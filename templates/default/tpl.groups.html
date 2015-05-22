@@ -1,0 +1,93 @@
+<script>
+	/**
+	 * @author Fabian Schmid <fs@studer-raimann.ch>
+	 */
+	$(document).ready(function () {
+
+		var xoctGroup = {
+			selected_id: 0,
+
+			load: function () {
+				$.ajax({url: "{BASE_URL}", type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
+					$('#xoct_groups').empty();
+					for (var i in data) {
+						$('#xoct_groups').append('<a class="list-group-item xoct_group" data-group-id="'
+						+ data[i].id
+						+ '">' + data[i].title + ''
+						+ '<span class="badge xoct_group_delete"><span class="glyphicon glyphicon-remove"></span></span></a>');
+					}
+				});
+			},
+			deleteGroup: function (id) {
+				if (confirm("{CONFIRM_MESSAGE}")) {
+					$.ajax({url: "{BASE_URL}", type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
+						if (data) {
+							$('[data-group-id="' + id + '"]').remove();
+						}
+					});
+				}
+			},
+			selectGroup: function (id) {
+				this.selected_id = id;
+				this.deselectAll();
+				$('[data-group-id="' + id + '"]').addClass('active');
+			},
+			deselectAll: function () {
+				$('.xoct_group').each(function () {
+					$(this).removeClass('active');
+				});
+			},
+			create: function (title, fallback) {
+				if (!title) {
+					return;
+				}
+				var self = this;
+				this.deselectAll();
+				$.ajax({url: "{BASE_URL}&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
+					self.load();
+					fallback();
+				});
+			}
+		};
+
+		xoctGroup.load();
+
+		$(document).on('click', '.xoct_group_delete', function () {
+			xoctGroup.deleteGroup($(this).parent().data('group-id'));
+		});
+
+		$(document).on('click', '.xoct_group', function () {
+			xoctGroup.selectGroup($(this).data('group-id'));
+		});
+
+		$('#xoct_add_new').click(function () {
+			var title = $('#group_name').val();
+			$('#group_name').attr('disabled', 'disabled');
+			$('#xoct_add_new').attr('disabled', 'disabled');
+			xoctGroup.create(title, function () {
+				$('#group_name').removeAttr('disabled');
+				$('#xoct_add_new').removeAttr('disabled');
+			});
+
+		});
+
+	});
+</script>
+<div class="row">
+	<div class="col-xs-6">
+		<h1>{HEADER_GROUPS}</h1>
+		<div class="input-group">
+			<span class="input-group-addon" id="l_group_name">{L_GROUP_NAME}</span>
+			<input id="group_name" type="text" class="form-control" placeholder="{PH_GROUP_NAME}" aria-describedby="l_group_name">
+			<span class="input-group-btn"><button class="btn btn-default" id="xoct_add_new" type="button">{BUTTON_GROUP_NAME}</button></span>
+		</div>
+		<ul id="xoct_groups" class="list-group"></ul>
+	</div>
+	<div class="col-xs-6">
+		<h1>{HEADER_PARTICIPANTS}</h1>
+		<div class="input-group">
+			<span class="input-group-addon" id="l_filter">{L_FILTER}</span>
+			<input id="filter" type="text" class="form-control" placeholder="{PH_FILTER}" aria-describedby="l_filter">
+		</div>
+	</div>
+</div>

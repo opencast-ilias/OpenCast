@@ -1,5 +1,5 @@
 <?php
-//require_once('class.ilDynamicLanguage.php');
+require_once('class.xoctDynLan.php');
 require_once('./Services/Repository/classes/class.ilRepositoryObjectPlugin.php');
 require_once('class.ilObjOpenCastAccess.php');
 
@@ -13,7 +13,33 @@ require_once('class.ilObjOpenCastAccess.php');
  * @version 1.0.00
  *
  */
-class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
+class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInterface {
+
+	/**
+	 * @return string
+	 */
+	public function getCsvPath() {
+		return './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/lang/lang.csv';
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getAjaxLink() {
+		return NULL;
+	}
+
+
+	/**
+	 * @param $a_var
+	 *
+	 * @return string
+	 */
+	public function txt($a_var) {
+		return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
+	}
+
 
 	const XOCT = 'xoct';
 	const AR_CUST = './Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php';

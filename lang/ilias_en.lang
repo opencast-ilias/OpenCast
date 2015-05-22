@@ -1,0 +1,49 @@
+<!-- language file start -->
+common_actions#:#Actions
+event_clips#:#Clips
+event_date#:#Date
+event_location#:#Location
+event_owner#:#Owner
+event_presenter#:#Presenter
+event_preview#:#Preview
+event_recording_station#:#Recording Station
+event_title#:#Title
+event_view#:#View
+groups_header#:#Groups
+groups_new#:#New Group
+groups_new_button#:#Create
+groups_new_placeholder#:#Groupname
+groups_participants_filter#:#Filter
+groups_participants_filter_placeholder#:#First- or Lastname
+groups_participants_header#:#Available Participants
+series_accept_eula#:#I accept the agreement
+series_cancel#:#Cancel
+series_channel_type#:#Channel-Type
+series_create#:#Create Channel
+series_department#:#Department
+series_department_info#:#How is the name of your department?
+series_description#:#Description
+series_discipline#:#Discipline
+series_edit#:#Edit Channel
+series_est_video_length#:#Estimated video content in hours
+series_est_video_length_info#:#How many video material (in hours) do you intend to publish in this channel?
+series_existing_channel_no#:#Create new Channel
+series_existing_channel_yes#:#Choose existing Channel
+series_existing_identifier#:#Existing Channel
+series_intended_lifetime#:#Intended lifetime of content
+series_intended_lifetime_info#:#How long shoud the video material be published?
+series_introduction_text#:#Work instruction
+series_license#:#License
+series_metadata#:#Channel-Infos
+series_permission_per_clip#:#Set permissions for a clip
+series_permission_per_clip_info#:#This setting enables an individual rights management based on clips ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the clips of this channel.
+series_save#:#Save
+series_saved#:#Channel-Information saved
+series_streaming_only#:#Streaming only
+series_title#:#Title
+series_update#:#Save
+series_use_annotations#:#Activate Annotations
+tab_event_index#:#Content
+tab_groups#:#Groups
+tab_info#:#Info
+tab_series_settings#:#Settings
