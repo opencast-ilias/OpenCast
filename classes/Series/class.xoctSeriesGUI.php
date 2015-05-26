@@ -73,4 +73,8 @@ class xoctSeriesGUI extends xoctGUI {
 	protected function delete() {
 		// TODO: Implement delete() method.
 	}
+
+	protected function view(){
+
+	}
 }

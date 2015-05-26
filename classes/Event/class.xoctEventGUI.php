@@ -25,11 +25,11 @@ class xoctEventGUI extends xoctGUI {
 		} else {
 			$this->xoctOpenCast = new xoctOpenCast ();
 		}
+		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
 	}
 
 
 	protected function index() {
-		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($xoctEventTableGUI->getHTML());
 	}
@@ -62,5 +62,10 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function delete() {
 		// TODO: Implement delete() method.
+	}
+
+
+	protected function view() {
+		//
 	}
 }

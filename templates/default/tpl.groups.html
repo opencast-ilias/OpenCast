@@ -3,57 +3,23 @@
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
 	$(document).ready(function () {
+		xoctGroup.init('{BASE_URL}');
+		xoctWaiter.init();
+		xoctGroup.load(function () {
+			xoctWaiter.show();
+		}, function () {
+			xoctWaiter.hide();
+		});
 
-		var xoctGroup = {
-			selected_id: 0,
-
-			load: function () {
-				$.ajax({url: "{BASE_URL}", type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
-					$('#xoct_groups').empty();
-					for (var i in data) {
-						$('#xoct_groups').append('<a class="list-group-item xoct_group" data-group-id="'
-						+ data[i].id
-						+ '">' + data[i].title + ''
-						+ '<span class="badge xoct_group_delete"><span class="glyphicon glyphicon-remove"></span></span></a>');
-					}
-				});
-			},
-			deleteGroup: function (id) {
-				if (confirm("{CONFIRM_MESSAGE}")) {
-					$.ajax({url: "{BASE_URL}", type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
-						if (data) {
-							$('[data-group-id="' + id + '"]').remove();
-						}
-					});
-				}
-			},
-			selectGroup: function (id) {
-				this.selected_id = id;
-				this.deselectAll();
-				$('[data-group-id="' + id + '"]').addClass('active');
-			},
-			deselectAll: function () {
-				$('.xoct_group').each(function () {
-					$(this).removeClass('active');
-				});
-			},
-			create: function (title, fallback) {
-				if (!title) {
-					return;
-				}
-				var self = this;
-				this.deselectAll();
-				$.ajax({url: "{BASE_URL}&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-					self.load();
-					fallback();
-				});
-			}
-		};
-
-		xoctGroup.load();
+		xoctGroupParticipant.init('{BASE_URL}');
+		xoctGroupParticipant.load();
 
 		$(document).on('click', '.xoct_group_delete', function () {
-			xoctGroup.deleteGroup($(this).parent().data('group-id'));
+			xoctGroup.deleteGroup($(this).parent().data('group-id'), function () {
+				xoctWaiter.show();
+			}, function () {
+				xoctWaiter.hide();
+			});
 		});
 
 		$(document).on('click', '.xoct_group', function () {
@@ -62,11 +28,11 @@
 
 		$('#xoct_add_new').click(function () {
 			var title = $('#group_name').val();
-			$('#group_name').attr('disabled', 'disabled');
-			$('#xoct_add_new').attr('disabled', 'disabled');
 			xoctGroup.create(title, function () {
-				$('#group_name').removeAttr('disabled');
-				$('#xoct_add_new').removeAttr('disabled');
+				xoctWaiter.show()
+			}, function () {
+				$('#group_name').val('');
+				xoctWaiter.hide();
 			});
 
 		});

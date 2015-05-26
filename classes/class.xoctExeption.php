@@ -9,13 +9,15 @@
 class xoctExeption extends ilPluginException {
 
 	const API_CALL_UNSUPPORTED = 10;
-	const API_CALL_STATUS_500= 500;
+	const OBJECT_WRONG_PARENT = 20;
+	const API_CALL_STATUS_500 = 500;
 	/**
 	 * @var array
 	 */
 	protected static $messages = array(
 		self::API_CALL_UNSUPPORTED => 'This Api-Call is not supported',
-		self::API_CALL_STATUS_500 => 'An error occurred during the request'
+		self::API_CALL_STATUS_500 => 'An error occurred during the request',
+		self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
 	);
 
 

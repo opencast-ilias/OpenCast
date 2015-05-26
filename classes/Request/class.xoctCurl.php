@@ -12,7 +12,7 @@ class xoctCurl {
 	 * @var int
 	 */
 	protected static $r_no = 1;
-	const DEBUG = 1;
+	const DEBUG = 12;
 
 
 	public function get() {
@@ -46,10 +46,10 @@ class xoctCurl {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getRequestType());
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		if (self::$ip_v4) {
-//			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			//			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		}
 		if (self::$ssl_version) {
-//			curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
+			//			curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
 		}
 		if ($this->getUsername() AND $this->getPassword()) {
 			curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
@@ -69,8 +69,12 @@ class xoctCurl {
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
 
+		$time = microtime(true);
 		$resp_orig = curl_exec($ch);
-		//		var_dump($resp_orig); // FSX
+		$response_time = microtime(true) - $time;
+		if (self::DEBUG) {
+			xoctLog::getInstance()->write('Response-Time: ' . $response_time . ' ms');
+		}
 
 		if ($resp_orig === false) {
 			$this->setResponseError(new exodCurlError($ch));

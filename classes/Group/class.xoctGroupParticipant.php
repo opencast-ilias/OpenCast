@@ -1,33 +1,82 @@
 <?php
+require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class xoctGroupParticipant
  */
-class xoctGroupParticipant {
+class xoctGroupParticipant extends ActiveRecord {
+
+	const STATUS_ACTIVE = 1;
+
 
 	/**
-	 * @param int $id
+	 * @return string
 	 */
-	public function __construct($id = 0) {
+	static function returnDbTableName() {
+		return 'xoct_group_participant';
 	}
 
 
 	/**
 	 * @var int
+	 *
+	 * @con_is_primary true
+	 * @con_is_unique  true
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     8
+	 * @con_sequence   true
 	 */
-	public $id = 0;
+	protected $id = 0;
 	/**
 	 * @var int
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     8
 	 */
-	public $user_id;
+	protected $user_id;
 	/**
 	 * @var int
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     8
 	 */
-	public $groupe_id;
+	protected $group_id;
 	/**
 	 * @var int
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     1
 	 */
-	public $status;
+	protected $status = self::STATUS_ACTIVE;
+
+
+	/**
+	 * @param $ref_id
+	 *
+	 * @return int
+	 * @throws xoctExeption
+	 */
+	public static function getAvailable($ref_id) {
+		global $tree;
+		/**
+		 * @var $tree ilTree
+		 */
+		while (ilObject2::_lookupType($ref_id, true) != 'crs') {
+			if ($ref_id == 1) {
+				throw new xoctExeption(xoctExeption::OBJECT_WRONG_PARENT);
+			}
+			$ref_id = $tree->getParentId($ref_id);
+		}
+
+		//return $ref_id;
+
+		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
+		echo '<pre>' . print_r($p, 1) . '</pre>';
+	}
 
 
 	/**
@@ -65,16 +114,16 @@ class xoctGroupParticipant {
 	/**
 	 * @return int
 	 */
-	public function getGroupeId() {
-		return $this->groupe_id;
+	public function getGroupId() {
+		return $this->group_id;
 	}
 
 
 	/**
-	 * @param int $groupe_id
+	 * @param $group_id
 	 */
-	public function setGroupeId($groupe_id) {
-		$this->groupe_id = $groupe_id;
+	public function setGroupId($group_id) {
+		$this->group_id = $group_id;
 	}
 
 

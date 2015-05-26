@@ -7,10 +7,12 @@
  */
 $(document).ready(function () {
 
+	xoctWaiter.init();
+
 	$('#existing_identifier').change(function () {
 
 		var identifier = $('#existing_identifier').val();
-
+		xoctWaiter.show();
 		$.ajax({
 			url: "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/json.php",
 			type: "GET",
@@ -31,6 +33,7 @@ $(document).ready(function () {
 			console.log("HTTP Request Failed");
 		}).always(function () {
 			/* ... */
+			xoctWaiter.hide();
 		});
 
 
