@@ -125,7 +125,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $xoctSeries   xoctSeries
 		 */
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
 			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());

@@ -54,7 +54,11 @@ class xoctSeries extends xoctObject {
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
 		$this->updateMetadataFromFields();
 		$array['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite() ));
+		$unibe = new xoctAcl();
+		$unibe->setRole('ROLE_UNIBE.CH_MEMBER');
+		$unibe->setAllow(true);
+		$unibe->setAction(xoctAcl::READ);
+		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite(), $unibe->__toStdClass() ));
 		$array['theme'] = $this->getTheme();
 
 		$data = json_decode(xoctRequest::root()->series()->post($array, 'fschmid@unibe.ch'));
@@ -129,6 +133,9 @@ class xoctSeries extends xoctObject {
 	 * @return xoctSeries[]
 	 */
 	public static function getAllForUser($user_string) {
+		if ($existing = xoctCache::getInstance()->get('series-' . $user_string)) {
+			return $existing;
+		}
 		$return = array();
 		$data = json_decode(xoctRequest::root()->series()->get($user_string));
 		foreach ($data as $d) {
@@ -136,6 +143,7 @@ class xoctSeries extends xoctObject {
 			$obj->loadFromStdClass($d);
 			$return[] = $obj;
 		}
+		xoctCache::getInstance()->set('series-' . $user_string, $return, 60);
 
 		return $return;
 	}

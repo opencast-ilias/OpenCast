@@ -1,7 +1,6 @@
 <?php
 require_once('class.xoctCurl.php');
-require_once('./Services/GlobalCache/classes/class.ilGlobalCache.php');
-require_once('class.xoctRequestDummy.php');
+require_once('class.xoctCurl.php');
 
 /**
  * Class xoctRequest
@@ -18,14 +17,6 @@ class xoctRequest {
 	public function get($as_user = '') {
 		$url = $this->getUrl();
 
-		$ilGlobalCache = ilGlobalCache::getInstance(ilGlobalCache::COMP_OBJ_DEF);
-		if ($ilGlobalCache->isActive()) {
-			$cache = $ilGlobalCache->get('xoct_api_calls');
-			if (array_key_exists($url, $cache)) {
-				return $cache[$url];
-			}
-		}
-
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		$xoctCurl->setUsername('apitest');
@@ -39,10 +30,6 @@ class xoctRequest {
 		$xoctCurl->get();
 
 		$responseBody = $xoctCurl->getResponseBody();
-		if ($ilGlobalCache->isActive()) {
-			$cache[$url] = $responseBody;
-			$ilGlobalCache->set('xoct_api_calls', $cache);
-		}
 
 		return $responseBody;
 	}
@@ -55,10 +42,6 @@ class xoctRequest {
 	 * @return string
 	 */
 	public function post(array $post_data, $as_user = '') {
-		$ilGlobalCache = ilGlobalCache::getInstance(ilGlobalCache::COMP_OBJ_DEF);
-		if ($ilGlobalCache->isActive()) {
-			$ilGlobalCache->delete('xoct_api_calls');
-		}
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setUsername('apitest');
@@ -112,7 +95,6 @@ class xoctRequest {
 	 * @return xoctRequest
 	 */
 	public static function root() {
-		//		return new xoctRequestDummy();
 		return new self();
 	}
 
@@ -136,9 +118,8 @@ class xoctRequest {
 	/**
 	 * @var string
 	 */
-//	protected $base = 'https://p2-int-api.cloud.switch.ch/api/';
+	//	protected $base = 'https://p2-int-api.cloud.switch.ch/api/';
 	protected $base = 'https://cast-ng-test.switch.ch/api/';
-
 	/**
 	 * @var array
 	 */

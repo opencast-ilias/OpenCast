@@ -3,6 +3,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('class.xoctGroup.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 require_once('class.xoctGroupParticipantGUI.php');
+
 /**
  * Class xoctGroupGUI
  *
@@ -41,6 +42,19 @@ class xoctGroupGUI extends xoctGUI {
 		$temp->setVariable('BUTTON_GROUP_NAME', $this->pl->txt('groups_new_button'));
 		$temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
 		$temp->setVariable('GP_BASE_URL', ($this->ctrl->getLinkTarget(new xoctGroupParticipantGUI($this->xoctOpenCast), '', '', true)));
+		$temp->setVariable('GROUP_LANGUAGE', json_encode(array(
+			'no_title' => $this->pl->txt('group_alert_no_title'),
+			'delete_group' => $this->pl->txt('group_alert_delete_group'),
+			'none_available' => $this->pl->txt('group_none_available')
+		)));
+		$temp->setVariable('PARTICIPANTS_LANGUAGE', json_encode(array(
+			'delete_participant' => $this->pl->txt('group_delete_participant'),
+			'select_group' => $this->pl->txt('group_select_group'),
+			'none_available' => $this->pl->txt('group_none_available'),
+			'none_available_all' => $this->pl->txt('group_none_available_all'),
+
+		)));
+
 		$this->tpl->setContent($temp->get());
 	}
 
@@ -63,7 +77,9 @@ class xoctGroupGUI extends xoctGUI {
 	public function getAll() {
 		$arr = array();
 		foreach (xoctGroup::getAllForObjId($this->xoctOpenCast->getObjId()) as $group) {
-			$arr[] = $group->__asStdClass();
+			$stdClass = $group->__asStdClass();
+			$stdClass->user_count = xoctGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
+			$arr[] = $stdClass;
 		}
 		$this->outJson($arr);
 	}
@@ -76,7 +92,6 @@ class xoctGroupGUI extends xoctGUI {
 		$obj->create();
 		$this->outJson($obj->__asStdClass());
 	}
-
 
 
 	protected function edit() {

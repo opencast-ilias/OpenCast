@@ -1,6 +1,7 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
+
 /**
  * Class xoctSeriesFormGUI
  *
@@ -83,28 +84,27 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
-
-		$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
-		{
-			$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
-			{
-				$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
-				require_once('class.xoctSeries.php');
-				$existing_series = array();
-				foreach (xoctSeries::getAllForUser('fschmid@unibe.ch') as $serie) {
-					$existing_series[$serie->getIdentifier()] = $serie->getTitle();
-				}
-				//				sort($existing_series);
-				$existing_identifier->setOptions($existing_series);
-				$existing->addSubItem($existing_identifier);
-			}
-			$existing_channel->addOption($existing);
-
-			$new = new ilRadioOption($this->txt('existing_channel_no'), self::EXISTING_NO);
-			$existing_channel->addOption($new);
-		}
-
 		if ($this->is_new) {
+			$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
+			{
+				$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
+				{
+					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
+					require_once('class.xoctSeries.php');
+					$existing_series = array();
+					foreach (xoctSeries::getAllForUser('fschmid@unibe.ch') as $serie) {
+						$existing_series[$serie->getIdentifier()] = $serie->getTitle();
+					}
+					//				sort($existing_series);
+					$existing_identifier->setOptions($existing_series);
+					$existing->addSubItem($existing_identifier);
+				}
+				$existing_channel->addOption($existing);
+
+				$new = new ilRadioOption($this->txt('existing_channel_no'), self::EXISTING_NO);
+				$existing_channel->addOption($new);
+			}
+
 			$this->addItem($existing_channel);
 		}
 
@@ -317,17 +317,19 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	//	}
 	//
 	//
-		protected function initView() {
-			$this->initForm();
-			/**
-			 * @var $item ilNonEditableValueGUI
-			 */
-			foreach ($this->getItems() as $item) {
-				$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
-				$this->removeItemByPostVar($item->getPostVar());
-				$this->addItem($te);
-			}
+	protected function initView() {
+		$this->initForm();
+		/**
+		 * @var $item ilNonEditableValueGUI
+		 */
+		foreach ($this->getItems() as $item) {
+			$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
+			$this->removeItemByPostVar($item->getPostVar());
+			$this->addItem($te);
 		}
+	}
+
+
 	protected static $disciplines = array(
 		1932 => 'Arts & Culture',
 		5314 => 'Architecture',

@@ -1,4 +1,5 @@
 <?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
 
 /**
  * Class xoctObject
@@ -12,20 +13,7 @@ abstract class xoctObject {
 	 * @var array
 	 */
 	protected static $cache = array();
-	//	abstract public function read();
-	//
-	//
-	//	abstract public function update();
-	//
-	//
-	//	abstract public function create();
-	//
-	//
-	//	abstract public function delete();
 
-	//	abstract protected function afterObjectLoad();
-
-	//	abstract protected function __toRequest();
 
 	/**
 	 * @param $identifier
@@ -34,8 +22,14 @@ abstract class xoctObject {
 	 */
 	public static function find($identifier) {
 		$class_name = get_called_class();
+		if ($existing = xoctCache::getInstance()->get($class_name . '-' . $identifier)) {
+			return $existing;
+		}
+
 		if (! isset(self::$cache[$class_name][$identifier])) {
-			self::$cache[$class_name][$identifier] = new $class_name($identifier);
+			$var = new $class_name($identifier);
+			xoctCache::getInstance()->set($class_name . '-' . $identifier, $var);
+			self::$cache[$class_name][$identifier] = $var;
 		}
 
 		return self::$cache[$class_name][$identifier];
@@ -49,6 +43,7 @@ abstract class xoctObject {
 	 */
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
+		xoctCache::getInstance()->delete($class_name . '-' . $identifier);
 		if (isset(self::$cache[$class_name][$identifier])) {
 			unset(self::$cache[$class_name][$identifier]);
 		}

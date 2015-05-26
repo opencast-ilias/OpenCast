@@ -71,9 +71,6 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @throws xoctExeption
 	 */
 	public static function getAvailable($ref_id) {
-		//		echo '<pre>' . print_r(, 1) . '</pre>';
-		//		exit;
-
 		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
 
 		if (isset(self::$crs_members_cache[$ref_id])) {
@@ -114,6 +111,9 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	public function getAllUserIdsForOpenCastObjId($obj_id) {
 		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(NULL, 'id');
+		if (count($all) == 0) {
+			return array();
+		}
 
 		return self::where(array( 'group_id' => $all ))->getArray(NULL, 'user_id');
 	}
