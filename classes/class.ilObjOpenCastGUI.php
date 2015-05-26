@@ -161,6 +161,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 				$this->ctrl->forwardCommand($xoctGroupGUI);
 				$this->tpl->show();
 				break;
+			case 'xoctgroupparticipantgui':
+				$xoctGroupParticipantGUI = new xoctGroupParticipantGUI($xoctOpenCast);
+				$this->ctrl->forwardCommand($xoctGroupParticipantGUI);
+				$this->tpl->show();
+				break;
 			case 'ilObjOpenCastGUI':
 			case '':
 				switch ($cmd) {

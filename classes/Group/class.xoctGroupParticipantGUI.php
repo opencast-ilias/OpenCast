@@ -1,6 +1,7 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupParticipant.php');
+require_once('class.xoctUser.php');
 
 /**
  * Class xoctGroupParticipantGUI
@@ -41,7 +42,28 @@ class xoctGroupParticipantGUI extends xoctGUI {
 
 
 	protected function getAvailable() {
-		xoctGroupParticipant::getAvailable($_GET['ref_id']);
+		$data = array();
+		foreach (xoctGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant) {
+			$stdClass = $xoctGroupParticipant->__asStdClass();
+			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+			$data[] = $stdClass;
+		}
+		$this->outJson($data);
+	}
+
+
+	protected function getPerGroup() {
+		$data = array();
+		$group_id = $_GET['group_id'];
+		if (! $group_id) {
+			$this->outJson(NULL);
+		}
+		foreach (xoctGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant) {
+			$stdClass = $xoctGroupParticipant->__asStdClass();
+			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+			$data[] = $stdClass;
+		}
+		$this->outJson($data);
 	}
 
 
@@ -51,7 +73,14 @@ class xoctGroupParticipantGUI extends xoctGUI {
 
 
 	protected function create() {
-		// TODO: Implement create() method.
+		if (! $_POST['user_id'] OR ! $_POST['group_id']) {
+			$this->outJson(false);
+		}
+		$xoctGroupParticipant = new xoctGroupParticipant();
+		$xoctGroupParticipant->setUserId($_POST['user_id']);
+		$xoctGroupParticipant->setGroupId($_POST['group_id']);
+		$xoctGroupParticipant->create();
+		$this->outJson(true);
 	}
 
 
@@ -71,6 +100,11 @@ class xoctGroupParticipantGUI extends xoctGUI {
 
 
 	protected function delete() {
-		// TODO: Implement delete() method.
+		if (! $_POST['id']) {
+			$this->outJson(false);
+		}
+		$o = new xoctGroupParticipant($_POST['id']);
+		$o->delete();
+		$this->outJson(true);
 	}
 }

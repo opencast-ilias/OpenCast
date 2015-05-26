@@ -3,28 +3,13 @@
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
 	$(document).ready(function () {
-		xoctGroup.init('{BASE_URL}');
 		xoctWaiter.init();
-		xoctGroup.load(function () {
-			xoctWaiter.show();
+		xoctGroup.init('{BASE_URL}', '#xoct_groups_container', function () {
+			xoctWaiter.show()
 		}, function () {
-			xoctWaiter.hide();
+			xoctWaiter.hide()
 		});
-
-		xoctGroupParticipant.init('{BASE_URL}');
-		xoctGroupParticipant.load();
-
-		$(document).on('click', '.xoct_group_delete', function () {
-			xoctGroup.deleteGroup($(this).parent().data('group-id'), function () {
-				xoctWaiter.show();
-			}, function () {
-				xoctWaiter.hide();
-			});
-		});
-
-		$(document).on('click', '.xoct_group', function () {
-			xoctGroup.selectGroup($(this).data('group-id'));
-		});
+		xoctGroupParticipant.init('{GP_BASE_URL}', '#xoct_available_participant_container', '#xoct_group_participants_container', xoctWaiter.show(), xoctWaiter.hide());
 
 		$('#xoct_add_new').click(function () {
 			var title = $('#group_name').val();
@@ -40,20 +25,34 @@
 	});
 </script>
 <div class="row">
-	<div class="col-xs-6">
+	<div class="col-xs-4">
 		<h1>{HEADER_GROUPS}</h1>
 		<div class="input-group">
 			<span class="input-group-addon" id="l_group_name">{L_GROUP_NAME}</span>
 			<input id="group_name" type="text" class="form-control" placeholder="{PH_GROUP_NAME}" aria-describedby="l_group_name">
 			<span class="input-group-btn"><button class="btn btn-default" id="xoct_add_new" type="button">{BUTTON_GROUP_NAME}</button></span>
 		</div>
-		<ul id="xoct_groups" class="list-group"></ul>
 	</div>
-	<div class="col-xs-6">
+	<div class="col-xs-4">
 		<h1>{HEADER_PARTICIPANTS}</h1>
+	</div>
+	<div class="col-xs-4">
+		<h1>{HEADER_PARTICIPANTS_AVAILABLE}</h1>
 		<div class="input-group">
 			<span class="input-group-addon" id="l_filter">{L_FILTER}</span>
 			<input id="filter" type="text" class="form-control" placeholder="{PH_FILTER}" aria-describedby="l_filter">
 		</div>
 	</div>
 </div>
+<div class="row">
+	<div class="col-xs-4">
+		<div id="xoct_groups_container"></div>
+	</div>
+	<div class="col-xs-4">
+		<div id="xoct_group_participants_container"></div>
+	</div>
+	<div class="col-xs-4">
+		<div id="xoct_available_participant_container"></div>
+	</div>
+</div>
+

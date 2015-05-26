@@ -2,7 +2,7 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
 require_once('class.xoctGroup.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
-
+require_once('class.xoctGroupParticipantGUI.php');
 /**
  * Class xoctGroupGUI
  *
@@ -33,12 +33,14 @@ class xoctGroupGUI extends xoctGUI {
 		$temp = $this->pl->getTemplate('default/tpl.groups.html', false, false);
 		$temp->setVariable('HEADER_GROUPS', $this->pl->txt('groups_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS', $this->pl->txt('groups_participants_header'));
+		$temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', $this->pl->txt('groups_available_participants_header'));
 		$temp->setVariable('L_GROUP_NAME', $this->pl->txt('groups_new'));
 		$temp->setVariable('PH_GROUP_NAME', $this->pl->txt('groups_new_placeholder'));
 		$temp->setVariable('L_FILTER', $this->pl->txt('groups_participants_filter'));
 		$temp->setVariable('PH_FILTER', $this->pl->txt('groups_participants_filter_placeholder'));
 		$temp->setVariable('BUTTON_GROUP_NAME', $this->pl->txt('groups_new_button'));
 		$temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
+		$temp->setVariable('GP_BASE_URL', ($this->ctrl->getLinkTarget(new xoctGroupParticipantGUI($this->xoctOpenCast), '', '', true)));
 		$this->tpl->setContent($temp->get());
 	}
 
@@ -74,6 +76,7 @@ class xoctGroupGUI extends xoctGUI {
 		$obj->create();
 		$this->outJson($obj->__asStdClass());
 	}
+
 
 
 	protected function edit() {

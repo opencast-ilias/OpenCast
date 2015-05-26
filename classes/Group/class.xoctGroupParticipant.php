@@ -3,6 +3,8 @@ require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class xoctGroupParticipant
+ *
+ * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctGroupParticipant extends ActiveRecord {
 
@@ -45,6 +47,10 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	protected $group_id;
 	/**
+	 * @var xoctUser
+	 */
+	protected $xoct_user = NULL;
+	/**
 	 * @var int
 	 *
 	 * @con_has_field  true
@@ -52,15 +58,27 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @con_length     1
 	 */
 	protected $status = self::STATUS_ACTIVE;
+	/**
+	 * @var array
+	 */
+	protected static $crs_members_cache = array();
 
 
 	/**
 	 * @param $ref_id
 	 *
-	 * @return int
+	 * @return xoctGroupParticipant[]
 	 * @throws xoctExeption
 	 */
 	public static function getAvailable($ref_id) {
+		//		echo '<pre>' . print_r(, 1) . '</pre>';
+		//		exit;
+
+		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
+
+		if (isset(self::$crs_members_cache[$ref_id])) {
+			return self::$crs_members_cache[$ref_id];
+		}
 		global $tree;
 		/**
 		 * @var $tree ilTree
@@ -72,10 +90,32 @@ class xoctGroupParticipant extends ActiveRecord {
 			$ref_id = $tree->getParentId($ref_id);
 		}
 
-		//return $ref_id;
-
 		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
-		echo '<pre>' . print_r($p, 1) . '</pre>';
+		$return = array();
+		foreach ($p->getMembers() as $user_id) {
+			if (in_array($user_id, $existing)) {
+				continue;
+			}
+			$obj = new self();
+			$obj->setUserId($user_id);
+			$return[] = $obj;
+		}
+
+		self::$crs_members_cache[$ref_id] = $return;
+
+		return $return;
+	}
+
+
+	/**
+	 * @param $obj_id
+	 *
+	 * @return array
+	 */
+	public function getAllUserIdsForOpenCastObjId($obj_id) {
+		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(NULL, 'id');
+
+		return self::where(array( 'group_id' => $all ))->getArray(NULL, 'user_id');
 	}
 
 
@@ -140,5 +180,25 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	public function setStatus($status) {
 		$this->status = $status;
+	}
+
+
+	/**
+	 * @return xoctUser
+	 */
+	public function getXoctUser() {
+		if (! $this->xoct_user AND $this->getUserId()) {
+			$this->xoct_user = new xoctUser($this->getUserId());
+		}
+
+		return $this->xoct_user;
+	}
+
+
+	/**
+	 * @param xoctUser $xoct_user
+	 */
+	public function setXoctUser($xoct_user) {
+		$this->xoct_user = $xoct_user;
 	}
 }
