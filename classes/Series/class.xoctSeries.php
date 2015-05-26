@@ -54,7 +54,11 @@ class xoctSeries extends xoctObject {
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
 		$this->updateMetadataFromFields();
 		$array['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite() ));
+		$unibe = new xoctAcl();
+		$unibe->setRole('ROLE_UNIBE.CH_MEMBER');
+		$unibe->setAllow(true);
+		$unibe->setAction(xoctAcl::READ);
+		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite(), $unibe->__toStdClass() ));
 		$array['theme'] = $this->getTheme();
 
 		$data = json_decode(xoctRequest::root()->series()->post($array, 'fschmid@unibe.ch'));
