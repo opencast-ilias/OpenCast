@@ -1,0 +1,128 @@
+.xsca_loader{
+    float: right;
+    display: none;
+    top: 0%;
+}
+
+.xsca_loaded{
+    float: right;
+    display: none;
+    top: 0%;
+}
+
+.xsca_members{
+    display: none;
+    margin: 5px;
+    padding: 5px;
+}
+
+.xsca_groups_title{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.xsca_clear_groups_filter{
+    cursor: pointer;
+}
+
+.xsca_clear_participants_filter{
+    cursor: pointer;
+}
+
+.xsca_participants_title{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.xsca_group{
+    padding: 5px;
+    background-color: #FAFAFA;
+    border-top: 1px solid #F0F0F0;
+    overflow: auto;
+}
+
+.xsca_participants{
+    /*margin: 10px;*/
+    padding: 5px 5px 5px 20px;
+    float: left;
+    width: 45%;
+}
+
+.xsca_participants_holder{
+    margin: 5px;
+    padding: 5px;
+    overflow: auto;
+}
+
+.xsca_groups{
+    /*margin: 10px;*/
+    padding: 5px 20px 5px 5px;
+    float: left;
+    width: 45%;
+
+}
+
+.xsca_group_info{
+    background-color: yellow;
+    display: none;
+    font-weight: bold;
+}
+
+.xsca_member {
+    background-color: #BBBBBB;
+    float: left;
+    font-size: 75%;
+    line-height: 20px;
+    margin: 5px 5px;
+
+    overflow: hidden;
+    padding: 10px 15px;
+    page-break-before: auto;
+    text-align: center;
+    width: 15em;
+    cursor: pointer;
+    /*
+    margin: 2px;
+    border-style: groove;
+    cursor: pointer;  */
+    /*-moz-border-radius:5px;*/ /* Firefox */
+    /*-webkit-border-radius:5px;*/ /* Safari, Chrome */
+   /* -khtml-border-radius:5px;*/ /* Konqueror */
+    /*border-radius:5px;*/ /* CSS3 */
+}
+
+.xsca_participant {
+    background-color: #BBBBBB;
+    float: left;
+    font-size: 75%;
+    line-height: 20px;
+    margin: 0 5px 20px;
+    overflow: hidden;
+    padding: 10px 15px;
+    page-break-before: auto;
+    text-align: center;
+    width: 15em;
+    cursor: pointer;
+    height: 160px !important;
+}
+
+
+.xsca_plus{
+    font-weight: bold;
+    color: green;
+}
+.xsca_minus{
+    font-weight: bold;
+    color: red;
+}
+
+#xsca_group_name_container{
+    cursor: pointer;
+}
+
+.xsca_delete_group{
+    cursor: pointer;
+    clear: both;
+    float: right;
+    padding-right: 5px;
+}

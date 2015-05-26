@@ -1,0 +1,49 @@
+<!-- language file start -->
+common_actions#:#Aktionen
+event_clips#:#Clips
+event_date#:#Datum
+event_location#:#Ort
+event_owner#:#Besitzer
+event_presenter#:#Presenter
+event_preview#:#Vorschau
+event_recording_station#:#Aufnahmestation
+event_title#:#Titel
+event_view#:#Anzeigen
+groups_header#:#Gruppen
+groups_new#:#Neue Gruppe
+groups_new_button#:#Erstellen
+groups_new_placeholder#:#Name der neuen Gruppe
+groups_participants_filter#:#Filter
+groups_participants_filter_placeholder#:#Vor- oder Nachname
+groups_participants_header#:#Verfügbare Teilnehmer
+series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
+series_cancel#:#Abbrechen
+series_channel_type#:#Channel-Typ
+series_create#:#Channel anlegen
+series_department#:#Department
+series_department_info#:#Name Ihrer Institution
+series_description#:#Beschreibung
+series_discipline#:#Disziplin
+series_edit#:#Channel bearbeiten
+series_est_video_length#:#Erwartete Länge des Videomaterials in Stunden
+series_est_video_length_info#:#Wie Viele Stunden Video erwarten Sie für diesen Channel?
+series_existing_channel_no#:#Neuen Channel anlegen
+series_existing_channel_yes#:#Bestehenden Channel wählen
+series_existing_identifier#:#Bestehender Channel
+series_intended_lifetime#:#Lebensdauer
+series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert bleiben
+series_introduction_text#:#Arbeitsanweisung
+series_license#:#Lizenz
+series_metadata#:#Channel-Infos
+series_permission_per_clip#:#Rechte pro Clip setzen
+series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Clip-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen des gewählten Kanals sehen dürfen.
+series_save#:#Speichern
+series_saved#:#Channel-Informationen gespeichert
+series_streaming_only#:#Nur Streaming
+series_title#:#Titel
+series_update#:#Speichern
+series_use_annotations#:#Annotationen aktivieren
+tab_event_index#:#Inhalt
+tab_groups#:#Gruppen
+tab_info#:#Info
+tab_series_settings#:#Einstellungen

@@ -2,15 +2,15 @@
 
 require_once('./Services/Component/classes/class.ilPluginConfigGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConfGUI.php');
-require_once('class.xoctMainGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+require_once('class.xoctMainGUI.php');
 
 /**
  * ilOpenCastConfigGUI
  *
- * @author  Fabian Schmid <fs@studer-raimann.ch>
+ * @author             Fabian Schmid <fs@studer-raimann.ch>
  *
- * @version 1.0.00
+ * @ilCtrl_IsCalledBy  ilOpenCastConfigGUI: ilObjComponentSettingsGUIs
  */
 class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 
@@ -19,11 +19,6 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */
-		if (xoct::is50()) {
-			$ilCtrl->redirectByClass(array( 'ilUIPluginRouterGUI', 'xoctMainGUI' ));
-		} else {
-			$ilCtrl->redirectByClass(array( 'ilRouterGUI', 'xoctMainGUI' ));
-		}
 		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $_GET["ctype"]);
 		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "cname", $_GET["cname"]);
 		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "slot_id", $_GET["slot_id"]);
@@ -41,9 +36,14 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 			$ilTabs->setBackTarget($lng->txt("cmps_plugins"), $ilCtrl->getLinkTargetByClass("ilobjcomponentsettingsgui", "listPlugins"));
 		}
 
-		$a_gui_object = new xoctMainGUI();
-		$a_gui_object->executeCommand();
-		//		$ilCtrl->forwardCommand($a_gui_object);
+		$nextClass = $ilCtrl->getNextClass();
+
+		if ($nextClass) {
+			$a_gui_object = new xoctMainGUI();
+			$ilCtrl->forwardCommand($a_gui_object);
+		} else {
+			$ilCtrl->redirectByClass(array( 'xoctMainGUI', 'xoctConfGUI' ));
+		}
 	}
 
 

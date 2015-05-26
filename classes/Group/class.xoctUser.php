@@ -11,21 +11,47 @@ class xoctUser {
 	 * @param int $ilias_user_id
 	 */
 	public function __construct($ilias_user_id = 6) {
+		$user = new ilObjUser($ilias_user_id);
+		$this->setExtId($user->getExternalAccount());
+		$this->setFirstName($user->getFirstname());
+		$this->setLastName($user->getLastname());
+		$this->setEmail($user->getEmail());
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getNamePresentation() {
+		return $this->getLastName() . ', ' . $this->getFirstName() . ' (' . $this->getEmail() . ')';
 	}
 
 
 	/**
 	 * @var int
 	 */
-	public $ilias_user_id = 6;
+	protected $ilias_user_id = 6;
 	/**
 	 * @var string
 	 */
-	public $ext_id;
+	protected $ext_id;
+	/**
+	 * @var string
+	 */
+	protected $first_name = '';
+	/**
+	 * @var string
+	 */
+	protected $last_name = '';
+	/**
+	 * @var string
+	 */
+	protected $email = '';
 	/**
 	 * @var int
 	 */
-	public $status;
+
+	protected $status;
 
 
 	/**
@@ -73,5 +99,53 @@ class xoctUser {
 	 */
 	public function setStatus($status) {
 		$this->status = $status;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getFirstName() {
+		return $this->first_name;
+	}
+
+
+	/**
+	 * @param string $first_name
+	 */
+	public function setFirstName($first_name) {
+		$this->first_name = $first_name;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getEmail() {
+		return $this->email;
+	}
+
+
+	/**
+	 * @param string $email
+	 */
+	public function setEmail($email) {
+		$this->email = $email;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getLastName() {
+		return $this->last_name;
+	}
+
+
+	/**
+	 * @param string $last_name
+	 */
+	public function setLastName($last_name) {
+		$this->last_name = $last_name;
 	}
 }

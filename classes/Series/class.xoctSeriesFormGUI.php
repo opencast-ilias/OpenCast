@@ -1,14 +1,31 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 /**
  * Class xoctSeriesFormGUI
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class xoctSeriesFormGUI extends ilPropertyFormGUI{
-	const F_COURSE_NAME = 'course_name';
+class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
+	const F_COURSE_NAME = 'course_name';
+	const F_TITLE = 'title';
+	const F_DESCRIPTION = 'description';
+	const F_CHANNEL_TYPE = 'channel_type';
+	const EXISTING_NO = 1;
+	const EXISTING_YES = 2;
+	const F_INTRODUCTION_TEXT = 'introduction_text';
+	const F_INTENDED_LIFETIME = 'intended_lifetime';
+	const F_EST_VIDEO_LENGTH = 'est_video_length';
+	const F_LICENSE = 'license';
+	const F_DISCIPLINE = 'discipline';
+	const F_DEPARTMENT = 'department';
+	const F_STREAMING_ONLY = 'streaming_only';
+	const F_USE_ANNOTATIONS = 'use_annotations';
+	const F_PERMISSION_PER_CLIP = 'permission_per_clip';
+	const F_ACCEPT_EULA = 'accept_eula';
+	const F_EXISTING_IDENTIFIER = 'existing_identifier';
 	/**
 	 * @var  xoctSeries
 	 */
@@ -32,33 +49,246 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI{
 
 
 	/**
-	 * @param            $parent_gui
-	 * @param xoctSeries $object
-	 * @param bool       $view
-	 * @param bool       $infopage
-	 * @param bool       $external
+	 * @param              $parent_gui
+	 * @param xoctOpenCast $cast
+	 * @param bool         $view
+	 * @param bool         $infopage
+	 * @param bool         $external
 	 */
-	public function __construct($parent_gui, xoctSeries $object, $view = false, $infopage = false, $external = true) {
-		global $ilCtrl, $lng;
-		$this->object = $object;
+	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
+		global $ilCtrl, $lng, $tpl;
+		$this->cast = $cast;
+		$this->series = $cast->getSeries();
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
-		if ($_GET['rl'] == 'true') {
-			$this->pl->updateLanguageFiles();
-		}
 		$this->ctrl->saveParameter($parent_gui, xoctSeriesGUI::SERIES_ID);
 		$this->ctrl->saveParameter($parent_gui, 'new_type');
 		$this->lng = $lng;
-		$this->is_new = ($this->object->getId() == 0);
+		$this->is_new = ($this->series->getIdentifier() == '');
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
+		xoctWaiterGUI::init();
+		$tpl->addJavaScript($this->pl->getStyleSheetLocation('default/existing_channel.js'));
 		if ($view) {
 			$this->initView();
 		} else {
 			$this->initForm();
 		}
+	}
+
+
+	protected function initForm() {
+		$this->setTarget('_top');
+		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->initButtons();
+
+		$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
+		{
+			$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
+			{
+				$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
+				require_once('class.xoctSeries.php');
+				$existing_series = array();
+				foreach (xoctSeries::getAllForUser('fschmid@unibe.ch') as $serie) {
+					$existing_series[$serie->getIdentifier()] = $serie->getTitle();
+				}
+				//				sort($existing_series);
+				$existing_identifier->setOptions($existing_series);
+				$existing->addSubItem($existing_identifier);
+			}
+			$existing_channel->addOption($existing);
+
+			$new = new ilRadioOption($this->txt('existing_channel_no'), self::EXISTING_NO);
+			$existing_channel->addOption($new);
+		}
+
+		if ($this->is_new) {
+			$this->addItem($existing_channel);
+		}
+
+		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
+		$te->setRequired(true);
+		$this->addItem($te);
+
+		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
+		$this->addItem($te);
+
+		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
+		$te->setRows(5);
+		$this->addItem($te);
+
+		//		$discipline = new ilSelectInputGUI($this->txt(self::F_DISCIPLINE), self::F_DISCIPLINE);
+		//		sort(self::$disciplines);
+		//		$discipline->setOptions(self::$disciplines);
+		//		$discipline->setRequired(true);
+		//		$this->addItem($discipline);
+
+		$license = new ilSelectInputGUI($this->txt(self::F_LICENSE), self::F_LICENSE);
+		$license->setOptions(array(
+			'http://creativecommons.org/licenses/by/2.5/ch/' => 'CC: Attribution',
+			'http://creativecommons.org/licenses/by-nc/2.5/ch/' => 'CC: Attribution-Noncommercial',
+			'http://creativecommons.org/licenses/by-nc-nd/2.5/ch/' => 'CC: Attribution-Noncommercial-No Derivative Works',
+			'http://creativecommons.org/licenses/by-nc-sa/2.5/ch/' => 'CC: Attribution-Noncommercial-Share Alike',
+			'http://creativecommons.org/licenses/by-nd/2.5/ch/' => 'CC: Attribution-No Derivative Works',
+			'http://creativecommons.org/licenses/by-sa/2.5/ch/' => 'CC: Attribution-Share Alike',
+			NULL => 'As defined in content',
+		));
+		$this->addItem($license);
+
+		//		$est_video_length = new ilNumberInputGUI($this->txt(self::F_EST_VIDEO_LENGTH), self::F_EST_VIDEO_LENGTH);
+		//		$est_video_length->setMinValue(1);
+		//		$est_video_length->setInfo($this->infoTxt(self::F_EST_VIDEO_LENGTH));
+		//		$est_video_length->setRequired(true);
+		//		$this->addItem($est_video_length);
+
+		//		$intended_lifetime = new ilSelectInputGUI($this->txt(self::F_INTENDED_LIFETIME), self::F_INTENDED_LIFETIME);
+		//		$intended_lifetime->setInfo($this->infoTxt(self::F_INTENDED_LIFETIME));
+		//		$intended_lifetime->setOptions(array(
+		//			6 => '6 month',
+		//			12 => '1 year',
+		//			24 => '2 years',
+		//			36 => '3 years',
+		//			60 => '4 years',
+		//			72 => '5 years',
+		//		));
+		//		$intended_lifetime->setRequired(true);
+		//		$this->addItem($intended_lifetime);
+
+		$department = new ilTextInputGUI($this->txt(self::F_DEPARTMENT), self::F_DEPARTMENT);
+		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
+		$this->addItem($department);
+
+		$use_annotations = new ilCheckboxInputGUI($this->txt(self::F_USE_ANNOTATIONS), self::F_USE_ANNOTATIONS);
+		$this->addItem($use_annotations);
+
+		$streaming_only = new ilCheckboxInputGUI($this->txt(self::F_STREAMING_ONLY), self::F_STREAMING_ONLY);
+		$this->addItem($streaming_only);
+
+		$permission_per_clip = new ilCheckboxInputGUI($this->txt(self::F_PERMISSION_PER_CLIP), self::F_PERMISSION_PER_CLIP);
+		$permission_per_clip->setInfo($this->infoTxt(self::F_PERMISSION_PER_CLIP));
+		$this->addItem($permission_per_clip);
+
+		if ($this->is_new) {
+			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
+			$accept_eula->setInfo('MISSING EULA TEXT');
+			$this->addItem($accept_eula);
+		}
+	}
+
+
+	public function fillFormRandomized() {
+		$array = array(
+			self::F_CHANNEL_TYPE => self::EXISTING_YES,
+			self::F_CHANNEL_TYPE => self::EXISTING_NO,
+			self::F_TITLE => 'New Channel ' . date(DATE_ATOM),
+			self::F_DESCRIPTION => 'This is a description',
+			self::F_INTRODUCTION_TEXT => 'We don\'t need no intro text',
+			self::F_LICENSE => $this->series->getLicense(),
+			self::F_USE_ANNOTATIONS => true,
+			self::F_STREAMING_ONLY => true,
+			self::F_PERMISSION_PER_CLIP => true,
+		);
+
+		$this->setValuesByArray($array);
+	}
+
+
+	public function fillForm() {
+		$array = array(
+			self::F_CHANNEL_TYPE => self::EXISTING_NO,
+			self::F_TITLE => $this->series->getTitle(),
+			self::F_DESCRIPTION => $this->series->getDescription(),
+			self::F_INTRODUCTION_TEXT => $this->cast->getIntroText(),
+			self::F_LICENSE => $this->series->getLicense(),
+			self::F_USE_ANNOTATIONS => $this->cast->getUseAnnotations(),
+			self::F_STREAMING_ONLY => $this->cast->getStreamingOnly(),
+			self::F_PERMISSION_PER_CLIP => $this->cast->getPermissionPerClip(),
+		);
+
+		$this->setValuesByArray($array);
+	}
+
+
+	/**
+	 * returns whether checkinput was successful or not.
+	 *
+	 * @return bool
+	 */
+	public function fillObject() {
+		if (! $this->checkInput()) {
+			return false;
+		}
+		if ($this->getInput(self::F_CHANNEL_TYPE) == self::EXISTING_YES) {
+			$this->series->setIdentifier($this->getInput(self::F_EXISTING_IDENTIFIER));
+		}
+		$this->series->setTitle($this->getInput(self::F_TITLE));
+		$this->series->setDescription($this->getInput(self::F_DESCRIPTION));
+		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
+		$this->series->setLicense($this->getInput(self::F_LICENSE));
+		$this->cast->setUseAnnotations($this->getInput(self::F_USE_ANNOTATIONS));
+		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
+		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
+
+		return true;
+	}
+
+
+	/**
+	 * @param $key
+	 *
+	 * @return string
+	 */
+	protected function txt($key) {
+		return $this->pl->txt('series_' . $key);
+	}
+
+
+	/**
+	 * @param $key
+	 *
+	 * @return string
+	 */
+	protected function infoTxt($key) {
+		return $this->pl->txt('series_' . $key . '_info');
+	}
+
+
+	/**
+	 * @return bool|string
+	 */
+	public function saveObject() {
+		if (! $this->fillObject()) {
+			return false;
+		}
+		if ($this->series->getIdentifier()) {
+			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
+			$this->series->update();
+			if ($this->is_new) {
+				$this->cast->create();
+			} else {
+				$this->cast->update();
+			}
+		} else {
+			$this->series->create();
+			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
+		}
+
+		return $this->cast;
+	}
+
+
+	protected function initButtons() {
+		if ($this->is_new) {
+			$this->setTitle($this->txt('create'));
+			$this->addCommandButton(xoctSeriesGUI::CMD_CREATE, $this->txt(xoctSeriesGUI::CMD_CREATE));
+		} else {
+			$this->setTitle($this->txt('edit'));
+			$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE, $this->txt(xoctSeriesGUI::CMD_UPDATE));
+		}
+
+		$this->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->txt(xoctSeriesGUI::CMD_CANCEL));
 	}
 
 
@@ -73,324 +303,135 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI{
 		$ilPropertyFormGUI->setFormAction($this->getFormAction());
 		$ilPropertyFormGUI->setTitle($this->getTitle());
 
-		$ilPropertyFormGUI->addCommandButton(xdglRequestGUI::CMD_SAVE, $this->lng->txt(xdglRequestGUI::CMD_SAVE));
-		$ilPropertyFormGUI->addCommandButton('cancel', $this->lng->txt('cancel'));
+		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_SAVE, $this->lng->txt(xoctSeriesGUI::CMD_SAVE));
+		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->lng->txt(xoctSeriesGUI::CMD_CANCEL));
 		foreach ($this->getItems() as $item) {
 			$ilPropertyFormGUI->addItem($item);
 		}
 
 		return $ilPropertyFormGUI;
 	}
-
-
-	public function addToInfoScreen(ilInfoScreenGUI $ilInfoScreenGUI) {
-	}
-
-
-	protected function initView() {
-		if (!$this->infopage) {
-			$te = new ilNonEditableValueGUI($this->txt(self::F_REQUESTER_FULLNAME), self::F_REQUESTER_FULLNAME);
-			$this->addItem($te);
-
-			$te = new ilNonEditableValueGUI($this->txt(self::F_REQUESTER_MAILTO), self::F_REQUESTER_MAILTO);
-			$this->addItem($te);
-
-			$te = new ilNonEditableValueGUI($this->txt(self::F_CREATE_DATE), self::F_CREATE_DATE);
-			$this->addItem($te);
-
-			$te = new ilNonEditableValueGUI($this->txt(self::F_LAST_STATUS_CHANGE), self::F_LAST_STATUS_CHANGE);
-			$this->addItem($te);
-
-			$te = new ilNonEditableValueGUI($this->txt(self::F_MODIFIED_BY), self::F_MODIFIED_BY);
-			$this->addItem($te);
-		}
-
-		$this->initForm();
-		/**
-		 * @var $item ilNonEditableValueGUI
-		 */
-		foreach ($this->getItems() as $item) {
-			$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
-			$this->removeItemByPostVar($item->getPostVar());
-			$this->addItem($te);
-		}
-	}
-
-
-	protected function initForm() {
-		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
-		$this->initButtons();
-
-		// Anzahl DigiLits
-		$te = new ilNonEditableValueGUI($this->txt(self::F_COUNT), self::F_COUNT);
-		$this->addItem($te);
-
-		// Course ID
-		if ($this->is_new) {
-			$te = new ilHiddenInputGUI(self::F_CRS_REF_ID);
-			$this->addItem($te);
-		}
-
-		// Course Name
-		$course_name = new ilTextInputGUI($this->txt(self::F_COURSE_NAME), self::F_COURSE_NAME);
-		if ($this->is_new) {
-			$course_name->setDisabled(true);
-		}
-		//		$course_name->setRequired(true);
-		$this->addItem($course_name);
-
-		// Author
-		$bj = new ilTextInputGUI($this->txt(self::F_AUTHOR), self::F_AUTHOR);
-		$bj->setRequired(true);
-		$this->addItem($bj);
-
-		//Add input for title and set value storred in session by createObject
-		$ti = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$ti->setRequired(true);
-		$this->addItem($ti);
-
-		// in book/journal
-		$bj = new ilTextInputGUI($this->txt(self::F_BOOK), self::F_BOOK);
-		$bj->setRequired(true);
-		$this->addItem($bj);
-
-		// editor
-		$pu = new ilTextInputGUI($this->txt(self::F_EDITOR), self::F_EDITOR);
-		$this->addItem($pu);
-
-		// place of publication
-		$pp = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$this->addItem($pp);
-
-		// publishing_company
-		$pc = new ilTextInputGUI($this->txt(self::F_PUBLISHER), self::F_PUBLISHER);
-		$this->addItem($pc);
-
-		// publishing year
-		$ye = new ilTextInputGUI($this->txt(self::F_PUBLISHING_YEAR), self::F_PUBLISHING_YEAR);
-		$ye->setMaxLength(4);
-		$ye->setRequired(true);
-		//Set Regex Check: must be 4 digits
-		$ye->setValidationRegexp(self::REGEX_FOUR_DIGITS_ONLY);
-		$ye->setValidationFailureMessage($this->pl->txt('validation_failure_4_digits_required'));
-		$this->addItem($ye);
-
-		// pages
-		$pa = new ilTextInputGUI($this->txt(self::F_PAGES), self::F_PAGES);
-		$pa->setRequired(true);
-		$this->addItem($pa);
-
-		// volume (Band)
-		$vo = new ilTextInputGUI($this->txt(self::F_VOLUME_YEAR), self::F_VOLUME_YEAR);
-		$this->addItem($vo);
-
-		// nur diese Auflage
-		$na = new ilCheckboxInputGUI($this->txt(self::F_EDITION_RELEVANT), self::F_EDITION_RELEVANT);
-		$this->addItem($na);
-
-		// ISSN number
-		$in = new ilTextInputGUI($this->txt(self::F_ISSN), self::F_ISSN);
-		$this->addItem($in);
-
-		//  Notice
-		$in = new ilTextAreaInputGUI($this->txt(self::F_NOTICE), self::F_NOTICE);
-		$in->setCols(40);
-		$in->setRows(6);
-		$this->addItem($in);
-
-		// Internal Notice
-		if (!$this->external) {
-			$in = new ilTextAreaInputGUI($this->txt(self::F_INTERNAL_NOTICE), self::F_INTERNAL_NOTICE);
-			$this->addItem($in);
-		}
-
-		// EULA
-		if ($this->is_new) {
-			$eula = new ilCheckboxInputGUI($this->txt(self::F_CONFIRM_EULA), self::F_CONFIRM_EULA);
-			$eula->setOptionTitle($this->txt(self::F_CONFIRM_EULA . '_title'));
-			$eula->setRequired(true);
-			$tpl = $this->pl->getTemplate('default/tpl.eula.html');
-			$tpl->setVariable('TXT_SHOW', $this->txt(self::F_CONFIRM_EULA . '_show'));
-			$tpl->setVariable('EULA', xdglConfig::get(xdglConfig::F_EULA_TEXT));
-
-			$eula->setInfo($tpl->get());
-			$this->addItem($eula);
-		}
-	}
-
-
-	/**
-	 * @param null $ref_id
-	 */
-	public function fillFormRandomized($ref_id = NULL) {
-		if ($ref_id) {
-			$this->object->setCrsRefId($ref_id);
-		}
-		$array = array(
-			self::F_AUTHOR => 'Author Name',
-			self::F_TITLE => 'Article Name',
-			self::F_BOOK => 'The Book',
-			self::F_EDITOR => '',
-			self::F_LOCATION => 'Berne',
-			self::F_PUBLISHER => 'Publisher Name',
-			self::F_PUBLISHING_YEAR => 2004,
-			self::F_PAGES => '50-89',
-			self::F_EDITION_RELEVANT => false,
-			self::F_ISSN => '',
-			self::F_VOLUME_YEAR => 2004,
-			self::F_NOTICE => 'This Text only!',
-			self::F_COURSE_NAME => $this->object->getCourseTitle(),
-
-		);
-		$this->setValuesByArray($array);
-	}
-
-
-	/**
-	 * @param int $ref_id
-	 */
-	public function fillForm($ref_id = NULL) {
-		if ($ref_id) {
-			$this->object->setCrsRefId($ref_id);
-		}
-		$ilObjUserRequester = new ilObjUser($this->object->getRequesterUsrId());
-		$ilObjUserModified = new ilObjUser($this->object->getLastModifiedByUsrId());
-
-		$array = array(
-			self::F_AUTHOR => $this->object->getAuthor(),
-			self::F_TITLE => $this->object->getTitle(),
-			self::F_BOOK => $this->object->getBook(),
-			self::F_EDITOR => $this->object->getEditor(),
-			self::F_LOCATION => $this->object->getLocation(),
-			self::F_PUBLISHER => $this->object->getPublisher(),
-			self::F_PUBLISHING_YEAR => $this->object->getPublishingYear(),
-			self::F_PAGES => $this->object->getPages(),
-			self::F_EDITION_RELEVANT => $this->object->getEditionRelevant(),
-			self::F_ISSN => $this->object->getIssn(),
-			self::F_COUNT => $this->object->getAmoutOfDigiLitsInCourse() . '/' . xdglConfig::get(xdglConfig::F_MAX_DIGILITS),
-			self::F_CRS_REF_ID => $this->object->getCrsRefId(),
-			self::F_REQUESTER_FULLNAME => $ilObjUserRequester->getPresentationTitle(),
-			self::F_REQUESTER_MAILTO => $ilObjUserRequester->getEmail(),
-			self::F_CREATE_DATE => date('d.m.Y - H:i:s', $this->object->getCreateDate()),
-			self::F_LAST_STATUS_CHANGE => date('d.m.Y - H:i:s', $this->object->getDateLastStatusChange()),
-			self::F_MODIFIED_BY => $ilObjUserModified->getPresentationTitle(),
-			self::F_VOLUME_YEAR => $this->object->getVolume(),
-			self::F_NOTICE => $this->object->getNotice(),
-			self::F_INTERNAL_NOTICE => $this->object->getInternalNotice(),
-			self::F_COURSE_NAME => $this->object->getCourseTitle(),
-		);
-		if ($this->is_new) {
-			$array[self::F_COUNT] = $this->object->getAmoutOfDigiLitsInCourse() + 1 . '/' . xdglConfig::get(xdglConfig::F_MAX_DIGILITS);
-		}
-		if ($this->view) {
-			$array[self::F_EDITION_RELEVANT] = xdglRequest::boolTextRepresentation($this->object->getEditionRelevant());
-		} else {
-			$array[self::F_EDITION_RELEVANT] = $this->object->getEditionRelevant();
-		}
-
-		$this->setValuesByArray($array);
-	}
-
-
-	/**
-	 * returns whether checkinput was successful or not.
-	 *
-	 * @return bool
-	 */
-	public function fillObject($ref_id) {
-		if (!$this->checkInput()) {
-			return false;
-		}
-		if ($this->is_new AND !$this->getInput(self::F_CONFIRM_EULA)) {
+	//
+	//
+	//	public function addToInfoScreen(ilInfoScreenGUI $ilInfoScreenGUI) {
+	//	}
+	//
+	//
+		protected function initView() {
+			$this->initForm();
 			/**
-			 * @var $item ilCheckboxInputGUI
+			 * @var $item ilNonEditableValueGUI
 			 */
-			$item = $this->getItemByPostVar(self::F_CONFIRM_EULA);
-			$item->setAlert($this->txt(self::F_CONFIRM_EULA . '_warning'));
-
-			return false;
-		}
-		$this->object->setCourseNumber($this->getInput(self::F_COURSE_NAME));
-		$this->object->setAuthor($this->getInput(self::F_AUTHOR));
-		$this->object->setTitle($this->getInput(self::F_TITLE));
-		$this->object->setBook($this->getInput(self::F_BOOK));
-		$this->object->setEditor($this->getInput(self::F_EDITOR));
-		$this->object->setLocation($this->getInput(self::F_LOCATION));
-		$this->object->setPublisher($this->getInput(self::F_PUBLISHER));
-		$this->object->setPublishingYear($this->getInput(self::F_PUBLISHING_YEAR));
-		$this->object->setPages($this->getInput(self::F_PAGES));
-		$this->object->setNotice($this->getInput(self::F_NOTICE));
-		if (!$this->external) {
-			$this->object->setInternalNotice($this->getInput(self::F_INTERNAL_NOTICE));
-		}
-		if ($this->getInput(self::F_VOLUME_YEAR) === '') {
-			$this->object->setVolume(NULL);
-		} else {
-			$this->object->setVolume($this->getInput(self::F_VOLUME_YEAR));
-		}
-		$this->object->setEditionRelevant($this->getInput(self::F_EDITION_RELEVANT));
-		$this->object->setIssn($this->getInput(self::F_ISSN));
-
-		if ($this->is_new AND $ref_id) {
-			$this->object->setCrsRefId($ref_id);
-		}
-
-		return true;
-	}
-
-
-	/**
-	 * @param $key
-	 *
-	 * @return string
-	 */
-	protected function txt($key) {
-		return $this->pl->txt('request_' . $key);
-	}
-
-
-	/**
-	 * @return bool false when unsuccessful or int request_id when successful
-	 */
-	public function saveObject($ref_id) {
-		if (!$this->fillObject($ref_id)) {
-			return false;
-		}
-		if ($this->object->getId() > 0) {
-			$this->object->update();
-		} else {
-			$this->object->create();
-			xdglNotification::sendNew($this->object);
-		}
-
-		return $this->object->getId();
-	}
-
-
-	protected function initButtons() {
-		if ($this->view) {
-			$this->setTitle($this->pl->txt('request_view'));
-			$this->addCommandButton('edit', $this->pl->txt('request_edit'));
-			if ($this->object->getStatus() != xdglRequest::STATUS_RELEASED) {
-				$this->addCommandButton(xdglRequestGUI::CDM_CONFIRM_REFUSE, $this->pl->txt('request_refuse'));
-				$this->addCommandButton(xdglRequestGUI::CMD_SELECT_FILE, $this->pl->txt('upload_title'));
-			} else {
-				$this->addCommandButton(xdglRequestGUI::CMD_REPLACE_FILE, $this->pl->txt('request_replace_file'));
-				$this->addCommandButton(xdglRequestGUI::CMD_DELETE_FILE, $this->pl->txt('request_delete_file'));
-			}
-		} else {
-			if ($this->is_new) {
-				$this->setTitle($this->pl->txt('request_create'));
-				$this->addCommandButton(xdglRequestGUI::CMD_SAVE, $this->pl->txt('request_create'));
-			} else {
-				$this->setTitle($this->pl->txt('request_edit'));
-				$this->addCommandButton(xdglRequestGUI::CMD_UPDATE, $this->pl->txt('request_update'));
+			foreach ($this->getItems() as $item) {
+				$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
+				$this->removeItemByPostVar($item->getPostVar());
+				$this->addItem($te);
 			}
 		}
-
-		$this->addCommandButton(xdglRequestGUI::CMD_CANCEL, $this->pl->txt('request_cancel'));
-	}
+	protected static $disciplines = array(
+		1932 => 'Arts & Culture',
+		5314 => 'Architecture',
+		6302 => 'Landscape architecture',
+		5575 => 'Spatial planning',
+		9202 => 'Art history',
+		3119 => 'Design',
+		6095 => 'Industrial design',
+		5103 => 'Visual communication',
+		5395 => 'Film',
+		8202 => 'Music',
+		2043 => 'Music education',
+		9610 => 'School and church music',
+		3829 => 'Theatre',
+		1497 => 'Visual arts',
+		6950 => 'Business',
+		1676 => 'Business Administration',
+		4949 => 'Business Informatics',
+		7290 => 'Economics',
+		2108 => 'Facility Management',
+		7641 => 'Hotel business',
+		6238 => 'Tourism',
+		5214 => 'Education',
+		1672 => 'Logopedics',
+		1406 => 'Pedagogy',
+		3822 => 'Orthopedagogy',
+		2150 => 'Special education',
+		9955 => 'Teacher education',
+		6409 => 'Primary school',
+		7008 => 'Secondary school I',
+		4233 => 'Secondary school II',
+		8220 => 'Health',
+		2075 => 'Dentistry',
+		5955 => 'Human medicine',
+		5516 => 'Nursing',
+		3424 => 'Pharmacy',
+		4864 => 'Therapy',
+		6688 => 'Occupational therapy',
+		7072 => 'Physiotherapy',
+		3787 => 'Veterinary medicine',
+		4832 => 'Humanities',
+		1438 => 'Archeology',
+		8796 => 'History',
+		7210 => 'Linguistics & Literature (LL)',
+		9557 => 'Classical European languages',
+		9391 => 'English LL',
+		9472 => 'French LL',
+		4391 => 'German LL',
+		3468 => 'Italian LL',
+		7408 => 'Linguistics',
+		6230 => 'Other modern European languages',
+		5676 => 'Other non-European languages',
+		5424 => 'Rhaeto-Romanic LL',
+		7599 => 'Translation studies',
+		7258 => 'Musicology',
+		4761 => 'Philosophy',
+		3867 => 'Theology',
+		6527 => 'General theology',
+		5633 => 'Protestant theology',
+		9787 => 'Roman catholic theology',
+		5889 => 'Interdisciplinary & Other',
+		6059 => 'Information & documentation',
+		5561 => 'Military sciences',
+		8683 => 'Sport',
+		1861 => 'Law',
+		4890 => 'Business law',
+		2990 => 'Natural sciences & Mathematics',
+		8990 => 'Astronomy',
+		4195 => 'Biology',
+		7793 => 'Ecology',
+		6451 => 'Chemistry',
+		1266 => 'Computer science',
+		5255 => 'Earth Sciences',
+		7950 => 'Geography',
+		2158 => 'Mathematics',
+		6986 => 'Physics',
+		8637 => 'Social sciences',
+		9619 => 'Communication and media studies',
+		8367 => 'Ethnology',
+		1774 => 'Gender studies',
+		1514 => 'Political science',
+		6005 => 'Psychology',
+		7288 => 'Social work',
+		6525 => 'Sociology',
+		9321 => 'Technology & Applied sciences',
+		3624 => 'Agriculture',
+		1442 => 'Enology',
+		1892 => 'Biotechnology',
+		7132 => 'Building Engineering',
+		5727 => 'Chemical Engineering',
+		9389 => 'Construction Science',
+		2527 => 'Civil Engineering',
+		9738 => 'Rural Engineering and Surveying',
+		5742 => 'Electrical Engineering',
+		2850 => 'Environmental Engineering',
+		9768 => 'Food technology',
+		2979 => 'Forestry',
+		1566 => 'Material sciences',
+		8189 => 'Mechanical Engineering',
+		5324 => 'Automoive Engineering',
+		8502 => 'Microtechnology',
+		4380 => 'Production and Enterprise',
+		7303 => 'Telecommunication',
+	);
 }
 
 ?>

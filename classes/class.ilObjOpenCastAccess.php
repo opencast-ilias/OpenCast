@@ -78,71 +78,77 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	/**
-	 * @param bool $redirect
-	 *
-	 * @return bool
-	 */
-	public static function isGlobalAdmin($redirect = false) {
-		global $rbacreview, $ilUser;
-		/**
-		 * @var $rbacreview ilRbacReview
-		 */
-
-		$isAssigned = $rbacreview->isAssigned($ilUser->getId(), 2);
-
-		if (! $isAssigned AND $redirect) {
-			self::redirectNonAccess();
-		}
-
-		return $isAssigned;
-	}
-
-
-	/**
-	 * @param bool $redirect
-	 *
-	 * @return bool
-	 */
-	public static function isAdmin($redirect = false) {
-		global $rbacreview, $ilUser;
-		// TODO
-		if (self::isGlobalAdmin()) {
-			return true;
-		}
-		if ($redirect) {
-			self::redirectNonAccess();
-		}
-
-		return false;
-	}
-
-
-	/**
-	 * @param bool $redirect
-	 *
-	 * @return bool
-	 */
-	public static function isManager($redirect = false) {
-		global $rbacreview, $ilUser;
-		// TODO
-
-		if ($redirect) {
-			self::redirectNonAccess();
-		}
-
-		return false;
-	}
-
-
-	/**
 	 * @param $a_id
 	 *
 	 * @return bool
 	 */
 	static function checkOnline($a_id) {
-		// TODO
-//		return true;
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
+
+		return $xoctOpenCast->isObjOnline();
 	}
+
+
+	//	/**
+	//	 * @param bool $redirect
+	//	 *
+	//	 * @return bool
+	//	 */
+	//	public static function isGlobalAdmin($redirect = false) {
+	//		global $rbacreview, $ilUser;
+	//		/**
+	//		 * @var $rbacreview ilRbacReview
+	//		 */
+	//
+	//		$isAssigned = $rbacreview->isAssigned($ilUser->getId(), 2);
+	//
+	//		if (! $isAssigned AND $redirect) {
+	//			self::redirectNonAccess();
+	//		}
+	//
+	//		return $isAssigned;
+	//	}
+	//
+	//
+	//	/**
+	//	 * @param bool $redirect
+	//	 *
+	//	 * @return bool
+	//	 */
+	//	public static function isAdmin($redirect = false) {
+	//		global $rbacreview, $ilUser;
+	//		// TODO
+	//		if (self::isGlobalAdmin()) {
+	//			return true;
+	//		}
+	//		if ($redirect) {
+	//			self::redirectNonAccess();
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//
+	//	/**
+	//	 * @param bool $redirect
+	//	 *
+	//	 * @return bool
+	//	 */
+	//	public static function isManager($redirect = false) {
+	//		global $rbacreview, $ilUser;
+	//		// TODO
+	//
+	//		if ($redirect) {
+	//			self::redirectNonAccess();
+	//		}
+	//
+	//		return false;
+	//	}
+
 }
 
 ?>

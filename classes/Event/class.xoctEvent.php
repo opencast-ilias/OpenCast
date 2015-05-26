@@ -1,16 +1,77 @@
 <?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctRequest.php');
 
 /**
  * Class xoctEvent
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctEvent {
+class xoctEvent extends xoctObject {
+
+
+	const STATE_SUCCEEDED = 'SUCCEEDED';
+
+
+	/**
+	 * @param array $filter
+	 *
+	 * @return xoctEvent[]
+	 */
+	public static function getFiltered(array $filter) {
+		$request = xoctRequest::root()->events();
+		if ($filter) {
+			$filter_string = '';
+			foreach ($filter as $k => $v) {
+				$filter_string .= $k . ':' . $v . '&';
+			}
+
+			$request->parameter('filter', $filter_string);
+		}
+		$data = json_decode($request->get());
+		$return = array();
+		foreach ($data as $d) {
+			$xoctEvent = new xoctEvent();
+			$xoctEvent->loadFromStdClass($d);
+			$return[] = $xoctEvent->__toArray();
+		}
+
+		return $return;
+	}
+
 
 	/**
 	 * @param string $identifier
 	 */
 	public function __construct($identifier = '') {
+		if ($identifier) {
+			$this->setIdentifier($identifier);
+			$this->read();
+		}
+	}
+
+
+	public function read() {
+		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
+		$this->loadFromStdClass($data);
+//		$this->loadMetadata();
+		$this->setMetadata(new xoctMetadata());
+		$this->setCreated(new DateTime($data->created));
+		$this->setStartTime(new DateTime($data->start_time));
+	}
+
+
+	public function loadMetadata() {
+		if ($this->getIdentifier()) {
+			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
+			foreach ($data as $d) {
+				if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
+					$xoctMetadata = new xoctMetadata();
+					$xoctMetadata->loadFromStdClass($d);
+					$this->setMetadata($xoctMetadata);
+				}
+			}
+		}
 	}
 
 
@@ -78,6 +139,10 @@ class xoctEvent {
 	 * @var xoctPublication[]
 	 */
 	public $publications;
+	/**
+	 * @var xoctMetadata
+	 */
+	protected $metadata = NULL;
 
 
 	/**
@@ -333,5 +398,21 @@ class xoctEvent {
 	 */
 	public function setPublications($publications) {
 		$this->publications = $publications;
+	}
+
+
+	/**
+	 * @return xoctMetadata
+	 */
+	public function getMetadata() {
+		return $this->metadata;
+	}
+
+
+	/**
+	 * @param xoctMetadata $metadata
+	 */
+	public function setMetadata(xoctMetadata $metadata) {
+		$this->metadata = $metadata;
 	}
 }
