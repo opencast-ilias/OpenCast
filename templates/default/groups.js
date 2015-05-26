@@ -71,15 +71,17 @@ var xoctGroup = {
 			}
 			if (data && data.length == 1) {
 				self.selectGroup(data[0].id);
+			} else {
+				if (select_current) {
+					self.selectGroup(selected_storage);
+				}
 			}
 
 			xoctGroupParticipant.clear();
 			xoctGroupParticipant.load();
 			self.after_load();
 			fallback();
-			if (select_current) {
-				self.selectGroup(selected_storage);
-			}
+
 		});
 	},
 	deleteGroup: function (id, fallback) {
@@ -97,8 +99,9 @@ var xoctGroup = {
 		}
 	},
 
-	selectGroup: function (id) {
-		if (this.selected_id == id) {
+	selectGroup: function (id, force) {
+		force = typeof(force) == 'undefined' ? false : force;
+		if (this.selected_id == id && !force) {
 			this.deselectAll();
 			this.selected_id = 0;
 		} else {
@@ -132,7 +135,7 @@ var xoctGroup = {
 		this.before_load();
 		$.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
 			self.load(function () {
-				self.selectGroup(data.id);
+				self.selectGroup(data.id, true);
 			});
 			self.after_load();
 			fallback(data);
