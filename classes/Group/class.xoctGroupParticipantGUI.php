@@ -43,11 +43,13 @@ class xoctGroupParticipantGUI extends xoctGUI {
 
 	protected function getAvailable() {
 		$data = array();
+
 		foreach (xoctGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant) {
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
 			$data[] = $stdClass;
 		}
+
 		$this->outJson($data);
 	}
 

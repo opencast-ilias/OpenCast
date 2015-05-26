@@ -7,16 +7,23 @@
 //$(document).ready(function () {
 
 var xoctWaiter = {
+	count: 0,
 	init: function () {
 		$('body').append('<div id="xoct_waiter" style="display: none; z-index: 9999"></div>')
 	},
 
 	show: function () {
-		$('#xoct_waiter').show();
+		if (this.count == 0) {
+			$('#xoct_waiter').show();
+		}
+		this.count = this.count + 1;
 	},
 
 	hide: function () {
-		$('#xoct_waiter').hide();
+		this.count = this.count - 1;
+		if (this.count == 0) {
+			$('#xoct_waiter').hide();
+		}
 	}
 };
 //});

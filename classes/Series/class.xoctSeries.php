@@ -129,6 +129,9 @@ class xoctSeries extends xoctObject {
 	 * @return xoctSeries[]
 	 */
 	public static function getAllForUser($user_string) {
+		if ($existing = xoctCache::getInstance()->get('series-' . $user_string)) {
+			return $existing;
+		}
 		$return = array();
 		$data = json_decode(xoctRequest::root()->series()->get($user_string));
 		foreach ($data as $d) {
@@ -136,6 +139,7 @@ class xoctSeries extends xoctObject {
 			$obj->loadFromStdClass($d);
 			$return[] = $obj;
 		}
+		xoctCache::getInstance()->set('series-' . $user_string, $return, 60);
 
 		return $return;
 	}

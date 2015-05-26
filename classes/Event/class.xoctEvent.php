@@ -9,7 +9,6 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class xoctEvent extends xoctObject {
 
-
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 
 
@@ -31,8 +30,7 @@ class xoctEvent extends xoctObject {
 		$data = json_decode($request->get());
 		$return = array();
 		foreach ($data as $d) {
-			$xoctEvent = new xoctEvent();
-			$xoctEvent->loadFromStdClass($d);
+			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->__toArray();
 		}
 
@@ -54,7 +52,7 @@ class xoctEvent extends xoctObject {
 	public function read() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
-//		$this->loadMetadata();
+		//		$this->loadMetadata();
 		$this->setMetadata(new xoctMetadata());
 		$this->setCreated(new DateTime($data->created));
 		$this->setStartTime(new DateTime($data->start_time));

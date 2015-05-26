@@ -7,16 +7,17 @@ var xoctGroup = {
 	selected_id: 0,
 	data_url: '',
 	container: null,
-	lng: {
-		delete_group: "Delete Group?",
-		no_title: "Please insert title"
-	},
+	lng: [
+		delete_group = "Delete Group?",
+		no_title = "Please insert title",
+		none_available = "None available"
+	],
 	before_load: function () {
 	},
 	after_load: function () {
 	},
-	language: function (lng) {
-		this.lng = lng;
+	lngFromJson: function (lng_json) {
+		this.lng = JSON.parse(lng_json);
 	},
 	init: function (data_url, container, before_load, after_load) {
 		if (typeof before_load != 'undefined') {
@@ -41,33 +42,55 @@ var xoctGroup = {
 		});
 
 	},
+	clear: function () {
+		this.container.empty();
+		this.selected_id = 0;
+	},
 
-	load: function () {
+	load: function (fallback, select_current) {
+		fallback = typeof(fallback) == 'undefined' ? function () {
+		} : fallback;
+		select_current = typeof(select_current) == 'undefined' ? false : select_current;
+		if (select_current) {
+			var selected_storage = this.selected_id;
+		}
 		var self = this;
 		this.before_load();
 		var url = this.data_url;
 		$.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
-			self.container.empty();
+			self.clear();
 			for (var i in data) {
-				self.container.append('<a class="list-group-item xoct_group" data-group-id="'+ data[i].id + '">'
+				self.container.append('<a class="list-group-item xoct_group" data-group-id="' + data[i].id + '">'
 				+ data[i].title
-				//+ '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
-				+ '<span class="glyphicon xoct_group_delete glyphicon-remove pull-right"></span>'
-				+ '<span class="glyphicon pull-right">5</span>'
+				+ '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
+				+ '<Button class="btn pull-right">' + data[i].user_count + '</button>'
 				+ '</li>');
-				//+ '<span class="badge xoct_group_delete"><span class="glyphicon glyphicon-remove"></span></span></a>');
 			}
+			if (!data || data.length == 0) {
+				self.container.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
+			}
+			if (data && data.length == 1) {
+				self.selectGroup(data[0].id);
+			}
+
+			xoctGroupParticipant.clear();
+			xoctGroupParticipant.load();
 			self.after_load();
+			fallback();
+			if (select_current) {
+				self.selectGroup(selected_storage);
+			}
 		});
 	},
 	deleteGroup: function (id, fallback) {
 		var url = this.data_url;
 		var self = this;
-		if (confirm(this.lng.delete_group)) {
+		if (confirm(this.lng['delete_group'])) {
 			this.before_load();
 			$.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
 				if (data) {
 					$('[data-group-id="' + id + '"]').remove();
+					self.load();
 				}
 				self.after_load();
 			});
@@ -98,9 +121,9 @@ var xoctGroup = {
 	 * @param before
 	 * @param after
 	 */
-	create: function (title, before, after) {
+	create: function (title, fallback) {
 		if (!title) {
-			alert(this.lng.no_title);
+			alert(this.lng['no_title']);
 			return;
 		}
 		var self = this;
@@ -108,8 +131,11 @@ var xoctGroup = {
 		this.deselectAll();
 		this.before_load();
 		$.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-			this.after_load();
-			self.load();
+			self.load(function () {
+				self.selectGroup(data.id);
+			});
+			self.after_load();
+			fallback(data);
 		});
 	}
 };
