@@ -18,18 +18,26 @@ class xoctEvent extends xoctObject {
 	 * @return xoctEvent[]
 	 */
 	public static function getFiltered(array $filter) {
+		/**
+		 * @var $xoctEvent xoctEvent
+		 */
 		$request = xoctRequest::root()->events();
-		if ($filter) {
-			$filter_string = '';
-			foreach ($filter as $k => $v) {
-				$filter_string .= $k . ':' . $v . '&';
-			}
-
-			$request->parameter('filter', $filter_string);
-		}
+		//		if ($filter) {
+		//			$filter_string = '';
+		//			foreach ($filter as $k => $v) {
+		//				$filter_string .= $k . ':' . $v . '&';
+		//			}
+		//
+		//			$request->parameter('filter', $filter_string);
+		//		}
 		$data = json_decode($request->get());
 		$return = array();
 		foreach ($data as $d) {
+
+			//			$xoctEvent = new xoctEvent();
+			//			$xoctEvent->loadFromStdClass($d);
+			//			xoctEvent::cache($xoctEvent->getIdentifier(), $xoctEvent);
+			//			$return[] = array('identifier'=>$xoctEvent->getIdentifier());
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->__toArray();
 		}
@@ -52,10 +60,36 @@ class xoctEvent extends xoctObject {
 	public function read() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
-		//		$this->loadMetadata();
-		$this->setMetadata(new xoctMetadata());
+		$this->loadMetadata();
 		$this->setCreated(new DateTime($data->created));
 		$this->setStartTime(new DateTime($data->start_time));
+		$this->loadPublications();
+		$this->loadAcl();
+	}
+
+
+	protected function loadPublications() {
+		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->get());
+		$publications = array();
+		foreach ($data as $d) {
+			$p = new xoctPublication();
+			$p->loadFromStdClass($d);
+			$publications[] = $p;
+		}
+		//		echo '<pre>' . print_r($publications, 1) . '</pre>';
+		$this->setPublications($publications);
+	}
+
+
+	protected function loadAcl() {
+		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->acl()->get());
+		$acls = array();
+		foreach ($data as $d) {
+			$p = new xoctAcl();
+			$p->loadFromStdClass($d);
+			$acls[] = $p;
+		}
+		$this->setAcls($acls);
 	}
 
 
@@ -76,71 +110,75 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var string
 	 */
-	public $identifier = '';
+	protected $identifier = '';
 	/**
 	 * @var int
 	 */
-	public $archive_version;
+	protected $archive_version;
 	/**
 	 * @var DateTime
 	 */
-	public $created;
+	protected $created;
 	/**
 	 * @var string
 	 */
-	public $creator;
+	protected $creator;
 	/**
 	 * @var Array
 	 */
-	public $contributors;
+	protected $contributors;
 	/**
 	 * @var string
 	 */
-	public $description;
+	protected $description;
 	/**
 	 * @var int
 	 */
-	public $duration;
+	protected $duration;
 	/**
 	 * @var bool
 	 */
-	public $has_previews;
+	protected $has_previews;
 	/**
 	 * @var string
 	 */
-	public $location;
+	protected $location;
 	/**
 	 * @var Array
 	 */
-	public $presenters;
+	protected $presenters;
 	/**
 	 * @var array
 	 */
-	public $publication_status;
+	protected $publication_status;
 	/**
 	 * @var array
 	 */
-	public $processing_state;
+	protected $processing_state;
 	/**
 	 * @var DateTime
 	 */
-	public $start_time;
+	protected $start_time;
 	/**
 	 * @var array
 	 */
-	public $subjects;
+	protected $subjects;
 	/**
 	 * @var string
 	 */
-	public $title;
+	protected $title;
 	/**
 	 * @var xoctPublication[]
 	 */
-	public $publications;
+	protected $publications;
 	/**
 	 * @var xoctMetadata
 	 */
 	protected $metadata = NULL;
+	/**
+	 * @var xoctAcl[]
+	 */
+	protected $acls = array();
 
 
 	/**
@@ -412,5 +450,21 @@ class xoctEvent extends xoctObject {
 	 */
 	public function setMetadata(xoctMetadata $metadata) {
 		$this->metadata = $metadata;
+	}
+
+
+	/**
+	 * @return xoctAcl[]
+	 */
+	public function getAcls() {
+		return $this->acls;
+	}
+
+
+	/**
+	 * @param xoctAcl[] $acls
+	 */
+	public function setAcls($acls) {
+		$this->acls = $acls;
 	}
 }

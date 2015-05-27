@@ -6,7 +6,7 @@
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class xoctExeption extends ilPluginException {
+class xoctExeption extends Exception {
 
 	const API_CALL_UNSUPPORTED = 10;
 	const OBJECT_WRONG_PARENT = 20;

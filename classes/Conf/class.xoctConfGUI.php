@@ -1,8 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctBase.php');
-
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctSeries.php');
+require_once('class.xoctConfFormGUI.php');
 
 /**
  * Class xoctConfGUI
@@ -13,12 +11,41 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class xoctConfGUI extends xoctGUI {
 
+	/**
+	 * @param $key
+	 *
+	 * @return string
+	 */
+	public function txt($key) {
+		return $this->pl->txt('config_' . $key);
+	}
+
+
 	public function index() {
-//		$xoctBase = new xoctBase();
-//		$xoctBase->get();
+		$xoctConfFormGUI = new xoctConfFormGUI($this);
+		$xoctConfFormGUI->fillForm();
+		$this->tpl->setContent($xoctConfFormGUI->getHTML());
+	}
 
 
-//		xoctSeries::getAll();
+	protected function update() {
+		$xoctConfFormGUI = new xoctConfFormGUI($this);
+		$xoctConfFormGUI->setValuesByPost();
+		if ($xoctConfFormGUI->saveObject()) {
+			ilUtil::sendSuccess($this->txt('msg_success'), true);
+			$this->ctrl->redirect($this, self::CMD_STANDARD);
+		}
+		$this->tpl->setContent($xoctConfFormGUI->getHTML());
+	}
+
+
+	protected function confirmDelete() {
+		// TODO: Implement confirmDelete() method.
+	}
+
+
+	protected function delete() {
+		// TODO: Implement delete() method.
 	}
 
 
@@ -34,20 +61,5 @@ class xoctConfGUI extends xoctGUI {
 
 	protected function edit() {
 		// TODO: Implement edit() method.
-	}
-
-
-	protected function update() {
-		// TODO: Implement update() method.
-	}
-
-
-	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
-	}
-
-
-	protected function delete() {
-		// TODO: Implement delete() method.
 	}
 }

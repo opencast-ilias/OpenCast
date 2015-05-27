@@ -1,47 +1,71 @@
 <?php
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php');
 /**
  * Class xoctPublication
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublication {
+class xoctPublication extends xoctObject {
 
 	/**
 	 * @param string $id
 	 */
 	public function __construct($id = '') {
+		$this->setId($id);
+		if ($id) {
+			$this->read();
+		}
+	}
+
+
+	public function read() {
 	}
 
 
 	/**
-	 * @var void
+	 * @var string
 	 */
-	public $id;
+	protected $id;
 	/**
 	 * @var string
 	 */
-	public $channel;
+	protected $channel;
 	/**
 	 * @var string
 	 */
-	public $mediatype;
+	protected $mediatype;
 	/**
 	 * @var string
 	 */
-	public $url;
+	protected $url;
 	/**
 	 * @var xoctMedia[]
 	 */
-	public $media;
+	protected $media;
 	/**
 	 * @var xoctAttachment[]
 	 */
-	public $attachments;
+	protected $attachments;
 
 
 	/**
-	 * @return void
+	 * @return string
+	 */
+	public function getUrl() {
+		return $this->url;
+	}
+
+
+	/**
+	 * @param string $url
+	 */
+	public function setUrl($url) {
+		$this->url = $url;
+	}
+
+
+	/**
+	 * @return string
 	 */
 	public function getId() {
 		return $this->id;
@@ -49,7 +73,7 @@ class xoctPublication {
 
 
 	/**
-	 * @param void $id
+	 * @param string $id
 	 */
 	public function setId($id) {
 		$this->id = $id;
@@ -85,22 +109,6 @@ class xoctPublication {
 	 */
 	public function setMediatype($mediatype) {
 		$this->mediatype = $mediatype;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getUrl() {
-		return $this->url;
-	}
-
-
-	/**
-	 * @param string $url
-	 */
-	public function setUrl($url) {
-		$this->url = $url;
 	}
 
 

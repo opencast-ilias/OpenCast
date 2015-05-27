@@ -34,6 +34,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventGUI.php');
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupGUI.php');
+
 /**
  * User Interface class for example repository object.
  *
@@ -114,90 +115,99 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	public function executeCommand() {
-		if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-			$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
-		}
-		$cmd = $this->ctrl->getCmd();
-		$next_class = $this->ctrl->getNextClass($this);
-		$this->tpl->getStandardTemplate();
-		/**
-		 * @var $xoctOpenCast xoctOpenCast
-		 * @var $xoctSeries   xoctSeries
-		 */
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		if ($xoctOpenCast instanceof xoctOpenCast) {
-			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
-			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
-		} else {
-			$this->tpl->setTitle($this->pl->txt('series_create'));
-		}
-		$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
-		$this->setTabs();
-		switch ($next_class) {
-			case 'ilpermissiongui':
-				$this->tabs_gui->setTabActive('permissions');
-				$perm_gui = new ilPermissionGUI($this);
-				//				$perm_gui->
-				$this->ctrl->forwardCommand($perm_gui);
-				break;
-			case 'ilinfoscreengui':
-				$info_gui = new ilInfoScreenGUI($this);
-				$this->ctrl->forwardCommand($info_gui);
-				$this->tpl->show();
-				break;
-			case 'xoctseriesgui':
-				$xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
-				$this->ctrl->forwardCommand($xoctSeriesGUI);
-				$this->tpl->show();
-				break;
-			case 'xocteventgui':
-				$xoctEventGUI = new xoctEventGUI($xoctOpenCast);
-				$this->ctrl->forwardCommand($xoctEventGUI);
-				$this->tpl->show();
-				break;
-			case 'xoctgroupgui':
-				$xoctGroupGUI = new xoctGroupGUI($xoctOpenCast);
-				$this->ctrl->forwardCommand($xoctGroupGUI);
-				$this->tpl->show();
-				break;
-			case 'xoctgroupparticipantgui':
-				$xoctGroupParticipantGUI = new xoctGroupParticipantGUI($xoctOpenCast);
-				$this->ctrl->forwardCommand($xoctGroupParticipantGUI);
-				$this->tpl->show();
-				break;
-			case 'ilObjOpenCastGUI':
-			case '':
-				switch ($cmd) {
-					case 'create':
-						$this->tabs_gui->clearTargets();
-						$this->create();
-						break;
-					case 'save':
-						$this->save();
-						break;
-					case 'edit':
-						$this->edit();
-						break;
-					case 'update':
-						parent::update();
-						break;
-					case self::CMD_SHOW_CONTENT:
-						$this->showContent();
-						$this->tpl->show();
-						break;
-					case 'cancel':
-						$this->ctrl->returnToParent($this);
-						break;
-					case 'infoScreen':
-						//						exit;
-						$this->tabs_gui->setTabActive(self::TAB_INFO);
-						$this->ctrl->setCmd('showSummary');
-						$this->ctrl->setCmdClass('ilinfoscreengui');
-						$this->infoScreen();
-						$this->tpl->show();
-						break;
-				}
-				break;
+		try {
+			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
+
+				$this->history->deleteSessionEntries();
+				$this->history->deleteDBEntries();
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+			}
+			$cmd = $this->ctrl->getCmd();
+			$next_class = $this->ctrl->getNextClass($this);
+			$this->tpl->getStandardTemplate();
+			/**
+			 * @var $xoctOpenCast xoctOpenCast
+			 * @var $xoctSeries   xoctSeries
+			 */
+			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+			if ($xoctOpenCast instanceof xoctOpenCast) {
+				$this->tpl->setTitle($this->object->getTitle());
+				$this->tpl->setDescription($this->object->getDescription());
+			} else {
+				$this->tpl->setTitle($this->pl->txt('series_create'));
+			}
+			$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
+			$this->setTabs();
+
+			switch ($next_class) {
+				case 'ilpermissiongui':
+					$this->tabs_gui->setTabActive('permissions');
+					$perm_gui = new ilPermissionGUI($this);
+					//				$perm_gui->
+					$this->ctrl->forwardCommand($perm_gui);
+					break;
+				case 'ilinfoscreengui':
+					$info_gui = new ilInfoScreenGUI($this);
+					$this->ctrl->forwardCommand($info_gui);
+					$this->tpl->show();
+					break;
+				case 'xoctseriesgui':
+					$xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
+					$this->ctrl->forwardCommand($xoctSeriesGUI);
+					$this->tpl->show();
+					break;
+				case 'xocteventgui':
+					$xoctEventGUI = new xoctEventGUI($xoctOpenCast);
+					$this->ctrl->forwardCommand($xoctEventGUI);
+					$this->tpl->show();
+					break;
+				case 'xoctgroupgui':
+					$xoctGroupGUI = new xoctGroupGUI($xoctOpenCast);
+					$this->ctrl->forwardCommand($xoctGroupGUI);
+					$this->tpl->show();
+					break;
+				case 'xoctgroupparticipantgui':
+					$xoctGroupParticipantGUI = new xoctGroupParticipantGUI($xoctOpenCast);
+					$this->ctrl->forwardCommand($xoctGroupParticipantGUI);
+					$this->tpl->show();
+					break;
+				case 'ilObjOpenCastGUI':
+				case '':
+					switch ($cmd) {
+						case 'create':
+							$this->tabs_gui->clearTargets();
+							$this->create();
+							break;
+						case 'save':
+							$this->save();
+							break;
+						case 'edit':
+							$this->edit();
+							break;
+						case 'update':
+							parent::update();
+							break;
+						case self::CMD_SHOW_CONTENT:
+							$this->showContent();
+							$this->tpl->show();
+							break;
+						case 'cancel':
+							$this->ctrl->returnToParent($this);
+							break;
+						case 'infoScreen':
+							//						exit;
+							$this->tabs_gui->setTabActive(self::TAB_INFO);
+							$this->ctrl->setCmd('showSummary');
+							$this->ctrl->setCmdClass('ilinfoscreengui');
+							$this->infoScreen();
+							$this->tpl->show();
+							break;
+					}
+					break;
+			}
+		} catch (xoctExeption $e) {
+			ilUtil::sendFailure($e->getMessage());
+			$this->tpl->show();
 		}
 	}
 

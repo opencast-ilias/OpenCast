@@ -223,55 +223,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		$filter = array();
 		$this->setData(xoctEvent::getFiltered($filter));
-
-		//		global $ilUser;
-		//		$usr_id = $ilUser->getId();
-		//		/**
-		//		 * @var $ilUser ilObjUser
-		//		 */
-		//		$this->determineOffsetAndOrder();
-		//		$this->determineLimit();
-		//		$xdglRequestList = xdglRequest::getCollection();
-		//		$xdglRequestList->orderBy($this->getOrderField(), $this->getOrderDirection());
-		//		$xdglRequestList->where(array( 'digi_lit_object_id' => 0 ), '>');
-		//		$xdglRequestList->where(array( 'status' => 0 ), '>');
-		//		$xdglRequestList->leftjoin('usr_data', 'requester_usr_id', 'usr_id', array( 'email' ));
-		//		$xdglRequestList->leftjoin(xdglLibrary::TABLE_NAME, 'library_id', 'id', array( 'id', 'title' ));
-		//		$xdglRequestList->leftjoin(xdglLibrarian::TABLE_NAME, 'librarian_id', 'usr_id', array( 'usr_id', 'library_id' ));
-		//		$xdglRequestList->leftjoin('usr_data', 'librarian_id', 'usr_id', array( 'email' ));
-		//		$xdglRequestList->leftjoin('object_reference', 'crs_ref_id', 'ref_id', array( 'ref_id', 'obj_id' ));
-		//		$xdglRequestList->leftjoin('object_data', 'object_reference.obj_id', 'obj_id', array( 'title' ), '=', true);
-		//		$sel = new arSelect();
-		//		$sel->setAs('ext_id');
-		//		if (xdglConfig::hasValidRegex()) {
-		//			$regex = xdglConfig::get(xdglConfig::F_REGEX);
-		//			preg_match('/\/\((.*)\)\//', $regex, $matches);
-		//			$sel->setFieldName('CASE object_data.title REGEXP "' . $matches[1] . '"
-		//				WHEN "1" THEN CONCAT(SUBSTRING_INDEX(object_data.title, " ", 1), "-", LPAD(xdgl_request.id, 6, 0))
-		//				WHEN "0" THEN CONCAT("UNKNOWN-", LPAD(xdgl_request.id, 6, 0)) END');
-		//			$sel->setTableName('');
-		//		} else {
-		//			$sel->setFieldName('id');
-		//			$sel->setTableName('xdgl_request');
-		//		}
-		//		$xdglRequestList->getArSelectCollection()->add($sel);
-		//
-		//		if (! ilObjDigiLitAccess::showAllLibraries()) {
-		//			$lib_ids = xdglLibrary::getLibraryIdsForUser($ilUser);
-		//			$xdglRequestList->where(array( 'xdgl_library.id' => $lib_ids ));
-		//		}
-		//
-		//		$this->filterResults($usr_id, $xdglRequestList);
-		//		$this->setMaxCount($xdglRequestList->count());
-		//		if (! $xdglRequestList->hasSets()) {
-		//			ilUtil::sendInfo('Keine Ergebnisse für diesen Filter');
-		//		}
-		//		$xdglRequestList->limit($this->getOffset(), $this->getOffset() + $this->getLimit());
-		//		$xdglRequestList->dateFormat('d.m.Y - H:i:s');
-		//		//		$xdglRequestList->debug();
-		//		$a_data = $xdglRequestList->getArray();
-		//
-		//		$this->setData($a_data);
 	}
 
 
@@ -287,12 +238,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$this->filter[$item->getPostVar()] = $item->getValue();
 		}
 	}
-
-
-	//	public function resetOffset() {
-	//		parent::resetOffset(false);
-	//		$this->ctrl->setParameter($this->parent_obj, $this->getNavParameter(), $this->nav_value);
-	//	}
 }
 
 ?>

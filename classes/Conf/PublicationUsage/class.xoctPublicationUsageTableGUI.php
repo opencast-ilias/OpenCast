@@ -30,7 +30,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 	/**
 	 * @param xoctPublicationUsageGUI $a_parent_obj
-	 * @param string               $a_parent_cmd
+	 * @param string                  $a_parent_cmd
 	 */
 	public function  __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd) {
 		/**
@@ -45,7 +45,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
-		$this->setRowTemplate('tpl.system_accounts.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
+		$this->setRowTemplate('tpl.publication_usage.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
 		$this->initColums();
 		//		$this->initFilters();
@@ -64,25 +64,29 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		/**
 		 * @var $xoctPublicationUsage xoctPublicationUsage
 		 */
-		$xoctPublicationUsage = xoctPublicationUsage::find($a_set['usage']);
-//		$this->tpl->setVariable('DOMAIN', $xoctPublicationUsage->getDomain());
-//		$this->tpl->setVariable('EXT_ID', $xoctPublicationUsage->getExtId());
-//		$this->tpl->setVariable('STATUS', $xoctPublicationUsage->getStatus());
+		$xoctPublicationUsage = xoctPublicationUsage::find($a_set['usage_id']);
+		$this->tpl->setVariable('USAGE_ID', $xoctPublicationUsage->getUsageId());
+		$this->tpl->setVariable('TITLE', $xoctPublicationUsage->getTitle());
+		$this->tpl->setVariable('DESCRIPTION', $xoctPublicationUsage->getDescription());
+		$this->tpl->setVariable('PUBLICATION_ID', $xoctPublicationUsage->getPublicationId());
+		$this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $xoctPublicationUsage->getMdType()));
+		$this->tpl->setVariable('EXT_ID', $xoctPublicationUsage->getExtId());
 
 		$this->addActionMenu($xoctPublicationUsage);
 	}
 
 
 	protected function initColums() {
-		$this->addColumn($this->parent_obj->txt('domain'));
+		$this->addColumn($this->parent_obj->txt('usage_id'));
+		$this->addColumn($this->parent_obj->txt('title'));
+		$this->addColumn($this->parent_obj->txt('description'));
+		$this->addColumn($this->parent_obj->txt('publication_id'));
+		$this->addColumn($this->parent_obj->txt('md_type'));
 		$this->addColumn($this->parent_obj->txt('ext_id'));
 		//		$this->addColumn($this->txt('status'));
 
 		$this->addColumn($this->pl->txt('common_actions'), '', '150px');
 	}
-
-
-
 
 
 	/**
@@ -91,10 +95,10 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 	protected function addActionMenu(xoctPublicationUsage $xoctPublicationUsage) {
 		$current_selection_list = new ilAdvancedSelectionListGUI();
 		$current_selection_list->setListTitle($this->pl->txt('common_actions'));
-		$current_selection_list->setId('sys_a_actions_' . $xoctPublicationUsage->getDomain());
+		$current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsage->getUsageId());
 		$current_selection_list->setUseImages(false);
 
-		$this->ctrl->setParameter($this->parent_obj, xoctPublicationUsageGUI::IDENTIFIER, $xoctPublicationUsage->getDomain());
+		$this->ctrl->setParameter($this->parent_obj, xoctPublicationUsageGUI::IDENTIFIER, $xoctPublicationUsage->getUsageId());
 		$current_selection_list->addItem($this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT), xoctPublicationUsageGUI::CMD_EDIT, $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_EDIT));
 		$current_selection_list->addItem($this->parent_obj->txt(xoctPublicationUsageGUI::CMD_DELETE), xoctPublicationUsageGUI::CMD_DELETE, $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_CONFIRM));
 

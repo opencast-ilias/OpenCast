@@ -30,8 +30,10 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function index() {
-		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-		$this->tpl->setContent($xoctEventTableGUI->getHTML());
+
+			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+			$this->tpl->setContent($xoctEventTableGUI->getHTML());
+
 	}
 
 
