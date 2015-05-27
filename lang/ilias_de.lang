@@ -1,5 +1,12 @@
 <!-- language file start -->
 common_actions#:#Aktionen
+config_cancel#:#Abbrechen
+config_curl#:#cURL
+config_curl_debug_level#:#Debug-Level
+config_curl_password#:#API-Passwort
+config_curl_username#:#API-Benutzername
+config_msg_success#:#Gespeichert
+config_update#:#Aktualisieren
 event_clips#:#Clips
 event_date#:#Datum
 event_location#:#Ort
@@ -23,6 +30,28 @@ groups_new_placeholder#:#Name der neuen Gruppe
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#Vor- oder Nachname
 groups_participants_header#:#Teilnehmer
+publication_usage_add#:#Hinzufügen
+publication_usage_add_new#:#Hinzufügen
+publication_usage_cancel#:#Abbrechen
+publication_usage_create#:#Erstellen
+publication_usage_delete#:#Löschen
+publication_usage_description#:#Beschreibung
+publication_usage_edit#:#Bearbeiten
+publication_usage_ext_id#:#Metadata-ID
+publication_usage_md_type#:#Typ
+publication_usage_md_type_1#:#Attachment
+publication_usage_md_type_2#:#Media
+publication_usage_md_type_select#:#Auswählen...
+publication_usage_msg_success#:#Gespeichert
+publication_usage_publication_id#:#Publikations-ID
+publication_usage_select_usage_id#:#Verwendungszweck
+publication_usage_title#:#Titel
+publication_usage_type_annotations#:#Link zu Annotationen
+publication_usage_type_mov#:#Link zu MOV-Player
+publication_usage_type_mp4#:#Link zu MP4-Player
+publication_usage_type_preview#:#URL Vorschau-Bild
+publication_usage_update#:#Aktualisieren
+publication_usage_usage_id#:#Nutzung
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_cancel#:#Abbrechen
 series_channel_type#:#Channel-Typ
@@ -48,9 +77,22 @@ series_save#:#Speichern
 series_saved#:#Channel-Informationen gespeichert
 series_streaming_only#:#Nur Streaming
 series_title#:#Titel
-series_update#:#Speichern
+series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren
+system_account_add_new#:#System-Account hinzufügen
+system_account_cancel#:#Abbrechen
+system_account_create#:#Erstellen
+system_account_delete#:#Löschen
+system_account_domain#:#Domain
+system_account_edit#:#Bearbeiten
+system_account_ext_id#:#Externe ID
+system_account_msg_success#:#Gespeichert
+system_account_status#:#Status
+system_account_update#:#Aktualisieren
 tab_event_index#:#Inhalt
 tab_groups#:#Gruppen
 tab_info#:#Info
+tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
+tab_settings#:#Einstellungen
+tab_system_accounts#:#System-Accounts

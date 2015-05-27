@@ -39,6 +39,7 @@ abstract class xoctGUI {
 
 	public function executeCommand() {
 		$nextClass = $this->ctrl->getNextClass();
+
 		switch ($nextClass) {
 			default:
 				$cmd = $this->ctrl->getCmd(self::CMD_STANDARD);

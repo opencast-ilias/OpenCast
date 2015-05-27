@@ -19,12 +19,8 @@ class xoctRequest {
 
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
-		$xoctCurl->setUsername('apitest');
-		$xoctCurl->setPassword('apitest');
-		$xoctCurl->setVerifyHost(false);
-		$xoctCurl->setVerifyPeer(false);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->get();
@@ -44,13 +40,9 @@ class xoctRequest {
 	public function post(array $post_data, $as_user = '') {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
-		$xoctCurl->setUsername('apitest');
-		$xoctCurl->setPassword('apitest');
-		$xoctCurl->setVerifyHost(false);
-		$xoctCurl->setVerifyPeer(false);
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->post();
@@ -68,13 +60,9 @@ class xoctRequest {
 	public function put(array $post_data, $as_user = '') {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
-		$xoctCurl->setUsername('apitest');
-		$xoctCurl->setPassword('apitest');
-		$xoctCurl->setVerifyHost(false);
-		$xoctCurl->setVerifyPeer(false);
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->put();

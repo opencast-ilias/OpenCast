@@ -1,73 +1,123 @@
 <?php
+require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class xoctPublicationUsage
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublicationUsage {
+class xoctPublicationUsage extends ActiveRecord {
 
-	const USAGE_MP4 = 'mp4';
-	const USAGE_ANNOTATION = 'anno';
-	const USAGE_MOV = 'mov';
-	const MD_TYPE_ATTACHMENT = 1;
-	const MD_TYPE_MEDIA = 2;
+	/**
+	 * @var array
+	 */
+	protected static $usage_ids = array(
+		self::USAGE_ANNOTATION,
+		self::USAGE_MP4,
+		self::USAGE_MOV,
+		self::USAGE_PREVIEW,
+	);
 
 
 	/**
-	 * @param string $usage
+	 * @return array
 	 */
-	public function __construct($usage = '') {
+	public static function getMissingUsageIds() {
+		$missing = array_diff(self::$usage_ids, self::getArray(NULL, 'usage_id'));
+
+		return $missing;
 	}
 
 
 	/**
-	 * @var string
+	 * @return string
+	 * @description Return the Name of your Database Table
+	 * @deprecated
 	 */
-	public $usage = '';
+	static function returnDbTableName() {
+		return 'xoct_publication_usage';
+	}
+
+
+	const USAGE_MP4 = 'mp4';
+	const USAGE_ANNOTATION = 'annotations';
+	const USAGE_MOV = 'mov';
+	const USAGE_PREVIEW = 'preview';
+	const MD_TYPE_ATTACHMENT = 1;
+	const MD_TYPE_MEDIA = 2;
 	/**
 	 * @var string
+	 *
+	 * @con_is_primary true
+	 * @con_is_unique  true
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
 	 */
-	public $title;
+	protected $usage_id = '';
 	/**
 	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
 	 */
-	public $description;
+	protected $title;
 	/**
 	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     4000
 	 */
-	public $publication_id;
+	protected $description;
+	/**
+	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
+	 */
+	protected $publication_id;
+	/**
+	 * @var bool
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     1
+	 */
+	protected $status;
+	/**
+	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
+	 */
+	protected $ext_id;
 	/**
 	 * @var int
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     1
 	 */
-	public $status;
-	/**
-	 * @var string
-	 */
-	public $media_id;
-	/**
-	 * @var string
-	 */
-	public $attachment_id;
-	/**
-	 * @var int
-	 */
-	public $md_type = self::MD_TYPE_MEDIA;
+	protected $md_type = NULL;
 
 
 	/**
 	 * @return string
 	 */
-	public function getUsage() {
-		return $this->usage;
+	public function getUsageId() {
+		return $this->usage_id;
 	}
 
 
 	/**
-	 * @param string $usage
+	 * @param string $usage_id
 	 */
-	public function setUsage($usage) {
-		$this->usage = $usage;
+	public function setUsageId($usage_id) {
+		$this->usage_id = $usage_id;
 	}
 
 
@@ -120,15 +170,15 @@ class xoctPublicationUsage {
 
 
 	/**
-	 * @return int
+	 * @return boolean
 	 */
-	public function getStatus() {
+	public function isStatus() {
 		return $this->status;
 	}
 
 
 	/**
-	 * @param int $status
+	 * @param boolean $status
 	 */
 	public function setStatus($status) {
 		$this->status = $status;
@@ -138,32 +188,16 @@ class xoctPublicationUsage {
 	/**
 	 * @return string
 	 */
-	public function getMediaId() {
-		return $this->media_id;
+	public function getExtId() {
+		return $this->ext_id;
 	}
 
 
 	/**
-	 * @param string $media_id
+	 * @param string $ext_id
 	 */
-	public function setMediaId($media_id) {
-		$this->media_id = $media_id;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getAttachmentId() {
-		return $this->attachment_id;
-	}
-
-
-	/**
-	 * @param string $attachment_id
-	 */
-	public function setAttachmentId($attachment_id) {
-		$this->attachment_id = $attachment_id;
+	public function setExtId($ext_id) {
+		$this->ext_id = $ext_id;
 	}
 
 

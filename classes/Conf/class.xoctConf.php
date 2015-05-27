@@ -1,57 +1,138 @@
 <?php
+require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class xoctConf
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctConf {
+class xoctConf extends ActiveRecord {
+
+	const CONFIG_VERSION = 1;
+	const F_CONFIG_VERSION = 'config_version';
+	const F_CURL_USERNAME = 'curl_username';
+	const F_CURL_PASSWORD = 'curl_password';
+	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+
 
 	/**
-	 * @param $config_key
+	 * @return string
+	 * @description Return the Name of your Database Table
+	 * @deprecated
 	 */
-	public function __construct($config_key) {
+	static function returnDbTableName() {
+		return 'xoct_config';
+	}
+
+
+	/**
+	 * @var array
+	 */
+	protected static $cache = array();
+	/**
+	 * @var array
+	 */
+	protected static $cache_loaded = array();
+	/**
+	 * @var bool
+	 */
+	protected $ar_safe_read = false;
+
+
+	/**
+	 * @return bool
+	 */
+	public static function isConfigUpToDate() {
+		return self::get(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
+	}
+
+
+	public static function load() {
+		$null = parent::get();
+	}
+
+
+	/**
+	 * @param $name
+	 *
+	 * @return mixed
+	 */
+	public static function get($name) {
+		if (! self::$cache_loaded[$name]) {
+			$obj = new self($name);
+			self::$cache[$name] = json_decode($obj->getValue());
+			self::$cache_loaded[$name] = true;
+		}
+
+		return self::$cache[$name];
+	}
+
+
+	/**
+	 * @param $name
+	 * @param $value
+	 */
+	public static function set($name, $value) {
+		$obj = new self($name);
+		$obj->setValue(json_encode($value));
+
+		if (self::where(array( 'name' => $name ))->hasSets()) {
+			$obj->update();
+		} else {
+			$obj->create();
+		}
 	}
 
 
 	/**
 	 * @var string
+	 *
+	 * @db_has_field        true
+	 * @db_is_unique        true
+	 * @db_is_primary       true
+	 * @db_is_notnull       true
+	 * @db_fieldtype        text
+	 * @db_length           250
 	 */
-	public $config_key;
+	protected $name;
 	/**
 	 * @var string
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        text
+	 * @db_length           4000
 	 */
-	public $config_value;
+	protected $value;
 
 
 	/**
-	 * @return string
+	 * @param string $name
 	 */
-	public function getConfigKey() {
-		return $this->config_key;
-	}
-
-
-	/**
-	 * @param string $config_key
-	 */
-	public function setConfigKey($config_key) {
-		$this->config_key = $config_key;
+	public function setName($name) {
+		$this->name = $name;
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getConfigValue() {
-		return $this->config_value;
+	public function getName() {
+		return $this->name;
 	}
 
 
 	/**
-	 * @param string $config_value
+	 * @param string $value
 	 */
-	public function setConfigValue($config_value) {
-		$this->config_value = $config_value;
+	public function setValue($value) {
+		$this->value = $value;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getValue() {
+		return $this->value;
 	}
 }

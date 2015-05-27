@@ -22,6 +22,10 @@
 */
 
 require_once('./Services/Repository/classes/class.ilObjectPlugin.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurlSettings.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurl.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
 
 /**
  * Class ilObjOpenCast
@@ -62,6 +66,14 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doRead() {
+		$xoctCurlSettings = new xoctCurlSettings();
+		$xoctCurlSettings->setUsername(xoctConf::get(xoctConf::F_CURL_USERNAME));
+		$xoctCurlSettings->setPassword(xoctConf::get(xoctConf::F_CURL_PASSWORD));
+//		$xoctCurlSettings->setVerifyPeer(false);
+//		$xoctCurlSettings->set(false);
+		$xoctCurlSettings->setDebugLevel(xoctConf::get(xoctConf::F_CURL_DEBUG_LEVEL));
+		xoctCurl::init($xoctCurlSettings);
+		xoctCache::setOverrideActive(true);
 	}
 
 

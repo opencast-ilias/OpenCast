@@ -30,8 +30,6 @@ class xoctSeriesGUI extends xoctGUI {
 
 	protected function index() {
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
-		$this->tpl->setContent('lorem');
-		// TODO: Implement index() method.
 	}
 
 

@@ -22,17 +22,23 @@ abstract class xoctObject {
 	 */
 	public static function find($identifier) {
 		$class_name = get_called_class();
-		if ($existing = xoctCache::getInstance()->get($class_name . '-' . $identifier)) {
+		$key = $class_name . '-' . $identifier;
+		$existing = xoctCache::getInstance()->get($key);
+		if ($existing) {
+//			echo '<pre>' . print_r($existing, 1) . '</pre>';
 			return $existing;
+		}else {
+//			echo $existing;
 		}
 
-		if (! isset(self::$cache[$class_name][$identifier])) {
-			$var = new $class_name($identifier);
-			xoctCache::getInstance()->set($class_name . '-' . $identifier, $var);
-			self::$cache[$class_name][$identifier] = $var;
+		$var = new $class_name($identifier);
+		$failed = xoctCache::getInstance()->set($key, $var);
+		if (! $failed) {
+			echo $key; // FSX delete
+			exit;
 		}
 
-		return self::$cache[$class_name][$identifier];
+		return $var;
 	}
 
 
@@ -44,9 +50,19 @@ abstract class xoctObject {
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
 		xoctCache::getInstance()->delete($class_name . '-' . $identifier);
-		if (isset(self::$cache[$class_name][$identifier])) {
-			unset(self::$cache[$class_name][$identifier]);
-		}
+//		if (isset(self::$cache[$class_name][$identifier])) {
+//			unset(self::$cache[$class_name][$identifier]);
+//		}
+	}
+
+
+	/**
+	 * @param            $identifier
+	 * @param xoctObject $object
+	 */
+	public static function cache($identifier, xoctObject $object) {
+		$class_name = get_class($object);
+		xoctCache::getInstance()->set($class_name . '-' . $identifier, $object);
 	}
 
 
