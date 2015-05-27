@@ -50,7 +50,20 @@ series_streaming_only#:#Streaming only
 series_title#:#Title
 series_update#:#Save
 series_use_annotations#:#Activate Annotations
+system_account_add_new#:#Add System-Account
+system_account_cancel#:#Cancel
+system_account_create#:#Create
+system_account_delete#:#Delete
+system_account_domain#:#Domain
+system_account_edit#:#Edit
+system_account_ext_id#:#External ID
+system_account_msg_success#:#Saved
+system_account_status#:#Status
+system_account_update#:#Update
 tab_event_index#:#Content
 tab_groups#:#Groups
 tab_info#:#Info
+tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
+tab_settings#:#Settings
+tab_system_accounts#:#System-Accounts

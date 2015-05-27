@@ -1,31 +1,60 @@
 <?php
+require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class xoctSystemAccount
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctSystemAccount {
+class xoctSystemAccount extends ActiveRecord {
+
+	const STATUS_ACTIVE = 1;
+
 
 	/**
-	 * @param string $domain
+	 * @return string
+	 * @description Return the Name of your Database Table
+	 * @deprecated
 	 */
-	public function __construct($domain = '') {
+	static function returnDbTableName() {
+		return 'xoct_system_account';
 	}
 
 
 	/**
 	 * @var string
+	 *
+	 * @con_is_primary true
+	 * @con_is_unique  true
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
 	 */
-	public $domain = '';
+	protected $domain = '';
 	/**
 	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     512
 	 */
-	public $ext_id;
+	protected $ext_id;
 	/**
 	 * @var int
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     1
 	 */
-	public $status;
+	protected $status = self::STATUS_ACTIVE;
+	/**
+	 * @var bool
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  integer
+	 * @con_length     1
+	 */
+	protected $standard = false;
 
 
 	/**
@@ -73,5 +102,21 @@ class xoctSystemAccount {
 	 */
 	public function setStatus($status) {
 		$this->status = $status;
+	}
+
+
+	/**
+	 * @return boolean
+	 */
+	public function isStandard() {
+		return $this->standard;
+	}
+
+
+	/**
+	 * @param boolean $standard
+	 */
+	public function setStandard($standard) {
+		$this->standard = $standard;
 	}
 }
