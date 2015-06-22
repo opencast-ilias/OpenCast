@@ -1,6 +1,10 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctRequest.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctPublication.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctUploadFile.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctMedia.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsage.php');
 
 /**
  * Class xoctEvent
@@ -22,22 +26,17 @@ class xoctEvent extends xoctObject {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$request = xoctRequest::root()->events();
-		//		if ($filter) {
-		//			$filter_string = '';
-		//			foreach ($filter as $k => $v) {
-		//				$filter_string .= $k . ':' . $v . '&';
-		//			}
-		//
-		//			$request->parameter('filter', $filter_string);
-		//		}
+		if ($filter) {
+			$filter_string = '';
+			foreach ($filter as $k => $v) {
+				$filter_string .= $k . ':' . $v . '';
+			}
+
+			$request->parameter('filter', $filter_string);
+		}
 		$data = json_decode($request->get());
 		$return = array();
 		foreach ($data as $d) {
-
-			//			$xoctEvent = new xoctEvent();
-			//			$xoctEvent->loadFromStdClass($d);
-			//			xoctEvent::cache($xoctEvent->getIdentifier(), $xoctEvent);
-			//			$return[] = array('identifier'=>$xoctEvent->getIdentifier());
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->__toArray();
 		}
@@ -68,6 +67,98 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	public function create() {
+		$data = array();
+
+		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+		$this->updateMetadataFromFields();
+
+		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+
+		$processing = $this->getProcessing();
+		$data['processing'] = json_encode($processing);
+
+		$data['acl'] = json_encode(xoctAcl::getStandardSet());
+
+		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
+		$data['presenter'] = $presenter->getCurlString();
+
+		$return = json_decode(xoctRequest::root()->events()->post($data));
+
+		$this->setIdentifier($return->identifier);
+	}
+
+
+	public function update() {
+		$data = array();
+		$this->updateMetadataFromFields();
+
+		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+
+		$acls = array();
+		foreach ($this->getAcls() as $acl) {
+			$acls[] = $acl->__toStdClass();
+		}
+
+		$data['acl'] = json_encode($acls);
+
+		xoctRequest::root()->events($this->getIdentifier())->post($data);
+	}
+
+
+	public function updateSeries() {
+		$this->getMetadata()->getField('isPartOf')->setValue($this->getSeriesIdentifier());
+	}
+
+
+	public function delete() {
+	}
+
+
+	public function getPresentationPublication() {
+		foreach ($this->getPublications() as $publication) {
+			if ($publication->getChannel() == 'engage-player') {
+				return $publication;
+			}
+		}
+
+		return new xoctPublication();
+	}
+
+
+	public function getPreviewAttachment() {
+		$xoctPublicationUsage = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PREVIEW);
+		foreach ($this->getPublications() as $publication) {
+			if ($publication->getChannel() == $xoctPublicationUsage->getPublicationId()) {
+				switch ($xoctPublicationUsage->getMdType()) {
+					case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
+						foreach ($publication->getAttachments() as $attachment) {
+							if ($attachment->getFlavor() == $xoctPublicationUsage->getExtId()) {
+								return $attachment;
+							}
+						}
+
+						return new xoctAttachment();
+						break;
+					case xoctPublicationUsage::MD_TYPE_MEDIA:
+						foreach ($publication->getMedia() as $media) {
+							if ($media->getFlavor() == $xoctPublicationUsage->getExtId()) {
+								return $media;
+							}
+						}
+
+						return new xoctMedia();
+						break;
+				}
+			}
+		}
+		$xoctMedia = new xoctMedia();
+		$xoctMedia->setUrl('/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png');
+
+		return $xoctMedia;
+	}
+
+
 	protected function loadPublications() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->get());
 		$publications = array();
@@ -76,7 +167,6 @@ class xoctEvent extends xoctObject {
 			$p->loadFromStdClass($d);
 			$publications[] = $p;
 		}
-		//		echo '<pre>' . print_r($publications, 1) . '</pre>';
 		$this->setPublications($publications);
 	}
 
@@ -179,6 +269,10 @@ class xoctEvent extends xoctObject {
 	 * @var xoctAcl[]
 	 */
 	protected $acls = array();
+	/**
+	 * @var string
+	 */
+	protected $series_identifier = '';
 
 
 	/**
@@ -466,5 +560,59 @@ class xoctEvent extends xoctObject {
 	 */
 	public function setAcls($acls) {
 		$this->acls = $acls;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getSeriesIdentifier() {
+		return $this->series_identifier;
+	}
+
+
+	/**
+	 * @param string $series_identifier
+	 */
+	public function setSeriesIdentifier($series_identifier) {
+		$this->series_identifier = $series_identifier;
+	}
+
+
+	protected function updateMetadataFromFields() {
+		$title = $this->getMetadata()->getField('title');
+		$title->setValue($this->getTitle());
+
+		$description = $this->getMetadata()->getField('description');
+		$description->setValue($this->getDescription());
+
+		$subjects = $this->getMetadata()->getField('subjects');
+		$subjects->setValue(array());
+
+		$is_part_of = $this->getMetadata()->getField('isPartOf');
+		$is_part_of->setLabel('EVENTS.EVENTS.DETAILS.METADATA.SERIES');
+		$is_part_of->setValue($this->getSeriesIdentifier());
+
+		$startDate = $this->getMetadata()->getField('startDate');
+		$startDate->setValue(date('Y-m-d'));
+
+		$startTime = $this->getMetadata()->getField('startTime');
+		$startTime->setValue(date('H:i'));
+	}
+
+
+	/**
+	 * @return stdClass
+	 */
+	protected function getProcessing() {
+		$processing = new stdClass();
+		$processing->workflow = "ng-schedule-and-upload";
+		$processing->configuration->flagForCutting = "false";
+		$processing->configuration->flagForReview = "false";
+		$processing->configuration->publishToEngage = "false";
+		$processing->configuration->publishToHarvesting = "false";
+		$processing->configuration->straightToPublishing = "false";
+
+		return $processing;
 	}
 }

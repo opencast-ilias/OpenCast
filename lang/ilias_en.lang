@@ -1,5 +1,6 @@
 <!-- language file start -->
 common_actions#:#Actions
+config_api_base#:#Api-Base-URL
 config_cancel#:#Cancel
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
@@ -7,14 +8,22 @@ config_curl_password#:#API-Password
 config_curl_username#:#API-Username
 config_msg_success#:#Saved
 config_update#:#Update
+event_add_new#:#Add Clip
+event_cancel#:#Cancel
 event_clips#:#Clips
+event_create#:#Upload Clip
 event_date#:#Date
+event_description#:#Description
+event_edit#:#Edit Clip
+event_file_presenter#:#File
 event_location#:#Location
+event_msg_success#:#Saved changes
 event_owner#:#Owner
 event_presenter#:#Presenter
 event_preview#:#Preview
 event_recording_station#:#Recording Station
 event_title#:#Title
+event_update#:#Save
 event_view#:#View
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name

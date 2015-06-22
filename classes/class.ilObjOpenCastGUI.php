@@ -116,12 +116,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	public function executeCommand() {
 		try {
-			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-
-				$this->history->deleteSessionEntries();
-				$this->history->deleteDBEntries();
-				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
-			}
 			$cmd = $this->ctrl->getCmd();
 			$next_class = $this->ctrl->getNextClass($this);
 			$this->tpl->getStandardTemplate();
@@ -130,9 +124,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			 * @var $xoctSeries   xoctSeries
 			 */
 			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-			if ($xoctOpenCast instanceof xoctOpenCast) {
+
+			if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
 				$this->tpl->setTitle($this->object->getTitle());
 				$this->tpl->setDescription($this->object->getDescription());
+				if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
+					//				$this->history->deleteSessionEntries();
+					//				$this->history->deleteDBEntries();
+					$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+				}
 			} else {
 				$this->tpl->setTitle($this->pl->txt('series_create'));
 			}
@@ -241,6 +241,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
 		$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
 		$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+		$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
+		$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
 
 		return true;
 	}

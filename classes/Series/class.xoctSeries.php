@@ -53,19 +53,24 @@ class xoctSeries extends xoctObject {
 	public function create() {
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
 		$this->updateMetadataFromFields();
-		$array['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+
+		$array['metadata'] = json_encode(array(
+			$this->getMetadata()->__toStdClass()
+		));
+
 		$unibe = new xoctAcl();
 		$unibe->setRole('ROLE_UNIBE.CH_MEMBER');
 		$unibe->setAllow(true);
 		$unibe->setAction(xoctAcl::READ);
 		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite(), $unibe->__toStdClass() ));
-		$array['theme'] = $this->getTheme();
+		 $array['theme'] = $this->getTheme();
 
 		$data = json_decode(xoctRequest::root()->series()->post($array, 'fschmid@unibe.ch'));
-		if ($data) {
-			$this->setIdentifier($data);
+
+		if ($data->identifier) {
+			$this->setIdentifier($data->identifier);
 		} else {
-			$this->setIdentifier(time()); // TODO set correct identifier
+			throw new xoctExeption(xoctExeption::API_CREATION_FAILED);
 		}
 	}
 
@@ -93,9 +98,17 @@ class xoctSeries extends xoctObject {
 
 
 	protected function updateMetadataFromFields() {
-		$this->getMetadata()->getField('title')->setValue($this->getTitle());
-		$this->getMetadata()->getField('description')->setValue($this->getDescription());
-		$this->getMetadata()->getField('license')->setValue($this->getLicense() ? $this->getLicense() : '-');
+		$title = $this->getMetadata()->getField('title');
+		$title->setValue($this->getTitle());
+		$this->getMetadata()->addOrReplaceField($title);
+
+		$description = $this->getMetadata()->getField('description');
+		$description->setValue($this->getDescription() ? $this->getDescription() : '-');
+		$this->getMetadata()->addOrReplaceField($description);
+
+		$license = $this->getMetadata()->getField('license');
+		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
+		$this->getMetadata()->addOrReplaceField($license);
 	}
 
 
@@ -208,7 +221,7 @@ class xoctSeries extends xoctObject {
 	/**
 	 * @var int
 	 */
-	protected $theme = 0;
+	protected $theme = 1234;
 
 
 	/**

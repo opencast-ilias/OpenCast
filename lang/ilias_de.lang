@@ -1,5 +1,6 @@
 <!-- language file start -->
 common_actions#:#Aktionen
+config_api_base#:#API-Basis-URL
 config_cancel#:#Abbrechen
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
@@ -7,14 +8,22 @@ config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
 config_msg_success#:#Gespeichert
 config_update#:#Aktualisieren
+event_add_new#:#Clip hinzufügen
+event_cancel#:#Abbrechen
 event_clips#:#Clips
+event_create#:#Clip hochladen
 event_date#:#Datum
+event_description#:#Beschreibung
+event_edit#:#Clip bearbeiten
+event_file_presenter#:#Datei
 event_location#:#Ort
+event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
 event_presenter#:#Presenter
 event_preview#:#Vorschau
 event_recording_station#:#Aufnahmestation
 event_title#:#Titel
+event_update#:#Speichern
 event_view#:#Anzeigen
 group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
 group_alert_no_title#:#Kein Gruppenname angegeben

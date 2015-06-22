@@ -49,13 +49,16 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 *
 	 * @return bool
 	 */
-	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = '') {
+	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id = NULL, $a_user_id = '') {
 		global $ilUser, $ilAccess;
 		/**
 		 * @var $ilAccess ilAccessHandler
 		 */
 		if ($a_user_id == '') {
 			$a_user_id = $ilUser->getId();
+		}
+		if ($a_obj_id === NULL) {
+			$a_obj_id = ilObject2::_lookupObjId($a_ref_id);
 		}
 		switch ($a_permission) {
 			case 'read':
@@ -90,6 +93,20 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
 
 		return $xoctOpenCast->isObjOnline();
+	}
+
+
+	/**
+	 * @param $ref_id
+	 *
+	 * @return bool
+	 */
+	public static function hasWriteAccess($ref_id = NULL) {
+		if ($ref_id === NULL) {
+			$ref_id = $_GET['ref_id'];
+		}
+
+		return self::_checkAccess('write', 'write', $ref_id);
 	}
 
 

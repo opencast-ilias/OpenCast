@@ -20,6 +20,16 @@ class xoctPublicationUsage extends ActiveRecord {
 
 
 	/**
+	 * @param $usage
+	 *
+	 * @return xoctPublicationUsage
+	 */
+	public static function getUsage($usage) {
+		return self::find($usage);
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public static function getMissingUsageIds() {

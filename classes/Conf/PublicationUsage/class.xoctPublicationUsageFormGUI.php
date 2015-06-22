@@ -17,6 +17,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	const F_STATUS = 'status';
 	const F_EXT_ID = 'ext_id';
 	const F_MD_TYPE = 'md_type';
+
 	/**
 	 * @var  xoctPublicationUsage
 	 */

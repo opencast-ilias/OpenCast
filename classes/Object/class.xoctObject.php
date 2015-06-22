@@ -24,19 +24,16 @@ abstract class xoctObject {
 		$class_name = get_called_class();
 		$key = $class_name . '-' . $identifier;
 		$existing = xoctCache::getInstance()->get($key);
+
 		if ($existing) {
-//			echo '<pre>' . print_r($existing, 1) . '</pre>';
+			xoctLog::getInstance()->write('used cached: ' . $key);
+
 			return $existing;
-		}else {
-//			echo $existing;
 		}
 
 		$var = new $class_name($identifier);
-		$failed = xoctCache::getInstance()->set($key, $var);
-		if (! $failed) {
-			echo $key; // FSX delete
-			exit;
-		}
+		xoctCache::getInstance()->set($key, $var);
+		xoctLog::getInstance()->write('cached not used: ' . $key);
 
 		return $var;
 	}
@@ -50,9 +47,6 @@ abstract class xoctObject {
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
 		xoctCache::getInstance()->delete($class_name . '-' . $identifier);
-//		if (isset(self::$cache[$class_name][$identifier])) {
-//			unset(self::$cache[$class_name][$identifier]);
-//		}
 	}
 
 
@@ -69,7 +63,7 @@ abstract class xoctObject {
 	/**
 	 * @return array
 	 */
-	protected function __toArray() {
+	public function __toArray() {
 		$data = $this->__toStdClass();
 		$array = (array)$data;
 
@@ -80,7 +74,7 @@ abstract class xoctObject {
 	/**
 	 * @return stdClass
 	 */
-	protected function __toStdClass() {
+	public function __toStdClass() {
 		$r = new ReflectionClass($this);
 		$stdClass = new stdClass();
 		foreach ($r->getProperties() as $name) {

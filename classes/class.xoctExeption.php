@@ -10,6 +10,7 @@ class xoctExeption extends Exception {
 
 	const API_CALL_UNSUPPORTED = 10;
 	const OBJECT_WRONG_PARENT = 20;
+	const API_CREATION_FAILED = 30;
 	const API_CALL_STATUS_500 = 500;
 	/**
 	 * @var array
@@ -18,6 +19,7 @@ class xoctExeption extends Exception {
 		self::API_CALL_UNSUPPORTED => 'This Api-Call is not supported',
 		self::API_CALL_STATUS_500 => 'An error occurred during the request',
 		self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
+		self::API_CREATION_FAILED => 'The response from the OpenCast-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
 	);
 
 

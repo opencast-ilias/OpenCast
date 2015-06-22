@@ -6,7 +6,8 @@ require_once('class.xoctEvent.php');
 require_once('./Services/Table/classes/class.ilTable2GUI.php');
 require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
 require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
+require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
 
 /**
  * Class xoctEventTableGUI
@@ -54,6 +55,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		//		$this->setEnableNumInfo(true);
 		//		$this->setExternalSorting(true);
 		//		$this->setExternalSegmentation(true);
+		// Add new
+
 		$this->parseData();
 	}
 
@@ -66,7 +69,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = xoctEvent::find($a_set['identifier']);
-		//		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
+		if ($xoctEvent->getPreviewAttachment()->getUrl()) {
+			$this->tpl->setVariable('PREVIEW', $xoctEvent->getPreviewAttachment()->getUrl());
+		} else {
+			// preview
+		}
+
 		$this->tpl->setVariable('TITLE', $xoctEvent->getTitle());
 		$this->tpl->setVariable('PRESENTER', implode(', ', $xoctEvent->getPresenters()));
 		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
@@ -109,6 +117,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+		$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 
 		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
 		//
@@ -221,7 +230,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 	protected function parseData() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$filter = array();
+		//		$filter = array();
 		$this->setData(xoctEvent::getFiltered($filter));
 	}
 

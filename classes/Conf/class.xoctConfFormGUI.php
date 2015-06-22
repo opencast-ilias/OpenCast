@@ -51,6 +51,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('curl'));
 		$this->addItem($h);
 
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_BASE), xoctConf::F_API_BASE);
+		$te->setRequired(true);
+		$this->addItem($te);
+
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_CURL_USERNAME), xoctConf::F_CURL_USERNAME);
 		$te->setRequired(true);
 		$this->addItem($te);
@@ -60,8 +64,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
-		$te->setOptions(array( xoctCurl::DEBUG_DEACTIVATED, xoctCurl::DEBUG_LEVEL_1, xoctCurl::DEBUG_LEVEL_2 ));
+		$te->setOptions(array( xoctCurl::DEBUG_DEACTIVATED, xoctCurl::DEBUG_LEVEL_1, xoctCurl::DEBUG_LEVEL_2, xoctCurl::DEBUG_LEVEL_3 ));
 		$this->addItem($te);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
+		$this->addItem($cb);
 	}
 
 

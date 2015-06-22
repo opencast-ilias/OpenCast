@@ -1,6 +1,6 @@
 <?php
 require_once('class.xoctCurl.php');
-require_once('class.xoctCurl.php');
+require_once('class.xoctRequestSettings.php');
 
 /**
  * Class xoctRequest
@@ -8,6 +8,14 @@ require_once('class.xoctCurl.php');
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctRequest {
+
+	/**
+	 * @param xoctRequestSettings $xoctRequestSettings
+	 */
+	public static function init(xoctRequestSettings $xoctRequestSettings) {
+		self::$base = $xoctRequestSettings->getApiBase();
+	}
+
 
 	/**
 	 * @param string $as_user
@@ -20,7 +28,7 @@ class xoctRequest {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->get();
@@ -42,7 +50,34 @@ class xoctRequest {
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+		}
+
+		$xoctCurl->post();
+
+		return $xoctCurl->getResponseBody();
+	}
+
+
+	/**
+	 * @param array            $post_data
+	 * @param xoctUploadFile[] $files
+	 * @param string           $as_user
+	 *
+	 * @return string
+	 */
+	public function postFiles(array $post_data, array $files, $as_user = '') {
+		$xoctCurl = new xoctCurl();
+		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->setPostFields($post_data);
+		$xoctCurl->setRequestContentType('multipart/form-data');
+		if ($as_user) {
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+		}
+		foreach ($files as $file) {
+			if ($file instanceof xoctUploadFile) {
+				$xoctCurl->addFile($file);
+			}
 		}
 
 		$xoctCurl->post();
@@ -62,7 +97,7 @@ class xoctRequest {
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->put();
@@ -106,8 +141,7 @@ class xoctRequest {
 	/**
 	 * @var string
 	 */
-	//	protected $base = 'https://p2-int-api.cloud.switch.ch/api/';
-	protected $base = 'https://cast-ng-test.switch.ch/api/';
+	protected static $base = '';
 	/**
 	 * @var array
 	 */
@@ -286,7 +320,7 @@ class xoctRequest {
 	 * @return string
 	 */
 	public function getBase() {
-		return $this->base;
+		return self::$base;
 	}
 
 
@@ -294,7 +328,7 @@ class xoctRequest {
 	 * @param string $base
 	 */
 	public function setBase($base) {
-		$this->base = $base;
+		self::$base = $base;
 	}
 
 

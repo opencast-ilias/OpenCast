@@ -7,8 +7,6 @@ require_once('class.ilObjOpenCastAccess.php');
  * OpenCast repository object plugin
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @author  Martin Studer <ms@studer-raimann.ch>
- * @author  Gabriel Comte <gc@studer-raimann.ch>
  *
  * @version 1.0.00
  *
@@ -37,7 +35,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInt
 	 * @return string
 	 */
 	public function txt($a_var) {
-		return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
+		return xoctDynLan::getInstance($this, xoctDynLan::MODE_PROD)->txt($a_var);
 	}
 
 

@@ -13,6 +13,24 @@ class xoctConf extends ActiveRecord {
 	const F_CURL_USERNAME = 'curl_username';
 	const F_CURL_PASSWORD = 'curl_password';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+	const F_API_BASE= 'api_base';
+	const F_ACTIVATE_CACHE = 'activate_cache';
+
+
+	public static function setApiSettings() {
+		$xoctCurlSettings = new xoctCurlSettings();
+		$xoctCurlSettings->setUsername(self::get(self::F_CURL_USERNAME));
+		$xoctCurlSettings->setPassword(self::get(self::F_CURL_PASSWORD));
+		$xoctCurlSettings->setVerifyPeer(false);
+		$xoctCurlSettings->setVerifyHost(false);
+		$xoctCurlSettings->setDebugLevel(self::get(self::F_CURL_DEBUG_LEVEL));
+		xoctCurl::init($xoctCurlSettings);
+		xoctCache::setOverrideActive(true);
+		$xoctRequestSettings = new xoctRequestSettings();
+		$xoctRequestSettings->setApiBase(self::get(self::F_API_BASE));
+		xoctRequest::init($xoctRequestSettings);
+		xoctCache::setOverrideActive(self::get(self::F_ACTIVATE_CACHE));
+	}
 
 
 	/**

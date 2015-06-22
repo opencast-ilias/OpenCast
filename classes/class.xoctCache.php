@@ -26,16 +26,7 @@ class xoctCache extends ilGlobalCache {
 	 * @return ilGlobalCache
 	 */
 	public static function getInstance() {
-		$component = self::COMP_OPENCAST;
-		if (! isset(self::$instances[$component])) {
-			$service_type = self::getComponentType($component);
-			$service_type = self::TYPE_APC;
-			$ilGlobalCache = new self($service_type, $component);
-
-			self::$instances[$component] = $ilGlobalCache;
-		}
-
-		return self::$instances[$component];
+		return new self(self::TYPE_APC, self::COMP_OPENCAST);
 	}
 
 
@@ -43,8 +34,7 @@ class xoctCache extends ilGlobalCache {
 	 * @return bool
 	 */
 	public function isActive() {
-		return true;
-//		return self::isOverrideActive();
+		return self::isOverrideActive();
 	}
 
 
@@ -61,6 +51,42 @@ class xoctCache extends ilGlobalCache {
 	 */
 	public static function setOverrideActive($override_active) {
 		self::$override_active = $override_active;
+	}
+
+
+	/**
+	 * @param      $key
+	 * @param      $value
+	 * @param null $ttl
+	 *
+	 * @return bool
+	 */
+	public function set($key, $value, $ttl = NULL) {
+		if (! $this->isActive()) {
+			return false;
+		}
+		$this->global_cache->setValid($key);
+
+		return $this->global_cache->set($key, $this->global_cache->serialize($value), $ttl);
+	}
+
+
+	public function get($key) {
+		if (! $this->isActive()) {
+			return false;
+		}
+		$unserialized_return = $this->global_cache->unserialize($this->global_cache->get($key));
+		if ($unserialized_return) {
+
+			if ($this->global_cache->isValid($key)) {
+
+				return $unserialized_return;
+			} else {
+				//				var_dump($key); // FSX
+			}
+		}
+
+		return NULL;
 	}
 }
 
