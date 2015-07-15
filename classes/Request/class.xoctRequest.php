@@ -19,16 +19,21 @@ class xoctRequest {
 
 	/**
 	 * @param string $as_user
+	 * @param array  $roles
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function get($as_user = '') {
+	public function get($as_user = '', array $roles = array()) {
 		$url = $this->getUrl();
 
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		if ($as_user) {
 			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+		}
+
+		if (count($roles) > 0) {
+			$xoctCurl->addHeader('X-RUN-WITH-ROLES: ' . implode(',', $roles));
 		}
 
 		$xoctCurl->get();
@@ -172,7 +177,7 @@ class xoctRequest {
 	 * @param string $identifier
 	 *
 	 * @return $this
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	public function events($identifier = '') {
 		$this->checkRoot();
@@ -380,19 +385,19 @@ class xoctRequest {
 	/**
 	 * @param array $supported_branches
 	 *
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	protected function checkBranch(array $supported_branches) {
 		$supported_branches[] = self::BRANCH_OTHER;
 		if (! in_array($this->branch, $supported_branches)) {
-			throw new xoctExeption(xoctExeption::API_CALL_UNSUPPORTED);
+			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}
 	}
 
 
 	protected function checkRoot() {
 		if (count($this->parts) > 0 OR $this->branch != self::BRANCH_OTHER) {
-			throw new xoctExeption(xoctExeption::API_CALL_UNSUPPORTED);
+			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}
 	}
 }

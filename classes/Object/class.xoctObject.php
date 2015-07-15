@@ -26,14 +26,14 @@ abstract class xoctObject {
 		$existing = xoctCache::getInstance()->get($key);
 
 		if ($existing) {
-			xoctLog::getInstance()->write('used cached: ' . $key);
+			xoctLog::getInstance()->write('used cached: ' . $key, xoctLog::DEBUG_LEVEL_3);
 
 			return $existing;
 		}
 
 		$var = new $class_name($identifier);
 		xoctCache::getInstance()->set($key, $var);
-		xoctLog::getInstance()->write('cached not used: ' . $key);
+		xoctLog::getInstance()->write('cached not used: ' . $key, xoctLog::DEBUG_LEVEL_3);
 
 		return $var;
 	}
@@ -68,6 +68,32 @@ abstract class xoctObject {
 		$array = (array)$data;
 
 		return $array;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function __toCsv($separator = ';', $line_separator = "\n\r") {
+		$csv = '';
+		foreach ($this->__toArray() as $k => $v) {
+			switch (true) {
+				case $v instanceof DateTime:
+					$csv .= $k . $separator . date(DATE_ISO8601, $v->getTimestamp()) . $line_separator;
+					break;
+				case $v instanceof stdClass:
+				case is_array($v):
+				case $v === NULL:
+				case $v === false:
+				case $v === '':
+					break;
+				default:
+					$csv .= $k . $separator . $v . $line_separator;
+					break;
+			}
+		}
+
+		return $csv;
 	}
 
 

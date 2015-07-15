@@ -14,6 +14,10 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctEvent extends xoctObject {
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
+	/**
+	 * @var string
+	 */
+	protected static $publication_preview = 'engage-player';
 
 
 	/**
@@ -22,6 +26,15 @@ class xoctEvent extends xoctObject {
 	 * @return xoctEvent[]
 	 */
 	public static function getFiltered(array $filter) {
+		$check_cache = count($filter) == 1 AND isset($filter['series']);
+		if ($check_cache) {
+			$key = 'unfiltered_list' . $filter['series'];
+			$existing = xoctCache::getInstance()->get($key);
+			if ($existing) {
+				return $existing;
+			}
+		}
+
 		/**
 		 * @var $xoctEvent xoctEvent
 		 */
@@ -34,11 +47,15 @@ class xoctEvent extends xoctObject {
 
 			$request->parameter('filter', $filter_string);
 		}
+		$request->parameter('limit', 1000);
 		$data = json_decode($request->get());
 		$return = array();
 		foreach ($data as $d) {
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->__toArray();
+		}
+		if ($check_cache) {
+			xoctCache::getInstance()->set($key, $return);
 		}
 
 		return $return;
@@ -63,6 +80,9 @@ class xoctEvent extends xoctObject {
 		$this->setCreated(new DateTime($data->created));
 		$this->setStartTime(new DateTime($data->start_time));
 		$this->loadPublications();
+		if ($this->getIdentifier()) {
+			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
+		}
 		$this->loadAcl();
 	}
 
@@ -78,7 +98,12 @@ class xoctEvent extends xoctObject {
 		$processing = $this->getProcessing();
 		$data['processing'] = json_encode($processing);
 
-		$data['acl'] = json_encode(xoctAcl::getStandardSet());
+		//		$data['acl'] = json_encode(xoctAcl::getStandardSet());
+		$acls = array();
+		foreach ($this->getAcls() as $acl) {
+			$acls[] = $acl->__toStdClass();
+		}
+		$data['acl'] = json_encode($acls);
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$data['presenter'] = $presenter->getCurlString();
@@ -92,14 +117,12 @@ class xoctEvent extends xoctObject {
 	public function update() {
 		$data = array();
 		$this->updateMetadataFromFields();
-
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 
 		$acls = array();
 		foreach ($this->getAcls() as $acl) {
 			$acls[] = $acl->__toStdClass();
 		}
-
 		$data['acl'] = json_encode($acls);
 
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
@@ -115,9 +138,63 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 * @return string
+	 */
+	public function getThumbnailUrl() {
+		$thumbnail = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL));
+		if (! $thumbnail) {
+			$thumbnail = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK));
+		}
+
+		return $thumbnail ? $thumbnail : './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
+	}
+
+
+	protected function getPublicationMetadataForUsage($thumbnail) {
+		/**
+		 * @var $thumbnail  xoctPublicationUsage
+		 * @var $attachment xoctAttachment
+		 * @var $media      xoctMedia
+		 */
+		$medias = array();
+		$attachments = array();
+		foreach ($this->getPublications() as $publication) {
+			$medias = array_merge($medias, $publication->getMedia());
+			$attachments = array_merge($attachments, $publication->getAttachments());
+		}
+		if ($thumbnail instanceof xoctPublicationUsage) {
+			switch ($thumbnail->getMdType()) {
+				case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
+					foreach ($attachments as $attachment) {
+						if ($attachment->getFlavor() == $thumbnail->getFlavor()) {
+							return $attachment->getUrl();
+						}
+					}
+					break;
+				case xoctPublicationUsage::MD_TYPE_MEDIA:
+					foreach ($medias as $media) {
+						if ($media->getFlavor() == $thumbnail->getFlavor()) {
+							return $media->getUrl();
+						}
+					}
+					break;
+				case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
+					break;
+			}
+		}
+
+		return NULL;
+	}
+
+
+	/**
+	 * @return xoctPublication
+	 * @deprecated
+	 */
 	public function getPresentationPublication() {
 		foreach ($this->getPublications() as $publication) {
-			if ($publication->getChannel() == 'engage-player') {
+			if ($publication->getChannel() == self::$publication_preview) {
 				return $publication;
 			}
 		}
@@ -126,14 +203,19 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 * @return xoctAttachment|xoctMedia
+	 * @deprecated
+	 */
 	public function getPreviewAttachment() {
-		$xoctPublicationUsage = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PREVIEW);
+		//		xoctCache::flushAll();
+		$xoctPublicationUsage = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API);
 		foreach ($this->getPublications() as $publication) {
-			if ($publication->getChannel() == $xoctPublicationUsage->getPublicationId()) {
+			if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
 				switch ($xoctPublicationUsage->getMdType()) {
 					case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
 						foreach ($publication->getAttachments() as $attachment) {
-							if ($attachment->getFlavor() == $xoctPublicationUsage->getExtId()) {
+							if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
 								return $attachment;
 							}
 						}
@@ -142,7 +224,7 @@ class xoctEvent extends xoctObject {
 						break;
 					case xoctPublicationUsage::MD_TYPE_MEDIA:
 						foreach ($publication->getMedia() as $media) {
-							if ($media->getFlavor() == $xoctPublicationUsage->getExtId()) {
+							if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
 								return $media;
 							}
 						}
@@ -186,6 +268,7 @@ class xoctEvent extends xoctObject {
 	public function loadMetadata() {
 		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
+
 			foreach ($data as $d) {
 				if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
 					$xoctMetadata = new xoctMetadata();
@@ -193,6 +276,9 @@ class xoctEvent extends xoctObject {
 					$this->setMetadata($xoctMetadata);
 				}
 			}
+		}
+		if (! $this->getMetadata()) {
+			$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
 		}
 	}
 
@@ -564,6 +650,14 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @param xoctAcl $acl
+	 */
+	public function addAcl(xoctAcl $acl) {
+		$this->acls[] = $acl;
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function getSeriesIdentifier() {
@@ -605,8 +699,9 @@ class xoctEvent extends xoctObject {
 	 * @return stdClass
 	 */
 	protected function getProcessing() {
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 		$processing = new stdClass();
-		$processing->workflow = "ng-schedule-and-upload";
+		$processing->workflow = xoctConf::get(xoctConf::F_WORKFLOW);
 		$processing->configuration->flagForCutting = "false";
 		$processing->configuration->flagForReview = "false";
 		$processing->configuration->publishToEngage = "false";

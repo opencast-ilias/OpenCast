@@ -1,27 +1,53 @@
 <!-- language file start -->
 common_actions#:#Actions
+config_activate_cache#:#Activate Cache
 config_api_base#:#Api-Base-URL
 config_cancel#:#Cancel
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_log_level_0#:#Deactivated
+config_log_level_1#:#LOW
+config_log_level_2#:#MEDIUM
+config_log_level_3#:#HIGH
+config_log_level_4#:#ULTRA
 config_msg_success#:#Saved
+config_role_anonymous#:#Anonymous
+config_role_ext_application#:#External Application
+config_role_external_application_member#:#External Application Member
+config_role_federation_member#:#Federation-Member
+config_role_ivt_email_prefix#:#Prefix for IVT-User-role (E-Mail is attached)
+config_role_ivt_external_prefix#:#Prefix for IVT-User-role (Ext-Account is attached)
+config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
+config_role_producer#:#Producer
+config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
+config_roles#:#OpenCast-Roles
 config_update#:#Update
+config_user_mapping#:#User-Mapping
+config_workflow#:#Workflow-ID
 event_add_new#:#Add Clip
 event_cancel#:#Cancel
+event_clear_cache#:#Clear Cache
 event_clips#:#Clips
 event_create#:#Upload Clip
+event_created#:#Created
+event_creator#:#Creator
 event_date#:#Date
 event_description#:#Description
+event_duration#:#Duration
 event_edit#:#Edit Clip
 event_file_presenter#:#File
+event_identifier#:#ID
 event_location#:#Location
 event_msg_success#:#Saved changes
 event_owner#:#Owner
 event_presenter#:#Presenter
+event_presenters#:#Presenters
 event_preview#:#Preview
+event_processing_state#:#State
 event_recording_station#:#Recording Station
+event_start_time#:#Start
 event_title#:#Title
 event_update#:#Save
 event_view#:#View
@@ -42,12 +68,15 @@ groups_participants_header#:#Participants
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel
+publication_usage_channel#:#Channel
 publication_usage_create#:#Create
 publication_usage_delete#:#Delete
 publication_usage_description#:#Description
 publication_usage_edit#:#Edit
 publication_usage_ext_id#:#Metadata-ID
+publication_usage_flavor#:#Flavor
 publication_usage_md_type#:#Type
+publication_usage_md_type_0#:#Publication itself
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
 publication_usage_md_type_select#:#Select...
@@ -55,10 +84,10 @@ publication_usage_msg_success#:#Saved
 publication_usage_publication_id#:#Publication-ID
 publication_usage_select_usage_id#:#Usage
 publication_usage_title#:#Title
-publication_usage_type_annotations#:#Link to Annotations
-publication_usage_type_mov#:#Link to MOV-Player
-publication_usage_type_mp4#:#Link to MP4-Player
-publication_usage_type_preview#:#URL of Preview-Image
+publication_usage_type_annotate#:#Annotate
+publication_usage_type_api#:#API
+publication_usage_type_player#:#Player
+publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 series_accept_eula#:#I accept the agreement
@@ -101,6 +130,8 @@ system_account_update#:#Update
 tab_event_index#:#Content
 tab_groups#:#Groups
 tab_info#:#Info
+tab_list_all#:#All Clips
+tab_migrate_event#:#Import Event
 tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings

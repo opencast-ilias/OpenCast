@@ -4,6 +4,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctMetadata.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAcl.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Properties/class.xoctProperties.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 
 /**
  * Class xoctSeries
@@ -58,19 +59,19 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->__toStdClass()
 		));
 
-		$unibe = new xoctAcl();
-		$unibe->setRole('ROLE_UNIBE.CH_MEMBER');
-		$unibe->setAllow(true);
-		$unibe->setAction(xoctAcl::READ);
-		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite(), $unibe->__toStdClass() ));
-		 $array['theme'] = $this->getTheme();
+		foreach ($this->getAccessPolicies() as $acl) {
+			$acls[] = $acl->__toStdClass();
+		}
 
-		$data = json_decode(xoctRequest::root()->series()->post($array, 'fschmid@unibe.ch'));
+		$array['acl'] = json_encode($acls);
+		$array['theme'] = $this->getTheme();
+
+		$data = json_decode(xoctRequest::root()->series()->post($array));
 
 		if ($data->identifier) {
 			$this->setIdentifier($data->identifier);
 		} else {
-			throw new xoctExeption(xoctExeption::API_CREATION_FAILED);
+			throw new xoctException(xoctException::API_CREATION_FAILED);
 		}
 	}
 
@@ -150,7 +151,8 @@ class xoctSeries extends xoctObject {
 			return $existing;
 		}
 		$return = array();
-		$data = json_decode(xoctRequest::root()->series()->get($user_string));
+		//		$data = json_decode(xoctRequest::root()->series()->get($user_string));
+		$data = json_decode(xoctRequest::root()->series()->get('', array( 'ROLE_ORG_PRODUCER', 'ROLE_EXTERNAL_APPLICATION' )));
 		foreach ($data as $d) {
 			$obj = new self();
 			$obj->loadFromStdClass($d);
@@ -317,6 +319,14 @@ class xoctSeries extends xoctObject {
 	 */
 	public function setAccessPolicies($access_policies) {
 		$this->access_policies = $access_policies;
+	}
+
+
+	/**
+	 * @param xoctAcl $access_policy
+	 */
+	public function addAccessPolicy(xoctAcl $access_policy) {
+		$this->access_policies[] = $access_policy;
 	}
 
 

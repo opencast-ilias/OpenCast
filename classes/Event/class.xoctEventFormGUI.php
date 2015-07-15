@@ -11,6 +11,15 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_TITLE = 'title';
 	const F_DESCRIPTION = 'description';
 	const F_FILE_PRESENTER = 'file_presenter';
+	const F_FILE_PRESENTATION = 'file_presenter';
+	const F_IDENTIFIER = 'identifier';
+	const F_CREATOR = 'creator';
+	const F_DURATION = 'duration';
+	const F_PROCESSING_STATE = 'processing_state';
+	const F_START_TIME = 'start_time';
+	const F_LOCATION = 'location';
+	const F_PRESENTERS = 'presenters';
+	const F_CREATED = 'created';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -75,6 +84,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
+		$te->setRequired(true);
 		$this->addItem($te);
 	}
 
@@ -83,6 +93,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$array = array(
 			self::F_TITLE => $this->object->getTitle(),
 			self::F_DESCRIPTION => $this->object->getDescription(),
+			self::F_IDENTIFIER => $this->object->getIdentifier(),
+			self::F_CREATOR => $this->object->getCreator(),
+			self::F_CREATED => $this->object->getCreated(),
+			self::F_DURATION => $this->object->getDuration(),
+			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
+			self::F_START_TIME => $this->object->getStartTime(),
+			self::F_LOCATION => $this->object->getLocation(),
+			self::F_PRESENTERS => $this->object->getPresenters(),
 		);
 
 		$this->setValuesByArray($array);
@@ -136,7 +154,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->object->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-			$this->object->create($_FILES[self::F_FILE_PRESENTER]);
+			$this->object->create();
 		}
 
 		return $this->object->getIdentifier();
@@ -144,20 +162,52 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 
 	protected function initButtons() {
-		if ($this->is_new) {
-			$this->setTitle($this->txt('create'));
-			$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
-		} else {
-			$this->setTitle($this->txt('edit'));
-			$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
+		switch (true) {
+			case  $this->is_new AND ! $this->view:
+				$this->setTitle($this->txt('create'));
+				$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
+				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				break;
+			case  ! $this->is_new AND ! $this->view:
+				$this->setTitle($this->txt('edit'));
+				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
+				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				break;
+			case $this->view:
+				$this->setTitle($this->txt('view'));
+				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				break;
 		}
-
-		$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 	}
 
 
 	protected function initView() {
 		$this->initForm();
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_IDENTIFIER), self::F_IDENTIFIER);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATOR), self::F_CREATOR);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATED), self::F_CREATED);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_DURATION), self::F_DURATION);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_PROCESSING_STATE), self::F_PROCESSING_STATE);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_START_TIME), self::F_START_TIME);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		$this->addItem($te);
+
+		$te = new ilNonEditableValueGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$this->addItem($te);
+
 		/**
 		 * @var $item ilNonEditableValueGUI
 		 */
@@ -166,6 +216,25 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->removeItemByPostVar($item->getPostVar());
 			$this->addItem($te);
 		}
+		$te = new ilCustomInputGUI('detail', 'detail');
+		$te->setHtml('<table><tr><td>' . $this->object->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
+		$this->addItem($te);
+	}
+
+
+	/**
+	 * @return xoctEvent
+	 */
+	public function getObject() {
+		return $this->object;
+	}
+
+
+	/**
+	 * @param xoctEvent $object
+	 */
+	public function setObject($object) {
+		$this->object = $object;
 	}
 }
 

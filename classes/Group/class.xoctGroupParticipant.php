@@ -68,7 +68,7 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @param $ref_id
 	 *
 	 * @return xoctGroupParticipant[]
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	public static function getAvailable($ref_id) {
 		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
@@ -82,7 +82,7 @@ class xoctGroupParticipant extends ActiveRecord {
 		 */
 		while (ilObject2::_lookupType($ref_id, true) != 'crs') {
 			if ($ref_id == 1) {
-				throw new xoctExeption(xoctExeption::OBJECT_WRONG_PARENT);
+				throw new xoctException(xoctException::OBJECT_WRONG_PARENT);
 			}
 			$ref_id = $tree->getParentId($ref_id);
 		}

@@ -24,7 +24,7 @@ $(document).ready(function () {
 			console.log(data);
 
 			$('#title').val(data.title);
-			$('#description').val(data.identifier);
+			$('#description').val(data.description);
 			$('#introduction_text').val('');
 			$('#license').val(data.license);
 			$('#department').val(data.department);

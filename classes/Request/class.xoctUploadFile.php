@@ -49,7 +49,7 @@ class xoctUploadFile {
 	 * @return string
 	 */
 	public function getCurlString() {
-		return '@' . $this->getFilePath() . ';filename=' . $this->getPostVar();
+		return '@' . $this->getFilePath() . ';filename=' . $this->getTitle();
 	}
 
 

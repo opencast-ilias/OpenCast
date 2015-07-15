@@ -2,6 +2,7 @@
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurl.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 
 /**
  * Class xoctConfFormGUI
@@ -64,11 +65,38 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
-		$te->setOptions(array( xoctCurl::DEBUG_DEACTIVATED, xoctCurl::DEBUG_LEVEL_1, xoctCurl::DEBUG_LEVEL_2, xoctCurl::DEBUG_LEVEL_3 ));
+		$te->setOptions(array(
+			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
+			xoctLog::DEBUG_LEVEL_1 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
+			xoctLog::DEBUG_LEVEL_2 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_2),
+			xoctLog::DEBUG_LEVEL_3 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
+			xoctLog::DEBUG_LEVEL_4 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
+		));
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
 		$this->addItem($cb);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_WORKFLOW), xoctConf::F_WORKFLOW);
+		$te->setRequired(true);
+		$this->addItem($te);
+
+		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_USER_MAPPING), xoctConf::F_USER_MAPPING);
+		$te->setOptions(array(
+			xoctUser::MAP_EXT_ID => 'External-ID',
+			xoctUser::MAP_EMAIL => 'E-Mail'
+		));
+		$this->addItem($te);
+
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('roles'));
+		$this->addItem($h);
+
+		foreach (xoctConf::$roles as $role) {
+			$te = new ilTextInputGUI($this->parent_gui->txt($role), $role);
+			$te->setRequired(true);
+			$this->addItem($te);
+		}
 	}
 
 

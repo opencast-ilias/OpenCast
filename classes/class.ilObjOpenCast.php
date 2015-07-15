@@ -67,7 +67,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doRead() {
-		xoctConf::setApiSettings();
 	}
 
 

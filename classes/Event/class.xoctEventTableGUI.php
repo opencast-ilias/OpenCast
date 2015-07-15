@@ -69,8 +69,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = xoctEvent::find($a_set['identifier']);
-		if ($xoctEvent->getPreviewAttachment()->getUrl()) {
-			$this->tpl->setVariable('PREVIEW', $xoctEvent->getPreviewAttachment()->getUrl());
+		if ($xoctEvent->getThumbnailUrl()) {
+			$this->tpl->setVariable('PREVIEW', $xoctEvent->getThumbnailUrl());
 		} else {
 			// preview
 		}

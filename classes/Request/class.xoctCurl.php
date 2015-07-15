@@ -1,6 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctLog.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctExeption.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctException.php');
 require_once('class.xoctCurlSettings.php');
 require_once('class.xoctCurlError.php');
 
@@ -15,7 +15,6 @@ class xoctCurl {
 	 * @param xoctCurlSettings $xoctCurlSettings
 	 */
 	public static function init(xoctCurlSettings $xoctCurlSettings) {
-		self::$DEBUG = $xoctCurlSettings->getDebugLevel();
 		self::$ip_v4 = $xoctCurlSettings->isIpV4();
 		self::$ssl_version = $xoctCurlSettings->getSslVersion();
 		self::$verify_host = $xoctCurlSettings->isVerifyHost();
@@ -25,18 +24,10 @@ class xoctCurl {
 	}
 
 
-	const DEBUG_DEACTIVATED = 0;
-	const DEBUG_LEVEL_1 = 1;
-	const DEBUG_LEVEL_2 = 2;
-	const DEBUG_LEVEL_3 = 3;
 	/**
 	 * @var int
 	 */
 	protected static $r_no = 1;
-	/**
-	 * @var int
-	 */
-	protected static $DEBUG = self::DEBUG_DEACTIVATED;
 
 
 	public function get() {
@@ -86,10 +77,6 @@ class xoctCurl {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		}
 
-		if (self::$DEBUG) {
-			$this->debug($ch);
-		}
-
 		$this->prepare($ch);
 
 		if ($this->getRequestContentType()) {
@@ -97,9 +84,9 @@ class xoctCurl {
 		}
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
-
+		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
-
+		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
 		if ($resp_orig === false) {
 			$this->setResponseError(new xoctCurlError($ch));
 			curl_close($ch);
@@ -109,19 +96,13 @@ class xoctCurl {
 		$this->setResponseContentSize(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 		$this->setResponseStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		if (self::$DEBUG > 0) {
-			xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms');
-		}
+		xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms', xoctLog::DEBUG_LEVEL_2);
 
 		if ($this->getResponseStatus() > 299) {
-			if (self::$DEBUG > 1) {
-				xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus());
-			}
-			if (self::$DEBUG > 2) {
-				xoctLog::getInstance()->write('Response:' . $resp_orig);
-			}
+			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
+			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
 
-			throw new xoctExeption(xoctExeption::API_CALL_STATUS_500, $resp_orig);
+			throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
 		}
 		curl_close($ch);
 	}
@@ -553,7 +534,7 @@ class xoctCurl {
 	/**
 	 * @param $ch
 	 *
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	protected function preparePut($ch) {
 		if ($this->getPostFields()) {
@@ -581,10 +562,8 @@ class xoctCurl {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_body);
 		$this->setPostBody(implode('&', $post_body));
 
-		if (self::$DEBUG > 2) {
-			xoctLog::getInstance()->write('POST-Body');
-			xoctLog::getInstance()->write($this->getPostBody());
-		}
+		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_3);
+		xoctLog::getInstance()->write($this->getPostBody(), xoctLog::DEBUG_LEVEL_3);
 	}
 
 
@@ -593,14 +572,17 @@ class xoctCurl {
 	 */
 	protected function debug($ch) {
 		$xoctLog = xoctLog::getInstance();
-		$xoctLog->write('execute *************************************************');
-		$xoctLog->write($this->getUrl());
-		$xoctLog->write($this->getRequestType());
-		if (self::$DEBUG > 2) {
-			curl_setopt($ch, CURLOPT_VERBOSE, true);
-			$handle = fopen(xoctLog::getFullPath(), 'a');
-			curl_setopt($ch, CURLOPT_STDERR, $handle);
+		$xoctLog->write('execute *************************************************', xoctLog::DEBUG_LEVEL_1);
+		$xoctLog->write($this->getUrl(), xoctLog::DEBUG_LEVEL_1);
+		$xoctLog->write($this->getRequestType(), xoctLog::DEBUG_LEVEL_1);
+		$backtrace = "Backtrace: \n";
+		foreach (debug_backtrace() as $b) {
+			$backtrace .= $b['file'] . ': ' . $b["function"] . "\n";
 		}
+		$xoctLog->write($backtrace, xoctLog::DEBUG_LEVEL_4);
+
+		curl_setopt($ch, CURLOPT_VERBOSE, true);
+		curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'a'));
 	}
 
 

@@ -35,7 +35,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		$form->setTitle($this->txt('select_usage_id'));
 		$form->addCommandButton(self::CMD_ADD, $this->txt(self::CMD_ADD));
 		$form->addCommandButton(self::CMD_CANCEL, $this->txt(self::CMD_CANCEL));
-		$sel = new ilSelectInputGUI($this->txt(xoctPublicationUsageFormGUI::F_PUBLICATION_ID), xoctPublicationUsageFormGUI::F_PUBLICATION_ID);
+		$sel = new ilSelectInputGUI($this->txt(xoctPublicationUsageFormGUI::F_CHANNEL), xoctPublicationUsageFormGUI::F_CHANNEL);
 		$options = array();
 		foreach (xoctPublicationUsage::getMissingUsageIds() as $id) {
 			$options[$id] = $this->txt('type_' . $id);
@@ -48,12 +48,12 @@ class xoctPublicationUsageGUI extends xoctGUI {
 
 
 	protected function add() {
-		if (! $_POST[xoctPublicationUsageFormGUI::F_PUBLICATION_ID]) {
+		if (! $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]) {
 			$this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID);
 		}
 		$xoctPublicationUsage = new xoctPublicationUsage();
-		$xoctPublicationUsage->setUsageId($_POST[xoctPublicationUsageFormGUI::F_PUBLICATION_ID]);
-		$xoctPublicationUsage->setTitle($this->txt('type_' . $_POST[xoctPublicationUsageFormGUI::F_PUBLICATION_ID]));
+		$xoctPublicationUsage->setUsageId($_POST[xoctPublicationUsageFormGUI::F_CHANNEL]);
+		$xoctPublicationUsage->setTitle($this->txt('type_' . $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]));
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $xoctPublicationUsage);
 		$xoctPublicationUsageFormGUI->fillForm();
 		$this->tpl->setContent($xoctPublicationUsageFormGUI->getHTML());

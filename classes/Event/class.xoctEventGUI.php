@@ -13,6 +13,7 @@ require_once('class.xoctEventFormGUI.php');
 class xoctEventGUI extends xoctGUI {
 
 	const IDENTIFIER = 'eid';
+	const CMD_CLEAR_CACHE = 'clearCache';
 
 
 	/**
@@ -26,7 +27,8 @@ class xoctEventGUI extends xoctGUI {
 			$this->xoctOpenCast = new xoctOpenCast();
 		}
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
-		$this->tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/xoct.css');
+		$this->tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
+		$this->tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');
 	}
 
 
@@ -34,9 +36,16 @@ class xoctEventGUI extends xoctGUI {
 		if (ilObjOpenCastAccess::hasWriteAccess()) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
-			$b->setUrl($this->ctrl->getLinkTarget($this, xoctEventGUI::CMD_ADD));
+			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
 			$b->setPrimary(true);
 			$this->toolbar->addButtonInstance($b);
+
+			if (xoctConf::get(xoctConf::F_ACTIVATE_CACHE)) {
+				$b = ilLinkButton::getInstance();
+				$b->setCaption('rep_robj_xoct_event_clear_cache');
+				$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
+				$this->toolbar->addButtonInstance($b);
+			}
 		}
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($xoctEventTableGUI->getHTML());
@@ -50,8 +59,13 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function create() {
+		global $ilUser;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
+		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
+		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getEvent());
+
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
@@ -89,8 +103,9 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function view() {
-		$event = xoctEvent::find($_GET[self::IDENTIFIER]);
-		$this->tpl->setContent('<pre>' . print_r($event->__toArray(), true) . '</pre>');
+		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast, true);
+		$xoctEventFormGUI->fillForm();
+		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -108,7 +123,7 @@ class xoctEventGUI extends xoctGUI {
 		$ids = array();
 		foreach ($data as $d) {
 			$event = xoctEvent::find($d->identifier);
-			$ids[$event->getIdentifier()] = $event->getTitle() . ' ( ' . $event->getIdentifier() . ' )';
+			$ids[$event->getIdentifier()] = $event->getTitle() . ' (...' . substr($event->getIdentifier(), - 4, 4) . ')';
 		}
 		array_multisort($ids);
 
@@ -122,12 +137,21 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var $event xoctEvent
 		 */
+		// $event = xoctEvent::find($_POST['import_identifier']);
 		$event = xoctEvent::find($_POST['import_identifier']);
+		$html = 'Series before set: ' . $event->getSeriesIdentifier() . '<br>';
 		$event->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-		$event->updateSeries();
+		$html .= 'Series after set: ' . $event->getSeriesIdentifier() . '<br>';
+		//		$event->updateSeries();
 		$event->update();
+		$html .= 'Series after update: ' . $event->getSeriesIdentifier() . '<br>';
+		//		echo '<pre>' . print_r($event, 1) . '</pre>';
+		$event = new xoctEvent($_POST['import_identifier']);
+		$html .= 'Series after new read: ' . $event->getSeriesIdentifier() . '<br>';
 
-		$this->ctrl->redirect($this, self::CMD_STANDARD);
+		//		$html .= 'POST: ' . $_POST['import_identifier'];
+		$this->tpl->setContent($html);
+		//		$this->ctrl->redirect($this, self::CMD_STANDARD);
 	}
 
 
@@ -142,6 +166,12 @@ class xoctEventGUI extends xoctGUI {
 			$content .= '<pre>' . print_r($event->__toStdClass(), 1) . '</pre>';
 		}
 		$this->tpl->setContent($content);
+	}
+
+
+	protected function clearCache() {
+		xoctCache::getInstance()->flush();
+		$this->cancel();
 	}
 
 

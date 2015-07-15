@@ -2,6 +2,7 @@
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 /**
  * Class xoctSeriesFormGUI
  *
@@ -81,7 +82,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	protected function initForm() {
-		xoctConf::setApiSettings();
+		global $ilUser;
+		$xoctUser = xoctUser::getInstance($ilUser);
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
@@ -93,10 +95,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
 					require_once('class.xoctSeries.php');
 					$existing_series = array();
-					foreach (xoctSeries::getAllForUser('fschmid@unibe.ch') as $serie) {
-						$existing_series[$serie->getIdentifier()] = $serie->getTitle();
+					foreach (xoctSeries::getAllForUser($xoctUser->getIdentifier()) as $serie) {
+						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
 					}
-					//				sort($existing_series);
+					array_multisort($existing_series);
 					$existing_identifier->setOptions($existing_series);
 					$existing->addSubItem($existing_identifier);
 				}
@@ -329,6 +331,29 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($te);
 		}
 	}
+
+
+	/**
+	 * @var xoctSeries
+	 */
+	protected $series;
+
+
+	/**
+	 * @return xoctSeries
+	 */
+	public function getSeries() {
+		return $this->series;
+	}
+
+
+	/**
+	 * @param xoctSeries $series
+	 */
+	public function setSeries($series) {
+		$this->series = $series;
+	}
+
 
 
 	protected static $disciplines = array(

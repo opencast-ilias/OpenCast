@@ -116,6 +116,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	public function executeCommand() {
 		try {
+			xoctConf::setApiSettings();
 			$cmd = $this->ctrl->getCmd();
 			$next_class = $this->ctrl->getNextClass($this);
 			$this->tpl->getStandardTemplate();
@@ -205,7 +206,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					}
 					break;
 			}
-		} catch (xoctExeption $e) {
+		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
 			$this->tpl->show();
 		}
@@ -275,8 +276,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	public function save() {
+		global $ilUser;
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
+		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->setValuesByPost();
+		$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getSeries());
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
