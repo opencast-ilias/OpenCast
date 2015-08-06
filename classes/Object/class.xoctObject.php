@@ -160,11 +160,32 @@ abstract class xoctObject {
 	 */
 	public function loadFromArray($array) {
 		foreach ($array as $k => $v) {
-			$this->{$k} = $v;
+			$this->{$k} = $this->wakeup($k, $v);
 		}
 		$this->afterObjectLoad();
 	}
 
+
+	/**
+	 * @param $fielname
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	protected function sleep($fieldname, $value) {
+		return $value;
+	}
+
+
+	/**
+	 * @param $fieldname
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	protected function wakeup($fieldname, $value) {
+		return $value;
+	}
 
 	protected function afterObjectLoad() {
 	}

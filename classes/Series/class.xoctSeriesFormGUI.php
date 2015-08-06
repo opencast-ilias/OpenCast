@@ -3,6 +3,7 @@ require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
+
 /**
  * Class xoctSeriesFormGUI
  *
@@ -261,10 +262,14 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @return bool|string
 	 */
-	public function saveObject() {
+	public function saveObject($obj_id = NULL) {
 		if (! $this->fillObject()) {
 			return false;
 		}
+		if ($obj_id) {
+			$this->cast->setObjId($obj_id);
+		}
+
 		if ($this->series->getIdentifier()) {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 			$this->series->update();
@@ -353,7 +358,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	public function setSeries($series) {
 		$this->series = $series;
 	}
-
 
 
 	protected static $disciplines = array(

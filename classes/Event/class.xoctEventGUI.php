@@ -2,6 +2,7 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
 require_once('class.xoctEventTableGUI.php');
 require_once('class.xoctEventFormGUI.php');
+require_once('class.xoctEventOwnerFormGUI.php');
 
 /**
  * Class xoctEventGUI
@@ -14,6 +15,8 @@ class xoctEventGUI extends xoctGUI {
 
 	const IDENTIFIER = 'eid';
 	const CMD_CLEAR_CACHE = 'clearCache';
+	const CMD_EDIT_OWNER = 'editOwner';
+	const CMD_UPDATE_OWNER = 'updateOwner';
 
 
 	/**
@@ -40,7 +43,7 @@ class xoctEventGUI extends xoctGUI {
 			$b->setPrimary(true);
 			$this->toolbar->addButtonInstance($b);
 
-			if (xoctConf::get(xoctConf::F_ACTIVATE_CACHE)) {
+			if (xoctCache::getInstance()->isActive()) {
 				$b = ilLinkButton::getInstance();
 				$b->setCaption('rep_robj_xoct_event_clear_cache');
 				$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
@@ -62,9 +65,9 @@ class xoctEventGUI extends xoctGUI {
 		global $ilUser;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
-		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
-		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getEvent());
+//		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
+//		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
+//		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getEvent());
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
@@ -172,6 +175,22 @@ class xoctEventGUI extends xoctGUI {
 	protected function clearCache() {
 		xoctCache::getInstance()->flush();
 		$this->cancel();
+	}
+
+
+	protected function editOwner() {
+		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventOwnerFormGUI->fillForm();
+		$this->tpl->setContent($xoctEventOwnerFormGUI->getHTML());
+	}
+
+
+	protected function updateOwner() {
+		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventOwnerFormGUI->setValuesByPost();
+		if($xoctEventOwnerFormGUI->saveObject()) {
+
+		}
 	}
 
 

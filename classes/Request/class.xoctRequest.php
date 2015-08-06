@@ -135,6 +135,7 @@ class xoctRequest {
 	const BRANCH_SERIES = 1;
 	const BRANCH_EVENTS = 2;
 	const BRANCH_BASE = 3;
+	const BRANCH_SECURITY = 4;
 	/**
 	 * @var array
 	 */
@@ -296,6 +297,38 @@ class xoctRequest {
 	//
 	//
 	//
+
+	//
+	// SECURITY
+	//
+	/**
+	 * @return $this
+	 * @throws xoctException
+	 */
+	public function security() {
+		$this->checkRoot();
+		$this->checkBranch(array( self::BRANCH_SECURITY ));
+		$this->branch = self::BRANCH_SECURITY;
+		$this->addPart('security');
+
+		return $this;
+	}
+
+
+	/**
+	 * @param $url
+	 *
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function sign($url) {
+		$this->checkBranch(array( self::BRANCH_SECURITY ));
+		$this->addPart('sign');
+		$data = array( 'url' => $url );
+
+		return $this->post($data);
+	}
+
 
 	/**
 	 * @param $part

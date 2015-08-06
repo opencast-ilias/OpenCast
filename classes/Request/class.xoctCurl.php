@@ -61,8 +61,9 @@ class xoctCurl {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getRequestType());
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		if (self::$ip_v4) {
-			//			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		}
+
 		if (self::$ssl_version) {
 			//			curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
 		}
@@ -580,9 +581,10 @@ class xoctCurl {
 			$backtrace .= $b['file'] . ': ' . $b["function"] . "\n";
 		}
 		$xoctLog->write($backtrace, xoctLog::DEBUG_LEVEL_4);
-
-		curl_setopt($ch, CURLOPT_VERBOSE, true);
-		curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'a'));
+		if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
+			curl_setopt($ch, CURLOPT_VERBOSE, true);
+			curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'a'));
+		}
 	}
 
 

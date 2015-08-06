@@ -33,11 +33,26 @@ require_once('class.ilObjOpenCast.php');
  */
 class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
+	const ROLE_MEMBER = 1;
+	const ROLE_ADMIN = 2;
+	const ROLE_TUTOR = 3;
 	const TXT_PERMISSION_DENIED = 'permission_denied';
 	/**
 	 * @var array
 	 */
 	protected static $cache = array();
+	/**
+	 * @var array
+	 */
+	protected static $members = array();
+	/**
+	 * @var array
+	 */
+	protected static $tutors = array();
+	/**
+	 * @var array
+	 */
+	protected static $admins = array();
 
 
 	/**
@@ -62,8 +77,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 		switch ($a_permission) {
 			case 'read':
-				if (! ilObjOpenCastAccess::checkOnline($a_obj_id) AND ! $ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)
-				) {
+				if (! ilObjOpenCastAccess::checkOnline($a_obj_id) AND ! $ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return true;
 				}
 				break;
@@ -105,9 +119,133 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		if ($ref_id === NULL) {
 			$ref_id = $_GET['ref_id'];
 		}
+		global $ilAccess;
 
-		return self::_checkAccess('write', 'write', $ref_id);
+		/**
+		 * @var $ilAccess ilAccesshandler
+		 */
+
+		return $ilAccess->checkAccess('write', '', $ref_id);
 	}
+
+
+	/**
+	 * @return int
+	 */
+	public static function getCourseRole() {
+		static $role;
+		if ($role) {
+			return $role;
+		}
+		global $ilUser;
+		self::initRoleMembers();
+		switch (true) {
+			case in_array($ilUser->getId(), self::$admins):
+				$role = self::ROLE_ADMIN;
+				break;
+			case in_array($ilUser->getId(), self::$members):
+				$role = self::ROLE_MEMBER;
+				break;
+			case in_array($ilUser->getId(), self::$tutors):
+				$role = self::ROLE_ADMIN;
+				break;
+		}
+
+		return $role;
+	}
+
+
+	protected static function initRoleMembers() {
+		static $init;
+		if ($init) {
+			return true;
+		}
+
+		$cp = new ilCourseParticipants(self::getCourseId());
+		self::setAdmins($cp->getAdmins());
+		self::setTutors($cp->getTutors());
+		self::setMembers($cp->getMembers());
+		$init = true;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public static function getCourseId() {
+		static $obj_id;
+		if ($obj_id) {
+			return $obj_id;
+		}
+		global $tree;
+		/**
+		 * @var $tree ilTree
+		 */
+		foreach ($tree->getNodePath($_GET['ref_id']) as $node) {
+			if ($node['type'] == 'crs') {
+				$obj_id = $node['obj_id'];
+			}
+		}
+
+		return $obj_id;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function getMembers() {
+		self::initRoleMembers();
+
+		return self::$members;
+	}
+
+
+	/**
+	 * @param array $members
+	 */
+	public static function setMembers($members) {
+		self::$members = $members;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function getTutors() {
+		self::initRoleMembers();
+
+		return self::$tutors;
+	}
+
+
+	/**
+	 * @param array $tutors
+	 */
+	public static function setTutors($tutors) {
+
+		self::$tutors = $tutors;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function getAdmins() {
+		self::initRoleMembers();
+
+		return self::$admins;
+	}
+
+
+	/**
+	 * @param array $admins
+	 */
+	public static function setAdmins($admins) {
+		self::$admins = $admins;
+	}
+
+
 
 
 	//	/**

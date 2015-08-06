@@ -90,6 +90,14 @@ class xoctLog extends ilLog {
 
 		return $log->getLogDir() . '/' . $log->getLogFile();
 	}
+
+
+	/**
+	 * @return int
+	 */
+	public static function getLogLevel() {
+		return self::$log_level;
+	}
 }
 
 ?>

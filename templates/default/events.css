@@ -1,4 +1,16 @@
 .xoct_preview_image {
 	width:  300px;
 	height: auto;
+	clear: both;
+
+}
+.xoct-state-running {
+	opacity: 0.5;
+}
+.event-state {
+	
+}
+
+.event-link-list{
+
 }

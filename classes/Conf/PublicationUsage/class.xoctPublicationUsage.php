@@ -13,6 +13,7 @@ class xoctPublicationUsage extends ActiveRecord {
 	const USAGE_API = 'api';
 	const USAGE_THUMBNAIL = 'thumbnail';
 	const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
+	const USAGE_DOWNLOAD = 'download';
 	const MD_TYPE_ATTACHMENT = 1;
 	const MD_TYPE_MEDIA = 2;
 	const MD_TYPE_PUBLICATION_ITSELF = 0;
@@ -25,6 +26,7 @@ class xoctPublicationUsage extends ActiveRecord {
 		self::USAGE_API,
 		self::USAGE_THUMBNAIL,
 		self::USAGE_THUMBNAIL_FALLBACK,
+		self::USAGE_DOWNLOAD,
 	);
 
 
@@ -46,6 +48,7 @@ class xoctPublicationUsage extends ActiveRecord {
 
 		return $missing;
 	}
+
 
 
 	/**

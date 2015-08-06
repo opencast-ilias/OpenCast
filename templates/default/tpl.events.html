@@ -1,9 +1,14 @@
-<tr class="{CSS_ROW}">
+<tr class="{CSS_ROW} {ADDITIONAL_CSS}">
 	<td class="std small">
 		<img class="xoct_preview_image" src="{PREVIEW}">
+		<p class="event-state">{STATE}</p>
 	</td>
 	<td class="std small">
-		{CLIPS}
+		<div class="btn-group-vertical" role="group" >
+			<!-- BEGIN link -->
+			<a href="{LINK_URL}" target="_blank" class="btn btn-info">{LINK_TEXT}</a>
+			<!-- END link -->
+		</div>
 	</td>
 	<td class="std small">
 		{TITLE}

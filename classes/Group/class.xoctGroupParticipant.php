@@ -188,7 +188,7 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	public function getXoctUser() {
 		if (! $this->xoct_user AND $this->getUserId()) {
-			$this->xoct_user = new xoctUser($this->getUserId());
+			$this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
 		}
 
 		return $this->xoct_user;

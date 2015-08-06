@@ -27,12 +27,12 @@ require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
 require_once('class.ilObjOpenCast.php');
 require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
 require_once('./Services/Repository/classes/class.ilRepUtilGUI.php');
+require_once('./Services/AccessControl/classes/class.ilPermissionGUI.php');
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctSeriesGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventGUI.php');
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupGUI.php');
 
 /**
@@ -102,7 +102,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->ctrl = $ilCtrl;
 		$this->tabs_gui = $ilTabs;
 		$this->pl = ilOpenCastPlugin::getInstance();
-		//		$this->pl->update();
 	}
 
 
@@ -130,8 +129,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 				$this->tpl->setTitle($this->object->getTitle());
 				$this->tpl->setDescription($this->object->getDescription());
 				if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-					//				$this->history->deleteSessionEntries();
-					//				$this->history->deleteDBEntries();
 					$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
 				}
 			} else {
@@ -142,10 +139,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 			switch ($next_class) {
 				case 'ilpermissiongui':
-					$this->tabs_gui->setTabActive('permissions');
+					$this->tabs_gui->setTabActive('id_permissions');
 					$perm_gui = new ilPermissionGUI($this);
 					//				$perm_gui->
 					$this->ctrl->forwardCommand($perm_gui);
+					$this->tpl->show();
 					break;
 				case 'ilinfoscreengui':
 					$info_gui = new ilInfoScreenGUI($this);
@@ -238,12 +236,24 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return bool
 	 */
 	protected function setTabs() {
+		global $lng, $ilUser;
 		$this->tabs_gui->addTab(self::TAB_EVENTS, $this->pl->txt('tab_event_index'), $this->ctrl->getLinkTarget(new xoctEventGUI(), xoctEventGUI::CMD_STANDARD));
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
-		$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
-		$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
-		$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
-		$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
+		if ($this->checkPermissionBool('write')) {
+			$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
+			$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+			if ($ilUser->getId() == 6) {
+				$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
+				$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
+			}
+		}
+
+		if ($this->checkPermissionBool("edit_permission")) {
+			$this->tabs_gui->addTab("id_permissions", $lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+				get_class($this),
+				"ilpermissiongui"
+			), "perm"));
+		}
 
 		return true;
 	}
@@ -276,12 +286,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	public function save() {
-		global $ilUser;
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
-		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->setValuesByPost();
-		$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getSeries());
+
+		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
+			global $ilUser;
+			$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
+			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getSeries());
+		}
+
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {

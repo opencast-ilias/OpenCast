@@ -151,8 +151,7 @@ class xoctSeries extends xoctObject {
 			return $existing;
 		}
 		$return = array();
-		//		$data = json_decode(xoctRequest::root()->series()->get($user_string));
-		$data = json_decode(xoctRequest::root()->series()->get('', array( 'ROLE_ORG_PRODUCER', 'ROLE_EXTERNAL_APPLICATION' )));
+		$data = json_decode(xoctRequest::root()->series()->get($user_string));
 		foreach ($data as $d) {
 			$obj = new self();
 			$obj->loadFromStdClass($d);

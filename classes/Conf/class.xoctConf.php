@@ -54,7 +54,7 @@ class xoctConf extends ActiveRecord {
 
 		//CACHE
 		xoctCache::setOverrideActive(self::get(self::F_ACTIVATE_CACHE));
-//		xoctCache::setOverrideActive(false);
+//		xoctCache::setOverrideActive(true);
 
 		// API
 		$xoctRequestSettings = new xoctRequestSettings();
@@ -63,7 +63,6 @@ class xoctConf extends ActiveRecord {
 
 		// LOG
 		xoctLog::init(self::get(self::F_CURL_DEBUG_LEVEL));
-		xoctLog::init(0);
 
 		// USER
 		xoctUser::setUserMapping(self::get(self::F_USER_MAPPING) ? self::get(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);

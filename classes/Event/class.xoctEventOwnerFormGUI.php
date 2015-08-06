@@ -1,25 +1,15 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
 /**
  * Class xoctEventFormGUI
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctEventFormGUI extends ilPropertyFormGUI {
+class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 
-	const F_TITLE = 'title';
-	const F_DESCRIPTION = 'description';
-	const F_FILE_PRESENTER = 'file_presenter';
-	const F_FILE_PRESENTATION = 'file_presenter';
-	const F_IDENTIFIER = 'identifier';
-	const F_CREATOR = 'creator';
-	const F_DURATION = 'duration';
-	const F_PROCESSING_STATE = 'processing_state';
-	const F_START_TIME = 'start_time';
-	const F_LOCATION = 'location';
-	const F_PRESENTERS = 'presenters';
-	const F_CREATED = 'created';
+	const F_OWNER = 'owner';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -45,7 +35,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	/**
 	 *
 	 */
-	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $view = false, $infopage = false, $external = true) {
+	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast) {
 		global $ilCtrl, $lng, $tpl;
 		$this->object = $object;
 		$this->xoctOpenCast = $xoctOpenCast;
@@ -55,16 +45,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->ctrl->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
 		$this->lng = $lng;
 		$this->is_new = ($this->object->getIdentifier() == '');
-		$this->view = $view;
-		$this->infopage = $infopage;
-		$this->external = $external;
-		xoctWaiterGUI::init();
-
-		if ($view) {
-			$this->initView();
-		} else {
-			$this->initForm();
-		}
+		$this->initForm();
 	}
 
 
@@ -73,34 +54,43 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
 
-		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$te->setRequired(true);
-		$this->addItem($te);
-
-		if ($this->is_new) {
-			$te = new ilFileInputGUI($this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
-			$te->setRequired(true);
-			$this->addItem($te);
+		$sel = new ilSelectInputGUI($this->txt(self::F_OWNER), self::F_OWNER);
+		$users = array();
+		foreach (ilObjOpenCastAccess::getMembers() as $member) {
+			$name = ilObjUser::_lookupName($member);
+			$users[$member] = $name['lastname'] . ', ' . $name['firstname'];
 		}
 
-		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
-		$te->setRequired(true);
-		$this->addItem($te);
+		$sel->setOptions($users);
+		$sel->setRequired(true);
+		$this->addItem($sel);
 	}
 
 
 	public function fillForm() {
+		global $ilUser;
+		foreach ($this->object->getAcls() as $acl) {
+//			echo '<pre>' . print_r($acl, 1) . '</pre>';
+			if ($acl->isIVTAcl()) {
+				$role = $acl->getRole();
+			}
+		}
+
+
+		$acl = new xoctAcl();
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::READ);
+		$acl->setRole(xoctUser::getInstance($ilUser)->getIVTRoleName());
+		$this->object->addAcl($acl);
+		$this->object->update();
+
+
+		$user_id = xoctUser::lookupUserIdForIVTRole($role);
+
+//		echo '<pre>' . print_r($role, 1) . '</pre>';
+
 		$array = array(
-			self::F_TITLE => $this->object->getTitle(),
-			self::F_DESCRIPTION => $this->object->getDescription(),
-			self::F_IDENTIFIER => $this->object->getIdentifier(),
-			self::F_CREATOR => $this->object->getCreator(),
-			self::F_CREATED => $this->object->getCreated(),
-			self::F_DURATION => $this->object->getDuration(),
-			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
-			self::F_START_TIME => $this->object->getStartTime(),
-			self::F_LOCATION => $this->object->getLocation(),
-			self::F_PRESENTERS => $this->object->getPresenter(),
+			self::F_OWNER => $this->object->getTitle(),
 		);
 
 		$this->setValuesByArray($array);
@@ -116,8 +106,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if (! $this->checkInput()) {
 			return false;
 		}
-		$this->object->setTitle($this->getInput(self::F_TITLE));
-		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
+		//$this->object->setTitle($this->getInput(self::F_OWNER));
 
 		return true;
 	}
@@ -150,34 +139,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if (! $this->fillObject()) {
 			return false;
 		}
-		if ($this->object->getIdentifier()) {
-			$this->object->update();
-		} else {
-			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-			$this->object->create();
-		}
 
-		return $this->object->getIdentifier();
+		//		$this->object->setAcls();
+
+		//		$this->object->update();
+
+		//		return $this->object->getIdentifier();
 	}
 
 
 	protected function initButtons() {
-		switch (true) {
-			case  $this->is_new AND ! $this->view:
-				$this->setTitle($this->txt('create'));
-				$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
-				break;
-			case  ! $this->is_new AND ! $this->view:
-				$this->setTitle($this->txt('edit'));
-				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
-				break;
-			case $this->view:
-				$this->setTitle($this->txt('view'));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
-				break;
-		}
+		$this->setTitle($this->txt('edit_owner'));
+		$this->addCommandButton(xoctEventGUI::CMD_UPDATE_OWNER, $this->txt(xoctEventGUI::CMD_UPDATE_OWNER));
+		$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 	}
 
 
@@ -225,18 +199,15 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$h->setTitle($pub->getChannel());
 			$this->addItem($h);
 
-						$te = new ilCustomInputGUI('Publication '.$pub->getChannel(), 'pub_'.$pub->getChannel());
-						$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-						$this->addItem($te);
-
+			$te = new ilCustomInputGUI('Publication ' . $pub->getChannel(), 'pub_' . $pub->getChannel());
+			$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
+			$this->addItem($te);
 
 			foreach ($pub->getMedia() as $med) {
 				$te = new ilCustomInputGUI($med->getId(), $med->getId());
 				$te->setHtml('<table><tr><td>' . $med->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
 				$this->addItem($te);
 			}
-
-
 		}
 
 		$h = new ilFormSectionHeaderGUI();

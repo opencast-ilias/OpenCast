@@ -71,18 +71,19 @@ class xoctCache extends ilGlobalCache {
 	}
 
 
+	/**
+	 * @param $key
+	 *
+	 * @return bool|mixed|null
+	 */
 	public function get($key) {
 		if (! $this->isActive()) {
 			return false;
 		}
 		$unserialized_return = $this->global_cache->unserialize($this->global_cache->get($key));
 		if ($unserialized_return) {
-
 			if ($this->global_cache->isValid($key)) {
-
 				return $unserialized_return;
-			} else {
-				//				var_dump($key); // FSX
 			}
 		}
 

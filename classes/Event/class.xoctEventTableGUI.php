@@ -1,7 +1,7 @@
 <?php
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctSecureLink.php');
 require_once('class.xoctEvent.php');
 require_once('./Services/Table/classes/class.ilTable2GUI.php');
 require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
@@ -69,17 +69,42 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = xoctEvent::find($a_set['identifier']);
-		if ($xoctEvent->getThumbnailUrl()) {
-			$this->tpl->setVariable('PREVIEW', $xoctEvent->getThumbnailUrl());
-		} else {
-			// preview
+
+		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xoctEvent->getProcessingState()));
+
+		if ($xoctEvent->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
+			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
+		} elseif ($xoctEvent->getThumbnailUrl()) {
+			$this->tpl->setVariable('PREVIEW', xoctSecureLink::sign($xoctEvent->getThumbnailUrl()));
+		}
+		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
+			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
+		}
+
+		if ($this->xoctOpenCast->getUseAnnotations()) {
+			$this->tpl->setCurrentBlock('link');
+			$this->tpl->setVariable('LINK_URL', $xoctEvent->getAnnotationLink());
+			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
+			$this->tpl->parseCurrentBlock();
+		}
+
+		$this->tpl->setCurrentBlock('link');
+		$this->tpl->setVariable('LINK_URL', $xoctEvent->getPlayerLink());
+		$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
+		$this->tpl->parseCurrentBlock();
+
+		if (! $this->xoctOpenCast->getStreamingOnly()) {
+			$this->tpl->setCurrentBlock('link');
+			$this->tpl->setVariable('LINK_URL', $xoctEvent->getDownloadLink());
+			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('download'));
+			$this->tpl->parseCurrentBlock();
 		}
 
 		$this->tpl->setVariable('TITLE', $xoctEvent->getTitle());
-		$this->tpl->setVariable('PRESENTER', implode(', ', $xoctEvent->getPresenters()));
+		$this->tpl->setVariable('PRESENTER', $xoctEvent->getPresenter());
 		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
 		$this->tpl->setVariable('RECORDING_STATION', $xoctEvent->getMetadata()->getField('recording_station')->getValue());
-		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format(DATE_ISO8601));
+		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
 		//		$this->tpl->setVariable('VAL_CREATE_DATE', $a_set['create_date']);
 		//		$this->tpl->setVariable('VAL_LAST_UPDATE', $a_set['last_change']);
 		//		$this->tpl->setVariable('VAL_REQUESTER_EMAIL', $a_set['usr_data_email']);
@@ -92,7 +117,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	protected function initColums() {
-		$this->addColumn($this->pl->txt('event_preview'));
+		$this->addColumn($this->pl->txt('event_preview'), '', '250px');
 		$this->addColumn($this->pl->txt('event_clips'));
 		$this->addColumn($this->pl->txt('event_title'), 'title');
 		$this->addColumn($this->pl->txt('event_presenter'), 'presenter');
@@ -118,6 +143,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+
+		if ($this->xoctOpenCast->getPermissionPerClip()) {
+			$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+		}
 
 		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
 		//
@@ -229,9 +258,16 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	protected function parseData() {
+		global $ilUser;
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
+
+		$user = '';
+		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+			$user = xoctUser::getInstance($ilUser)->getIVTRoleName();
+		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		//		$filter = array();
-		$this->setData(xoctEvent::getFiltered($filter));
+		$this->setData(xoctEvent::getFiltered($filter, NULL, $user));
 	}
 
 

@@ -26,13 +26,13 @@ class xoctAclStandardSets {
 	 */
 	public function __construct(ilObjuser $ilUser) {
 		// PRODUCER
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_PRODUCER));
-		$xoctAcl->setAction(xoctAcl::WRITE);
-		$xoctAcl->setAllow(true);
-
-		$this->series[] = $xoctAcl;
-		$this->event[] = $xoctAcl;
+//		$xoctAcl = new xoctAcl();
+//		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_PRODUCER));
+//		$xoctAcl->setAction(xoctAcl::WRITE);
+//		$xoctAcl->setAllow(true);
+//
+//		$this->series[] = $xoctAcl;
+//		$this->event[] = $xoctAcl;
 
 		// PRODUCER
 		$xoctAcl = new xoctAcl();
@@ -62,40 +62,42 @@ class xoctAclStandardSets {
 		$this->event[] = $xoctAcl;
 
 		// F_ROLE_FEDERATION_MEMBER
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_FEDERATION_MEMBER));
-		$xoctAcl->setAction(xoctAcl::WRITE);
-		$xoctAcl->setAllow(true);
-
-		$this->series[] = $xoctAcl;
-		$this->event[] = $xoctAcl;
-
-		// F_ROLE_FEDERATION_MEMBER
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_FEDERATION_MEMBER));
-		$xoctAcl->setAction(xoctAcl::READ);
-		$xoctAcl->setAllow(true);
-
-		$this->series[] = $xoctAcl;
-		$this->event[] = $xoctAcl;
-
-		// F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER));
-		$xoctAcl->setAction(xoctAcl::WRITE);
-		$xoctAcl->setAllow(true);
-
-		$this->series[] = $xoctAcl;
-		$this->event[] = $xoctAcl;
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_FEDERATION_MEMBER));
+		//		$xoctAcl->setAction(xoctAcl::WRITE);
+		//		$xoctAcl->setAllow(true);
+		//
+		//		$this->series[] = $xoctAcl;
+		//		$this->event[] = $xoctAcl;
+		//
+		//		// F_ROLE_FEDERATION_MEMBER
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_FEDERATION_MEMBER));
+		//		$xoctAcl->setAction(xoctAcl::READ);
+		//		$xoctAcl->setAllow(true);
+		//
+		//		$this->series[] = $xoctAcl;
+		//		$this->event[] = $xoctAcl;
 
 		// F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER));
-		$xoctAcl->setAction(xoctAcl::READ);
-		$xoctAcl->setAllow(true);
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER));
+		//		$xoctAcl->setAction(xoctAcl::WRITE);
+		//		$xoctAcl->setAllow(true);
+		//
+		//		$this->series[] = $xoctAcl;
+		//		$this->event[] = $xoctAcl;
+		//
+		//		// F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setRole(xoctConf::get(xoctConf::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER));
+		//		$xoctAcl->setAction(xoctAcl::READ);
+		//		$xoctAcl->setAllow(true);
+		//
+		//		$this->series[] = $xoctAcl;
+		//		$this->event[] = $xoctAcl;
 
-		$this->series[] = $xoctAcl;
-		$this->event[] = $xoctAcl;
+		// User Specific
 		$xoctUser = xoctUser::getInstance($ilUser);
 		foreach ($xoctUser->getStandardAcls() as $acl) {
 			$this->series[] = $acl;
