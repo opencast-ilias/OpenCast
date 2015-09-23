@@ -51,6 +51,21 @@ class xoctUser {
 
 
 	/**
+	 * @return mixed
+	 */
+	public static function getIdentifierPrefix() {
+		switch (self::getUserMapping()) {
+			case self::MAP_EXT_ID:
+				return xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX);
+				break;
+			case self::MAP_EMAIL:
+				xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
+				break;
+		}
+	}
+
+
+	/**
 	 * @param $role
 	 *
 	 * @return int
@@ -61,27 +76,28 @@ class xoctUser {
 		}
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
-				$identifier = str_replace(xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX), '', $role);
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX));
 				$field = 'ext_account';
 				break;
 			case self::MAP_EMAIL:
-				$identifier = str_replace(xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX), '', $role);
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX));
 				$field = 'email';
 				break;
 		}
-		global $ilDB;
 
-		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $ilDB->quote($identifier, 'text');
-		$set = $ilDB->query($sql);
-		$data = $ilDB->fetchAssoc($set);
-		//		echo '<pre>' . print_r($sql, 1) . '</pre>';
-		//		echo '<pre>' . print_r($data, 1) . '</pre>';
+		preg_match("/" . $regex . "/uism", $role, $matches);
+
 
 		/**
 		 * @var $ilDB ilDB
 		 */
+		global $ilDB;
 
-		return NULL;
+		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $ilDB->quote($matches[1], 'text');
+		$set = $ilDB->query($sql);
+		$data = $ilDB->fetchObject($set);
+
+		return $data->usr_id;
 	}
 
 
@@ -105,6 +121,7 @@ class xoctUser {
 	 */
 	protected function __construct($ilias_user_id = 6) {
 		$user = new ilObjUser($ilias_user_id);
+		$this->setIliasUserId($ilias_user_id);
 		$this->setExtId($user->getExternalAccount());
 		$this->setFirstName($user->getFirstname());
 		$this->setLastName($user->getLastname());
@@ -334,12 +351,12 @@ class xoctUser {
 
 		$acls[] = $xoctAcl;
 
-//		$xoctAcl = new xoctAcl();
-//		$xoctAcl->setAllow(true);
-//		$xoctAcl->setAction(xoctAcl::WRITE);
-//		$xoctAcl->setRole($this->getOrganisationRoleName());
-//
-//		$acls[] = $xoctAcl;
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setAllow(true);
+		//		$xoctAcl->setAction(xoctAcl::WRITE);
+		//		$xoctAcl->setRole($this->getOrganisationRoleName());
+		//
+		//		$acls[] = $xoctAcl;
 
 		$xoctAcl = new xoctAcl();
 		$xoctAcl->setAllow(true);

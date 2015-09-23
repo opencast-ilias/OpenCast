@@ -228,7 +228,10 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function properties() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('properties');
 
 		return $this;
@@ -242,7 +245,10 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function metadata() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('metadata');
 
 		return $this;
@@ -252,9 +258,15 @@ class xoctRequest {
 	/**
 	 * @return $this
 	 */
-	public function acl() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+	public function acl($action = NULL) {
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('acl');
+		if ($action) {
+			$this->addPart($action);
+		}
 
 		return $this;
 	}

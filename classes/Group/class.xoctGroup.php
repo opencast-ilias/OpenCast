@@ -30,6 +30,10 @@ class xoctGroup extends ActiveRecord {
 
 
 	/**
+	 * @var array
+	 */
+	protected static $series_id_to_groups_map = array();
+	/**
 	 * @var int
 	 *
 	 * @con_is_primary true
@@ -40,6 +44,40 @@ class xoctGroup extends ActiveRecord {
 	 * @con_sequence   true
 	 */
 	protected $id = 0;
+
+
+	/**
+	 * @param          $series_identifier
+	 * @param xoctUser $xoctUser
+	 *
+	 * @return xoctGroupParticipant[]
+	 */
+	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser) {
+		if (! isset($series_id_to_groups_map[$series_identifier])) {
+			$xoctOpenCast = xoctOpenCast::where(array( 'series_identifier' => $series_identifier ))->first();
+			if (! $xoctOpenCast instanceof xoctOpenCast) {
+				return array();
+			}
+
+			$series_id_to_groups_map[$series_identifier] = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(NULL, 'id');;
+		}
+		$group_id = $series_id_to_groups_map[$series_identifier];
+		if (count($group_id) == 0) {
+			return array();
+		}
+
+		$my_groups = xoctGroupParticipant::where(array(
+			'user_id' => $xoctUser->getIliasUserId(),
+			'group_id' => $group_id
+		))->getArray(NULL, 'group_id');
+		if (count($my_groups) == 0) {
+			return array();
+		}
+
+		return xoctGroupParticipant::where(array( 'group_id' => $my_groups ))->get();
+	}
+
+
 	/**
 	 * @var int
 	 * @con_has_field  true

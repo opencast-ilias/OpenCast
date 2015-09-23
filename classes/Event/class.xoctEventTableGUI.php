@@ -105,12 +105,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
 		$this->tpl->setVariable('RECORDING_STATION', $xoctEvent->getMetadata()->getField('recording_station')->getValue());
 		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
-		//		$this->tpl->setVariable('VAL_CREATE_DATE', $a_set['create_date']);
-		//		$this->tpl->setVariable('VAL_LAST_UPDATE', $a_set['last_change']);
-		//		$this->tpl->setVariable('VAL_REQUESTER_EMAIL', $a_set['usr_data_email']);
-		//		$this->tpl->setVariable('VAL_STATUS', $this->pl->txt('request_status_' . $a_set['status']));
-		//		$this->tpl->setVariable('VAL_LIBRARY', $a_set['xdgl_library_title']);
-		//		$this->tpl->setVariable('VAL_LIBRARIAN', $a_set['usr_data_2_email']);
+		$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
+
 		//
 		$this->addActionMenu($xoctEvent);
 	}
@@ -122,10 +118,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addColumn($this->pl->txt('event_title'), 'title');
 		$this->addColumn($this->pl->txt('event_presenter'), 'presenter');
 		$this->addColumn($this->pl->txt('event_location'), 'location');
-		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
+//		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
 		$this->addColumn($this->pl->txt('event_date'), 'date');
-		$this->addColumn($this->pl->txt('event_owner'), 'owner');
-
+		$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
 		$this->addColumn($this->pl->txt('common_actions'));
 	}
 
@@ -134,6 +129,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param xoctEvent $xoctEvent
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
+		global $ilUser;
+		/**
+		 * @var $xoctUser xoctUser
+		 */
+		$xoctUser = xoctUser::getInstance($ilUser);
 
 		$current_selection_list = new ilAdvancedSelectionListGUI();
 		$current_selection_list->setListTitle($this->pl->txt('common_actions'));
@@ -141,11 +141,15 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$current_selection_list->setUseImages(false);
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
-		$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+		if (ilObjOpenCast::DEV) {
+			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+		}
 
-		if ($this->xoctOpenCast->getPermissionPerClip()) {
-			$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN || $xoctEvent->hasWriteAccess($xoctUser)) {
+			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			if ($this->xoctOpenCast->getPermissionPerClip()) {
+				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+			}
 		}
 
 		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
@@ -262,12 +266,24 @@ class xoctEventTableGUI extends ilTable2GUI {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
 		$user = '';
+		$xoctUser = xoctUser::getInstance($ilUser);
 		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-			$user = xoctUser::getInstance($ilUser)->getIVTRoleName();
+			$user = $xoctUser->getIVTRoleName();
 		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		//		$filter = array();
-		$this->setData(xoctEvent::getFiltered($filter, NULL, $user));
+		$a_data = xoctEvent::getFiltered($filter, $user, NULL);
+
+		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+			foreach ($a_data as $i => $d) {
+				$xoctEvent = xoctEvent::find($d['identifier']);
+				if (! $xoctEvent->hasWriteAccess($xoctUser)) {
+					unset($a_data[$i]);
+				}
+			}
+		}
+
+		$this->setData($a_data);
 	}
 
 

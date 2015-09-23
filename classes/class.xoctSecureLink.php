@@ -23,7 +23,6 @@ class xoctSecureLink {
 		$data = json_decode(xoctRequest::root()->security()->sign($url));
 
 		if ($data->error) {
-			//			throw new xoctException(xoctException::API_CALL_STATUS_500, $data->error);
 			return '';
 		}
 

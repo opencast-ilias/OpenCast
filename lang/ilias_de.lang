@@ -27,6 +27,7 @@ config_update#:#Aktualisieren
 config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
 event_add_new#:#Clip hinzufügen
+event_annotate#:#Annotieren
 event_cancel#:#Abbrechen
 event_clear_cache#:#Cache leeren
 event_clips#:#Clips
@@ -37,11 +38,14 @@ event_date#:#Datum
 event_description#:#Beschreibung
 event_duration#:#Dauer
 event_edit#:#Clip bearbeiten
+event_edit_owner#:#Besitzer bearbeiten
 event_file_presenter#:#Datei
 event_identifier#:#ID
-event_location#:#Ort
+event_location#:#Aufnahmestation
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
+event_owner_select#:#Bitte wählen...
+event_player#:#Abspielen
 event_presenter#:#Presenter
 event_presenters#:#Referenten
 event_preview#:#Vorschau
@@ -50,6 +54,7 @@ event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
 event_title#:#Titel
 event_update#:#Speichern
+event_updateOwner#:#Besitzer speichern
 event_view#:#Anzeigen
 group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
 group_alert_no_title#:#Kein Gruppenname angegeben

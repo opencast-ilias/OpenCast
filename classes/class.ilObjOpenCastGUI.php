@@ -119,6 +119,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$cmd = $this->ctrl->getCmd();
 			$next_class = $this->ctrl->getNextClass($this);
 			$this->tpl->getStandardTemplate();
+
+			if ($this->access->checkAccess("read", "", $_GET["ref_id"])) {
+				$this->history->addItem($_GET["ref_id"], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType());
+			}
+			$this->setLocator();
+
 			/**
 			 * @var $xoctOpenCast xoctOpenCast
 			 * @var $xoctSeries   xoctSeries
@@ -237,12 +243,20 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	protected function setTabs() {
 		global $lng, $ilUser;
+
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+
 		$this->tabs_gui->addTab(self::TAB_EVENTS, $this->pl->txt('tab_event_index'), $this->ctrl->getLinkTarget(new xoctEventGUI(), xoctEventGUI::CMD_STANDARD));
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
 		if ($this->checkPermissionBool('write')) {
 			$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
-			$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
-			if ($ilUser->getId() == 6) {
+			if ($xoctOpenCast->getPermissionPerClip()) {
+				$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+			}
+			if ($ilUser->getId() == 6 AND ilObjOpenCast::DEV) {
 				$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
 				$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
 			}

@@ -13,6 +13,11 @@ require_once('class.ilObjOpenCastAccess.php');
  */
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInterface {
 
+	protected function uninstallCustom() {
+		//
+	}
+
+
 	/**
 	 * @return string
 	 */

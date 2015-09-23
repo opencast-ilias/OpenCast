@@ -27,6 +27,7 @@ config_update#:#Update
 config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
 event_add_new#:#Add Clip
+event_annotate#:#Annotate
 event_cancel#:#Cancel
 event_clear_cache#:#Clear Cache
 event_clips#:#Clips
@@ -37,11 +38,14 @@ event_date#:#Date
 event_description#:#Description
 event_duration#:#Duration
 event_edit#:#Edit Clip
+event_edit_owner#:#Edit Owner
 event_file_presenter#:#File
 event_identifier#:#ID
-event_location#:#Location
+event_location#:#Recording Station
 event_msg_success#:#Saved changes
 event_owner#:#Owner
+event_owner_select#:#Please select...
+event_player#:#Play
 event_presenter#:#Presenter
 event_presenters#:#Presenters
 event_preview#:#Preview
@@ -50,6 +54,7 @@ event_recording_station#:#Recording Station
 event_start_time#:#Start
 event_title#:#Title
 event_update#:#Save
+event_updateOwner#:#Update owner
 event_view#:#View
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name

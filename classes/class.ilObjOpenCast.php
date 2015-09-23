@@ -42,6 +42,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 */
 	protected $object;
 
+	const DEV = true;
+
 
 	/**
 	 * @param int $a_ref_id

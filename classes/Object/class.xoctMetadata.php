@@ -76,6 +76,25 @@ class xoctMetadata extends xoctObject {
 	}
 
 
+	/**
+	 * @param $field_name
+	 *
+	 * @return bool
+	 */
+	public function removeField($field_name) {
+		foreach ($this->getFields() as $i => $field) {
+			if ($field->getId() == $field_name) {
+				unset($this->fields[$i]);
+				sort($this->fields);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	public function read() {
 		// TODO: Implement read() method.
 	}
@@ -108,11 +127,11 @@ class xoctMetadata extends xoctObject {
 		parent::loadFromArray($array);
 		$fields = array();
 		foreach ($this->getFields() as $f) {
-			//			var_dump($f); // FSX
 			$field = new xoctMetadataField();
 			$field->loadFromArray($f);
-			$fields[$field->getId()] = $field;
+			$fields[] = $field;
 		}
+		sort($fields);
 		$this->setFields($fields);
 	}
 
@@ -122,6 +141,7 @@ class xoctMetadata extends xoctObject {
 	 */
 	public function addField(xoctMetadataField $xoctMetadataField) {
 		$this->fields[] = $xoctMetadataField;
+		sort($this->fields);
 	}
 
 

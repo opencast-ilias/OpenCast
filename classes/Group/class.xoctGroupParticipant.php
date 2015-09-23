@@ -63,7 +63,6 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	protected static $crs_members_cache = array();
 
-
 	/**
 	 * @param $ref_id
 	 *

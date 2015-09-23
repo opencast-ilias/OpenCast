@@ -74,7 +74,32 @@ class xoctAcl extends xoctObject {
 	 * @return stdClass[]
 	 */
 	public static function getStandardSet() {
-		return array( self::userRead()->__toStdClass(), self::adminWrite()->__toStdClass(), self::adminRead()->__toStdClass() );
+		return array(
+			self::userRead()->__toStdClass(),
+			self::adminWrite()->__toStdClass(),
+			self::adminRead()->__toStdClass()
+		);
+	}
+
+
+	/**
+	 * @return xoctAcl[]
+	 */
+	public static function getStandardSetForEvent() {
+		$acls = array();
+		$acl = new xoctAcl();
+		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::READ);
+		$acls[] = $acl;
+
+		$acl = new xoctAcl();
+		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::WRITE);
+		$acls[] = $acl;
+
+		return $acls;
 	}
 
 

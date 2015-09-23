@@ -56,7 +56,12 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 
 		$sel = new ilSelectInputGUI($this->txt(self::F_OWNER), self::F_OWNER);
 		$users = array();
+		$users[NULL] = $this->pl->txt('event_owner_select');
 		foreach (ilObjOpenCastAccess::getMembers() as $member) {
+			$name = ilObjUser::_lookupName($member);
+			$users[$member] = $name['lastname'] . ', ' . $name['firstname'];
+		}
+		foreach (ilObjOpenCastAccess::getAdmins() as $member) {
 			$name = ilObjUser::_lookupName($member);
 			$users[$member] = $name['lastname'] . ', ' . $name['firstname'];
 		}
@@ -68,29 +73,16 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 
 
 	public function fillForm() {
-		global $ilUser;
-		foreach ($this->object->getAcls() as $acl) {
-//			echo '<pre>' . print_r($acl, 1) . '</pre>';
-			if ($acl->isIVTAcl()) {
-				$role = $acl->getRole();
-			}
+//		echo '<pre>' . print_r($this->object, 1) . '</pre>';
+//		exit;
+		$user_id = NULL;
+		$owner = $this->object->getOwner();
+
+		if ($owner instanceof xoctUser) {
+			$user_id = $owner->getIliasUserId();
 		}
-
-
-		$acl = new xoctAcl();
-		$acl->setAllow(true);
-		$acl->setAction(xoctAcl::READ);
-		$acl->setRole(xoctUser::getInstance($ilUser)->getIVTRoleName());
-		$this->object->addAcl($acl);
-		$this->object->update();
-
-
-		$user_id = xoctUser::lookupUserIdForIVTRole($role);
-
-//		echo '<pre>' . print_r($role, 1) . '</pre>';
-
 		$array = array(
-			self::F_OWNER => $this->object->getTitle(),
+			self::F_OWNER => $user_id,
 		);
 
 		$this->setValuesByArray($array);
@@ -106,7 +98,9 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		if (! $this->checkInput()) {
 			return false;
 		}
-		//$this->object->setTitle($this->getInput(self::F_OWNER));
+
+		$xoctUser = xoctUser::getInstance(new ilObjUser($this->getInput(self::F_OWNER)));
+		$this->object->setOwner($xoctUser);
 
 		return true;
 	}
@@ -139,12 +133,9 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		if (! $this->fillObject()) {
 			return false;
 		}
+		$this->object->update();
 
-		//		$this->object->setAcls();
-
-		//		$this->object->update();
-
-		//		return $this->object->getIdentifier();
+		return true;
 	}
 
 

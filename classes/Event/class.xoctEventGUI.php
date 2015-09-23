@@ -62,12 +62,8 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function create() {
-		global $ilUser;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
-//		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
-//		$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
-//		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getEvent());
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
@@ -88,8 +84,10 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 		if ($xoctEventFormGUI->saveObject()) {
+//			echo '<pre>' . print_r($xoctEventFormGUI->getObject(), 1) . '</pre>';
+			xoctCache::getInstance()->flush();
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
-			$this->ctrl->redirect($this, self::CMD_STANDARD);
+//			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -106,7 +104,10 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function view() {
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast, true);
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
+		exit;
+		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -188,8 +189,10 @@ class xoctEventGUI extends xoctGUI {
 	protected function updateOwner() {
 		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventOwnerFormGUI->setValuesByPost();
-		if($xoctEventOwnerFormGUI->saveObject()) {
-
+		if ($xoctEventOwnerFormGUI->saveObject()) {
+			xoctCache::getInstance()->flush();
+			ilUtil::sendSuccess($this->txt('msg_success'), true);
+			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 	}
 

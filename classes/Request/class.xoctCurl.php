@@ -102,8 +102,11 @@ class xoctCurl {
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
 			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
-
-			throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
+			if ($this->getResponseStatus() == 403) {
+				throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
+			} else {
+				throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
+			}
 		}
 		curl_close($ch);
 	}
@@ -555,13 +558,14 @@ class xoctCurl {
 				$this->addPostField($file->getPostVar(), $file->getCurlString());
 			}
 		}
-		$post_body = array();
-
+		$post_body_string = '';
 		foreach ($this->getPostFields() as $key => $value) {
-			$post_body[$key] = $value;
+			$post_body_string .= $key . '=' . $value . '&';
 		}
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_body);
-		$this->setPostBody(implode('&', $post_body));
+
+		$post_body_string = rtrim($post_body_string, '&');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
+		$this->setPostBody($post_body_string);
 
 		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_3);
 		xoctLog::getInstance()->write($this->getPostBody(), xoctLog::DEBUG_LEVEL_3);

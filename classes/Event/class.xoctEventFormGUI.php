@@ -17,9 +17,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_DURATION = 'duration';
 	const F_PROCESSING_STATE = 'processing_state';
 	const F_START_TIME = 'start_time';
-	const F_LOCATION = 'location';
 	const F_PRESENTERS = 'presenters';
 	const F_CREATED = 'created';
+	const F_LOCATION = 'location';
+	const F_SOURCE = 'source';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -43,7 +44,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 *
+	 * @param              $parent_gui
+	 * @param xoctEvent    $object
+	 * @param xoctOpenCast $xoctOpenCast
+	 * @param bool|false   $view
+	 * @param bool|false   $infopage
+	 * @param bool|true    $external
 	 */
 	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $view = false, $infopage = false, $external = true) {
 		global $ilCtrl, $lng, $tpl;
@@ -84,8 +90,16 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
-		$te->setRequired(true);
 		$this->addItem($te);
+
+		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		$this->addItem($te);
+
+		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$this->addItem($te);
+
+//		$te = new ilTextInputGUI($this->txt(self::F_SOURCE), self::F_SOURCE);
+//		$this->addItem($te);
 	}
 
 
@@ -99,8 +113,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_DURATION => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
 			self::F_START_TIME => $this->object->getStartTime(),
-			self::F_LOCATION => $this->object->getLocation(),
 			self::F_PRESENTERS => $this->object->getPresenter(),
+			self::F_LOCATION => $this->object->getLocation(),
+			self::F_SOURCE => $this->object->getSource(),
 		);
 
 		$this->setValuesByArray($array);
@@ -118,6 +133,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 		$this->object->setTitle($this->getInput(self::F_TITLE));
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
+		$this->object->setLocation($this->getInput(self::F_LOCATION));
+		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
 
 		return true;
 	}

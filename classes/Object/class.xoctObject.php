@@ -98,30 +98,63 @@ abstract class xoctObject {
 
 
 	/**
+	 * @return string
+	 */
+	public function __toJSON() {
+		return json_encode($this->__toStdClass());
+	}
+
+
+	/**
 	 * @return stdClass
 	 */
 	public function __toStdClass() {
 		$r = new ReflectionClass($this);
 		$stdClass = new stdClass();
 		foreach ($r->getProperties() as $name) {
-			$key = $name->getName();
+			$key = utf8_encode($name->getName());
+
 			if ($key == 'cache') {
 				continue;
 			}
-			if ($this->{$key} instanceof xoctObject) {
-				$stdClass->{$key} = $this->{$key}->__toStdClass();
-			} elseif (is_array($this->{$key})) {
-				$a = array();
-				foreach ($this->{$key} as $k => $v) {
-					if ($v instanceof xoctObject) {
-						$a[$k] = $v->__toStdClass();
-					} else {
-						$a[$k] = $v;
+
+			$value = $this->sleep($key, $this->{$key});
+			switch (true) {
+				case ($value instanceof xoctObject):
+					$stdClass->{$key} = $value->__toStdClass();
+					break;
+				case (is_array($value)):
+					$a = array();
+					foreach ($value as $k => $v) {
+						if ($v instanceof xoctObject) {
+							$a[$k] = $v->__toStdClass();
+						} else {
+							$a[$k] = self::convertToUtf8($v);
+						}
 					}
-				}
-				$stdClass->{$key} = $a;
-			} else {
-				$stdClass->{$key} = $this->{$key};
+					$stdClass->{$key} = $a;
+					break;
+				case (is_bool($value)):
+					$stdClass->{$key} = $value;
+					break;
+				case ($value instanceof DateTime):
+					$stdClass->{$key} = $value->getTimestamp();
+					break;
+				case ($value instanceof stdClass):
+					$a = array();
+					$value = (array)$value;
+					foreach ($value as $k => $v) {
+						if ($v instanceof xoctObject) {
+							$a[$k] = $v->__toStdClass();
+						} else {
+							$a[$k] = self::convertToUtf8($v);
+						}
+					}
+					$stdClass->{$key} = $a;
+					break;
+				default:
+					$stdClass->{$key} = self::convertToUtf8($value);
+					break;
 			}
 		}
 
@@ -130,10 +163,16 @@ abstract class xoctObject {
 
 
 	/**
+	 * @param $string
+	 *
 	 * @return string
 	 */
-	public function __toJson() {
-		return json_encode($this->__toStdClass());
+	public static function convertToUtf8($string) {
+		if (is_object($string)) {
+			return $string;
+		}
+
+		return iconv(mb_detect_encoding($string, mb_detect_order(), true), "UTF-8", $string);
 	}
 
 
@@ -167,7 +206,7 @@ abstract class xoctObject {
 
 
 	/**
-	 * @param $fielname
+	 * @param $fieldname
 	 * @param $value
 	 *
 	 * @return mixed
@@ -186,6 +225,7 @@ abstract class xoctObject {
 	protected function wakeup($fieldname, $value) {
 		return $value;
 	}
+
 
 	protected function afterObjectLoad() {
 	}
