@@ -84,10 +84,9 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 		if ($xoctEventFormGUI->saveObject()) {
-//			echo '<pre>' . print_r($xoctEventFormGUI->getObject(), 1) . '</pre>';
 			xoctCache::getInstance()->flush();
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
-//			$this->ctrl->redirect($this, self::CMD_STANDARD);
+			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -104,9 +103,10 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function view() {
+		$this->cancel();
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
-		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
-		exit;
+		//		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
+		//		exit;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());

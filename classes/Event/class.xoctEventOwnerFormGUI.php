@@ -57,13 +57,11 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		$sel = new ilSelectInputGUI($this->txt(self::F_OWNER), self::F_OWNER);
 		$users = array();
 		$users[NULL] = $this->pl->txt('event_owner_select');
-		foreach (ilObjOpenCastAccess::getMembers() as $member) {
-			$name = ilObjUser::_lookupName($member);
-			$users[$member] = $name['lastname'] . ', ' . $name['firstname'];
-		}
-		foreach (ilObjOpenCastAccess::getAdmins() as $member) {
-			$name = ilObjUser::_lookupName($member);
-			$users[$member] = $name['lastname'] . ', ' . $name['firstname'];
+		foreach (array_merge(ilObjOpenCastAccess::getMembers(), ilObjOpenCastAccess::getAdmins()) as $member) {
+			$xoctUser = xoctUser::getInstance(new ilObjuser($member));
+			if ($xoctUser->getIdentifier()) {
+				$users[$member] = $xoctUser->getNamePresentation();
+			}
 		}
 
 		$sel->setOptions($users);
@@ -73,8 +71,6 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 
 
 	public function fillForm() {
-//		echo '<pre>' . print_r($this->object, 1) . '</pre>';
-//		exit;
 		$user_id = NULL;
 		$owner = $this->object->getOwner();
 
@@ -143,73 +139,6 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		$this->setTitle($this->txt('edit_owner'));
 		$this->addCommandButton(xoctEventGUI::CMD_UPDATE_OWNER, $this->txt(xoctEventGUI::CMD_UPDATE_OWNER));
 		$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
-	}
-
-
-	protected function initView() {
-		$this->initForm();
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_IDENTIFIER), self::F_IDENTIFIER);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATOR), self::F_CREATOR);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATED), self::F_CREATED);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_DURATION), self::F_DURATION);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_PROCESSING_STATE), self::F_PROCESSING_STATE);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_START_TIME), self::F_START_TIME);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
-		$this->addItem($te);
-
-		/**
-		 * @var $item ilNonEditableValueGUI
-		 */
-		foreach ($this->getItems() as $item) {
-			$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
-			$this->removeItemByPostVar($item->getPostVar());
-			$this->addItem($te);
-		}
-		$te = new ilCustomInputGUI('detail', 'detail');
-		$te->setHtml('<table><tr><td>' . $this->object->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-		$this->addItem($te);
-
-		foreach ($this->object->getPublications() as $pub) {
-			$h = new ilFormSectionHeaderGUI();
-			$h->setTitle($pub->getChannel());
-			$this->addItem($h);
-
-			$te = new ilCustomInputGUI('Publication ' . $pub->getChannel(), 'pub_' . $pub->getChannel());
-			$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-			$this->addItem($te);
-
-			foreach ($pub->getMedia() as $med) {
-				$te = new ilCustomInputGUI($med->getId(), $med->getId());
-				$te->setHtml('<table><tr><td>' . $med->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-				$this->addItem($te);
-			}
-		}
-
-		$h = new ilFormSectionHeaderGUI();
-		$h->setTitle('ACL');
-		$this->addItem($h);
-
-		foreach ($this->object->getAcls() as $acl) {
-			$te = new ilCustomInputGUI($acl->getRole(), $acl->getRole());
-			$te->setHtml('<table><tr><td>' . $acl->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-			$this->addItem($te);
-		}
 	}
 
 

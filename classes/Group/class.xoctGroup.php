@@ -54,14 +54,14 @@ class xoctGroup extends ActiveRecord {
 	 */
 	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser) {
 		if (! isset($series_id_to_groups_map[$series_identifier])) {
-			$xoctOpenCast = xoctOpenCast::where(array( 'series_identifier' => $series_identifier ))->first();
+			$xoctOpenCast = xoctOpenCast::where(array( 'series_identifier' => $series_identifier ))->last();
 			if (! $xoctOpenCast instanceof xoctOpenCast) {
 				return array();
 			}
-
 			$series_id_to_groups_map[$series_identifier] = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(NULL, 'id');;
 		}
 		$group_id = $series_id_to_groups_map[$series_identifier];
+
 		if (count($group_id) == 0) {
 			return array();
 		}

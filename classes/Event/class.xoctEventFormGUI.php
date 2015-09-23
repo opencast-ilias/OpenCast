@@ -90,16 +90,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
+		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
-//		$te = new ilTextInputGUI($this->txt(self::F_SOURCE), self::F_SOURCE);
-//		$this->addItem($te);
+		//		$te = new ilTextInputGUI($this->txt(self::F_SOURCE), self::F_SOURCE);
+		//		$this->addItem($te);
 	}
 
 
@@ -242,18 +245,15 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$h->setTitle($pub->getChannel());
 			$this->addItem($h);
 
-						$te = new ilCustomInputGUI('Publication '.$pub->getChannel(), 'pub_'.$pub->getChannel());
-						$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-						$this->addItem($te);
-
+			$te = new ilCustomInputGUI('Publication ' . $pub->getChannel(), 'pub_' . $pub->getChannel());
+			$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
+			$this->addItem($te);
 
 			foreach ($pub->getMedia() as $med) {
 				$te = new ilCustomInputGUI($med->getId(), $med->getId());
 				$te->setHtml('<table><tr><td>' . $med->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
 				$this->addItem($te);
 			}
-
-
 		}
 
 		$h = new ilFormSectionHeaderGUI();

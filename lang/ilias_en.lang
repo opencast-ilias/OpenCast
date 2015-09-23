@@ -52,6 +52,8 @@ event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
+event_state_instantiated#:#Uploaded
+event_state_running#:#Converting
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner

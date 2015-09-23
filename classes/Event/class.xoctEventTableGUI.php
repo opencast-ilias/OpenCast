@@ -142,7 +142,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		if (ilObjOpenCast::DEV) {
-			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+//			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
 		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN || $xoctEvent->hasWriteAccess($xoctUser)) {

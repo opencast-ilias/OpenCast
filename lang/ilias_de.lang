@@ -52,6 +52,8 @@ event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
+event_state_instantiated#:#Hochgeladen
+event_state_running#:#Wird konvertiert
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern

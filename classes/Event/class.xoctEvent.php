@@ -122,7 +122,11 @@ class xoctEvent extends xoctObject {
 	 * @throws xoctException
 	 */
 	public function hasWriteAccess(xoctUser $xoctUser) {
-		if ($this->getOwnerAcl()->getRole() == $xoctUser->getIVTRoleName()) {
+		$xoctAcl = $this->getOwnerAcl();
+		if (! $xoctAcl instanceof xoctAcl) {
+			return false;
+		}
+		if ($xoctAcl->getRole() == $xoctUser->getIVTRoleName()) {
 			return true;
 		}
 
@@ -178,11 +182,11 @@ class xoctEvent extends xoctObject {
 		$this->getMetadata()->removeField('identifier');
 		$this->getMetadata()->removeField('isPartOf');
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
-//		$this->getMetadata()->removeField('presenter'); // can't be updated at the moment
+		//		$this->getMetadata()->removeField('presenter'); // can't be updated at the moment
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-//		echo $data['metadata'];
-//		exit;
+		//		echo $data['metadata'];
+		//		exit;
 
 		// ACL
 		// $data['acl'] = json_encode( $this->getAcls() );
@@ -876,8 +880,8 @@ class xoctEvent extends xoctObject {
 		$startTime = $this->getMetadata()->getField('startTime');
 		$startTime->setValue(date('H:i'));
 
-//		$source = $this->getMetadata()->getField('source');
-//		$source->setValue($this->getSource());
+		//		$source = $this->getMetadata()->getField('source');
+		//		$source->setValue($this->getSource());
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
