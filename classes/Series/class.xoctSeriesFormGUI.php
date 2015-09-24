@@ -29,6 +29,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_PERMISSION_PER_CLIP = 'permission_per_clip';
 	const F_ACCEPT_EULA = 'accept_eula';
 	const F_EXISTING_IDENTIFIER = 'existing_identifier';
+	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
 	/**
 	 * @var  xoctSeries
 	 */
@@ -172,6 +173,11 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$permission_per_clip = new ilCheckboxInputGUI($this->txt(self::F_PERMISSION_PER_CLIP), self::F_PERMISSION_PER_CLIP);
 		$permission_per_clip->setInfo($this->infoTxt(self::F_PERMISSION_PER_CLIP));
+
+		$set_own_rights = new ilCheckboxInputGUI($this->txt(self::F_PERMISSION_ALLOW_SET_OWN), self::F_PERMISSION_ALLOW_SET_OWN);
+		$set_own_rights->setInfo($this->infoTxt(self::F_PERMISSION_ALLOW_SET_OWN));
+		$permission_per_clip->addSubItem($set_own_rights);
+
 		$this->addItem($permission_per_clip);
 
 		if ($this->is_new) {
@@ -184,7 +190,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 	public function fillFormRandomized() {
 		$array = array(
-			self::F_CHANNEL_TYPE => self::EXISTING_YES,
 			self::F_CHANNEL_TYPE => self::EXISTING_NO,
 			self::F_TITLE => 'New Channel ' . date(DATE_ATOM),
 			self::F_DESCRIPTION => 'This is a description',
@@ -193,6 +198,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_USE_ANNOTATIONS => true,
 			self::F_STREAMING_ONLY => true,
 			self::F_PERMISSION_PER_CLIP => true,
+			self::F_PERMISSION_ALLOW_SET_OWN => true,
 		);
 
 		$this->setValuesByArray($array);
@@ -209,6 +215,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_USE_ANNOTATIONS => $this->cast->getUseAnnotations(),
 			self::F_STREAMING_ONLY => $this->cast->getStreamingOnly(),
 			self::F_PERMISSION_PER_CLIP => $this->cast->getPermissionPerClip(),
+			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
 		);
 
 		$this->setValuesByArray($array);
@@ -234,6 +241,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setUseAnnotations($this->getInput(self::F_USE_ANNOTATIONS));
 		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
+		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 
 		return true;
 	}

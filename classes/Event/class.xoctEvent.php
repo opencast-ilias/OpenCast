@@ -122,20 +122,9 @@ class xoctEvent extends xoctObject {
 	 * @throws xoctException
 	 */
 	public function hasWriteAccess(xoctUser $xoctUser) {
-		$xoctAcl = $this->getOwnerAcl();
-		if (! $xoctAcl instanceof xoctAcl) {
-			return false;
-		}
-		if ($xoctAcl->getRole() == $xoctUser->getIVTRoleName()) {
+		if ($this->isOwner($xoctUser)) {
 			return true;
 		}
-
-		$role_names = array();
-		foreach (xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctGroupParticipant) {
-			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
-		}
-
-		return in_array($this->getOwnerAcl()->getRole(), $role_names);
 	}
 
 
@@ -146,13 +135,46 @@ class xoctEvent extends xoctObject {
 	 * @throws xoctException
 	 */
 	public function hasReadAccess(xoctUser $xoctUser) {
-		foreach ($this->getAcls() as $acl) {
-			if ($acl->getAction() == xoctAcl::READ && $acl->getRole() == $xoctUser->getRoleName()) {
-				return true;
-			}
+		if ($this->isOwner($xoctUser)) {
+			return true;
+		}
+
+		$role_names = array();
+		foreach (xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctGroupParticipant) {
+			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
+		}
+
+		if (in_array($this->getOwnerAcl()->getRole(), $role_names)) {
+			return true;
+		}
+
+		$role_names_invitations = array();
+		foreach (xoctInvitation::getAllInvitationsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctIntivation) {
+			$xoctUserInvitation = xoctUser::getInstance(new ilObjUser($xoctIntivation->getOwnerId()));
+			$role_names_invitations[] = $xoctUserInvitation->getIVTRoleName();
+		}
+
+		if (in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
+			return true;
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * @param xoctUser $xoctUser
+	 *
+	 * @return bool
+	 */
+	public function isOwner(xoctUser $xoctUser) {
+		$xoctAcl = $this->getOwnerAcl();
+		if (! $xoctAcl instanceof xoctAcl) {
+			return false;
+		}
+		if ($xoctAcl->getRole() == $xoctUser->getIVTRoleName()) {
+			return true;
+		}
 	}
 
 
@@ -263,6 +285,12 @@ class xoctEvent extends xoctObject {
 		$acl->setRole($xoctUser->getIVTRoleName());
 		$this->addAcl($acl);
 		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
+	}
+
+
+	public function removeOwner() {
+		$this->removeAllOwnerAcls();
+		$this->getMetadata()->getField('rightsHolder')->setValue('');
 	}
 
 

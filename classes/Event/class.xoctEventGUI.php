@@ -49,6 +49,11 @@ class xoctEventGUI extends xoctGUI {
 				$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
 				$this->toolbar->addButtonInstance($b);
 			}
+
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_remove_invitations');
+			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
+			$this->toolbar->addButtonInstance($b);
 		}
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($xoctEventTableGUI->getHTML());
@@ -89,6 +94,15 @@ class xoctEventGUI extends xoctGUI {
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
+
+
+	protected function removeInvitations() {
+		foreach (xoctInvitation::where(array( 'obj_id' => $this->xoctOpenCast->getObjId() ))->get() as $xoctInvitation) {
+			$xoctInvitation->delete();
+		}
+		ilUtil::sendSuccess($this->txt('msg_success'), true);
+		$this->ctrl->redirect($this, self::CMD_STANDARD);
 	}
 
 

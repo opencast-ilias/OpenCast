@@ -263,7 +263,7 @@ class xoctUser {
 	 */
 	public function getIdentifier() {
 		if (! $this->identifier) {
-			throw new xoctException(xoctException::NO_USER_MAPPING);
+//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return $this->identifier;
@@ -277,7 +277,7 @@ class xoctUser {
 	public function getRoleName() {
 		$prefix = xoctConf::get(xoctConf::F_ROLE_USER_PREFIX);
 		if (! $prefix) {
-			throw new xoctException(xoctException::NO_USER_MAPPING);
+//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
@@ -308,7 +308,7 @@ class xoctUser {
 				break;
 		}
 		if (! $prefix) {
-			throw new xoctException(xoctException::NO_USER_MAPPING);
+//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);

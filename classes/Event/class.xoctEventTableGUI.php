@@ -8,6 +8,7 @@ require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvan
 require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitationGUI.php');
 
 /**
  * Class xoctEventTableGUI
@@ -78,7 +79,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$this->tpl->setVariable('PREVIEW', xoctSecureLink::sign($xoctEvent->getThumbnailUrl()));
 		}
 		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
-			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
+			//			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
 		}
 
 		if ($this->xoctOpenCast->getUseAnnotations()) {
@@ -105,7 +106,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
 		$this->tpl->setVariable('RECORDING_STATION', $xoctEvent->getMetadata()->getField('recording_station')->getValue());
 		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
-		if($this->xoctOpenCast->getPermissionPerClip()) {
+		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->tpl->setCurrentBlock('owner');
 			$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
 			$this->tpl->parseCurrentBlock();
@@ -124,7 +125,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addColumn($this->pl->txt('event_location'), 'location');
 //		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
 		$this->addColumn($this->pl->txt('event_date'), 'date');
-		if($this->xoctOpenCast->getPermissionPerClip()) {
+		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
 		}
 		$this->addColumn($this->pl->txt('common_actions'));
@@ -147,48 +148,26 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$current_selection_list->setUseImages(false);
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		if (ilObjOpenCast::DEV) {
-//			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
-		}
+		$this->ctrl->setParameterByClass('xoctInvitationGUI', xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 
-		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN || $xoctEvent->hasWriteAccess($xoctUser)) {
+		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN
+			|| ($xoctEvent->hasWriteAccess($xoctUser) && $this->xoctOpenCast->getPermissionPerClip()))
+		) {
 			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 			if ($this->xoctOpenCast->getPermissionPerClip()) {
 				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 			}
 		}
 
-		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
-		//
-		//		switch ($a_set['status']) {
-		//			case xdglRequest::STATUS_NEW:
-		//			case xdglRequest::STATUS_IN_PROGRRESS:
-		//				$current_selection_list->addItem($this->pl->txt('request_view'), 'view_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_VIEW));
-		//				$current_selection_list->addItem($this->pl->txt('request_edit'), 'edit_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_EDIT));
-		//				$current_selection_list->addItem($this->pl->txt('upload_title'), 'upload_pdf', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_SELECT_FILE));
-		//				$current_selection_list->addItem($this->pl->txt('request_change_status_to_wip'), 'change_status_to_wip', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_CHANGE_STATUS_TO_WIP));
-		//				$current_selection_list->addItem($this->pl->txt('request_refuse'), 'refuse_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CDM_CONFIRM_REFUSE));
-		//				$current_selection_list->addItem($this->pl->txt('request_assign'), 'assign_request', $this->ctrl->getLinkTargetByClass('xdglLibraryGUI', xdglLibraryGUI::CMD_ASSIGN_LIBRARY));
-		//				break;
-		//			//			case xdglRequest::STATUS_IN_PROGRRESS:
-		//			//				$current_selection_list->addItem($this->pl->txt('request_view'), 'view_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_VIEW));
-		//			//				$current_selection_list->addItem($this->pl->txt('request_edit'), 'edit_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_EDIT));
-		//			//				$current_selection_list->addItem($this->pl->txt('upload_title'), 'upload_pdf', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_SELECT_FILE));
-		//			//				$current_selection_list->addItem($this->pl->txt('request_refuse'), 'refuse_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CDM_CONFIRM_REFUSE));
-		//			//				break;
-		//			case xdglRequest::STATUS_RELEASED:
-		//				$current_selection_list->addItem($this->pl->txt('request_view'), 'view_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_VIEW));
-		//				$current_selection_list->addItem($this->pl->txt('request_edit'), 'edit_request', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_EDIT));
-		//				$current_selection_list->addItem($this->pl->txt('request_download_file'), 'request_download_file', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_DOWNLOAD_FILE));
-		//				$current_selection_list->addItem($this->pl->txt('request_replace_file'), 'request_replace_file', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_REPLACE_FILE));
-		//				$current_selection_list->addItem($this->pl->txt('request_delete_file'), 'request_delete_file', $this->ctrl->getLinkTarget($this->parent_obj, xdglRequestGUI::CMD_DELETE_FILE));
-		//				break;
-		//			case xdglRequest::STATUS_REFUSED:
-		//			case xdglRequest::STATUS_COPY:
-		//				break;
-		//		}
-		//
-		//		$this->tpl->setVariable('VAL_ACTION', $current_selection_list->getHTML());
+		if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->hasWriteAccess($xoctUser)) {
+			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
+		}
+
+		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+			$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
+		} else {
+			$this->tpl->setVariable('ACTIONS', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
+		}
 	}
 
 
@@ -283,7 +262,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
 			foreach ($a_data as $i => $d) {
 				$xoctEvent = xoctEvent::find($d['identifier']);
-				if (! $xoctEvent->hasWriteAccess($xoctUser)) {
+				if (! $xoctEvent->hasReadAccess($xoctUser)) {
 					unset($a_data[$i]);
 				}
 			}
