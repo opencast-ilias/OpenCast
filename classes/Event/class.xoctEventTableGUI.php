@@ -105,7 +105,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
 		$this->tpl->setVariable('RECORDING_STATION', $xoctEvent->getMetadata()->getField('recording_station')->getValue());
 		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
-		$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
+		if($this->xoctOpenCast->getPermissionPerClip()) {
+			$this->tpl->setCurrentBlock('owner');
+			$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
+			$this->tpl->parseCurrentBlock();
+		}
 
 		//
 		$this->addActionMenu($xoctEvent);
@@ -120,7 +124,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addColumn($this->pl->txt('event_location'), 'location');
 //		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
 		$this->addColumn($this->pl->txt('event_date'), 'date');
-		$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
+		if($this->xoctOpenCast->getPermissionPerClip()) {
+			$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
+		}
 		$this->addColumn($this->pl->txt('common_actions'));
 	}
 
