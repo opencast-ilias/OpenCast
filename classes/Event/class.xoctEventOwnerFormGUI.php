@@ -65,7 +65,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		}
 
 		$sel->setOptions($users);
-		$sel->setRequired(true);
+		//		$sel->setRequired(true);
 		$this->addItem($sel);
 	}
 
@@ -95,8 +95,13 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 			return false;
 		}
 
-		$xoctUser = xoctUser::getInstance(new ilObjUser($this->getInput(self::F_OWNER)));
-		$this->object->setOwner($xoctUser);
+		$owner = $this->getInput(self::F_OWNER);
+		if ($owner) {
+			$xoctUser = xoctUser::getInstance(new ilObjUser($owner));
+			$this->object->setOwner($xoctUser);
+		} else {
+			$this->object->removeOwner();
+		}
 
 		return true;
 	}

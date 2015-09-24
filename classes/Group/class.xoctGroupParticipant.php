@@ -70,11 +70,11 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @throws xoctException
 	 */
 	public static function getAvailable($ref_id) {
-		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
 
 		if (isset(self::$crs_members_cache[$ref_id])) {
 			return self::$crs_members_cache[$ref_id];
 		}
+		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
 		global $tree;
 		/**
 		 * @var $tree ilTree

@@ -123,7 +123,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addColumn($this->pl->txt('event_title'), 'title');
 		$this->addColumn($this->pl->txt('event_presenter'), 'presenter');
 		$this->addColumn($this->pl->txt('event_location'), 'location');
-//		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
+		//		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
 		$this->addColumn($this->pl->txt('event_date'), 'date');
 		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
