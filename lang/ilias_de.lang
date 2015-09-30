@@ -41,6 +41,7 @@ event_edit#:#Clip bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_file_presenter#:#Datei
 event_identifier#:#ID
+event_invite_others#:#Clip freigeben
 event_location#:#Aufnahmestation
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
@@ -72,6 +73,9 @@ groups_new_placeholder#:#Name der neuen Gruppe
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#Vor- oder Nachname
 groups_participants_header#:#Teilnehmer
+invitations_back#:#Zurück
+invitations_header#:#Clip freigeben
+invitations_none_available#:#Keine verfügbar
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen

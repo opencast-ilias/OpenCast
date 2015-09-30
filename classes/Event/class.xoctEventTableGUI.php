@@ -66,8 +66,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param array $a_set
 	 */
 	public function fillRow($a_set) {
+		global $ilUser;
+		$xoctUser = xoctUser::getInstance($ilUser);
 		/**
 		 * @var $xoctEvent xoctEvent
+		 * @var $xoctUser  xoctUser
 		 */
 		$xoctEvent = xoctEvent::find($a_set['identifier']);
 
@@ -108,11 +111,21 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
 		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->tpl->setCurrentBlock('owner');
+
 			$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
+			if ($xoctEvent->isOwner($xoctUser)) {
+				$this->tpl->setCurrentBlock('invitations');
+				$in = xoctInvitation::where(array(
+					'owner_id' => $xoctUser->getIliasUserId(),
+					'event_identifier' => $xoctEvent->getIdentifier()
+				))->count();
+				if ($in > 0) {
+					$this->tpl->setVariable('INVITATIONS', $in);
+				}
+				$this->tpl->parseCurrentBlock();
+			}
 			$this->tpl->parseCurrentBlock();
 		}
-
-		//
 		$this->addActionMenu($xoctEvent);
 	}
 
@@ -149,6 +162,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$this->ctrl->setParameterByClass('xoctInvitationGUI', xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
+
+		if (ilObjOpenCast::DEV) {
+			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+		}
 
 		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN
 			|| ($xoctEvent->hasWriteAccess($xoctUser) && $this->xoctOpenCast->getPermissionPerClip()))

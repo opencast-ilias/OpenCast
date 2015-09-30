@@ -149,7 +149,7 @@ class xoctEvent extends xoctObject {
 		}
 
 		$role_names_invitations = array();
-		foreach (xoctInvitation::getAllInvitationsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctIntivation) {
+		foreach (xoctInvitation::getAllInvitationsOfUser($this->getIdentifier(), $xoctUser) as $xoctIntivation) {
 			$xoctUserInvitation = xoctUser::getInstance(new ilObjUser($xoctIntivation->getOwnerId()));
 			$role_names_invitations[] = $xoctUserInvitation->getIVTRoleName();
 		}
@@ -225,7 +225,10 @@ class xoctEvent extends xoctObject {
 
 
 	public function updateSeries() {
+		$this->updateMetadataFromFields();
 		$this->getMetadata()->getField('isPartOf')->setValue($this->getSeriesIdentifier());
+		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+		xoctRequest::root()->events($this->getIdentifier())->post($data);
 	}
 
 
@@ -355,7 +358,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getDownloadLink() {
 		if (! $this->download_url) {
-			$this->download_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD));
+			$this->download_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD)));
 		}
 
 		return $this->download_url;

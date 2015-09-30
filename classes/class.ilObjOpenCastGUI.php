@@ -177,6 +177,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					$this->tpl->show();
 					break;
 				case 'xoctinvitationgui':
+					$this->tabs_gui->clearTargets();
+					$this->tabs_gui->setBackTarget($this->pl->txt('invitations_back'), $this->ctrl->getLinkTargetByClass('xoctEventGUI'));
 					$xoctGroupGUI = new xoctInvitationGUI($xoctOpenCast);
 					$this->ctrl->forwardCommand($xoctGroupGUI);
 					$this->tpl->show();

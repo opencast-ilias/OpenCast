@@ -41,6 +41,7 @@ event_edit#:#Edit Clip
 event_edit_owner#:#Edit Owner
 event_file_presenter#:#File
 event_identifier#:#ID
+event_invite_others#:#Share Clip
 event_location#:#Recording Station
 event_msg_success#:#Saved changes
 event_owner#:#Owner
@@ -72,6 +73,9 @@ groups_new_placeholder#:#Group-Name
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#First- or Lastname
 groups_participants_header#:#Participants
+invitations_back#:#Back
+invitations_header#:#Share Clip
+invitations_none_available#:#None available
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel

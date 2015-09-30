@@ -36,6 +36,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function index() {
+		global $ilUser;
 		if (ilObjOpenCastAccess::hasWriteAccess()) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
@@ -49,12 +50,16 @@ class xoctEventGUI extends xoctGUI {
 				$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
 				$this->toolbar->addButtonInstance($b);
 			}
-
-			$b = ilLinkButton::getInstance();
-			$b->setCaption('rep_robj_xoct_event_remove_invitations');
-			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
-			$this->toolbar->addButtonInstance($b);
 		}
+//		if(xoctInvitation::where(array(
+//			'obj_id' => $this->xoctOpenCast->getObjId(),
+//			'user_id' => $ilUser->getId()
+//		))->hasSets()) {
+//			$b = ilLinkButton::getInstance();
+//			$b->setCaption('rep_robj_xoct_event_remove_invitations');
+//			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
+//			$this->toolbar->addButtonInstance($b);
+//		}
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($xoctEventTableGUI->getHTML());
 	}
@@ -98,7 +103,11 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function removeInvitations() {
-		foreach (xoctInvitation::where(array( 'obj_id' => $this->xoctOpenCast->getObjId() ))->get() as $xoctInvitation) {
+		global $ilUser;
+		foreach (xoctInvitation::where(array(
+			'obj_id' => $this->xoctOpenCast->getObjId(),
+			'user_id' => $ilUser->getId()
+		))->get() as $xoctInvitation) {
 			$xoctInvitation->delete();
 		}
 		ilUtil::sendSuccess($this->txt('msg_success'), true);
@@ -161,7 +170,7 @@ class xoctEventGUI extends xoctGUI {
 		$event->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 		$html .= 'Series after set: ' . $event->getSeriesIdentifier() . '<br>';
 		//		$event->updateSeries();
-		$event->update();
+		$event->updateSeries();
 		$html .= 'Series after update: ' . $event->getSeriesIdentifier() . '<br>';
 		//		echo '<pre>' . print_r($event, 1) . '</pre>';
 		$event = new xoctEvent($_POST['import_identifier']);
