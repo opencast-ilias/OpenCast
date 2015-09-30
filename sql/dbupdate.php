@@ -16,4 +16,6 @@ xoctOpenCast::installDB();
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupParticipant.php');
 xoctGroupParticipant::installDB();
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php');
+xoctInvitation::installDB();
 ?>

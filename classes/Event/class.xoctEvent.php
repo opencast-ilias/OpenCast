@@ -144,7 +144,8 @@ class xoctEvent extends xoctObject {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
 		}
 
-		if (in_array($this->getOwnerAcl()->getRole(), $role_names)) {
+
+		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
 			return true;
 		}
 
@@ -154,7 +155,7 @@ class xoctEvent extends xoctObject {
 			$role_names_invitations[] = $xoctUserInvitation->getIVTRoleName();
 		}
 
-		if (in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
+		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
 			return true;
 		}
 

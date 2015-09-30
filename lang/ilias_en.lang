@@ -35,7 +35,8 @@ event_create#:#Upload Clip
 event_created#:#Created
 event_creator#:#Creator
 event_date#:#Date
-event_description#:#Description
+event_description#:#Subtitle
+event_download#:#Download
 event_duration#:#Duration
 event_edit#:#Edit Clip
 event_edit_owner#:#Edit Owner
@@ -120,6 +121,8 @@ series_intended_lifetime_info#:#How long shoud the video material be published?
 series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Channel-Infos
+series_permission_allow_set_own#:#Share Clip
+series_permission_allow_set_own_info#:#users can share their clips (read-only)
 series_permission_per_clip#:#Set permissions for a clip
 series_permission_per_clip_info#:#This setting enables an individual rights management based on clips ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the clips of this channel.
 series_save#:#Save

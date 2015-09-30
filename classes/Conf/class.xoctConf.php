@@ -14,6 +14,7 @@ class xoctConf extends ActiveRecord {
 	const F_CURL_USERNAME = 'curl_username';
 	const F_CURL_PASSWORD = 'curl_password';
 	const F_WORKFLOW = 'workflow';
+	const F_EULA = 'eula';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
 	const F_API_BASE = 'api_base';
 	const F_ACTIVATE_CACHE = 'activate_cache';
@@ -54,7 +55,7 @@ class xoctConf extends ActiveRecord {
 
 		//CACHE
 		xoctCache::setOverrideActive(self::get(self::F_ACTIVATE_CACHE));
-//		xoctCache::setOverrideActive(true);
+		//		xoctCache::setOverrideActive(true);
 
 		// API
 		$xoctRequestSettings = new xoctRequestSettings();

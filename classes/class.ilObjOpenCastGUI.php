@@ -255,6 +255,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $xoctOpenCast xoctOpenCast
 		 */
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		if(!$xoctOpenCast instanceof xoctOpenCast) {
+			return false;
+		}
 
 		$this->tabs_gui->addTab(self::TAB_EVENTS, $this->pl->txt('tab_event_index'), $this->ctrl->getLinkTarget(new xoctEventGUI(), xoctEventGUI::CMD_STANDARD));
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
@@ -300,7 +303,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	public function initCreateForm($type) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->fillForm();
-		$creation_form->fillFormRandomized();
+		//$creation_form->fillFormRandomized();
 
 		return $creation_form->getAsPropertyFormGui();
 	}
@@ -355,7 +358,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $item ilTextInputGUI
 		 */
 		foreach ($xoctOpenCastFormGUI->getItems() as $item) {
-			$info->addProperty($item->getTitle(), $item->getValue());
+			//$info->addProperty($item->getTitle(), $item->getValue());
 		}
 
 		$info->enablePrivateNotes();

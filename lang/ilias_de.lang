@@ -35,7 +35,8 @@ event_create#:#Clip hochladen
 event_created#:#Erstellt
 event_creator#:#Ersteller
 event_date#:#Datum
-event_description#:#Beschreibung
+event_description#:#Untertitel
+event_download#:#Download
 event_duration#:#Dauer
 event_edit#:#Clip bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
@@ -120,6 +121,8 @@ series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert blei
 series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
 series_metadata#:#Channel-Infos
+series_permission_allow_set_own#:#Leserechte erteilen
+series_permission_allow_set_own_info#:#Clip-Besitzer können Leserechte auf ihre Clips erteilen
 series_permission_per_clip#:#Rechte pro Clip setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Clip-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen des gewählten Kanals sehen dürfen.
 series_save#:#Speichern

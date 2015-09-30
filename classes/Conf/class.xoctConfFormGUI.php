@@ -88,6 +88,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
+		$te->setUseRte(true);
+		$this->addItem($te);
+
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('roles'));
 		$this->addItem($h);

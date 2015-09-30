@@ -51,17 +51,23 @@ class xoctEventGUI extends xoctGUI {
 				$this->toolbar->addButtonInstance($b);
 			}
 		}
-//		if(xoctInvitation::where(array(
-//			'obj_id' => $this->xoctOpenCast->getObjId(),
-//			'user_id' => $ilUser->getId()
-//		))->hasSets()) {
-//			$b = ilLinkButton::getInstance();
-//			$b->setCaption('rep_robj_xoct_event_remove_invitations');
-//			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
-//			$this->toolbar->addButtonInstance($b);
-//		}
+		$intro_text = '';
+		if ($this->xoctOpenCast->getIntroText()) {
+			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
+			$intro->setVariable('INTRO', $this->xoctOpenCast->getIntroText());
+			$intro_text = $intro->get();
+		}
+		//		if(xoctInvitation::where(array(
+		//			'obj_id' => $this->xoctOpenCast->getObjId(),
+		//			'user_id' => $ilUser->getId()
+		//		))->hasSets()) {
+		//			$b = ilLinkButton::getInstance();
+		//			$b->setCaption('rep_robj_xoct_event_remove_invitations');
+		//			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
+		//			$this->toolbar->addButtonInstance($b);
+		//		}
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-		$this->tpl->setContent($xoctEventTableGUI->getHTML());
+		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
 	}
 
 
@@ -128,7 +134,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function view() {
 		$this->cancel();
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
-		//		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
+				echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
 		//		exit;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();

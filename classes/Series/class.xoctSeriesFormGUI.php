@@ -163,7 +163,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$department = new ilTextInputGUI($this->txt(self::F_DEPARTMENT), self::F_DEPARTMENT);
 		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
-		$this->addItem($department);
+		// $this->addItem($department);
 
 		$use_annotations = new ilCheckboxInputGUI($this->txt(self::F_USE_ANNOTATIONS), self::F_USE_ANNOTATIONS);
 		$this->addItem($use_annotations);
@@ -182,7 +182,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
-			$accept_eula->setInfo('MISSING EULA TEXT');
+			$accept_eula->setInfo(xoctConf::get(xoctConf::F_EULA));
 			$this->addItem($accept_eula);
 		}
 	}

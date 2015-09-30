@@ -39,9 +39,9 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInt
 	 *
 	 * @return string
 	 */
-//	public function txt($a_var) {
-//		return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
-//	}
+	//public function txt($a_var) {
+	//	return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
+	//}
 
 
 	const XOCT = 'xoct';
@@ -58,6 +58,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInt
 	 */
 	public static function getInstance() {
 		if (! isset(self::$cache)) {
+			//require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/sql/dbupdate.php');
 			self::$cache = new self();
 		}
 

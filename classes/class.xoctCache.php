@@ -26,7 +26,13 @@ class xoctCache extends ilGlobalCache {
 	 * @return ilGlobalCache
 	 */
 	public static function getInstance() {
-		return new self(self::TYPE_APC, self::COMP_OPENCAST);
+		$xoctCache = parent::getInstance(self::COMP_OPENCAST);
+		//$xoctCache = new self(self::TYPE_APC, self::COMP_OPENCAST);
+		//var_dump($xoctCache); // FSX
+		//exit;
+		$xoctCache->setActive(true);
+
+		return $xoctCache;
 	}
 
 
