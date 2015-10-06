@@ -7,6 +7,7 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
+config_eula#:#Nutzungsvereinbarung
 config_log_level_0#:#Deaktiviert
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
@@ -78,6 +79,7 @@ groups_participants_header#:#Teilnehmer
 invitations_back#:#Zurück
 invitations_header#:#Clip freigeben
 invitations_none_available#:#Keine verfügbar
+obj_xoct#:#OpenCast
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen
@@ -105,6 +107,7 @@ publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_cancel#:#Abbrechen
+series_channel_id#:#Series ID
 series_channel_type#:#Channel-Typ
 series_create#:#Channel anlegen
 series_department#:#Department
@@ -122,6 +125,7 @@ series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert blei
 series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
 series_metadata#:#Channel-Infos
+series_obj_online#:#Online
 series_permission_allow_set_own#:#Leserechte erteilen
 series_permission_allow_set_own_info#:#Clip-Besitzer können Leserechte auf ihre Clips erteilen
 series_permission_per_clip#:#Rechte pro Clip setzen

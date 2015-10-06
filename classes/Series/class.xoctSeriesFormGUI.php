@@ -30,6 +30,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_ACCEPT_EULA = 'accept_eula';
 	const F_EXISTING_IDENTIFIER = 'existing_identifier';
 	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
+	const F_OBJ_ONLINE = 'obj_online';
+	const F_CHANNEL_ID = 'channel_id';
 	/**
 	 * @var  xoctSeries
 	 */
@@ -120,6 +122,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
 		$this->addItem($te);
 
+		$te = new ilCheckboxInputGUI($this->txt(self::F_OBJ_ONLINE), self::F_OBJ_ONLINE);
+		$this->addItem($te);
+
 		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
 		$te->setRows(5);
 		$this->addItem($te);
@@ -183,7 +188,13 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
 			$accept_eula->setInfo(xoctConf::get(xoctConf::F_EULA));
+			$accept_eula->setRequired(true);
 			$this->addItem($accept_eula);
+		}
+
+		if(!$this->is_new) {
+			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
+			$this->addItem($channel_id);
 		}
 	}
 
@@ -216,6 +227,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_STREAMING_ONLY => $this->cast->getStreamingOnly(),
 			self::F_PERMISSION_PER_CLIP => $this->cast->getPermissionPerClip(),
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
+			self::F_OBJ_ONLINE => $this->cast->isObjOnline(),
+			self::F_CHANNEL_ID => $this->cast->getSeriesIdentifier(),
 		);
 
 		$this->setValuesByArray($array);
@@ -242,6 +255,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
+		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
 
 		return true;
 	}

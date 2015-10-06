@@ -26,10 +26,12 @@ class xoctCache extends ilGlobalCache {
 	 * @return ilGlobalCache
 	 */
 	public static function getInstance() {
-		$xoctCache = parent::getInstance(self::COMP_OPENCAST);
-		//$xoctCache = new self(self::TYPE_APC, self::COMP_OPENCAST);
-		//var_dump($xoctCache); // FSX
-		//exit;
+		require_once('./include/inc.ilias_version.php');
+		if (str_replace('.', '', ILIAS_VERSION_NUMERIC) > 510) {
+			$xoctCache = parent::getInstance(self::COMP_OPENCAST);
+		} else {
+			$xoctCache = new self(self::TYPE_APC, self::COMP_OPENCAST);
+		}
 		$xoctCache->setActive(true);
 
 		return $xoctCache;
@@ -109,6 +111,7 @@ class xoctCache extends ilGlobalCache {
 			return false;
 		}
 		$unserialized_return = $this->global_cache->unserialize($this->global_cache->get($key));
+
 		if ($unserialized_return) {
 			if ($this->global_cache->isValid($key)) {
 				return $unserialized_return;

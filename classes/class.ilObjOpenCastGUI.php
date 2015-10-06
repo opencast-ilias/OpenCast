@@ -119,30 +119,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$cmd = $this->ctrl->getCmd();
 			$next_class = $this->ctrl->getNextClass($this);
 			$this->tpl->getStandardTemplate();
-
-			if ($this->access->checkAccess("read", "", $_GET["ref_id"])) {
-				$this->history->addItem($_GET["ref_id"], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType());
-			}
-			$this->setLocator();
-
-			/**
-			 * @var $xoctOpenCast xoctOpenCast
-			 * @var $xoctSeries   xoctSeries
-			 */
-			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-
-			if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
-				$this->tpl->setTitle($this->object->getTitle());
-				$this->tpl->setDescription($this->object->getDescription());
-				if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-					$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
-				}
-			} else {
-				$this->tpl->setTitle($this->pl->txt('series_create'));
-			}
-			$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
-			$this->setTabs();
-			$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
+			$xoctOpenCast = $this->initHeader();
 
 			switch ($next_class) {
 				case 'ilpermissiongui':
@@ -258,7 +235,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $xoctOpenCast xoctOpenCast
 		 */
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		if(!$xoctOpenCast instanceof xoctOpenCast) {
+		if (! $xoctOpenCast instanceof xoctOpenCast) {
 			return false;
 		}
 
@@ -306,6 +283,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	public function initCreateForm($type) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->fillForm();
+
 		//$creation_form->fillFormRandomized();
 
 		return $creation_form->getAsPropertyFormGui();
@@ -367,6 +345,43 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$info->enablePrivateNotes();
 		$this->addInfoItems($info);
 		$this->ctrl->forwardCommand($info);
+	}
+
+
+	/**
+	 * @return xoctOpenCast
+	 */
+	protected function initHeader() {
+		$this->setLocator();
+
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctSeries   xoctSeries
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+
+		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
+			$this->tpl->setTitle($this->object->getTitle());
+			$this->tpl->setDescription($this->object->getDescription());
+			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+			}
+			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
+			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
+			/**
+			 * @var $list_gui ilObjOpenCastListGUI
+			 */
+			if ($xoctOpenCast->isObjOnline()) {
+				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
+			}
+		} else {
+			$this->tpl->setTitle($this->pl->txt('series_create'));
+		}
+		$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
+		$this->setTabs();
+		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
+
+		return $xoctOpenCast;
 	}
 
 	//	public function confirmDeleteObject() {

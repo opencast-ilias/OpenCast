@@ -1,17 +1,19 @@
 .xoct_preview_image {
 	width:  300px;
 	height: auto;
-	clear: both;
+	clear:  both;
 
 }
-.xoct-state-running * {
-	opacity: 0.5;
+
+.xoct-state-running {
+	/*opacity: 0.5;*/
 	background-color: #D6FFAC !important;
 }
+
 .event-state {
-	
+
 }
 
-.event-link-list{
+.event-link-list {
 
 }

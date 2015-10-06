@@ -22,7 +22,7 @@
 */
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
 include_once('./Services/Repository/classes/class.ilObjectPluginListGUI.php');
-
+require_once('class.ilObjOpenCastGUI.php');
 /**
  * ListGUI implementation for OpenCast object plugin. This one
  * handles the presentation in container items (categories, courses, ...)
@@ -57,23 +57,21 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		return 'ilObjOpenCastGUI';
 	}
 
-
-	/**
-	 * @return array
-	 */
-	public function getCommands() {
+//
+//	/**
+//	 * @return array
+//	 */
+//	public function getCommands() {
 //		$this->commands = $this->initCommands();
-
-		return parent::getCommands();
-	}
-
+//
+//		return parent::getCommands();
+//	}
+//
 
 	/**
 	 * @return array
 	 */
 	public function initCommands() {
-//		$request = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-
 		// Always set
 		$this->timings_enabled = false;
 		$this->subscribe_enabled = false;
@@ -83,230 +81,144 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		$this->delete_enabled = true;
 
 		// Should be overwritten according to status
-		$this->cut_enabled = false;
-		$this->copy_enabled = false;
+		$this->cut_enabled = true;
+		$this->copy_enabled = true;
 
 		$commands = array(
 			array(
 				'permission' => 'read',
-				'cmd' => 'showContent',
-				'default' => true
+				'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT
 			)
 		);
 
-//		switch ($request->getStatus()) {
-//			case xoctRequest::STATUS_IN_PROGRRESS:
-//				break;
-//			case xoctRequest::STATUS_REFUSED:
-//			case xoctRequest::STATUS_COPY:
-//
-//				$commands[] = array(
-//					'txt' => $this->plugin->txt('common_cmd_delete'),
-//					'permission' => 'delete',
-//					'cmd' => 'confirmDeleteObject',
-//					'default' => false
-//				);
-//				break;
-//
-//			case xoctRequest::STATUS_NEW:
-//			case xoctRequest::STATUS_RELEASED:
-//				$commands[] = array(
-//					'txt' => $this->plugin->txt('common_cmd_delete'),
-//					'permission' => 'delete',
-//					'cmd' => 'confirmDeleteObject',
-//					'default' => false
-//				);
-//
-//				$this->cut_enabled = true;
-//				$this->copy_enabled = true;
-//				break;
-//		}
+		//		switch ($request->getStatus()) {
+		//			case xoctRequest::STATUS_IN_PROGRRESS:
+		//				break;
+		//			case xoctRequest::STATUS_REFUSED:
+		//			case xoctRequest::STATUS_COPY:
+		//
+		//				$commands[] = array(
+		//					'txt' => $this->plugin->txt('common_cmd_delete'),
+		//					'permission' => 'delete',
+		//					'cmd' => 'confirmDeleteObject',
+		//					'default' => false
+		//				);
+		//				break;
+		//
+		//			case xoctRequest::STATUS_NEW:
+		//			case xoctRequest::STATUS_RELEASED:
+		//				$commands[] = array(
+		//					'txt' => $this->plugin->txt('common_cmd_delete'),
+		//					'permission' => 'delete',
+		//					'cmd' => 'confirmDeleteObject',
+		//					'default' => false
+		//				);
+		//
+		//				$this->cut_enabled = true;
+		//				$this->copy_enabled = true;
+		//				break;
+		//		}
 
 		return $commands;
 	}
 
 
-//	/**
-//	 * @param $title
-//	 *
-//	 * @return bool|void
-//	 */
-//	public function setTitle($title) {
-//		$xoctRequest = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-//		$this->title = $xoctRequest->getTitle() . ' / ' . $xoctRequest->getAuthor();
-//		parent::setTitle($this->title);
-//		$this->default_command = false;
-//	}
+	//	/**
+	//	 * @param $title
+	//	 *
+	//	 * @return bool|void
+	//	 */
+	//	public function setTitle($title) {
+	//		$xoctRequest = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
+	//		$this->title = $xoctRequest->getTitle() . ' / ' . $xoctRequest->getAuthor();
+	//		parent::setTitle($this->title);
+	//		$this->default_command = false;
+	//	}
 
+	/**
+	 * Get item properties
+	 *
+	 * @return    array        array of property arrays:
+	 *                        "alert" (boolean) => display as an alert property (usually in red)
+	 *                        "property" (string) => property name
+	 *                        "value" (string) => property value
+	 */
+	public function getPropertiesLorem() {
+		xoctConf::setApiSettings();
 
-//	/**
-//	 * Get item properties
-//	 *
-//	 * @return    array        array of property arrays:
-//	 *                        "alert" (boolean) => display as an alert property (usually in red)
-//	 *                        "property" (string) => property name
-//	 *                        "value" (string) => property value
-//	 */
-//	public function getProperties() {
-//		global $lng;
-//
-//		$request = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-//
-//		$info_string = '';
-//		$info_string .= $request->getBook() . ' ';
-//		$info_string .= '(' . $request->getPublishingYear() . '), ';
-//		// $info_string .= $this->plugin->txt('obj_list_page') . ' ';
-//		$info_string .= $request->getPages();
-//
-//		$props[] = array(
-//			'alert' => false,
-//			'newline' => true,
-//			'property' => 'description',
-//			'value' => $info_string,
-//			'propertyNameVisible' => false
-//		);
-//
-//		switch ($request->getStatus()) {
-//			case xoctRequest::STATUS_NEW:
-//				$props[] = array(
-//					'alert' => true,
-//					'newline' => true,
-//					'property' => $lng->txt('status'),
-//					'value' => $this->plugin->txt('request_status_' . xoctRequest::STATUS_NEW),
-//					'propertyNameVisible' => true
-//				);
-//				$props[] = array(
-//					'alert' => false,
-//					'newline' => true,
-//					'property' => $this->plugin->txt('request_creation_date'),
-//					'value' => self::format_date_time($request->getCreateDate()),
-//					'propertyNameVisible' => true
-//				);
-//				break;
-//			case xoctRequest::STATUS_IN_PROGRRESS:
-//				$props[] = array(
-//					'alert' => true,
-//					'newline' => true,
-//					'property' => $lng->txt('status'),
-//					'value' => $this->plugin->txt('request_status_' . xoctRequest::STATUS_IN_PROGRRESS),
-//					'propertyNameVisible' => true
-//				);
-//				$props[] = array(
-//					'alert' => false,
-//					'newline' => true,
-//					'property' => $this->plugin->txt('request_creation_date'),
-//					'value' => self::format_date_time($request->getCreateDate()),
-//					'propertyNameVisible' => true
-//				);
-//				break;
-//
-//			case xoctRequest::STATUS_REFUSED:
-//				$props[] = array(
-//					'alert' => true,
-//					'newline' => true,
-//					'property' => $lng->txt('status'),
-//					'value' => $this->plugin->txt('request_status_' . xoctRequest::STATUS_REFUSED),
-//					'propertyNameVisible' => true
-//				);
-//				$props[] = array(
-//					'alert' => false,
-//					'newline' => true,
-//					'property' => $this->plugin->txt('request_creation_date'),
-//					'value' => self::format_date_time($request->getCreateDate()),
-//					'propertyNameVisible' => true
-//				);
-//				$props[] = array(
-//					'alert' => false,
-//					'newline' => true,
-//					'property' => $this->plugin->txt('request_refusing_date'),
-//					'value' => self::format_date_time($request->getDateLastStatusChange()),
-//					'propertyNameVisible' => true
-//				);
-//				break;
-//
-//			case xoctRequest::STATUS_RELEASED:
-//			case xoctRequest::STATUS_COPY:
-//				// Display a warning if a file is not a hidden Unix file, and
-//				// the filename extension is missing
-//				$file = $request->getAbsoluteFilePath();
-//
-//				if (!preg_match('/^\\.|\\.[a-zA-Z0-9]+$/', $file)) {
-//					$props[] = array(
-//						'alert' => false,
-//						'property' => $lng->txt('filename_interoperability'),
-//						'value' => $lng->txt('filename_extension_missing'),
-//						'propertyNameVisible' => false
-//					);
-//				}
-//				$props[] = array(
-//					'alert' => false,
-//					'property' => $lng->txt('size'),
-//					'value' => ilFormat::formatSize(filesize($file), 'short'),
-//					'propertyNameVisible' => false,
-//					'newline' => true,
-//				);
-//				$props[] = array(
-//					'alert' => false,
-//					'newline' => true,
-//					'property' => $this->plugin->txt('request_upload_date'),
-//					'value' => self::format_date_time($request->getDateLastStatusChange()),
-//					'propertyNameVisible' => true
-//				);
-//
-//				if (!ilObjOpenCastAccess::hasAccessToDownload($this->ref_id)) {
-//					$props[] = array(
-//						'alert' => true,
-//						'newline' => true,
-//						'property' => 'description',
-//						'value' => $this->plugin->txt('status_no_access_to_download'),
-//						'propertyNameVisible' => false
-//					);
-//				}
-//
-//				break;
-//		}
-//
-//		return $props;
-//	}
-//
-//
-//	/**
-//	 * insert item title
-//	 *
-//	 * @overwritten
-//	 */
-//	public function insertTitle() {
-//		/**
-//		 * @var ilCtrl $ilCtrl
-//		 */
-//		global $ilCtrl;
-//
-//		$request = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-//
-//		switch ($request->getStatus()) {
-//			case xoctRequest::STATUS_NEW:
-//			case xoctRequest::STATUS_IN_PROGRRESS:
-//			case xoctRequest::STATUS_REFUSED:
-//				$this->default_command = false;
-//				break;
-//			case xoctRequest::STATUS_RELEASED:
-//			case xoctRequest::STATUS_COPY:
-//				if (ilObjOpenCastAccess::hasAccessToDownload($this->ref_id)) {
-//					$ilCtrl->setParameterByClass('ilObjOpenCastGUI', xoctRequestGUI::XDGL_ID, xoctRequest::getIdByOpenCastObjectId($this->obj_id));
-//					$this->default_command = array(
-//						'link' => $ilCtrl->getLinkTargetByClass('ilObjOpenCastGUI', ilObjOpenCastGUI::CMD_SEND_FILE),
-//						'frame' => '_top'
-//					);
-//				} else {
-//					$this->default_command = false;
-//				}
-//
-//				break;
-//		}
-//
-//		parent::insertTitle();
-//	}
+		try {
+			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+			if (! $xoctOpenCast instanceof xoctOpenCast) {
+				return array();
+			}
 
+			$props[] = array(
+				'alert' => false,
+				'newline' => true,
+				'property' => 'description',
+				'value' => $xoctOpenCast->getSeries()->getDescription(),
+				'propertyNameVisible' => false
+			);
+			if (! $xoctOpenCast->isObjOnline()) {
+				$props[] = array(
+					'alert' => true,
+					'newline' => true,
+					'property' => 'Status',
+					'value' => 'Offline',
+					'propertyNameVisible' => true
+				);
+			}
+		} catch (xoctException $e) {
+			$props[] = array(
+				'alert' => true,
+				'newline' => true,
+				'property' => 'Status',
+				'value' => $e->getMessage(),
+				'propertyNameVisible' => false
+			);
+		}
+
+		return $props;
+	}
+
+	//
+	//
+	//	/**
+	//	 * insert item title
+	//	 *
+	//	 * @overwritten
+	//	 */
+	//	public function insertTitle() {
+	//		/**
+	//		 * @var ilCtrl $ilCtrl
+	//		 */
+	//		global $ilCtrl;
+	//
+	//		$request = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
+	//
+	//		switch ($request->getStatus()) {
+	//			case xoctRequest::STATUS_NEW:
+	//			case xoctRequest::STATUS_IN_PROGRRESS:
+	//			case xoctRequest::STATUS_REFUSED:
+	//				$this->default_command = false;
+	//				break;
+	//			case xoctRequest::STATUS_RELEASED:
+	//			case xoctRequest::STATUS_COPY:
+	//				if (ilObjOpenCastAccess::hasAccessToDownload($this->ref_id)) {
+	//					$ilCtrl->setParameterByClass('ilObjOpenCastGUI', xoctRequestGUI::XDGL_ID, xoctRequest::getIdByOpenCastObjectId($this->obj_id));
+	//					$this->default_command = array(
+	//						'link' => $ilCtrl->getLinkTargetByClass('ilObjOpenCastGUI', ilObjOpenCastGUI::CMD_SEND_FILE),
+	//						'frame' => '_top'
+	//					);
+	//				} else {
+	//					$this->default_command = false;
+	//				}
+	//
+	//				break;
+	//		}
+	//
+	//		parent::insertTitle();
+	//	}
 
 	/**
 	 * @param $unix_timestamp

@@ -7,6 +7,7 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_eula#:#EULA
 config_log_level_0#:#Deactivated
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
@@ -78,6 +79,7 @@ groups_participants_header#:#Participants
 invitations_back#:#Back
 invitations_header#:#Share Clip
 invitations_none_available#:#None available
+obj_xoct#:#OpenCast
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel
@@ -105,6 +107,7 @@ publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 series_accept_eula#:#I accept the agreement
 series_cancel#:#Cancel
+series_channel_id#:#Series ID
 series_channel_type#:#Channel-Type
 series_create#:#Create Channel
 series_department#:#Department
@@ -122,6 +125,7 @@ series_intended_lifetime_info#:#How long shoud the video material be published?
 series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Channel-Infos
+series_obj_online#:#Online
 series_permission_allow_set_own#:#Share Clip
 series_permission_allow_set_own_info#:#users can share their clips (read-only)
 series_permission_per_clip#:#Set permissions for a clip

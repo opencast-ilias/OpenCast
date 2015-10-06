@@ -1,6 +1,6 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-
+require_once('class.xoctSeries.php');
 /**
  * Class xoctOpenCast
  *
