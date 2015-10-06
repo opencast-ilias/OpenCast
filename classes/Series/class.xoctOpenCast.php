@@ -110,7 +110,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $streaming_only = true;
+	protected $streaming_only = false;
 	/**
 	 * @var
 	 *
@@ -118,7 +118,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $permission_per_clip = true;
+	protected $permission_per_clip = false;
 	/**
 	 * @var
 	 *
@@ -126,7 +126,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $permission_allow_set_own = true;
+	protected $permission_allow_set_own = false;
 	/**
 	 * @var
 	 *

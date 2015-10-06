@@ -44,6 +44,7 @@ event_file_presenter#:#File
 event_identifier#:#ID
 event_invite_others#:#Share Clip
 event_location#:#Recording Station
+event_msg_created#:#Upload finished
 event_msg_success#:#Saved changes
 event_owner#:#Owner
 event_owner_select#:#Please select...

@@ -143,7 +143,10 @@ class xoctEvent extends xoctObject {
 		foreach (xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctGroupParticipant) {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
 		}
-
+		if($this->getOwnerAcl() instanceof xoctAcl ) {
+//			echo '<pre>' . print_r($role_names, 1) . '</pre>';
+//			echo '<pre>' . print_r($this->getOwnerAcl()->getRole(), 1) . '</pre>';
+		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
 			return true;

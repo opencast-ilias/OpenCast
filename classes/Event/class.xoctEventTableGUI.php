@@ -141,7 +141,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
 		}
-		$this->addColumn($this->pl->txt('common_actions'));
+		$this->addColumn($this->pl->txt('common_actions'), "", "", false, "text-right");
 	}
 
 

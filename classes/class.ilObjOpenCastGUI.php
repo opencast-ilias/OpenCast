@@ -142,6 +142,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 			$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
 			$this->setTabs();
+			$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
 
 			switch ($next_class) {
 				case 'ilpermissiongui':
@@ -214,6 +215,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 							$this->infoScreen();
 							$this->tpl->show();
 							break;
+						default:
+							$this->ctrl->redirect(new xoctEventGUI($xoctOpenCast));
 					}
 					break;
 			}

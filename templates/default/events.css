@@ -4,8 +4,9 @@
 	clear: both;
 
 }
-.xoct-state-running {
+.xoct-state-running * {
 	opacity: 0.5;
+	background-color: #D6FFAC !important;
 }
 .event-state {
 	

@@ -57,15 +57,12 @@ class xoctEventGUI extends xoctGUI {
 			$intro->setVariable('INTRO', $this->xoctOpenCast->getIntroText());
 			$intro_text = $intro->get();
 		}
-		//		if(xoctInvitation::where(array(
-		//			'obj_id' => $this->xoctOpenCast->getObjId(),
-		//			'user_id' => $ilUser->getId()
-		//		))->hasSets()) {
-		//			$b = ilLinkButton::getInstance();
-		//			$b->setCaption('rep_robj_xoct_event_remove_invitations');
-		//			$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
-		//			$this->toolbar->addButtonInstance($b);
-		//		}
+
+		$b = ilLinkButton::getInstance();
+		$b->setCaption('rep_robj_xoct_event_remove_invitations');
+		$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
+//		$this->toolbar->addButtonInstance($b);
+
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
 	}
@@ -82,7 +79,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
-			ilUtil::sendSuccess($this->txt('msg_success'), true);
+			ilUtil::sendSuccess($this->txt('msg_created'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
@@ -110,10 +107,14 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function removeInvitations() {
 		global $ilUser;
-		foreach (xoctInvitation::where(array(
-			'obj_id' => $this->xoctOpenCast->getObjId(),
-			'user_id' => $ilUser->getId()
-		))->get() as $xoctInvitation) {
+		//		foreach (xoctInvitation::where(array(
+		//			'obj_id' => $this->xoctOpenCast->getObjId(),
+		//			//			'user_id' => $ilUser->getId()
+		//		))->get() as $xoctInvitation) {
+		//			$xoctInvitation->delete();
+		//		}
+
+		foreach (xoctInvitation::get() as $xoctInvitation) {
 			$xoctInvitation->delete();
 		}
 		ilUtil::sendSuccess($this->txt('msg_success'), true);
@@ -134,7 +135,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function view() {
 		$this->cancel();
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
-				echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
+		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
 		//		exit;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
