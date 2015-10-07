@@ -30,7 +30,7 @@ config_workflow#:#Workflow-ID
 event_add_new#:#Add Clip
 event_annotate#:#Annotate
 event_cancel#:#Cancel
-event_clear_cache#:#Clear Cache
+event_clear_cache#:#Reload Events
 event_clips#:#Clips
 event_create#:#Upload Clip
 event_created#:#Created

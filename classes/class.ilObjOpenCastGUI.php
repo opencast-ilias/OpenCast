@@ -54,6 +54,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	const CMD_SHOW_CONTENT = 'showContent';
+	const CMD_REDIRECT_SETTING = 'redirectSettings';
 	const TAB_EVENTS = 'series';
 	const TAB_SETTINGS = 'settings';
 	const TAB_INFO = 'info';
@@ -117,7 +118,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		try {
 			xoctConf::setApiSettings();
 			$cmd = $this->ctrl->getCmd();
-			$next_class = $this->ctrl->getNextClass($this);
+			$next_class = $this->ctrl->getNextClass();
 			$this->tpl->getStandardTemplate();
 			$xoctOpenCast = $this->initHeader();
 
@@ -161,6 +162,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					$this->ctrl->forwardCommand($xoctGroupGUI);
 					$this->tpl->show();
 					break;
+				case 'ilcommonactiondispatchergui':
+					include_once 'Services/Object/classes/class.ilCommonActionDispatcherGUI.php';
+					$gui = ilCommonActionDispatcherGUI::getInstanceFromAjaxCall();
+					$this->ctrl->forwardCommand($gui);
+					break;
 				case 'ilObjOpenCastGUI':
 				case '':
 					switch ($cmd) {
@@ -171,11 +177,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 						case 'save':
 							$this->save();
 							break;
-						case 'edit':
-							$this->edit();
-							break;
-						case 'update':
-							parent::update();
+						case self::CMD_REDIRECT_SETTING:
+							$this->redirectSettings();
 							break;
 						case self::CMD_SHOW_CONTENT:
 							$this->showContent();
@@ -193,7 +196,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 							$this->tpl->show();
 							break;
 						default:
-							$this->ctrl->redirect(new xoctEventGUI($xoctOpenCast));
+							parent::executeCommand();
+//							$this->ctrl->redirect(new xoctEventGUI($xoctOpenCast));
 					}
 					break;
 			}
@@ -206,6 +210,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	protected function showContent() {
 		$this->ctrl->redirect(new xoctEventGUI());
+	}
+
+	protected function redirectSettings(){
+		$this->ctrl->redirect(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT);
 	}
 
 

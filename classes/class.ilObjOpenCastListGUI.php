@@ -23,6 +23,7 @@
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
 include_once('./Services/Repository/classes/class.ilObjectPluginListGUI.php');
 require_once('class.ilObjOpenCastGUI.php');
+
 /**
  * ListGUI implementation for OpenCast object plugin. This one
  * handles the presentation in container items (categories, courses, ...)
@@ -57,12 +58,12 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		return 'ilObjOpenCastGUI';
 	}
 
-//
+
 //	/**
 //	 * @return array
 //	 */
 //	public function getCommands() {
-//		$this->commands = $this->initCommands();
+////		$this->commands = $this->initCommands();
 //
 //		return parent::getCommands();
 //	}
@@ -72,13 +73,16 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 * @return array
 	 */
 	public function initCommands() {
+
 		// Always set
-		$this->timings_enabled = false;
+		$this->timings_enabled = true;
 		$this->subscribe_enabled = false;
 		$this->payment_enabled = false;
 		$this->link_enabled = false;
 		$this->info_screen_enabled = true;
 		$this->delete_enabled = true;
+		$this->notes_enabled = true;
+		$this->comments_enabled = true;
 
 		// Should be overwritten according to status
 		$this->cut_enabled = true;
@@ -87,8 +91,14 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		$commands = array(
 			array(
 				'permission' => 'read',
-				'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT
-			)
+				'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT,
+				'default' => true,
+			),
+			array(
+				'permission' => 'write',
+				'cmd' => ilObjOpenCastGUI::CMD_REDIRECT_SETTING,
+				'lang_var' => 'edit'
+			),
 		);
 
 		//		switch ($request->getStatus()) {
@@ -139,17 +149,19 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 * Get item properties
 	 *
 	 * @return    array        array of property arrays:
-	 *                        "alert" (boolean) => display as an alert property (usually in red)
-	 *                        "property" (string) => property name
-	 *                        "value" (string) => property value
+	 *                        'alert' (boolean) => display as an alert property (usually in red)
+	 *                        'property' (string) => property name
+	 *                        'value' (string) => property value
 	 */
-	public function getPropertiesLorem() {
+	public function getProperties() {
 		xoctConf::setApiSettings();
+
+		$props = parent::getProperties();
 
 		try {
 			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
 			if (! $xoctOpenCast instanceof xoctOpenCast) {
-				return array();
+				return $props;
 			}
 
 			$props[] = array(
