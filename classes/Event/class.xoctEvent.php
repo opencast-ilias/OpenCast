@@ -382,7 +382,10 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @return xoctPublication
 	 */
-	public function getPublicationMetadataForUsage(xoctPublicationUsage $xoctPublicationUsage) {
+	public function getPublicationMetadataForUsage($xoctPublicationUsage) {
+		if (! $xoctPublicationUsage instanceof xoctPublicationUsage) {
+			return new xoctPublication();
+		}
 		/**
 		 * @var $xoctPublicationUsage  xoctPublicationUsage
 		 * @var $attachment            xoctAttachment
@@ -394,30 +397,28 @@ class xoctEvent extends xoctObject {
 			$medias = array_merge($medias, $publication->getMedia());
 			$attachments = array_merge($attachments, $publication->getAttachments());
 		}
-		if ($xoctPublicationUsage instanceof xoctPublicationUsage) {
-			switch ($xoctPublicationUsage->getMdType()) {
-				case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
-					foreach ($attachments as $attachment) {
-						if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-							return $attachment;
-						}
+		switch ($xoctPublicationUsage->getMdType()) {
+			case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
+				foreach ($attachments as $attachment) {
+					if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
+						return $attachment;
 					}
-					break;
-				case xoctPublicationUsage::MD_TYPE_MEDIA:
-					foreach ($medias as $media) {
-						if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-							return $media;
-						}
+				}
+				break;
+			case xoctPublicationUsage::MD_TYPE_MEDIA:
+				foreach ($medias as $media) {
+					if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
+						return $media;
 					}
-					break;
-				case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
-					foreach ($this->getPublications() as $publication) {
-						if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
-							return $publication;
-						}
+				}
+				break;
+			case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
+				foreach ($this->getPublications() as $publication) {
+					if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
+						return $publication;
 					}
-					break;
-			}
+				}
+				break;
 		}
 
 		return new xoctPublication();
