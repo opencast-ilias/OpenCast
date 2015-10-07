@@ -49,6 +49,8 @@ event_identifier#:#ID
 event_invite_others#:#Share Clip
 event_location#:#Recording Station
 event_msg_created#:#Upload finished
+event_msg_deleted#:#Clip deleted
+event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_owner#:#Owner
 event_owner_select#:#Please select...

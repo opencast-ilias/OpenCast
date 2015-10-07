@@ -49,6 +49,8 @@ event_identifier#:#ID
 event_invite_others#:#Clip freigeben
 event_location#:#Aufnahmestation
 event_msg_created#:#Upload abgeschlossen
+event_msg_deleted#:#Clip gelöscht
+event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
 event_owner_select#:#Bitte wählen...
