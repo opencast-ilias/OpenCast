@@ -254,7 +254,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
-			//			$creation_form->setValuesByPost();
 			$this->tpl->setContent($creation_form->getHtml());
 		}
 	}
@@ -275,6 +274,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} else {
 			$cast->create();
 		}
+
+		$newObj->setTitle($cast->getSeries()->getTitle());
+		$newObj->setDescription($cast->getSeries()->getDescription());
+		$newObj->update();
 
 		parent::afterSave($newObj);
 	}
