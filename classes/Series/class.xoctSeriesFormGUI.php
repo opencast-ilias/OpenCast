@@ -32,6 +32,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
 	const F_OBJ_ONLINE = 'obj_online';
 	const F_CHANNEL_ID = 'channel_id';
+	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
 	/**
 	 * @var  xoctSeries
 	 */
@@ -144,7 +145,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		if ($licenses) {
 			foreach (explode("\n", $licenses) as $nl) {
 				$lic = explode("#", $nl);
-				if($lic[0] && $lic[1]) {
+				if ($lic[0] && $lic[1]) {
 					$options[$lic[0]] = $lic[1];
 				}
 			}
@@ -171,6 +172,12 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$permission_per_clip->addSubItem($set_own_rights);
 
 		$this->addItem($permission_per_clip);
+		xoctOpenCast::updateDB();
+		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN)) {
+			$show_upload_token = new ilCheckboxInputGUI($this->txt(self::F_SHOW_UPLOAD_TOKEN), self::F_SHOW_UPLOAD_TOKEN);
+			$show_upload_token->setInfo($this->infoTxt(self::F_SHOW_UPLOAD_TOKEN));
+			$this->addItem($show_upload_token);
+		}
 
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
@@ -197,6 +204,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_STREAMING_ONLY => true,
 			self::F_PERMISSION_PER_CLIP => true,
 			self::F_PERMISSION_ALLOW_SET_OWN => true,
+			self::F_SHOW_UPLOAD_TOKEN => true,
 		);
 
 		$this->setValuesByArray($array);
@@ -216,6 +224,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
 			self::F_OBJ_ONLINE => $this->cast->isObjOnline(),
 			self::F_CHANNEL_ID => $this->cast->getSeriesIdentifier(),
+			self::F_SHOW_UPLOAD_TOKEN => $this->cast->isShowUploadToken(),
 		);
 
 		$this->setValuesByArray($array);
@@ -243,6 +252,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
+		$this->cast->setShowUploadToken($this->getInput(self::F_SHOW_UPLOAD_TOKEN));
 
 		return true;
 	}

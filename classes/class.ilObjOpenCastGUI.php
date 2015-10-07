@@ -319,7 +319,38 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * show information screen
 	 */
 	function infoScreen() {
-		parent::infoScreen();
+		global $ilAccess, $ilUser, $lng, $ilCtrl, $tpl, $ilTabs;
+
+		$ilTabs->setTabActive("info_short");
+
+		$this->checkPermission("visible");
+
+		include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
+		$info = new ilInfoScreenGUI($this);
+		$info->enablePrivateNotes();
+
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$daily_token =  strtoupper(substr(md5($xoctOpenCast->getSeriesIdentifier() . date('d-m-Y')), 0, 6));
+
+		if(xoctConf::get(xoctConf::F_UPLOAD_TOKEN) && $xoctOpenCast->isShowUploadToken()) {
+			$info->addSection($this->pl->txt('upload_token_upload_token'));
+			$info->addProperty($this->pl->txt('upload_token_channel_id'), $xoctOpenCast->getSeriesIdentifier());
+			$info->addProperty($this->pl->txt('upload_token_daily_upload_token'), $daily_token);
+		}
+
+
+		// general information
+		$lng->loadLanguageModule("meta");
+
+		$this->addInfoItems($info);
+
+		// forward the command
+		$ret = $ilCtrl->forwardCommand($info);
+
+
 		$this->initHeader();
 	}
 }

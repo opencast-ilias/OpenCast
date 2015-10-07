@@ -30,6 +30,7 @@ config_role_producer#:#Producer
 config_role_user_prefix#:#Präfix für Benutzer-Rolle (Mapping wird angehängt)
 config_roles#:#OpenCast-Rollen
 config_update#:#Aktualisieren
+config_upload_token#:#Aktiviere Upload-Token
 config_use_modals#:#Player in Modal öffnen
 config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
@@ -143,6 +144,8 @@ series_permission_per_clip#:#Rechte pro Clip setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Clip-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen des gewählten Kanals sehen dürfen.
 series_save#:#Speichern
 series_saved#:#Channel-Informationen gespeichert
+series_show_upload_token#:#Upload-Token anzeigen
+series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Clips hochladen können
 series_streaming_only#:#Nur Streaming
 series_title#:#Titel
 series_update#:#Aktualisieren
@@ -167,3 +170,6 @@ tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
+upload_token_channel_id#:#Series-ID
+upload_token_daily_upload_token#:#Token
+upload_token_upload_token#:#Upload-Token

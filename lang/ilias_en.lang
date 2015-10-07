@@ -30,6 +30,7 @@ config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
 config_roles#:#OpenCast-Roles
 config_update#:#Update
+config_upload_token#:#Activate Upload-Token
 config_use_modals#:#Open Player in Modal
 config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
@@ -143,6 +144,8 @@ series_permission_per_clip#:#Set permissions for a clip
 series_permission_per_clip_info#:#This setting enables an individual rights management based on clips ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the clips of this channel.
 series_save#:#Save
 series_saved#:#Channel-Information saved
+series_show_upload_token#:#Show Upload-Token
+series_show_upload_token_info#:#Displays a code which students can use to upload own clips
 series_streaming_only#:#Streaming only
 series_title#:#Title
 series_update#:#Update
@@ -167,3 +170,6 @@ tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
+upload_token_channel_id#:#Series-ID
+upload_token_daily_upload_token#:#Token
+upload_token_upload_token#:#Upload-Token
