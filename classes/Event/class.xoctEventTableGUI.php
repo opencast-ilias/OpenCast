@@ -84,12 +84,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 			//			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
 		}
-		require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
-		$modal = ilModalGUI::getInstance();
-		$modal->setId('modal_' . $xoctEvent->getIdentifier());
-		$modal->setHeading($xoctEvent->getTitle());
-		$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
-		$this->tpl->setVariable('MODAL', $modal->getHTML());
 
 		if ($this->xoctOpenCast->getUseAnnotations()) {
 			$this->tpl->setCurrentBlock('link');
@@ -98,12 +92,19 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 			$this->tpl->parseCurrentBlock();
 		}
-
 		$this->tpl->setCurrentBlock('link');
 		$this->tpl->setVariable('LINK_URL', $xoctEvent->getPlayerLink());
-		$this->tpl->setVariable('LINK_URL', '#');
 		$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
-		$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
+		if (xoctConf::get(xoctConf::F_USE_MODALS)) {
+			require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
+			$modal = ilModalGUI::getInstance();
+			$modal->setId('modal_' . $xoctEvent->getIdentifier());
+			$modal->setHeading($xoctEvent->getTitle());
+			$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
+			$this->tpl->setVariable('MODAL', $modal->getHTML());
+			$this->tpl->setVariable('LINK_URL', '#');
+			$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
+		}
 		$this->tpl->parseCurrentBlock();
 
 		if (! $this->xoctOpenCast->getStreamingOnly()) {
