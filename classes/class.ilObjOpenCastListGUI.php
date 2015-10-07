@@ -137,6 +137,23 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	/**
+	 * get all alert properties
+	 *
+	 * @return array
+	 */
+	public function getAlertProperties() {
+		$alert = array();
+		foreach ((array)$this->getCustomProperties() as $prop) {
+			if ($prop['alert'] == true) {
+				$alert[] = $prop;
+			}
+		}
+
+		return $alert;
+	}
+
+
+	/**
 	 * @param $unix_timestamp
 	 *
 	 * @return string formatted date

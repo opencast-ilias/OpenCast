@@ -236,8 +236,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->fillForm();
 
-		//$creation_form->fillFormRandomized();
-
 		return $creation_form->getAsPropertyFormGui();
 	}
 
@@ -255,7 +253,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
-			$creation_form->setValuesByPost();
+			//			$creation_form->setValuesByPost();
 			$this->tpl->setContent($creation_form->getHtml());
 		}
 	}
@@ -314,6 +312,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
 
 		return $xoctOpenCast;
+	}
+
+
+	/**
+	 * show information screen
+	 */
+	function infoScreen() {
+		parent::infoScreen();
+		$this->initHeader();
 	}
 }
 
