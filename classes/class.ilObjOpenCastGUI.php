@@ -369,8 +369,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
 
 		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
-			$this->tpl->setTitle($this->object->getTitle());
-			$this->tpl->setDescription($this->object->getDescription());
+			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
+			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
 			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
 				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
 			}
@@ -379,7 +379,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
-			if ($xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isObjOnline()) {
 				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {

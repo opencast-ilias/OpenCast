@@ -59,15 +59,15 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	}
 
 
-//	/**
-//	 * @return array
-//	 */
-//	public function getCommands() {
-////		$this->commands = $this->initCommands();
-//
-//		return parent::getCommands();
-//	}
-//
+	//	/**
+	//	 * @return array
+	//	 */
+	//	public function getCommands() {
+	////		$this->commands = $this->initCommands();
+	//
+	//		return parent::getCommands();
+	//	}
+	//
 
 	/**
 	 * @return array
@@ -153,24 +153,24 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 *                        'property' (string) => property name
 	 *                        'value' (string) => property value
 	 */
-	public function getProperties() {
+	public function getCustomProperties() {
 		xoctConf::setApiSettings();
 
-		$props = parent::getProperties();
+//		$props = parent::getProperties();
 
 		try {
 			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
 			if (! $xoctOpenCast instanceof xoctOpenCast) {
-				return $props;
+				return array();
 			}
 
-			$props[] = array(
-				'alert' => false,
-				'newline' => true,
-				'property' => 'description',
-				'value' => $xoctOpenCast->getSeries()->getDescription(),
-				'propertyNameVisible' => false
-			);
+			//			$props[] = array(
+			//				'alert' => false,
+			//				'newline' => true,
+			//				'property' => 'description',
+			//				'value' => $xoctOpenCast->getSeries()->getDescription(),
+			//				'propertyNameVisible' => false
+			//			);
 			if (! $xoctOpenCast->isObjOnline()) {
 				$props[] = array(
 					'alert' => true,
@@ -192,6 +192,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		return $props;
 	}
+
+
+
+
 
 	//
 	//

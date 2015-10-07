@@ -64,6 +64,10 @@ class xoctSeriesGUI extends xoctGUI {
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_SETTINGS);
 		$xoctSeriesFormGUI = new xoctSeriesFormGUI($this, $this->xoctOpenCast);
 		if ($xoctSeriesFormGUI->saveObject()) {
+			$obj = new ilObjOpenCast($_GET['ref_id']);
+			$obj->setTitle($this->xoctOpenCast->getSeries()->getTitle());
+			$obj->setDescription($this->xoctOpenCast->getSeries()->getDescription());
+			$obj->update();
 			ilUtil::sendSuccess($this->pl->txt('series_saved'), true);
 			$this->ctrl->redirect($this, self::CMD_EDIT);
 		}
