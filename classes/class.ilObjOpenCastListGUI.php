@@ -59,16 +59,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	}
 
 
-	//	/**
-	//	 * @return array
-	//	 */
-	//	public function getCommands() {
-	////		$this->commands = $this->initCommands();
-	//
-	//		return parent::getCommands();
-	//	}
-	//
-
 	/**
 	 * @return array
 	 */
@@ -101,49 +91,9 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			),
 		);
 
-		//		switch ($request->getStatus()) {
-		//			case xoctRequest::STATUS_IN_PROGRRESS:
-		//				break;
-		//			case xoctRequest::STATUS_REFUSED:
-		//			case xoctRequest::STATUS_COPY:
-		//
-		//				$commands[] = array(
-		//					'txt' => $this->plugin->txt('common_cmd_delete'),
-		//					'permission' => 'delete',
-		//					'cmd' => 'confirmDeleteObject',
-		//					'default' => false
-		//				);
-		//				break;
-		//
-		//			case xoctRequest::STATUS_NEW:
-		//			case xoctRequest::STATUS_RELEASED:
-		//				$commands[] = array(
-		//					'txt' => $this->plugin->txt('common_cmd_delete'),
-		//					'permission' => 'delete',
-		//					'cmd' => 'confirmDeleteObject',
-		//					'default' => false
-		//				);
-		//
-		//				$this->cut_enabled = true;
-		//				$this->copy_enabled = true;
-		//				break;
-		//		}
-
 		return $commands;
 	}
 
-
-	//	/**
-	//	 * @param $title
-	//	 *
-	//	 * @return bool|void
-	//	 */
-	//	public function setTitle($title) {
-	//		$xoctRequest = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-	//		$this->title = $xoctRequest->getTitle() . ' / ' . $xoctRequest->getAuthor();
-	//		parent::setTitle($this->title);
-	//		$this->default_command = false;
-	//	}
 
 	/**
 	 * Get item properties
@@ -156,21 +106,13 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	public function getCustomProperties() {
 		xoctConf::setApiSettings();
 
-//		$props = parent::getProperties();
-
+		$props = array();
 		try {
 			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
 			if (! $xoctOpenCast instanceof xoctOpenCast) {
-				return array();
+				return $props;
 			}
 
-			//			$props[] = array(
-			//				'alert' => false,
-			//				'newline' => true,
-			//				'property' => 'description',
-			//				'value' => $xoctOpenCast->getSeries()->getDescription(),
-			//				'propertyNameVisible' => false
-			//			);
 			if (! $xoctOpenCast->isObjOnline()) {
 				$props[] = array(
 					'alert' => true,
@@ -193,48 +135,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		return $props;
 	}
 
-
-
-
-
-	//
-	//
-	//	/**
-	//	 * insert item title
-	//	 *
-	//	 * @overwritten
-	//	 */
-	//	public function insertTitle() {
-	//		/**
-	//		 * @var ilCtrl $ilCtrl
-	//		 */
-	//		global $ilCtrl;
-	//
-	//		$request = xoctRequest::getInstanceForOpenCastObjectId($this->obj_id);
-	//
-	//		switch ($request->getStatus()) {
-	//			case xoctRequest::STATUS_NEW:
-	//			case xoctRequest::STATUS_IN_PROGRRESS:
-	//			case xoctRequest::STATUS_REFUSED:
-	//				$this->default_command = false;
-	//				break;
-	//			case xoctRequest::STATUS_RELEASED:
-	//			case xoctRequest::STATUS_COPY:
-	//				if (ilObjOpenCastAccess::hasAccessToDownload($this->ref_id)) {
-	//					$ilCtrl->setParameterByClass('ilObjOpenCastGUI', xoctRequestGUI::XDGL_ID, xoctRequest::getIdByOpenCastObjectId($this->obj_id));
-	//					$this->default_command = array(
-	//						'link' => $ilCtrl->getLinkTargetByClass('ilObjOpenCastGUI', ilObjOpenCastGUI::CMD_SEND_FILE),
-	//						'frame' => '_top'
-	//					);
-	//				} else {
-	//					$this->default_command = false;
-	//				}
-	//
-	//				break;
-	//		}
-	//
-	//		parent::insertTitle();
-	//	}
 
 	/**
 	 * @param $unix_timestamp
