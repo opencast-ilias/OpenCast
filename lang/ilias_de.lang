@@ -1,4 +1,6 @@
 <!-- language file start -->
+admin_export#:#Einstellungen exportieren
+admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
 config_activate_cache#:#Cache aktivieren
 config_api_base#:#API-Basis-URL
@@ -156,6 +158,7 @@ system_account_msg_success#:#Gespeichert
 system_account_status#:#Status
 system_account_update#:#Aktualisieren
 tab_event_index#:#Inhalt
+tab_export#:#Import/Export
 tab_groups#:#Gruppen
 tab_info#:#Info
 tab_list_all#:#Alle Clips

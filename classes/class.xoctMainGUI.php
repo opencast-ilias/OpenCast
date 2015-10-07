@@ -4,6 +4,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConfGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/SystemAccount/class.xoctSystemAccountGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/Export/class.xoctConfExportGUI.php');
 
 /**
  * Class xoctMainGUI
@@ -18,6 +19,7 @@ class xoctMainGUI extends xoctGUI {
 	const TAB_SETTINGS = 'settings';
 	const TAB_SYSTEM_ACCOUNTS = 'system_accounts';
 	const TAB_PUBLICATION_USAGE = 'publication_usage';
+	const TAB_EXPORT = 'export';
 
 
 	/**
@@ -31,6 +33,7 @@ class xoctMainGUI extends xoctGUI {
 			. self::TAB_SYSTEM_ACCOUNTS), $this->ctrl->getLinkTarget(new xoctSystemAccountGUI()));
 		$this->tabs->addTab(self::TAB_PUBLICATION_USAGE, $this->pl->txt('tab_'
 			. self::TAB_PUBLICATION_USAGE), $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI()));
+		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
 
 		switch ($nextClass) {
 			case 'xoctpublicationusagegui':
@@ -42,6 +45,11 @@ class xoctMainGUI extends xoctGUI {
 				$this->tabs->setTabActive(self::TAB_SYSTEM_ACCOUNTS);
 				$xoctSystemAccountGUI = new xoctSystemAccountGUI();
 				$this->ctrl->forwardCommand($xoctSystemAccountGUI);
+				break;
+			case 'xoctconfexportgui':
+				$this->tabs->setTabActive(self::TAB_EXPORT);
+				$xoctConfExportGUI = new xoctConfExportGUI();
+				$this->ctrl->forwardCommand($xoctConfExportGUI);
 				break;
 			default:
 				$this->tabs->setTabActive(self::TAB_SETTINGS);
