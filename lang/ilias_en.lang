@@ -58,7 +58,7 @@ event_msg_deleted#:#Clip deleted
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_owner#:#Owner
-event_owner_select#:#Please select...
+event_owner_select#:#--not assigned--
 event_player#:#Play
 event_presenter#:#Presenter
 event_presenters#:#Presenters

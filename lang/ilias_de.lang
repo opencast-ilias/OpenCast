@@ -58,7 +58,7 @@ event_msg_deleted#:#Clip gelöscht
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
-event_owner_select#:#Bitte wählen...
+event_owner_select#:#--nicht zugewiesen--
 event_player#:#Abspielen
 event_presenter#:#Presenter
 event_presenters#:#Referenten
