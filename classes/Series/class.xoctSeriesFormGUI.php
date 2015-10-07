@@ -136,35 +136,22 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		//		$this->addItem($discipline);
 
 		$license = new ilSelectInputGUI($this->txt(self::F_LICENSE), self::F_LICENSE);
-		$license->setOptions(array(
-			'http://creativecommons.org/licenses/by/2.5/ch/' => 'CC: Attribution',
-			'http://creativecommons.org/licenses/by-nc/2.5/ch/' => 'CC: Attribution-Noncommercial',
-			'http://creativecommons.org/licenses/by-nc-nd/2.5/ch/' => 'CC: Attribution-Noncommercial-No Derivative Works',
-			'http://creativecommons.org/licenses/by-nc-sa/2.5/ch/' => 'CC: Attribution-Noncommercial-Share Alike',
-			'http://creativecommons.org/licenses/by-nd/2.5/ch/' => 'CC: Attribution-No Derivative Works',
-			'http://creativecommons.org/licenses/by-sa/2.5/ch/' => 'CC: Attribution-Share Alike',
+		$options = array(
 			NULL => 'As defined in content',
-		));
+		);
+		$licenses = xoctConf::get(xoctConf::F_LICENSES);
+		$license_info = xoctConf::get(xoctConf::F_LICENSE_INFO);
+		if ($licenses) {
+			foreach (explode("\n", $licenses) as $nl) {
+				$lic = explode("#", $nl);
+				if($lic[0] && $lic[1]) {
+					$options[$lic[0]] = $lic[1];
+				}
+			}
+		}
+		$license->setInfo($license_info);
+		$license->setOptions($options);
 		$this->addItem($license);
-
-		//		$est_video_length = new ilNumberInputGUI($this->txt(self::F_EST_VIDEO_LENGTH), self::F_EST_VIDEO_LENGTH);
-		//		$est_video_length->setMinValue(1);
-		//		$est_video_length->setInfo($this->infoTxt(self::F_EST_VIDEO_LENGTH));
-		//		$est_video_length->setRequired(true);
-		//		$this->addItem($est_video_length);
-
-		//		$intended_lifetime = new ilSelectInputGUI($this->txt(self::F_INTENDED_LIFETIME), self::F_INTENDED_LIFETIME);
-		//		$intended_lifetime->setInfo($this->infoTxt(self::F_INTENDED_LIFETIME));
-		//		$intended_lifetime->setOptions(array(
-		//			6 => '6 month',
-		//			12 => '1 year',
-		//			24 => '2 years',
-		//			36 => '3 years',
-		//			60 => '4 years',
-		//			72 => '5 years',
-		//		));
-		//		$intended_lifetime->setRequired(true);
-		//		$this->addItem($intended_lifetime);
 
 		$department = new ilTextInputGUI($this->txt(self::F_DEPARTMENT), self::F_DEPARTMENT);
 		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
@@ -192,7 +179,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($accept_eula);
 		}
 
-		if(!$this->is_new) {
+		if (! $this->is_new) {
 			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
 			$this->addItem($channel_id);
 		}

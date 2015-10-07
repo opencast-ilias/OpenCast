@@ -8,6 +8,9 @@ config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
 config_eula#:#Nutzungsvereinbarung
+config_license_info#:#Lizenz-Informationen
+config_licenses#:#Lizenzen
+config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
 config_log_level_0#:#Deaktiviert
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM

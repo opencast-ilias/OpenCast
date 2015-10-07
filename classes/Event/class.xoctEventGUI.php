@@ -36,6 +36,8 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+
+
 	protected function index() {
 		global $ilUser;
 		if (ilObjOpenCastAccess::hasWriteAccess()) {
@@ -97,7 +99,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
-			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
@@ -114,7 +116,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
-			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
@@ -175,7 +177,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
-			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
 		$ilConfirmationGUI = new ilConfirmationGUI();
@@ -193,7 +195,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
-			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
 		$xoctEvent->delete();
