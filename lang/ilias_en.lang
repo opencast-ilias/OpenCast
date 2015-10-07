@@ -36,11 +36,13 @@ event_clips#:#Clips
 event_create#:#Upload Clip
 event_created#:#Created
 event_creator#:#Creator
+event_cut#:#Cut Clip
 event_date#:#Date
+event_delete#:#Delete Clip
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration
-event_edit#:#Edit Clip
+event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
 event_file_presenter#:#File
 event_identifier#:#ID
@@ -157,4 +159,3 @@ tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
-event_cut#:#Cut Clip

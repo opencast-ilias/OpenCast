@@ -36,11 +36,13 @@ event_clips#:#Clips
 event_create#:#Clip hochladen
 event_created#:#Erstellt
 event_creator#:#Ersteller
+event_cut#:#Clip schneiden
 event_date#:#Datum
+event_delete#:#Clip löschen
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
-event_edit#:#Clip bearbeiten
+event_edit#:#Metadaten bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_file_presenter#:#Datei
 event_identifier#:#ID
@@ -157,4 +159,3 @@ tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
-event_cut#:#Clip schneiden

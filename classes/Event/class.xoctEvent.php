@@ -317,7 +317,13 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 * @return bool
+	 */
 	public function delete() {
+		xoctRequest::root()->events($this->getIdentifier())->delete();
+
+		return true;
 	}
 
 

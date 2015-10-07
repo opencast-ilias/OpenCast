@@ -3,6 +3,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('class.xoctEventTableGUI.php');
 require_once('class.xoctEventFormGUI.php');
 require_once('class.xoctEventOwnerFormGUI.php');
+require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
 
 /**
  * Class xoctEventGUI
@@ -89,6 +90,16 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function edit() {
+		global $ilUser;
+		/**
+		 * @var xoctEvent $xoctEvent
+		 */
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
@@ -96,6 +107,16 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function update() {
+		global $ilUser;
+		/**
+		 * @var xoctEvent $xoctEvent
+		 */
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 		if ($xoctEventFormGUI->saveObject()) {
@@ -121,7 +142,7 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
-		 * @var $xoctGroup xoctGroup
+		 * @var $xoctGroup      xoctGroup
 		 */
 		foreach ($a_data as $i => $d) {
 			$xoctEvent = xoctEvent::find($d['identifier']);
@@ -147,22 +168,47 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
+		global $ilUser;
+		/**
+		 * @var xoctEvent $xoctEvent
+		 */
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
+		$ilConfirmationGUI = new ilConfirmationGUI();
+		$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
+		$ilConfirmationGUI->setHeaderText($this->txt('delete'));
+		$ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
+		$ilConfirmationGUI->setConfirm($this->txt('delete'), self::CMD_DELETE);
+		$ilConfirmationGUI->addItem(self::IDENTIFIER, $xoctEvent->getIdentifier(), $xoctEvent->getTitle());
+		$this->tpl->setContent($ilConfirmationGUI->getHTML());
 	}
 
 
 	protected function delete() {
-		// TODO: Implement delete() method.
+		global $ilUser;
+		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+			ilUtil::sendSuccess($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
+		$xoctEvent->delete();
+		ilUtil::sendSuccess($this->txt('msg_deleted'), true);
+		$this->cancel();
 	}
 
 
 	protected function view() {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
-				exit;
-//		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
-//		$xoctEventFormGUI->fillForm();
-//		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+		exit;
+		//		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
+		//		$xoctEventFormGUI->fillForm();
+		//		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
 

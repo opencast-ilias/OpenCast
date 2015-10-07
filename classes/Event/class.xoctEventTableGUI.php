@@ -185,6 +185,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if ($cutting_link) {
 				$current_selection_list->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
 			}
+			$current_selection_list->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
 			if ($this->xoctOpenCast->getPermissionPerClip()) {
 				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 			}

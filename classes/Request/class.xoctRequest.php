@@ -112,10 +112,14 @@ class xoctRequest {
 
 
 	/**
-	 *
+	 * @return string
 	 */
 	public function delete() {
-		// TODO implement here
+		$xoctCurl = new xoctCurl();
+		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->delete();
+
+		return $xoctCurl->getResponseBody();
 	}
 
 
