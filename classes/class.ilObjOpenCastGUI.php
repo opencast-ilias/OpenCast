@@ -57,7 +57,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	const CMD_REDIRECT_SETTING = 'redirectSettings';
 	const TAB_EVENTS = 'series';
 	const TAB_SETTINGS = 'settings';
-	const TAB_INFO = 'info';
+	const TAB_INFO = 'info_short';
 	const TAB_GROUPS = 'groups';
 	/**
 	 * @var ilObjOpenCast
@@ -114,91 +114,34 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
+	/**
+	 * @param $cmd
+	 */
+	public function performCommand($cmd) {
+		$this->{$cmd}();
+	}
+
+
 	public function executeCommand() {
 		try {
 			xoctConf::setApiSettings();
-			$cmd = $this->ctrl->getCmd();
 			$next_class = $this->ctrl->getNextClass();
 			$this->tpl->getStandardTemplate();
-			$xoctOpenCast = $this->initHeader();
 
 			switch ($next_class) {
-				case 'ilpermissiongui':
-					$this->tabs_gui->setTabActive('id_permissions');
-					$perm_gui = new ilPermissionGUI($this);
-					//				$perm_gui->
-					$this->ctrl->forwardCommand($perm_gui);
-					$this->tpl->show();
-					break;
-				case 'ilinfoscreengui':
-					$info_gui = new ilInfoScreenGUI($this);
-					$this->ctrl->forwardCommand($info_gui);
-					$this->tpl->show();
-					break;
 				case 'xoctseriesgui':
-					$xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
+				case 'xocteventgui':
+				case 'xoctgroupgui':
+				case 'xoctgroupparticipantgui':
+				case 'xoctinvitationgui':
+					$xoctOpenCast = $this->initHeader();
+					$this->setTabs();
+					$xoctSeriesGUI = new $next_class($xoctOpenCast);
 					$this->ctrl->forwardCommand($xoctSeriesGUI);
 					$this->tpl->show();
 					break;
-				case 'xocteventgui':
-					$xoctEventGUI = new xoctEventGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctEventGUI);
-					$this->tpl->show();
-					break;
-				case 'xoctgroupgui':
-					$xoctGroupGUI = new xoctGroupGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctGroupGUI);
-					$this->tpl->show();
-					break;
-				case 'xoctgroupparticipantgui':
-					$xoctGroupParticipantGUI = new xoctGroupParticipantGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctGroupParticipantGUI);
-					$this->tpl->show();
-					break;
-				case 'xoctinvitationgui':
-					$this->tabs_gui->clearTargets();
-					$this->tabs_gui->setBackTarget($this->pl->txt('invitations_back'), $this->ctrl->getLinkTargetByClass('xoctEventGUI'));
-					$xoctGroupGUI = new xoctInvitationGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctGroupGUI);
-					$this->tpl->show();
-					break;
-				case 'ilcommonactiondispatchergui':
-					include_once 'Services/Object/classes/class.ilCommonActionDispatcherGUI.php';
-					$gui = ilCommonActionDispatcherGUI::getInstanceFromAjaxCall();
-					$this->ctrl->forwardCommand($gui);
-					break;
-				case 'ilObjOpenCastGUI':
-				case '':
-					switch ($cmd) {
-						case 'create':
-							$this->tabs_gui->clearTargets();
-							$this->create();
-							break;
-						case 'save':
-							$this->save();
-							break;
-						case self::CMD_REDIRECT_SETTING:
-							$this->redirectSettings();
-							break;
-						case self::CMD_SHOW_CONTENT:
-							$this->showContent();
-							$this->tpl->show();
-							break;
-						case 'cancel':
-							$this->ctrl->returnToParent($this);
-							break;
-						case 'infoScreen':
-							//						exit;
-							$this->tabs_gui->setTabActive(self::TAB_INFO);
-							$this->ctrl->setCmd('showSummary');
-							$this->ctrl->setCmdClass('ilinfoscreengui');
-							$this->infoScreen();
-							$this->tpl->show();
-							break;
-						default:
-							parent::executeCommand();
-//							$this->ctrl->redirect(new xoctEventGUI($xoctOpenCast));
-					}
+				default:
+					parent::executeCommand();
 					break;
 			}
 		} catch (xoctException $e) {
@@ -212,7 +155,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->ctrl->redirect(new xoctEventGUI());
 	}
 
-	protected function redirectSettings(){
+
+	protected function redirectSettings() {
 		$this->ctrl->redirect(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT);
 	}
 
@@ -261,7 +205,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 
 		if ($this->checkPermissionBool("edit_permission")) {
-			$this->tabs_gui->addTab("id_permissions", $lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+			$this->tabs_gui->addTab("perm_settings", $lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
 				get_class($this),
 				"ilpermissiongui"
 			), "perm"));
@@ -337,25 +281,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	public function infoScreen() {
-		$info = new ilInfoScreenGUI($this);
-		$info->addSection($this->txt('series_metadata'));
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		$xoctOpenCastFormGUI = new xoctSeriesFormGUI($this, $xoctOpenCast, true, true);
-		$xoctOpenCastFormGUI->fillForm();
-		/**
-		 * @var $item ilTextInputGUI
-		 */
-		foreach ($xoctOpenCastFormGUI->getItems() as $item) {
-			//$info->addProperty($item->getTitle(), $item->getValue());
-		}
-
-		$info->enablePrivateNotes();
-		$this->addInfoItems($info);
-		$this->ctrl->forwardCommand($info);
-	}
-
-
 	/**
 	 * @return xoctOpenCast
 	 */
@@ -379,44 +304,17 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
-			if (!$xoctOpenCast->isObjOnline()) {
+			if (! $xoctOpenCast->isObjOnline()) {
 				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {
 			$this->tpl->setTitle($this->pl->txt('series_create'));
 		}
 		$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
-		$this->setTabs();
 		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
 
 		return $xoctOpenCast;
 	}
-
-	//	public function confirmDeleteObject() {
-	//		$a_val = array( $_GET['ref_id'] );
-	//		ilSession::set('saved_post', $a_val);
-	//		$ru = new ilRepUtilGUI($this);
-	//		if (! $ru->showDeleteConfirmation($a_val, false)) {
-	//			$this->redirectParentGui();
-	//		}
-	//		$this->tpl->show();
-	//	}
-	//
-	//
-	//	public function confirmedDelete() {
-	//		if (isset($_POST['mref_id'])) {
-	//			$_SESSION['saved_post'] = array_unique(array_merge($_SESSION['saved_post'], $_POST['mref_id']));
-	//		}
-	//		$ref_id = $_SESSION['saved_post'][0];
-	//		$parent_ref_id = $this->getParentRefId($ref_id);
-	//		$xoctRequest = xoctRequest::getInstanceForOpenCastObjectId(ilObject2::_lookupObjId($ref_id));
-	//		$xoctRequest->setStatus(xoctRequest::STATUS_DELETED);
-	//		$xoctRequest->update();
-	//		$ru = new ilRepUtilGUI($this);
-	//		$ru->deleteObjects(ilObjOpenCast::returnParentCrsRefId($_GET['ref_id']), ilSession::get('saved_post'));
-	//		ilSession::clear('saved_post');
-	//		ilUtil::redirect(ilLink::_getLink($parent_ref_id));
-	//	}
 }
 
 ?>
