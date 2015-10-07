@@ -46,7 +46,9 @@ abstract class xoctObject {
 	 */
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
-		xoctCache::getInstance()->delete($class_name . '-' . $identifier);
+		$key = $class_name . '-' . $identifier;
+		xoctLog::getInstance()->write('removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_3);
+		xoctCache::getInstance()->delete($key);
 	}
 
 

@@ -88,6 +88,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	public function findPublication() {
+	}
+
+
 	/**
 	 * @param string $identifier
 	 */
@@ -143,9 +147,9 @@ class xoctEvent extends xoctObject {
 		foreach (xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctGroupParticipant) {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
 		}
-		if($this->getOwnerAcl() instanceof xoctAcl ) {
-//			echo '<pre>' . print_r($role_names, 1) . '</pre>';
-//			echo '<pre>' . print_r($this->getOwnerAcl()->getRole(), 1) . '</pre>';
+		if ($this->getOwnerAcl() instanceof xoctAcl) {
+			//			echo '<pre>' . print_r($role_names, 1) . '</pre>';
+			//			echo '<pre>' . print_r($this->getOwnerAcl()->getRole(), 1) . '</pre>';
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
@@ -208,7 +212,6 @@ class xoctEvent extends xoctObject {
 		$this->getMetadata()->removeField('identifier');
 		$this->getMetadata()->removeField('isPartOf');
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
-		//		$this->getMetadata()->removeField('presenter'); // can't be updated at the moment
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		//		echo $data['metadata'];
@@ -220,11 +223,13 @@ class xoctEvent extends xoctObject {
 		// All Data
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
 		$this->updateAcls();
+		self::removeFromCache($this->getIdentifier());
 	}
 
 
 	public function updateAcls() {
 		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcls()) ));
+		self::removeFromCache($this->getIdentifier());
 	}
 
 
@@ -233,6 +238,7 @@ class xoctEvent extends xoctObject {
 		$this->getMetadata()->getField('isPartOf')->setValue($this->getSeriesIdentifier());
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
+		self::removeFromCache($this->getIdentifier());
 	}
 
 
@@ -320,9 +326,10 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getThumbnailUrl() {
 		if (! $this->thumbnail_url) {
-			$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL));
+			$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
 			if (! $this->thumbnail_url) {
-				$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK));
+				$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
+					->getUrl();
 			}
 			if (! $this->thumbnail_url) {
 				$this->thumbnail_url = self::NO_PREVIEW;
@@ -338,7 +345,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getAnnotationLink() {
 		if (! $this->annotation_url) {
-			$this->annotation_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE));
+			$this->annotation_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
 		}
 
 		return $this->annotation_url;
@@ -350,7 +357,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getPlayerLink() {
 		if (! $this->player_url) {
-			$this->player_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER));
+			$this->player_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
 		}
 
 		return $this->player_url;
@@ -362,14 +369,20 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getDownloadLink() {
 		if (! $this->download_url) {
-			$this->download_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD)));
+			$this->download_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))
+				->getUrl());
 		}
 
 		return $this->download_url;
 	}
 
 
-	protected function getPublicationMetadataForUsage($xoctPublicationUsage) {
+	/**
+	 * @param $xoctPublicationUsage
+	 *
+	 * @return xoctPublication
+	 */
+	public function getPublicationMetadataForUsage(xoctPublicationUsage $xoctPublicationUsage) {
 		/**
 		 * @var $xoctPublicationUsage  xoctPublicationUsage
 		 * @var $attachment            xoctAttachment
@@ -386,28 +399,28 @@ class xoctEvent extends xoctObject {
 				case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
 					foreach ($attachments as $attachment) {
 						if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-							return $attachment->getUrl();
+							return $attachment;
 						}
 					}
 					break;
 				case xoctPublicationUsage::MD_TYPE_MEDIA:
 					foreach ($medias as $media) {
 						if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-							return $media->getUrl();
+							return $media;
 						}
 					}
 					break;
 				case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
 					foreach ($this->getPublications() as $publication) {
 						if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
-							return $publication->getUrl();
+							return $publication;
 						}
 					}
 					break;
 			}
 		}
 
-		return NULL;
+		return new xoctPublication();
 	}
 
 

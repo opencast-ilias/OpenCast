@@ -84,17 +84,26 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 			//			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
 		}
+		require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
+		$modal = ilModalGUI::getInstance();
+		$modal->setId('modal_' . $xoctEvent->getIdentifier());
+		$modal->setHeading($xoctEvent->getTitle());
+		$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
+		$this->tpl->setVariable('MODAL', $modal->getHTML());
 
 		if ($this->xoctOpenCast->getUseAnnotations()) {
 			$this->tpl->setCurrentBlock('link');
 			$this->tpl->setVariable('LINK_URL', $xoctEvent->getAnnotationLink());
 			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
+
 			$this->tpl->parseCurrentBlock();
 		}
 
 		$this->tpl->setCurrentBlock('link');
 		$this->tpl->setVariable('LINK_URL', $xoctEvent->getPlayerLink());
+		$this->tpl->setVariable('LINK_URL', '#');
 		$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
+		$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
 		$this->tpl->parseCurrentBlock();
 
 		if (! $this->xoctOpenCast->getStreamingOnly()) {
@@ -171,6 +180,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 			|| ($xoctEvent->hasWriteAccess($xoctUser) && $this->xoctOpenCast->getPermissionPerClip()))
 		) {
 			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			$cutting_link = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+			if ($cutting_link) {
+				$current_selection_list->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
+			}
 			if ($this->xoctOpenCast->getPermissionPerClip()) {
 				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 			}

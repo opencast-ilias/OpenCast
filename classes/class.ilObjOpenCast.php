@@ -28,6 +28,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctRequest.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
+
 /**
  * Class ilObjOpenCast
  *
@@ -41,8 +42,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @var bool
 	 */
 	protected $object;
-
-	const DEV = false;
+	const DEV = true;
 
 
 	/**

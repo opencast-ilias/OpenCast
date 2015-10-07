@@ -39,9 +39,9 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInt
 	 *
 	 * @return string
 	 */
-	public function txt($a_var) {
-		return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
-	}
+//	public function txt($a_var) {
+//		return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
+//	}
 
 
 	const XOCT = 'xoct';

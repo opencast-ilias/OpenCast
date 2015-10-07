@@ -25,6 +25,7 @@ config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
 config_roles#:#OpenCast-Roles
 config_update#:#Update
+config_use_modals#:#Open Player in Modal
 config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
 event_add_new#:#Add Clip
@@ -101,6 +102,7 @@ publication_usage_select_usage_id#:#Usage
 publication_usage_title#:#Title
 publication_usage_type_annotate#:#Annotate
 publication_usage_type_api#:#API
+publication_usage_type_cutting#:#Cutting-Tool
 publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
@@ -155,3 +157,4 @@ tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
+event_cut#:#Cut Clip

@@ -58,10 +58,12 @@ class xoctEventGUI extends xoctGUI {
 			$intro_text = $intro->get();
 		}
 
-		$b = ilLinkButton::getInstance();
-		$b->setCaption('rep_robj_xoct_event_remove_invitations');
-		$b->setUrl($this->ctrl->getLinkTarget($this, 'removeInvitations'));
-//		$this->toolbar->addButtonInstance($b);
+		if ($ilUser->getId() == 6 && ilObjOpenCast::DEV) {
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_clear_clips_develop');
+			$b->setUrl($this->ctrl->getLinkTarget($this, 'clearAllClips'));
+			$this->toolbar->addButtonInstance($b);
+		}
 
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
@@ -97,7 +99,6 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 		if ($xoctEventFormGUI->saveObject()) {
-			xoctCache::getInstance()->flush();
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
@@ -106,19 +107,42 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function removeInvitations() {
-		global $ilUser;
-		//		foreach (xoctInvitation::where(array(
-		//			'obj_id' => $this->xoctOpenCast->getObjId(),
-		//			//			'user_id' => $ilUser->getId()
-		//		))->get() as $xoctInvitation) {
-		//			$xoctInvitation->delete();
-		//		}
-
 		foreach (xoctInvitation::get() as $xoctInvitation) {
 			$xoctInvitation->delete();
 		}
 		ilUtil::sendSuccess($this->txt('msg_success'), true);
 		$this->ctrl->redirect($this, self::CMD_STANDARD);
+	}
+
+
+	protected function clearAllClips() {
+		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		/**
+		 * @var $xoctEvent      xoctEvent
+		 * @var $xoctInvitation xoctInvitation
+		 * @var $xoctGroup xoctGroup
+		 */
+		foreach ($a_data as $i => $d) {
+			$xoctEvent = xoctEvent::find($d['identifier']);
+			$xoctEvent->setTitle('Clip ' . $i);
+			$xoctEvent->setDescription('Subtitle ' . $i);
+			$xoctEvent->setPresenter('Presenter ' . $i);
+			$xoctEvent->setLocation('Station ' . $i);
+			$xoctEvent->setCreated(new DateTime());
+			$xoctEvent->removeOwner();
+			$xoctEvent->removeAllOwnerAcls();
+			$xoctEvent->setAcls(xoctAcl::getStandardSetForEvent());
+			$xoctEvent->update();
+			foreach (xoctInvitation::where(array( 'event_identifier' => $xoctEvent->getIdentifier() ))->get() as $xoctInvitation) {
+				$xoctInvitation->delete();
+			}
+		}
+		foreach (xoctGroup::where(array( 'serie_id' => $this->xoctOpenCast->getObjId() ))->get() as $xoctGroup) {
+			$xoctGroup->delete();
+		}
+
+		$this->cancel();
 	}
 
 
@@ -133,13 +157,12 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function view() {
-		$this->cancel();
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
-		//		exit;
-		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
-		$xoctEventFormGUI->fillForm();
-		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+				exit;
+//		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
+//		$xoctEventFormGUI->fillForm();
+//		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -220,7 +243,6 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventOwnerFormGUI->setValuesByPost();
 		if ($xoctEventOwnerFormGUI->saveObject()) {
-			xoctCache::getInstance()->flush();
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}

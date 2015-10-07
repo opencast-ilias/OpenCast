@@ -559,6 +559,7 @@ class xoctCurl {
 			}
 		}
 		$post_body_string = '';
+
 		foreach ($this->getPostFields() as $key => $value) {
 			$post_body_string .= $key . '=' . $value . '&';
 		}
