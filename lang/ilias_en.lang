@@ -45,6 +45,7 @@ event_creator#:#Creator
 event_cut#:#Cut Clip
 event_date#:#Date
 event_delete#:#Delete Clip
+event_delete_confirm#:#This will delete the clip in ILIAS and in OpenCast. Do you want to preceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration

@@ -42,7 +42,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @var bool
 	 */
 	protected $object;
-	const DEV = false;
+	const DEV = true;
 
 
 	/**

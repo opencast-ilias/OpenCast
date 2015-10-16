@@ -45,6 +45,7 @@ event_creator#:#Ersteller
 event_cut#:#Clip schneiden
 event_date#:#Datum
 event_delete#:#Clip löschen
+event_delete_confirm#:#Das Löschen bewirkt, dass der Clip definitiv gelöscht wird (auch auf OpenCast). Wollen Sie diesen Clip wirklich löschen?
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer

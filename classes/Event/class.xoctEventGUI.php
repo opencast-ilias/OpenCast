@@ -182,7 +182,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$ilConfirmationGUI = new ilConfirmationGUI();
 		$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-		$ilConfirmationGUI->setHeaderText($this->txt('delete'));
+		$ilConfirmationGUI->setHeaderText($this->txt('delete_confirm'));
 		$ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
 		$ilConfirmationGUI->setConfirm($this->txt('delete'), self::CMD_DELETE);
 		$ilConfirmationGUI->addItem(self::IDENTIFIER, $xoctEvent->getIdentifier(), $xoctEvent->getTitle());
