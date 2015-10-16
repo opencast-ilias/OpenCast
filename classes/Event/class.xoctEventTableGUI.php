@@ -177,8 +177,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
-		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN
-			|| ($xoctEvent->hasWriteAccess($xoctUser) && $this->xoctOpenCast->getPermissionPerClip()))
+		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN && $this->xoctOpenCast->getPermissionPerClip())
 		) {
 			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 			$cutting_link = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
@@ -191,7 +190,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			}
 		}
 
-		if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->hasWriteAccess($xoctUser)) {
+		if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->isOwner($xoctUser)) {
 			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
 
