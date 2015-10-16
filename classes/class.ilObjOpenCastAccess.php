@@ -78,7 +78,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		switch ($a_permission) {
 			case 'read':
 				if (! ilObjOpenCastAccess::checkOnline($a_obj_id) AND ! $ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
-					return true;
+					return false;
 				}
 				break;
 		}
