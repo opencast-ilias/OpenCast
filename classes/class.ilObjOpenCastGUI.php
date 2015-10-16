@@ -254,7 +254,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
-			$this->tpl->setContent($creation_form->getHtml());
+			$form = $this->initCreateForm($this->getType());
+			$form->setValuesByPost();
+			$this->tpl->setContent($form->getHTML());
 		}
 	}
 
