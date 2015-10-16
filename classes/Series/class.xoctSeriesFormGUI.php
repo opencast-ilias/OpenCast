@@ -238,21 +238,29 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 */
 	public function fillObject() {
 		if (! $this->checkInput()) {
+			$this->checkEula();
+
 			return false;
 		}
+		if (! $this->checkEula()) {
+			return false;
+		}
+
 		if ($this->getInput(self::F_CHANNEL_TYPE) == self::EXISTING_YES) {
 			$this->series->setIdentifier($this->getInput(self::F_EXISTING_IDENTIFIER));
 		}
 		$this->series->setTitle($this->getInput(self::F_TITLE));
 		$this->series->setDescription($this->getInput(self::F_DESCRIPTION));
-		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
 		$this->series->setLicense($this->getInput(self::F_LICENSE));
+
+		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
 		$this->cast->setUseAnnotations($this->getInput(self::F_USE_ANNOTATIONS));
 		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
 		$this->cast->setShowUploadToken($this->getInput(self::F_SHOW_UPLOAD_TOKEN));
+		$this->cast->setAgreementAccepted(true);
 
 		return true;
 	}
@@ -338,12 +346,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		return $ilPropertyFormGUI;
 	}
-	//
-	//
-	//	public function addToInfoScreen(ilInfoScreenGUI $ilInfoScreenGUI) {
-	//	}
-	//
-	//
+
+
 	protected function initView() {
 		$this->initForm();
 		/**
@@ -483,6 +487,24 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		4380 => 'Production and Enterprise',
 		7303 => 'Telecommunication',
 	);
+
+
+	/**
+	 * @return bool
+	 */
+	protected function checkEula() {
+		if ($this->is_new && ! $this->getInput(self::F_ACCEPT_EULA)) {
+			/**
+			 * @var $field ilCheckboxInputGUI
+			 */
+			$field = $this->getItemByPostVar(self::F_ACCEPT_EULA);
+			$field->setAlert($this->txt('alert_eula'));
+
+			return false;
+		}
+
+		return true;
+	}
 }
 
 ?>

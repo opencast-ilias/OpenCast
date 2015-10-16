@@ -118,6 +118,7 @@ publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 series_accept_eula#:#I accept the agreement
+series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Channel-Type

@@ -118,6 +118,7 @@ publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
+series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Channel-Typ
