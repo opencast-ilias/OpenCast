@@ -29,7 +29,7 @@ class xoctRequest {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-RUN-AS-USER: ' . $as_user);
 		}
 
 		if (count($roles) > 0) {
