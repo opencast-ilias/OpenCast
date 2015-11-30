@@ -236,6 +236,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	public function initCreateForm($type) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		$creation_form->fillForm();
+		if (ilObjOpenCast::DEV) {
+			$creation_form->fillFormRandomized();
+		}
 
 		return $creation_form->getAsPropertyFormGui();
 	}
