@@ -19,7 +19,7 @@ class xoctRequest {
 
 	/**
 	 * @param string $as_user
-	 * @param array  $roles
+	 * @param array $roles
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class xoctRequest {
 
 
 	/**
-	 * @param array  $post_data
+	 * @param array $post_data
 	 * @param string $as_user
 	 *
 	 * @return string
@@ -65,9 +65,9 @@ class xoctRequest {
 
 
 	/**
-	 * @param array            $post_data
+	 * @param array $post_data
 	 * @param xoctUploadFile[] $files
-	 * @param string           $as_user
+	 * @param string $as_user
 	 *
 	 * @return string
 	 */
@@ -92,7 +92,7 @@ class xoctRequest {
 
 
 	/**
-	 * @param array  $post_data
+	 * @param array $post_data
 	 * @param string $as_user
 	 *
 	 * @return string
@@ -409,8 +409,13 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function parameter($key, $value) {
-		$this->parameters[$key] = $value;
+		switch (true) {
+			case is_bool($value):
+				$value = ($value ? 'true' : 'false');
+				break;
+		}
 
+		$this->parameters[$key] = $value;
 		return $this;
 	}
 
@@ -438,7 +443,7 @@ class xoctRequest {
 	 */
 	protected function checkBranch(array $supported_branches) {
 		$supported_branches[] = self::BRANCH_OTHER;
-		if (! in_array($this->branch, $supported_branches)) {
+		if (!in_array($this->branch, $supported_branches)) {
 			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}
 	}
