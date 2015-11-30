@@ -32,7 +32,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 	/**
 	 * @param xoctEventGUI $a_parent_obj
-	 * @param string       $a_parent_cmd
+	 * @param string $a_parent_cmd
 	 */
 	public function  __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
 		/**
@@ -107,7 +107,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		}
 		$this->tpl->parseCurrentBlock();
 
-		if (! $this->xoctOpenCast->getStreamingOnly()) {
+		if (!$this->xoctOpenCast->getStreamingOnly()) {
 			$this->tpl->setCurrentBlock('link');
 			$this->tpl->setVariable('LINK_URL', $xoctEvent->getDownloadLink());
 			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('download'));
@@ -177,8 +177,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
-		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN && $this->xoctOpenCast->getPermissionPerClip())
-		) {
+		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
 			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 			$cutting_link = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
 			if ($cutting_link) {
@@ -287,13 +286,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$user = $xoctUser->getIVTRoleName();
 		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		//		$filter = array();
+		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+			//			$filter['status'] = xoctEvent::STATE_SUCCEEDED; does not work
+		}
 		$a_data = xoctEvent::getFiltered($filter, $user, NULL);
 
-		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
 			foreach ($a_data as $i => $d) {
 				$xoctEvent = xoctEvent::find($d['identifier']);
-				if (! $xoctEvent->hasReadAccess($xoctUser)) {
+				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser)) {
+					unset($a_data[$i]);
+				}
+				if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 					unset($a_data[$i]);
 				}
 			}
