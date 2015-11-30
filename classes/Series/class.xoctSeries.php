@@ -107,11 +107,11 @@ class xoctSeries extends xoctObject {
 		$this->getMetadata()->addOrReplaceField($title);
 
 		$description = $this->getMetadata()->getField('description');
-		$description->setValue($this->getDescription() ? $this->getDescription() : '-');
+		$description->setValue($this->getDescription());
 		$this->getMetadata()->addOrReplaceField($description);
 
 		$license = $this->getMetadata()->getField('license');
-		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
+		$license->setValue($this->getLicense());
 		$this->getMetadata()->addOrReplaceField($license);
 	}
 
