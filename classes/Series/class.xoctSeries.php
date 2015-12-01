@@ -66,8 +66,7 @@ class xoctSeries extends xoctObject {
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
 
-		xoctLog::getInstance()->write('FSX!!!!!!!'. print_r($array, true), xoctLog::DEBUG_LEVEL_1);
-
+		xoctLog::getInstance()->write('FSX!!!!!!!' . print_r($array, true), xoctLog::DEBUG_LEVEL_1);
 
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
@@ -111,7 +110,7 @@ class xoctSeries extends xoctObject {
 		$this->getMetadata()->addOrReplaceField($description);
 
 		$license = $this->getMetadata()->getField('license');
-		$license->setValue($this->getLicense());
+		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
 		$this->getMetadata()->addOrReplaceField($license);
 	}
 
