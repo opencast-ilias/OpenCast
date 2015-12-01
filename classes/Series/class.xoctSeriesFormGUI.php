@@ -58,9 +58,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @param              $parent_gui
 	 * @param xoctOpenCast $cast
-	 * @param bool         $view
-	 * @param bool         $infopage
-	 * @param bool         $external
+	 * @param bool $view
+	 * @param bool $infopage
+	 * @param bool $external
 	 */
 	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
 		global $ilCtrl, $lng, $tpl;
@@ -186,7 +186,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($accept_eula);
 		}
 
-		if (! $this->is_new) {
+		if (!$this->is_new) {
 			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
 			$this->addItem($channel_id);
 		}
@@ -237,12 +237,12 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-		if (! $this->checkInput()) {
+		if (!$this->checkInput()) {
 			$this->checkEula();
 
 			return false;
 		}
-		if (! $this->checkEula()) {
+		if (!$this->checkEula()) {
 			return false;
 		}
 
@@ -290,7 +290,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool|string
 	 */
 	public function saveObject($obj_id = NULL) {
-		if (! $this->fillObject()) {
+		if (!$this->fillObject()) {
 			return false;
 		}
 		if ($obj_id) {
@@ -334,15 +334,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return ilPropertyFormGUI This object but as an ilPropertyFormGUI instead of a xdglRequestFormGUI
 	 */
 	public function getAsPropertyFormGui() {
-		$ilPropertyFormGUI = new ilPropertyFormGUI();
-		$ilPropertyFormGUI->setFormAction($this->getFormAction());
-		$ilPropertyFormGUI->setTitle($this->getTitle());
-
+		$ilPropertyFormGUI = $this;
+		$ilPropertyFormGUI->clearCommandButtons();
 		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_SAVE, $this->lng->txt(xoctSeriesGUI::CMD_SAVE));
 		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->lng->txt(xoctSeriesGUI::CMD_CANCEL));
-		foreach ($this->getItems() as $item) {
-			$ilPropertyFormGUI->addItem($item);
-		}
 
 		return $ilPropertyFormGUI;
 	}
@@ -493,7 +488,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	protected function checkEula() {
-		if ($this->is_new && ! $this->getInput(self::F_ACCEPT_EULA)) {
+		if ($this->is_new && !$this->getInput(self::F_ACCEPT_EULA)) {
 			/**
 			 * @var $field ilCheckboxInputGUI
 			 */

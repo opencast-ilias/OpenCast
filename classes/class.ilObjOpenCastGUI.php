@@ -188,7 +188,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $xoctOpenCast xoctOpenCast
 		 */
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		if (! $xoctOpenCast instanceof xoctOpenCast) {
+		if (!$xoctOpenCast instanceof xoctOpenCast) {
 			return false;
 		}
 
@@ -230,14 +230,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	/**
 	 * @param string $type
-	 *
-	 * @return ilPropertyFormGUI
+	 * @param bool|false $from_post
+	 * @return xoctSeriesFormGUI
 	 */
-	public function initCreateForm($type) {
+	public function initCreateForm($type, $from_post = false) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
-		$creation_form->fillForm();
-		if (ilObjOpenCast::DEV) {
-			$creation_form->fillFormRandomized();
+		if ($from_post) {
+			$creation_form->setValuesByPost();
+		} else {
+			$creation_form->fillForm();
+			if (ilObjOpenCast::DEV) {
+				$creation_form->fillFormRandomized();
+			}
 		}
 
 		return $creation_form->getAsPropertyFormGui();
@@ -245,8 +249,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	public function save() {
-		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
-		$creation_form->setValuesByPost();
+		$creation_form = $this->initCreateForm($this->getType(), true);
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
 			global $ilUser;
@@ -257,9 +260,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
-			$form = $this->initCreateForm($this->getType());
-			$form->setValuesByPost();
-			$this->tpl->setContent($form->getHTML());
+			$this->tpl->setContent($creation_form->getHTML());
 		}
 	}
 
@@ -311,7 +312,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
-			if (! $xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isObjOnline()) {
 				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {
@@ -328,7 +329,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * show information screen
 	 */
 	function infoScreen() {
-		global $ilAccess, $ilUser, $lng, $ilCtrl, $tpl, $ilTabs;
+		global $lng, $ilCtrl, $ilTabs;
 
 		$ilTabs->setTabActive("info_short");
 
