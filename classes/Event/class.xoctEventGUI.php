@@ -36,8 +36,6 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
-
-
 	protected function index() {
 		global $ilUser;
 		if (ilObjOpenCastAccess::hasWriteAccess()) {
@@ -73,6 +71,22 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+	protected function applyFilter() {
+		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+		$xoctEventTableGUI->resetOffset(true);
+		$xoctEventTableGUI->writeFilterToSession();
+		$this->ctrl->redirect($this, self::CMD_STANDARD);
+	}
+
+
+	protected function resetFilter() {
+		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+		$xoctEventTableGUI->resetOffset();
+		$xoctEventTableGUI->resetFilter();
+		$this->ctrl->redirect($this, self::CMD_STANDARD);
+	}
+
+
 	protected function add() {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
@@ -98,7 +112,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -115,7 +129,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -176,7 +190,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -194,7 +208,7 @@ class xoctEventGUI extends xoctGUI {
 		global $ilUser;
 		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (! $xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
