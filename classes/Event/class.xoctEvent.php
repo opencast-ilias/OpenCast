@@ -414,7 +414,8 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getPlayerLink() {
 		if (!$this->player_url) {
-			$this->player_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
+			$this->player_url = xoctSecureLink::sign($url);
 		}
 
 		return $this->player_url;
