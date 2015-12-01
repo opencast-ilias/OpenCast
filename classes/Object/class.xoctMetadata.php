@@ -223,7 +223,7 @@ class xoctMetadataField extends xoctObject {
 	/**
 	 * @var bool
 	 */
-	protected $required = true;
+	protected $required = false;
 	/**
 	 * @var array
 	 */
@@ -339,6 +339,18 @@ class xoctMetadataField extends xoctObject {
 	 */
 	public function setCollection($collection) {
 		$this->collection = $collection;
+	}
+
+
+	/**
+	 * @return stdClass
+	 */
+	public function __toStdClass() {
+		$stdClass = new stdClass();
+		$stdClass->id = $this->getId();
+		$stdClass->value = $this->getValue();
+
+		return $stdClass;
 	}
 }
 
