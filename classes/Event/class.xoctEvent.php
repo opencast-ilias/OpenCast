@@ -401,7 +401,7 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getAnnotationLink() {
-		if (!$this->annotation_url) {
+		if (!isset($this->annotation_url)) {
 			$this->annotation_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
 		}
 
@@ -413,7 +413,7 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getPlayerLink() {
-		if (!$this->player_url) {
+		if (!isset($this->player_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
 			$this->player_url = xoctSecureLink::sign($url);
 		}
@@ -426,7 +426,7 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getDownloadLink() {
-		if (!$this->download_url) {
+		if (!isset($this->download_url)) {
 			$this->download_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
 		}
 
@@ -525,6 +525,16 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	protected function initProcessingState() {
+		if (!$this->processing_state_init) {
+			if ($this->processing_state == xoctEvent::STATE_SUCCEEDED && count($this->publication_status) === 1) {
+				$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+			}
+		}
+		$this->processing_state_init = true;
+	}
+
+
 	/**
 	 * @var string
 	 */
@@ -609,6 +619,10 @@ class xoctEvent extends xoctObject {
 	 * @var string
 	 */
 	protected $source = '';
+	/**
+	 * @var bool
+	 */
+	private $processing_state_init = false;
 
 
 	/**
@@ -1044,22 +1058,5 @@ class xoctEvent extends xoctObject {
 		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
-	}
-
-
-	/**
-	 * @var bool
-	 */
-	protected $processing_state_init = false;
-
-
-	protected function initProcessingState() {
-		if (!$this->processing_state_init) {
-			$links_available = ($this->getAnnotationLink() && $this->getDownloadLink() && $this->getPlayerLink());
-			if ($this->processing_state == xoctEvent::STATE_SUCCEEDED && !$links_available) {
-				$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
-			}
-		}
-		$this->processing_state_init = true;
 	}
 }

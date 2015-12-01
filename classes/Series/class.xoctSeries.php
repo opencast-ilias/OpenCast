@@ -62,12 +62,8 @@ class xoctSeries extends xoctObject {
 		foreach ($this->getAccessPolicies() as $acl) {
 			$acls[] = $acl->__toStdClass();
 		}
-
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
-
-		xoctLog::getInstance()->write('FSX!!!!!!!' . print_r($array, true), xoctLog::DEBUG_LEVEL_1);
-
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
 		if ($data->identifier) {
