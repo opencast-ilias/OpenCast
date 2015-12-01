@@ -69,26 +69,22 @@ class xoctEventTableGUI extends ilTable2GUI {
 		global $ilUser;
 		$xoctUser = xoctUser::getInstance($ilUser);
 		/**
-		 * @var $xoctEvent xoctEvent
+		 * @var $xE xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$xoctEvent = xoctEvent::find($a_set['identifier']);
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED
-			&& (!$xoctEvent->getAnnotationLink() OR !$xoctEvent->getDownloadLink() OR !$xoctEvent->getPlayerLink())
-		) {
-			$xoctEvent->setProcessingState('NOT_PUBLISHED');
-		}
+		$xE = xoctEvent::find($a_set['identifier']);
 
-		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xoctEvent->getProcessingState()));
+		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
+		$this->tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$xE->getProcessingState()]);
 
-		if ($xoctEvent->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
+		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
-		} elseif ($xoctEvent->getThumbnailUrl()) {
-			$this->tpl->setVariable('PREVIEW', $xoctEvent->getThumbnailUrl());
+		} elseif ($xE->getThumbnailUrl()) {
+			$this->tpl->setVariable('PREVIEW', $xE->getThumbnailUrl());
 		}
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+		if ($xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
 			if ($this->xoctOpenCast->getUseAnnotations()) {
-				$annotationLink = $xoctEvent->getAnnotationLink();
+				$annotationLink = $xE->getAnnotationLink();
 				if ($annotationLink) {
 					$this->tpl->setCurrentBlock('link');
 					$this->tpl->setVariable('LINK_URL', $annotationLink);
@@ -97,7 +93,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 					$this->tpl->parseCurrentBlock();
 				}
 			}
-			$playerLink = $xoctEvent->getPlayerLink();
+			$playerLink = $xE->getPlayerLink();
 			if ($playerLink) {
 				$this->tpl->setCurrentBlock('link');
 				$this->tpl->setVariable('LINK_URL', $playerLink);
@@ -105,18 +101,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 				if (xoctConf::get(xoctConf::F_USE_MODALS)) {
 					require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
 					$modal = ilModalGUI::getInstance();
-					$modal->setId('modal_' . $xoctEvent->getIdentifier());
-					$modal->setHeading($xoctEvent->getTitle());
-					$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
+					$modal->setId('modal_' . $xE->getIdentifier());
+					$modal->setHeading($xE->getTitle());
+					$modal->setBody('<iframe class="xoct_iframe" src="' . $xE->getPlayerLink() . '"></iframe>');
 					$this->tpl->setVariable('MODAL', $modal->getHTML());
 					$this->tpl->setVariable('LINK_URL', '#');
-					$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
+					$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xE->getIdentifier() . '"');
 				}
 				$this->tpl->parseCurrentBlock();
 			}
 
 			if (!$this->xoctOpenCast->getStreamingOnly()) {
-				$downloadLink = $xoctEvent->getDownloadLink();
+				$downloadLink = $xE->getDownloadLink();
 				if ($downloadLink) {
 					$this->tpl->setCurrentBlock('link');
 					$this->tpl->setVariable('LINK_URL', $downloadLink);
@@ -124,22 +120,24 @@ class xoctEventTableGUI extends ilTable2GUI {
 					$this->tpl->parseCurrentBlock();
 				}
 			}
+		} else {
+			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState())));
 		}
 
-		$this->tpl->setVariable('TITLE', $xoctEvent->getTitle());
-		$this->tpl->setVariable('PRESENTER', $xoctEvent->getPresenter());
-		$this->tpl->setVariable('LOCATION', $xoctEvent->getLocation());
-		$this->tpl->setVariable('RECORDING_STATION', $xoctEvent->getMetadata()->getField('recording_station')->getValue());
-		$this->tpl->setVariable('DATE', $xoctEvent->getCreated()->format('d.m.Y - H:i:s'));
+		$this->tpl->setVariable('TITLE', $xE->getTitle());
+		$this->tpl->setVariable('PRESENTER', $xE->getPresenter());
+		$this->tpl->setVariable('LOCATION', $xE->getLocation());
+		$this->tpl->setVariable('RECORDING_STATION', $xE->getMetadata()->getField('recording_station')->getValue());
+		$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
 		if ($this->xoctOpenCast->getPermissionPerClip()) {
 			$this->tpl->setCurrentBlock('owner');
 
-			$this->tpl->setVariable('OWNER', $xoctEvent->getOwnerUsername());
-			if ($xoctEvent->isOwner($xoctUser)) {
+			$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
+			if ($xE->isOwner($xoctUser)) {
 				$this->tpl->setCurrentBlock('invitations');
 				$in = xoctInvitation::where(array(
 					'owner_id' => $xoctUser->getIliasUserId(),
-					'event_identifier' => $xoctEvent->getIdentifier()
+					'event_identifier' => $xE->getIdentifier()
 				))->count();
 				if ($in > 0) {
 					$this->tpl->setVariable('INVITATIONS', $in);
@@ -205,10 +203,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
 
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED || $xoctEvent->getProcessingState() == xoctEvent::STATE_NOT_PUBLISHED) {
 			$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
-		} else {
-			$this->tpl->setVariable('ACTIONS', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
 		}
 	}
 

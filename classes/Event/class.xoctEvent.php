@@ -14,10 +14,22 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctEvent extends xoctObject {
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
+	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
+	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const PRESENTER_SEP = ';';
+	/**
+	 * @var array
+	 */
+	public static $state_mapping = array(
+		xoctEvent::STATE_SUCCEEDED => 'success',
+		xoctEvent::STATE_INSTANTIATED => 'info',
+		xoctEvent::STATE_ENCODING => 'info',
+		xoctEvent::STATE_NOT_PUBLISHED => 'info',
+		xoctEvent::STATE_FAILED => 'danger',
+	);
 	/**
 	 * @var string
 	 */
@@ -140,6 +152,7 @@ class xoctEvent extends xoctObject {
 		$this->loadAcl();
 		$this->setOwnerUsername($this->getMetadata()->getField('rightsHolder')->getValue());
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
+		$this->initProcessingState();
 	}
 
 
@@ -777,6 +790,7 @@ class xoctEvent extends xoctObject {
 	 * @return array
 	 */
 	public function getProcessingState() {
+		$this->initProcessingState();
 		return $this->processing_state;
 	}
 
@@ -1029,5 +1043,22 @@ class xoctEvent extends xoctObject {
 		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
+	}
+
+
+	/**
+	 * @var bool
+	 */
+	protected $processing_state_init = false;
+
+
+	protected function initProcessingState() {
+		if (!$this->processing_state_init) {
+			$links_available = ($this->getAnnotationLink() && $this->getDownloadLink() && $this->getPlayerLink());
+			if ($this->processing_state == xoctEvent::STATE_SUCCEEDED && !$links_available) {
+				$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+			}
+		}
+		$this->processing_state_init = true;
 	}
 }
