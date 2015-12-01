@@ -79,7 +79,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($xoctEvent->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
 		} elseif ($xoctEvent->getThumbnailUrl()) {
-			$this->tpl->setVariable('PREVIEW', xoctSecureLink::sign($xoctEvent->getThumbnailUrl()));
+			$this->tpl->setVariable('PREVIEW', $xoctEvent->getThumbnailUrl());
 		}
 		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 			//			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));

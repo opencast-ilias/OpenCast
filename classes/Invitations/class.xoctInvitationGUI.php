@@ -39,7 +39,7 @@ class xoctInvitationGUI extends xoctGUI {
 			$this->ctrl->redirectByClass('xoctEventGUI');
 		}
 		$temp = $this->pl->getTemplate('default/tpl.invitations.html', false, false);
-		$temp->setVariable('PREVIEW', xoctSecureLink::sign($this->xoctEvent->getThumbnailUrl()));
+		$temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
 		$temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
 		$temp->setVariable('HEADER_INVITAIONS', $this->pl->txt('invitations_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', $this->pl->txt('groups_available_participants_header'));
