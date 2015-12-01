@@ -36,6 +36,7 @@ config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
 event_add_new#:#Clip hinzufügen
 event_annotate#:#Annotieren
+event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
 event_clear_cache#:#Events neu laden
 event_clips#:#Clips
@@ -68,7 +69,9 @@ event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
+event_state_failed#:#fehlgeschlagen
 event_state_instantiated#:#Hochgeladen
+event_state_not_published#:#Nicht publiziert
 event_state_running#:#Clip wird konvertiert und ist für die Studierenden noch nicht sichtbar.
 event_title#:#Titel
 event_update#:#Speichern
@@ -175,4 +178,3 @@ tab_system_accounts#:#System-Accounts
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
-event_auto_publish#:#Automatisch publizieren

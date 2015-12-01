@@ -36,6 +36,7 @@ config_user_mapping#:#User-Mapping
 config_workflow#:#Workflow-ID
 event_add_new#:#Add Clip
 event_annotate#:#Annotate
+event_auto_publish#:#Auto publish
 event_cancel#:#Cancel
 event_clear_cache#:#Reload Events
 event_clips#:#Clips
@@ -68,7 +69,9 @@ event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
+event_state_failed#:#failed
 event_state_instantiated#:#Uploaded
+event_state_not_published#:# Not published
 event_state_running#:#Converting
 event_title#:#Title
 event_update#:#Save
@@ -175,4 +178,3 @@ tab_system_accounts#:#System-Accounts
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
-event_auto_publish#:#Auto publish
