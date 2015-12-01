@@ -22,7 +22,7 @@ class xoctGroupParticipantGUI extends xoctGUI {
 			$this->xoctOpenCast = new xoctOpenCast ();
 		}
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
-		xoctWaiterGUI::init();
+		xoctWaiterGUI::loadLib();
 		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/group_participants.js'));
 	}
 

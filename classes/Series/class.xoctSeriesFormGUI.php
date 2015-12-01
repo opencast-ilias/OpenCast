@@ -76,7 +76,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
-		xoctWaiterGUI::init();
+		xoctWaiterGUI::loadLib();
 		$tpl->addJavaScript($this->pl->getStyleSheetLocation('default/existing_channel.js'));
 		if ($view) {
 			$this->initView();

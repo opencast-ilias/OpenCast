@@ -25,7 +25,7 @@ class xoctInvitationGUI extends xoctGUI {
 		}
 		$this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
-		xoctWaiterGUI::init();
+		xoctWaiterGUI::loadLib();
 		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/invitations.js'));
 		$this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
 	}
