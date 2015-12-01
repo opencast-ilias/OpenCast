@@ -21,6 +21,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_CREATED = 'created';
 	const F_LOCATION = 'location';
 	const F_SOURCE = 'source';
+	const F_AUTO_PUBLISH = 'auto_publish';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -45,11 +46,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 	/**
 	 * @param              $parent_gui
-	 * @param xoctEvent    $object
+	 * @param xoctEvent $object
 	 * @param xoctOpenCast $xoctOpenCast
-	 * @param bool|false   $view
-	 * @param bool|false   $infopage
-	 * @param bool|true    $external
+	 * @param bool|false $view
+	 * @param bool|false $infopage
+	 * @param bool|true $external
 	 */
 	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $view = false, $infopage = false, $external = true) {
 		global $ilCtrl, $lng, $tpl;
@@ -87,6 +88,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$te = new ilFileInputGUI($this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
 			$te->setRequired(true);
 			$this->addItem($te);
+
+			$cb = new ilCheckboxInputGUI($this->txt(self::F_AUTO_PUBLISH), self::F_AUTO_PUBLISH);
+			$this->addItem($cb);
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
@@ -100,9 +104,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
 		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
-
-		//		$te = new ilTextInputGUI($this->txt(self::F_SOURCE), self::F_SOURCE);
-		//		$this->addItem($te);
 	}
 
 
@@ -131,7 +132,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-		if (! $this->checkInput()) {
+		if (!$this->checkInput()) {
 			return false;
 		}
 		$this->object->setTitle($this->getInput(self::F_TITLE));
@@ -167,7 +168,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @return bool|string
 	 */
 	public function saveObject() {
-		if (! $this->fillObject()) {
+		if (!$this->fillObject()) {
 			return false;
 		}
 		if ($this->object->getIdentifier()) {
@@ -183,12 +184,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 	protected function initButtons() {
 		switch (true) {
-			case  $this->is_new AND ! $this->view:
+			case  $this->is_new AND !$this->view:
 				$this->setTitle($this->txt('create'));
 				$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
-			case  ! $this->is_new AND ! $this->view:
+			case  !$this->is_new AND !$this->view:
 				$this->setTitle($this->txt('edit'));
 				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));

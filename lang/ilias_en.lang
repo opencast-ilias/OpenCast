@@ -175,3 +175,4 @@ tab_system_accounts#:#System-Accounts
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
+event_auto_publish#:#Auto publish

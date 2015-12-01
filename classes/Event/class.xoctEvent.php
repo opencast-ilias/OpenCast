@@ -187,7 +187,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function isOwner(xoctUser $xoctUser) {
 		$xoctAcl = $this->getOwnerAcl();
-		if (! $xoctAcl instanceof xoctAcl) {
+		if (!$xoctAcl instanceof xoctAcl) {
 			return false;
 		}
 		if ($xoctAcl->getRole() == $xoctUser->getIVTRoleName()) {
@@ -196,7 +196,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	public function create() {
+	/**
+	 * @param bool|false $auto_publish
+	 */
+	public function create($auto_publish = false) {
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
@@ -204,7 +207,7 @@ class xoctEvent extends xoctObject {
 		$this->setAcls(xoctAcl::getStandardSetForEvent());
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$data['processing'] = json_encode($this->getProcessing());
+		$data['processing'] = json_encode($this->getProcessing($auto_publish));
 		$data['acl'] = json_encode($this->getAcls());
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
@@ -341,13 +344,13 @@ class xoctEvent extends xoctObject {
 	 * @return string
 	 */
 	public function getThumbnailUrl() {
-		if (! $this->thumbnail_url) {
+		if (!$this->thumbnail_url) {
 			$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
-			if (! $this->thumbnail_url) {
+			if (!$this->thumbnail_url) {
 				$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
 					->getUrl();
 			}
-			if (! $this->thumbnail_url) {
+			if (!$this->thumbnail_url) {
 				$this->thumbnail_url = self::NO_PREVIEW;
 			}
 		}
@@ -360,7 +363,7 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getAnnotationLink() {
-		if (! $this->annotation_url) {
+		if (!$this->annotation_url) {
 			$this->annotation_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
 		}
 
@@ -372,7 +375,7 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getPlayerLink() {
-		if (! $this->player_url) {
+		if (!$this->player_url) {
 			$this->player_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
 		}
 
@@ -384,9 +387,8 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getDownloadLink() {
-		if (! $this->download_url) {
-			$this->download_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))
-				->getUrl());
+		if (!$this->download_url) {
+			$this->download_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
 		}
 
 		return $this->download_url;
@@ -399,7 +401,7 @@ class xoctEvent extends xoctObject {
 	 * @return xoctPublication
 	 */
 	public function getPublicationMetadataForUsage($xoctPublicationUsage) {
-		if (! $xoctPublicationUsage instanceof xoctPublicationUsage) {
+		if (!$xoctPublicationUsage instanceof xoctPublicationUsage) {
 			return new xoctPublication();
 		}
 		/**
@@ -443,6 +445,7 @@ class xoctEvent extends xoctObject {
 
 	protected function loadPublications() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->parameter('sign', true)->get());
+
 		$publications = array();
 		foreach ($data as $d) {
 			$p = new xoctPublication();
@@ -477,7 +480,7 @@ class xoctEvent extends xoctObject {
 				}
 			}
 		}
-		if (! $this->getMetadata()) {
+		if (!$this->getMetadata()) {
 			$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
 		}
 	}
@@ -985,17 +988,20 @@ class xoctEvent extends xoctObject {
 	//	}
 
 	/**
+	 * @param bool|false $auto_publish
 	 * @return stdClass
 	 */
-	protected function getProcessing() {
+	protected function getProcessing($auto_publish = false) {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::get(xoctConf::F_WORKFLOW);
-		$processing->configuration->flagForCutting = "false";
-		$processing->configuration->flagForReview = "false";
-		$processing->configuration->publishToEngage = "false";
-		$processing->configuration->publishToHarvesting = "false";
-		$processing->configuration->straightToPublishing = "false";
+		$processing->configuration = new stdClass();
+		$processing->configuration->flagForCutting = 'false';
+		$processing->configuration->flagForReview = 'false';
+		$processing->configuration->publishToEngage = 'false';
+		$processing->configuration->publishToHarvesting = 'false';
+		$processing->configuration->straightToPublishing = 'false';
+		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
 	}
