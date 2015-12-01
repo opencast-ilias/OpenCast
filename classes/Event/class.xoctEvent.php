@@ -526,12 +526,12 @@ class xoctEvent extends xoctObject {
 
 
 	protected function initProcessingState() {
-		if (!$this->processing_state_init) {
-			if ($this->processing_state == xoctEvent::STATE_SUCCEEDED && count($this->publication_status) === 1) {
+//		if ($this->processing_state_init != 5) {
+			if ($this->processing_state == xoctEvent::STATE_SUCCEEDED && count($this->publication_status) < 3) {
 				$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
 			}
-		}
-		$this->processing_state_init = true;
+//		}
+//		$this->processing_state_init = 5;
 	}
 
 
