@@ -65,7 +65,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
-		xoctWaiterGUI::init();
+//		xoctWaiterGUI::initJS();
+//		xoctWaiterGUI::addListener('input.btn-default');
 
 		if ($view) {
 			$this->initView();
@@ -90,6 +91,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->addItem($te);
 
 			$cb = new ilCheckboxInputGUI($this->txt(self::F_AUTO_PUBLISH), self::F_AUTO_PUBLISH);
+			$cb->setChecked(true);
 			$this->addItem($cb);
 		}
 
@@ -175,7 +177,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->object->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-			$this->object->create();
+			$this->object->create($this->getInput(self::F_AUTO_PUBLISH) ? true : false);
 		}
 
 		return $this->object->getIdentifier();

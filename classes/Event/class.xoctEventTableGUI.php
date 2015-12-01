@@ -73,6 +73,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xoctUser  xoctUser
 		 */
 		$xoctEvent = xoctEvent::find($a_set['identifier']);
+		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED
+			&& (!$xoctEvent->getAnnotationLink() OR !$xoctEvent->getDownloadLink() OR !$xoctEvent->getPlayerLink())
+		) {
+			$xoctEvent->setProcessingState('NOT_PUBLISHED');
+		}
 
 		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xoctEvent->getProcessingState()));
 
@@ -81,37 +86,44 @@ class xoctEventTableGUI extends ilTable2GUI {
 		} elseif ($xoctEvent->getThumbnailUrl()) {
 			$this->tpl->setVariable('PREVIEW', $xoctEvent->getThumbnailUrl());
 		}
-		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
-			//			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xoctEvent->getProcessingState())));
-		}
+		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+			if ($this->xoctOpenCast->getUseAnnotations()) {
+				$annotationLink = $xoctEvent->getAnnotationLink();
+				if ($annotationLink) {
+					$this->tpl->setCurrentBlock('link');
+					$this->tpl->setVariable('LINK_URL', $annotationLink);
+					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
 
-		if ($this->xoctOpenCast->getUseAnnotations()) {
-			$this->tpl->setCurrentBlock('link');
-			$this->tpl->setVariable('LINK_URL', $xoctEvent->getAnnotationLink());
-			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
+					$this->tpl->parseCurrentBlock();
+				}
+			}
+			$playerLink = $xoctEvent->getPlayerLink();
+			if ($playerLink) {
+				$this->tpl->setCurrentBlock('link');
+				$this->tpl->setVariable('LINK_URL', $playerLink);
+				$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
+				if (xoctConf::get(xoctConf::F_USE_MODALS)) {
+					require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
+					$modal = ilModalGUI::getInstance();
+					$modal->setId('modal_' . $xoctEvent->getIdentifier());
+					$modal->setHeading($xoctEvent->getTitle());
+					$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
+					$this->tpl->setVariable('MODAL', $modal->getHTML());
+					$this->tpl->setVariable('LINK_URL', '#');
+					$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
+				}
+				$this->tpl->parseCurrentBlock();
+			}
 
-			$this->tpl->parseCurrentBlock();
-		}
-		$this->tpl->setCurrentBlock('link');
-		$this->tpl->setVariable('LINK_URL', $xoctEvent->getPlayerLink());
-		$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
-		if (xoctConf::get(xoctConf::F_USE_MODALS)) {
-			require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
-			$modal = ilModalGUI::getInstance();
-			$modal->setId('modal_' . $xoctEvent->getIdentifier());
-			$modal->setHeading($xoctEvent->getTitle());
-			$modal->setBody('<iframe class="xoct_iframe" src="' . $xoctEvent->getPlayerLink() . '"></iframe>');
-			$this->tpl->setVariable('MODAL', $modal->getHTML());
-			$this->tpl->setVariable('LINK_URL', '#');
-			$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xoctEvent->getIdentifier() . '"');
-		}
-		$this->tpl->parseCurrentBlock();
-
-		if (!$this->xoctOpenCast->getStreamingOnly()) {
-			$this->tpl->setCurrentBlock('link');
-			$this->tpl->setVariable('LINK_URL', $xoctEvent->getDownloadLink());
-			$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('download'));
-			$this->tpl->parseCurrentBlock();
+			if (!$this->xoctOpenCast->getStreamingOnly()) {
+				$downloadLink = $xoctEvent->getDownloadLink();
+				if ($downloadLink) {
+					$this->tpl->setCurrentBlock('link');
+					$this->tpl->setVariable('LINK_URL', $downloadLink);
+					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('download'));
+					$this->tpl->parseCurrentBlock();
+				}
+			}
 		}
 
 		$this->tpl->setVariable('TITLE', $xoctEvent->getTitle());

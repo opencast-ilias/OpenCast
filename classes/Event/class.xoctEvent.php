@@ -15,6 +15,7 @@ class xoctEvent extends xoctObject {
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_ENCODING = 'RUNNING';
+	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const PRESENTER_SEP = ';';
 	/**
@@ -227,8 +228,6 @@ class xoctEvent extends xoctObject {
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		//		echo $data['metadata'];
-		//		exit;
 
 		// ACL
 		// $data['acl'] = json_encode( $this->getAcls() );
