@@ -322,6 +322,19 @@ class xoctEvent extends xoctObject {
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getIVTRoleName());
 		$this->addAcl($acl);
+
+		$acl = new xoctAcl();
+		$acl->setAction(xoctAcl::READ);
+		$acl->setAllow(true);
+		$acl->setRole($xoctUser->getUserRoleName());
+		$this->addAcl($acl);
+
+		$acl = new xoctAcl();
+		$acl->setAction(xoctAcl::WRITE);
+		$acl->setAllow(true);
+		$acl->setRole($xoctUser->getUserRoleName());
+		$this->addAcl($acl);
+
 		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
 	}
 
