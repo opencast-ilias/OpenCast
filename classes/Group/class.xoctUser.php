@@ -71,7 +71,7 @@ class xoctUser {
 	 * @return int
 	 */
 	public static function lookupUserIdForIVTRole($role) {
-		if (! $role) {
+		if (!$role) {
 			return NULL;
 		}
 		switch (self::getUserMapping()) {
@@ -86,7 +86,6 @@ class xoctUser {
 		}
 
 		preg_match("/" . $regex . "/uism", $role, $matches);
-
 
 		/**
 		 * @var $ilDB ilDB
@@ -108,7 +107,7 @@ class xoctUser {
 	 */
 	public static function getInstance(ilObjUser $ilUser) {
 		$key = $ilUser->getId();
-		if (! isset(self::$instances[$key])) {
+		if (!isset(self::$instances[$key])) {
 			self::$instances[$key] = new self($key);
 		}
 
@@ -262,8 +261,8 @@ class xoctUser {
 	 * @throws xoctException
 	 */
 	public function getIdentifier() {
-		if (! $this->identifier) {
-//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		if (!$this->identifier) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return $this->identifier;
@@ -276,8 +275,8 @@ class xoctUser {
 	 */
 	public function getRoleName() {
 		$prefix = xoctConf::get(xoctConf::F_ROLE_USER_PREFIX);
-		if (! $prefix) {
-//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		if (!$prefix) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
@@ -296,6 +295,14 @@ class xoctUser {
 
 	/**
 	 * @return string
+	 */
+	public function getUserRoleName() {
+		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), xoctConf::get(xoctConf::F_ROLE_USER_PREFIX));
+	}
+
+
+	/**
+	 * @return string
 	 * @throws xoctException
 	 */
 	public function getIVTRoleName() {
@@ -307,8 +314,8 @@ class xoctUser {
 				$prefix = xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
 				break;
 		}
-		if (! $prefix) {
-//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		if (!$prefix) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
@@ -321,7 +328,7 @@ class xoctUser {
 	 */
 	public function getOrganisationRoleName() {
 		$prefix = xoctConf::get(xoctConf::F_ROLE_ORGANIZATION_PREFIX);
-		if (! $prefix) {
+		if (!$prefix) {
 			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 		$cut = explode('@', $this->getIdentifier());

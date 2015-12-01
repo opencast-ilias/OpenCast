@@ -100,7 +100,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
 					require_once('class.xoctSeries.php');
 					$existing_series = array();
-					foreach (xoctSeries::getAllForUser($xoctUser->getIdentifier()) as $serie) {
+					foreach (xoctSeries::getAllForUser($xoctUser->getUserRoleName()) as $serie) {
 						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
 					}
 					array_multisort($existing_series);

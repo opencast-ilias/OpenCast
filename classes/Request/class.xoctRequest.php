@@ -9,6 +9,10 @@ require_once('class.xoctRequestSettings.php');
  */
 class xoctRequest {
 
+	const X_RUN_AS_USER = 'X-RUN-AS-USER';
+	const X_RUN_WITH_ROLES = 'X-RUN-WITH-ROLES';
+
+
 	/**
 	 * @param xoctRequestSettings $xoctRequestSettings
 	 */
@@ -29,11 +33,11 @@ class xoctRequest {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-RUN-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
 		}
 
 		if (count($roles) > 0) {
-			$xoctCurl->addHeader('X-RUN-WITH-ROLES: ' . implode(',', $roles));
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
 		}
 
 		$xoctCurl->get();
