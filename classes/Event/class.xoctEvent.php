@@ -89,7 +89,7 @@ class xoctEvent extends xoctObject {
 		$return = array();
 		foreach ($data as $d) {
 			$xoctEvent = xoctEvent::find($d->identifier);
-			$return[] = $xoctEvent->__toArray();
+			$return[] = $xoctEvent->getArrayForTable();
 		}
 		if ($check_cache) {
 			xoctCache::getInstance()->set($key, $return);
@@ -99,7 +99,20 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	public function findPublication() {
+	/**
+	 * @return array
+	 */
+	public function getArrayForTable() {
+		return array(
+			'identifier' => $this->getIdentifier(),
+			'title' => $this->getTitle(),
+			'presenter' => $this->getPresenter(),
+			'recording_station' => $this->getMetadata()->getField('recording_station')->getValue(),
+			'created' => $this->getCreated()->format(DATE_ATOM),
+			'created_unix' => $this->getCreated()->format('U'),
+			'owner' => $this->getOwnerUsername(),
+			'state' => $this->getProcessingState()
+		);
 	}
 
 

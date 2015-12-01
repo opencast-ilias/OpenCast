@@ -51,8 +51,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
 		$this->initColums();
-		//		$this->initFilters();
-		//		$this->setDefaultOrderField('title');
+		$this->initFilters();
+		$this->setDefaultOrderField('title');
 		//		$this->setEnableNumInfo(true);
 		//		$this->setExternalSorting(true);
 		//		$this->setExternalSegmentation(true);
@@ -214,6 +214,27 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	protected function initFilters() {
+		// TITLE
+		$te = new ilTextInputGUI($this->parent_obj->txt('title'), 'title');
+		$this->addAndReadFilterItem($te);
+
+		// PRESENTER
+		$te = new ilTextInputGUI($this->parent_obj->txt('presenter'), 'presenter');
+		$this->addAndReadFilterItem($te);
+
+		// LCOATION
+		$te = new ilTextInputGUI($this->parent_obj->txt('location'), 'location');
+		$this->addAndReadFilterItem($te);
+
+		// OWNER
+		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner');
+		$this->addAndReadFilterItem($te);
+
+		// DATE
+		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
+		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created');
+		$this->addAndReadFilterItem($date);
+
 		//		// Status
 		//		$te = new ilMultiSelectInputGUI($this->pl->txt('filter_status'), 'status');
 		//		$te->setOptions(array(
@@ -249,45 +270,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 	}
 
 
-	/**
-	 * @param                  $usr_id
-	 * @param ActiveRecordList $xdglRequestList
-	 *
-	 * @throws Exception
-	 */
-	protected function filterResults($usr_id, ActiveRecordList $xdglRequestList) {
-		//		foreach ($this->filter as $field => $value) {
-		//			if ($value) {
-		//				switch ($field) {
-		//					case 'xdgl_library_id':
-		//						$field = 'xdgl_library.id';
-		//						$xdglRequestList->where(array( $field => $value ));
-		//						break;
-		//					case 'ext_id':
-		//						if (class_exists('arHaving')) {
-		//							$h = new arHaving();
-		//							$h->setFieldname('ext_id');
-		//							$h->setValue('%' . $value . '%');
-		//							$h->setOperator('LIKE');
-		//							$xdglRequestList->getArHavingCollection()->add($h);
-		//						}
-		//						break;
-		//					case 'xdgl_librarian_id':
-		//						$key = array_keys($value, xdglRequest::LIBRARIAN_ID_MINE);
-		//						if (count($key)) {
-		//							$value[$key[0]] = $usr_id;
-		//						}
-		//						$xdglRequestList->where(array( 'librarian_id' => $value ));
-		//						break;
-		//					default:
-		//						$xdglRequestList->where(array( $field => $value ));
-		//						break;
-		//				}
-		//			}
-		//		}
-	}
-
-
 	protected function parseData() {
 		global $ilUser;
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
@@ -298,24 +280,63 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$user = $xoctUser->getIVTRoleName();
 		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-			//			$filter['status'] = xoctEvent::STATE_SUCCEEDED; does not work
-		}
 		$a_data = xoctEvent::getFiltered($filter, $user, NULL);
-
-		if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-			foreach ($a_data as $i => $d) {
-				$xoctEvent = xoctEvent::find($d['identifier']);
-				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser)) {
-					unset($a_data[$i]);
-				}
-				if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
-					unset($a_data[$i]);
-				}
-			}
-		}
+		$a_data = array_filter($a_data, $this->filterPermissions());
+		$a_data = array_filter($a_data, $this->filterArray());
 
 		$this->setData($a_data);
+	}
+
+
+	/**
+	 * @return Closure => $value) {
+	 */
+	protected function filterArray() {
+		return function ($array) {
+			foreach ($this->filter as $field => $value) {
+				switch ($field) {
+					case 'created':
+						if (!$value['start'] || !$value['end']) {
+							continue;
+						}
+						$dateObject = new ilDateTime($array['created_unix'], IL_CAL_UNIX);
+						$within = ilDateTime::_within($dateObject, $value['start'], $value['end']);
+						return $within;
+						break;
+					default:
+						if (!$value) {
+							continue;
+						}
+						return (strpos($array[$field], $value) !== false);
+						break;
+				}
+			}
+
+			return true;
+		};
+	}
+
+
+	/**
+	 * @return Closure
+	 */
+	protected function filterPermissions() {
+		return function ($array) {
+			global $ilUser;
+
+			if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+				$xoctUser = xoctUser::getInstance($ilUser);
+				$xoctEvent = xoctEvent::find($array['identifier']);
+				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser)) {
+					return false;
+				}
+				if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
+					return false;
+				}
+			}
+
+			return true;
+		};
 	}
 
 
@@ -325,10 +346,20 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function addAndReadFilterItem(ilFormPropertyGUI $item) {
 		$this->addFilterItem($item);
 		$item->readFromSession();
-		if ($item instanceof ilCheckboxInputGUI) {
-			$this->filter[$item->getPostVar()] = $item->getChecked();
-		} else {
-			$this->filter[$item->getPostVar()] = $item->getValue();
+
+		switch (true) {
+			case ($item instanceof ilCheckboxInputGUI):
+				$this->filter[$item->getPostVar()] = $item->getChecked();
+				break;
+			case ($item instanceof ilDateDurationInputGUI):
+				$this->filter[$item->getPostVar()] = array(
+					'start' => $item->getStart(),
+					'end' => $item->getEnd()
+				);
+				break;
+			default:
+				$this->filter[$item->getPostVar()] = $item->getValue();
+				break;
 		}
 	}
 }
