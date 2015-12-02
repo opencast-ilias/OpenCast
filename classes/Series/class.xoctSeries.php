@@ -52,7 +52,9 @@ class xoctSeries extends xoctObject {
 
 
 	public function create() {
-		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
+		$metadata = xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES);
+		$metadata->setLabel('Opencast Series DublinCore');
+		$this->setMetadata($metadata);
 		$this->updateMetadataFromFields();
 
 		$array['metadata'] = json_encode(array(
@@ -64,6 +66,7 @@ class xoctSeries extends xoctObject {
 		}
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
+
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
 		if ($data->identifier) {
@@ -108,6 +111,10 @@ class xoctSeries extends xoctObject {
 		$license = $this->getMetadata()->getField('license');
 		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
 		$this->getMetadata()->addOrReplaceField($license);
+
+		//		$subjects = $this->getMetadata()->getField('subjects');
+		//		$subjects->setValue($this->getSubjects());
+		//		$this->getMetadata()->addOrReplaceField($subjects);
 	}
 
 
