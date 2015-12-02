@@ -64,6 +64,15 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	/**
+	 * @param $column
+	 * @return bool
+	 */
+	public function isColumsSelected($column) {
+		return in_array($column, $this->getSelectedColumns());
+	}
+
+
+	/**
 	 * @param array $a_set
 	 */
 	public function fillRow($a_set) {
@@ -76,7 +85,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$xE = xoctEvent::find($a_set['identifier']);
 
 		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
-		$this->tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$xE->getProcessingState()]);
 
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
@@ -121,48 +129,124 @@ class xoctEventTableGUI extends ilTable2GUI {
 					$this->tpl->parseCurrentBlock();
 				}
 			}
-		} else {
-			$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState())));
 		}
 
-		$this->tpl->setVariable('TITLE', $xE->getTitle());
-		$this->tpl->setVariable('PRESENTER', $xE->getPresenter());
-		$this->tpl->setVariable('LOCATION', $xE->getLocation());
-		$this->tpl->setVariable('RECORDING_STATION', $xE->getMetadata()->getField('recording_station')->getValue());
-		$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
-		if ($this->xoctOpenCast->getPermissionPerClip()) {
-			$this->tpl->setCurrentBlock('owner');
+		if ($this->isColumsSelected('event_title')) {
+			$this->tpl->setCurrentBlock('event_title');
+			$this->tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$xE->getProcessingState()]);
+			if (!$xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+				$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState())));
+			}
+			$this->tpl->setVariable('TITLE', $xE->getTitle());
+			$this->tpl->parseCurrentBlock();
+		}
+		if ($this->isColumsSelected('event_presenter')) {
+			$this->tpl->setCurrentBlock('event_presenter');
+			$this->tpl->setVariable('PRESENTER', $xE->getPresenter());
+			$this->tpl->parseCurrentBlock();
+		}
 
-			$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
-			if ($xE->isOwner($xoctUser)) {
-				$this->tpl->setCurrentBlock('invitations');
-				$in = xoctInvitation::where(array(
-					'owner_id' => $xoctUser->getIliasUserId(),
-					'event_identifier' => $xE->getIdentifier()
-				))->count();
-				if ($in > 0) {
-					$this->tpl->setVariable('INVITATIONS', $in);
+		if ($this->isColumsSelected('event_location')) {
+			$this->tpl->setCurrentBlock('event_location');
+			$this->tpl->setVariable('LOCATION', $xE->getLocation());
+			$this->tpl->parseCurrentBlock();
+		}
+
+		if ($this->isColumsSelected('event_date')) {
+			$this->tpl->setCurrentBlock('event_date');
+			$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
+			$this->tpl->parseCurrentBlock();
+		}
+
+		//		$this->tpl->setVariable('RECORDING_STATION', $xE->getMetadata()->getField('recording_station')->getValue());
+
+		if ($this->xoctOpenCast->getPermissionPerClip()) {
+
+			if ($this->isColumsSelected('event_owner')) {
+
+				$this->tpl->setCurrentBlock('event_owner');
+
+				$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
+				if ($xE->isOwner($xoctUser)) {
+					$this->tpl->setCurrentBlock('invitations');
+					$in = xoctInvitation::where(array(
+						'owner_id' => $xoctUser->getIliasUserId(),
+						'event_identifier' => $xE->getIdentifier()
+					))->count();
+					if ($in > 0) {
+						$this->tpl->setVariable('INVITATIONS', $in);
+					}
+					$this->tpl->parseCurrentBlock();
 				}
 				$this->tpl->parseCurrentBlock();
 			}
-			$this->tpl->parseCurrentBlock();
 		}
 		$this->addActionMenu($xE);
 	}
 
 
-	protected function initColums() {
-		$this->addColumn($this->pl->txt('event_preview'), '', '250px');
-		$this->addColumn($this->pl->txt('event_clips'));
-		$this->addColumn($this->pl->txt('event_title'), 'title');
-		$this->addColumn($this->pl->txt('event_presenter'), 'presenter');
-		$this->addColumn($this->pl->txt('event_location'), 'location');
-		//		$this->addColumn($this->pl->txt('event_recording_station'), 'recording_station');
-		$this->addColumn($this->pl->txt('event_date'), 'created_unix');
-		if ($this->xoctOpenCast->getPermissionPerClip()) {
-			$this->addColumn($this->pl->txt('event_owner'), 'owner_username');
+	/**
+	 * @return array
+	 */
+	protected function getAllColums() {
+		$columns = array(
+			'event_preview' => array(
+				'selectable' => false,
+				'sort_field' => null,
+				'width' => '250px'
+			),
+
+			'event_clips' => array(
+				'selectable' => false,
+				'sort_field' => null,
+			),
+
+			'event_title' => array(
+				'selectable' => true,
+				'sort_field' => 'title',
+			),
+
+			'event_presenter' => array(
+				'selectable' => true,
+				'sort_field' => 'presenter',
+			),
+
+			'event_location' => array(
+				'selectable' => true,
+				'sort_field' => 'location',
+			),
+
+			'event_date' => array(
+				'selectable' => true,
+				'sort_field' => 'created_unix',
+			),
+
+			'event_owner' => array(
+				'selectable' => true,
+				'sort_field' => 'owner_username',
+			),
+
+			'common_actions' => array(
+				'selectable' => false,
+			),
+		);
+
+		if (!$this->xoctOpenCast->getPermissionPerClip()) {
+			unset($columns['event_owner']);
 		}
-		$this->addColumn($this->pl->txt('common_actions'), "", "", false, "text-right");
+
+		return $columns;
+	}
+
+
+	protected function initColums() {
+		$selected_colums = $this->getSelectedColumns();
+
+		foreach ($this->getAllColums() as $text => $col) {
+			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
+				$this->addColumn($this->pl->txt($text), $col['sort_field'], $col['width']);
+			}
+		}
 	}
 
 
@@ -362,10 +446,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	/**
-	 * CSV Version of Fill Header. Likely to
-	 * be overwritten by derived class.
-	 *
-	 * @param    object $a_csv current file
+	 * @param object $a_csv
 	 */
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
@@ -378,14 +459,29 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	/**
-	 * CSV Version of Fill Row. Most likely to
-	 * be overwritten by derived class.
-	 *
-	 * @param    object $a_csv current file
-	 * @param    array $a_set data array
+	 * @param object $a_csv
+	 * @param array $a_set
 	 */
 	protected function fillRowCSV($a_csv, $a_set) {
-		parent::fillRowCSV($a_csv, $a_set); // TODO: Change the autogenerated stub
+		parent::fillRowCSV($a_csv, $a_set);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getSelectableColumns() {
+		$return = array();
+		foreach ($this->getAllColums() as $text => $col) {
+			if ($col['selectable']) {
+				$return[$text] = array(
+					'txt' => $this->pl->txt($text),
+					'default' => $col['default']
+				);
+			}
+		}
+
+		return $return;
 	}
 }
 
