@@ -84,6 +84,7 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->getField('title')->__toStdClass(),
 			$this->getMetadata()->getField('description')->__toStdClass(),
 			$this->getMetadata()->getField('license')->__toStdClass(),
+			$this->getMetadata()->getField('identifier')->__toStdClass(),
 		));
 
 		xoctRequest::root()->series($this->getIdentifier())->metadata()->parameter('type', $this->getMetadata()->getFlavor())->put($array);
@@ -112,9 +113,9 @@ class xoctSeries extends xoctObject {
 		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
 		$this->getMetadata()->addOrReplaceField($license);
 
-		//		$subjects = $this->getMetadata()->getField('subjects');
-		//		$subjects->setValue($this->getSubjects());
-		//		$this->getMetadata()->addOrReplaceField($subjects);
+		$subjects = $this->getMetadata()->getField('identifier');
+		$subjects->setValue($this->getIdentifier());
+		$this->getMetadata()->addOrReplaceField($subjects);
 	}
 
 
