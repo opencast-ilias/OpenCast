@@ -14,23 +14,20 @@ class xoctAcl extends xoctObject {
 	const READ = 'read';
 
 
-	public function read() {
-		// TODO: Implement read() method.
-	}
+	/**
+	 * @return bool
+	 */
+	public function isIVTAcl() {
+		switch (xoctUser::getUserMapping()) {
+			case xoctUser::MAP_EMAIL:
+				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX)) === 0);
+				break;
+			case xoctUser::MAP_EXT_ID:
+				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX)) === 0);
+				break;
+		}
 
-
-	public function update() {
-		// TODO: Implement update() method.
-	}
-
-
-	public function create() {
-		// TODO: Implement create() method.
-	}
-
-
-	public function delete() {
-		// TODO: Implement delete() method.
+		return false;
 	}
 
 
@@ -77,7 +74,32 @@ class xoctAcl extends xoctObject {
 	 * @return stdClass[]
 	 */
 	public static function getStandardSet() {
-		return array( self::userRead()->__toStdClass(), self::adminWrite()->__toStdClass(), self::adminRead()->__toStdClass() );
+		return array(
+			self::userRead()->__toStdClass(),
+			self::adminWrite()->__toStdClass(),
+			self::adminRead()->__toStdClass()
+		);
+	}
+
+
+	/**
+	 * @return xoctAcl[]
+	 */
+	public static function getStandardSetForEvent() {
+		$acls = array();
+		$acl = new xoctAcl();
+		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::READ);
+		$acls[] = $acl;
+
+		$acl = new xoctAcl();
+		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::WRITE);
+		$acls[] = $acl;
+
+		return $acls;
 	}
 
 

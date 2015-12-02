@@ -26,6 +26,8 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurlSettings.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurl.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctRequest.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
 
 /**
  * Class ilObjOpenCast
@@ -40,6 +42,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @var bool
 	 */
 	protected $object;
+	const DEV = false;
 
 
 	/**
@@ -66,14 +69,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doRead() {
-		$xoctCurlSettings = new xoctCurlSettings();
-		$xoctCurlSettings->setUsername(xoctConf::get(xoctConf::F_CURL_USERNAME));
-		$xoctCurlSettings->setPassword(xoctConf::get(xoctConf::F_CURL_PASSWORD));
-//		$xoctCurlSettings->setVerifyPeer(false);
-//		$xoctCurlSettings->set(false);
-		$xoctCurlSettings->setDebugLevel(xoctConf::get(xoctConf::F_CURL_DEBUG_LEVEL));
-		xoctCurl::init($xoctCurlSettings);
-		xoctCache::setOverrideActive(true);
 	}
 
 
@@ -93,6 +88,26 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|void
 	 */
 	protected function doCloneObject(ilObjOpenCast $new_obj, $a_target_id, $a_copy_id = NULL) {
+		/**
+		 * @var $xoctOpenCastNew xoctOpenCast
+		 * @var $xoctOpenCastOld xoctOpenCast
+		 */
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
+		$xoctOpenCastNew = new xoctOpenCast();
+		$xoctOpenCastNew->setObjId($new_obj->getId());
+		$xoctOpenCastOld = xoctOpenCast::find($this->getId());
+
+		$xoctOpenCastNew->setSeriesIdentifier($xoctOpenCastOld->getSeriesIdentifier());
+		$xoctOpenCastNew->setIntroText($xoctOpenCastOld->getIntroText());
+		$xoctOpenCastNew->setAgreementAccepted($xoctOpenCastOld->getAgreementAccepted());
+		$xoctOpenCastNew->setObjOnline(false);
+		$xoctOpenCastNew->setPermissionAllowSetOwn($xoctOpenCastOld->getPermissionAllowSetOwn());
+		$xoctOpenCastNew->setShowUploadToken($xoctOpenCastOld->isShowUploadToken());
+		$xoctOpenCastNew->setStreamingOnly($xoctOpenCastOld->getStreamingOnly());
+		$xoctOpenCastNew->setUseAnnotations($xoctOpenCastOld->getUseAnnotations());
+		$xoctOpenCastNew->setPermissionPerClip($xoctOpenCastOld->getPermissionPerClip());
+
+		$xoctOpenCastNew->create();
 	}
 
 

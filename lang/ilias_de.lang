@@ -1,20 +1,81 @@
 <!-- language file start -->
+admin_export#:#Einstellungen exportieren
+admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
+config_activate_cache#:#Cache aktivieren
+config_api_base#:#API-Basis-URL
 config_cancel#:#Abbrechen
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
+config_eula#:#Nutzungsvereinbarung
+config_license_info#:#Lizenz-Informationen
+config_licenses#:#Lizenzen
+config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
+config_log_level_0#:#Deaktiviert
+config_log_level_1#:#LOW
+config_log_level_2#:#MEDIUM
+config_log_level_3#:#HIGH
+config_log_level_4#:#ULTRA
 config_msg_success#:#Gespeichert
+config_role_anonymous#:#Anonym
+config_role_ext_application#:#External Application
+config_role_external_application_member#:#External Application Member
+config_role_federation_member#:#Federation-Mitglied
+config_role_ivt_email_prefix#:#Präfix für IVT-Benutzer-Rolle (E-Mail wird ergänzt)
+config_role_ivt_external_prefix#:#Präfix für IVT-Benutzer-Rolle (Ext-Account wird ergänzt)
+config_role_organisation_prefix#:#Präfix für Organisations-Rolle (Domain des Mapping wird angehängt)
+config_role_producer#:#Producer
+config_role_user_prefix#:#Präfix für Benutzer-Rolle (Mapping wird angehängt)
+config_roles#:#OpenCast-Rollen
 config_update#:#Aktualisieren
+config_upload_token#:#Aktiviere Upload-Token
+config_use_modals#:#Player in Modal öffnen
+config_user_mapping#:#User-Mapping
+config_workflow#:#Workflow-ID
+event_add_new#:#Clip hinzufügen
+event_annotate#:#Annotieren
+event_auto_publish#:#Automatisch publizieren
+event_cancel#:#Abbrechen
+event_clear_cache#:#Events neu laden
 event_clips#:#Clips
+event_create#:#Clip hochladen
+event_created#:#Erstellt
+event_creator#:#Ersteller
+event_cut#:#Clip schneiden
 event_date#:#Datum
-event_location#:#Ort
+event_delete#:#Clip löschen
+event_delete_confirm#:#Das Löschen bewirkt, dass der Clip definitiv gelöscht wird (auch auf OpenCast). Wollen Sie diesen Clip wirklich löschen?
+event_description#:#Untertitel
+event_download#:#Download
+event_duration#:#Dauer
+event_edit#:#Metadaten bearbeiten
+event_edit_owner#:#Besitzer bearbeiten
+event_file_presenter#:#Datei
+event_identifier#:#ID
+event_invite_others#:#Clip freigeben
+event_location#:#Aufnahmestation
+event_msg_created#:#Upload abgeschlossen
+event_msg_deleted#:#Clip gelöscht
+event_msg_no_access#:#kein Zugriff
+event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
+event_owner_select#:#--nicht zugewiesen--
+event_player#:#Abspielen
 event_presenter#:#Presenter
+event_presenters#:#Referenten
 event_preview#:#Vorschau
+event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
+event_start_time#:#Start
+event_state_failed#:#fehlgeschlagen
+event_state_instantiated#:#Hochgeladen
+event_state_not_published#:#Nicht publiziert
+event_state_running#:#Clip wird konvertiert und ist für die Studierenden noch nicht sichtbar.
 event_title#:#Titel
+event_update#:#Speichern
+event_updateOwner#:#Besitzer speichern
 event_view#:#Anzeigen
 group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
 group_alert_no_title#:#Kein Gruppenname angegeben
@@ -30,15 +91,22 @@ groups_new_placeholder#:#Name der neuen Gruppe
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#Vor- oder Nachname
 groups_participants_header#:#Teilnehmer
+invitations_back#:#Zurück
+invitations_header#:#Clip freigeben
+invitations_none_available#:#Keine verfügbar
+obj_xoct#:#OpenCast
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen
+publication_usage_channel#:#Channel
 publication_usage_create#:#Erstellen
 publication_usage_delete#:#Löschen
 publication_usage_description#:#Beschreibung
 publication_usage_edit#:#Bearbeiten
 publication_usage_ext_id#:#Metadata-ID
+publication_usage_flavor#:#Flavor
 publication_usage_md_type#:#Typ
+publication_usage_md_type_0#:#Publikation
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
 publication_usage_md_type_select#:#Auswählen...
@@ -46,14 +114,17 @@ publication_usage_msg_success#:#Gespeichert
 publication_usage_publication_id#:#Publikations-ID
 publication_usage_select_usage_id#:#Verwendungszweck
 publication_usage_title#:#Titel
-publication_usage_type_annotations#:#Link zu Annotationen
-publication_usage_type_mov#:#Link zu MOV-Player
-publication_usage_type_mp4#:#Link zu MP4-Player
-publication_usage_type_preview#:#URL Vorschau-Bild
+publication_usage_type_annotate#:#Annotationen
+publication_usage_type_api#:#API
+publication_usage_type_cutting#:#Cutting-Tool
+publication_usage_type_player#:#Player
+publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
+series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
+series_channel_id#:#Series ID
 series_channel_type#:#Channel-Typ
 series_create#:#Channel anlegen
 series_department#:#Department
@@ -71,10 +142,15 @@ series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert blei
 series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
 series_metadata#:#Channel-Infos
+series_obj_online#:#Online
+series_permission_allow_set_own#:#Leserechte erteilen
+series_permission_allow_set_own_info#:#Clip-Besitzer können Leserechte auf ihre Clips erteilen
 series_permission_per_clip#:#Rechte pro Clip setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Clip-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen des gewählten Kanals sehen dürfen.
 series_save#:#Speichern
 series_saved#:#Channel-Informationen gespeichert
+series_show_upload_token#:#Upload-Token anzeigen
+series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Clips hochladen können
 series_streaming_only#:#Nur Streaming
 series_title#:#Titel
 series_update#:#Aktualisieren
@@ -90,9 +166,15 @@ system_account_msg_success#:#Gespeichert
 system_account_status#:#Status
 system_account_update#:#Aktualisieren
 tab_event_index#:#Inhalt
+tab_export#:#Import/Export
 tab_groups#:#Gruppen
 tab_info#:#Info
+tab_list_all#:#Alle Clips
+tab_migrate_event#:#Event importieren
 tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
+upload_token_channel_id#:#Series-ID
+upload_token_daily_upload_token#:#Token
+upload_token_upload_token#:#Upload-Token

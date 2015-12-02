@@ -1,6 +1,6 @@
 <?php
 require_once('class.xoctCurl.php');
-require_once('class.xoctCurl.php');
+require_once('class.xoctRequestSettings.php');
 
 /**
  * Class xoctRequest
@@ -9,18 +9,35 @@ require_once('class.xoctCurl.php');
  */
 class xoctRequest {
 
+	const X_RUN_AS_USER = 'X-RUN-AS-USER';
+	const X_RUN_WITH_ROLES = 'X-RUN-WITH-ROLES';
+
+
+	/**
+	 * @param xoctRequestSettings $xoctRequestSettings
+	 */
+	public static function init(xoctRequestSettings $xoctRequestSettings) {
+		self::$base = $xoctRequestSettings->getApiBase();
+	}
+
+
 	/**
 	 * @param string $as_user
+	 * @param array $roles
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function get($as_user = '') {
+	public function get($as_user = '', array $roles = array()) {
 		$url = $this->getUrl();
 
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
+		}
+
+		if (count($roles) > 0) {
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
 		}
 
 		$xoctCurl->get();
@@ -32,7 +49,7 @@ class xoctRequest {
 
 
 	/**
-	 * @param array  $post_data
+	 * @param array $post_data
 	 * @param string $as_user
 	 *
 	 * @return string
@@ -42,7 +59,7 @@ class xoctRequest {
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->post();
@@ -52,7 +69,34 @@ class xoctRequest {
 
 
 	/**
-	 * @param array  $post_data
+	 * @param array $post_data
+	 * @param xoctUploadFile[] $files
+	 * @param string $as_user
+	 *
+	 * @return string
+	 */
+	public function postFiles(array $post_data, array $files, $as_user = '') {
+		$xoctCurl = new xoctCurl();
+		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->setPostFields($post_data);
+		$xoctCurl->setRequestContentType('multipart/form-data');
+		if ($as_user) {
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+		}
+		foreach ($files as $file) {
+			if ($file instanceof xoctUploadFile) {
+				$xoctCurl->addFile($file);
+			}
+		}
+
+		$xoctCurl->post();
+
+		return $xoctCurl->getResponseBody();
+	}
+
+
+	/**
+	 * @param array $post_data
 	 * @param string $as_user
 	 *
 	 * @return string
@@ -62,7 +106,7 @@ class xoctRequest {
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-//			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
 		}
 
 		$xoctCurl->put();
@@ -72,10 +116,14 @@ class xoctRequest {
 
 
 	/**
-	 *
+	 * @return string
 	 */
 	public function delete() {
-		// TODO implement here
+		$xoctCurl = new xoctCurl();
+		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->delete();
+
+		return $xoctCurl->getResponseBody();
 	}
 
 
@@ -95,6 +143,7 @@ class xoctRequest {
 	const BRANCH_SERIES = 1;
 	const BRANCH_EVENTS = 2;
 	const BRANCH_BASE = 3;
+	const BRANCH_SECURITY = 4;
 	/**
 	 * @var array
 	 */
@@ -106,8 +155,7 @@ class xoctRequest {
 	/**
 	 * @var string
 	 */
-	//	protected $base = 'https://p2-int-api.cloud.switch.ch/api/';
-	protected $base = 'https://cast-ng-test.switch.ch/api/';
+	protected static $base = '';
 	/**
 	 * @var array
 	 */
@@ -138,7 +186,7 @@ class xoctRequest {
 	 * @param string $identifier
 	 *
 	 * @return $this
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	public function events($identifier = '') {
 		$this->checkRoot();
@@ -188,7 +236,10 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function properties() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('properties');
 
 		return $this;
@@ -202,7 +253,10 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function metadata() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('metadata');
 
 		return $this;
@@ -212,9 +266,15 @@ class xoctRequest {
 	/**
 	 * @return $this
 	 */
-	public function acl() {
-		$this->checkBranch(array( self::BRANCH_SERIES, self::BRANCH_EVENTS ));
+	public function acl($action = NULL) {
+		$this->checkBranch(array(
+			self::BRANCH_SERIES,
+			self::BRANCH_EVENTS
+		));
 		$this->addPart('acl');
+		if ($action) {
+			$this->addPart($action);
+		}
 
 		return $this;
 	}
@@ -258,6 +318,38 @@ class xoctRequest {
 	//
 	//
 
+	//
+	// SECURITY
+	//
+	/**
+	 * @return $this
+	 * @throws xoctException
+	 */
+	public function security() {
+		$this->checkRoot();
+		$this->checkBranch(array( self::BRANCH_SECURITY ));
+		$this->branch = self::BRANCH_SECURITY;
+		$this->addPart('security');
+
+		return $this;
+	}
+
+
+	/**
+	 * @param $url
+	 *
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function sign($url) {
+		$this->checkBranch(array( self::BRANCH_SECURITY ));
+		$this->addPart('sign');
+		$data = array( 'url' => $url );
+
+		return $this->post($data);
+	}
+
+
 	/**
 	 * @param $part
 	 */
@@ -286,7 +378,7 @@ class xoctRequest {
 	 * @return string
 	 */
 	public function getBase() {
-		return $this->base;
+		return self::$base;
 	}
 
 
@@ -294,7 +386,7 @@ class xoctRequest {
 	 * @param string $base
 	 */
 	public function setBase($base) {
-		$this->base = $base;
+		self::$base = $base;
 	}
 
 
@@ -321,8 +413,13 @@ class xoctRequest {
 	 * @return $this
 	 */
 	public function parameter($key, $value) {
-		$this->parameters[$key] = $value;
+		switch (true) {
+			case is_bool($value):
+				$value = ($value ? 'true' : 'false');
+				break;
+		}
 
+		$this->parameters[$key] = $value;
 		return $this;
 	}
 
@@ -346,19 +443,19 @@ class xoctRequest {
 	/**
 	 * @param array $supported_branches
 	 *
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	protected function checkBranch(array $supported_branches) {
 		$supported_branches[] = self::BRANCH_OTHER;
-		if (! in_array($this->branch, $supported_branches)) {
-			throw new xoctExeption(xoctExeption::API_CALL_UNSUPPORTED);
+		if (!in_array($this->branch, $supported_branches)) {
+			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}
 	}
 
 
 	protected function checkRoot() {
 		if (count($this->parts) > 0 OR $this->branch != self::BRANCH_OTHER) {
-			throw new xoctExeption(xoctExeption::API_CALL_UNSUPPORTED);
+			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}
 	}
 }

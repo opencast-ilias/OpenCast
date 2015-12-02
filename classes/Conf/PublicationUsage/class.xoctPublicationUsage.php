@@ -8,15 +8,38 @@ require_once('./Services/ActiveRecord/class.ActiveRecord.php');
  */
 class xoctPublicationUsage extends ActiveRecord {
 
+	const USAGE_ANNOTATE = 'annotate';
+	const USAGE_PLAYER = 'player';
+	const USAGE_API = 'api';
+	const USAGE_THUMBNAIL = 'thumbnail';
+	const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
+	const USAGE_DOWNLOAD = 'download';
+	const USAGE_CUTTING = 'cutting';
+	const MD_TYPE_ATTACHMENT = 1;
+	const MD_TYPE_MEDIA = 2;
+	const MD_TYPE_PUBLICATION_ITSELF = 0;
 	/**
 	 * @var array
 	 */
 	protected static $usage_ids = array(
-		self::USAGE_ANNOTATION,
-		self::USAGE_MP4,
-		self::USAGE_MOV,
-		self::USAGE_PREVIEW,
+		self::USAGE_ANNOTATE,
+		self::USAGE_PLAYER,
+		self::USAGE_API,
+		self::USAGE_THUMBNAIL,
+		self::USAGE_THUMBNAIL_FALLBACK,
+		self::USAGE_DOWNLOAD,
+		self::USAGE_CUTTING,
 	);
+
+
+	/**
+	 * @param $usage
+	 *
+	 * @return xoctPublicationUsage
+	 */
+	public static function getUsage($usage) {
+		return self::find($usage);
+	}
 
 
 	/**
@@ -39,12 +62,6 @@ class xoctPublicationUsage extends ActiveRecord {
 	}
 
 
-	const USAGE_MP4 = 'mp4';
-	const USAGE_ANNOTATION = 'annotations';
-	const USAGE_MOV = 'mov';
-	const USAGE_PREVIEW = 'preview';
-	const MD_TYPE_ATTACHMENT = 1;
-	const MD_TYPE_MEDIA = 2;
 	/**
 	 * @var string
 	 *
@@ -78,7 +95,7 @@ class xoctPublicationUsage extends ActiveRecord {
 	 * @con_fieldtype  text
 	 * @con_length     512
 	 */
-	protected $publication_id;
+	protected $channel;
 	/**
 	 * @var bool
 	 *
@@ -94,7 +111,7 @@ class xoctPublicationUsage extends ActiveRecord {
 	 * @con_fieldtype  text
 	 * @con_length     512
 	 */
-	protected $ext_id;
+	protected $flavor;
 	/**
 	 * @var int
 	 *
@@ -156,16 +173,16 @@ class xoctPublicationUsage extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getPublicationId() {
-		return $this->publication_id;
+	public function getChannel() {
+		return $this->channel;
 	}
 
 
 	/**
-	 * @param string $publication_id
+	 * @param string $channel
 	 */
-	public function setPublicationId($publication_id) {
-		$this->publication_id = $publication_id;
+	public function setChannel($channel) {
+		$this->channel = $channel;
 	}
 
 
@@ -188,16 +205,16 @@ class xoctPublicationUsage extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getExtId() {
-		return $this->ext_id;
+	public function getFlavor() {
+		return $this->flavor;
 	}
 
 
 	/**
-	 * @param string $ext_id
+	 * @param string $flavor
 	 */
-	public function setExtId($ext_id) {
-		$this->ext_id = $ext_id;
+	public function setFlavor($flavor) {
+		$this->flavor = $flavor;
 	}
 
 

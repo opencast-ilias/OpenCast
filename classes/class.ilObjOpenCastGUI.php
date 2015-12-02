@@ -27,12 +27,12 @@ require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
 require_once('class.ilObjOpenCast.php');
 require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
 require_once('./Services/Repository/classes/class.ilRepUtilGUI.php');
+require_once('./Services/AccessControl/classes/class.ilPermissionGUI.php');
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctSeriesGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventGUI.php');
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupGUI.php');
 
 /**
@@ -54,9 +54,10 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	const CMD_SHOW_CONTENT = 'showContent';
+	const CMD_REDIRECT_SETTING = 'redirectSettings';
 	const TAB_EVENTS = 'series';
 	const TAB_SETTINGS = 'settings';
-	const TAB_INFO = 'info';
+	const TAB_INFO = 'info_short';
 	const TAB_GROUPS = 'groups';
 	/**
 	 * @var ilObjOpenCast
@@ -102,7 +103,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->ctrl = $ilCtrl;
 		$this->tabs_gui = $ilTabs;
 		$this->pl = ilOpenCastPlugin::getInstance();
-		//		$this->pl->update();
 	}
 
 
@@ -114,98 +114,38 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	public function executeCommand() {
-		try {
-			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
+	/**
+	 * @param $cmd
+	 */
+	public function performCommand($cmd) {
+		$this->{$cmd}();
+	}
 
-				$this->history->deleteSessionEntries();
-				$this->history->deleteDBEntries();
-				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
-			}
-			$cmd = $this->ctrl->getCmd();
-			$next_class = $this->ctrl->getNextClass($this);
+
+	public function executeCommand() {
+		$this->checkPermission('read');
+		try {
+			xoctConf::setApiSettings();
+			$next_class = $this->ctrl->getNextClass();
 			$this->tpl->getStandardTemplate();
-			/**
-			 * @var $xoctOpenCast xoctOpenCast
-			 * @var $xoctSeries   xoctSeries
-			 */
-			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-			if ($xoctOpenCast instanceof xoctOpenCast) {
-				$this->tpl->setTitle($this->object->getTitle());
-				$this->tpl->setDescription($this->object->getDescription());
-			} else {
-				$this->tpl->setTitle($this->pl->txt('series_create'));
-			}
-			$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
-			$this->setTabs();
 
 			switch ($next_class) {
-				case 'ilpermissiongui':
-					$this->tabs_gui->setTabActive('permissions');
-					$perm_gui = new ilPermissionGUI($this);
-					//				$perm_gui->
-					$this->ctrl->forwardCommand($perm_gui);
-					break;
-				case 'ilinfoscreengui':
-					$info_gui = new ilInfoScreenGUI($this);
-					$this->ctrl->forwardCommand($info_gui);
-					$this->tpl->show();
-					break;
 				case 'xoctseriesgui':
-					$xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
+				case 'xocteventgui':
+				case 'xoctgroupgui':
+				case 'xoctgroupparticipantgui':
+				case 'xoctinvitationgui':
+					$xoctOpenCast = $this->initHeader();
+					$this->setTabs();
+					$xoctSeriesGUI = new $next_class($xoctOpenCast);
 					$this->ctrl->forwardCommand($xoctSeriesGUI);
 					$this->tpl->show();
 					break;
-				case 'xocteventgui':
-					$xoctEventGUI = new xoctEventGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctEventGUI);
-					$this->tpl->show();
-					break;
-				case 'xoctgroupgui':
-					$xoctGroupGUI = new xoctGroupGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctGroupGUI);
-					$this->tpl->show();
-					break;
-				case 'xoctgroupparticipantgui':
-					$xoctGroupParticipantGUI = new xoctGroupParticipantGUI($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctGroupParticipantGUI);
-					$this->tpl->show();
-					break;
-				case 'ilObjOpenCastGUI':
-				case '':
-					switch ($cmd) {
-						case 'create':
-							$this->tabs_gui->clearTargets();
-							$this->create();
-							break;
-						case 'save':
-							$this->save();
-							break;
-						case 'edit':
-							$this->edit();
-							break;
-						case 'update':
-							parent::update();
-							break;
-						case self::CMD_SHOW_CONTENT:
-							$this->showContent();
-							$this->tpl->show();
-							break;
-						case 'cancel':
-							$this->ctrl->returnToParent($this);
-							break;
-						case 'infoScreen':
-							//						exit;
-							$this->tabs_gui->setTabActive(self::TAB_INFO);
-							$this->ctrl->setCmd('showSummary');
-							$this->ctrl->setCmdClass('ilinfoscreengui');
-							$this->infoScreen();
-							$this->tpl->show();
-							break;
-					}
+				default:
+					parent::executeCommand();
 					break;
 			}
-		} catch (xoctExeption $e) {
+		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
 			$this->tpl->show();
 		}
@@ -214,6 +154,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	protected function showContent() {
 		$this->ctrl->redirect(new xoctEventGUI());
+	}
+
+
+	protected function redirectSettings() {
+		$this->ctrl->redirect(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT);
 	}
 
 
@@ -237,10 +182,35 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return bool
 	 */
 	protected function setTabs() {
+		global $lng, $ilUser;
+
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		if (!$xoctOpenCast instanceof xoctOpenCast) {
+			return false;
+		}
+
 		$this->tabs_gui->addTab(self::TAB_EVENTS, $this->pl->txt('tab_event_index'), $this->ctrl->getLinkTarget(new xoctEventGUI(), xoctEventGUI::CMD_STANDARD));
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
-		$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
-		$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+		if ($this->checkPermissionBool('write')) {
+			$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
+			if ($xoctOpenCast->getPermissionPerClip()) {
+				$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+			}
+			if ($ilUser->getId() == 6 AND ilObjOpenCast::DEV) {
+				$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
+				$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
+			}
+		}
+
+		if ($this->checkPermissionBool("edit_permission")) {
+			$this->tabs_gui->addTab("perm_settings", $lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
+				get_class($this),
+				"ilpermissiongui"
+			), "perm"));
+		}
 
 		return true;
 	}
@@ -260,26 +230,37 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 	/**
 	 * @param string $type
-	 *
-	 * @return ilPropertyFormGUI
+	 * @param bool|false $from_post
+	 * @return xoctSeriesFormGUI
 	 */
-	public function initCreateForm($type) {
+	public function initCreateForm($type, $from_post = false) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
-		$creation_form->fillForm();
-		$creation_form->fillFormRandomized();
+		if ($from_post) {
+			$creation_form->setValuesByPost();
+		} else {
+			$creation_form->fillForm();
+			if (ilObjOpenCast::DEV) {
+				$creation_form->fillFormRandomized();
+			}
+		}
 
 		return $creation_form->getAsPropertyFormGui();
 	}
 
 
 	public function save() {
-		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
-		$creation_form->setValuesByPost();
+		$creation_form = $this->initCreateForm($this->getType(), true);
+
+		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
+			global $ilUser;
+			$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
+			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getSeries());
+		}
+
 		if ($identifier = $creation_form->saveObject()) {
 			$this->saveObject($identifier);
 		} else {
-			$creation_form->setValuesByPost();
-			$this->tpl->setContent($creation_form->getHtml());
+			$this->tpl->setContent($creation_form->getHTML());
 		}
 	}
 
@@ -300,53 +281,86 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$cast->create();
 		}
 
+		$newObj->setTitle($cast->getSeries()->getTitle());
+		$newObj->setDescription($cast->getSeries()->getDescription());
+		$newObj->update();
+
 		parent::afterSave($newObj);
 	}
 
 
-	public function infoScreen() {
-		$info = new ilInfoScreenGUI($this);
-		$info->addSection($this->txt('series_metadata'));
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		$xoctOpenCastFormGUI = new xoctSeriesFormGUI($this, $xoctOpenCast, true, true);
-		$xoctOpenCastFormGUI->fillForm();
-		/**
-		 * @var $item ilTextInputGUI
-		 */
-		foreach ($xoctOpenCastFormGUI->getItems() as $item) {
-			$info->addProperty($item->getTitle(), $item->getValue());
-		}
+	/**
+	 * @return xoctOpenCast
+	 */
+	protected function initHeader() {
+		$this->setLocator();
 
-		$info->enablePrivateNotes();
-		$this->addInfoItems($info);
-		$this->ctrl->forwardCommand($info);
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctSeries   xoctSeries
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+
+		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
+			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
+			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
+			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+			}
+			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
+			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
+			/**
+			 * @var $list_gui ilObjOpenCastListGUI
+			 */
+			if (!$xoctOpenCast->isObjOnline()) {
+				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
+			}
+		} else {
+			$this->tpl->setTitle($this->pl->txt('series_create'));
+		}
+		$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
+		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
+
+		return $xoctOpenCast;
 	}
 
-	//	public function confirmDeleteObject() {
-	//		$a_val = array( $_GET['ref_id'] );
-	//		ilSession::set('saved_post', $a_val);
-	//		$ru = new ilRepUtilGUI($this);
-	//		if (! $ru->showDeleteConfirmation($a_val, false)) {
-	//			$this->redirectParentGui();
-	//		}
-	//		$this->tpl->show();
-	//	}
-	//
-	//
-	//	public function confirmedDelete() {
-	//		if (isset($_POST['mref_id'])) {
-	//			$_SESSION['saved_post'] = array_unique(array_merge($_SESSION['saved_post'], $_POST['mref_id']));
-	//		}
-	//		$ref_id = $_SESSION['saved_post'][0];
-	//		$parent_ref_id = $this->getParentRefId($ref_id);
-	//		$xoctRequest = xoctRequest::getInstanceForOpenCastObjectId(ilObject2::_lookupObjId($ref_id));
-	//		$xoctRequest->setStatus(xoctRequest::STATUS_DELETED);
-	//		$xoctRequest->update();
-	//		$ru = new ilRepUtilGUI($this);
-	//		$ru->deleteObjects(ilObjOpenCast::returnParentCrsRefId($_GET['ref_id']), ilSession::get('saved_post'));
-	//		ilSession::clear('saved_post');
-	//		ilUtil::redirect(ilLink::_getLink($parent_ref_id));
-	//	}
+
+	/**
+	 * show information screen
+	 */
+	function infoScreen() {
+		global $lng, $ilCtrl, $ilTabs;
+
+		$ilTabs->setTabActive("info_short");
+
+		$this->checkPermission("visible");
+
+		include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
+		$info = new ilInfoScreenGUI($this);
+		$info->enablePrivateNotes();
+
+		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$daily_token = strtoupper(substr(md5($xoctOpenCast->getSeriesIdentifier() . date('d-m-Y')), 0, 6));
+
+		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN) && $xoctOpenCast->isShowUploadToken()) {
+			$info->addSection($this->pl->txt('upload_token_upload_token'));
+			$info->addProperty($this->pl->txt('upload_token_channel_id'), $xoctOpenCast->getSeriesIdentifier());
+			$info->addProperty($this->pl->txt('upload_token_daily_upload_token'), $daily_token);
+		}
+
+		// general information
+		$lng->loadLanguageModule("meta");
+
+		$this->addInfoItems($info);
+
+		// forward the command
+		$ret = $ilCtrl->forwardCommand($info);
+
+		$this->initHeader();
+	}
 }
 
 ?>

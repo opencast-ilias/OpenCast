@@ -4,6 +4,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctMetadata.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAcl.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Properties/class.xoctProperties.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 
 /**
  * Class xoctSeries
@@ -51,21 +52,27 @@ class xoctSeries extends xoctObject {
 
 
 	public function create() {
-		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
+		$metadata = xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES);
+		$metadata->setLabel('Opencast Series DublinCore');
+		$this->setMetadata($metadata);
 		$this->updateMetadataFromFields();
-		$array['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$unibe = new xoctAcl();
-		$unibe->setRole('ROLE_UNIBE.CH_MEMBER');
-		$unibe->setAllow(true);
-		$unibe->setAction(xoctAcl::READ);
-		$array['acl'] = json_encode(array( xoctAcl::userRead(), xoctAcl::adminWrite(), xoctAcl::adminWrite(), $unibe->__toStdClass() ));
+
+		$array['metadata'] = json_encode(array(
+			$this->getMetadata()->__toStdClass()
+		));
+
+		foreach ($this->getAccessPolicies() as $acl) {
+			$acls[] = $acl->__toStdClass();
+		}
+		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
 
-		$data = json_decode(xoctRequest::root()->series()->post($array, 'fschmid@unibe.ch'));
-		if ($data) {
-			$this->setIdentifier($data);
+		$data = json_decode(xoctRequest::root()->series()->post($array));
+
+		if ($data->identifier) {
+			$this->setIdentifier($data->identifier);
 		} else {
-			$this->setIdentifier(time()); // TODO set correct identifier
+			throw new xoctException(xoctException::API_CREATION_FAILED);
 		}
 	}
 
@@ -77,6 +84,7 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->getField('title')->__toStdClass(),
 			$this->getMetadata()->getField('description')->__toStdClass(),
 			$this->getMetadata()->getField('license')->__toStdClass(),
+			$this->getMetadata()->getField('identifier')->__toStdClass(),
 		));
 
 		xoctRequest::root()->series($this->getIdentifier())->metadata()->parameter('type', $this->getMetadata()->getFlavor())->put($array);
@@ -93,9 +101,21 @@ class xoctSeries extends xoctObject {
 
 
 	protected function updateMetadataFromFields() {
-		$this->getMetadata()->getField('title')->setValue($this->getTitle());
-		$this->getMetadata()->getField('description')->setValue($this->getDescription());
-		$this->getMetadata()->getField('license')->setValue($this->getLicense() ? $this->getLicense() : '-');
+		$title = $this->getMetadata()->getField('title');
+		$title->setValue($this->getTitle());
+		$this->getMetadata()->addOrReplaceField($title);
+
+		$description = $this->getMetadata()->getField('description');
+		$description->setValue($this->getDescription());
+		$this->getMetadata()->addOrReplaceField($description);
+
+		$license = $this->getMetadata()->getField('license');
+		$license->setValue($this->getLicense() ? $this->getLicense() : '-');
+		$this->getMetadata()->addOrReplaceField($license);
+
+		$subjects = $this->getMetadata()->getField('identifier');
+		$subjects->setValue($this->getIdentifier());
+		$this->getMetadata()->addOrReplaceField($subjects);
 	}
 
 
@@ -137,7 +157,7 @@ class xoctSeries extends xoctObject {
 			return $existing;
 		}
 		$return = array();
-		$data = json_decode(xoctRequest::root()->series()->get($user_string));
+		$data = json_decode(xoctRequest::root()->series()->get('', array( $user_string )));
 		foreach ($data as $d) {
 			$obj = new self();
 			$obj->loadFromStdClass($d);
@@ -208,7 +228,7 @@ class xoctSeries extends xoctObject {
 	/**
 	 * @var int
 	 */
-	protected $theme = 0;
+	protected $theme = 1234;
 
 
 	/**
@@ -304,6 +324,14 @@ class xoctSeries extends xoctObject {
 	 */
 	public function setAccessPolicies($access_policies) {
 		$this->access_policies = $access_policies;
+	}
+
+
+	/**
+	 * @param xoctAcl $access_policy
+	 */
+	public function addAccessPolicy(xoctAcl $access_policy) {
+		$this->access_policies[] = $access_policy;
 	}
 
 

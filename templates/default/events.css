@@ -1,0 +1,28 @@
+.xoct_preview_image {
+	width:  200px;
+	height: auto;
+	clear:  both;
+
+}
+
+.tblrow1.xoct-state-running td {
+	background-color: #EAFFD5 !important;
+}
+
+.tblrow2.xoct-state-running td {
+	background-color: #D6FFAC !important;
+}
+
+.event-state {
+
+}
+
+.event-link-list {
+
+}
+
+.xoct_iframe {
+	border: none;
+	width:  100%;
+	height: 500px;
+}

@@ -1,6 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctLog.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctExeption.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctException.php');
 require_once('class.xoctCurlSettings.php');
 require_once('class.xoctCurlError.php');
 
@@ -15,7 +15,6 @@ class xoctCurl {
 	 * @param xoctCurlSettings $xoctCurlSettings
 	 */
 	public static function init(xoctCurlSettings $xoctCurlSettings) {
-		self::$DEBUG = $xoctCurlSettings->getDebugLevel();
 		self::$ip_v4 = $xoctCurlSettings->isIpV4();
 		self::$ssl_version = $xoctCurlSettings->getSslVersion();
 		self::$verify_host = $xoctCurlSettings->isVerifyHost();
@@ -25,18 +24,10 @@ class xoctCurl {
 	}
 
 
-	const DEBUG_DEACTIVATED = 0;
-	const DEBUG_LEVEL_1 = 1;
-	const DEBUG_LEVEL_2 = 2;
-	const DEBUG_LEVEL_3 = 3;
 	/**
 	 * @var int
 	 */
 	protected static $r_no = 1;
-	/**
-	 * @var int
-	 */
-	protected static $DEBUG = self::DEBUG_DEACTIVATED;
 
 
 	public function get() {
@@ -70,8 +61,9 @@ class xoctCurl {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getRequestType());
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		if (self::$ip_v4) {
-			//			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 		}
+
 		if (self::$ssl_version) {
 			//			curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
 		}
@@ -85,16 +77,17 @@ class xoctCurl {
 		if (! $this->isVerifyPeer()) {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		}
-		if (self::$DEBUG) {
-			$this->debug($ch);
-		}
 
 		$this->prepare($ch);
 
+		if ($this->getRequestContentType()) {
+			$this->addHeader('Content-Type: ' . $this->getRequestContentType());
+		}
+
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
-
+		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
-
+		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
 		if ($resp_orig === false) {
 			$this->setResponseError(new xoctCurlError($ch));
 			curl_close($ch);
@@ -104,19 +97,18 @@ class xoctCurl {
 		$this->setResponseContentSize(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 		$this->setResponseStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		if (self::$DEBUG > 0) {
-			xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms');
-		}
+		xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms', xoctLog::DEBUG_LEVEL_1);
 
 		if ($this->getResponseStatus() > 299) {
-			xoctLog::getInstance()->write('ERROR 500');
-			if (self::$DEBUG > 1) {
-				xoctLog::getInstance()->write($resp_orig);
+			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
+			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
+			if ($this->getResponseStatus() == 403) {
+				throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
+			} else {
+				throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
 			}
-
-			throw new xoctExeption(xoctExeption::API_CALL_STATUS_500, $resp_orig);
 		}
-		//		curl_close($ch);
+		curl_close($ch);
 	}
 
 
@@ -192,6 +184,14 @@ class xoctCurl {
 	 * @var bool
 	 */
 	protected static $verify_host = true;
+	/**
+	 * @var string
+	 */
+	protected $request_content_type = '';
+	/**
+	 * @var xoctUploadFile[]
+	 */
+	protected $files = array();
 
 
 	/**
@@ -496,21 +496,51 @@ class xoctCurl {
 
 
 	/**
+	 * @return string
+	 */
+	public function getRequestContentType() {
+		return $this->request_content_type;
+	}
+
+
+	/**
+	 * @param string $request_content_type
+	 */
+	public function setRequestContentType($request_content_type) {
+		$this->request_content_type = $request_content_type;
+	}
+
+
+	/**
+	 * @return xoctUploadFile[]
+	 */
+	public function getFiles() {
+		return $this->files;
+	}
+
+
+	/**
+	 * @param xoctUploadFile[] $files
+	 */
+	public function setFiles($files) {
+		$this->files = $files;
+	}
+
+
+	/**
+	 * @param xoctUploadFile $xoctUploadFile
+	 */
+	public function addFile(xoctUploadFile $xoctUploadFile) {
+		$this->files[] = $xoctUploadFile;
+	}
+
+
+	/**
 	 * @param $ch
 	 *
-	 * @throws xoctExeption
+	 * @throws xoctException
 	 */
 	protected function preparePut($ch) {
-		//		curl_setopt($ch, CURLOPT_PUT, self::DEBUG);
-		if ($this->getPutFilePath()) {
-			//			if (! is_readable($this->getPutFilePath())) {
-			//
-			//				throw new xoctExeption(- 1, 'File not readable');
-			//			}
-			//			$fh_res = fopen($this->getPutFilePath(), 'r');
-			//			curl_setopt($ch, CURLOPT_INFILE, $fh_res);
-			//			curl_setopt($ch, CURLOPT_INFILESIZE, filesize($this->getPutFilePath()));
-		}
 		if ($this->getPostFields()) {
 			$this->preparePost($ch);
 		}
@@ -521,12 +551,25 @@ class xoctCurl {
 	 * @param $ch
 	 */
 	protected function preparePost($ch) {
-		$post_body = array();
-		foreach ($this->getPostFields() as $key => $value) {
-			$post_body[] = $key . '=' . $value;
+		curl_getinfo($ch, CURLINFO_HEADER_OUT);
+		if (count($this->getFiles()) > 0) {
+			curl_getinfo($ch, CURLOPT_SAFE_UPLOAD, false);
+			foreach ($this->getFiles() as $file) {
+				$this->addPostField($file->getPostVar(), $file->getCurlString());
+			}
 		}
-		$this->setPostBody(implode('&', $post_body));
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostBody());
+		$post_body_string = '';
+
+		foreach ($this->getPostFields() as $key => $value) {
+			$post_body_string .= $key . '=' . $value . '&';
+		}
+
+		$post_body_string = rtrim($post_body_string, '&');
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
+		$this->setPostBody($post_body_string);
+
+		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_3);
+		xoctLog::getInstance()->write($this->getPostBody(), xoctLog::DEBUG_LEVEL_3);
 	}
 
 
@@ -535,13 +578,17 @@ class xoctCurl {
 	 */
 	protected function debug($ch) {
 		$xoctLog = xoctLog::getInstance();
-		$xoctLog->write('execute *************************************************');
-		$xoctLog->write($this->getUrl());
-		$xoctLog->write($this->getRequestType());
-		if (self::$DEBUG > 2) {
+		$xoctLog->write('execute *************************************************', xoctLog::DEBUG_LEVEL_1);
+		$xoctLog->write($this->getUrl(), xoctLog::DEBUG_LEVEL_1);
+		$xoctLog->write($this->getRequestType(), xoctLog::DEBUG_LEVEL_1);
+		$backtrace = "Backtrace: \n";
+		foreach (debug_backtrace() as $b) {
+			$backtrace .= $b['file'] . ': ' . $b["function"] . "\n";
+		}
+		$xoctLog->write($backtrace, xoctLog::DEBUG_LEVEL_4);
+		if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
 			curl_setopt($ch, CURLOPT_VERBOSE, true);
-			$handle = fopen(xoctLog::getFullPath(), 'a');
-			curl_setopt($ch, CURLOPT_STDERR, $handle);
+			curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'a'));
 		}
 	}
 
@@ -558,6 +605,69 @@ class xoctCurl {
 				$this->preparePost($ch);
 				break;
 		}
+	}
+
+
+	/**
+	 * @param $ch
+	 */
+	protected function buildBoundary($ch) {
+		//		$disallow = array( "\0", "\"", "\r", "\n" );
+		$disallow = array();
+		$body = array();
+		// build normal parameters
+		foreach ($this->getPostFields() as $k => $v) {
+			$k = str_replace($disallow, "", $k);
+			$body[] = implode("\r\n", array(
+				"Content-Disposition: form-data; name=\"{$k}\"",
+				"",
+				filter_var($v),
+			));
+		}
+
+		// build file parameters
+		foreach ($this->getFiles() as $k => $v) {
+			$k = $v->getPostVar();
+			$v = $v->getFilePath();
+
+			switch (true) {
+				case false === $v = realpath(filter_var($v)):
+				case ! is_file($v):
+				case ! is_readable($v):
+					continue; // or return false, throw new InvalidArgumentException
+			}
+			$data = file_get_contents($v);
+			$v = call_user_func("end", explode(DIRECTORY_SEPARATOR, $v));
+			$k = str_replace($disallow, "_", $k);
+			$v = str_replace($disallow, "_", $v);
+			$body[] = implode("\r\n", array(
+				"Content-Disposition: form-data; name=\"{$k}\"; filename=\"{$v}\"",
+				"Content-Type: application/octet-stream",
+				"",
+				$data,
+			));
+		}
+
+		// generate safe boundary
+		do {
+			$boundary = "---------------------" . md5(mt_rand() . microtime());
+		} while (preg_grep("/{$boundary}/", $body));
+
+		// add boundary for each parameters
+		array_walk($body, function (&$part) use ($boundary) {
+			$part = "--{$boundary}\r\n{$part}";
+		});
+
+		// add final boundary
+		$body[] = "--{$boundary}--";
+		$body[] = "";
+
+		// set options
+		$this->setPostBody(implode("\r\n", $body));
+		//		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostBody());
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+		$this->addHeader('Expect: 100-continue');
+		$this->addHeader("Content-Type: multipart/form-data; boundary={$boundary}");
 	}
 }
 

@@ -1,20 +1,81 @@
 <!-- language file start -->
+admin_export#:#Export Settings
+admin_import#:#Import Settings
 common_actions#:#Actions
+config_activate_cache#:#Activate Cache
+config_api_base#:#Api-Base-URL
 config_cancel#:#Cancel
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_eula#:#EULA
+config_license_info#:#License-Info
+config_licenses#:#Licenses
+config_licenses_info#:#Add new lines with URL#Name
+config_log_level_0#:#Deactivated
+config_log_level_1#:#LOW
+config_log_level_2#:#MEDIUM
+config_log_level_3#:#HIGH
+config_log_level_4#:#ULTRA
 config_msg_success#:#Saved
+config_role_anonymous#:#Anonymous
+config_role_ext_application#:#External Application
+config_role_external_application_member#:#External Application Member
+config_role_federation_member#:#Federation-Member
+config_role_ivt_email_prefix#:#Prefix for IVT-User-role (E-Mail is attached)
+config_role_ivt_external_prefix#:#Prefix for IVT-User-role (Ext-Account is attached)
+config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
+config_role_producer#:#Producer
+config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
+config_roles#:#OpenCast-Roles
 config_update#:#Update
+config_upload_token#:#Activate Upload-Token
+config_use_modals#:#Open Player in Modal
+config_user_mapping#:#User-Mapping
+config_workflow#:#Workflow-ID
+event_add_new#:#Add Clip
+event_annotate#:#Annotate
+event_auto_publish#:#Auto publish
+event_cancel#:#Cancel
+event_clear_cache#:#Reload Events
 event_clips#:#Clips
+event_create#:#Upload Clip
+event_created#:#Created
+event_creator#:#Creator
+event_cut#:#Cut Clip
 event_date#:#Date
-event_location#:#Location
+event_delete#:#Delete Clip
+event_delete_confirm#:#This will delete the clip in ILIAS and in OpenCast. Do you want to preceed?
+event_description#:#Subtitle
+event_download#:#Download
+event_duration#:#Duration
+event_edit#:#Edit Metadata
+event_edit_owner#:#Edit Owner
+event_file_presenter#:#File
+event_identifier#:#ID
+event_invite_others#:#Share Clip
+event_location#:#Recording Station
+event_msg_created#:#Upload finished
+event_msg_deleted#:#Clip deleted
+event_msg_no_access#:#No Access
+event_msg_success#:#Saved changes
 event_owner#:#Owner
+event_owner_select#:#--not assigned--
+event_player#:#Play
 event_presenter#:#Presenter
+event_presenters#:#Presenters
 event_preview#:#Preview
+event_processing_state#:#State
 event_recording_station#:#Recording Station
+event_start_time#:#Start
+event_state_failed#:#failed
+event_state_instantiated#:#Uploaded
+event_state_not_published#:# Not published
+event_state_running#:#Converting
 event_title#:#Title
+event_update#:#Save
+event_updateOwner#:#Update owner
 event_view#:#View
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name
@@ -30,15 +91,22 @@ groups_new_placeholder#:#Group-Name
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#First- or Lastname
 groups_participants_header#:#Participants
+invitations_back#:#Back
+invitations_header#:#Share Clip
+invitations_none_available#:#None available
+obj_xoct#:#OpenCast
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel
+publication_usage_channel#:#Channel
 publication_usage_create#:#Create
 publication_usage_delete#:#Delete
 publication_usage_description#:#Description
 publication_usage_edit#:#Edit
 publication_usage_ext_id#:#Metadata-ID
+publication_usage_flavor#:#Flavor
 publication_usage_md_type#:#Type
+publication_usage_md_type_0#:#Publication itself
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
 publication_usage_md_type_select#:#Select...
@@ -46,14 +114,17 @@ publication_usage_msg_success#:#Saved
 publication_usage_publication_id#:#Publication-ID
 publication_usage_select_usage_id#:#Usage
 publication_usage_title#:#Title
-publication_usage_type_annotations#:#Link to Annotations
-publication_usage_type_mov#:#Link to MOV-Player
-publication_usage_type_mp4#:#Link to MP4-Player
-publication_usage_type_preview#:#URL of Preview-Image
+publication_usage_type_annotate#:#Annotate
+publication_usage_type_api#:#API
+publication_usage_type_cutting#:#Cutting-Tool
+publication_usage_type_player#:#Player
+publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 series_accept_eula#:#I accept the agreement
+series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
+series_channel_id#:#Series ID
 series_channel_type#:#Channel-Type
 series_create#:#Create Channel
 series_department#:#Department
@@ -71,10 +142,15 @@ series_intended_lifetime_info#:#How long shoud the video material be published?
 series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Channel-Infos
+series_obj_online#:#Online
+series_permission_allow_set_own#:#Share Clip
+series_permission_allow_set_own_info#:#users can share their clips (read-only)
 series_permission_per_clip#:#Set permissions for a clip
 series_permission_per_clip_info#:#This setting enables an individual rights management based on clips ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the clips of this channel.
 series_save#:#Save
 series_saved#:#Channel-Information saved
+series_show_upload_token#:#Show Upload-Token
+series_show_upload_token_info#:#Displays a code which students can use to upload own clips
 series_streaming_only#:#Streaming only
 series_title#:#Title
 series_update#:#Update
@@ -90,9 +166,15 @@ system_account_msg_success#:#Saved
 system_account_status#:#Status
 system_account_update#:#Update
 tab_event_index#:#Content
+tab_export#:#Import/Export
 tab_groups#:#Groups
 tab_info#:#Info
+tab_list_all#:#All Clips
+tab_migrate_event#:#Import Event
 tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
+upload_token_channel_id#:#Series-ID
+upload_token_daily_upload_token#:#Token
+upload_token_upload_token#:#Upload-Token

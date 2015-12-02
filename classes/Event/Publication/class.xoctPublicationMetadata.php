@@ -1,11 +1,12 @@
 <?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php');
 
 /**
  * Class xoctPublicationMetadata
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublicationMetadata {
+class xoctPublicationMetadata extends xoctObject {
 
 	/**
 	 * @param string $id

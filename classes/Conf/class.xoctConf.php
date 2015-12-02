@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 
 /**
  * Class xoctConf
@@ -10,9 +11,67 @@ class xoctConf extends ActiveRecord {
 
 	const CONFIG_VERSION = 1;
 	const F_CONFIG_VERSION = 'config_version';
+	const F_USE_MODALS = 'use_modals';
 	const F_CURL_USERNAME = 'curl_username';
 	const F_CURL_PASSWORD = 'curl_password';
+	const F_WORKFLOW = 'workflow';
+	const F_EULA = 'eula';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+	const F_API_BASE = 'api_base';
+	const F_ACTIVATE_CACHE = 'activate_cache';
+	const F_USER_MAPPING = 'user_mapping';
+	const F_ROLE_PRODUCER = 'role_producer';
+	const F_ROLE_EXT_APPLICATION = 'role_ext_application';
+	const F_ROLE_USER_PREFIX = 'role_user_prefix';
+	const F_ROLE_ORGANIZATION_PREFIX = 'role_organisation_prefix';
+	const F_ROLE_ANONYMOUS = 'role_anonymous';
+	const F_ROLE_FEDERATION_MEMBER = 'role_federation_member';
+	const F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER = 'role_external_application_member';
+	const F_ROLE_USER_IVT_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
+	const F_ROLE_USER_IVT_EMAIL_PREFIX = 'role_ivt_email_prefix';
+	const F_LICENSE_INFO = 'license_info';
+	const F_LICENSES = 'licenses';
+	const F_UPLOAD_TOKEN = 'upload_token';
+	/**
+	 * @var array
+	 */
+	public static $roles = array(
+		self::F_ROLE_PRODUCER,
+		self::F_ROLE_EXT_APPLICATION,
+		self::F_ROLE_USER_PREFIX,
+		self::F_ROLE_ORGANIZATION_PREFIX,
+		self::F_ROLE_ANONYMOUS,
+		self::F_ROLE_FEDERATION_MEMBER,
+		self::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER,
+		self::F_ROLE_USER_IVT_EXTERNAL_PREFIX,
+		self::F_ROLE_USER_IVT_EMAIL_PREFIX,
+	);
+
+
+	public static function setApiSettings() {
+		// CURL
+		$xoctCurlSettings = new xoctCurlSettings();
+		$xoctCurlSettings->setUsername(self::get(self::F_CURL_USERNAME));
+		$xoctCurlSettings->setPassword(self::get(self::F_CURL_PASSWORD));
+		$xoctCurlSettings->setVerifyPeer(true);
+		$xoctCurlSettings->setVerifyHost(true);
+		xoctCurl::init($xoctCurlSettings);
+
+		//CACHE
+		xoctCache::setOverrideActive(self::get(self::F_ACTIVATE_CACHE));
+		//		xoctCache::setOverrideActive(true);
+
+		// API
+		$xoctRequestSettings = new xoctRequestSettings();
+		$xoctRequestSettings->setApiBase(self::get(self::F_API_BASE));
+		xoctRequest::init($xoctRequestSettings);
+
+		// LOG
+		xoctLog::init(self::get(self::F_CURL_DEBUG_LEVEL));
+
+		// USER
+		xoctUser::setUserMapping(self::get(self::F_USER_MAPPING) ? self::get(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);
+	}
 
 
 	/**

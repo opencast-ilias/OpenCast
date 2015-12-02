@@ -1,29 +1,42 @@
-<tr class="{CSS_ROW}">
+<tr class="{CSS_ROW} {ADDITIONAL_CSS}">
 	<td class="std small">
-		{PREVIEW}
+		<img class="xoct_preview_image" src="{PREVIEW}">
+		{MODAL}
 	</td>
 	<td class="std small">
-		{CLIPS}
+		<div class="btn-group-vertical" role="group" >
+			<!-- BEGIN link -->
+			<a href="{LINK_URL}" target="_blank" class="btn btn-info" {MODAL_LINK}>{LINK_TEXT}</a>
+			<!-- END link -->
+		</div>
 	</td>
+	<!-- BEGIN event_title -->
 	<td class="std small">
-		{TITLE}
+		{TITLE}<br>
+		<span class="label label-{STATE_CSS}">{STATE}</span>
 	</td>
+	<!-- END event_title -->
+	<!-- BEGIN event_presenter -->
 	<td class="std small">
 		{PRESENTER}
 	</td>
+	<!-- END event_presenter -->
+	<!-- BEGIN event_location -->
 	<td class="std small">
 		{LOCATION}
 	</td>
-	<td class="std small">
-		{RECORDING_STATION}
-	</td>
+	<!-- END event_location -->
+	<!-- BEGIN event_date -->
 	<td class="std small">
 		{DATE}
 	</td>
+	<!-- END event_date -->
+	<!-- BEGIN event_owner -->
 	<td class="std small">
-		{OWNER}
+		{OWNER}<!-- BEGIN invitations --> <span class="badge">+ {INVITATIONS}</span> <!-- END invitations -->
 	</td>
-	<td class="std small">
+	<!-- END event_owner -->
+	<td class=" small text-right">
 		{ACTIONS}
 	</td>
 </tr>

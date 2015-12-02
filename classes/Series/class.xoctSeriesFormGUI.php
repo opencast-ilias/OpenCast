@@ -1,6 +1,8 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
 
 /**
  * Class xoctSeriesFormGUI
@@ -27,6 +29,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_PERMISSION_PER_CLIP = 'permission_per_clip';
 	const F_ACCEPT_EULA = 'accept_eula';
 	const F_EXISTING_IDENTIFIER = 'existing_identifier';
+	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
+	const F_OBJ_ONLINE = 'obj_online';
+	const F_CHANNEL_ID = 'channel_id';
+	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
 	/**
 	 * @var  xoctSeries
 	 */
@@ -52,9 +58,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @param              $parent_gui
 	 * @param xoctOpenCast $cast
-	 * @param bool         $view
-	 * @param bool         $infopage
-	 * @param bool         $external
+	 * @param bool $view
+	 * @param bool $infopage
+	 * @param bool $external
 	 */
 	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
 		global $ilCtrl, $lng, $tpl;
@@ -70,7 +76,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
-		xoctWaiterGUI::init();
+		xoctWaiterGUI::loadLib();
 		$tpl->addJavaScript($this->pl->getStyleSheetLocation('default/existing_channel.js'));
 		if ($view) {
 			$this->initView();
@@ -81,6 +87,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	protected function initForm() {
+		global $ilUser;
+		$xoctUser = xoctUser::getInstance($ilUser);
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
@@ -92,10 +100,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
 					require_once('class.xoctSeries.php');
 					$existing_series = array();
-					foreach (xoctSeries::getAllForUser('fschmid@unibe.ch') as $serie) {
-						$existing_series[$serie->getIdentifier()] = $serie->getTitle();
+					foreach (xoctSeries::getAllForUser($xoctUser->getUserRoleName()) as $serie) {
+						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
 					}
-					//				sort($existing_series);
+					array_multisort($existing_series);
 					$existing_identifier->setOptions($existing_series);
 					$existing->addSubItem($existing_identifier);
 				}
@@ -115,6 +123,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
 		$this->addItem($te);
 
+		$te = new ilCheckboxInputGUI($this->txt(self::F_OBJ_ONLINE), self::F_OBJ_ONLINE);
+		$this->addItem($te);
+
 		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
 		$te->setRows(5);
 		$this->addItem($te);
@@ -126,39 +137,26 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		//		$this->addItem($discipline);
 
 		$license = new ilSelectInputGUI($this->txt(self::F_LICENSE), self::F_LICENSE);
-		$license->setOptions(array(
-			'http://creativecommons.org/licenses/by/2.5/ch/' => 'CC: Attribution',
-			'http://creativecommons.org/licenses/by-nc/2.5/ch/' => 'CC: Attribution-Noncommercial',
-			'http://creativecommons.org/licenses/by-nc-nd/2.5/ch/' => 'CC: Attribution-Noncommercial-No Derivative Works',
-			'http://creativecommons.org/licenses/by-nc-sa/2.5/ch/' => 'CC: Attribution-Noncommercial-Share Alike',
-			'http://creativecommons.org/licenses/by-nd/2.5/ch/' => 'CC: Attribution-No Derivative Works',
-			'http://creativecommons.org/licenses/by-sa/2.5/ch/' => 'CC: Attribution-Share Alike',
+		$options = array(
 			NULL => 'As defined in content',
-		));
+		);
+		$licenses = xoctConf::get(xoctConf::F_LICENSES);
+		$license_info = xoctConf::get(xoctConf::F_LICENSE_INFO);
+		if ($licenses) {
+			foreach (explode("\n", $licenses) as $nl) {
+				$lic = explode("#", $nl);
+				if ($lic[0] && $lic[1]) {
+					$options[$lic[0]] = $lic[1];
+				}
+			}
+		}
+		$license->setInfo($license_info);
+		$license->setOptions($options);
 		$this->addItem($license);
-
-		//		$est_video_length = new ilNumberInputGUI($this->txt(self::F_EST_VIDEO_LENGTH), self::F_EST_VIDEO_LENGTH);
-		//		$est_video_length->setMinValue(1);
-		//		$est_video_length->setInfo($this->infoTxt(self::F_EST_VIDEO_LENGTH));
-		//		$est_video_length->setRequired(true);
-		//		$this->addItem($est_video_length);
-
-		//		$intended_lifetime = new ilSelectInputGUI($this->txt(self::F_INTENDED_LIFETIME), self::F_INTENDED_LIFETIME);
-		//		$intended_lifetime->setInfo($this->infoTxt(self::F_INTENDED_LIFETIME));
-		//		$intended_lifetime->setOptions(array(
-		//			6 => '6 month',
-		//			12 => '1 year',
-		//			24 => '2 years',
-		//			36 => '3 years',
-		//			60 => '4 years',
-		//			72 => '5 years',
-		//		));
-		//		$intended_lifetime->setRequired(true);
-		//		$this->addItem($intended_lifetime);
 
 		$department = new ilTextInputGUI($this->txt(self::F_DEPARTMENT), self::F_DEPARTMENT);
 		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
-		$this->addItem($department);
+		// $this->addItem($department);
 
 		$use_annotations = new ilCheckboxInputGUI($this->txt(self::F_USE_ANNOTATIONS), self::F_USE_ANNOTATIONS);
 		$this->addItem($use_annotations);
@@ -168,19 +166,35 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$permission_per_clip = new ilCheckboxInputGUI($this->txt(self::F_PERMISSION_PER_CLIP), self::F_PERMISSION_PER_CLIP);
 		$permission_per_clip->setInfo($this->infoTxt(self::F_PERMISSION_PER_CLIP));
+
+		$set_own_rights = new ilCheckboxInputGUI($this->txt(self::F_PERMISSION_ALLOW_SET_OWN), self::F_PERMISSION_ALLOW_SET_OWN);
+		$set_own_rights->setInfo($this->infoTxt(self::F_PERMISSION_ALLOW_SET_OWN));
+		$permission_per_clip->addSubItem($set_own_rights);
+
 		$this->addItem($permission_per_clip);
+		xoctOpenCast::updateDB();
+		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN)) {
+			$show_upload_token = new ilCheckboxInputGUI($this->txt(self::F_SHOW_UPLOAD_TOKEN), self::F_SHOW_UPLOAD_TOKEN);
+			$show_upload_token->setInfo($this->infoTxt(self::F_SHOW_UPLOAD_TOKEN));
+			$this->addItem($show_upload_token);
+		}
 
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
-			$accept_eula->setInfo('MISSING EULA TEXT');
+			$accept_eula->setInfo(xoctConf::get(xoctConf::F_EULA));
+			$accept_eula->setRequired(true);
 			$this->addItem($accept_eula);
+		}
+
+		if (!$this->is_new) {
+			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
+			$this->addItem($channel_id);
 		}
 	}
 
 
 	public function fillFormRandomized() {
 		$array = array(
-			self::F_CHANNEL_TYPE => self::EXISTING_YES,
 			self::F_CHANNEL_TYPE => self::EXISTING_NO,
 			self::F_TITLE => 'New Channel ' . date(DATE_ATOM),
 			self::F_DESCRIPTION => 'This is a description',
@@ -189,6 +203,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_USE_ANNOTATIONS => true,
 			self::F_STREAMING_ONLY => true,
 			self::F_PERMISSION_PER_CLIP => true,
+			self::F_PERMISSION_ALLOW_SET_OWN => true,
+			self::F_SHOW_UPLOAD_TOKEN => true,
 		);
 
 		$this->setValuesByArray($array);
@@ -205,6 +221,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_USE_ANNOTATIONS => $this->cast->getUseAnnotations(),
 			self::F_STREAMING_ONLY => $this->cast->getStreamingOnly(),
 			self::F_PERMISSION_PER_CLIP => $this->cast->getPermissionPerClip(),
+			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
+			self::F_OBJ_ONLINE => $this->cast->isObjOnline(),
+			self::F_CHANNEL_ID => $this->cast->getSeriesIdentifier(),
+			self::F_SHOW_UPLOAD_TOKEN => $this->cast->isShowUploadToken(),
 		);
 
 		$this->setValuesByArray($array);
@@ -217,19 +237,30 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-		if (! $this->checkInput()) {
+		if (!$this->checkInput()) {
+			$this->checkEula();
+
 			return false;
 		}
+		if (!$this->checkEula()) {
+			return false;
+		}
+
 		if ($this->getInput(self::F_CHANNEL_TYPE) == self::EXISTING_YES) {
 			$this->series->setIdentifier($this->getInput(self::F_EXISTING_IDENTIFIER));
 		}
 		$this->series->setTitle($this->getInput(self::F_TITLE));
 		$this->series->setDescription($this->getInput(self::F_DESCRIPTION));
-		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
 		$this->series->setLicense($this->getInput(self::F_LICENSE));
+
+		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
 		$this->cast->setUseAnnotations($this->getInput(self::F_USE_ANNOTATIONS));
 		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
+		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
+		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
+		$this->cast->setShowUploadToken($this->getInput(self::F_SHOW_UPLOAD_TOKEN));
+		$this->cast->setAgreementAccepted(true);
 
 		return true;
 	}
@@ -258,10 +289,14 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @return bool|string
 	 */
-	public function saveObject() {
-		if (! $this->fillObject()) {
+	public function saveObject($obj_id = NULL) {
+		if (!$this->fillObject()) {
 			return false;
 		}
+		if ($obj_id) {
+			$this->cast->setObjId($obj_id);
+		}
+
 		if ($this->series->getIdentifier()) {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 			$this->series->update();
@@ -299,24 +334,15 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return ilPropertyFormGUI This object but as an ilPropertyFormGUI instead of a xdglRequestFormGUI
 	 */
 	public function getAsPropertyFormGui() {
-		$ilPropertyFormGUI = new ilPropertyFormGUI();
-		$ilPropertyFormGUI->setFormAction($this->getFormAction());
-		$ilPropertyFormGUI->setTitle($this->getTitle());
-
+		$ilPropertyFormGUI = $this;
+		$ilPropertyFormGUI->clearCommandButtons();
 		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_SAVE, $this->lng->txt(xoctSeriesGUI::CMD_SAVE));
 		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->lng->txt(xoctSeriesGUI::CMD_CANCEL));
-		foreach ($this->getItems() as $item) {
-			$ilPropertyFormGUI->addItem($item);
-		}
 
 		return $ilPropertyFormGUI;
 	}
-	//
-	//
-	//	public function addToInfoScreen(ilInfoScreenGUI $ilInfoScreenGUI) {
-	//	}
-	//
-	//
+
+
 	protected function initView() {
 		$this->initForm();
 		/**
@@ -327,6 +353,28 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->removeItemByPostVar($item->getPostVar());
 			$this->addItem($te);
 		}
+	}
+
+
+	/**
+	 * @var xoctSeries
+	 */
+	protected $series;
+
+
+	/**
+	 * @return xoctSeries
+	 */
+	public function getSeries() {
+		return $this->series;
+	}
+
+
+	/**
+	 * @param xoctSeries $series
+	 */
+	public function setSeries($series) {
+		$this->series = $series;
 	}
 
 
@@ -434,6 +482,24 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		4380 => 'Production and Enterprise',
 		7303 => 'Telecommunication',
 	);
+
+
+	/**
+	 * @return bool
+	 */
+	protected function checkEula() {
+		if ($this->is_new && !$this->getInput(self::F_ACCEPT_EULA)) {
+			/**
+			 * @var $field ilCheckboxInputGUI
+			 */
+			$field = $this->getItemByPostVar(self::F_ACCEPT_EULA);
+			$field->setAlert($this->txt('alert_eula'));
+
+			return false;
+		}
+
+		return true;
+	}
 }
 
 ?>

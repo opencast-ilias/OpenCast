@@ -68,9 +68,9 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('USAGE_ID', $xoctPublicationUsage->getUsageId());
 		$this->tpl->setVariable('TITLE', $xoctPublicationUsage->getTitle());
 		$this->tpl->setVariable('DESCRIPTION', $xoctPublicationUsage->getDescription());
-		$this->tpl->setVariable('PUBLICATION_ID', $xoctPublicationUsage->getPublicationId());
+		$this->tpl->setVariable('CHANNEL', $xoctPublicationUsage->getChannel());
 		$this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $xoctPublicationUsage->getMdType()));
-		$this->tpl->setVariable('EXT_ID', $xoctPublicationUsage->getExtId());
+		$this->tpl->setVariable('FLAVOR', $xoctPublicationUsage->getFlavor());
 
 		$this->addActionMenu($xoctPublicationUsage);
 	}
@@ -80,9 +80,9 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->addColumn($this->parent_obj->txt('usage_id'));
 		$this->addColumn($this->parent_obj->txt('title'));
 		$this->addColumn($this->parent_obj->txt('description'));
-		$this->addColumn($this->parent_obj->txt('publication_id'));
+		$this->addColumn($this->parent_obj->txt('channel'));
 		$this->addColumn($this->parent_obj->txt('md_type'));
-		$this->addColumn($this->parent_obj->txt('ext_id'));
+		$this->addColumn($this->parent_obj->txt('flavor'));
 		//		$this->addColumn($this->txt('status'));
 
 		$this->addColumn($this->pl->txt('common_actions'), '', '150px');
@@ -107,7 +107,6 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 
 	protected function parseData() {
-		xoctPublicationUsage::installDB();
 		$this->setData(xoctPublicationUsage::getArray());
 	}
 

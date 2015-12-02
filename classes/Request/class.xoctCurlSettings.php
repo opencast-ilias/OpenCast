@@ -8,13 +8,9 @@
 class xoctCurlSettings {
 
 	/**
-	 * @var int
-	 */
-	protected $debug_level = xoctCurl::DEBUG_DEACTIVATED;
-	/**
 	 * @var bool
 	 */
-	protected $ip_v4 = false;
+	protected $ip_v4 = true;
 	/**
 	 * @var int
 	 */
@@ -35,22 +31,6 @@ class xoctCurlSettings {
 	 * @var string
 	 */
 	protected $password = NULL;
-
-
-	/**
-	 * @return int
-	 */
-	public function getDebugLevel() {
-		return $this->debug_level;
-	}
-
-
-	/**
-	 * @param int $debug_level
-	 */
-	public function setDebugLevel($debug_level) {
-		$this->debug_level = $debug_level;
-	}
 
 
 	/**

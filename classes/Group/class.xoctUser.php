@@ -1,4 +1,6 @@
 <?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAcl.php');
 
 /**
  * Class xoctUser
@@ -7,26 +9,16 @@
  */
 class xoctUser {
 
+	const MAP_EMAIL = 1;
+	const MAP_EXT_ID = 2;
 	/**
-	 * @param int $ilias_user_id
+	 * @var int
 	 */
-	public function __construct($ilias_user_id = 6) {
-		$user = new ilObjUser($ilias_user_id);
-		$this->setExtId($user->getExternalAccount());
-		$this->setFirstName($user->getFirstname());
-		$this->setLastName($user->getLastname());
-		$this->setEmail($user->getEmail());
-	}
-
-
+	protected static $user_mapping = self::MAP_EXT_ID;
 	/**
-	 * @return string
+	 * @var string
 	 */
-	public function getNamePresentation() {
-		return $this->getLastName() . ', ' . $this->getFirstName() . ' (' . $this->getEmail() . ')';
-	}
-
-
+	protected $identifier = '';
 	/**
 	 * @var int
 	 */
@@ -52,6 +44,104 @@ class xoctUser {
 	 */
 
 	protected $status;
+	/**
+	 * @var xoctUser[]
+	 */
+	protected static $instances = array();
+
+
+	/**
+	 * @return mixed
+	 */
+	public static function getIdentifierPrefix() {
+		switch (self::getUserMapping()) {
+			case self::MAP_EXT_ID:
+				return xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX);
+				break;
+			case self::MAP_EMAIL:
+				xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
+				break;
+		}
+	}
+
+
+	/**
+	 * @param $role
+	 *
+	 * @return int
+	 */
+	public static function lookupUserIdForIVTRole($role) {
+		if (!$role) {
+			return NULL;
+		}
+		switch (self::getUserMapping()) {
+			case self::MAP_EXT_ID:
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX));
+				$field = 'ext_account';
+				break;
+			case self::MAP_EMAIL:
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX));
+				$field = 'email';
+				break;
+		}
+
+		preg_match("/" . $regex . "/uism", $role, $matches);
+
+		/**
+		 * @var $ilDB ilDB
+		 */
+		global $ilDB;
+
+		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $ilDB->quote($matches[1], 'text');
+		$set = $ilDB->query($sql);
+		$data = $ilDB->fetchObject($set);
+
+		return $data->usr_id;
+	}
+
+
+	/**
+	 * @param ilObjUser $ilUser
+	 *
+	 * @return xoctUser
+	 */
+	public static function getInstance(ilObjUser $ilUser) {
+		$key = $ilUser->getId();
+		if (!isset(self::$instances[$key])) {
+			self::$instances[$key] = new self($key);
+		}
+
+		return self::$instances[$key];
+	}
+
+
+	/**
+	 * @param int $ilias_user_id
+	 */
+	protected function __construct($ilias_user_id = 6) {
+		$user = new ilObjUser($ilias_user_id);
+		$this->setIliasUserId($ilias_user_id);
+		$this->setExtId($user->getExternalAccount());
+		$this->setFirstName($user->getFirstname());
+		$this->setLastName($user->getLastname());
+		$this->setEmail($user->getEmail());
+		switch (self::getUserMapping()) {
+			case self::MAP_EXT_ID:
+				$this->setIdentifier($this->getExtId());
+				break;
+			case self::MAP_EMAIL:
+				$this->setIdentifier($this->getEmail());
+				break;
+		}
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getNamePresentation() {
+		return $this->getLastName() . ', ' . $this->getFirstName() . ' (' . $this->getEmail() . ')';
+	}
 
 
 	/**
@@ -147,5 +237,149 @@ class xoctUser {
 	 */
 	public function setLastName($last_name) {
 		$this->last_name = $last_name;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public static function getUserMapping() {
+		return self::$user_mapping;
+	}
+
+
+	/**
+	 * @param int $user_mapping
+	 */
+	public static function setUserMapping($user_mapping) {
+		self::$user_mapping = $user_mapping;
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function getIdentifier() {
+		if (!$this->identifier) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		}
+
+		return $this->identifier;
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function getRoleName() {
+		$prefix = xoctConf::get(xoctConf::F_ROLE_USER_PREFIX);
+		if (!$prefix) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		}
+
+		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
+	}
+
+
+	/**
+	 * @param $string
+	 *
+	 * @return mixed
+	 */
+	protected function modify($string) {
+		return $string;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getUserRoleName() {
+		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), xoctConf::get(xoctConf::F_ROLE_USER_PREFIX));
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function getIVTRoleName() {
+		switch (self::getUserMapping()) {
+			case self::MAP_EXT_ID:
+				$prefix = xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX);
+				break;
+			default:
+				$prefix = xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
+				break;
+		}
+		if (!$prefix) {
+			//			throw new xoctException(xoctException::NO_USER_MAPPING);
+		}
+
+		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function getOrganisationRoleName() {
+		$prefix = xoctConf::get(xoctConf::F_ROLE_ORGANIZATION_PREFIX);
+		if (!$prefix) {
+			throw new xoctException(xoctException::NO_USER_MAPPING);
+		}
+		$cut = explode('@', $this->getIdentifier());
+
+		return str_replace('{IDENTIFIER}', $this->modify($cut[1]), $prefix);
+	}
+
+
+	/**
+	 * @return xoctAcl[]
+	 * @throws xoctException
+	 */
+	public function getStandardAcls() {
+		$acls = array();
+
+		$xoctAcl = new xoctAcl();
+		$xoctAcl->setAllow(true);
+		$xoctAcl->setAction(xoctAcl::WRITE);
+		$xoctAcl->setRole($this->getRoleName());
+
+		$acls[] = $xoctAcl;
+
+		$xoctAcl = new xoctAcl();
+		$xoctAcl->setAllow(true);
+		$xoctAcl->setAction(xoctAcl::READ);
+		$xoctAcl->setRole($this->getRoleName());
+
+		$acls[] = $xoctAcl;
+
+		//		$xoctAcl = new xoctAcl();
+		//		$xoctAcl->setAllow(true);
+		//		$xoctAcl->setAction(xoctAcl::WRITE);
+		//		$xoctAcl->setRole($this->getOrganisationRoleName());
+		//
+		//		$acls[] = $xoctAcl;
+
+		$xoctAcl = new xoctAcl();
+		$xoctAcl->setAllow(true);
+		$xoctAcl->setAction(xoctAcl::READ);
+		$xoctAcl->setRole($this->getOrganisationRoleName());
+
+		$acls[] = $xoctAcl;
+
+		return $acls;
+	}
+
+
+	/**
+	 * @param string $identifier
+	 */
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
 	}
 }

@@ -24,19 +24,15 @@ abstract class xoctObject {
 		$class_name = get_called_class();
 		$key = $class_name . '-' . $identifier;
 		$existing = xoctCache::getInstance()->get($key);
-		if ($existing) {
-//			echo '<pre>' . print_r($existing, 1) . '</pre>';
-			return $existing;
-		}else {
-//			echo $existing;
-		}
 
-		$var = new $class_name($identifier);
-		$failed = xoctCache::getInstance()->set($key, $var);
-		if (! $failed) {
-			echo $key; // FSX delete
-			exit;
+		if ($existing) {
+			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
+
+			return $existing;
 		}
+		xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
+		$var = new $class_name($identifier);
+		self::cache($identifier, $var);
 
 		return $var;
 	}
@@ -49,10 +45,9 @@ abstract class xoctObject {
 	 */
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
-		xoctCache::getInstance()->delete($class_name . '-' . $identifier);
-//		if (isset(self::$cache[$class_name][$identifier])) {
-//			unset(self::$cache[$class_name][$identifier]);
-//		}
+		$key = $class_name . '-' . $identifier;
+		xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
+		xoctCache::getInstance()->delete($key);
 	}
 
 
@@ -62,14 +57,16 @@ abstract class xoctObject {
 	 */
 	public static function cache($identifier, xoctObject $object) {
 		$class_name = get_class($object);
-		xoctCache::getInstance()->set($class_name . '-' . $identifier, $object);
+		$key = $class_name . '-' . $identifier;
+		xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
+		xoctCache::getInstance()->set($key, $object);
 	}
 
 
 	/**
 	 * @return array
 	 */
-	protected function __toArray() {
+	public function __toArray() {
 		$data = $this->__toStdClass();
 		$array = (array)$data;
 
@@ -78,30 +75,89 @@ abstract class xoctObject {
 
 
 	/**
+	 * @return string
+	 */
+	public function __toCsv($separator = ';', $line_separator = "\n\r") {
+		$csv = '';
+		foreach ($this->__toArray() as $k => $v) {
+			switch (true) {
+				case $v instanceof DateTime:
+					$csv .= $k . $separator . date(DATE_ISO8601, $v->getTimestamp()) . $line_separator;
+					break;
+				case $v instanceof stdClass:
+				case is_array($v):
+				case $v === NULL:
+				case $v === false:
+				case $v === '':
+					break;
+				default:
+					$csv .= $k . $separator . $v . $line_separator;
+					break;
+			}
+		}
+
+		return $csv;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function __toJSON() {
+		return json_encode($this->__toStdClass());
+	}
+
+
+	/**
 	 * @return stdClass
 	 */
-	protected function __toStdClass() {
+	public function __toStdClass() {
 		$r = new ReflectionClass($this);
 		$stdClass = new stdClass();
 		foreach ($r->getProperties() as $name) {
-			$key = $name->getName();
+			$key = utf8_encode($name->getName());
+
 			if ($key == 'cache') {
 				continue;
 			}
-			if ($this->{$key} instanceof xoctObject) {
-				$stdClass->{$key} = $this->{$key}->__toStdClass();
-			} elseif (is_array($this->{$key})) {
-				$a = array();
-				foreach ($this->{$key} as $k => $v) {
-					if ($v instanceof xoctObject) {
-						$a[$k] = $v->__toStdClass();
-					} else {
-						$a[$k] = $v;
+
+			$value = $this->sleep($key, $this->{$key});
+			switch (true) {
+				case ($value instanceof xoctObject):
+					$stdClass->{$key} = $value->__toStdClass();
+					break;
+				case (is_array($value)):
+					$a = array();
+					foreach ($value as $k => $v) {
+						if ($v instanceof xoctObject) {
+							$a[$k] = $v->__toStdClass();
+						} else {
+							$a[$k] = self::convertToUtf8($v);
+						}
 					}
-				}
-				$stdClass->{$key} = $a;
-			} else {
-				$stdClass->{$key} = $this->{$key};
+					$stdClass->{$key} = $a;
+					break;
+				case (is_bool($value)):
+					$stdClass->{$key} = $value;
+					break;
+				case ($value instanceof DateTime):
+					$stdClass->{$key} = $value->getTimestamp();
+					break;
+				case ($value instanceof stdClass):
+					$a = array();
+					$value = (array)$value;
+					foreach ($value as $k => $v) {
+						if ($v instanceof xoctObject) {
+							$a[$k] = $v->__toStdClass();
+						} else {
+							$a[$k] = self::convertToUtf8($v);
+						}
+					}
+					$stdClass->{$key} = $a;
+					break;
+				default:
+					$stdClass->{$key} = self::convertToUtf8($value);
+					break;
 			}
 		}
 
@@ -110,10 +166,16 @@ abstract class xoctObject {
 
 
 	/**
+	 * @param $string
+	 *
 	 * @return string
 	 */
-	public function __toJson() {
-		return json_encode($this->__toStdClass());
+	public static function convertToUtf8($string) {
+		if (is_object($string)) {
+			return $string;
+		}
+
+		return iconv(mb_detect_encoding($string, mb_detect_order(), true), "UTF-8", $string);
 	}
 
 
@@ -140,9 +202,31 @@ abstract class xoctObject {
 	 */
 	public function loadFromArray($array) {
 		foreach ($array as $k => $v) {
-			$this->{$k} = $v;
+			$this->{$k} = $this->wakeup($k, $v);
 		}
 		$this->afterObjectLoad();
+	}
+
+
+	/**
+	 * @param $fieldname
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	protected function sleep($fieldname, $value) {
+		return $value;
+	}
+
+
+	/**
+	 * @param $fieldname
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	protected function wakeup($fieldname, $value) {
+		return $value;
 	}
 
 

@@ -1,5 +1,8 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctAttachment.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctMedia.php');
+
 /**
  * Class xoctPublication
  *
@@ -19,6 +22,26 @@ class xoctPublication extends xoctObject {
 
 
 	public function read() {
+	}
+
+
+	public function loadFromStdClass(stdClass $class) {
+		parent::loadFromStdClass($class);
+		$attachments = array();
+		foreach ($this->getAttachments() as $attachment) {
+			$xoctAttachment = new xoctAttachment();
+			$xoctAttachment->loadFromStdClass($attachment);
+			$attachments[] = $xoctAttachment;
+		}
+		$this->setAttachments($attachments);
+
+		$medias = array();
+		foreach ($this->getMedia() as $media) {
+			$xoctMedia = new xoctMedia();
+			$xoctMedia->loadFromStdClass($media);
+			$medias[] = $xoctMedia;
+		}
+		$this->setMedia($medias);
 	}
 
 

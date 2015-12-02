@@ -2,11 +2,11 @@
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
- * Class xoctGroupParticipant
+ * Class xoctInvitation
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctGroupParticipant extends ActiveRecord {
+class xoctInvitation extends ActiveRecord {
 
 	const STATUS_ACTIVE = 1;
 
@@ -15,7 +15,7 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @return string
 	 */
 	static function returnDbTableName() {
-		return 'xoct_group_participant';
+		return 'xoct_invitations';
 	}
 
 
@@ -31,6 +31,14 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	protected $id = 0;
 	/**
+	 * @var string
+	 *
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     128
+	 */
+	protected $event_identifier;
+	/**
 	 * @var int
 	 *
 	 * @con_has_field  true
@@ -45,7 +53,7 @@ class xoctGroupParticipant extends ActiveRecord {
 	 * @con_fieldtype  integer
 	 * @con_length     8
 	 */
-	protected $group_id;
+	protected $owner_id;
 	/**
 	 * @var xoctUser
 	 */
@@ -61,61 +69,23 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @var array
 	 */
-	protected static $crs_members_cache = array();
-
-	/**
-	 * @param $ref_id
-	 *
-	 * @return xoctGroupParticipant[]
-	 * @throws xoctException
-	 */
-	public static function getAvailable($ref_id) {
-
-		if (isset(self::$crs_members_cache[$ref_id])) {
-			return self::$crs_members_cache[$ref_id];
-		}
-		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
-		global $tree;
-		/**
-		 * @var $tree ilTree
-		 */
-		while (ilObject2::_lookupType($ref_id, true) != 'crs') {
-			if ($ref_id == 1) {
-				throw new xoctException(xoctException::OBJECT_WRONG_PARENT);
-			}
-			$ref_id = $tree->getParentId($ref_id);
-		}
-
-		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
-		$return = array();
-		foreach ($p->getMembers() as $user_id) {
-			if (in_array($user_id, $existing)) {
-				continue;
-			}
-			$obj = new self();
-			$obj->setUserId($user_id);
-			$return[] = $obj;
-		}
-
-		self::$crs_members_cache[$ref_id] = $return;
-
-		return $return;
-	}
+	protected static $series_id_to_groups_map = array();
 
 
 	/**
-	 * @param $obj_id
+	 * @param          $event_identifier
+	 * @param xoctUser $xoctUser
 	 *
 	 * @return array
 	 */
-	public function getAllUserIdsForOpenCastObjId($obj_id) {
-		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(NULL, 'id');
-		if (count($all) == 0) {
-			return array();
-		}
-
-		return self::where(array( 'group_id' => $all ))->getArray(NULL, 'user_id');
+	public static function getAllInvitationsOfUser($event_identifier, xoctUser $xoctUser) {
+		return self::where(array(
+			'user_id' => $xoctUser->getIliasUserId(),
+			'event_identifier' => $event_identifier
+		))->get();
 	}
+
+
 
 
 	/**
@@ -153,16 +123,16 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getGroupId() {
-		return $this->group_id;
+	public function getOwnerId() {
+		return $this->owner_id;
 	}
 
 
 	/**
-	 * @param $group_id
+	 * @param int $owner_id
 	 */
-	public function setGroupId($group_id) {
-		$this->group_id = $group_id;
+	public function setOwnerId($owner_id) {
+		$this->owner_id = $owner_id;
 	}
 
 
@@ -179,6 +149,22 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	public function setStatus($status) {
 		$this->status = $status;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getEventIdentifier() {
+		return $this->event_identifier;
+	}
+
+
+	/**
+	 * @param int $event_identifier
+	 */
+	public function setEventIdentifier($event_identifier) {
+		$this->event_identifier = $event_identifier;
 	}
 
 

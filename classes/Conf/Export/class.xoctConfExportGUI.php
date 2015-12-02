@@ -1,0 +1,186 @@
+<?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
+require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
+
+/**
+ * Class xoctConfExportGUI
+ *
+ * @author            Fabian Schmid <fs@studer-raimann.ch>
+ * @version           1.0.0
+ *
+ * @ilCtrl_IsCalledBy xoctConfExportGUI : xoctMainGUI
+ */
+class xoctConfExportGUI extends xoctGUI {
+
+	protected function index() {
+		global $ilToolbar;
+		/**
+		 * @var $ilToolbar ilToolbarGUI
+		 */
+		$b = ilLinkButton::getInstance();
+		$b->setCaption('rep_robj_xoct_admin_export');
+		$b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
+		$ilToolbar->addButtonInstance($b);
+		$ilToolbar->addSpacer();
+		$ilToolbar->addSeparator();
+		$ilToolbar->addSpacer();
+
+		$ilToolbar->setFormAction($this->ctrl->getLinkTarget($this, 'import'), true);
+		$import = new ilFileInputGUI('xoct_import', 'xoct_import');
+		$ilToolbar->addInputItem($import);
+		$ilToolbar->addFormButton($this->pl->txt('admin_import'), 'import');
+	}
+
+
+	protected function import() {
+		$domxml = new DOMDocument('1.0', 'UTF-8');
+		$domxml->loadXML(file_get_contents($_FILES['xoct_import']['tmp_name']));
+
+		/**
+		 * @var $node DOMElement
+		 */
+		$xoct_confs = $domxml->getElementsByTagName('xoct_conf');
+		foreach ($xoct_confs as $node) {
+			$name = $node->getElementsByTagName('name')->item(0)->nodeValue;
+			$value = $node->getElementsByTagName('value')->item(0)->nodeValue;
+			if ($name) {
+				//				xoctConf::set($name, $value);
+			}
+		}
+
+		/**
+		 * @var $xoctSystemAccount xoctSystemAccount
+		 */
+		$xoct_system_accounts = $domxml->getElementsByTagName('xoct_system_account');
+
+		foreach ($xoct_system_accounts as $node) {
+			$domain = $node->getElementsByTagName('domain')->item(0)->nodeValue;
+			if (! $domain) {
+				continue;
+			}
+			$xoctSystemAccount = xoctSystemAccount::findOrGetInstance($domain);
+			$xoctSystemAccount->setExtId($node->getElementsByTagName('ext_id')->item(0)->nodeValue);
+			$xoctSystemAccount->setStatus($node->getElementsByTagName('status')->item(0)->nodeValue);
+			$xoctSystemAccount->setStandard($node->getElementsByTagName('standard')->item(0)->nodeValue);
+			if (! xoctSystemAccount::where(array( 'domain' => $xoctSystemAccount->getDomain() ))->hasSets()) {
+				$xoctSystemAccount->create();
+			} else {
+				$xoctSystemAccount->update();
+			}
+		}
+
+		/**
+		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 */
+		$xoct_publication_usage = $domxml->getElementsByTagName('xoct_publication_usage');
+
+		foreach ($xoct_publication_usage as $node) {
+			$usage_id = $node->getElementsByTagName('usage_id')->item(0)->nodeValue;
+			if (! $usage_id) {
+				continue;
+			}
+			$xoctPublicationUsage = xoctPublicationUsage::findOrGetInstance($usage_id);
+			$xoctPublicationUsage->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
+			$xoctPublicationUsage->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
+			$xoctPublicationUsage->setChannel($node->getElementsByTagName('channel')->item(0)->nodeValue);
+			$xoctPublicationUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
+			$xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
+
+			if (! xoctPublicationUsage::where(array( 'usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
+				$xoctSystemAccount->create();
+			} else {
+				$xoctSystemAccount->update();
+			}
+		}
+		$this->cancel();
+	}
+
+
+	protected function export() {
+		$domxml = new DOMDocument('1.0', 'UTF-8');
+		$domxml->preserveWhiteSpace = false;
+		$domxml->formatOutput = true;
+		$config = $domxml->appendChild(new DOMElement('opencast_settings'));
+
+		$xml_info = $config->appendChild(new DOMElement('info'));
+		$xml_info->appendChild(new DOMElement('plugin_version', $this->pl->getVersion()));
+		$xml_info->appendChild(new DOMElement('plugin_db_version', $this->pl->getDBVersion()));
+		$xml_info->appendChild(new DOMElement('config_version', xoctConf::get(xoctConf::CONFIG_VERSION)));
+
+		// xoctConf
+		$xml_xoctConfs = $config->appendChild(new DOMElement('xoct_confs'));
+		/**
+		 * @var $xoctConf xoctConf
+		 */
+		foreach (xoctConf::getCollection()->get() as $xoctConf) {
+			$xml_xoctConf = $xml_xoctConfs->appendChild(new DOMElement('xoct_conf'));
+			$xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
+			//			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
+			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection(xoctConf::get($xoctConf->getName())));
+		}
+		// xoctSystemAccounts
+		$xml_xoctSystemAccounts = $config->appendChild(new DOMElement('xoct_system_accounts'));
+		/**
+		 * @var $xoctSystemAccount xoctSystemAccount
+		 */
+		foreach (xoctSystemAccount::get() as $xoctSystemAccount) {
+			$xml_xoctSystemAccount = $xml_xoctSystemAccounts->appendChild(new DOMElement('xoct_system_account'));
+			$xml_xoctSystemAccount->appendChild(new DOMElement('domain'))->appendChild(new DOMCdataSection($xoctSystemAccount->getDomain()));
+			$xml_xoctSystemAccount->appendChild(new DOMElement('ext_id'))->appendChild(new DOMCdataSection($xoctSystemAccount->getExtId()));
+			$xml_xoctSystemAccount->appendChild(new DOMElement('status'))->appendChild(new DOMCdataSection($xoctSystemAccount->getStatus()));
+			$xml_xoctSystemAccount->appendChild(new DOMElement('standard'))->appendChild(new DOMCdataSection($xoctSystemAccount->isStandard()));
+		}
+
+		// xoctPublicationUsages
+		$xml_xoctPublicationUsages = $config->appendChild(new DOMElement('xoct_publication_usages'));
+		/**
+		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 */
+		foreach (xoctPublicationUsage::get() as $xoctPublicationUsage) {
+			$xml_xoctPU = $xml_xoctPublicationUsages->appendChild(new DOMElement('xoct_publication_usage'));
+			$xml_xoctPU->appendChild(new DOMElement('usage_id'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getUsageId()));
+			$xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getTitle()));
+			$xml_xoctPU->appendChild(new DOMElement('description'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getDescription()));
+			$xml_xoctPU->appendChild(new DOMElement('channel'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getChannel()));
+			$xml_xoctPU->appendChild(new DOMElement('flavor'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getFlavor()));
+			$xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getMdType()));
+		}
+
+		file_put_contents('/tmp/opencastexport.xml', $domxml->saveXML());
+		ob_end_clean();
+		ilUtil::deliverFile('/tmp/opencastexport.xml', 'opencastexport.xml');
+		unlink('/tmp/opencastexport.xml');
+	}
+
+
+	protected function add() {
+		// TODO: Implement add() method.
+	}
+
+
+	protected function create() {
+		// TODO: Implement create() method.
+	}
+
+
+	protected function edit() {
+		// TODO: Implement edit() method.
+	}
+
+
+	protected function update() {
+		// TODO: Implement update() method.
+	}
+
+
+	protected function confirmDelete() {
+		// TODO: Implement confirmDelete() method.
+	}
+
+
+	protected function delete() {
+		// TODO: Implement delete() method.
+	}
+}
+
+?>

@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
+require_once('class.xoctSeries.php');
 
 /**
  * Class xoctOpenCast
@@ -27,6 +28,21 @@ class xoctOpenCast extends ActiveRecord {
 
 
 	/**
+	 * @param $series_identifier
+	 *
+	 * @return int
+	 */
+	public static function lookupObjId($series_identifier) {
+		$xoctOpenCast = xoctOpenCast::where(array( 'series_identifier' => $series_identifier ))->last();
+		if ($xoctOpenCast instanceof xoctOpenCast) {
+			return $xoctOpenCast->getObjId();
+		}
+
+		return false;
+	}
+
+
+	/**
 	 * @return xoctSeries
 	 */
 	public function getSeries() {
@@ -41,6 +57,15 @@ class xoctOpenCast extends ActiveRecord {
 		}
 
 		return new xoctSeries();
+	}
+
+
+	public function create() {
+		if ($this->getObjId() === 0) {
+			$this->update();
+		} else {
+			parent::create();
+		}
 	}
 
 
@@ -78,7 +103,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $use_annotations;
+	protected $use_annotations = false;
 	/**
 	 * @var
 	 *
@@ -86,7 +111,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $streaming_only;
+	protected $streaming_only = false;
 	/**
 	 * @var
 	 *
@@ -94,7 +119,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $permission_per_clip;
+	protected $permission_per_clip = false;
 	/**
 	 * @var
 	 *
@@ -102,7 +127,15 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $agreement_accepted;
+	protected $permission_allow_set_own = false;
+	/**
+	 * @var
+	 *
+	 * @con_has_field true
+	 * @con_fieldtype integer
+	 * @con_length    1
+	 */
+	protected $agreement_accepted = false;
 	/**
 	 * @var bool
 	 *
@@ -110,7 +143,15 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    1
 	 */
-	protected $obj_online;
+	protected $obj_online = false;
+	/**
+	 * @var bool
+	 *
+	 * @con_has_field true
+	 * @con_fieldtype integer
+	 * @con_length    1
+	 */
+	protected $show_upload_token = false;
 
 
 	/**
@@ -238,6 +279,38 @@ class xoctOpenCast extends ActiveRecord {
 	 */
 	public function setIntroText($intro_text) {
 		$this->intro_text = $intro_text;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getPermissionAllowSetOwn() {
+		return ($this->permission_allow_set_own && $this->getPermissionPerClip());
+	}
+
+
+	/**
+	 * @param mixed $permission_allow_set_own
+	 */
+	public function setPermissionAllowSetOwn($permission_allow_set_own) {
+		$this->permission_allow_set_own = $permission_allow_set_own;
+	}
+
+
+	/**
+	 * @return boolean
+	 */
+	public function isShowUploadToken() {
+		return $this->show_upload_token;
+	}
+
+
+	/**
+	 * @param boolean $show_upload_token
+	 */
+	public function setShowUploadToken($show_upload_token) {
+		$this->show_upload_token = $show_upload_token;
 	}
 }
 

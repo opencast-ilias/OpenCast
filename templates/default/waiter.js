@@ -1,10 +1,9 @@
 /**
+ * xoctWaiter
  *
- *
+ * GUI-Overlay
  * @author Fabian Schmid <fs@studer-raimann.ch>
- *
  */
-//$(document).ready(function () {
 
 var xoctWaiter = {
 	count: 0,
@@ -29,6 +28,17 @@ var xoctWaiter = {
 			window.clearTimeout(this.timer);
 			$('#xoct_waiter').fadeOut(200);
 		}
+	},
+	/**
+	 * @param dom_selector_string
+	 */
+	addListener: function (dom_selector_string) {
+		var self = this;
+		$(document).ready(function () {
+			$(dom_selector_string ).on( "click", function() {
+
+				self.show();
+			});
+		});
 	}
 };
-//});
