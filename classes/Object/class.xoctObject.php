@@ -26,11 +26,11 @@ abstract class xoctObject {
 		$existing = xoctCache::getInstance()->get($key);
 
 		if ($existing) {
-			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_1);
+			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
 
 			return $existing;
 		}
-		xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
 		$var = new $class_name($identifier);
 		self::cache($identifier, $var);
 

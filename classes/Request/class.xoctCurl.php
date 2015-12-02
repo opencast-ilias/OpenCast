@@ -97,7 +97,7 @@ class xoctCurl {
 		$this->setResponseContentSize(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 		$this->setResponseStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms', xoctLog::DEBUG_LEVEL_2);
+		xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms', xoctLog::DEBUG_LEVEL_1);
 
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
