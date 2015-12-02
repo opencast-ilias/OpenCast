@@ -59,9 +59,9 @@ class xoctEvent extends xoctObject {
 		 */
 		$xoctEvent = parent::find($identifier);
 		if ($xoctEvent->getProcessingState() != self::STATE_SUCCEEDED) {
-			self::removeFromCache($identifier);
-			$xoctEvent->read();
-			self::cache($identifier, $xoctEvent);
+//			self::removeFromCache($identifier);
+//			$xoctEvent->read();
+//			self::cache($identifier, $xoctEvent);
 		}
 
 		return $xoctEvent;
@@ -73,7 +73,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @return xoctEvent[]
 	 */
-	public static function getFiltered(array $filter, $for_user = NULL, $for_role = NULL) {
+	public static function getFiltered(array $filter, $for_user = NULL, $for_role = NULL, $from = 0, $to = 99999) {
 		$check_cache = count($filter) == 1 AND isset($filter['series']);
 		if ($check_cache) {
 			$key = 'unfiltered_list' . $filter['series'] . '_' . $for_user;
@@ -96,12 +96,18 @@ class xoctEvent extends xoctObject {
 			$request->parameter('filter', $filter_string);
 		}
 		$request->parameter('limit', 1000);
-		$request->parameter('sign', true);
+		//$request->parameter('sign', true);
 		$data = json_decode($request->get($for_user, array( $for_role )));
 		$return = array();
+		$i = 0;
 		foreach ($data as $d) {
+			if ($i < $from || $i > $to) {
+//				$return[] = array();
+//				continue;
+			}
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->getArrayForTable();
+			$i++;
 		}
 		if ($check_cache) {
 			xoctCache::getInstance()->set($key, $return);
@@ -393,7 +399,7 @@ class xoctEvent extends xoctObject {
 			}
 		}
 
-		return $this->thumbnail_url;
+		return xoctSecureLink::sign($this->thumbnail_url);
 	}
 
 
@@ -402,7 +408,8 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
-			$this->annotation_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
+			$this->annotation_url = xoctSecureLink::sign($url);
 		}
 
 		return $this->annotation_url;
@@ -427,7 +434,8 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getDownloadLink() {
 		if (!isset($this->download_url)) {
-			$this->download_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
+			$this->download_url = $url;
 		}
 
 		return $this->download_url;
@@ -483,7 +491,7 @@ class xoctEvent extends xoctObject {
 
 
 	protected function loadPublications() {
-		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->parameter('sign', true)->get());
+		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->get());
 
 		$publications = array();
 		foreach ($data as $d) {
