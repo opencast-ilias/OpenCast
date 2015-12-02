@@ -476,7 +476,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if ($col['selectable']) {
 				$return[$text] = array(
 					'txt' => $this->pl->txt($text),
-					'default' => $col['default']
+					'default' => true
 				);
 			}
 		}
