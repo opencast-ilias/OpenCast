@@ -69,6 +69,16 @@ class xoctSeries extends xoctObject {
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
 
+		/*	foreach ($array as $k => $item) {
+				echo $k . ':<br>';
+				echo $item;
+
+				echo '<br>';
+				echo '<br>';
+			}
+
+			exit;*/
+
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
 		if ($data->identifier) {
