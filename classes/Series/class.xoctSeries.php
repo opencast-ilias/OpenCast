@@ -58,7 +58,9 @@ class xoctSeries extends xoctObject {
 		$this->updateMetadataFromFields();
 
 		$array['metadata'] = json_encode(array(
-			$this->getMetadata()->__toStdClass()
+			$this->getMetadata()->getField('title')->__toStdClass(),
+			$this->getMetadata()->getField('description')->__toStdClass(),
+			$this->getMetadata()->getField('license')->__toStdClass(),
 		));
 
 		foreach ($this->getAccessPolicies() as $acl) {
