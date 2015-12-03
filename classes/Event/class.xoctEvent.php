@@ -125,7 +125,7 @@ class xoctEvent extends xoctObject {
 			'identifier' => $this->getIdentifier(),
 			'title' => $this->getTitle(),
 			'presenter' => $this->getPresenter(),
-			'recording_station' => $this->getLocation(),
+			'event_location' => $this->getLocation(),
 			'created' => $this->getCreated()->format(DATE_ATOM),
 			'created_unix' => $this->getCreated()->format('U'),
 			'owner' => $this->getOwnerUsername(),
