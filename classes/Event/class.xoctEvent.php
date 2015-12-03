@@ -59,9 +59,9 @@ class xoctEvent extends xoctObject {
 		 */
 		$xoctEvent = parent::find($identifier);
 		if ($xoctEvent->getProcessingState() != self::STATE_SUCCEEDED) {
-//			self::removeFromCache($identifier);
-//			$xoctEvent->read();
-//			self::cache($identifier, $xoctEvent);
+			//			self::removeFromCache($identifier);
+			//			$xoctEvent->read();
+			//			self::cache($identifier, $xoctEvent);
 		}
 
 		return $xoctEvent;
@@ -102,12 +102,12 @@ class xoctEvent extends xoctObject {
 		$i = 0;
 		foreach ($data as $d) {
 			if ($i < $from || $i > $to) {
-//				$return[] = array();
-//				continue;
+				//				$return[] = array();
+				//				continue;
 			}
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->getArrayForTable();
-			$i++;
+			$i ++;
 		}
 		if ($check_cache) {
 			xoctCache::getInstance()->set($key, $return);
@@ -389,17 +389,18 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getThumbnailUrl() {
 		if (!$this->thumbnail_url) {
-			$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
+			$this->thumbnail_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))
+				->getUrl());
 			if (!$this->thumbnail_url) {
-				$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
-					->getUrl();
+				$this->thumbnail_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
+					->getUrl());
 			}
 			if (!$this->thumbnail_url) {
 				$this->thumbnail_url = self::NO_PREVIEW;
 			}
 		}
 
-		return xoctSecureLink::sign($this->thumbnail_url);
+		return $this->thumbnail_url;
 	}
 
 
