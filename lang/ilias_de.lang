@@ -70,8 +70,8 @@ event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
-event_state_instantiated#:#Hochgeladen
-event_state_not_published#:#Nicht publiziert
+event_state_instantiated#:#Hochgeladen, für Studierende noch nicht sichtbar
+event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
 event_state_running#:#Clip wird konvertiert und ist für die Studierenden noch nicht sichtbar.
 event_title#:#Titel
 event_update#:#Speichern
