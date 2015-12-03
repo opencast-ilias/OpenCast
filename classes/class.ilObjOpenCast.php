@@ -88,6 +88,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|void
 	 */
 	protected function doCloneObject(ilObjOpenCast $new_obj, $a_target_id, $a_copy_id = NULL) {
+		xoctConf::setApiSettings();
 		/**
 		 * @var $xoctOpenCastNew xoctOpenCast
 		 * @var $xoctOpenCastOld xoctOpenCast
