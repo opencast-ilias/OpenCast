@@ -65,6 +65,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
+		$this->lng->loadLanguageModule('form');
 //		xoctWaiterGUI::initJS();
 //		xoctWaiterGUI::addListener('input.btn-default');
 
