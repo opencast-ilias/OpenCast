@@ -58,13 +58,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	/**
 	 * @param string $a_cmd
 	 * @param string $a_permission
-	 * @param int    $a_ref_id
-	 * @param int    $a_obj_id
+	 * @param int $a_ref_id
+	 * @param int $a_obj_id
 	 * @param string $a_user_id
 	 *
 	 * @return bool
 	 */
-	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id = NULL, $a_user_id = '') {
+	public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id = NULL, $a_user_id = '') {
 		global $ilUser, $ilAccess;
 		/**
 		 * @var $ilAccess ilAccessHandler
@@ -75,9 +75,15 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		if ($a_obj_id === NULL) {
 			$a_obj_id = ilObject2::_lookupObjId($a_ref_id);
 		}
+
 		switch ($a_permission) {
 			case 'read':
-				if (! ilObjOpenCastAccess::checkOnline($a_obj_id) AND ! $ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !$ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+					return false;
+				}
+				break;
+			case 'visible':
+				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !$ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return false;
 				}
 				break;
@@ -106,7 +112,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		 */
 		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
 
-		return $xoctOpenCast->isObjOnline();
+		return (bool)$xoctOpenCast->isObjOnline();
 	}
 
 
@@ -244,66 +250,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	public static function setAdmins($admins) {
 		self::$admins = $admins;
 	}
-
-
-
-
-	//	/**
-	//	 * @param bool $redirect
-	//	 *
-	//	 * @return bool
-	//	 */
-	//	public static function isGlobalAdmin($redirect = false) {
-	//		global $rbacreview, $ilUser;
-	//		/**
-	//		 * @var $rbacreview ilRbacReview
-	//		 */
-	//
-	//		$isAssigned = $rbacreview->isAssigned($ilUser->getId(), 2);
-	//
-	//		if (! $isAssigned AND $redirect) {
-	//			self::redirectNonAccess();
-	//		}
-	//
-	//		return $isAssigned;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param bool $redirect
-	//	 *
-	//	 * @return bool
-	//	 */
-	//	public static function isAdmin($redirect = false) {
-	//		global $rbacreview, $ilUser;
-	//		// TODO
-	//		if (self::isGlobalAdmin()) {
-	//			return true;
-	//		}
-	//		if ($redirect) {
-	//			self::redirectNonAccess();
-	//		}
-	//
-	//		return false;
-	//	}
-	//
-	//
-	//	/**
-	//	 * @param bool $redirect
-	//	 *
-	//	 * @return bool
-	//	 */
-	//	public static function isManager($redirect = false) {
-	//		global $rbacreview, $ilUser;
-	//		// TODO
-	//
-	//		if ($redirect) {
-	//			self::redirectNonAccess();
-	//		}
-	//
-	//		return false;
-	//	}
-
 }
 
 ?>
