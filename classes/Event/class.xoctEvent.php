@@ -436,7 +436,7 @@ class xoctEvent extends xoctObject {
 	public function getDownloadLink() {
 		if (!isset($this->download_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
-			$this->download_url = $url;
+			$this->download_url = xoctSecureLink::sign($url);
 		}
 
 		return $this->download_url;
