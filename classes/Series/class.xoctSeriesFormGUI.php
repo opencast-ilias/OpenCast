@@ -495,6 +495,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$field = $this->getItemByPostVar(self::F_ACCEPT_EULA);
 			$field->setAlert($this->txt('alert_eula'));
 
+			ilUtil::sendFailure($this->lng->txt("form_input_not_valid"));
+
 			return false;
 		}
 
