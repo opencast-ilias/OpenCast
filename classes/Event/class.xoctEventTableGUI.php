@@ -84,7 +84,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 */
 		$xE = xoctEvent::find($a_set['identifier']);
 
-		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
+		// $this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
 
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
@@ -134,7 +134,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($this->isColumsSelected('event_title')) {
 			$this->tpl->setCurrentBlock('event_title');
 			$this->tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$xE->getProcessingState()]);
-			if (!$xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+
+			if ($xE->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 				$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState())));
 			}
 			$this->tpl->setVariable('TITLE', $xE->getTitle());
