@@ -255,6 +255,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param xoctEvent $xoctEvent
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
+		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED && $xoctEvent->getProcessingState() != xoctEvent::STATE_NOT_PUBLISHED) {
+			return;
+		}
 		global $ilUser;
 		/**
 		 * @var $xoctUser xoctUser
@@ -289,9 +292,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
 
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED || $xoctEvent->getProcessingState() == xoctEvent::STATE_NOT_PUBLISHED) {
-			$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
-		}
+		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
 	}
 
 
