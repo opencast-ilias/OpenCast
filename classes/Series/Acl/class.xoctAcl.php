@@ -99,6 +99,18 @@ class xoctAcl extends xoctObject {
 		$acl->setAction(xoctAcl::WRITE);
 		$acls[] = $acl;
 
+		$acl = new xoctAcl();
+		$acl->setRole('ROLE_ORG_PRODUCER');
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::WRITE);
+		$acls[] = $acl;
+
+		$acl = new xoctAcl();
+		$acl->setRole('ROLE_ORG_PRODUCER');
+		$acl->setAllow(true);
+		$acl->setAction(xoctAcl::READ);
+		$acls[] = $acl;
+
 		return $acls;
 	}
 
