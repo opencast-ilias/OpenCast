@@ -65,7 +65,14 @@ class xoctOpenCast extends ActiveRecord {
 			$this->update();
 		} else {
 			parent::create();
+			xoctDataMapper::xoctOpenCastupdated($this);
 		}
+	}
+
+
+	public function update() {
+		parent::update();
+		xoctDataMapper::xoctOpenCastupdated($this);
 	}
 
 

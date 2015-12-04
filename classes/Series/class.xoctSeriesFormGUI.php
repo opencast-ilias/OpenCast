@@ -76,7 +76,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
-		xoctWaiterGUI::loadLib();
 		$tpl->addJavaScript($this->pl->getStyleSheetLocation('default/existing_channel.js'));
 		if ($view) {
 			$this->initView();
@@ -329,10 +328,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * Workaround for returning an object of class ilPropertyFormGUI instead of this subclass
-	 * this is used, until bug (http://ilias.de/mantis/view.php?id=13168) is fixed
-	 *
-	 * @return ilPropertyFormGUI This object but as an ilPropertyFormGUI instead of a xdglRequestFormGUI
+	 * @return xoctSeriesFormGUI
 	 */
 	public function getAsPropertyFormGui() {
 		$ilPropertyFormGUI = $this;
