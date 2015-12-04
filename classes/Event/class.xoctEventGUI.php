@@ -44,14 +44,15 @@ class xoctEventGUI extends xoctGUI {
 			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
 			$b->setPrimary(true);
 			$this->toolbar->addButtonInstance($b);
-
-			if (xoctCache::getInstance()->isActive()) {
-				$b = ilLinkButton::getInstance();
-				$b->setCaption('rep_robj_xoct_event_clear_cache');
-				$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
-				$this->toolbar->addButtonInstance($b);
-			}
 		}
+
+		if (xoctCache::getInstance()->isActive()) {
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_clear_cache');
+			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
+			$this->toolbar->addButtonInstance($b);
+		}
+
 		$intro_text = '';
 		if ($this->xoctOpenCast->getIntroText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
