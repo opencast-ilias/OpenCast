@@ -360,12 +360,13 @@ class xoctEventTableGUI extends ilTable2GUI {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
 		$user = '';
-		$xoctUser = xoctUser::getInstance($ilUser);
-		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-			$user = $xoctUser->getIVTRoleName();
-		}
+//		$xoctUser = xoctUser::getInstance($ilUser);
+//		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+//			$user = $xoctUser->getIVTRoleName();
+//		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL, $this->getOffset(), $this->getLimit());
+		$a_data = xoctEvent::getFiltered($filter, NULL, $user ? array( $user ) : NULL, $this->getOffset(), $this->getLimit());
+
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
