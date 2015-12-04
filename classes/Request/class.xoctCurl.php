@@ -89,7 +89,7 @@ class xoctCurl {
 		}
 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
-		//		$this->debug($ch);
+		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
 		//		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
 		if ($resp_orig === false) {
@@ -103,7 +103,7 @@ class xoctCurl {
 
 		//		xoctLog::getInstance()->write('Connect-Time: ' . round(curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
 		$request_end_time = microtime(true) - $request_start_time;
-		xoctLog::getInstance()->write('Full-Time: ' . round($request_end_time * 1000, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('Full-Time: ' . round($request_end_time * 100, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
 			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
