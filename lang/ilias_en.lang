@@ -70,7 +70,7 @@ event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
 event_state_failed#:#failed
-event_state_instantiated#:#Uploaded, not yet visible
+event_state_instantiated#:#Converting not yet started, not yet visible
 event_state_not_published#:# Not published, not yet visible
 event_state_running#:#Converting, not yet visible
 event_title#:#Title

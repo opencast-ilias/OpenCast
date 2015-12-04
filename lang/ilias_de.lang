@@ -70,7 +70,7 @@ event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
-event_state_instantiated#:#Hochgeladen, für Studierende noch nicht sichtbar
+event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
 event_title#:#Titel
