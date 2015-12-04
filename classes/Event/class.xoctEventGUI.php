@@ -67,6 +67,12 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
+		// DELETE AFTER USAGE
+		//		$b = ilLinkButton::getInstance();
+		//		$b->setCaption('rechte_neuladen_hack');
+		//		$b->setUrl($this->ctrl->getLinkTarget($this, 'resetPermissions'));
+		//		$this->toolbar->addButtonInstance($b);
+
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
 	}
@@ -183,6 +189,27 @@ class xoctEventGUI extends xoctGUI {
 			$xoctGroup->delete();
 		}
 
+		$this->cancel();
+	}
+
+
+	protected function resetPermissions() {
+		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		/**
+		 * @var $xoctEvent      xoctEvent
+		 * @var $xoctInvitation xoctInvitation
+		 * @var $xoctGroup      xoctGroup
+		 */
+		$errors = 'Folgende Clips konnten nicht upgedatet werde: ';
+		foreach ($a_data as $i => $d) {
+			$xoctEvent = xoctEvent::find($d['identifier']);
+			try {
+				$xoctEvent->update();
+			} catch (xoctException $e) {
+				$errors .= $xoctEvent->getTitle() . '; ';
+			}
+		}
 		$this->cancel();
 	}
 
