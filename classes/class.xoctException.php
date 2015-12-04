@@ -19,7 +19,7 @@ class xoctException extends Exception {
 	 */
 	protected static $messages = array(
 		self::API_CALL_UNSUPPORTED => 'This Api-Call is not supported',
-		self::API_CALL_STATUS_500 => 'An error occurred during the request',
+		self::API_CALL_STATUS_500 => 'An error occurred while communicating with the OpenCast-Server',
 		self::API_CALL_STATUS_403 => 'Access denied',
 		self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
 		self::API_CREATION_FAILED => 'The response from the OpenCast-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
