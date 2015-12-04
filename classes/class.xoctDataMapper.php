@@ -12,16 +12,20 @@ class xoctDataMapper {
 	 * @return bool
 	 */
 	public static function xoctOpenCastupdated(xoctOpenCast $xoctOpenCast) {
-		/**
-		 * @var $ilObjOpenCast ilObjOpenCast
-		 */
-		$ilObjOpenCast = ilObjectFactory::getInstanceByObjId($xoctOpenCast->getObjId());
+		if ($xoctOpenCast->getObjId()) {
+			/**
+			 * @var $ilObjOpenCast ilObjOpenCast
+			 */
+			$ilObjOpenCast = ilObjectFactory::getInstanceByObjId($xoctOpenCast->getObjId());
 
-		$ilObjOpenCast->setTitle($xoctOpenCast->getSeries()->getTitle());
-		$ilObjOpenCast->setDescription($xoctOpenCast->getSeries()->getDescription());
+			$ilObjOpenCast->setTitle($xoctOpenCast->getSeries()->getTitle());
+			$ilObjOpenCast->setDescription($xoctOpenCast->getSeries()->getDescription());
 
-		$ilObjOpenCast->update();
+			$ilObjOpenCast->update();
 
-		return true;
+			return true;
+		}
+		
+		return false;
 	}
 }
