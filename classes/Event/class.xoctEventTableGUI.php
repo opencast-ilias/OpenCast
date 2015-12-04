@@ -314,44 +314,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addAndReadFilterItem($te);
 
 		// DATE
-		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
-		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created_unix');
-		$date->setStart(new ilDateTime(time() - 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
-		$date->setEnd(new ilDateTime(time() + 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
-		$this->addAndReadFilterItem($date);
+		//		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
+		//		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created_unix');
+		//		$date->setStart(new ilDateTime(time() - 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
+		//		$date->setEnd(new ilDateTime(time() + 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
+		//		$this->addAndReadFilterItem($date);
 
-		//		// Status
-		//		$te = new ilMultiSelectInputGUI($this->pl->txt('filter_status'), 'status');
-		//		$te->setOptions(array(
-		//			xdglRequest::STATUS_NEW => $this->pl->txt('request_status_' . xdglRequest::STATUS_NEW),
-		//			xdglRequest::STATUS_IN_PROGRRESS => $this->pl->txt('request_status_' . xdglRequest::STATUS_IN_PROGRRESS),
-		//			xdglRequest::STATUS_REFUSED => $this->pl->txt('request_status_' . xdglRequest::STATUS_REFUSED),
-		//			xdglRequest::STATUS_RELEASED => $this->pl->txt('request_status_' . xdglRequest::STATUS_RELEASED),
-		//			xdglRequest::STATUS_RELEASED => $this->pl->txt('request_status_' . xdglRequest::STATUS_RELEASED),
-		//			xdglRequest::STATUS_COPY => $this->pl->txt('request_status_' . xdglRequest::STATUS_COPY),
-		//		));
-		//		$this->addAndReadFilterItem($te);
-		//
-		//		// Library
-		//		if (ilObjDigiLitAccess::showAllLibraries()) {
-		//			$te = new ilMultiSelectInputGUI($this->pl->txt('filter_library'), 'xdgl_library_id');
-		//			$te->setOptions(xdglLibrary::where(array( 'active' => true ))->getArray('id', 'title'));
-		//			$this->addAndReadFilterItem($te);
-		//		}
-		//		global $ilUser;
-		//		$te = new ilMultiSelectInputGUI($this->pl->txt('filter_librarian'), 'xdgl_librarian_id');
-		//		xdglLibrary::getLibraryIdsForUser($ilUser);
-		//		$lib_id = ilObjDigiLitAccess::showAllLibraries() ? NULL : xdglLibrary::getLibraryIdsForUser($ilUser);
-		//		$libs = xdglLibrarian::getAssignedLibrariansForLibrary($lib_id, $ilUser->getId(), ilObjDigiLitAccess::showAllLibraries());
-		//		$libs[xdglRequest::LIBRARIAN_ID_NONE] = $this->pl->txt('filter_none');
-		//		$libs[xdglRequest::LIBRARIAN_ID_MINE] = $this->pl->txt('filter_mine');
-		//		ksort($libs);
-		//		$te->setOptions($libs);
-		//		$this->addAndReadFilterItem($te);
-		//
-		//		// Ext_ID
-		//		$te = new ilTextInputGUI($this->pl->txt('request_ext_id'), 'ext_id');
-		//		$this->addAndReadFilterItem($te);
 	}
 
 
