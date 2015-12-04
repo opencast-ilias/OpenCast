@@ -306,16 +306,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addAndReadFilterItem($te);
 
 		// LCOATION
-		$te = new ilTextInputGUI($this->parent_obj->txt('location'), 'location');
+		$te = new ilTextInputGUI($this->parent_obj->txt('location'), 'event_location');
 		$this->addAndReadFilterItem($te);
 
 		// OWNER
-		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner');
+		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner_username');
 		$this->addAndReadFilterItem($te);
 
 		// DATE
 		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
-		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created');
+		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created_unix');
+		$date->setStart(new ilDateTime(time() - 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
+		$date->setEnd(new ilDateTime(time() + 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
 		$this->addAndReadFilterItem($date);
 
 		//		// Status
@@ -363,10 +365,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$user = $xoctUser->getIVTRoleName();
 		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, $user, NULL, $this->getOffset(), $this->getLimit());
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL, $this->getOffset(), $this->getLimit());
+
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
-
 		$this->setData($a_data);
 	}
 
@@ -376,26 +378,32 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function filterArray() {
 		return function ($array) {
+			$return = true;
 			foreach ($this->filter as $field => $value) {
 				switch ($field) {
-					case 'created':
+					case 'created_unix':
 						if (!$value['start'] || !$value['end']) {
 							continue;
 						}
 						$dateObject = new ilDateTime($array['created_unix'], IL_CAL_UNIX);
 						$within = ilDateTime::_within($dateObject, $value['start'], $value['end']);
-						return $within;
+						if (!$within) {
+							$return = false;
+						}
 						break;
 					default:
-						if (!$value) {
+						if ($value === null || $value === '' || $value === false) {
 							continue;
 						}
-						return (strpos($array[$field], $value) !== false);
+						$strpos = (strpos(strtolower($array[$field]), strtolower($value)) !== false);
+						if (!$strpos) {
+							$return = false;
+						}
 						break;
 				}
 			}
 
-			return true;
+			return $return;
 		};
 	}
 
