@@ -172,7 +172,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$permission_per_clip->addSubItem($set_own_rights);
 
 		$this->addItem($permission_per_clip);
-		xoctOpenCast::updateDB();
+
 		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN)) {
 			$show_upload_token = new ilCheckboxInputGUI($this->txt(self::F_SHOW_UPLOAD_TOKEN), self::F_SHOW_UPLOAD_TOKEN);
 			$show_upload_token->setInfo($this->infoTxt(self::F_SHOW_UPLOAD_TOKEN));
@@ -205,6 +205,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_PER_CLIP => true,
 			self::F_PERMISSION_ALLOW_SET_OWN => true,
 			self::F_SHOW_UPLOAD_TOKEN => true,
+			self::F_ACCEPT_EULA => true,
 		);
 
 		$this->setValuesByArray($array);

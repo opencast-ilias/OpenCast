@@ -95,7 +95,10 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function create() {
+		global $ilUser;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$xoctAclStandardSets = new xoctAclStandardSets(xoctUser::getInstance($ilUser));
+		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getAcls());
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
@@ -136,6 +139,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
+
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
@@ -170,7 +174,6 @@ class xoctEventGUI extends xoctGUI {
 			$xoctEvent->setCreated(new DateTime());
 			$xoctEvent->removeOwner();
 			$xoctEvent->removeAllOwnerAcls();
-			$xoctEvent->setAcls(xoctAcl::getStandardSetForEvent());
 			$xoctEvent->update();
 			foreach (xoctInvitation::where(array( 'event_identifier' => $xoctEvent->getIdentifier() ))->get() as $xoctInvitation) {
 				$xoctInvitation->delete();

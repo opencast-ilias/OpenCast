@@ -1,6 +1,5 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAcl.php');
 
 /**
  * Class xoctUser
@@ -334,45 +333,6 @@ class xoctUser {
 		$cut = explode('@', $this->getIdentifier());
 
 		return str_replace('{IDENTIFIER}', $this->modify($cut[1]), $prefix);
-	}
-
-
-	/**
-	 * @return xoctAcl[]
-	 * @throws xoctException
-	 */
-	public function getStandardAcls() {
-		$acls = array();
-
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setAllow(true);
-		$xoctAcl->setAction(xoctAcl::WRITE);
-		$xoctAcl->setRole($this->getRoleName());
-
-		$acls[] = $xoctAcl;
-
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setAllow(true);
-		$xoctAcl->setAction(xoctAcl::READ);
-		$xoctAcl->setRole($this->getRoleName());
-
-		$acls[] = $xoctAcl;
-
-		//		$xoctAcl = new xoctAcl();
-		//		$xoctAcl->setAllow(true);
-		//		$xoctAcl->setAction(xoctAcl::WRITE);
-		//		$xoctAcl->setRole($this->getOrganisationRoleName());
-		//
-		//		$acls[] = $xoctAcl;
-
-		$xoctAcl = new xoctAcl();
-		$xoctAcl->setAllow(true);
-		$xoctAcl->setAction(xoctAcl::READ);
-		$xoctAcl->setRole($this->getOrganisationRoleName());
-
-		$acls[] = $xoctAcl;
-
-		return $acls;
 	}
 
 

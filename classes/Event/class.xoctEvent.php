@@ -237,7 +237,6 @@ class xoctEvent extends xoctObject {
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
 		$this->updateMetadataFromFields();
-		$this->setAcls(xoctAcl::getStandardSetForEvent());
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing($auto_publish));
@@ -261,9 +260,6 @@ class xoctEvent extends xoctObject {
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 
-		// ACL
-		// $data['acl'] = json_encode( $this->getAcls() );
-
 		// All Data
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
 		$this->updateAcls();
@@ -272,6 +268,11 @@ class xoctEvent extends xoctObject {
 
 
 	public function updateAcls() {
+		$xoctAclStandardSets = new xoctAclStandardSets();
+		foreach ($xoctAclStandardSets->getAcls() as $acl) {
+			$this->addAcl($acl);
+		}
+
 		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcls()) ));
 		self::removeFromCache($this->getIdentifier());
 	}
