@@ -43,6 +43,15 @@ class xoctWaiterGUI {
 		$code = 'xoctWaiter.addListener("' . $dom_selector_string . '");';
 		$tpl->addOnLoadCode($code);
 	}
+
+	/**
+	 * @param $dom_selector_string
+	 */
+	public static function addLinkOverlay($dom_selector_string) {
+		global $tpl;
+		$code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
+		$tpl->addOnLoadCode($code);
+	}
 }
 
 ?>
