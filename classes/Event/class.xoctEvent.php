@@ -520,12 +520,13 @@ class xoctEvent extends xoctObject {
 	public function loadMetadata() {
 		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
-
-			foreach ($data as $d) {
-				if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
-					$xoctMetadata = new xoctMetadata();
-					$xoctMetadata->loadFromStdClass($d);
-					$this->setMetadata($xoctMetadata);
+			if (is_array($data)) {
+				foreach ($data as $d) {
+					if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
+						$xoctMetadata = new xoctMetadata();
+						$xoctMetadata->loadFromStdClass($d);
+						$this->setMetadata($xoctMetadata);
+					}
 				}
 			}
 		}
