@@ -1,7 +1,7 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 require_once('class.xoctSeries.php');
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctDataMapper.php');
 /**
  * Class xoctOpenCast
  *
