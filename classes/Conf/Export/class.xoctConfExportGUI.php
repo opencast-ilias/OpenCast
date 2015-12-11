@@ -44,7 +44,7 @@ class xoctConfExportGUI extends xoctGUI {
 			$name = $node->getElementsByTagName('name')->item(0)->nodeValue;
 			$value = $node->getElementsByTagName('value')->item(0)->nodeValue;
 			if ($name) {
-				//				xoctConf::set($name, $value);
+				xoctConf::set($name, $value);
 			}
 		}
 
@@ -55,14 +55,19 @@ class xoctConfExportGUI extends xoctGUI {
 
 		foreach ($xoct_system_accounts as $node) {
 			$domain = $node->getElementsByTagName('domain')->item(0)->nodeValue;
-			if (! $domain) {
+			if (!$domain) {
 				continue;
 			}
-			$xoctSystemAccount = xoctSystemAccount::findOrGetInstance($domain);
+			$xoctSystemAccount = xoctSystemAccount::find($domain);
+			if (!$xoctSystemAccount instanceof xoctSystemAccount) {
+				$xoctSystemAccount = new xoctSystemAccount();
+			}
+			$xoctSystemAccount->setDomain($domain);
 			$xoctSystemAccount->setExtId($node->getElementsByTagName('ext_id')->item(0)->nodeValue);
 			$xoctSystemAccount->setStatus($node->getElementsByTagName('status')->item(0)->nodeValue);
 			$xoctSystemAccount->setStandard($node->getElementsByTagName('standard')->item(0)->nodeValue);
-			if (! xoctSystemAccount::where(array( 'domain' => $xoctSystemAccount->getDomain() ))->hasSets()) {
+
+			if (!xoctSystemAccount::where(array( 'domain' => $xoctSystemAccount->getDomain() ))->hasSets()) {
 				$xoctSystemAccount->create();
 			} else {
 				$xoctSystemAccount->update();
@@ -76,7 +81,7 @@ class xoctConfExportGUI extends xoctGUI {
 
 		foreach ($xoct_publication_usage as $node) {
 			$usage_id = $node->getElementsByTagName('usage_id')->item(0)->nodeValue;
-			if (! $usage_id) {
+			if (!$usage_id) {
 				continue;
 			}
 			$xoctPublicationUsage = xoctPublicationUsage::findOrGetInstance($usage_id);
@@ -86,10 +91,10 @@ class xoctConfExportGUI extends xoctGUI {
 			$xoctPublicationUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
 			$xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
-			if (! xoctPublicationUsage::where(array( 'usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
-				$xoctSystemAccount->create();
+			if (!xoctPublicationUsage::where(array( 'usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
+				$xoctPublicationUsage->create();
 			} else {
-				$xoctSystemAccount->update();
+				$xoctPublicationUsage->update();
 			}
 		}
 		$this->cancel();
