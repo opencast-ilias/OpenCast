@@ -97,15 +97,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
-		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
-		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 	}
 
