@@ -58,10 +58,11 @@ class xoctEvent extends xoctObject {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = parent::find($identifier);
+
 		if ($xoctEvent->getProcessingState() != self::STATE_SUCCEEDED) {
-			//			self::removeFromCache($identifier);
-			//			$xoctEvent->read();
-			//			self::cache($identifier, $xoctEvent);
+			self::removeFromCache($identifier);
+			$xoctEvent->read();
+			self::cache($identifier, $xoctEvent);
 		}
 
 		return $xoctEvent;
