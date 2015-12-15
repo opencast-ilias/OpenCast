@@ -34,7 +34,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param xoctEventGUI $a_parent_obj
 	 * @param string $a_parent_cmd
 	 */
-	public function  __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
+	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */
@@ -141,6 +141,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$this->tpl->setVariable('TITLE', $xE->getTitle());
 			$this->tpl->parseCurrentBlock();
 		}
+		if ($this->isColumsSelected('event_description')) {
+			$this->tpl->setCurrentBlock('event_description');
+			$this->tpl->setVariable('DESCRIPTION', $xE->getDescription());
+			$this->tpl->parseCurrentBlock();
+		}
 		if ($this->isColumsSelected('event_presenter')) {
 			$this->tpl->setCurrentBlock('event_presenter');
 			$this->tpl->setVariable('PRESENTER', $xE->getPresenter());
@@ -196,37 +201,35 @@ class xoctEventTableGUI extends ilTable2GUI {
 				'sort_field' => null,
 				'width' => '250px'
 			),
-
 			'event_clips' => array(
 				'selectable' => false,
 				'sort_field' => null,
 			),
-
 			'event_title' => array(
 				'selectable' => true,
 				'sort_field' => 'title',
 			),
-
+			'event_description' => array(
+				'selectable' => true,
+				'sort_field' => 'description',
+				'default' => false,
+			),
 			'event_presenter' => array(
 				'selectable' => true,
 				'sort_field' => 'presenter',
 			),
-
 			'event_location' => array(
 				'selectable' => true,
 				'sort_field' => 'event_location',
 			),
-
 			'event_date' => array(
 				'selectable' => true,
 				'sort_field' => 'created_unix',
 			),
-
 			'event_owner' => array(
 				'selectable' => true,
 				'sort_field' => 'owner_username',
 			),
-
 			'common_actions' => array(
 				'selectable' => false,
 			),
@@ -300,17 +303,21 @@ class xoctEventTableGUI extends ilTable2GUI {
 		// TITLE
 		$te = new ilTextInputGUI($this->parent_obj->txt('title'), 'title');
 		$this->addAndReadFilterItem($te);
+//
+//		// DESCRIPTION
+//		$te = new ilTextInputGUI($this->parent_obj->txt('description'), 'description');
+//		$this->addAndReadFilterItem($te);
 
 		// PRESENTER
 		$te = new ilTextInputGUI($this->parent_obj->txt('presenter'), 'presenter');
 		$this->addAndReadFilterItem($te);
 
 		// LCOATION
-		$te = new ilTextInputGUI($this->parent_obj->txt('location'), 'event_location');
+		$te = new ilTextInputGUI($this->parent_obj->txt('location'), 'location');
 		$this->addAndReadFilterItem($te);
 
 		// OWNER
-		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner_username');
+		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner');
 		$this->addAndReadFilterItem($te);
 
 		// DATE
@@ -429,9 +436,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			$a_csv->addColumn($k);
+			echo '<pre>' . print_r($k, 1) . '</pre>';
+			echo '<pre>' . print_r($this->pl->txt('event_' . $k), 1) . '</pre>';
+			$a_csv->addColumn($this->pl->txt($k));
 		}
-
+		exit;
 		$a_csv->addRow();
 	}
 
@@ -454,7 +463,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if ($col['selectable']) {
 				$return[$text] = array(
 					'txt' => $this->pl->txt($text),
-					'default' => true
+					'default' => $col['default'] ? $col['default'] : true
 				);
 			}
 		}

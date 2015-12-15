@@ -125,12 +125,13 @@ class xoctEvent extends xoctObject {
 		return array(
 			'identifier' => $this->getIdentifier(),
 			'title' => $this->getTitle(),
+			'description' => $this->getDescription(),
 			'presenter' => $this->getPresenter(),
-			'event_location' => $this->getLocation(),
+			'location' => $this->getLocation(),
 			'created' => $this->getCreated()->format(DATE_ATOM),
 			'created_unix' => $this->getCreated()->format('U'),
-			'owner_username' => $this->getOwnerUsername(),
-			'state' => $this->getProcessingState()
+			'owner' => $this->getOwnerUsername(),
+			'processing_state' => $this->getProcessingState()
 		);
 	}
 
