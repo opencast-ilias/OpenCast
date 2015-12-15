@@ -106,14 +106,14 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	public function getCustomProperties() {
 		xoctConf::setApiSettings();
 
-		$props = array();
+		$props = parent::getCustomProperties(array());
 		try {
 			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-			if (! $xoctOpenCast instanceof xoctOpenCast) {
+			if (!$xoctOpenCast instanceof xoctOpenCast) {
 				return $props;
 			}
 
-			if (! $xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isObjOnline()) {
 				$props[] = array(
 					'alert' => true,
 					'newline' => true,
