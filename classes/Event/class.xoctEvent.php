@@ -151,7 +151,8 @@ class xoctEvent extends xoctObject {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
-		$this->setCreated(new DateTime($data->created));
+		$created = new DateTime($data->created);
+		$this->setCreated($created->add(new DateInterval('PT3600S'))); // OpenCast FIX
 		$this->setStartTime(new DateTime($data->start_time));
 		$this->loadPublications();
 		if ($this->getIdentifier()) {
@@ -669,7 +670,7 @@ class xoctEvent extends xoctObject {
 	 * @return DateTime
 	 */
 	public function getCreated() {
-		return $this->created;
+		return $this->created ? $this->created : new DateTime();
 	}
 
 

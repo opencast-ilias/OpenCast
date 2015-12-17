@@ -77,6 +77,18 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	public function setValuesByPost() {
+		/**
+		 * @var $item ilTextInputGUI
+		 */
+		foreach ($this->getItems() as $item) {
+			if ($item->getPostVar() != self::F_CREATED) {
+				$item->setValueByArray($_POST);
+			}
+		}
+	}
+
+
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
@@ -104,22 +116,34 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
 		$this->addItem($te);
+
+		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
+		$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		$date->setShowTime(true);
+		$date->setShowSeconds(true);
+		$this->addItem($date);
 	}
 
 
 	public function fillForm() {
+		$createdDateTime = $this->object->getCreated();
+		$created = array(
+			'date' => $createdDateTime->format('Y-m-d'),
+			'time' => $createdDateTime->format('H:i:s'),
+		);
+
 		$array = array(
 			self::F_TITLE => $this->object->getTitle(),
 			self::F_DESCRIPTION => $this->object->getDescription(),
 			self::F_IDENTIFIER => $this->object->getIdentifier(),
 			self::F_CREATOR => $this->object->getCreator(),
-			self::F_CREATED => $this->object->getCreated(),
 			self::F_DURATION => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
 			self::F_START_TIME => $this->object->getStartTime(),
 			self::F_PRESENTERS => $this->object->getPresenter(),
 			self::F_LOCATION => $this->object->getLocation(),
 			self::F_SOURCE => $this->object->getSource(),
+			self::F_CREATED => $created,
 		);
 
 		$this->setValuesByArray($array);
@@ -139,6 +163,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
+		/**
+		 * @var $created ilDateTime
+		 */
+		$created = $this->getItemByPostVar(self::F_CREATED)->getDate();
+		$this->object->setCreated(new DateTime($created->get(IL_CAL_ISO_8601)));
 
 		return true;
 	}

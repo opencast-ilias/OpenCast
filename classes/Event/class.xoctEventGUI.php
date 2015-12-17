@@ -99,6 +99,12 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function add() {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$createdDateTime = new DateTime();
+		$created = array(
+			'date' => $createdDateTime->format('Y-m-d'),
+			'time' => $createdDateTime->format('H:i:s'),
+		);
+		$xoctEventFormGUI->setValuesByArray(array( 'created' => $created ));
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
@@ -146,6 +152,7 @@ class xoctEventGUI extends xoctGUI {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
+
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 
