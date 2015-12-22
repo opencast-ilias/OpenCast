@@ -540,10 +540,15 @@ class xoctEvent extends xoctObject {
 
 
 	protected function initProcessingState() {
-		if ($this->processing_state == self::STATE_SUCCEEDED) {
-			if (count($this->publication_status) < 2) {
-				$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
-			}
+		switch ($this->processing_state) {
+			case self::STATE_SUCCEEDED:
+				if (count($this->publication_status) < 2) {
+					$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+				}
+				break;
+			case '': // FIX: OpenCast delivers sometimes a empty state. this patch will be removed after fix on OpenCast
+				$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
+				break;
 		}
 	}
 
