@@ -63,8 +63,8 @@ event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_player#:#Abspielen
-event_presenter#:#Presenter
-event_presenters#:#Referenten
+event_presenter#:#Referent/in
+event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation

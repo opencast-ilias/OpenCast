@@ -66,8 +66,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->infopage = $infopage;
 		$this->external = $external;
 		$this->lng->loadLanguageModule('form');
-//		xoctWaiterGUI::initJS();
-//		xoctWaiterGUI::addListener('input.btn-default');
+		//		xoctWaiterGUI::initJS();
+		//		xoctWaiterGUI::addListener('input.btn-default');
 
 		if ($view) {
 			$this->initView();
@@ -95,11 +95,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->initButtons();
 
 		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$te->setRequired(true);
+		$te->setRequired(!$this->is_new);
 		$this->addItem($te);
 
 		if ($this->is_new) {
 			$te = new ilFileInputGUI($this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$te->setSuffixes(array(
+				'mov',
+				'mp4',
+				'm4v',
+				'flv',
+				'mpeg',
+				'avi'
+			));
 			$te->setRequired(true);
 			$this->addItem($te);
 
@@ -111,10 +119,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
 		$this->addItem($te);
 
 		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
@@ -159,7 +167,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if (!$this->checkInput()) {
 			return false;
 		}
-		$this->object->setTitle($this->getInput(self::F_TITLE));
+		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
+		$title = $this->object->getTitle();
+
+		$this->object->setTitle($title ? $title : $presenter->getTitle());
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
