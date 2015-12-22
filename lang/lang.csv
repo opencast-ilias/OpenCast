@@ -137,6 +137,7 @@ series;est_video_length_info;"Wie Viele Stunden Video erwarten Sie für diese Se
 series;existing_channel_no;"Neue Serie anlegen";"Create new Series"
 series;existing_channel_yes;"Bestehende Serie wählen";"Choose existing Series"
 series;existing_identifier;"Bestehende Serie";"Existing Series"
+series;has_duplicates;"Diese Serie hat mehrere Verlinkungen in ILIAS. Änderungen wirken sich auf alle Verlinkungen aus";"This Series has several links in ILIAS. Changes affect all links."
 series;intended_lifetime;"Lebensdauer";"Intended lifetime of content"
 series;intended_lifetime_info;"Wie lange soll das Videomaterial publiziert bleiben";"How long shoud the video material be published?"
 series;introduction_text;"Arbeitsanweisung";"Work instruction"

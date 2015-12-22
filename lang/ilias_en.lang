@@ -137,6 +137,7 @@ series_est_video_length_info#:#How many video material (in hours) do you intend 
 series_existing_channel_no#:#Create new Series
 series_existing_channel_yes#:#Choose existing Series
 series_existing_identifier#:#Existing Series
+series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
 series_intended_lifetime#:#Intended lifetime of content
 series_intended_lifetime_info#:#How long shoud the video material be published?
 series_introduction_text#:#Work instruction
