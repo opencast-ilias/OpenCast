@@ -69,6 +69,16 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doRead() {
+		xoctConf::setApiSettings();
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->getId());
+		if ($xoctOpenCast->getSeries()->getTitle() != $this->getTitle() || $xoctOpenCast->getSeries()->getDescription() != $this->getDescription()) {
+			$this->setTitle($xoctOpenCast->getSeries()->getTitle());
+			$this->setDescription($xoctOpenCast->getSeries()->getDescription());
+			$this->update();
+		}
 	}
 
 
@@ -83,7 +93,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	/**
 	 * @param ilObjOpenCast $new_obj
 	 * @param               $a_target_id
-	 * @param null          $a_copy_id
+	 * @param null $a_copy_id
 	 *
 	 * @return bool|void
 	 */

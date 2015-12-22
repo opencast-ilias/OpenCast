@@ -305,7 +305,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
 			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
 			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()->getTitle());
 			}
 			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
 			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
