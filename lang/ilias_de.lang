@@ -54,7 +54,7 @@ event_edit#:#Metadaten bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_file_presenter#:#Datei
 event_identifier#:#ID
-event_invite_others#:#Aufzeichnung freigeben
+event_invite_others#:#Aufzeichnung teilen
 event_location#:#Aufnahmestation
 event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
