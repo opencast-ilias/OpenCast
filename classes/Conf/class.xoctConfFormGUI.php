@@ -95,8 +95,29 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
-		$te->setRteTags(array_merge($te->getRteTags(), array( 'a' )));
+		$te->setRequired(true);
 		$te->setUseRte(true);
+		$te->setRteTags(array('p', 'a', 'br'));
+		$te->usePurifier(true);
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect'
+		));
+
+		$te->setRows(5);
+		$this->addItem($te);
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
