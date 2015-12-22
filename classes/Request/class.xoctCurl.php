@@ -107,9 +107,13 @@ class xoctCurl {
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
 			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
+
 			switch ($this->getResponseStatus()) {
 				case 403:
 					throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
+					break;
+				case 401:
+					throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS);
 					break;
 				case 404:
 					$this->setResponseBody(json_encode(null));

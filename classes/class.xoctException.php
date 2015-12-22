@@ -14,6 +14,7 @@ class xoctException extends Exception {
 	const NO_USER_MAPPING = 40;
 	const API_CALL_STATUS_500 = 500;
 	const API_CALL_STATUS_403 = 403;
+	const API_CALL_BAD_CREDENTIALS = 403;
 	/**
 	 * @var array
 	 */
@@ -24,6 +25,8 @@ class xoctException extends Exception {
 		self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
 		self::API_CREATION_FAILED => 'The response from the OpenCast-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
 		self::NO_USER_MAPPING => 'Your user-account cannot communicate with the OpenCast-Server. please contact your system administrator.',
+		self::API_CALL_BAD_CREDENTIALS => 'The OpenCast-Server cannot be accessed at the moment.',
+
 	);
 
 

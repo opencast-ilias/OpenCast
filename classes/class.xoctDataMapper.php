@@ -17,10 +17,8 @@ class xoctDataMapper {
 			 * @var $ilObjOpenCast ilObjOpenCast
 			 */
 			$ilObjOpenCast = ilObjectFactory::getInstanceByObjId($xoctOpenCast->getObjId());
-
 			$ilObjOpenCast->setTitle($xoctOpenCast->getSeries()->getTitle());
 			$ilObjOpenCast->setDescription($xoctOpenCast->getSeries()->getDescription());
-
 			$ilObjOpenCast->update();
 
 			return true;
