@@ -38,7 +38,7 @@ event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
-event_clear_cache#:#Events neu laden
+event_clear_cache#:#Aufzeichnungen neu laden
 event_clips#:#Aufzeichnungen
 event_create#:#Aufzeichnung hochladen
 event_created#:#Erstellt
