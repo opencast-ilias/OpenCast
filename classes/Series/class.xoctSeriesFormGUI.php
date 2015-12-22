@@ -128,7 +128,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
 		$te->setUseRte(true);
-		$te->setRteTags(array());
+		$te->setRteTags(array('br', 'p'));
 		$te->setRows(5);
 		$this->addItem($te);
 
