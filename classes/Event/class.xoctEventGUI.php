@@ -18,6 +18,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CLEAR_CACHE = 'clearCache';
 	const CMD_EDIT_OWNER = 'editOwner';
 	const CMD_UPDATE_OWNER = 'updateOwner';
+	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
 
 
 	/**
@@ -114,13 +115,19 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctAclStandardSets = new xoctAclStandardSets(xoctUser::getInstance($ilUser));
 		$xoctEventFormGUI->getObject()->setAcls($xoctAclStandardSets->getAcls());
-		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_created'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
+		$xoctEventFormGUI->setValuesByPost();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
+
+
+	protected function uploadChunks() {
+		$xoctPlupload = new xoctPlupload();
+		$xoctPlupload->handleUpload();
 	}
 
 

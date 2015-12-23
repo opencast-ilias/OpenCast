@@ -12,6 +12,10 @@ class xoctWaiterGUI {
 	 * @var bool
 	 */
 	protected static $init = false;
+	/**
+	 * @var bool
+	 */
+	protected static $init_js = false;
 
 
 	/**
@@ -27,11 +31,17 @@ class xoctWaiterGUI {
 	}
 
 
-	public static function initJS() {
+	/**
+	 * @param string $type
+	 */
+	public static function initJS($type = 'waiter') {
 		self::loadLib();
-		global $tpl;
-		$code = 'xoctWaiter.init();';
-		$tpl->addOnLoadCode($code);
+		if (!self::$init_js) {
+			global $tpl;
+			$code = 'xoctWaiter.init(\'' . $type . '\');';
+			$tpl->addOnLoadCode($code);
+			self::$init_js = true;
+		}
 	}
 
 
@@ -44,12 +54,21 @@ class xoctWaiterGUI {
 		$tpl->addOnLoadCode($code);
 	}
 
+
 	/**
 	 * @param $dom_selector_string
 	 */
 	public static function addLinkOverlay($dom_selector_string) {
 		global $tpl;
 		$code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
+		$tpl->addOnLoadCode($code);
+	}
+
+
+	public static function show() {
+		global $tpl;
+		self::initJS();
+		$code = 'xoctWaiter.show();';
 		$tpl->addOnLoadCode($code);
 	}
 }

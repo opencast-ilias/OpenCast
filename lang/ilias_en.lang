@@ -73,9 +73,12 @@ event_state_failed#:#failed
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:# Not published, not yet visible to students
 event_state_running#:#Converting, not yet visible to students
+event_supported_filetypes#:#Supported Filetypes
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
+event_upload_clear#:#Reset
+event_upload_select#:#Select file
 event_view#:#View
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name
@@ -180,3 +183,4 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Create openCast-Series
+form_msg_select#:#Please select fist a Videofile

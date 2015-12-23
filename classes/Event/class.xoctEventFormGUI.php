@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 
 /**
  * Class xoctEventFormGUI
@@ -66,6 +67,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->infopage = $infopage;
 		$this->external = $external;
 		$this->lng->loadLanguageModule('form');
+		$this->setId('xoct_event');
 		//		xoctWaiterGUI::initJS();
 		//		xoctWaiterGUI::addListener('input.btn-default');
 
@@ -99,7 +101,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		if ($this->is_new) {
-			$te = new ilFileInputGUI($this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$te->setUrl($this->ctrl->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_UPLOAD_CHUNKS));
 			$te->setSuffixes(array(
 				'mov',
 				'mp4',
@@ -164,7 +167,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-		if (!$this->checkInput()) {
+				if (!$this->checkInput()) {
 			return false;
 		}
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
