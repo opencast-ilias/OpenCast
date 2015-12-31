@@ -1,33 +1,21 @@
 /**
- * xoctFileuploaderSettings
- * @type {{lng: {msg_select: string}, log: boolean, form_id: string, url: string, runtimes: string, pick_button: string, chunk_size: string, max_file_size: string,supported_suffixes:string}}
+ * xoctFileuploader
+ * @type {{init: xoctFileuploader.init}}
  */
-var xoctFileuploaderSettings = {
-	initFromJSON: function (json) {
-		var self = this;
-		var input = JSON.parse(json);
-		for (var attrname in input) {
-			self[attrname] = input[attrname];
-		}
-
-
-		/**
-		 * xoctFileuploader
-		 * @type {plupload.Uploader}
-		 */
-
-		var xoctFileuploader = new plupload.Uploader({
+var xoctFileuploader = {
+	init: function () {
+		var xoctFileuploaderJS = new plupload.Uploader({
 			cmd: '',
-			runtimes: self.runtimes,
-			browse_button: self.pick_button, // you can pass in id...
-			url: self.getUrl(),
-			chunk_size: self.chunk_size,
+			runtimes: xoctFileuploaderSettings.runtimes,
+			browse_button: xoctFileuploaderSettings.pick_button,
+			url: xoctFileuploaderSettings.getUrl(),
+			chunk_size: xoctFileuploaderSettings.chunk_size,
 			unique_names: true,
 			has_files: false,
 			filters: {
 				max_file_size: self.max_file_size,
 				mime_types: [
-					{title: "-", extensions: self.supported_suffixes},
+					{title: "-", extensions: xoctFileuploaderSettings.supported_suffixes},
 				]
 			},
 			multi_selection: false,
@@ -45,7 +33,7 @@ var xoctFileuploaderSettings = {
 								xoctWaiter.show();
 								self.start();
 							} else {
-								alert(self.lng.msg_select);
+								alert(xoctFileuploaderSettings.lng.msg_select);
 							}
 							return false;
 						});
@@ -76,7 +64,7 @@ var xoctFileuploaderSettings = {
 					$('#xoct_cmd').attr('name', this.cmd);
 					$('#xoct_cmd').val(1);
 					setTimeout(function () {
-						$('#form_' + self.form_id).submit();
+						$('#form_' + xoctFileuploaderSettings.form_id).submit();
 					}, 100);
 				},
 				FilesAdded: function (up, files) {
@@ -103,13 +91,31 @@ var xoctFileuploaderSettings = {
 			}
 		});
 
+		xoctFileuploaderJS.init();
+	}
+};
 
-		$(document).ready(function () {
-			xoctFileuploader.init();
-		});
-
-
+/**
+ * xoctFileuploaderSettings
+ * @type {{lng: {msg_select: string}, log: boolean, form_id: string, url: string, runtimes: string, pick_button: string, chunk_size: string, max_file_size: string,supported_suffixes:string}}
+ */
+var xoctFileuploaderSettings = {
+	/**
+	 * called from PHP
+	 * @param json
+	 */
+	initFromJSON: function (json) {
+		var self = this;
+		var input = JSON.parse(json);
+		for (var attrname in input) {
+			self[attrname] = input[attrname];
+		}
+		xoctFileuploader.init();
 	},
+	/**
+	 * replaces amp; with empty strings
+	 * @returns {string}
+	 */
 	getUrl: function () {
 		var replacer = new RegExp('amp;', 'g');
 		console.log(this);
