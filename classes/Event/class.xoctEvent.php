@@ -572,7 +572,7 @@ class xoctEvent extends xoctObject {
 
 	protected function initProcessingState() {
 		if ($this->processing_state_init) {
-			return true;
+			//			return true;
 		}
 		switch ($this->processing_state) {
 			case self::STATE_SUCCEEDED:
@@ -583,7 +583,11 @@ class xoctEvent extends xoctObject {
 				}
 				break;
 			case '': // FIX: OpenCast delivers sometimes a empty state. this patch will be removed after fix on OpenCast
-				$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
+				if (!$this->getXoctEventAdditions()->getIsOnline()) {
+					$this->setProcessingState(self::STATE_OFFLINE);
+				} else {
+					$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
+				}
 				break;
 		}
 
