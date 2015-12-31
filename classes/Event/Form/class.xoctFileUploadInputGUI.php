@@ -68,8 +68,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$pl = ilOpenCastPlugin::getInstance();
 		$tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/tpl.uploader.html', false, true);
 
-		$tpl->setVariable('JS', $this->getJS());
-
+		$tpl->setVariable('JS', $this->initJS());
 		$tpl->setVariable('BUTTON_SELECT', $pl->txt('event_upload_select'));
 		$tpl->setVariable('BUTTON_CLEAR', $pl->txt('event_upload_clear'));
 		$tpl->setVariable('POSTVAR', $this->getPostVar());
@@ -79,10 +78,10 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	}
 
 
-	protected function getJS() {
+	protected function initJS() {
+		global $tpl;
+		$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.js');
 		$pl = ilOpenCastPlugin::getInstance();
-		$js = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.js', false, true);
-
 		$settings = new stdClass();
 		$settings->lng = new stdClass();
 		$settings->lng->msg_select = $pl->txt('form_msg_select');
@@ -95,10 +94,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$settings->chunk_size = '10mb';
 		$settings->max_file_size = '10000mb';
 		$settings->supported_suffixes = implode(',', $this->getSuffixes());
-
-		$js->setVariable('SETTINGS', json_encode($settings));
-
-		return $js->get();
+		$tpl->addOnLoadCode('xoctFileuploaderSettings.initFromJSON(\'' . json_encode($settings) . '\');');
 	}
 
 
