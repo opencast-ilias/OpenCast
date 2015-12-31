@@ -62,7 +62,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInt
 	 * @return ilOpenCastPlugin
 	 */
 	public static function getInstance() {
-		if (! isset(self::$cache)) {
+		if (!isset(self::$cache)) {
 			//require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/sql/dbupdate.php');
 			self::$cache = new self();
 		}
