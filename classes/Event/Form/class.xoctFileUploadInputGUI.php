@@ -51,7 +51,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	public function __construct(ilPropertyFormGUI $ilPropertyFormGUI, $cmd, $a_title, $a_postvar) {
 		global $tpl;
 		$pl = ilOpenCastPlugin::getInstance();
-		//		xoctWaiterGUI::initJS('percentage');
+		xoctWaiterGUI::loadLib();
 		$ilPropertyFormGUI->setId($ilPropertyFormGUI->getId() ? $ilPropertyFormGUI->getId() : md5(rand(1, 99)));
 		$this->setFormId($ilPropertyFormGUI->getId());
 		$this->setCmd($cmd);
@@ -73,6 +73,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$tpl->setVariable('BUTTON_SELECT', $pl->txt('event_upload_select'));
 		$tpl->setVariable('BUTTON_CLEAR', $pl->txt('event_upload_clear'));
 		$tpl->setVariable('POSTVAR', $this->getPostVar());
+		$tpl->setVariable('FILETYPES', $pl->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getSuffixes()));
 
 		return $tpl->get();
 	}

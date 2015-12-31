@@ -1,7 +1,7 @@
 div.xoct_waiter, div.xoct_percentage {
 	display:          none;
 	z-index:          9999;
-	position:         absolute;
+	position:         fixed;
 	top:              0;
 	left:             0;
 	width:            100%;
@@ -23,5 +23,5 @@ div.xoct_waiter {
 div.xoct_percentage div.progress {
 	margin-left:  20%;
 	margin-right: 20%;
-	margin-top:   49%;
+	margin-top:   400px;
 }

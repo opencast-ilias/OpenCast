@@ -58,6 +58,7 @@ var xoctFileuploader = new plupload.Uploader({
 			};
 			xoctWaiter.reinit('waiter');
 			xoctWaiter.show();
+			xoctWaiter.show();
 			plupload.each(files, function (file) {
 				self_file = file;
 			});
@@ -67,7 +68,9 @@ var xoctFileuploader = new plupload.Uploader({
 			console.log(this.cmd);
 			$('#xoct_cmd').attr('name', this.cmd);
 			$('#xoct_cmd').val(1);
-			$('#form_' + xoctFileuploaderSettings.form_id).submit();
+			setTimeout(function () {
+				$('#form_' + xoctFileuploaderSettings.form_id).submit();
+			}, 100);
 		},
 		FilesAdded: function (up, files) {
 			this.has_files = true;
