@@ -4,6 +4,7 @@ require_once('class.xoctEventTableGUI.php');
 require_once('class.xoctEventFormGUI.php');
 require_once('class.xoctEventOwnerFormGUI.php');
 require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
+require_once('class.xoctEventAdditions.php');
 
 /**
  * Class xoctEventGUI
@@ -19,6 +20,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_EDIT_OWNER = 'editOwner';
 	const CMD_UPDATE_OWNER = 'updateOwner';
 	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
+	const CMD_SET_ONLINE = 'setOnline';
+	const CMD_SET_OFFLINE = 'setOffline';
 
 
 	/**
@@ -64,12 +67,12 @@ class xoctEventGUI extends xoctGUI {
 			$intro_text = $intro->get();
 		}
 
-		//		if ($ilUser->getId() == 6 && ilObjOpenCast::DEV) {
-		//			$b = ilLinkButton::getInstance();
-		//			$b->setCaption('rep_robj_xoct_event_clear_clips_develop');
-		//			$b->setUrl($this->ctrl->getLinkTarget($this, 'clearAllClips'));
-		//			$this->toolbar->addButtonInstance($b);
-		//		}
+		if ($ilUser->getId() == 6 && ilObjOpenCast::DEV) {
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_clear_clips_develop');
+			$b->setUrl($this->ctrl->getLinkTarget($this, 'clearAllClips'));
+			$this->toolbar->addButtonInstance($b);
+		}
 
 		// DELETE AFTER USAGE
 		//		$b = ilLinkButton::getInstance();
@@ -145,6 +148,22 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
+
+
+	public function setOnline() {
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctEvent->getXoctEventAdditions()->setIsOnline(true);
+		$xoctEvent->getXoctEventAdditions()->update();
+		$this->cancel();
+	}
+
+
+	public function setOffline() {
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctEvent->getXoctEventAdditions()->setIsOnline(false);
+		$xoctEvent->getXoctEventAdditions()->update();
+		$this->cancel();
 	}
 
 

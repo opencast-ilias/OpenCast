@@ -5,6 +5,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctUploadFile.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctMedia.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsage.php');
+require_once('class.xoctEventAdditions.php');
 
 /**
  * Class xoctEvent
@@ -14,6 +15,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctEvent extends xoctObject {
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
+	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
@@ -29,6 +31,7 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_ENCODING => 'info',
 		xoctEvent::STATE_NOT_PUBLISHED => 'info',
 		xoctEvent::STATE_FAILED => 'danger',
+		xoctEvent::STATE_OFFLINE => 'info',
 	);
 	/**
 	 * @var string
@@ -46,6 +49,10 @@ class xoctEvent extends xoctObject {
 	 * @var null
 	 */
 	protected $download_url = NULL;
+	/**
+	 * @var xoctEventAdditions
+	 */
+	protected $xoctEventAdditions = null;
 
 
 	/**
@@ -59,7 +66,11 @@ class xoctEvent extends xoctObject {
 		 */
 		$xoctEvent = parent::find($identifier);
 
-		if ($xoctEvent->getProcessingState() != self::STATE_SUCCEEDED) {
+		if (!in_array($xoctEvent->getProcessingState(), array(
+			self::STATE_SUCCEEDED,
+			self::STATE_OFFLINE
+		))
+		) {
 			self::removeFromCache($identifier);
 			$xoctEvent->read();
 			self::cache($identifier, $xoctEvent);
@@ -162,6 +173,7 @@ class xoctEvent extends xoctObject {
 		$this->setOwnerUsername($this->getMetadata()->getField('rightsHolder')->getValue());
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
+		$this->initAdditions();
 	}
 
 
@@ -539,10 +551,21 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 * @var bool
+	 */
+	protected $processing_state_init = false;
+
+
 	protected function initProcessingState() {
+		if ($this->processing_state_init) {
+			return true;
+		}
 		switch ($this->processing_state) {
 			case self::STATE_SUCCEEDED:
-				if (count($this->publication_status) < 2) {
+				if (!$this->getXoctEventAdditions()->getIsOnline()) {
+					$this->setProcessingState(self::STATE_OFFLINE);
+				} elseif (count($this->publication_status) <= 2) {
 					$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
 				}
 				break;
@@ -550,6 +573,8 @@ class xoctEvent extends xoctObject {
 				$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
 				break;
 		}
+
+		$this->processing_state_init = true;
 	}
 
 
@@ -1016,8 +1041,8 @@ class xoctEvent extends xoctObject {
 		$startTime = $this->getMetadata()->getField('startTime');
 		$startTime->setValue(date('H:i'));
 
-		//		$source = $this->getMetadata()->getField('source');
-		//		$source->setValue($this->getSource());
+		$source = $this->getMetadata()->getField('source');
+		$source->setValue($this->getSource());
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
@@ -1072,5 +1097,35 @@ class xoctEvent extends xoctObject {
 		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
+	}
+
+
+	/**
+	 * @return xoctEventAdditions
+	 */
+	public function getXoctEventAdditions() {
+		$this->initAdditions();
+		return $this->xoctEventAdditions;
+	}
+
+
+	/**
+	 * @param xoctEventAdditions $xoctEventAdditions
+	 */
+	public function setXoctEventAdditions(xoctEventAdditions $xoctEventAdditions) {
+		$this->xoctEventAdditions = $xoctEventAdditions;
+	}
+
+
+	protected function initAdditions() {
+		if ($this->xoctEventAdditions instanceof xoctEventAdditions) {
+			return;
+		}
+		$xoctEventAdditions = xoctEventAdditions::find($this->getIdentifier());
+		if (!$xoctEventAdditions instanceof xoctEventAdditions) {
+			$xoctEventAdditions = new xoctEventAdditions();
+			$xoctEventAdditions->setId($this->getIdentifier());
+		}
+		$this->setXoctEventAdditions($xoctEventAdditions);
 	}
 }

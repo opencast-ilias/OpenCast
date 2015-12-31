@@ -60,6 +60,8 @@ event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
+event_online#:#Event online
+event_online_info#:#An Event can be set offline on this ILIAS-Installation. The Event on OpenCast ist not affected
 event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_player#:#Play
@@ -68,10 +70,13 @@ event_presenters#:#Presenters
 event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
+event_set_offline#:#Set offline
+event_set_online#:#Set online
 event_start_time#:#Start
 event_state_failed#:#failed
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:# Not published, not yet visible to students
+event_state_offline#:#Offline
 event_state_running#:#Converting, not yet visible to students
 event_supported_filetypes#:#Supported Filetypes
 event_title#:#Title
@@ -80,6 +85,7 @@ event_updateOwner#:#Update owner
 event_upload_clear#:#Reset
 event_upload_select#:#Select file
 event_view#:#View
+form_msg_select#:#Please select fist a Videofile
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name
 group_delete_participant#:#Do you really want to delete this Membership?
@@ -183,4 +189,3 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Create openCast-Series
-form_msg_select#:#Please select fist a Videofile

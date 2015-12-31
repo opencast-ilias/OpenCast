@@ -60,6 +60,8 @@ event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
+event_online#:#Aufzeichnung online
+event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_player#:#Abspielen
@@ -68,10 +70,13 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
+event_set_offline#:#Offline schalten
+event_set_online#:#Online schalten
 event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
+event_state_offline#:#Offline
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
 event_supported_filetypes#:#Unterstützte Dateitypen
 event_title#:#Titel
@@ -80,6 +85,7 @@ event_updateOwner#:#Besitzer speichern
 event_upload_clear#:#Zurücksetzen
 event_upload_select#:#Datei auswählen
 event_view#:#Anzeigen
+form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
 group_alert_no_title#:#Kein Gruppenname angegeben
 group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
@@ -183,4 +189,3 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#OpenCast-Series erstellen
-form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus

@@ -23,6 +23,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_LOCATION = 'location';
 	const F_SOURCE = 'source';
 	const F_AUTO_PUBLISH = 'auto_publish';
+	const F_ONLINE = 'online';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -119,6 +120,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->addItem($cb);
 		}
 
+		$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
+		$cb->setChecked(true);
+		$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
+		$this->addItem($cb);
+
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
 		$this->addItem($te);
 
@@ -150,11 +156,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_CREATOR => $this->object->getCreator(),
 			self::F_DURATION => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
+			self::F_AUTO_PUBLISH => true,
 			self::F_START_TIME => $this->object->getStartTime(),
 			self::F_PRESENTERS => $this->object->getPresenter(),
 			self::F_LOCATION => $this->object->getLocation(),
 			self::F_SOURCE => $this->object->getSource(),
 			self::F_CREATED => $created,
+			self::F_ONLINE => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
 		$this->setValuesByArray($array);
@@ -167,7 +175,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-				if (!$this->checkInput()) {
+		if (!$this->checkInput()) {
 			return false;
 		}
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
@@ -177,6 +185,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
+		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
+
 		/**
 		 * @var $created ilDateTime
 		 */
@@ -216,9 +226,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 		if ($this->object->getIdentifier()) {
 			$this->object->update();
+			$this->object->getXoctEventAdditions()->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 			$this->object->create($this->getInput(self::F_AUTO_PUBLISH) ? true : false);
+			$this->object->getXoctEventAdditions()->setId($this->object->getIdentifier());
+			$this->object->getXoctEventAdditions()->create();
 		}
 
 		return $this->object->getIdentifier();

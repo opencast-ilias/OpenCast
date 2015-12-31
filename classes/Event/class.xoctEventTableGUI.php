@@ -258,7 +258,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param xoctEvent $xoctEvent
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
-		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED && $xoctEvent->getProcessingState() != xoctEvent::STATE_NOT_PUBLISHED) {
+		if (!in_array($xoctEvent->getProcessingState(), array(
+			xoctEvent::STATE_SUCCEEDED,
+			xoctEvent::STATE_NOT_PUBLISHED,
+			xoctEvent::STATE_OFFLINE
+		))
+		) {
 			return;
 		}
 		global $ilUser;
@@ -267,35 +272,41 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 */
 		$xoctUser = xoctUser::getInstance($ilUser);
 
-		$current_selection_list = new ilAdvancedSelectionListGUI();
-		$current_selection_list->setListTitle($this->pl->txt('common_actions'));
-		$current_selection_list->setId('event_actions_' . $xoctEvent->getIdentifier());
-		$current_selection_list->setUseImages(false);
+		$ac = new ilAdvancedSelectionListGUI();
+		$ac->setListTitle($this->pl->txt('common_actions'));
+		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
+		$ac->setUseImages(false);
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$this->ctrl->setParameterByClass('xoctInvitationGUI', xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 
 		if (ilObjOpenCast::DEV) {
-			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+			$ac->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
 		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
-			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 			$cutting_link = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
 			if ($cutting_link) {
-				$current_selection_list->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
+				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
 			}
-			$current_selection_list->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
+			$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
 			if ($this->xoctOpenCast->getPermissionPerClip()) {
-				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+				$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+			}
+			// Online/offline
+			if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+				$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
+			} else {
+				$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
 			}
 		}
 
 		if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->isOwner($xoctUser)) {
-			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
+			$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
 
-		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
+		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
 	}
 
 
@@ -303,10 +314,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		// TITLE
 		$te = new ilTextInputGUI($this->parent_obj->txt('title'), 'title');
 		$this->addAndReadFilterItem($te);
-//
-//		// DESCRIPTION
-//		$te = new ilTextInputGUI($this->parent_obj->txt('description'), 'description');
-//		$this->addAndReadFilterItem($te);
+		//
+		//		// DESCRIPTION
+		//		$te = new ilTextInputGUI($this->parent_obj->txt('description'), 'description');
+		//		$this->addAndReadFilterItem($te);
 
 		// PRESENTER
 		$te = new ilTextInputGUI($this->parent_obj->txt('presenter'), 'presenter');
@@ -393,6 +404,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
 				$xoctUser = xoctUser::getInstance($ilUser);
 				$xoctEvent = xoctEvent::find($array['identifier']);
+				if (!$xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+					return false;
+				}
 				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser)) {
 					return false;
 				}
