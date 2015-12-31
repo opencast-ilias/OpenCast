@@ -103,12 +103,7 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function add() {
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
-		$createdDateTime = new DateTime();
-		$created = array(
-			'date' => $createdDateTime->format('Y-m-d'),
-			'time' => $createdDateTime->format('H:i:s'),
-		);
-		$xoctEventFormGUI->setValuesByArray(array( 'created' => $created ));
+		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
