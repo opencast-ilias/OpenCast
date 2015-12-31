@@ -460,6 +460,19 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @return null|string
+	 */
+	public function getCuttingLink() {
+		if (!isset($this->cutting_url)) {
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+			$this->cutting_url = xoctSecureLink::sign($url);
+		}
+
+		return $this->cutting_url;
+	}
+
+
+	/**
 	 * @param $xoctPublicationUsage
 	 *
 	 * @return xoctPublication
