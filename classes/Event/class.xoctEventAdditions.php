@@ -19,6 +19,9 @@ class xoctEventAdditions extends ActiveRecord {
 
 
 	public function update() {
+		if (!$this->getId()) {
+			return false;
+		}
 		if (!self::where(array( 'id' => $this->getId() ))->hasSets()) {
 			$this->create();
 		} else {
@@ -29,6 +32,9 @@ class xoctEventAdditions extends ActiveRecord {
 
 
 	public function create() {
+		if (!$this->getId()) {
+			return false;
+		}
 		xoctEvent::removeFromCache($this->getId());
 		parent::create();
 	}
