@@ -42,10 +42,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->setId(self::TBL_ID);
 		$this->setPrefix(self::TBL_ID);
 		$this->setFormName(self::TBL_ID);
 		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
+		$this->setId(self::TBL_ID . '_' . $xoctOpenCast->getSeriesIdentifier());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
@@ -68,6 +68,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @return bool
 	 */
 	public function isColumsSelected($column) {
+		if (!array_key_exists($column, $this->getSelectableColumns())) {
+			return true;
+		}
+
 		return in_array($column, $this->getSelectedColumns());
 	}
 
@@ -247,6 +251,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$selected_colums = $this->getSelectedColumns();
 
 		foreach ($this->getAllColums() as $text => $col) {
+			if (!$this->isColumsSelected($text)) {
+				continue;
+			}
 			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
 				$this->addColumn($this->pl->txt($text), $col['sort_field'], $col['width']);
 			}
@@ -450,11 +457,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			echo '<pre>' . print_r($k, 1) . '</pre>';
-			echo '<pre>' . print_r($this->pl->txt('event_' . $k), 1) . '</pre>';
 			$a_csv->addColumn($this->pl->txt($k));
 		}
-		exit;
 		$a_csv->addRow();
 	}
 
@@ -477,7 +481,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if ($col['selectable']) {
 				$return[$text] = array(
 					'txt' => $this->pl->txt($text),
-					'default' => $col['default'] ? $col['default'] : true
+					'default' => isset($col['default']) ? $col['default'] : true
 				);
 			}
 		}
