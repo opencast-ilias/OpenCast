@@ -180,9 +180,13 @@ abstract class xoctObject {
 
 
 	/**
-	 * @param stdClass $class
+	 * @param $class
+	 * @throws xoctException
 	 */
-	public function loadFromStdClass(stdClass $class) {
+	public function loadFromStdClass($class) {
+		if (!$class instanceof stdClass) {
+			throw new xoctException(xoctException::API_CALL_STATUS_500);
+		}
 		$array = (array)$class;
 		$this->loadFromArray($array);
 	}
