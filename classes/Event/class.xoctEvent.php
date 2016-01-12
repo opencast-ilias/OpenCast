@@ -1061,6 +1061,10 @@ class xoctEvent extends xoctObject {
 		$source = $this->getMetadata()->getField('source');
 		$source->setValue($this->getSource());
 
+		$created = $this->getMetadata()->getField('created');
+		$dateTime = $this->getCreated()->sub(new DateInterval('PT7200S')); // OpenCast FIX
+		$created->setValue($dateTime->format("Y-m-d\TH:i:s\Z"));
+
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
 	}
