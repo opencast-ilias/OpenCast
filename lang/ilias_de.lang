@@ -76,7 +76,7 @@ event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
-event_state_offline#:#Offline
+event_state_offline#:#Offline, für Studierende nicht sichtbar
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
 event_supported_filetypes#:#Unterstützte Dateitypen
 event_title#:#Titel

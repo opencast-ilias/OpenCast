@@ -76,7 +76,7 @@ event_start_time#:#Start
 event_state_failed#:#failed
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:# Not published, not yet visible to students
-event_state_offline#:#Offline
+event_state_offline#:#Offline, not visible to students
 event_state_running#:#Converting, not yet visible to students
 event_supported_filetypes#:#Supported Filetypes
 event_title#:#Title
