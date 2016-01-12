@@ -137,7 +137,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
 		$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		$date->setShowTime(true);
-		$date->setShowSeconds(true);
+		$date->setShowSeconds(false);
 		$this->addItem($date);
 	}
 
