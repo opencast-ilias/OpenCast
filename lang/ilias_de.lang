@@ -146,7 +146,7 @@ series_est_video_length_info#:#Wie Viele Stunden Video erwarten Sie für diese S
 series_existing_channel_no#:#Neue Serie anlegen
 series_existing_channel_yes#:#Bestehende Serie wählen
 series_existing_identifier#:#Bestehende Serie
-series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS. Änderungen wirken sich auf alle Verlinkungen aus
+series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS. Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
 series_intended_lifetime#:#Lebensdauer
 series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert bleiben
 series_introduction_text#:#Arbeitsanweisung
