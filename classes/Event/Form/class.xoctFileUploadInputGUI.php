@@ -89,7 +89,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$settings->cmd = $this->getCmd();
 		$settings->form_id = $this->getFormId();
 		$settings->url = $this->getUrl();
-		$settings->runtimes = 'silverlight,html5,html4';
+		$settings->runtimes = 'html5,html4';
 		$settings->pick_button = 'xoct_pickfiles';
 		$settings->chunk_size = '10mb';
 		$settings->max_file_size = '10000mb';
