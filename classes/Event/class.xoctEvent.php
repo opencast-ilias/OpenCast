@@ -26,29 +26,29 @@ class xoctEvent extends xoctObject {
 	 * @var array
 	 */
 	public static $state_mapping = array(
-		xoctEvent::STATE_SUCCEEDED => 'success',
-		xoctEvent::STATE_INSTANTIATED => 'info',
-		xoctEvent::STATE_ENCODING => 'info',
+		xoctEvent::STATE_SUCCEEDED     => 'success',
+		xoctEvent::STATE_INSTANTIATED  => 'info',
+		xoctEvent::STATE_ENCODING      => 'info',
 		xoctEvent::STATE_NOT_PUBLISHED => 'info',
-		xoctEvent::STATE_FAILED => 'danger',
-		xoctEvent::STATE_OFFLINE => 'info',
+		xoctEvent::STATE_FAILED        => 'danger',
+		xoctEvent::STATE_OFFLINE       => 'info',
 	);
 	/**
 	 * @var string
 	 */
-	protected $thumbnail_url = NULL;
+	protected $thumbnail_url = null;
 	/**
 	 * @var string
 	 */
-	protected $annotation_url = NULL;
+	protected $annotation_url = null;
 	/**
 	 * @var string
 	 */
-	protected $player_url = NULL;
+	protected $player_url = null;
 	/**
 	 * @var null
 	 */
-	protected $download_url = NULL;
+	protected $download_url = null;
 	/**
 	 * @var xoctEventAdditions
 	 */
@@ -68,7 +68,7 @@ class xoctEvent extends xoctObject {
 
 		if (!in_array($xoctEvent->getProcessingState(), array(
 			self::STATE_SUCCEEDED,
-			self::STATE_OFFLINE
+			self::STATE_OFFLINE,
 		))
 		) {
 			self::removeFromCache($identifier);
@@ -85,7 +85,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @return xoctEvent[]
 	 */
-	public static function getFiltered(array $filter, $for_user = NULL, $for_role = NULL, $from = 0, $to = 99999) {
+	public static function getFiltered(array $filter, $for_user = null, $for_role = null, $from = 0, $to = 99999) {
 		$check_cache = count($filter) == 1 AND isset($filter['series']);
 		if ($check_cache) {
 			$key = 'unfiltered_list' . $filter['series'] . '_' . $for_user;
@@ -134,15 +134,15 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getArrayForTable() {
 		return array(
-			'identifier' => $this->getIdentifier(),
-			'title' => $this->getTitle(),
-			'description' => $this->getDescription(),
-			'presenter' => $this->getPresenter(),
-			'location' => $this->getLocation(),
-			'created' => $this->getCreated()->format(DATE_ATOM),
-			'created_unix' => $this->getCreated()->format('U'),
-			'owner' => $this->getOwnerUsername(),
-			'processing_state' => $this->getProcessingState()
+			'identifier'       => $this->getIdentifier(),
+			'title'            => $this->getTitle(),
+			'description'      => $this->getDescription(),
+			'presenter'        => $this->getPresenter(),
+			'location'         => $this->getLocation(),
+			'created'          => $this->getCreated()->format(DATE_ATOM),
+			'created_unix'     => $this->getCreated()->format('U'),
+			'owner'            => $this->getOwnerUsername(),
+			'processing_state' => $this->getProcessingState(),
 		);
 	}
 
@@ -317,9 +317,9 @@ class xoctEvent extends xoctObject {
 				return $acl;
 			}
 		}
-		$owner_acl[$this->getIdentifier()] = NULL;
+		$owner_acl[$this->getIdentifier()] = null;
 
-		return NULL;
+		return null;
 	}
 
 
@@ -334,7 +334,7 @@ class xoctEvent extends xoctObject {
 				return xoctUser::getInstance(new ilObjUser($usr_id));
 			}
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -405,11 +405,12 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getThumbnailUrl() {
 		if (!$this->thumbnail_url) {
-			$this->thumbnail_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))
-				->getUrl());
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
+			$this->thumbnail_url = xoctSecureLink::sign($url);
 			if (!$this->thumbnail_url) {
-				$this->thumbnail_url = xoctSecureLink::sign($this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
-					->getUrl());
+				$fallback = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
+				                 ->getUrl();
+				$this->thumbnail_url = xoctSecureLink::sign($fallback);
 			}
 			if (!$this->thumbnail_url) {
 				$this->thumbnail_url = self::NO_PREVIEW;
@@ -662,7 +663,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var xoctMetadata
 	 */
-	protected $metadata = NULL;
+	protected $metadata = null;
 	/**
 	 * @var xoctAcl[]
 	 */
@@ -862,6 +863,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getProcessingState() {
 		$this->initProcessingState();
+
 		return $this->processing_state;
 	}
 
@@ -1126,6 +1128,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getXoctEventAdditions() {
 		$this->initAdditions();
+
 		return $this->xoctEventAdditions;
 	}
 
