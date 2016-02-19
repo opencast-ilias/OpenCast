@@ -359,7 +359,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		// forward the command
 		$ret = $ilCtrl->forwardCommand($info);
 
-		$this->initHeader();
+//		$this->initHeader();
 	}
 }
 
