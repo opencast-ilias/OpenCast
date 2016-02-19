@@ -44,6 +44,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 
 	/**
 	 * xoctFileUploadInputGUI constructor.
+	 *
 	 * @param ilPropertyFormGUI $ilPropertyFormGUI
 	 * @param string $a_title
 	 * @param $a_postvar
@@ -67,8 +68,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	public function render() {
 		$pl = ilOpenCastPlugin::getInstance();
 		$tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/tpl.uploader.html', false, true);
-
-		$tpl->setVariable('JS', $this->initJS());
+		$this->initJS();
 		$tpl->setVariable('BUTTON_SELECT', $pl->txt('event_upload_select'));
 		$tpl->setVariable('BUTTON_CLEAR', $pl->txt('event_upload_clear'));
 		$tpl->setVariable('POSTVAR', $this->getPostVar());
@@ -80,7 +80,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 
 	protected function initJS() {
 		global $tpl;
-		$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.js');
+		$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.min.js');
 		$pl = ilOpenCastPlugin::getInstance();
 		$settings = new stdClass();
 		$settings->lng = new stdClass();
@@ -364,7 +364,9 @@ class xoctPlupload {
 
 		// Create target dir
 		if (!file_exists($targetDir)) {
-			@mkdir($targetDir);
+			if (!mkdir($targetDir, 0777, true)) {
+				throw new ilException('Could not create directory');
+			}
 		}
 
 		// Get a file name

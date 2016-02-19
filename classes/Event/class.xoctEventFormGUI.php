@@ -110,7 +110,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'm4v',
 				'flv',
 				'mpeg',
-				'avi'
+				'avi',
 			));
 			$te->setRequired(true);
 			$this->addItem($te);
@@ -150,19 +150,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		);
 
 		$array = array(
-			self::F_TITLE => $this->object->getTitle(),
-			self::F_DESCRIPTION => $this->object->getDescription(),
-			self::F_IDENTIFIER => $this->object->getIdentifier(),
-			self::F_CREATOR => $this->object->getCreator(),
-			self::F_DURATION => $this->object->getDuration(),
+			self::F_TITLE            => $this->object->getTitle(),
+			self::F_DESCRIPTION      => $this->object->getDescription(),
+			self::F_IDENTIFIER       => $this->object->getIdentifier(),
+			self::F_CREATOR          => $this->object->getCreator(),
+			self::F_DURATION         => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
-			self::F_AUTO_PUBLISH => true,
-			self::F_START_TIME => $this->object->getStartTime(),
-			self::F_PRESENTERS => $this->object->getPresenter(),
-			self::F_LOCATION => $this->object->getLocation(),
-			self::F_SOURCE => $this->object->getSource(),
-			self::F_CREATED => $created,
-			self::F_ONLINE => $this->object->getXoctEventAdditions()->getIsOnline(),
+			self::F_AUTO_PUBLISH     => true,
+			self::F_START_TIME       => $this->object->getStartTime(),
+			self::F_PRESENTERS       => $this->object->getPresenter(),
+			self::F_LOCATION         => $this->object->getLocation(),
+			self::F_SOURCE           => $this->object->getSource(),
+			self::F_CREATED          => $created,
+			self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
 		$this->setValuesByArray($array);
@@ -176,8 +176,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 */
 	public function fillObject() {
 		if (!$this->checkInput()) {
+
 			return false;
 		}
+
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$title = $this->object->getTitle();
 
