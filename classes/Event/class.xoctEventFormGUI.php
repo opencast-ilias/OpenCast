@@ -181,7 +181,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
-		$title = $this->object->getTitle();
+		$title = $this->getInput(self::F_TITLE);
 
 		$this->object->setTitle($title ? $title : $presenter->getTitle());
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
