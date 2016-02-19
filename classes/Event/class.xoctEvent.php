@@ -466,7 +466,14 @@ class xoctEvent extends xoctObject {
 	public function getCuttingLink() {
 		if (!isset($this->cutting_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
-			$this->cutting_url = xoctSecureLink::sign($url);
+			if ($url) {
+				$this->cutting_url = xoctSecureLink::sign($url);
+			} else {
+
+				$base = rtrim(xoctConf::get(xoctConf::F_API_BASE), "/");
+				$base = str_replace('/api', '', $base);
+				$this->cutting_url = $base . '/admin-ng/index.html#/events/events/' . $this->getIdentifier() . '/tools/editor';
+			}
 		}
 
 		return $this->cutting_url;
