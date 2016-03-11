@@ -1,5 +1,4 @@
 <?php
-require_once('class.xoctDynLan.php');
 require_once('./Services/Repository/classes/class.ilRepositoryObjectPlugin.php');
 require_once('class.ilObjOpenCastAccess.php');
 
@@ -11,43 +10,18 @@ require_once('class.ilObjOpenCastAccess.php');
  * @version 1.0.00
  *
  */
-class ilOpenCastPlugin extends ilRepositoryObjectPlugin implements xoctDynLanInterface {
+class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 
 	protected function uninstallCustom() {
 		//
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getCsvPath() {
-		return './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/lang/lang.csv';
+	public function txt($a_var) {
+		require_once('./Customizing/global/plugins/Libraries/PluginTranslator/class.sragPluginTranslator.php');
+//		return sragPluginTranslator::getInstance($this)->rebuild(true)->txt($a_var);
+		return sragPluginTranslator::getInstance($this)->active()->write()->txt($a_var);
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getAjaxLink() {
-		return NULL;
-	}
-
-
-	/**
-	 * @param $a_var
-	 *
-	 * @return string
-	 */
-	public function txt2($a_var) {
-		if (ilObjOpenCast::DEV) {
-
-			return xoctDynLan::getInstance($this, xoctDynLan::MODE_DEV)->txt($a_var);
-		} else {
-			return parent::txt($a_var);
-		}
-	}
-
 
 	const XOCT = 'xoct';
 	const AR_CUST = './Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php';
