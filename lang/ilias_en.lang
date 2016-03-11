@@ -76,6 +76,11 @@ event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
 event_view#:#View
+event_online#:#Online
+event_online_info#:#An Event can be set offline on this ILIAS-Installation. The Event on OpenCast ist not affected
+event_upload_select#:#Select file
+event_upload_clear#:#Remove
+event_supported_filetypes#:#Supported Filetypes
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group
@@ -178,3 +183,4 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Add new Series
+form_msg_select#:#Please select first a Videofile

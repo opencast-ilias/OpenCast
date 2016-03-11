@@ -400,7 +400,8 @@
                 "translations": {
                     "de": "Upload abgeschlossen",
                     "en": "Upload finished"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "msg_deleted": {
                 "translations": {
@@ -488,7 +489,8 @@
                 "translations": {
                     "de": "Hochgeladen",
                     "en": "Uploaded"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "state_not_published": {
                 "translations": {
@@ -526,6 +528,41 @@
                     "de": "Anzeigen",
                     "en": "View"
                 }
+            },
+            "online": {
+                "translations": {
+                    "de": "Online",
+                    "en": "Online"
+                },
+                "last_used": "11.03.2016"
+            },
+            "online_info": {
+                "translations": {
+                    "de": "Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet",
+                    "en": "An Event can be set offline on this ILIAS-Installation. The Event on OpenCast ist not affected"
+                },
+                "last_used": "11.03.2016"
+            },
+            "upload_select": {
+                "translations": {
+                    "de": "Datei ausw\u00e4hlen",
+                    "en": "Select file"
+                },
+                "last_used": "11.03.2016"
+            },
+            "upload_clear": {
+                "translations": {
+                    "de": "Entfernen",
+                    "en": "Remove"
+                },
+                "last_used": "11.03.2016"
+            },
+            "supported_filetypes": {
+                "translations": {
+                    "de": "Unterst\u00fctzte Dateitypen",
+                    "en": "Supported Filetypes"
+                },
+                "last_used": "11.03.2016"
             }
         },
         "groups": {
@@ -1202,6 +1239,15 @@
                 "translations": {
                     "de": "Neue Serie anlegen",
                     "en": "Add new Series"
+                },
+                "last_used": "11.03.2016"
+            }
+        },
+        "form": {
+            "msg_select": {
+                "translations": {
+                    "de": "Bitte w\u00e4hlen Sie zuerst eine Videodatei aus",
+                    "en": "Please select first a Videofile"
                 },
                 "last_used": "11.03.2016"
             }

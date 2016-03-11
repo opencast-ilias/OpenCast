@@ -76,6 +76,11 @@ event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
 event_view#:#Anzeigen
+event_online#:#Online
+event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet
+event_upload_select#:#Datei auswählen
+event_upload_clear#:#Entfernen
+event_supported_filetypes#:#Unterstützte Dateitypen
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
@@ -178,3 +183,4 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Neue Serie anlegen
+form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
