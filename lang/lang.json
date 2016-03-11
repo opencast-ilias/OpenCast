@@ -318,7 +318,8 @@
                 "translations": {
                     "de": "Clip schneiden",
                     "en": "Cut Clip"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "date": {
                 "translations": {
@@ -502,7 +503,8 @@
                 "translations": {
                     "de": "Clip wird konvertiert und ist f\u00fcr die Studierenden noch nicht sichtbar.",
                     "en": "Converting"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "title": {
                 "translations": {
@@ -875,7 +877,8 @@
                 "translations": {
                     "de": "Series ID",
                     "en": "Series ID"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "channel_type": {
                 "translations": {
@@ -922,7 +925,8 @@
                 "translations": {
                     "de": "Channel bearbeiten",
                     "en": "Edit Channel"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "est_video_length": {
                 "translations": {
@@ -1068,7 +1072,8 @@
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
-                }
+                },
+                "last_used": "11.03.2016"
             },
             "use_annotations": {
                 "translations": {

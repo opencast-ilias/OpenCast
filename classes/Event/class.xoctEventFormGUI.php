@@ -118,12 +118,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$cb = new ilCheckboxInputGUI($this->txt(self::F_AUTO_PUBLISH), self::F_AUTO_PUBLISH);
 			$cb->setChecked(true);
 			$this->addItem($cb);
+		} else {
+			$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
+			$cb->setChecked(true);
+			$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
+			$this->addItem($cb);
 		}
-
-		$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
-		$cb->setChecked(true);
-		$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
-		$this->addItem($cb);
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
 		$this->addItem($te);
@@ -232,8 +232,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 			$this->object->create($this->getInput(self::F_AUTO_PUBLISH) ? true : false);
-			$this->object->getXoctEventAdditions()->setId($this->object->getIdentifier());
-			$this->object->getXoctEventAdditions()->create();
+			$xoctEventAdditions = $this->object->getXoctEventAdditions();
+			$xoctEventAdditions->setId($this->object->getIdentifier());
+			$xoctEventAdditions->setIsOnline(true);
+			$xoctEventAdditions->create();
 		}
 
 		return $this->object->getIdentifier();
