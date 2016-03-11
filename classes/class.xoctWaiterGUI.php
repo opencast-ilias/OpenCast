@@ -24,7 +24,7 @@ class xoctWaiterGUI {
 	public static function loadLib() {
 		global $tpl;
 		if (!self::$init) {
-			$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.js');
+			$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
 			$tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
 			self::$init = true;
 		}

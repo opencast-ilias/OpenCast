@@ -4,12 +4,12 @@
  * GUI-Overlay
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-
 var xoctWaiter = {
 	possible_types: ['waiter', 'percentage'],
 	type: 'waiter',
 	count: 0,
 	timer: null,
+
 	init: function (type) {
 		this.type = type ? type : this.type;
 		if (this.type == 'waiter') {
