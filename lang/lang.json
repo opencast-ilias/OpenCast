@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             }
         },
         "config": {
@@ -265,7 +265,8 @@
                 "translations": {
                     "de": "Annotieren",
                     "en": "Annotate"
-                }
+                },
+                "last_used": "14.03.2016"
             },
             "auto_publish": {
                 "translations": {
@@ -292,7 +293,7 @@
                     "de": "Clips",
                     "en": "Clips"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "create": {
                 "translations": {
@@ -319,20 +320,21 @@
                     "de": "Clip schneiden",
                     "en": "Cut Clip"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "date": {
                 "translations": {
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Clip l\u00f6schen",
                     "en": "Delete Clip"
-                }
+                },
+                "last_used": "14.03.2016"
             },
             "delete_confirm": {
                 "translations": {
@@ -345,7 +347,7 @@
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "download": {
                 "translations": {
@@ -363,13 +365,15 @@
                 "translations": {
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
-                }
+                },
+                "last_used": "14.03.2016"
             },
             "edit_owner": {
                 "translations": {
                     "de": "Besitzer bearbeiten",
                     "en": "Edit Owner"
-                }
+                },
+                "last_used": "14.03.2016"
             },
             "file_presenter": {
                 "translations": {
@@ -395,7 +399,7 @@
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "msg_created": {
                 "translations": {
@@ -427,7 +431,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "owner_select": {
                 "translations": {
@@ -439,14 +443,15 @@
                 "translations": {
                     "de": "Abspielen",
                     "en": "Play"
-                }
+                },
+                "last_used": "14.03.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Presenter",
                     "en": "Presenter"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "presenters": {
                 "translations": {
@@ -460,7 +465,7 @@
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "processing_state": {
                 "translations": {
@@ -511,7 +516,7 @@
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "update": {
                 "translations": {
@@ -565,6 +570,13 @@
                     "en": "Supported Filetypes"
                 },
                 "last_used": "11.03.2016"
+            },
+            "set_offline": {
+                "translations": {
+                    "de": "Offline schalten",
+                    "en": "Set offline"
+                },
+                "last_used": "14.03.2016"
             }
         },
         "groups": {
@@ -1155,7 +1167,7 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "export": {
                 "translations": {
@@ -1169,14 +1181,14 @@
                     "de": "Gruppen",
                     "en": "Groups"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "info": {
                 "translations": {
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "list_all": {
                 "translations": {
@@ -1202,7 +1214,7 @@
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "11.03.2016"
+                "last_used": "14.03.2016"
             },
             "settings": {
                 "translations": {

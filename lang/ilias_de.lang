@@ -81,6 +81,7 @@ event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird 
 event_upload_select#:#Datei auswählen
 event_upload_clear#:#Entfernen
 event_supported_filetypes#:#Unterstützte Dateitypen
+event_set_offline#:#Offline schalten
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
