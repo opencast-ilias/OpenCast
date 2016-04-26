@@ -40,6 +40,10 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	 * @var string
 	 */
 	protected $cmd = '';
+	/**
+	 * @var array
+	 */
+	protected $mime_types = array();
 
 
 	/**
@@ -94,6 +98,8 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$settings->chunk_size = '10mb';
 		$settings->max_file_size = '10000mb';
 		$settings->supported_suffixes = implode(',', $this->getSuffixes());
+		$settings->mime_types = implode(',', $this->getMimeTypes());
+
 		$tpl->addOnLoadCode('xoctFileuploaderSettings.initFromJSON(\'' . json_encode($settings) . '\');');
 	}
 
@@ -249,6 +255,22 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	 */
 	public function setFormId($form_id) {
 		$this->form_id = $form_id;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getMimeTypes() {
+		return $this->mime_types;
+	}
+
+
+	/**
+	 * @param array $mime_types
+	 */
+	public function setMimeTypes($mime_types) {
+		$this->mime_types = $mime_types;
 	}
 }
 

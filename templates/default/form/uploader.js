@@ -2,6 +2,7 @@
  * xoctFileuploader
  * @type {{init: xoctFileuploader.init}}
  */
+mOxie.Mime.addMimeType("video/quicktime,mov");
 var xoctFileuploader = {
     init: function () {
         var xoctFileuploaderJS = new plupload.Uploader({
@@ -13,10 +14,11 @@ var xoctFileuploader = {
             unique_names: true,
             has_files: false,
             filters: {
-                max_file_size: self.max_file_size,
+                max_file_size: xoctFileuploaderSettings.max_file_size,
                 mime_types: [
                     {title: "-", extensions: xoctFileuploaderSettings.supported_suffixes},
-                ]
+                ],
+                // mime_types: xoctFileuploaderSettings.mime_types
             },
             multi_selection: false,
             flash_swf_url: '../js/Moxie.swf',
@@ -97,7 +99,7 @@ var xoctFileuploader = {
 
 /**
  * xoctFileuploaderSettings
- * @type {{lng: {msg_select: string}, log: boolean, form_id: string, url: string, runtimes: string, pick_button: string, chunk_size: string, max_file_size: string,supported_suffixes:string}}
+ * @type {{lng: {msg_select: string}, log: boolean, form_id: string, url: string, runtimes: string, pick_button: string, chunk_size: string, max_file_size: string,supported_suffixes:string,mime_types:string}}
  */
 var xoctFileuploaderSettings = {
     /**

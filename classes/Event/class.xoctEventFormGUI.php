@@ -112,6 +112,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'mpeg',
 				'avi',
 			));
+//			$te->setMimeTypes(array(
+//				'video/avi',
+//				'video/quicktime',
+//				'video/mpeg',
+//				'video/mp4',
+//				'video/ogg',
+//				'video/webm',
+//				'video/x-ms-wmv',
+//				'video/x-flv',
+//				'video/x-matroska',
+//				'video/x-msvideo',
+//				'video/x-dv',
+//			));
 			$te->setRequired(true);
 			$this->addItem($te);
 
