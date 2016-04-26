@@ -19,7 +19,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class xoctEventTableGUI extends ilTable2GUI {
 
-	const TBL_ID = 'tbl_xoct_events';
+	const TBL_ID = 'tbl_xoct_';
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -28,11 +28,26 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @var array
 	 */
 	protected $filter = array();
+	/**
+	 * @var \xoctOpenCast
+	 */
+	protected $xoctOpenCast;
+	/**
+	 * @var \ilCtrl
+	 */
+	protected $ctrl;
+	/**
+	 * @var \xoctEventGUI
+	 */
+	protected $parent_obj;
 
 
 	/**
-	 * @param xoctEventGUI $a_parent_obj
+	 * xoctEventTableGUI constructor.
+	 *
+	 * @param \xoctEventGUI $a_parent_obj
 	 * @param string $a_parent_cmd
+	 * @param \xoctOpenCast $xoctOpenCast
 	 */
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
 		/**
@@ -42,10 +57,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->setPrefix(self::TBL_ID);
-		$this->setFormName(self::TBL_ID);
+		$a_val = self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
+		$this->setPrefix($a_val);
+		$this->setFormName($a_val);
+		$this->setId($a_val);
 		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
-		$this->setId(self::TBL_ID . '_' . $xoctOpenCast->getSeriesIdentifier());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
@@ -54,10 +70,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->initFilters();
 		$this->setDefaultOrderField('title');
 		$this->setExportFormats(array( self::EXPORT_CSV ));
-		//		$this->setEnableNumInfo(true);
-		//		$this->setExternalSorting(true);
-		//		$this->setExternalSegmentation(true);
-		// Add new
 
 		$this->parseData();
 	}
@@ -269,7 +281,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			xoctEvent::STATE_SUCCEEDED,
 			xoctEvent::STATE_NOT_PUBLISHED,
 			xoctEvent::STATE_OFFLINE,
-			xoctEvent::STATE_ENCODING,
+			//			xoctEvent::STATE_ENCODING,
 		))
 		) {
 			return;
