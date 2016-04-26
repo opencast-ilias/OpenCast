@@ -19,7 +19,7 @@ class xoctSeriesGUI extends xoctGUI {
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+	public function __construct(xoctOpenCast $xoctOpenCast = null) {
 		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
@@ -90,5 +90,10 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	protected function view() {
+	}
+
+
+	protected function cancel() {
+		$this->ctrl->redirect($this, self::CMD_EDIT);
 	}
 }
