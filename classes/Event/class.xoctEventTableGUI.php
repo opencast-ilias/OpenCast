@@ -467,7 +467,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			$a_csv->addColumn($this->pl->txt($k));
+			$a_csv->addColumn($this->pl->txt('event_'.$k));
 		}
 		$a_csv->addRow();
 	}
