@@ -163,7 +163,8 @@ class xoctEvent extends xoctObject {
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
 		$created = new DateTime($data->created);
-		$this->setCreated($created->add(new DateInterval('PT3600S'))); // OpenCast FIX
+		$this->setCreated($created->add(new DateInterval('PT7200S'))); // OpenCast FIX
+		//		$this->setCreated($created);
 		$this->setStartTime(new DateTime($data->start_time));
 		$this->loadPublications();
 		if ($this->getIdentifier()) {
@@ -251,6 +252,10 @@ class xoctEvent extends xoctObject {
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+
+		$created = new DateTime(); // OpenCast FIX
+		$this->setCreated($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
+		$this->setStartTime($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
 		$this->updateMetadataFromFields();
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
@@ -267,6 +272,9 @@ class xoctEvent extends xoctObject {
 
 
 	public function update() {
+		$created = $this->getCreated() instanceof DateTime ? $this->getCreated() : new DateTime(); // OpenCast FIX
+		$this->setCreated($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
+
 		// Metadata
 		$this->updateMetadataFromFields();
 		$this->getMetadata()->removeField('identifier');
