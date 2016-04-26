@@ -475,7 +475,7 @@ class xoctEvent extends xoctObject {
 		if (!isset($this->cutting_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
 			if ($url) {
-				$this->cutting_url = xoctSecureLink::sign($url);
+				$this->cutting_url = $url;
 			} else {
 
 				$base = rtrim(xoctConf::get(xoctConf::F_API_BASE), "/");
