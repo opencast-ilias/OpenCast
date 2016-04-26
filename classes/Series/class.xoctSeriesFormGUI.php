@@ -128,8 +128,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
 		$te->setUseRte(true);
-		$te->setRteTags(array('p', 'a', 'br'));
-		$te->usePurifier(true);
+		$te->setRteTags(array('p', 'a', 'br', 'b', 'i', 'strong', 'emp', 'imp', 'em', 'span'));
+//		$te->usePurifier(true);
 		$te->disableButtons(array(
 			'charmap',
 			'undo',
