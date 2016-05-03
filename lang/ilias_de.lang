@@ -33,19 +33,19 @@ config_upload_token#:#Aktiviere Upload-Token
 config_user_mapping#:#User-Mapping
 config_use_modals#:#Player in Modal öffnen
 config_workflow#:#Workflow-ID
-event_add_new#:#Clip hinzufügen
+event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
 event_clear_cache#:#Events neu laden
-event_clips#:#Clips
-event_create#:#Clip hochladen
+event_clips#:#Aufzeichnungen
+event_create#:#Aufzeichnung hochladen
 event_created#:#Erstellt
 event_creator#:#Ersteller
-event_cut#:#Clip schneiden
+event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
-event_delete#:#Clip löschen
-event_delete_confirm#:#Das Löschen bewirkt, dass der Clip definitiv gelöscht wird (auch auf OpenCast). Wollen Sie diesen Clip wirklich löschen?
+event_delete#:#Aufzeichnung löschen
+event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf OpenCast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
@@ -53,10 +53,10 @@ event_edit#:#Metadaten bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_file_presenter#:#Datei
 event_identifier#:#ID
-event_invite_others#:#Clip freigeben
+event_invite_others#:#Aufzeichnung freigeben
 event_location#:#Aufnahmestation
 event_msg_created#:#Upload abgeschlossen
-event_msg_deleted#:#Clip gelöscht
+event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
@@ -69,9 +69,10 @@ event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
-event_state_instantiated#:#Hochgeladen
-event_state_not_published#:#Nicht publiziert
-event_state_running#:#Clip wird konvertiert und ist für die Studierenden noch nicht sichtbar.
+event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
+event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
+event_state_running#:#Wird konvertiert und ist für die Studierenden noch nicht sichtbar.
+event_state_offline#:#Offline, für Studierende nicht sichtbar
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
@@ -98,13 +99,13 @@ group_none_available#:#Keine verfügbar
 group_none_available_all#:#Keine verfügbar
 group_select_group#:#Gruppe auswählen
 invitations_back#:#Zurück
-invitations_header#:#Clip freigeben
+invitations_header#:#Aufzeichnung freigeben
 invitations_none_available#:#Keine verfügbar
 obj_xoct#:#OpenCast
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen
-publication_usage_channel#:#Channel
+publication_usage_channel#:#Serie
 publication_usage_create#:#Erstellen
 publication_usage_delete#:#Löschen
 publication_usage_description#:#Beschreibung
@@ -131,32 +132,32 @@ series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
-series_channel_type#:#Channel-Typ
-series_create#:#Channel anlegen
+series_channel_type#:#Serien-Typ
+series_create#:#Serie anlegen
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
 series_description#:#Beschreibung
 series_discipline#:#Disziplin
-series_edit#:#Channel bearbeiten
+series_edit#:#Serie bearbeiten
 series_est_video_length#:#Erwartete Länge des Videomaterials in Stunden
-series_est_video_length_info#:#Wie Viele Stunden Video erwarten Sie für diesen Channel?
-series_existing_channel_no#:#Neuen Channel anlegen
-series_existing_channel_yes#:#Bestehenden Channel wählen
-series_existing_identifier#:#Bestehender Channel
+series_est_video_length_info#:#Wie Viele Stunden Video erwarten Sie für dieser Serie?
+series_existing_channel_no#:#Neue Serieanlegen
+series_existing_channel_yes#:#Bestehende Seriewählen
+series_existing_identifier#:#Bestehende Serie
 series_intended_lifetime#:#Lebensdauer
 series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert bleiben
 series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
-series_metadata#:#Channel-Infos
+series_metadata#:#Serien-Infos
 series_obj_online#:#Online
 series_permission_allow_set_own#:#Leserechte erteilen
-series_permission_allow_set_own_info#:#Clip-Besitzer können Leserechte auf ihre Clips erteilen
-series_permission_per_clip#:#Rechte pro Clip setzen
-series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Clip-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen des gewählten Kanals sehen dürfen.
+series_permission_allow_set_own_info#:#Aufzeichnungs-Besitzer können Leserechte auf ihre Aufzeichnungen erteilen
+series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
+series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
 series_save#:#Speichern
-series_saved#:#Channel-Informationen gespeichert
+series_saved#:#Serien-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
-series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Clips hochladen können
+series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen können
 series_streaming_only#:#Nur Streaming
 series_title#:#Titel
 series_update#:#Aktualisieren
@@ -175,15 +176,15 @@ tab_event_index#:#Inhalt
 tab_export#:#Import/Export
 tab_groups#:#Gruppen
 tab_info#:#Info
-tab_list_all#:#Alle Clips
+tab_list_all#:#Alle Aufzeichnungen
 tab_migrate_event#:#Event importieren
 tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
-upload_token_channel_id#:#Series-ID
+upload_token_channel_id#:#Serien-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
-xoct_new#:#Neue Serie anlegen
+xoct_new#:#OpenCast-Series erstellen
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
