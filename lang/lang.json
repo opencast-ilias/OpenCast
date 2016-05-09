@@ -284,7 +284,7 @@
             },
             "clear_cache": {
                 "translations": {
-                    "de": "Events neu laden",
+                    "de": "Aufzeichnungen neu laden",
                     "en": "Reload Events"
                 }
             },
@@ -331,7 +331,7 @@
             },
             "delete": {
                 "translations": {
-                    "de": "Aufzeichnung l\u00f6schen",
+                    "de": "Aufzeichung l\u00f6schen",
                     "en": "Delete Event"
                 },
                 "last_used": "03.05.2016"
@@ -391,7 +391,7 @@
             },
             "invite_others": {
                 "translations": {
-                    "de": "Aufzeichnung freigeben",
+                    "de": "Aufzeichnung teilen",
                     "en": "Share Event"
                 },
                 "last_used": "03.05.2016"
@@ -452,14 +452,14 @@
             },
             "presenter": {
                 "translations": {
-                    "de": "Presenter",
+                    "de": "Referent\/in",
                     "en": "Presenter"
                 },
                 "last_used": "03.05.2016"
             },
             "presenters": {
                 "translations": {
-                    "de": "Referenten",
+                    "de": "Referent\/in",
                     "en": "Presenters"
                 },
                 "last_used": "03.05.2016"
@@ -511,7 +511,7 @@
             },
             "state_running": {
                 "translations": {
-                    "de": "Wird konvertiert und ist f\u00fcr die Studierenden noch nicht sichtbar.",
+                    "de": "Wird konvertiert, f\u00fcr Studierende noch nicht sichtbar",
                     "en": "Converting, not yet visible to students"
                 },
                 "last_used": "26.04.2016"
@@ -519,7 +519,7 @@
             "state_offline": {
                 "translations": {
                     "de": "Offline, f\u00fcr Studierende nicht sichtbar",
-                    "en": "Offline"
+                    "en": "Offline, not visible to students"
                 },
                 "last_used": "26.04.2016"
             },
@@ -553,8 +553,8 @@
             },
             "online": {
                 "translations": {
-                    "de": "Online",
-                    "en": "Online"
+                    "de": "Aufzeichnung online",
+                    "en": "Event online"
                 },
                 "last_used": "26.04.2016"
             },
@@ -574,8 +574,8 @@
             },
             "upload_clear": {
                 "translations": {
-                    "de": "Entfernen",
-                    "en": "Remove"
+                    "de": "Zur\u00fccksetzen",
+                    "en": "Reset"
                 },
                 "last_used": "03.05.2016"
             },
@@ -599,6 +599,22 @@
                     "en": "Date"
                 },
                 "last_used": "26.04.2016"
+            },
+            "event_created_unix": {
+                "translations": {
+                    "en": "Date"
+                }
+            },
+            "event_event_created_unix": {
+                "translations": {
+                    "en": "Date"
+                }
+            },
+            "set_online": {
+                "translations": {
+                    "de": "Online schalten",
+                    "en": "Set online"
+                }
             }
         },
         "groups": {
@@ -932,7 +948,7 @@
             },
             "channel_type": {
                 "translations": {
-                    "de": "Serien-Typ",
+                    "de": "Serie-Typ",
                     "en": "Series-Type"
                 },
                 "last_used": "26.04.2016"
@@ -986,20 +1002,20 @@
             },
             "est_video_length_info": {
                 "translations": {
-                    "de": "Wie Viele Stunden Video erwarten Sie f\u00fcr dieser Serie?",
+                    "de": "Wie Viele Stunden Video erwarten Sie f\u00fcr diese Serie?",
                     "en": "How many video material (in hours) do you intend to publish in this Series?"
                 }
             },
             "existing_channel_no": {
                 "translations": {
-                    "de": "Neue Serieanlegen",
+                    "de": "Neue Serie anlegen",
                     "en": "Create new Series"
                 },
                 "last_used": "26.04.2016"
             },
             "existing_channel_yes": {
                 "translations": {
-                    "de": "Bestehende Seriew\u00e4hlen",
+                    "de": "Bestehende Serie w\u00e4hlen",
                     "en": "Choose existing Series"
                 },
                 "last_used": "26.04.2016"
@@ -1039,7 +1055,7 @@
             },
             "metadata": {
                 "translations": {
-                    "de": "Serien-Infos",
+                    "de": "Serie-Infos",
                     "en": "Series-Infos"
                 }
             },
@@ -1060,21 +1076,21 @@
             "permission_allow_set_own_info": {
                 "translations": {
                     "de": "Aufzeichnungs-Besitzer k\u00f6nnen Leserechte auf ihre Aufzeichnungen erteilen",
-                    "en": "users can share their Events (read-only)"
+                    "en": "Owners can share their Events (read-only)"
                 },
                 "last_used": "03.05.2016"
             },
             "permission_per_clip": {
                 "translations": {
                     "de": "Rechte pro Aufzeichnung setzen",
-                    "en": "Set permissions for a Event"
+                    "en": "Set permissions for an Event"
                 },
                 "last_used": "03.05.2016"
             },
             "permission_per_clip_info": {
                 "translations": {
                     "de": "Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer s\u00e4mtliche Aufzeichnungen der gew\u00e4hlten Serie sehen d\u00fcrfen.",
-                    "en": "This setting enables an individual rights management based on Events ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this Series."
+                    "en": "This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series."
                 },
                 "last_used": "03.05.2016"
             },
@@ -1086,7 +1102,7 @@
             },
             "saved": {
                 "translations": {
-                    "de": "Serien-Informationen gespeichert",
+                    "de": "Serie-Informationen gespeichert",
                     "en": "Series-Information saved"
                 },
                 "last_used": "26.04.2016"
@@ -1132,6 +1148,12 @@
                     "en": "Activate Annotations"
                 },
                 "last_used": "03.05.2016"
+            },
+            "has_duplicates": {
+                "translations": {
+                    "de": "Diese Serie hat mehrere Verlinkungen in ILIAS. \u00c4nderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.",
+                    "en": "This Series has several links in ILIAS. Changes affect all links."
+                }
             }
         },
         "system": {
@@ -1282,7 +1304,7 @@
         "upload": {
             "token_channel_id": {
                 "translations": {
-                    "de": "Serien-ID",
+                    "de": "Series-ID",
                     "en": "Series-ID"
                 },
                 "last_used": "03.05.2016"
@@ -1306,7 +1328,7 @@
             "new": {
                 "translations": {
                     "de": "OpenCast-Series erstellen",
-                    "en": "Add new Series"
+                    "en": "Create openCast-Series"
                 },
                 "last_used": "26.04.2016"
             }
@@ -1315,7 +1337,7 @@
             "msg_select": {
                 "translations": {
                     "de": "Bitte w\u00e4hlen Sie zuerst eine Videodatei aus",
-                    "en": "Please select first a Videofile"
+                    "en": "Please select fist a Videofile"
                 },
                 "last_used": "03.05.2016"
             }
