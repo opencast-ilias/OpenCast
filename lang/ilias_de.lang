@@ -1,4 +1,3 @@
-<!-- language file start -->
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
@@ -10,29 +9,29 @@ config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
 config_eula#:#Nutzungsvereinbarung
-config_license_info#:#Lizenz-Informationen
 config_licenses#:#Lizenzen
 config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
+config_license_info#:#Lizenz-Informationen
 config_log_level_0#:#Deaktiviert
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Gespeichert
+config_roles#:#OpenCast-Rollen
 config_role_anonymous#:#Anonym
-config_role_ext_application#:#External Application
 config_role_external_application_member#:#External Application Member
+config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Mitglied
 config_role_ivt_email_prefix#:#Präfix für IVT-Benutzer-Rolle (E-Mail wird ergänzt)
 config_role_ivt_external_prefix#:#Präfix für IVT-Benutzer-Rolle (Ext-Account wird ergänzt)
 config_role_organisation_prefix#:#Präfix für Organisations-Rolle (Domain des Mapping wird angehängt)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Präfix für Benutzer-Rolle (Mapping wird angehängt)
-config_roles#:#OpenCast-Rollen
 config_update#:#Aktualisieren
 config_upload_token#:#Aktiviere Upload-Token
-config_use_modals#:#Player in Modal öffnen
 config_user_mapping#:#User-Mapping
+config_use_modals#:#Player in Modal öffnen
 config_workflow#:#Workflow-ID
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
@@ -60,8 +59,6 @@ event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
-event_online#:#Aufzeichnung online
-event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_player#:#Abspielen
@@ -70,28 +67,24 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
-event_set_offline#:#Offline schalten
-event_set_online#:#Online schalten
 event_start_time#:#Start
 event_state_failed#:#fehlgeschlagen
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
-event_state_offline#:#Offline, für Studierende nicht sichtbar
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
-event_supported_filetypes#:#Unterstützte Dateitypen
+event_state_offline#:#Offline, für Studierende nicht sichtbar
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
-event_upload_clear#:#Zurücksetzen
-event_upload_select#:#Datei auswählen
 event_view#:#Anzeigen
-form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
-group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
-group_alert_no_title#:#Kein Gruppenname angegeben
-group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
-group_none_available#:#Keine verfügbar
-group_none_available_all#:#Keine verfügbar
-group_select_group#:#Gruppe auswählen
+event_online#:#Aufzeichnung online
+event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet
+event_upload_select#:#Datei auswählen
+event_upload_clear#:#Zurücksetzen
+event_supported_filetypes#:#Unterstützte Dateitypen
+event_set_offline#:#Offline schalten
+event_created_unix#:#Datum
+event_set_online#:#Online schalten
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
@@ -100,6 +93,12 @@ groups_new_placeholder#:#Name der neuen Gruppe
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#Vor- oder Nachname
 groups_participants_header#:#Teilnehmer
+group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
+group_alert_no_title#:#Kein Gruppenname angegeben
+group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
+group_none_available#:#Keine verfügbar
+group_none_available_all#:#Keine verfügbar
+group_select_group#:#Gruppe auswählen
 invitations_back#:#Zurück
 invitations_header#:#Aufzeichnung freigeben
 invitations_none_available#:#Keine verfügbar
@@ -146,7 +145,6 @@ series_est_video_length_info#:#Wie Viele Stunden Video erwarten Sie für diese S
 series_existing_channel_no#:#Neue Serie anlegen
 series_existing_channel_yes#:#Bestehende Serie wählen
 series_existing_identifier#:#Bestehende Serie
-series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS. Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
 series_intended_lifetime#:#Lebensdauer
 series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert bleiben
 series_introduction_text#:#Arbeitsanweisung
@@ -165,6 +163,7 @@ series_streaming_only#:#Nur Streaming
 series_title#:#Titel
 series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren
+series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS. Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
 system_account_create#:#Erstellen
@@ -185,7 +184,9 @@ tab_publication_usage#:#Publikationen
 tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
+tab_back#:#Zurück
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#OpenCast-Series erstellen
+form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
