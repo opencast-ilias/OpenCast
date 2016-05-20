@@ -1097,7 +1097,10 @@ class xoctEvent extends xoctObject {
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
-		if (!$input || !$input instanceof DateTime) {
+		if ($input instanceof DateTime) {
+			$input = $input->format(DATE_ATOM);
+		}
+		if (!$input) {
 			$input = 'now';
 		}
 
