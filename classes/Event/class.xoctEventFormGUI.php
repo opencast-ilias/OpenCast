@@ -132,10 +132,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$cb->setChecked(true);
 			$this->addItem($cb);
 		} else {
-			$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
-			$cb->setChecked(true);
-			$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
-			$this->addItem($cb);
+			//			$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
+			//			$cb->setChecked(true);
+			//			$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
+			//			$this->addItem($cb);
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
