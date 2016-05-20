@@ -112,19 +112,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'mpeg',
 				'avi',
 			));
-//			$te->setMimeTypes(array(
-//				'video/avi',
-//				'video/quicktime',
-//				'video/mpeg',
-//				'video/mp4',
-//				'video/ogg',
-//				'video/webm',
-//				'video/x-ms-wmv',
-//				'video/x-flv',
-//				'video/x-matroska',
-//				'video/x-msvideo',
-//				'video/x-dv',
-//			));
+			//			$te->setMimeTypes(array(
+			//				'video/avi',
+			//				'video/quicktime',
+			//				'video/mpeg',
+			//				'video/mp4',
+			//				'video/ogg',
+			//				'video/webm',
+			//				'video/x-ms-wmv',
+			//				'video/x-flv',
+			//				'video/x-matroska',
+			//				'video/x-msvideo',
+			//				'video/x-dv',
+			//			));
 			$te->setRequired(true);
 			$this->addItem($te);
 
@@ -151,12 +151,17 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		$date->setShowTime(true);
 		$date->setShowSeconds(false);
+
 		$this->addItem($date);
 	}
 
 
 	public function fillForm() {
 		$createdDateTime = $this->object->getCreated();
+		if (!$this->is_new) {
+			$createdDateTime->add(new DateInterval('PT7200S'));
+		} // OpenCast FIX
+
 		$created = array(
 			'date' => $createdDateTime->format('Y-m-d'),
 			'time' => $createdDateTime->format('H:i:s'),
@@ -203,10 +208,15 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
 
 		/**
-		 * @var $created ilDateTime
+		 * @var $created            ilDateTime
+		 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
 		 */
-		$created = $this->getItemByPostVar(self::F_CREATED)->getDate();
-		$this->object->setCreated(new DateTime($created->get(IL_CAL_ISO_8601)));
+		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_CREATED);
+		$created = $ilDateTimeInputGUI->getDate();
+		$default_datetime = $this->object->getDefaultDateTimeObject($created->get(IL_CAL_ISO_8601));
+		$default_datetime->sub(new DateInterval('PT7200S'));
+
+		$this->object->setCreated($default_datetime);
 
 		return true;
 	}
@@ -263,6 +273,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
 			case  !$this->is_new AND !$this->view:
+				if (ilObjOpenCast::DEV) {
+					$this->addCommandButton('saveAndStay', 'Save and Stay');
+				}
 				$this->setTitle($this->txt('edit'));
 				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));

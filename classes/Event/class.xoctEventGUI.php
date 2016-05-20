@@ -27,7 +27,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+	public function __construct(xoctOpenCast $xoctOpenCast = null) {
 		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
@@ -162,6 +162,29 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+	protected function saveAndStay() {
+		global $ilUser;
+		/**
+		 * @var xoctEvent $xoctEvent
+		 */
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
+
+		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventFormGUI->setValuesByPost();
+
+		if ($xoctEventFormGUI->saveObject()) {
+			ilUtil::sendSuccess($this->txt('msg_success'), true);
+			$this->ctrl->redirect($this, self::CMD_EDIT);
+		}
+		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
+
+
 	protected function update() {
 		global $ilUser;
 		/**
@@ -196,7 +219,7 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = xoctEvent::getFiltered($filter, null, null);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -226,7 +249,7 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = xoctEvent::getFiltered($filter, null, null);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation

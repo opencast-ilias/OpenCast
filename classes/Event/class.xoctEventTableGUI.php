@@ -176,7 +176,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		if ($this->isColumsSelected('event_date')) {
 			$this->tpl->setCurrentBlock('event_date');
-			$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
+			$this->tpl->setVariable('DATE', $xE->getCreated()->add(new DateInterval('PT7200S'))->format('d.m.Y - H:i:s'));
 			$this->tpl->parseCurrentBlock();
 		}
 

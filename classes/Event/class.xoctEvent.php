@@ -22,6 +22,7 @@ class xoctEvent extends xoctObject {
 	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const PRESENTER_SEP = ';';
+	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	/**
 	 * @var array
 	 */
@@ -159,13 +160,16 @@ class xoctEvent extends xoctObject {
 
 
 	public function read() {
+		if ($this->read) {
+			return;
+		}
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
-		$created = new DateTime($data->created);
-		$this->setCreated($created->add(new DateInterval('PT7200S'))); // OpenCast FIX
-		//		$this->setCreated($created);
-		$this->setStartTime(new DateTime($data->start_time));
+
+		$this->setCreated($this->getDefaultDateTimeObject($data->created));
+		$this->setStartTime($this->getDefaultDateTimeObject($data->start_time));
+
 		$this->loadPublications();
 		if ($this->getIdentifier()) {
 			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
@@ -175,6 +179,7 @@ class xoctEvent extends xoctObject {
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
 		$this->initAdditions();
+		$this->read = true;
 	}
 
 
@@ -253,9 +258,12 @@ class xoctEvent extends xoctObject {
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
 
-		$created = new DateTime(); // OpenCast FIX
-		$this->setCreated($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
-		$this->setStartTime($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
+		$created = $this->getCreated();
+		if (!$created instanceof DateTime) {
+			$created = $this->getDefaultDateTimeObject();
+		}
+		$this->setCreated($created);
+		$this->setStartTime($created);
 		$this->updateMetadataFromFields();
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
@@ -272,9 +280,6 @@ class xoctEvent extends xoctObject {
 
 
 	public function update() {
-		$created = $this->getCreated() instanceof DateTime ? $this->getCreated() : new DateTime(); // OpenCast FIX
-		$this->setCreated($created->sub(new DateInterval('PT7200S'))); // OpenCast FIX
-
 		// Metadata
 		$this->updateMetadataFromFields();
 		$this->getMetadata()->removeField('identifier');
@@ -733,7 +738,7 @@ class xoctEvent extends xoctObject {
 	 * @return DateTime
 	 */
 	public function getCreated() {
-		return $this->created ? $this->created : new DateTime();
+		return $this->created ? $this->created : $this->getDefaultDateTimeObject();
 	}
 
 
@@ -1084,6 +1089,18 @@ class xoctEvent extends xoctObject {
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
+	}
+
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getDefaultDateTimeObject($input = null) {
+		if (!$input) {
+			$input = 'now';
+		}
+
+		return new DateTime($input, new DateTimeZone(self::TZ_EUROPE_ZURICH));
 	}
 
 
