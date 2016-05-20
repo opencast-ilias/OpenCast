@@ -939,14 +939,14 @@
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "channel_id": {
                 "translations": {
                     "de": "Series ID",
                     "en": "Series ID"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "channel_type": {
                 "translations": {
@@ -967,21 +967,21 @@
                     "de": "Department",
                     "en": "Department"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "department_info": {
                 "translations": {
                     "de": "Name Ihrer Institution",
                     "en": "How is the name of your department?"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "description": {
                 "translations": {
                     "de": "Beschreibung",
                     "en": "Description"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "discipline": {
                 "translations": {
@@ -994,7 +994,7 @@
                     "de": "Serie bearbeiten",
                     "en": "Edit Series"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "est_video_length": {
                 "translations": {
@@ -1046,14 +1046,14 @@
                     "de": "Arbeitsanweisung",
                     "en": "Work instruction"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "license": {
                 "translations": {
                     "de": "Lizenz",
                     "en": "License"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "metadata": {
                 "translations": {
@@ -1066,35 +1066,35 @@
                     "de": "Online",
                     "en": "Online"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "permission_allow_set_own": {
                 "translations": {
                     "de": "Leserechte erteilen",
                     "en": "Share Event"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "permission_allow_set_own_info": {
                 "translations": {
                     "de": "Aufzeichnungs-Besitzer k\u00f6nnen Leserechte auf ihre Aufzeichnungen erteilen",
                     "en": "Owners can share their Events (read-only)"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "permission_per_clip": {
                 "translations": {
                     "de": "Rechte pro Aufzeichnung setzen",
                     "en": "Set permissions for an Event"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "permission_per_clip_info": {
                 "translations": {
                     "de": "Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer s\u00e4mtliche Aufzeichnungen der gew\u00e4hlten Serie sehen d\u00fcrfen.",
                     "en": "This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series."
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "save": {
                 "translations": {
@@ -1107,49 +1107,49 @@
                     "de": "Serie-Informationen gespeichert",
                     "en": "Series-Information saved"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "show_upload_token": {
                 "translations": {
                     "de": "Upload-Token anzeigen",
                     "en": "Show Upload-Token"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "show_upload_token_info": {
                 "translations": {
                     "de": "Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen k\u00f6nnen",
                     "en": "Displays a code which students can use to upload own Events"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "streaming_only": {
                 "translations": {
                     "de": "Nur Streaming",
                     "en": "Streaming only"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "title": {
                 "translations": {
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "update": {
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "use_annotations": {
                 "translations": {
                     "de": "Annotationen aktivieren",
                     "en": "Activate Annotations"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "has_duplicates": {
                 "translations": {
