@@ -32,7 +32,9 @@ class xoctUploadFile {
 	public function getCurlString() {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 		$xoctPlupload = new xoctPlupload();
-		return '@' . $xoctPlupload->getTargetDir() . '/' . $this->getFilePath() . ';filename=' . $this->getTitle();
+		$str = '@' . $xoctPlupload->getTargetDir() . '/' . $this->getTitle() . ';filename=' . $this->getTitle();
+
+		return $str;
 	}
 
 

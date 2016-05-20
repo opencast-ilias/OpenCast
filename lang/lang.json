@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             }
         },
         "config": {
@@ -35,223 +35,224 @@
                     "de": "Cache aktivieren",
                     "en": "Activate Cache"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "api_base": {
                 "translations": {
                     "de": "API-Basis-URL",
                     "en": "Api-Base-URL"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "cancel": {
                 "translations": {
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "curl": {
                 "translations": {
                     "de": "cURL",
                     "en": "cURL"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "curl_debug_level": {
                 "translations": {
                     "de": "Debug-Level",
                     "en": "Debug-Level"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "curl_password": {
                 "translations": {
                     "de": "API-Passwort",
                     "en": "API-Password"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "curl_username": {
                 "translations": {
                     "de": "API-Benutzername",
                     "en": "API-Username"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "eula": {
                 "translations": {
                     "de": "Nutzungsvereinbarung",
                     "en": "EULA"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "licenses": {
                 "translations": {
                     "de": "Lizenzen",
                     "en": "Licenses"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "licenses_info": {
                 "translations": {
                     "de": "Neue Eintr\u00e4ge auf neuer Zeile in der Form URL#Name hinzuf\u00fcgen",
                     "en": "Add new lines with URL#Name"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "license_info": {
                 "translations": {
                     "de": "Lizenz-Informationen",
                     "en": "License-Info"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "log_level_0": {
                 "translations": {
                     "de": "Deaktiviert",
                     "en": "Deactivated"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "log_level_1": {
                 "translations": {
                     "de": "LOW",
                     "en": "LOW"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "log_level_2": {
                 "translations": {
                     "de": "MEDIUM",
                     "en": "MEDIUM"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "log_level_3": {
                 "translations": {
                     "de": "HIGH",
                     "en": "HIGH"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "log_level_4": {
                 "translations": {
                     "de": "ULTRA",
                     "en": "ULTRA"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "msg_success": {
                 "translations": {
                     "de": "Gespeichert",
                     "en": "Saved"
-                }
+                },
+                "last_used": "20.05.2016"
             },
             "roles": {
                 "translations": {
                     "de": "OpenCast-Rollen",
                     "en": "OpenCast-Roles"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_anonymous": {
                 "translations": {
                     "de": "Anonym",
                     "en": "Anonymous"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_external_application_member": {
                 "translations": {
                     "de": "External Application Member",
                     "en": "External Application Member"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_ext_application": {
                 "translations": {
                     "de": "External Application",
                     "en": "External Application"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_federation_member": {
                 "translations": {
                     "de": "Federation-Mitglied",
                     "en": "Federation-Member"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_ivt_email_prefix": {
                 "translations": {
                     "de": "Pr\u00e4fix f\u00fcr IVT-Benutzer-Rolle (E-Mail wird erg\u00e4nzt)",
                     "en": "Prefix for IVT-User-role (E-Mail is attached)"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_ivt_external_prefix": {
                 "translations": {
                     "de": "Pr\u00e4fix f\u00fcr IVT-Benutzer-Rolle (Ext-Account wird erg\u00e4nzt)",
                     "en": "Prefix for IVT-User-role (Ext-Account is attached)"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_organisation_prefix": {
                 "translations": {
                     "de": "Pr\u00e4fix f\u00fcr Organisations-Rolle (Domain des Mapping wird angeh\u00e4ngt)",
                     "en": "Prefix for Organization-Roles (Domain of Mapping is attached)"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_producer": {
                 "translations": {
                     "de": "Producer",
                     "en": "Producer"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "role_user_prefix": {
                 "translations": {
                     "de": "Pr\u00e4fix f\u00fcr Benutzer-Rolle (Mapping wird angeh\u00e4ngt)",
                     "en": "Prefix for User-Roles (Mapping is attached)"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "update": {
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "upload_token": {
                 "translations": {
                     "de": "Aktiviere Upload-Token",
                     "en": "Activate Upload-Token"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "user_mapping": {
                 "translations": {
                     "de": "User-Mapping",
                     "en": "User-Mapping"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "use_modals": {
                 "translations": {
                     "de": "Player in Modal \u00f6ffnen",
                     "en": "Open Player in Modal"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "workflow": {
                 "translations": {
                     "de": "Workflow-ID",
                     "en": "Workflow-ID"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             }
         },
         "event": {
@@ -273,14 +274,14 @@
                     "de": "Automatisch publizieren",
                     "en": "Auto publish"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "cancel": {
                 "translations": {
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "clear_cache": {
                 "translations": {
@@ -293,21 +294,21 @@
                     "de": "Aufzeichnungen",
                     "en": "Events"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "create": {
                 "translations": {
                     "de": "Aufzeichnung hochladen",
                     "en": "Upload Event"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "created": {
                 "translations": {
                     "de": "Erstellt",
                     "en": "Created"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "creator": {
                 "translations": {
@@ -320,21 +321,21 @@
                     "de": "Aufzeichnung schneiden",
                     "en": "Cut Event"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "date": {
                 "translations": {
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Aufzeichung l\u00f6schen",
                     "en": "Delete Event"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "delete_confirm": {
                 "translations": {
@@ -347,13 +348,14 @@
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "download": {
                 "translations": {
                     "de": "Download",
                     "en": "Download"
-                }
+                },
+                "last_used": "20.05.2016"
             },
             "duration": {
                 "translations": {
@@ -366,7 +368,7 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "edit_owner": {
                 "translations": {
@@ -380,7 +382,7 @@
                     "de": "Datei",
                     "en": "File"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "identifier": {
                 "translations": {
@@ -401,14 +403,14 @@
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "msg_created": {
                 "translations": {
                     "de": "Upload abgeschlossen",
                     "en": "Upload finished"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "msg_deleted": {
                 "translations": {
@@ -434,7 +436,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "owner_select": {
                 "translations": {
@@ -448,28 +450,28 @@
                     "de": "Abspielen",
                     "en": "Play"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Referent\/in",
                     "en": "Presenter"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "presenters": {
                 "translations": {
                     "de": "Referent\/in",
                     "en": "Presenters"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "preview": {
                 "translations": {
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "processing_state": {
                 "translations": {
@@ -514,7 +516,7 @@
                     "de": "Wird konvertiert, f\u00fcr Studierende noch nicht sichtbar",
                     "en": "Converting, not yet visible to students"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "state_offline": {
                 "translations": {
@@ -528,7 +530,7 @@
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "update": {
                 "translations": {
@@ -570,28 +572,28 @@
                     "de": "Datei ausw\u00e4hlen",
                     "en": "Select file"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "upload_clear": {
                 "translations": {
                     "de": "Zur\u00fccksetzen",
                     "en": "Reset"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "supported_filetypes": {
                 "translations": {
                     "de": "Unterst\u00fctzte Dateitypen",
                     "en": "Supported Filetypes"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
             },
             "set_offline": {
                 "translations": {
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "created_unix": {
                 "translations": {
@@ -1228,14 +1230,14 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "export": {
                 "translations": {
                     "de": "Import\/Export",
                     "en": "Import\/Export"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "groups": {
                 "translations": {
@@ -1249,7 +1251,7 @@
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "list_all": {
                 "translations": {
@@ -1270,28 +1272,28 @@
                     "de": "Publikationen",
                     "en": "Publications"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "series_settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "09.05.2016"
+                "last_used": "20.05.2016"
             },
             "settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "system_accounts": {
                 "translations": {
                     "de": "System-Accounts",
                     "en": "System-Accounts"
                 },
-                "last_used": "26.04.2016"
+                "last_used": "20.05.2016"
             },
             "back": {
                 "translations": {
@@ -1339,7 +1341,14 @@
                     "de": "Bitte w\u00e4hlen Sie zuerst eine Videodatei aus",
                     "en": "Please select fist a Videofile"
                 },
-                "last_used": "03.05.2016"
+                "last_used": "20.05.2016"
+            },
+            "msg_not_supported": {
+                "translations": {
+                    "de": "Dateityp wird nicht unterst\u00fctzt",
+                    "en": "Filetype is not supported"
+                },
+                "last_used": "20.05.2016"
             }
         }
     }

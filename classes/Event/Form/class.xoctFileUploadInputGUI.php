@@ -19,7 +19,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	/**
 	 * @var string
 	 */
-	protected $chunk_size = '1M';
+	protected $chunk_size = '2M';
 	/**
 	 * @var bool
 	 */
@@ -89,16 +89,19 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$settings = new stdClass();
 		$settings->lng = new stdClass();
 		$settings->lng->msg_select = $pl->txt('form_msg_select');
+		$settings->lng->msg_not_supported = $pl->txt('form_msg_not_supported');
 		$settings->log = $this->isLog();
 		$settings->cmd = $this->getCmd();
 		$settings->form_id = $this->getFormId();
 		$settings->url = $this->getUrl();
 		$settings->runtimes = 'html5,html4';
 		$settings->pick_button = 'xoct_pickfiles';
-		$settings->chunk_size = '10mb';
+		$settings->chunk_size = $this->getChunkSize();
 		$settings->max_file_size = '10000mb';
 		$settings->supported_suffixes = implode(',', $this->getSuffixes());
+		$settings->supported_suffixes_array = $this->getSuffixes();
 		$settings->mime_types = implode(',', $this->getMimeTypes());
+		$settings->mime_types_array = $this->getMimeTypes();
 
 		$tpl->addOnLoadCode('xoctFileuploaderSettings.initFromJSON(\'' . json_encode($settings) . '\');');
 	}

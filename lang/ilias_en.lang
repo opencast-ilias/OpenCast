@@ -192,3 +192,4 @@ upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Create openCast-Series
 form_msg_select#:#Please select fist a Videofile
+form_msg_not_supported#:#Filetype is not supported

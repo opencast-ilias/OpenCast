@@ -738,7 +738,7 @@ class xoctEvent extends xoctObject {
 	 * @return DateTime
 	 */
 	public function getCreated() {
-		return $this->created ? $this->created : $this->getDefaultDateTimeObject();
+		return ($this->created instanceof DateTime) ? $this->created : $this->getDefaultDateTimeObject($this->created);
 	}
 
 
@@ -1093,10 +1093,11 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @param null $input
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
-		if (!$input) {
+		if (!$input || !$input instanceof DateTime) {
 			$input = 'now';
 		}
 
