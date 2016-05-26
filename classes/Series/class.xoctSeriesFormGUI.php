@@ -127,6 +127,26 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_INTRODUCTION_TEXT), self::F_INTRODUCTION_TEXT);
+		$te->setUseRte(true);
+		$te->setRteTags(array( 'p', 'a', 'br', 'b', 'i', 'strong', 'emp', 'imp', 'em', 'span', 'u', 'sub', 'sup' ));
+		$te->usePurifier(false);
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
+
 		$te->setRows(5);
 		$this->addItem($te);
 
@@ -138,7 +158,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$license = new ilSelectInputGUI($this->txt(self::F_LICENSE), self::F_LICENSE);
 		$options = array(
-			NULL => 'As defined in content',
+			null => 'As defined in content',
 		);
 		$licenses = xoctConf::get(xoctConf::F_LICENSES);
 		$license_info = xoctConf::get(xoctConf::F_LICENSE_INFO);
@@ -172,7 +192,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$permission_per_clip->addSubItem($set_own_rights);
 
 		$this->addItem($permission_per_clip);
-		xoctOpenCast::updateDB();
+
 		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN)) {
 			$show_upload_token = new ilCheckboxInputGUI($this->txt(self::F_SHOW_UPLOAD_TOKEN), self::F_SHOW_UPLOAD_TOKEN);
 			$show_upload_token->setInfo($this->infoTxt(self::F_SHOW_UPLOAD_TOKEN));
@@ -195,16 +215,17 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 	public function fillFormRandomized() {
 		$array = array(
-			self::F_CHANNEL_TYPE => self::EXISTING_NO,
-			self::F_TITLE => 'New Channel ' . date(DATE_ATOM),
-			self::F_DESCRIPTION => 'This is a description',
-			self::F_INTRODUCTION_TEXT => 'We don\'t need no intro text',
-			self::F_LICENSE => $this->series->getLicense(),
-			self::F_USE_ANNOTATIONS => true,
-			self::F_STREAMING_ONLY => true,
-			self::F_PERMISSION_PER_CLIP => true,
+			self::F_CHANNEL_TYPE             => self::EXISTING_NO,
+			self::F_TITLE                    => 'New Channel ' . date(DATE_ATOM),
+			self::F_DESCRIPTION              => 'This is a description',
+			self::F_INTRODUCTION_TEXT        => 'We don\'t need no intro text',
+			self::F_LICENSE                  => $this->series->getLicense(),
+			self::F_USE_ANNOTATIONS          => true,
+			self::F_STREAMING_ONLY           => true,
+			self::F_PERMISSION_PER_CLIP      => true,
 			self::F_PERMISSION_ALLOW_SET_OWN => true,
-			self::F_SHOW_UPLOAD_TOKEN => true,
+			self::F_SHOW_UPLOAD_TOKEN        => true,
+			self::F_ACCEPT_EULA              => true,
 		);
 
 		$this->setValuesByArray($array);
@@ -213,18 +234,18 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 	public function fillForm() {
 		$array = array(
-			self::F_CHANNEL_TYPE => self::EXISTING_NO,
-			self::F_TITLE => $this->series->getTitle(),
-			self::F_DESCRIPTION => $this->series->getDescription(),
-			self::F_INTRODUCTION_TEXT => $this->cast->getIntroText(),
-			self::F_LICENSE => $this->series->getLicense(),
-			self::F_USE_ANNOTATIONS => $this->cast->getUseAnnotations(),
-			self::F_STREAMING_ONLY => $this->cast->getStreamingOnly(),
-			self::F_PERMISSION_PER_CLIP => $this->cast->getPermissionPerClip(),
+			self::F_CHANNEL_TYPE             => self::EXISTING_NO,
+			self::F_TITLE                    => $this->series->getTitle(),
+			self::F_DESCRIPTION              => $this->series->getDescription(),
+			self::F_INTRODUCTION_TEXT        => $this->cast->getIntroText(),
+			self::F_LICENSE                  => $this->series->getLicense(),
+			self::F_USE_ANNOTATIONS          => $this->cast->getUseAnnotations(),
+			self::F_STREAMING_ONLY           => $this->cast->getStreamingOnly(),
+			self::F_PERMISSION_PER_CLIP      => $this->cast->getPermissionPerClip(),
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
-			self::F_OBJ_ONLINE => $this->cast->isObjOnline(),
-			self::F_CHANNEL_ID => $this->cast->getSeriesIdentifier(),
-			self::F_SHOW_UPLOAD_TOKEN => $this->cast->isShowUploadToken(),
+			self::F_OBJ_ONLINE               => $this->cast->isObjOnline(),
+			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
+			self::F_SHOW_UPLOAD_TOKEN        => $this->cast->isShowUploadToken(),
 		);
 
 		$this->setValuesByArray($array);
@@ -289,7 +310,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @return bool|string
 	 */
-	public function saveObject($obj_id = NULL) {
+	public function saveObject($obj_id = null) {
 		if (!$this->fillObject()) {
 			return false;
 		}
@@ -328,10 +349,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * Workaround for returning an object of class ilPropertyFormGUI instead of this subclass
-	 * this is used, until bug (http://ilias.de/mantis/view.php?id=13168) is fixed
-	 *
-	 * @return ilPropertyFormGUI This object but as an ilPropertyFormGUI instead of a xdglRequestFormGUI
+	 * @return xoctSeriesFormGUI
 	 */
 	public function getAsPropertyFormGui() {
 		$ilPropertyFormGUI = $this;
@@ -494,6 +512,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			 */
 			$field = $this->getItemByPostVar(self::F_ACCEPT_EULA);
 			$field->setAlert($this->txt('alert_eula'));
+
+			ilUtil::sendFailure($this->lng->txt("form_input_not_valid"));
 
 			return false;
 		}

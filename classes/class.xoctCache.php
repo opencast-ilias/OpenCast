@@ -49,7 +49,7 @@ class xoctCache extends ilGlobalCache {
 	 * @throws RuntimeException
 	 */
 	public function flush($complete = false) {
-		if (! $this->global_cache instanceof ilGlobalCacheService || ! $this->isActive()) {
+		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
 
@@ -64,7 +64,7 @@ class xoctCache extends ilGlobalCache {
 	 * @return bool
 	 */
 	public function delete($key) {
-		if (! $this->global_cache instanceof ilGlobalCacheService || ! $this->isActive()) {
+		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
 
@@ -104,7 +104,8 @@ class xoctCache extends ilGlobalCache {
 	 * @return bool
 	 */
 	public function set($key, $value, $ttl = NULL) {
-		if (! $this->global_cache instanceof ilGlobalCacheService || ! $this->isActive()) {
+//		$ttl = $ttl ? $ttl : 480;
+		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
 		$this->global_cache->setValid($key);
@@ -119,7 +120,7 @@ class xoctCache extends ilGlobalCache {
 	 * @return bool|mixed|null
 	 */
 	public function get($key) {
-		if (! $this->global_cache instanceof ilGlobalCacheService || ! $this->isActive()) {
+		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
 		$unserialized_return = $this->global_cache->unserialize($this->global_cache->get($key));

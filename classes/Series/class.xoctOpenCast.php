@@ -1,6 +1,7 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 require_once('class.xoctSeries.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctDataMapper.php');
 
 /**
  * Class xoctOpenCast
@@ -65,7 +66,22 @@ class xoctOpenCast extends ActiveRecord {
 			$this->update();
 		} else {
 			parent::create();
+			xoctDataMapper::xoctOpenCastupdated($this);
 		}
+	}
+
+
+	public function update() {
+		parent::update();
+		xoctDataMapper::xoctOpenCastupdated($this);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasDuplicatesOnSystem() {
+		return (self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->count() > 1);
 	}
 
 

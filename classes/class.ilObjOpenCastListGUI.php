@@ -96,6 +96,68 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	/**
+	 * @param bool $get_exceoptions
+	 * @return xoctSeries
+	 * @throws Exception
+	 */
+	protected function getSeries($get_exceoptions = false) {
+		$xoctSeries = new xoctSeries();
+		try {
+			$xoctOpenCast = $this->getOpenCast($get_exceoptions);
+			if ($xoctOpenCast instanceof xoctOpenCast) {
+				$xoctSeries = $xoctOpenCast->getSeries();
+			}
+		} catch (xoctException $e) {
+			if ($get_exceoptions) {
+				throw $e;
+			}
+		}
+
+		return $xoctSeries;
+	}
+
+
+	/**
+	 * @param bool $get_exceoptions
+	 * @return ActiveRecord|xoctOpenCast
+	 * @throws xoctException
+	 */
+	protected function getOpenCast($get_exceoptions = false) {
+		$xoctOpenCast = new xoctOpenCast();
+		try {
+			xoctConf::setApiSettings();
+			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		} catch (xoctException $e) {
+			if ($get_exceoptions) {
+				throw $e;
+			}
+		}
+
+		return $xoctOpenCast;
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	public function getTitle() {
+		$title = $this->getSeries()->getTitle();
+		return $title ? $title : parent::getTitle();
+	}
+
+
+	/**
+	 * @return string
+	 * @throws xoctException
+	 */
+	function getDescription() {
+		$description = $this->getSeries()->getDescription();
+		return $description ? $description : parent::getDescription();
+	}
+
+
+	/**
 	 * Get item properties
 	 *
 	 * @return    array        array of property arrays:
@@ -104,16 +166,16 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 *                        'value' (string) => property value
 	 */
 	public function getCustomProperties() {
-		xoctConf::setApiSettings();
 
-		$props = array();
+		$props = parent::getCustomProperties(array());
 		try {
-			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-			if (! $xoctOpenCast instanceof xoctOpenCast) {
+			$xoctOpenCast = $this->getOpenCast(true);
+			if (!$xoctOpenCast instanceof xoctOpenCast) {
 				return $props;
 			}
+			$xoctOpenCast->getSeries();
 
-			if (! $xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isObjOnline()) {
 				$props[] = array(
 					'alert' => true,
 					'newline' => true,
@@ -126,7 +188,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			$props[] = array(
 				'alert' => true,
 				'newline' => true,
-				'property' => 'Status',
+				'property' => 'API',
 				'value' => $e->getMessage(),
 				'propertyNameVisible' => false
 			);

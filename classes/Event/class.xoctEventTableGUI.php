@@ -19,7 +19,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class xoctEventTableGUI extends ilTable2GUI {
 
-	const TBL_ID = 'tbl_xoct_events';
+	const TBL_ID = 'tbl_xoct_';
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -28,13 +28,28 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @var array
 	 */
 	protected $filter = array();
+	/**
+	 * @var \xoctOpenCast
+	 */
+	protected $xoctOpenCast;
+	/**
+	 * @var \ilCtrl
+	 */
+	protected $ctrl;
+	/**
+	 * @var \xoctEventGUI
+	 */
+	protected $parent_obj;
 
 
 	/**
-	 * @param xoctEventGUI $a_parent_obj
+	 * xoctEventTableGUI constructor.
+	 *
+	 * @param \xoctEventGUI $a_parent_obj
 	 * @param string $a_parent_cmd
+	 * @param \xoctOpenCast $xoctOpenCast
 	 */
-	public function  __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
+	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast) {
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */
@@ -42,9 +57,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->setId(self::TBL_ID);
-		$this->setPrefix(self::TBL_ID);
-		$this->setFormName(self::TBL_ID);
+		$a_val = self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
+		$this->setPrefix($a_val);
+		$this->setFormName($a_val);
+		$this->setId($a_val);
 		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
@@ -54,10 +70,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->initFilters();
 		$this->setDefaultOrderField('title');
 		$this->setExportFormats(array( self::EXPORT_CSV ));
-		//		$this->setEnableNumInfo(true);
-		//		$this->setExternalSorting(true);
-		//		$this->setExternalSegmentation(true);
-		// Add new
 
 		$this->parseData();
 	}
@@ -68,6 +80,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @return bool
 	 */
 	public function isColumsSelected($column) {
+		if (!array_key_exists($column, $this->getSelectableColumns())) {
+			return true;
+		}
+
 		return in_array($column, $this->getSelectedColumns());
 	}
 
@@ -79,12 +95,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 		global $ilUser;
 		$xoctUser = xoctUser::getInstance($ilUser);
 		/**
-		 * @var $xE xoctEvent
+		 * @var $xE        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
 		$xE = xoctEvent::find($a_set['identifier']);
 
-		$this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
+		// $this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
 
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
@@ -134,10 +150,16 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ($this->isColumsSelected('event_title')) {
 			$this->tpl->setCurrentBlock('event_title');
 			$this->tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$xE->getProcessingState()]);
-			if (!$xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+
+			if ($xE->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 				$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState())));
 			}
 			$this->tpl->setVariable('TITLE', $xE->getTitle());
+			$this->tpl->parseCurrentBlock();
+		}
+		if ($this->isColumsSelected('event_description')) {
+			$this->tpl->setCurrentBlock('event_description');
+			$this->tpl->setVariable('DESCRIPTION', $xE->getDescription());
 			$this->tpl->parseCurrentBlock();
 		}
 		if ($this->isColumsSelected('event_presenter')) {
@@ -154,7 +176,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		if ($this->isColumsSelected('event_date')) {
 			$this->tpl->setCurrentBlock('event_date');
-			$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
+			$this->tpl->setVariable('DATE', $xE->getCreated()->add(new DateInterval('PT7200S'))->format('d.m.Y - H:i:s'));
 			$this->tpl->parseCurrentBlock();
 		}
 
@@ -170,8 +192,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 				if ($xE->isOwner($xoctUser)) {
 					$this->tpl->setCurrentBlock('invitations');
 					$in = xoctInvitation::where(array(
-						'owner_id' => $xoctUser->getIliasUserId(),
-						'event_identifier' => $xE->getIdentifier()
+						'owner_id'         => $xoctUser->getIliasUserId(),
+						'event_identifier' => $xE->getIdentifier(),
 					))->count();
 					if ($in > 0) {
 						$this->tpl->setVariable('INVITATIONS', $in);
@@ -190,43 +212,41 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function getAllColums() {
 		$columns = array(
-			'event_preview' => array(
+			'event_preview'     => array(
 				'selectable' => false,
 				'sort_field' => null,
-				'width' => '250px'
+				'width'      => '250px',
 			),
-
-			'event_clips' => array(
+			'event_clips'       => array(
 				'selectable' => false,
 				'sort_field' => null,
 			),
-
-			'event_title' => array(
+			'event_title'       => array(
 				'selectable' => true,
 				'sort_field' => 'title',
 			),
-
-			'event_presenter' => array(
+			'event_description' => array(
+				'selectable' => true,
+				'sort_field' => 'description',
+				'default'    => false,
+			),
+			'event_presenter'   => array(
 				'selectable' => true,
 				'sort_field' => 'presenter',
 			),
-
-			'event_location' => array(
+			'event_location'    => array(
 				'selectable' => true,
-				'sort_field' => 'location',
+				'sort_field' => 'event_location',
 			),
-
-			'event_date' => array(
+			'event_date'        => array(
 				'selectable' => true,
 				'sort_field' => 'created_unix',
 			),
-
-			'event_owner' => array(
+			'event_owner'       => array(
 				'selectable' => true,
 				'sort_field' => 'owner_username',
 			),
-
-			'common_actions' => array(
+			'common_actions'    => array(
 				'selectable' => false,
 			),
 		);
@@ -243,6 +263,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$selected_colums = $this->getSelectedColumns();
 
 		foreach ($this->getAllColums() as $text => $col) {
+			if (!$this->isColumsSelected($text)) {
+				continue;
+			}
 			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
 				$this->addColumn($this->pl->txt($text), $col['sort_field'], $col['width']);
 			}
@@ -254,43 +277,65 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param xoctEvent $xoctEvent
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
+		if (!in_array($xoctEvent->getProcessingState(), array(
+			xoctEvent::STATE_SUCCEEDED,
+			xoctEvent::STATE_NOT_PUBLISHED,
+			xoctEvent::STATE_OFFLINE,
+			//			xoctEvent::STATE_ENCODING,
+		))
+		) {
+			return;
+		}
 		global $ilUser;
 		/**
 		 * @var $xoctUser xoctUser
 		 */
 		$xoctUser = xoctUser::getInstance($ilUser);
 
-		$current_selection_list = new ilAdvancedSelectionListGUI();
-		$current_selection_list->setListTitle($this->pl->txt('common_actions'));
-		$current_selection_list->setId('event_actions_' . $xoctEvent->getIdentifier());
-		$current_selection_list->setUseImages(false);
+		$ac = new ilAdvancedSelectionListGUI();
+		$ac->setListTitle($this->pl->txt('common_actions'));
+		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
+		$ac->setUseImages(false);
 
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$this->ctrl->setParameterByClass('xoctInvitationGUI', xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 
 		if (ilObjOpenCast::DEV) {
-			$current_selection_list->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+			$ac->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
 		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
-			$current_selection_list->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
-			$cutting_link = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			}
+			$cutting_link = $xoctEvent->getCuttingLink();
 			if ($cutting_link) {
-				$current_selection_list->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
+				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
 			}
-			$current_selection_list->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
-			if ($this->xoctOpenCast->getPermissionPerClip()) {
-				$current_selection_list->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
+			}
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				if ($this->xoctOpenCast->getPermissionPerClip()) {
+					$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
+				}
+			}
+			// Online/offline
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+					$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
+				} else {
+					$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
+				}
+			}
+		}
+		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+			if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->isOwner($xoctUser)) {
+				$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 			}
 		}
 
-		if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->isOwner($xoctUser)) {
-			$current_selection_list->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
-		}
-
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED || $xoctEvent->getProcessingState() == xoctEvent::STATE_NOT_PUBLISHED) {
-			$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
-		}
+		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
 	}
 
 
@@ -298,6 +343,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		// TITLE
 		$te = new ilTextInputGUI($this->parent_obj->txt('title'), 'title');
 		$this->addAndReadFilterItem($te);
+		//
+		//		// DESCRIPTION
+		//		$te = new ilTextInputGUI($this->parent_obj->txt('description'), 'description');
+		//		$this->addAndReadFilterItem($te);
 
 		// PRESENTER
 		$te = new ilTextInputGUI($this->parent_obj->txt('presenter'), 'presenter');
@@ -312,42 +361,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->addAndReadFilterItem($te);
 
 		// DATE
-		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
-		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created');
-		$this->addAndReadFilterItem($date);
+		//		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
+		//		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created_unix');
+		//		$date->setStart(new ilDateTime(time() - 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
+		//		$date->setEnd(new ilDateTime(time() + 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
+		//		$this->addAndReadFilterItem($date);
 
-		//		// Status
-		//		$te = new ilMultiSelectInputGUI($this->pl->txt('filter_status'), 'status');
-		//		$te->setOptions(array(
-		//			xdglRequest::STATUS_NEW => $this->pl->txt('request_status_' . xdglRequest::STATUS_NEW),
-		//			xdglRequest::STATUS_IN_PROGRRESS => $this->pl->txt('request_status_' . xdglRequest::STATUS_IN_PROGRRESS),
-		//			xdglRequest::STATUS_REFUSED => $this->pl->txt('request_status_' . xdglRequest::STATUS_REFUSED),
-		//			xdglRequest::STATUS_RELEASED => $this->pl->txt('request_status_' . xdglRequest::STATUS_RELEASED),
-		//			xdglRequest::STATUS_RELEASED => $this->pl->txt('request_status_' . xdglRequest::STATUS_RELEASED),
-		//			xdglRequest::STATUS_COPY => $this->pl->txt('request_status_' . xdglRequest::STATUS_COPY),
-		//		));
-		//		$this->addAndReadFilterItem($te);
-		//
-		//		// Library
-		//		if (ilObjDigiLitAccess::showAllLibraries()) {
-		//			$te = new ilMultiSelectInputGUI($this->pl->txt('filter_library'), 'xdgl_library_id');
-		//			$te->setOptions(xdglLibrary::where(array( 'active' => true ))->getArray('id', 'title'));
-		//			$this->addAndReadFilterItem($te);
-		//		}
-		//		global $ilUser;
-		//		$te = new ilMultiSelectInputGUI($this->pl->txt('filter_librarian'), 'xdgl_librarian_id');
-		//		xdglLibrary::getLibraryIdsForUser($ilUser);
-		//		$lib_id = ilObjDigiLitAccess::showAllLibraries() ? NULL : xdglLibrary::getLibraryIdsForUser($ilUser);
-		//		$libs = xdglLibrarian::getAssignedLibrariansForLibrary($lib_id, $ilUser->getId(), ilObjDigiLitAccess::showAllLibraries());
-		//		$libs[xdglRequest::LIBRARIAN_ID_NONE] = $this->pl->txt('filter_none');
-		//		$libs[xdglRequest::LIBRARIAN_ID_MINE] = $this->pl->txt('filter_mine');
-		//		ksort($libs);
-		//		$te->setOptions($libs);
-		//		$this->addAndReadFilterItem($te);
-		//
-		//		// Ext_ID
-		//		$te = new ilTextInputGUI($this->pl->txt('request_ext_id'), 'ext_id');
-		//		$this->addAndReadFilterItem($te);
 	}
 
 
@@ -356,15 +375,15 @@ class xoctEventTableGUI extends ilTable2GUI {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
 		$user = '';
-		$xoctUser = xoctUser::getInstance($ilUser);
-		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-			$user = $xoctUser->getIVTRoleName();
-		}
+		//		$xoctUser = xoctUser::getInstance($ilUser);
+		//		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
+		//			$user = $xoctUser->getIVTRoleName();
+		//		}
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, $user, NULL, $this->getOffset(), $this->getLimit());
+		$a_data = xoctEvent::getFiltered($filter, null, $user ? array( $user ) : null, $this->getOffset(), $this->getLimit());
+
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
-
 		$this->setData($a_data);
 	}
 
@@ -374,26 +393,32 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function filterArray() {
 		return function ($array) {
+			$return = true;
 			foreach ($this->filter as $field => $value) {
 				switch ($field) {
-					case 'created':
+					case 'created_unix':
 						if (!$value['start'] || !$value['end']) {
 							continue;
 						}
 						$dateObject = new ilDateTime($array['created_unix'], IL_CAL_UNIX);
 						$within = ilDateTime::_within($dateObject, $value['start'], $value['end']);
-						return $within;
+						if (!$within) {
+							$return = false;
+						}
 						break;
 					default:
-						if (!$value) {
+						if ($value === null || $value === '' || $value === false) {
 							continue;
 						}
-						return (strpos($array[$field], $value) !== false);
+						$strpos = (strpos(strtolower($array[$field]), strtolower($value)) !== false);
+						if (!$strpos) {
+							$return = false;
+						}
 						break;
 				}
 			}
 
-			return true;
+			return $return;
 		};
 	}
 
@@ -408,6 +433,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
 				$xoctUser = xoctUser::getInstance($ilUser);
 				$xoctEvent = xoctEvent::find($array['identifier']);
+				if (!$xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+					return false;
+				}
 				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser)) {
 					return false;
 				}
@@ -435,7 +463,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			case ($item instanceof ilDateDurationInputGUI):
 				$this->filter[$item->getPostVar()] = array(
 					'start' => $item->getStart(),
-					'end' => $item->getEnd()
+					'end'   => $item->getEnd(),
 				);
 				break;
 			default:
@@ -451,9 +479,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			$a_csv->addColumn($k);
+			$a_csv->addColumn($this->pl->txt('event_'.$k));
 		}
-
 		$a_csv->addRow();
 	}
 
@@ -475,8 +502,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		foreach ($this->getAllColums() as $text => $col) {
 			if ($col['selectable']) {
 				$return[$text] = array(
-					'txt' => $this->pl->txt($text),
-					'default' => true
+					'txt'     => $this->pl->txt($text),
+					'default' => isset($col['default']) ? $col['default'] : true,
 				);
 			}
 		}

@@ -253,8 +253,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
 			global $ilUser;
-			$xoctAclStandardSets = new xoctAclStandardSets($ilUser);
-			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getSeries());
+			$xoctAclStandardSets = new xoctAclStandardSets(xoctUser::getInstance($ilUser));
+			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
 		}
 
 		if ($identifier = $creation_form->saveObject()) {
@@ -305,7 +305,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
 			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
 			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), '');
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()->getTitle());
 			}
 			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
 			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
@@ -359,7 +359,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		// forward the command
 		$ret = $ilCtrl->forwardCommand($info);
 
-		$this->initHeader();
+//		$this->initHeader();
 	}
 }
 

@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 
 /**
  * Class xoctEventFormGUI
@@ -22,6 +23,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_LOCATION = 'location';
 	const F_SOURCE = 'source';
 	const F_AUTO_PUBLISH = 'auto_publish';
+	const F_ONLINE = 'online';
 	/**
 	 * @var  xoctEvent
 	 */
@@ -65,13 +67,27 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
-//		xoctWaiterGUI::initJS();
-//		xoctWaiterGUI::addListener('input.btn-default');
+		$this->lng->loadLanguageModule('form');
+		$this->setId('xoct_event');
+		//		xoctWaiterGUI::initJS();
+		//		xoctWaiterGUI::addListener('input.btn-default');
 
 		if ($view) {
 			$this->initView();
 		} else {
 			$this->initForm();
+		}
+	}
+
+
+	public function setValuesByPost() {
+		/**
+		 * @var $item ilTextInputGUI
+		 */
+		foreach ($this->getItems() as $item) {
+			if ($item->getPostVar() != self::F_CREATED) {
+				$item->setValueByArray($_POST);
+			}
 		}
 	}
 
@@ -82,46 +98,89 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->initButtons();
 
 		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$te->setRequired(true);
+		$te->setRequired(!$this->is_new);
 		$this->addItem($te);
 
 		if ($this->is_new) {
-			$te = new ilFileInputGUI($this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$te->setUrl($this->ctrl->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_UPLOAD_CHUNKS));
+			$te->setSuffixes(array(
+				'mov',
+				'mp4',
+				'm4v',
+				'flv',
+				'mpeg',
+				'avi',
+			));
+			$te->setMimeTypes(array(
+				'video/avi',
+				'video/quicktime',
+				'video/mpeg',
+				'video/mp4',
+				'video/ogg',
+				'video/webm',
+				'video/x-ms-wmv',
+				'video/x-flv',
+				'video/x-matroska',
+				'video/x-msvideo',
+				'video/x-dv',
+			));
 			$te->setRequired(true);
 			$this->addItem($te);
 
 			$cb = new ilCheckboxInputGUI($this->txt(self::F_AUTO_PUBLISH), self::F_AUTO_PUBLISH);
 			$cb->setChecked(true);
 			$this->addItem($cb);
+		} else {
+			//			$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
+			//			$cb->setChecked(true);
+			//			$cb->setInfo($this->txt(self::F_ONLINE . '_info'));
+			//			$this->addItem($cb);
 		}
 
 		$te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
-		$te->setRequired(true); // remove after fix on API
-		$this->addItem($te);
-
-		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
-		$te->setRequired(true); // remove after fix on API
 		$this->addItem($te);
+
+		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		$this->addItem($te);
+
+		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
+		$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		$date->setShowTime(true);
+		$date->setShowSeconds(false);
+
+		$this->addItem($date);
 	}
 
 
 	public function fillForm() {
+		$createdDateTime = $this->object->getCreated();
+		if (!$this->is_new) {
+			$createdDateTime->add(new DateInterval('PT7200S'));
+		} // OpenCast FIX
+
+		$created = array(
+			'date' => $createdDateTime->format('Y-m-d'),
+			'time' => $createdDateTime->format('H:i:s'),
+		);
+
 		$array = array(
-			self::F_TITLE => $this->object->getTitle(),
-			self::F_DESCRIPTION => $this->object->getDescription(),
-			self::F_IDENTIFIER => $this->object->getIdentifier(),
-			self::F_CREATOR => $this->object->getCreator(),
-			self::F_CREATED => $this->object->getCreated(),
-			self::F_DURATION => $this->object->getDuration(),
+			self::F_TITLE            => $this->object->getTitle(),
+			self::F_DESCRIPTION      => $this->object->getDescription(),
+			self::F_IDENTIFIER       => $this->object->getIdentifier(),
+			self::F_CREATOR          => $this->object->getCreator(),
+			self::F_DURATION         => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
-			self::F_START_TIME => $this->object->getStartTime(),
-			self::F_PRESENTERS => $this->object->getPresenter(),
-			self::F_LOCATION => $this->object->getLocation(),
-			self::F_SOURCE => $this->object->getSource(),
+			self::F_AUTO_PUBLISH     => true,
+			self::F_START_TIME       => $this->object->getStartTime(),
+			self::F_PRESENTERS       => $this->object->getPresenter(),
+			self::F_LOCATION         => $this->object->getLocation(),
+			self::F_SOURCE           => $this->object->getSource(),
+			self::F_CREATED          => $created,
+//			self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
 		$this->setValuesByArray($array);
@@ -135,12 +194,29 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 */
 	public function fillObject() {
 		if (!$this->checkInput()) {
+
 			return false;
 		}
-		$this->object->setTitle($this->getInput(self::F_TITLE));
+
+		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
+		$title = $this->getInput(self::F_TITLE);
+
+		$this->object->setTitle($title ? $title : $presenter->getTitle());
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
+		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
+
+		/**
+		 * @var $created            ilDateTime
+		 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
+		 */
+		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_CREATED);
+		$created = $ilDateTimeInputGUI->getDate();
+		$default_datetime = $this->object->getDefaultDateTimeObject($created->get(IL_CAL_ISO_8601));
+		$default_datetime->sub(new DateInterval('PT7200S'));
+
+		$this->object->setCreated($default_datetime);
 
 		return true;
 	}
@@ -175,9 +251,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 		if ($this->object->getIdentifier()) {
 			$this->object->update();
+			$this->object->getXoctEventAdditions()->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 			$this->object->create($this->getInput(self::F_AUTO_PUBLISH) ? true : false);
+			$xoctEventAdditions = $this->object->getXoctEventAdditions();
+			$xoctEventAdditions->setId($this->object->getIdentifier());
+			$xoctEventAdditions->setIsOnline(true);
+			$xoctEventAdditions->create();
 		}
 
 		return $this->object->getIdentifier();
@@ -192,6 +273,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
 			case  !$this->is_new AND !$this->view:
+				if (ilObjOpenCast::DEV) {
+					$this->addCommandButton('saveAndStay', 'Save and Stay');
+				}
 				$this->setTitle($this->txt('edit'));
 				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));

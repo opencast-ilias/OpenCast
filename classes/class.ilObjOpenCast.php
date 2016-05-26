@@ -28,7 +28,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctRequest.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 /**
  * Class ilObjOpenCast
  *
@@ -69,6 +69,16 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doRead() {
+		xoctConf::setApiSettings();
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 */
+		$xoctOpenCast = xoctOpenCast::find($this->getId());
+		if ($xoctOpenCast->getSeries()->getTitle() != $this->getTitle() || $xoctOpenCast->getSeries()->getDescription() != $this->getDescription()) {
+			$this->setTitle($xoctOpenCast->getSeries()->getTitle());
+			$this->setDescription($xoctOpenCast->getSeries()->getDescription());
+			$this->update();
+		}
 	}
 
 
@@ -83,11 +93,12 @@ class ilObjOpenCast extends ilObjectPlugin {
 	/**
 	 * @param ilObjOpenCast $new_obj
 	 * @param               $a_target_id
-	 * @param null          $a_copy_id
+	 * @param null $a_copy_id
 	 *
 	 * @return bool|void
 	 */
 	protected function doCloneObject(ilObjOpenCast $new_obj, $a_target_id, $a_copy_id = NULL) {
+		xoctConf::setApiSettings();
 		/**
 		 * @var $xoctOpenCastNew xoctOpenCast
 		 * @var $xoctOpenCastOld xoctOpenCast

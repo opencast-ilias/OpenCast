@@ -5,6 +5,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctUploadFile.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Publication/class.xoctMedia.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsage.php');
+require_once('class.xoctEventAdditions.php');
 
 /**
  * Class xoctEvent
@@ -14,38 +15,45 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctEvent extends xoctObject {
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
+	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
 	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const PRESENTER_SEP = ';';
+	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	/**
 	 * @var array
 	 */
 	public static $state_mapping = array(
-		xoctEvent::STATE_SUCCEEDED => 'success',
-		xoctEvent::STATE_INSTANTIATED => 'info',
-		xoctEvent::STATE_ENCODING => 'info',
+		xoctEvent::STATE_SUCCEEDED     => 'success',
+		xoctEvent::STATE_INSTANTIATED  => 'info',
+		xoctEvent::STATE_ENCODING      => 'info',
 		xoctEvent::STATE_NOT_PUBLISHED => 'info',
-		xoctEvent::STATE_FAILED => 'danger',
+		xoctEvent::STATE_FAILED        => 'danger',
+		xoctEvent::STATE_OFFLINE       => 'info',
 	);
 	/**
 	 * @var string
 	 */
-	protected $thumbnail_url = NULL;
+	protected $thumbnail_url = null;
 	/**
 	 * @var string
 	 */
-	protected $annotation_url = NULL;
+	protected $annotation_url = null;
 	/**
 	 * @var string
 	 */
-	protected $player_url = NULL;
+	protected $player_url = null;
 	/**
 	 * @var null
 	 */
-	protected $download_url = NULL;
+	protected $download_url = null;
+	/**
+	 * @var xoctEventAdditions
+	 */
+	protected $xoctEventAdditions = null;
 
 
 	/**
@@ -58,10 +66,15 @@ class xoctEvent extends xoctObject {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = parent::find($identifier);
-		if ($xoctEvent->getProcessingState() != self::STATE_SUCCEEDED) {
-//			self::removeFromCache($identifier);
-//			$xoctEvent->read();
-//			self::cache($identifier, $xoctEvent);
+
+		if (!in_array($xoctEvent->getProcessingState(), array(
+			self::STATE_SUCCEEDED,
+			self::STATE_OFFLINE,
+		))
+		) {
+			self::removeFromCache($identifier);
+			$xoctEvent->read();
+			self::cache($identifier, $xoctEvent);
 		}
 
 		return $xoctEvent;
@@ -73,7 +86,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @return xoctEvent[]
 	 */
-	public static function getFiltered(array $filter, $for_user = NULL, $for_role = NULL, $from = 0, $to = 99999) {
+	public static function getFiltered(array $filter, $for_user = null, $for_role = null, $from = 0, $to = 99999) {
 		$check_cache = count($filter) == 1 AND isset($filter['series']);
 		if ($check_cache) {
 			$key = 'unfiltered_list' . $filter['series'] . '_' . $for_user;
@@ -102,12 +115,12 @@ class xoctEvent extends xoctObject {
 		$i = 0;
 		foreach ($data as $d) {
 			if ($i < $from || $i > $to) {
-//				$return[] = array();
-//				continue;
+				//				$return[] = array();
+				//				continue;
 			}
 			$xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->getArrayForTable();
-			$i++;
+			$i ++;
 		}
 		if ($check_cache) {
 			xoctCache::getInstance()->set($key, $return);
@@ -122,14 +135,15 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getArrayForTable() {
 		return array(
-			'identifier' => $this->getIdentifier(),
-			'title' => $this->getTitle(),
-			'presenter' => $this->getPresenter(),
-			'recording_station' => $this->getMetadata()->getField('recording_station')->getValue(),
-			'created' => $this->getCreated()->format(DATE_ATOM),
-			'created_unix' => $this->getCreated()->format('U'),
-			'owner' => $this->getOwnerUsername(),
-			'state' => $this->getProcessingState()
+			'identifier'       => $this->getIdentifier(),
+			'title'            => $this->getTitle(),
+			'description'      => $this->getDescription(),
+			'presenter'        => $this->getPresenter(),
+			'location'         => $this->getLocation(),
+			'created'          => $this->getCreated()->format(DATE_ATOM),
+			'created_unix'     => $this->getCreated()->format('U'),
+			'owner'            => $this->getOwnerUsername(),
+			'processing_state' => $this->getProcessingState(),
 		);
 	}
 
@@ -146,11 +160,16 @@ class xoctEvent extends xoctObject {
 
 
 	public function read() {
+		if ($this->read) {
+			return;
+		}
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
-		$this->setCreated(new DateTime($data->created));
-		$this->setStartTime(new DateTime($data->start_time));
+
+		$this->setCreated($this->getDefaultDateTimeObject($data->created));
+		$this->setStartTime($this->getDefaultDateTimeObject($data->start_time));
+
 		$this->loadPublications();
 		if ($this->getIdentifier()) {
 			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
@@ -159,6 +178,8 @@ class xoctEvent extends xoctObject {
 		$this->setOwnerUsername($this->getMetadata()->getField('rightsHolder')->getValue());
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
+		$this->initAdditions();
+		$this->read = true;
 	}
 
 
@@ -236,8 +257,14 @@ class xoctEvent extends xoctObject {
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+
+		$created = $this->getCreated();
+		if (!$created instanceof DateTime) {
+			$created = $this->getDefaultDateTimeObject();
+		}
+		$this->setCreated($created);
+		$this->setStartTime($created);
 		$this->updateMetadataFromFields();
-		$this->setAcls(xoctAcl::getStandardSetForEvent());
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing($auto_publish));
@@ -261,9 +288,6 @@ class xoctEvent extends xoctObject {
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 
-		// ACL
-		// $data['acl'] = json_encode( $this->getAcls() );
-
 		// All Data
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
 		$this->updateAcls();
@@ -272,6 +296,11 @@ class xoctEvent extends xoctObject {
 
 
 	public function updateAcls() {
+		$xoctAclStandardSets = new xoctAclStandardSets();
+		foreach ($xoctAclStandardSets->getAcls() as $acl) {
+			$this->addAcl($acl);
+		}
+
 		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcls()) ));
 		self::removeFromCache($this->getIdentifier());
 	}
@@ -301,9 +330,9 @@ class xoctEvent extends xoctObject {
 				return $acl;
 			}
 		}
-		$owner_acl[$this->getIdentifier()] = NULL;
+		$owner_acl[$this->getIdentifier()] = null;
 
-		return NULL;
+		return null;
 	}
 
 
@@ -318,7 +347,7 @@ class xoctEvent extends xoctObject {
 				return xoctUser::getInstance(new ilObjUser($usr_id));
 			}
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -389,17 +418,19 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getThumbnailUrl() {
 		if (!$this->thumbnail_url) {
-			$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
+			$this->thumbnail_url = xoctSecureLink::sign($url);
 			if (!$this->thumbnail_url) {
-				$this->thumbnail_url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
-					->getUrl();
+				$fallback = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
+				                 ->getUrl();
+				$this->thumbnail_url = xoctSecureLink::sign($fallback);
 			}
 			if (!$this->thumbnail_url) {
 				$this->thumbnail_url = self::NO_PREVIEW;
 			}
 		}
 
-		return xoctSecureLink::sign($this->thumbnail_url);
+		return $this->thumbnail_url;
 	}
 
 
@@ -409,7 +440,7 @@ class xoctEvent extends xoctObject {
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
-			$this->annotation_url = xoctSecureLink::sign($url);
+			$this->annotation_url = $url; // doesn't need to be signed
 		}
 
 		return $this->annotation_url;
@@ -435,10 +466,30 @@ class xoctEvent extends xoctObject {
 	public function getDownloadLink() {
 		if (!isset($this->download_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
-			$this->download_url = $url;
+			$this->download_url = xoctSecureLink::sign($url);
 		}
 
 		return $this->download_url;
+	}
+
+
+	/**
+	 * @return null|string
+	 */
+	public function getCuttingLink() {
+		if (!isset($this->cutting_url)) {
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+			if ($url) {
+				$this->cutting_url = $url;
+			} else {
+
+				$base = rtrim(xoctConf::get(xoctConf::F_API_BASE), "/");
+				$base = str_replace('/api', '', $base);
+				$this->cutting_url = $base . '/admin-ng/index.html#/events/events/' . $this->getIdentifier() . '/tools/editor';
+			}
+		}
+
+		return $this->cutting_url;
 	}
 
 
@@ -518,12 +569,13 @@ class xoctEvent extends xoctObject {
 	public function loadMetadata() {
 		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
-
-			foreach ($data as $d) {
-				if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
-					$xoctMetadata = new xoctMetadata();
-					$xoctMetadata->loadFromStdClass($d);
-					$this->setMetadata($xoctMetadata);
+			if (is_array($data)) {
+				foreach ($data as $d) {
+					if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
+						$xoctMetadata = new xoctMetadata();
+						$xoctMetadata->loadFromStdClass($d);
+						$this->setMetadata($xoctMetadata);
+					}
 				}
 			}
 		}
@@ -533,10 +585,34 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 * @var bool
+	 */
+	protected $processing_state_init = false;
+
+
 	protected function initProcessingState() {
-		if (count($this->publication_status) < 2) {
-			$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+		if ($this->processing_state_init) {
+			//			return true;
 		}
+		switch ($this->processing_state) {
+			case self::STATE_SUCCEEDED:
+				if (!$this->getXoctEventAdditions()->getIsOnline()) {
+					$this->setProcessingState(self::STATE_OFFLINE);
+				} elseif (count($this->publication_status) <= 2) {
+					$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+				}
+				break;
+			case '': // FIX: OpenCast delivers sometimes a empty state. this patch will be removed after fix on OpenCast
+				if (!$this->getXoctEventAdditions()->getIsOnline()) {
+					$this->setProcessingState(self::STATE_OFFLINE);
+				} else {
+					$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
+				}
+				break;
+		}
+
+		$this->processing_state_init = true;
 	}
 
 
@@ -607,7 +683,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var xoctMetadata
 	 */
-	protected $metadata = NULL;
+	protected $metadata = null;
 	/**
 	 * @var xoctAcl[]
 	 */
@@ -662,7 +738,7 @@ class xoctEvent extends xoctObject {
 	 * @return DateTime
 	 */
 	public function getCreated() {
-		return $this->created;
+		return ($this->created instanceof DateTime) ? $this->created : $this->getDefaultDateTimeObject($this->created);
 	}
 
 
@@ -807,6 +883,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getProcessingState() {
 		$this->initProcessingState();
+
 		return $this->processing_state;
 	}
 
@@ -1003,11 +1080,31 @@ class xoctEvent extends xoctObject {
 		$startTime = $this->getMetadata()->getField('startTime');
 		$startTime->setValue(date('H:i'));
 
-		//		$source = $this->getMetadata()->getField('source');
-		//		$source->setValue($this->getSource());
+		$source = $this->getMetadata()->getField('source');
+		$source->setValue($this->getSource());
+
+		$created = $this->getMetadata()->getField('created');
+		$dateTime = $this->getCreated()->sub(new DateInterval('PT7200S')); // OpenCast FIX
+		$created->setValue($dateTime->format("Y-m-d\TH:i:s\Z"));
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
+	}
+
+
+	/**
+	 * @param null $input
+	 * @return \DateTime
+	 */
+	public function getDefaultDateTimeObject($input = null) {
+		if ($input instanceof DateTime) {
+			$input = $input->format(DATE_ATOM);
+		}
+		if (!$input) {
+			$input = 'now';
+		}
+
+		return new DateTime($input, new DateTimeZone(self::TZ_EUROPE_ZURICH));
 	}
 
 
@@ -1059,5 +1156,36 @@ class xoctEvent extends xoctObject {
 		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
+	}
+
+
+	/**
+	 * @return xoctEventAdditions
+	 */
+	public function getXoctEventAdditions() {
+		$this->initAdditions();
+
+		return $this->xoctEventAdditions;
+	}
+
+
+	/**
+	 * @param xoctEventAdditions $xoctEventAdditions
+	 */
+	public function setXoctEventAdditions(xoctEventAdditions $xoctEventAdditions) {
+		$this->xoctEventAdditions = $xoctEventAdditions;
+	}
+
+
+	protected function initAdditions() {
+		if ($this->xoctEventAdditions instanceof xoctEventAdditions) {
+			return;
+		}
+		$xoctEventAdditions = xoctEventAdditions::find($this->getIdentifier());
+		if (!$xoctEventAdditions instanceof xoctEventAdditions) {
+			$xoctEventAdditions = new xoctEventAdditions();
+			$xoctEventAdditions->setId($this->getIdentifier());
+		}
+		$this->setXoctEventAdditions($xoctEventAdditions);
 	}
 }

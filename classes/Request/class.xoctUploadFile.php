@@ -14,8 +14,8 @@ class xoctUploadFile {
 	 * @return xoctUploadFile
 	 */
 	public static function getInstanceFromFileArray($name) {
-		$file = $_FILES[$name];
-		//		echo '<pre>' . print_r($_FILES, 1) . '</pre>';
+		$file = $_POST[$name];
+
 		$inst = new self();
 		$inst->setTitle($file['name']);
 		$inst->setFilePath($file['tmp_name']);
@@ -27,29 +27,14 @@ class xoctUploadFile {
 
 
 	/**
-	 * @param       $post_var
-	 * @param array $input
-	 *
-	 * @return xoctUploadFile
-	 */
-	public static function getInstanceFromArray($post_var, array $input) {
-		$file = $input;
-
-		$inst = new self();
-		$inst->setTitle($file['name']);
-		$inst->setFilePath($file['tmp_name']);
-		$inst->setFileSize($file['size']);
-		$inst->setPostVar($post_var);
-
-		return $inst;
-	}
-
-
-	/**
 	 * @return string
 	 */
 	public function getCurlString() {
-		return '@' . $this->getFilePath() . ';filename=' . $this->getTitle();
+		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
+		$xoctPlupload = new xoctPlupload();
+		$str = '@' . $xoctPlupload->getTargetDir() . '/' . $this->getTitle() . ';filename=' . $this->getTitle();
+
+		return $str;
 	}
 
 

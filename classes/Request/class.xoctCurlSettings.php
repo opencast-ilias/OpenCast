@@ -10,7 +10,7 @@ class xoctCurlSettings {
 	/**
 	 * @var bool
 	 */
-	protected $ip_v4 = true;
+	protected $ip_v4 = false;
 	/**
 	 * @var int
 	 */

@@ -55,28 +55,32 @@ class xoctCurl {
 
 
 	protected function execute() {
-		$ch = curl_init();
+		static $ch;
+		$request_start_time = microtime(true);
+		if (!$ch) {
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			if (self::$ip_v4) {
+				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+			}
+
+			if (self::$ssl_version) {
+				curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
+			}
+			if ($this->getUsername() AND $this->getPassword()) {
+				curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
+			}
+
+			if (!$this->isVerifyHost()) {
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			}
+			if (!$this->isVerifyPeer()) {
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			}
+		}
 
 		curl_setopt($ch, CURLOPT_URL, $this->getUrl());
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getRequestType());
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		if (self::$ip_v4) {
-			curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-		}
-
-		if (self::$ssl_version) {
-			//			curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
-		}
-		if ($this->getUsername() AND $this->getPassword()) {
-			curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
-		}
-
-		if (! $this->isVerifyHost()) {
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		}
-		if (! $this->isVerifyPeer()) {
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		}
 
 		$this->prepare($ch);
 
@@ -87,28 +91,42 @@ class xoctCurl {
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
 		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
-		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
+		//		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
 		if ($resp_orig === false) {
 			$this->setResponseError(new xoctCurlError($ch));
-			curl_close($ch);
+			//			curl_close($ch);
 		}
 		$this->setResponseBody($resp_orig);
 		$this->setResponseMimeType(curl_getinfo($ch, CURLINFO_CONTENT_TYPE));
 		$this->setResponseContentSize(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 		$this->setResponseStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		xoctLog::getInstance()->write('Connect-Time: ' . curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000 . ' ms', xoctLog::DEBUG_LEVEL_1);
-
+		//		xoctLog::getInstance()->write('Connect-Time: ' . round(curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		$request_end_time = microtime(true) - $request_start_time;
+		xoctLog::getInstance()->write('Full-Time: ' . round($request_end_time * 100, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
 			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
+
+			switch ($this->getResponseStatus()) {
+				case 403:
+					throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
+					break;
+				case 401:
+					throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS);
+					break;
+				case 404:
+					$this->setResponseBody(json_encode(null));
+					break;
+				default:
+					throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
+					break;
+			}
 			if ($this->getResponseStatus() == 403) {
-				throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
 			} else {
-				throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
 			}
 		}
-		curl_close($ch);
+		//		curl_close($ch);
 	}
 
 
@@ -632,8 +650,8 @@ class xoctCurl {
 
 			switch (true) {
 				case false === $v = realpath(filter_var($v)):
-				case ! is_file($v):
-				case ! is_readable($v):
+				case !is_file($v):
+				case !is_readable($v):
 					continue; // or return false, throw new InvalidArgumentException
 			}
 			$data = file_get_contents($v);

@@ -1,4 +1,3 @@
-<!-- language file start -->
 admin_export#:#Export Settings
 admin_import#:#Import Settings
 common_actions#:#Actions
@@ -10,43 +9,43 @@ config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
 config_eula#:#EULA
-config_license_info#:#License-Info
 config_licenses#:#Licenses
 config_licenses_info#:#Add new lines with URL#Name
+config_license_info#:#License-Info
 config_log_level_0#:#Deactivated
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Saved
+config_roles#:#OpenCast-Roles
 config_role_anonymous#:#Anonymous
-config_role_ext_application#:#External Application
 config_role_external_application_member#:#External Application Member
+config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Member
 config_role_ivt_email_prefix#:#Prefix for IVT-User-role (E-Mail is attached)
 config_role_ivt_external_prefix#:#Prefix for IVT-User-role (Ext-Account is attached)
 config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
-config_roles#:#OpenCast-Roles
 config_update#:#Update
 config_upload_token#:#Activate Upload-Token
-config_use_modals#:#Open Player in Modal
 config_user_mapping#:#User-Mapping
+config_use_modals#:#Open Player in Modal
 config_workflow#:#Workflow-ID
-event_add_new#:#Add Clip
+event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
 event_cancel#:#Cancel
 event_clear_cache#:#Reload Events
-event_clips#:#Clips
-event_create#:#Upload Clip
+event_clips#:#Events
+event_create#:#Upload Event
 event_created#:#Created
 event_creator#:#Creator
-event_cut#:#Cut Clip
+event_cut#:#Cut Event
 event_date#:#Date
-event_delete#:#Delete Clip
-event_delete_confirm#:#This will delete the clip in ILIAS and in OpenCast. Do you want to preceed?
+event_delete#:#Delete Event
+event_delete_confirm#:#This will delete the Event in ILIAS and in OpenCast. Do you want to preceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration
@@ -54,10 +53,10 @@ event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
 event_file_presenter#:#File
 event_identifier#:#ID
-event_invite_others#:#Share Clip
+event_invite_others#:#Share Event
 event_location#:#Recording Station
 event_msg_created#:#Upload finished
-event_msg_deleted#:#Clip deleted
+event_msg_deleted#:#Event deleted
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_owner#:#Owner
@@ -70,19 +69,24 @@ event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
 event_state_failed#:#failed
-event_state_instantiated#:#Uploaded
-event_state_not_published#:# Not published
-event_state_running#:#Converting
+event_state_instantiated#:#Converting not yet started, not yet visible to students
+event_state_not_published#:#Not published, not yet visible to students
+event_state_running#:#Converting, not yet visible to students
+event_state_offline#:#Offline, not visible to students
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
 event_view#:#View
-group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
-group_alert_no_title#:#Please provide a Group-Name
-group_delete_participant#:#Do you really want to delete this Membership?
-group_none_available#:#None available
-group_none_available_all#:#None available
-group_select_group#:#Select Group
+event_online#:#Event online
+event_online_info#:#An Event can be set offline on this ILIAS-Installation. The Event on OpenCast ist not affected
+event_upload_select#:#Select file
+event_upload_clear#:#Reset
+event_supported_filetypes#:#Supported Filetypes
+event_set_offline#:#Set offline
+event_created_unix#:#Date
+event_event_created_unix#:#Date
+event_event_event_created_unix#:#Date
+event_set_online#:#Set online
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group
@@ -91,14 +95,20 @@ groups_new_placeholder#:#Group-Name
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#First- or Lastname
 groups_participants_header#:#Participants
+group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
+group_alert_no_title#:#Please provide a Group-Name
+group_delete_participant#:#Do you really want to delete this Membership?
+group_none_available#:#None available
+group_none_available_all#:#None available
+group_select_group#:#Select Group
 invitations_back#:#Back
-invitations_header#:#Share Clip
+invitations_header#:#Share Event
 invitations_none_available#:#None available
 obj_xoct#:#OpenCast
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel
-publication_usage_channel#:#Channel
+publication_usage_channel#:#Series
 publication_usage_create#:#Create
 publication_usage_delete#:#Delete
 publication_usage_description#:#Description
@@ -125,36 +135,37 @@ series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
 series_channel_id#:#Series ID
-series_channel_type#:#Channel-Type
-series_create#:#Create Channel
+series_channel_type#:#Series-Type
+series_create#:#Create Series
 series_department#:#Department
 series_department_info#:#How is the name of your department?
 series_description#:#Description
 series_discipline#:#Discipline
-series_edit#:#Edit Channel
+series_edit#:#Edit Series
 series_est_video_length#:#Estimated video content in hours
-series_est_video_length_info#:#How many video material (in hours) do you intend to publish in this channel?
-series_existing_channel_no#:#Create new Channel
-series_existing_channel_yes#:#Choose existing Channel
-series_existing_identifier#:#Existing Channel
+series_est_video_length_info#:#How many video material (in hours) do you intend to publish in this Series?
+series_existing_channel_no#:#Create new Series
+series_existing_channel_yes#:#Choose existing Series
+series_existing_identifier#:#Existing Series
 series_intended_lifetime#:#Intended lifetime of content
 series_intended_lifetime_info#:#How long shoud the video material be published?
 series_introduction_text#:#Work instruction
 series_license#:#License
-series_metadata#:#Channel-Infos
+series_metadata#:#Series-Infos
 series_obj_online#:#Online
-series_permission_allow_set_own#:#Share Clip
-series_permission_allow_set_own_info#:#users can share their clips (read-only)
-series_permission_per_clip#:#Set permissions for a clip
-series_permission_per_clip_info#:#This setting enables an individual rights management based on clips ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the clips of this channel.
+series_permission_allow_set_own#:#Share Event
+series_permission_allow_set_own_info#:#Owners can share their Events (read-only)
+series_permission_per_clip#:#Set permissions for an Event
+series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
 series_save#:#Save
-series_saved#:#Channel-Information saved
+series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
-series_show_upload_token_info#:#Displays a code which students can use to upload own clips
+series_show_upload_token_info#:#Displays a code which students can use to upload own Events
 series_streaming_only#:#Streaming only
 series_title#:#Title
 series_update#:#Update
 series_use_annotations#:#Activate Annotations
+series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
 system_account_add_new#:#Add System-Account
 system_account_cancel#:#Cancel
 system_account_create#:#Create
@@ -169,12 +180,16 @@ tab_event_index#:#Content
 tab_export#:#Import/Export
 tab_groups#:#Groups
 tab_info#:#Info
-tab_list_all#:#All Clips
+tab_list_all#:#All Events
 tab_migrate_event#:#Import Event
 tab_publication_usage#:#Publications
 tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
+tab_back#:#Back
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
+xoct_new#:#Create openCast-Series
+form_msg_select#:#Please select fist a Videofile
+form_msg_not_supported#:#Filetype is not supported

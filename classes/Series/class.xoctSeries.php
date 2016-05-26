@@ -56,9 +56,10 @@ class xoctSeries extends xoctObject {
 		$metadata->setLabel('Opencast Series DublinCore');
 		$this->setMetadata($metadata);
 		$this->updateMetadataFromFields();
+		$this->getMetadata()->removeField('identifier'); // the identifier metadata lead to double creation of series on cast
 
 		$array['metadata'] = json_encode(array(
-			$this->getMetadata()->__toStdClass()
+			$this->getMetadata()->__toStdClass(),
 		));
 
 		foreach ($this->getAccessPolicies() as $acl) {
@@ -66,6 +67,18 @@ class xoctSeries extends xoctObject {
 		}
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
+
+//		echo $array['acl'];
+//		exit;
+//		foreach ($array as $k => $item) {
+//			echo $k . ':<br>';
+//			echo $item;
+//
+//			echo '<br>';
+//			echo '<br>';
+//		}
+//
+//		exit;
 
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
@@ -85,6 +98,7 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->getField('description')->__toStdClass(),
 			$this->getMetadata()->getField('license')->__toStdClass(),
 			$this->getMetadata()->getField('identifier')->__toStdClass(),
+			// identifier is needed as workaround
 		));
 
 		xoctRequest::root()->series($this->getIdentifier())->metadata()->parameter('type', $this->getMetadata()->getFlavor())->put($array);

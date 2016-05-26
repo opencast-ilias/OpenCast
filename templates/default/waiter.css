@@ -1,13 +1,27 @@
-div#xoct_waiter {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+div.xoct_waiter, div.xoct_percentage {
+	display:          none;
+	z-index:          9999;
+	position:         fixed;
+	top:              0;
+	left:             0;
+	width:            100%;
+	height:           100%;
 	background-color: white;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-	filter: alpha(opacity=80);
-	-moz-opacity: 0.8;
-	-khtml-opacity: 0.8;
-	opacity: 0.8;
+	-ms-filter:       "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter:           alpha(opacity=80);
+	-moz-opacity:     0.8;
+	-khtml-opacity:   0.8;
+	opacity:          0.8;
+}
+
+div.xoct_waiter {
+	background-image:    url("../images/spinner.gif");
+	background-repeat:   no-repeat;
+	background-position: center center;
+}
+
+div.xoct_percentage div.progress {
+	margin-left:  20%;
+	margin-right: 20%;
+	margin-top:   400px;
 }

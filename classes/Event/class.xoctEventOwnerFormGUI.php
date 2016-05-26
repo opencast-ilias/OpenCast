@@ -57,7 +57,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		$sel = new ilSelectInputGUI($this->txt(self::F_OWNER), self::F_OWNER);
 		$users = array();
 		$users[NULL] = $this->pl->txt('event_owner_select');
-		foreach (array_merge(ilObjOpenCastAccess::getMembers(), ilObjOpenCastAccess::getAdmins()) as $member) {
+		foreach (array_merge(ilObjOpenCastAccess::getMembers(), ilObjOpenCastAccess::getAdmins(), ilObjOpenCastAccess::getTutors()) as $member) {
 			$xoctUser = xoctUser::getInstance(new ilObjuser($member));
 			if ($xoctUser->getIdentifier()) {
 				$users[$member] = $xoctUser->getNamePresentation();
@@ -91,7 +91,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function fillObject() {
-		if (! $this->checkInput()) {
+		if (!$this->checkInput()) {
 			return false;
 		}
 
@@ -131,7 +131,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 	 * @return bool|string
 	 */
 	public function saveObject() {
-		if (! $this->fillObject()) {
+		if (!$this->fillObject()) {
 			return false;
 		}
 		$this->object->update();

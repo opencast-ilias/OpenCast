@@ -95,8 +95,32 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
-		$te->setRteTags(array_merge($te->getRteTags(), array( 'a' )));
+		$te->setRequired(true);
 		$te->setUseRte(true);
+		$te->setRteTags(array(
+			'p',
+			'a',
+			'br'
+		));
+		$te->usePurifier(true);
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect'
+		));
+
+		$te->setRows(5);
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
@@ -104,8 +128,32 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
+		$te->setRequired(true);
 		$te->setUseRte(true);
-		$te->setRteTags(array_merge($te->getRteTags(), array( 'a' )));
+		$te->setRteTags(array(
+			'p',
+			'a',
+			'br'
+		));
+		$te->usePurifier(true);
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect'
+		));
+
+		$te->setRows(5);
 		$this->addItem($te);
 
 		$h = new ilFormSectionHeaderGUI();
@@ -158,7 +206,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public function saveObject() {
-		if (! $this->checkInput()) {
+		if (!$this->checkInput()) {
 			return false;
 		}
 		foreach ($this->getItems() as $item) {
@@ -192,7 +240,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public static function checkForSubItem($item) {
-		return ! $item instanceof ilFormSectionHeaderGUI AND ! $item instanceof ilMultiSelectInputGUI;
+		return !$item instanceof ilFormSectionHeaderGUI AND !$item instanceof ilMultiSelectInputGUI;
 	}
 
 
@@ -202,7 +250,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 * @return bool
 	 */
 	public static function checkItem($item) {
-		return ! $item instanceof ilFormSectionHeaderGUI;
+		return !$item instanceof ilFormSectionHeaderGUI;
 	}
 }
 
