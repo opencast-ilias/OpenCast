@@ -180,7 +180,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_LOCATION         => $this->object->getLocation(),
 			self::F_SOURCE           => $this->object->getSource(),
 			self::F_CREATED          => $created,
-//			self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
+			//			self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
 		$this->setValuesByArray($array);
@@ -205,7 +205,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
-		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
+		//		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
 
 		/**
 		 * @var $created            ilDateTime

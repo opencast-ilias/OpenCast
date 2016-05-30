@@ -102,6 +102,9 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function add() {
+		if ($this->xoctOpenCast->hasDuplicatesOnSystem()) {
+			ilUtil::sendInfo($this->pl->txt('series_has_duplicates_events'));
+		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());

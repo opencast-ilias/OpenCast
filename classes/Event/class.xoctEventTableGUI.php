@@ -108,16 +108,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$this->tpl->setVariable('PREVIEW', $xE->getThumbnailUrl());
 		}
 		if ($xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
-			if ($this->xoctOpenCast->getUseAnnotations()) {
-				$annotationLink = $xE->getAnnotationLink();
-				if ($annotationLink) {
-					$this->tpl->setCurrentBlock('link');
-					$this->tpl->setVariable('LINK_URL', $annotationLink);
-					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
-
-					$this->tpl->parseCurrentBlock();
-				}
-			}
+			// PLAYER LINK
 			$playerLink = $xE->getPlayerLink();
 			if ($playerLink) {
 				$this->tpl->setCurrentBlock('link');
@@ -135,13 +126,24 @@ class xoctEventTableGUI extends ilTable2GUI {
 				}
 				$this->tpl->parseCurrentBlock();
 			}
-
+			// DOWNLOAD LINK
 			if (!$this->xoctOpenCast->getStreamingOnly()) {
 				$downloadLink = $xE->getDownloadLink();
 				if ($downloadLink) {
 					$this->tpl->setCurrentBlock('link');
 					$this->tpl->setVariable('LINK_URL', $downloadLink);
 					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('download'));
+					$this->tpl->parseCurrentBlock();
+				}
+			}
+			// ANNOTATIONS LINK
+			if ($this->xoctOpenCast->getUseAnnotations()) {
+				$annotationLink = $xE->getAnnotationLink();
+				if ($annotationLink) {
+					$this->tpl->setCurrentBlock('link');
+					$this->tpl->setVariable('LINK_URL', $annotationLink);
+					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
+
 					$this->tpl->parseCurrentBlock();
 				}
 			}
@@ -304,22 +306,38 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$ac->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
-		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
-				$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
-			}
-			$cutting_link = $xoctEvent->getCuttingLink();
-			if ($cutting_link) {
-				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
-			}
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
-				$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
-			}
+		$admin = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN;
+		$tutor = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_TUTOR;
+		if ($admin) {
+			// Edit Owner
 			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
 				if ($this->xoctOpenCast->getPermissionPerClip()) {
 					$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 				}
 			}
+		}
+		// Share event
+		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+			if ($this->xoctOpenCast->getPermissionAllowSetOwn() && ($xoctEvent->isOwner($xoctUser) || $tutor || $admin)) {
+				$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
+			}
+		}
+		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
+			// Cut Event
+			$cutting_link = $xoctEvent->getCuttingLink();
+			if ($cutting_link) {
+				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
+			}
+			// Delete Event
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
+			}
+
+			// Edit Event
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+				$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			}
+
 			// Online/offline
 			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
 				if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
@@ -327,11 +345,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 				} else {
 					$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
 				}
-			}
-		}
-		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
-			if ($this->xoctOpenCast->getPermissionAllowSetOwn() && $xoctEvent->isOwner($xoctUser)) {
-				$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 			}
 		}
 
@@ -479,7 +492,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			$a_csv->addColumn($this->pl->txt('event_'.$k));
+			$a_csv->addColumn($this->pl->txt('event_' . $k));
 		}
 		$a_csv->addRow();
 	}
