@@ -141,6 +141,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					$this->ctrl->forwardCommand($xoctSeriesGUI);
 					$this->tpl->show();
 					break;
+				case 'ilpermissiongui':
+					$this->initHeader(false);
+					parent::executeCommand();
+					break;
 				default:
 					parent::executeCommand();
 					break;
@@ -295,8 +299,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	/**
 	 * @return xoctOpenCast
 	 */
-	protected function initHeader() {
-		$this->setLocator();
+	protected function initHeader($render_locator = true) {
+		if ($render_locator) {
+			$this->setLocator();
+		}
 
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
@@ -340,7 +346,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		 * @var $tree         ilTree
 		 */
 		$ilTabs->setTabActive("info_short");
-
+		$this->initHeader(false);
 		$this->checkPermission("visible");
 
 		include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
