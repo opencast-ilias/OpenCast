@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             }
         },
         "config": {
@@ -294,7 +294,7 @@
                     "de": "Aufzeichnungen",
                     "en": "Events"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "create": {
                 "translations": {
@@ -321,21 +321,21 @@
                     "de": "Aufzeichnung schneiden",
                     "en": "Cut Event"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "date": {
                 "translations": {
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Aufzeichung l\u00f6schen",
                     "en": "Delete Event"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "delete_confirm": {
                 "translations": {
@@ -349,14 +349,14 @@
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "download": {
                 "translations": {
                     "de": "Download",
                     "en": "Download"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "duration": {
                 "translations": {
@@ -369,7 +369,7 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "edit_owner": {
                 "translations": {
@@ -404,7 +404,7 @@
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "msg_created": {
                 "translations": {
@@ -437,7 +437,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "owner_select": {
                 "translations": {
@@ -451,14 +451,14 @@
                     "de": "Abspielen",
                     "en": "Play"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Referent\/in",
                     "en": "Presenter"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "presenters": {
                 "translations": {
@@ -472,7 +472,7 @@
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "processing_state": {
                 "translations": {
@@ -531,7 +531,7 @@
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "update": {
                 "translations": {
@@ -594,7 +594,7 @@
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "created_unix": {
                 "translations": {
@@ -941,14 +941,14 @@
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "channel_id": {
                 "translations": {
                     "de": "Series ID",
                     "en": "Series ID"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "channel_type": {
                 "translations": {
@@ -969,21 +969,21 @@
                     "de": "Department",
                     "en": "Department"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "department_info": {
                 "translations": {
                     "de": "Name Ihrer Institution",
                     "en": "How is the name of your department?"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "description": {
                 "translations": {
                     "de": "Beschreibung",
                     "en": "Description"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "discipline": {
                 "translations": {
@@ -996,7 +996,7 @@
                     "de": "Serie bearbeiten",
                     "en": "Edit Series"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "est_video_length": {
                 "translations": {
@@ -1048,14 +1048,14 @@
                     "de": "Arbeitsanweisung",
                     "en": "Work instruction"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "license": {
                 "translations": {
                     "de": "Lizenz",
                     "en": "License"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "metadata": {
                 "translations": {
@@ -1068,35 +1068,35 @@
                     "de": "Online",
                     "en": "Online"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "permission_allow_set_own": {
                 "translations": {
                     "de": "Leserechte erteilen",
                     "en": "Share Event"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "permission_allow_set_own_info": {
                 "translations": {
                     "de": "Aufzeichnungs-Besitzer k\u00f6nnen Leserechte auf ihre Aufzeichnungen erteilen",
                     "en": "Owners can share their Events (read-only)"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "permission_per_clip": {
                 "translations": {
                     "de": "Rechte pro Aufzeichnung setzen",
                     "en": "Set permissions for an Event"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "permission_per_clip_info": {
                 "translations": {
                     "de": "Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer s\u00e4mtliche Aufzeichnungen der gew\u00e4hlten Serie sehen d\u00fcrfen.",
                     "en": "This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series."
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "save": {
                 "translations": {
@@ -1116,49 +1116,49 @@
                     "de": "Upload-Token anzeigen",
                     "en": "Show Upload-Token"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "show_upload_token_info": {
                 "translations": {
                     "de": "Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen k\u00f6nnen",
                     "en": "Displays a code which students can use to upload own Events"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "streaming_only": {
                 "translations": {
                     "de": "Nur Streaming",
                     "en": "Streaming only"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "title": {
                 "translations": {
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "update": {
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "use_annotations": {
                 "translations": {
                     "de": "Annotationen aktivieren",
                     "en": "Activate Annotations"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "has_duplicates": {
                 "translations": {
                     "de": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter \u00abInfo\u00bb). \u00c4nderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.",
                     "en": "This Series has several links in ILIAS. Changes affect all links."
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "has_duplicates_events": {
                 "translations": {
@@ -1246,7 +1246,7 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "export": {
                 "translations": {
@@ -1267,7 +1267,7 @@
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "list_all": {
                 "translations": {
@@ -1295,7 +1295,7 @@
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "settings": {
                 "translations": {
@@ -1373,14 +1373,23 @@
                     "de": "Verlinkungen",
                     "en": "Links"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
             },
             "linked_item": {
                 "translations": {
                     "de": "Verlinkung",
                     "en": "Link"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "05.07.2016"
+            }
+        },
+        "msg": {
+            "info_multiple_aftersave": {
+                "translations": {
+                    "de": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter \u00abInfo\u00bb). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.",
+                    "en": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter \u00abInfo\u00bb). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen."
+                },
+                "last_used": "05.07.2016"
             }
         }
     }
