@@ -72,6 +72,7 @@ class xoctEvent extends xoctObject {
 			self::STATE_OFFLINE,
 		))
 		) {
+			xoctLog::getInstance()->write('CACHE, not valid: ' . $identifier, xoctLog::DEBUG_LEVEL_3);
 			self::removeFromCache($identifier);
 			$xoctEvent->read();
 			self::cache($identifier, $xoctEvent);
