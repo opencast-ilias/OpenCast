@@ -1104,8 +1104,13 @@ class xoctEvent extends xoctObject {
 		if (!$input) {
 			$input = 'now';
 		}
+		try {
+			$timezone = new DateTimeZone(self::TZ_EUROPE_ZURICH);
+		} catch (Exception $e) {
+			$timezone = null;
+		}
 
-		return new DateTime($input, new DateTimeZone(self::TZ_EUROPE_ZURICH));
+		return new DateTime($input, $timezone);
 	}
 
 
