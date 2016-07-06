@@ -72,6 +72,7 @@ class xoctEvent extends xoctObject {
 			self::STATE_OFFLINE,
 		))
 		) {
+			xoctLog::getInstance()->write('CACHE, not valid: ' . $identifier, xoctLog::DEBUG_LEVEL_3);
 			self::removeFromCache($identifier);
 			$xoctEvent->read();
 			self::cache($identifier, $xoctEvent);
@@ -1103,8 +1104,13 @@ class xoctEvent extends xoctObject {
 		if (!$input) {
 			$input = 'now';
 		}
+		try {
+			$timezone = new DateTimeZone(self::TZ_EUROPE_ZURICH);
+		} catch (Exception $e) {
+			$timezone = null;
+		}
 
-		return new DateTime($input, new DateTimeZone(self::TZ_EUROPE_ZURICH));
+		return new DateTime($input, $timezone);
 	}
 
 

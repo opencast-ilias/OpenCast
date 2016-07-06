@@ -141,6 +141,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					$this->ctrl->forwardCommand($xoctSeriesGUI);
 					$this->tpl->show();
 					break;
+				case 'ilpermissiongui':
+					$this->initHeader(false);
+					parent::executeCommand();
+					break;
 				default:
 					parent::executeCommand();
 					break;
@@ -208,7 +212,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($this->checkPermissionBool("edit_permission")) {
 			$this->tabs_gui->addTab("perm_settings", $lng->txt("perm_settings"), $this->ctrl->getLinkTargetByClass(array(
 				get_class($this),
-				"ilpermissiongui"
+				"ilpermissiongui",
 			), "perm"));
 		}
 
@@ -280,6 +284,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} else {
 			$cast->create();
 		}
+		if (xoctOpenCast::where(array( 'series_identifier' => $cast->getSeriesIdentifier() ))->count() > 1) {
+			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
+		}
 
 		$newObj->setTitle($cast->getSeries()->getTitle());
 		$newObj->setDescription($cast->getSeries()->getDescription());
@@ -292,8 +299,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	/**
 	 * @return xoctOpenCast
 	 */
-	protected function initHeader() {
-		$this->setLocator();
+	protected function initHeader($render_locator = true) {
+		if ($render_locator) {
+			$this->setLocator();
+		}
 
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
@@ -305,7 +314,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->setTitle($xoctOpenCast->getSeries()->getTitle());
 			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
 			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
-				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()->getTitle());
+				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()
+				                                                                                                                                    ->getTitle());
 			}
 			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
 			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
@@ -329,17 +339,35 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * show information screen
 	 */
 	function infoScreen() {
-		global $lng, $ilCtrl, $ilTabs;
-
+		global $lng, $ilCtrl, $ilTabs, $tree;
+		/**
+		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $item         xoctOpenCast
+		 * @var $tree         ilTree
+		 */
 		$ilTabs->setTabActive("info_short");
-
+		$this->initHeader(false);
 		$this->checkPermission("visible");
 
 		include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
 		$info = new ilInfoScreenGUI($this);
 		$info->enablePrivateNotes();
-
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		$activeRecordList = xoctOpenCast::where(array( 'series_identifier' => $xoctOpenCast->getSeriesIdentifier() ));
+		if ($activeRecordList->count() > 1) {
+			$info->addSection($this->pl->txt('info_linked_items'));
+			$i = 1;
+			foreach ($activeRecordList->get() as $item) {
+				$refs = ilObject2::_getAllReferences($item->getObjId());
+				foreach ($refs as $ref) {
+					$parent = $tree->getParentId($ref);
+					$info->addProperty(($i) . '. '
+					                   . $this->pl->txt('info_linked_item'), ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)), ilLink::_getStaticLink($parent));
+					$i ++;
+				}
+			}
+		}
+
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
 		 */
@@ -358,8 +386,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		// forward the command
 		$ret = $ilCtrl->forwardCommand($info);
-
-//		$this->initHeader();
+		//		$this->initHeader();
 	}
 }
 
