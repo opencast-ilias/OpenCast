@@ -53,7 +53,7 @@ event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
 event_file_presenter#:#File
 event_identifier#:#ID
-event_invite_others#:#Share Event
+event_invite_others#:#Grant access rights
 event_location#:#Recording Station
 event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
