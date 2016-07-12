@@ -19,7 +19,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  */
 class xoctEventTableGUI extends ilTable2GUI {
 
-	const TBL_ID = 'tbl_xoct_';
+	const TBL_ID = 'tbl_xoct';
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -57,7 +57,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
-		$a_val = self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
+		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);
 		$this->setFormName($a_val);
 		$this->setId($a_val);
@@ -72,6 +72,23 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$this->setExportFormats(array( self::EXPORT_CSV ));
 
 		$this->parseData();
+	}
+
+
+	/**
+	 * @param \xoctOpenCast $xoctOpenCast
+	 */
+	public static function setDefaultRowValue(xoctOpenCast $xoctOpenCast) {
+		$_GET[self::getGeneratedPrefix($xoctOpenCast) . '_trows'] = 20;
+	}
+
+
+	/**
+	 * @param \xoctOpenCast $xoctOpenCast
+	 * @return string
+	 */
+	public static function getGeneratedPrefix(xoctOpenCast $xoctOpenCast) {
+		return self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
 	}
 
 
