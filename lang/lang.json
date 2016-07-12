@@ -281,7 +281,7 @@
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "12.07.2016"
             },
             "clear_cache": {
                 "translations": {
@@ -335,14 +335,14 @@
                     "de": "Aufzeichung l\u00f6schen",
                     "en": "Delete Event"
                 },
-                "last_used": "05.07.2016"
+                "last_used": "12.07.2016"
             },
             "delete_confirm": {
                 "translations": {
-                    "de": "Das L\u00f6schen bewirkt, dass die Aufzeichnung definitiv gel\u00f6scht wird (auf Opencast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich l\u00f6schen?",
+                    "de": "Das L\u00f6schen bewirkt, dass die Aufzeichnung definitiv gel\u00f6scht wird (auch auf Opencast und in allf\u00e4lligen anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich l\u00f6schen?",
                     "en": "This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to preceed?"
                 },
-                "last_used": "27.05.2016"
+                "last_used": "12.07.2016"
             },
             "description": {
                 "translations": {
@@ -1246,7 +1246,7 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "05.07.2016"
+                "last_used": "12.07.2016"
             },
             "export": {
                 "translations": {
@@ -1267,7 +1267,7 @@
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "05.07.2016"
+                "last_used": "12.07.2016"
             },
             "list_all": {
                 "translations": {
@@ -1295,7 +1295,7 @@
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "05.07.2016"
+                "last_used": "12.07.2016"
             },
             "settings": {
                 "translations": {
