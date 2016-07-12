@@ -36,8 +36,10 @@ class xoctInvitationGUI extends xoctGUI {
 
 	protected function index() {
 		global $ilUser;
+		$admin = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN;
+		$tutor = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_TUTOR;
 		$oxtUser = xoctUser::getInstance($ilUser);
-		if (! $this->xoctEvent->isOwner($oxtUser)) {
+		if (!$this->xoctEvent->isOwner($oxtUser) && !$admin && !$tutor) {
 			ilUtil::sendFailure('Access denied', true);
 			$this->ctrl->redirectByClass('xoctEventGUI');
 		}
