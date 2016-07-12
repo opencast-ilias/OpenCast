@@ -94,6 +94,6 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	protected function cancel() {
-		$this->ctrl->redirect($this, self::CMD_EDIT);
+		$this->ctrl->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
 	}
 }
