@@ -162,7 +162,7 @@ class xoctEvent extends xoctObject {
 
 	public function read() {
 		if ($this->read) {
-			return;
+			// return;
 		}
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
