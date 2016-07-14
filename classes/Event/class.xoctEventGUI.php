@@ -79,8 +79,7 @@ class xoctEventGUI extends xoctGUI {
 		//		$b->setCaption('rechte_neuladen_hack');
 		//		$b->setUrl($this->ctrl->getLinkTarget($this, 'resetPermissions'));
 		//		$this->toolbar->addButtonInstance($b);
-		
-		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
+
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
 	}
@@ -95,6 +94,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function resetFilter() {
+		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$xoctEventTableGUI->resetOffset();
 		$xoctEventTableGUI->resetFilter();
