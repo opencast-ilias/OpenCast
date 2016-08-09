@@ -492,7 +492,7 @@ class xoctEvent extends xoctObject {
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
-			$this->annotation_url = $url; // doesn't need to be signed
+			$this->annotation_url = xoctSecureLink::sign($url);
 		}
 
 		return $this->annotation_url;
