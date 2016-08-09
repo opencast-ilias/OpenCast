@@ -22,6 +22,10 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
+	/**
+	 * @var \xoctOpenCast
+	 */
+	protected $xoctOpenCast;
 
 
 	/**
@@ -94,7 +98,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function resetFilter() {
-		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
+		//		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 		$xoctEventTableGUI->resetOffset();
 		$xoctEventTableGUI->resetFilter();
