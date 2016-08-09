@@ -57,7 +57,7 @@ class xoctCurl {
 	protected function execute() {
 		static $ch;
 		$request_start_time = microtime(true);
-		if (!$ch) {
+		if (!isset($ch)) {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			if (self::$ip_v4) {
@@ -101,9 +101,15 @@ class xoctCurl {
 		$this->setResponseContentSize(curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD));
 		$this->setResponseStatus(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-		//		xoctLog::getInstance()->write('Connect-Time: ' . round(curl_getinfo($ch, CURLINFO_CONNECT_TIME) * 1000, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
-		$request_end_time = microtime(true) - $request_start_time;
-		xoctLog::getInstance()->write('Full-Time: ' . round($request_end_time * 100, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		$i = 1000;
+
+		xoctLog::getInstance()->write('CURLINFO_CONNECT_TIME: ' . round(curl_getinfo($ch, CURLINFO_CONNECT_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CURLINFO_NAMELOOKUP_TIME: ' . round(curl_getinfo($ch, CURLINFO_NAMELOOKUP_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CURLINFO_REDIRECT_TIME: ' . round(curl_getinfo($ch, CURLINFO_REDIRECT_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CURLINFO_STARTTRANSFER_TIME: ' . round(curl_getinfo($ch, CURLINFO_STARTTRANSFER_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CURLINFO_PRETRANSFER_TIME: ' . round(curl_getinfo($ch, CURLINFO_PRETRANSFER_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+		xoctLog::getInstance()->write('CURLINFO_TOTAL_TIME: ' . round(curl_getinfo($ch, CURLINFO_TOTAL_TIME) * $i, 2) . ' ms', xoctLog::DEBUG_LEVEL_1);
+
 		if ($this->getResponseStatus() > 299) {
 			xoctLog::getInstance()->write('ERROR ' . $this->getResponseStatus(), xoctLog::DEBUG_LEVEL_1);
 			xoctLog::getInstance()->write('Response:' . $resp_orig, xoctLog::DEBUG_LEVEL_3);
