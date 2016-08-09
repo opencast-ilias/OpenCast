@@ -100,7 +100,7 @@ group_none_available#:#Keine verfügbar
 group_none_available_all#:#Keine verfügbar
 group_select_group#:#Gruppe auswählen
 invitations_back#:#Zurück
-invitations_header#:#Aufzeichnung freigeben
+invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 obj_xoct#:#OpenCast
 publication_usage_add#:#Hinzufügen
