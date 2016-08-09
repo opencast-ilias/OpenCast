@@ -110,16 +110,15 @@ class xoctEvent extends xoctObject {
 			$request->parameter('filter', $filter_string);
 		}
 		$request->parameter('limit', 1000);
-		//$request->parameter('sign', true);
+		//		$request->parameter('sign', true);
+
 		$data = json_decode($request->get($for_user, array( $for_role )));
 		$return = array();
 		$i = 0;
 		foreach ($data as $d) {
-			if ($i < $from || $i > $to) {
-				//				$return[] = array();
-				//				continue;
-			}
-			$xoctEvent = xoctEvent::find($d->identifier);
+			$xoctEvent = new xoctEvent();
+			$xoctEvent->loadFromStdClass($d);
+			// $xoctEvent = xoctEvent::find($d->identifier);
 			$return[] = $xoctEvent->getArrayForTable();
 			$i ++;
 		}
@@ -161,11 +160,11 @@ class xoctEvent extends xoctObject {
 
 
 	public function read() {
-		if ($this->read) {
-			// return;
-		}
+		//		if (!$this->isLoaded()) {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
+		//		}
+
 		$this->loadMetadata();
 
 		$this->setCreated($this->getDefaultDateTimeObject($data->created));
@@ -180,7 +179,6 @@ class xoctEvent extends xoctObject {
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
 		$this->initAdditions();
-		$this->read = true;
 	}
 
 
@@ -194,6 +192,8 @@ class xoctEvent extends xoctObject {
 		if ($this->isOwner($xoctUser)) {
 			return true;
 		}
+
+		return false;
 	}
 
 
@@ -273,8 +273,9 @@ class xoctEvent extends xoctObject {
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$data['presenter'] = $presenter->getCurlString();
-
+		//		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
 		$return = json_decode(xoctRequest::root()->events()->post($data));
+		//		}
 
 		$this->setIdentifier($return->identifier);
 	}
