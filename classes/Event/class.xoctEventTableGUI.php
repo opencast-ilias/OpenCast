@@ -117,8 +117,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 */
 		$xE = xoctEvent::find($a_set['identifier']);
 
-		// $this->tpl->setVariable('ADDITIONAL_CSS', 'xoct-state-' . strtolower($xE->getProcessingState()));
-
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
 		} elseif ($xE->getThumbnailUrl()) {
@@ -300,6 +298,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			xoctEvent::STATE_SUCCEEDED,
 			xoctEvent::STATE_NOT_PUBLISHED,
 			xoctEvent::STATE_OFFLINE,
+			xoctEvent::STATE_FAILED,
 			//			xoctEvent::STATE_ENCODING,
 		))
 		) {
@@ -325,7 +324,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		$admin = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN;
 		$tutor = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_TUTOR;
-		if ($admin) {
+		if ($admin && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 			// Edit Owner
 			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
 				if ($this->xoctOpenCast->getPermissionPerClip()) {
@@ -334,7 +333,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			}
 		}
 		// Share event
-		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 			if ($this->xoctOpenCast->getPermissionAllowSetOwn() && ($xoctEvent->isOwner($xoctUser) || $tutor || $admin)) {
 				$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 			}
@@ -342,7 +341,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
 			// Cut Event
 			$cutting_link = $xoctEvent->getCuttingLink();
-			if ($cutting_link) {
+			if ($cutting_link  && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
 			}
 			// Delete Event
@@ -351,12 +350,12 @@ class xoctEventTableGUI extends ilTable2GUI {
 			}
 
 			// Edit Event
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 				$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 			}
 
 			// Online/offline
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING) {
+			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 				if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
 					$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
 				} else {

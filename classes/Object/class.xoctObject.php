@@ -13,6 +13,10 @@ abstract class xoctObject {
 	 * @var array
 	 */
 	protected static $cache = array();
+	/**
+	 * @var bool
+	 */
+	protected $loaded = false;
 
 
 	/**
@@ -23,6 +27,9 @@ abstract class xoctObject {
 	public static function find($identifier) {
 		$class_name = get_called_class();
 		$key = $class_name . '-' . $identifier;
+		if (self::$cache[$key] instanceof $class_name) {
+			return self::$cache[$key];
+		}
 		$existing = xoctCache::getInstance()->get($key);
 
 		if ($existing) {
@@ -46,6 +53,7 @@ abstract class xoctObject {
 	public static function removeFromCache($identifier) {
 		$class_name = get_called_class();
 		$key = $class_name . '-' . $identifier;
+		self::$cache[$key] = null;
 		xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
 		xoctCache::getInstance()->delete($key);
 	}
@@ -58,6 +66,7 @@ abstract class xoctObject {
 	public static function cache($identifier, xoctObject $object) {
 		$class_name = get_class($object);
 		$key = $class_name . '-' . $identifier;
+		self::$cache[$key] = $object;
 		xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
 		xoctCache::getInstance()->set($key, $object);
 	}
@@ -86,7 +95,7 @@ abstract class xoctObject {
 					break;
 				case $v instanceof stdClass:
 				case is_array($v):
-				case $v === NULL:
+				case $v === null:
 				case $v === false:
 				case $v === '':
 					break;
@@ -209,6 +218,23 @@ abstract class xoctObject {
 			$this->{$k} = $this->wakeup($k, $v);
 		}
 		$this->afterObjectLoad();
+		$this->setLoaded(true);
+	}
+
+
+	/**
+	 * @return boolean
+	 */
+	public function isLoaded() {
+		return $this->loaded;
+	}
+
+
+	/**
+	 * @param boolean $loaded
+	 */
+	public function setLoaded($loaded) {
+		$this->loaded = $loaded;
 	}
 
 

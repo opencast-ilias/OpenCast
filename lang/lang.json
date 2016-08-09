@@ -321,7 +321,7 @@
                     "de": "Aufzeichnung schneiden",
                     "en": "Cut Event"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "date": {
                 "translations": {
@@ -335,14 +335,14 @@
                     "de": "Aufzeichung löschen",
                     "en": "Delete Event"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "delete_confirm": {
                 "translations": {
                     "de": "Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast und in allfälligen anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?",
                     "en": "This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to preceed?"
                 },
-                "last_used": "12.07.2016"
+                "last_used": "09.08.2016"
             },
             "description": {
                 "translations": {
@@ -369,14 +369,14 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "edit_owner": {
                 "translations": {
                     "de": "Besitzer bearbeiten",
                     "en": "Edit Owner"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "file_presenter": {
                 "translations": {
@@ -397,7 +397,7 @@
                     "de": "Zugriffsrechte erteilen",
                     "en": "Grant access rights"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "location": {
                 "translations": {
@@ -417,7 +417,8 @@
                 "translations": {
                     "de": "Aufzeichnung gelöscht",
                     "en": "Event deleted"
-                }
+                },
+                "last_used": "09.08.2016"
             },
             "msg_no_access": {
                 "translations": {
@@ -595,7 +596,7 @@
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "09.08.2016"
             },
             "created_unix": {
                 "translations": {
