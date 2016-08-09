@@ -14,6 +14,9 @@ require_once('class.xoctEventAdditions.php');
  */
 class xoctEvent extends xoctObject {
 
+	const LOAD_MD_INTERNAL = true;
+	const LOAD_ACL_INTERNAL = false;
+	const LOAD_PUB_INTERNAL = true;
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
@@ -72,9 +75,8 @@ class xoctEvent extends xoctObject {
 			self::STATE_OFFLINE,
 		))
 		) {
-			xoctLog::getInstance()->write('CACHE, not valid: ' . $identifier, xoctLog::DEBUG_LEVEL_3);
+			xoctLog::getInstance()->write('CACHE, not valid: ' . $identifier, xoctLog::DEBUG_LEVEL_1);
 			self::removeFromCache($identifier);
-			$xoctEvent->read();
 			self::cache($identifier, $xoctEvent);
 		}
 
@@ -88,15 +90,6 @@ class xoctEvent extends xoctObject {
 	 * @return xoctEvent[]
 	 */
 	public static function getFiltered(array $filter, $for_user = null, $for_role = null, $from = 0, $to = 99999) {
-		$check_cache = count($filter) == 1 AND isset($filter['series']);
-		if ($check_cache) {
-			$key = 'unfiltered_list' . $filter['series'] . '_' . $for_user;
-			$existing = xoctCache::getInstance()->get($key);
-			if ($existing) {
-				//				return $existing;
-			}
-		}
-
 		/**
 		 * @var $xoctEvent xoctEvent
 		 */
@@ -110,20 +103,23 @@ class xoctEvent extends xoctObject {
 			$request->parameter('filter', $filter_string);
 		}
 		$request->parameter('limit', 1000);
-		//		$request->parameter('sign', true);
+		if (!self::LOAD_MD_INTERNAL) {
+			$request->parameter('withmetadata', true);
+		}
+		if (!self::LOAD_ACL_INTERNAL) {
+			$request->parameter('withacl', true);
+		}
+		if (!self::LOAD_PUB_INTERNAL) {
+			$request->parameter('sign', true);
+			$request->parameter('withpublications', true);
+		}
 
 		$data = json_decode($request->get($for_user, array( $for_role )));
 		$return = array();
-		$i = 0;
+
 		foreach ($data as $d) {
-			$xoctEvent = new xoctEvent();
-			$xoctEvent->loadFromStdClass($d);
-			// $xoctEvent = xoctEvent::find($d->identifier);
+			$xoctEvent = xoctEvent::findOrLoadFromStdClass($d->identifier, $d);
 			$return[] = $xoctEvent->getArrayForTable();
-			$i ++;
-		}
-		if ($check_cache) {
-			xoctCache::getInstance()->set($key, $return);
 		}
 
 		return $return;
@@ -144,6 +140,7 @@ class xoctEvent extends xoctObject {
 			'created_unix'     => $this->getCreated()->format('U'),
 			'owner'            => $this->getOwnerUsername(),
 			'processing_state' => $this->getProcessingState(),
+			'object'           => $this,
 		);
 	}
 
@@ -160,25 +157,77 @@ class xoctEvent extends xoctObject {
 
 
 	public function read() {
-		//		if (!$this->isLoaded()) {
-		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
-		$this->loadFromStdClass($data);
-		//		}
+		if (!$this->isLoaded()) {
+			xoctLog::getInstance()->writeTrace();
+			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
+			$this->loadFromStdClass($data);
+		}
+		$this->afterObjectLoad();
+	}
 
-		$this->loadMetadata();
 
-		$this->setCreated($this->getDefaultDateTimeObject($data->created));
-		$this->setStartTime($this->getDefaultDateTimeObject($data->start_time));
-
-		$this->loadPublications();
-		if ($this->getIdentifier()) {
+	protected function afterObjectLoad() {
+		if (!$this->getMetadata()) {
+			$this->loadMetadata();
+		}
+		if (!$this->getPublications()) {
+			$this->loadPublications();
+		}
+		if (!$this->getIdentifier()) {
 			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
 		}
-		$this->loadAcl();
+		if (!$this->getAcl()) {
+			$this->loadAcl();
+		}
 		$this->setOwnerUsername($this->getMetadata()->getField('rightsHolder')->getValue());
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
-		$this->initAdditions();
+		if (!$this->getXoctEventAdditions()) {
+			$this->initAdditions();
+		}
+	}
+
+
+	/**
+	 * @param $fieldname
+	 * @param $value
+	 *
+	 * @return mixed
+	 */
+	protected function wakeup($fieldname, $value) {
+		switch ($fieldname) {
+			case 'created':
+			case 'start_time':
+				return $this->getDefaultDateTimeObject($value);
+				break;
+			case 'metadata':
+				$metadata = new xoctMetadata();
+				$metadata->loadFromArray($value);
+
+				return $metadata;
+			case 'acl':
+				$acls = array();
+				foreach ($value as $acl_array) {
+					$acl = new xoctAcl();
+					$acl->loadFromStdClass($acl_array);
+					$acls[] = $acl;
+				}
+
+				return $acls;
+			case 'publications':
+				$publications = array();
+				foreach ($value as $p_array) {
+					$md = new xoctPublication();
+					$md->loadFromArray($p_array);
+					$publications[] = $md;
+				}
+
+				return $publications;
+			case 'presenter':
+				return implode(self::PRESENTER_SEP, $value);
+			default:
+				return $value;
+		}
 	}
 
 
@@ -269,7 +318,7 @@ class xoctEvent extends xoctObject {
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing($auto_publish));
-		$data['acl'] = json_encode($this->getAcls());
+		$data['acl'] = json_encode($this->getAcl());
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$data['presenter'] = $presenter->getCurlString();
@@ -303,7 +352,7 @@ class xoctEvent extends xoctObject {
 			$this->addAcl($acl);
 		}
 
-		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcls()) ));
+		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcl()) ));
 		self::removeFromCache($this->getIdentifier());
 	}
 
@@ -325,7 +374,7 @@ class xoctEvent extends xoctObject {
 		if (isset($owner_acl[$this->getIdentifier()])) {
 			return $owner_acl[$this->getIdentifier()];
 		}
-		foreach ($this->getAcls() as $acl) {
+		foreach ($this->getAcl() as $acl) {
 			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getIdentifierPrefix())) !== false) {
 				$owner_acl[$this->getIdentifier()] = $acl;
 
@@ -396,12 +445,12 @@ class xoctEvent extends xoctObject {
 
 
 	public function removeAllOwnerAcls() {
-		foreach ($this->getAcls() as $i => $acl) {
+		foreach ($this->getAcl() as $i => $acl) {
 			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getIdentifierPrefix())) !== false) {
-				unset($this->acls[$i]);
+				unset($this->acl[$i]);
 			}
 		}
-		sort($this->acls);
+		sort($this->acl);
 	}
 
 
@@ -564,7 +613,7 @@ class xoctEvent extends xoctObject {
 			$p->loadFromStdClass($d);
 			$acls[] = $p;
 		}
-		$this->setAcls($acls);
+		$this->setAcl($acls);
 	}
 
 
@@ -689,7 +738,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var xoctAcl[]
 	 */
-	protected $acls = array();
+	protected $acl = array();
 	/**
 	 * @var string
 	 */
@@ -981,16 +1030,16 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @return xoctAcl[]
 	 */
-	public function getAcls() {
-		return $this->acls;
+	public function getAcl() {
+		return $this->acl;
 	}
 
 
 	/**
-	 * @param xoctAcl[] $acls
+	 * @param xoctAcl[] $acl
 	 */
-	public function setAcls($acls) {
-		$this->acls = $acls;
+	public function setAcl($acl) {
+		$this->acl = $acl;
 	}
 
 
@@ -1000,13 +1049,13 @@ class xoctEvent extends xoctObject {
 	 * @return bool
 	 */
 	public function addAcl(xoctAcl $acl) {
-		foreach ($this->getAcls() as $existingAcl) {
+		foreach ($this->getAcl() as $existingAcl) {
 			if ($acl->getRole() == $existingAcl->getRole() && $acl->getAction() == $existingAcl->getAction()) {
 				return false;
 			}
 		}
 
-		$this->acls[] = $acl;
+		$this->acl[] = $acl;
 
 		return true;
 	}
@@ -1115,20 +1164,6 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @param $fieldname
-	 * @param $value
-	 *
-	 * @return mixed
-	 */
-	protected function wakeup($fieldname, $value) {
-		switch ($fieldname) {
-			case 'presenter':
-				return implode(self::PRESENTER_SEP, $value);
-			default:
-				return $value;
-		}
-	}
 
 
 	/**

@@ -11,13 +11,25 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctSecureLink {
 
 	/**
+	 * @var array
+	 */
+	protected static $cache = array();
+
+
+	/**
 	 * @param $url
 	 *
 	 * @return mixed
 	 */
 	public static function sign($url) {
-		if (! $url) {
+		if (!xoctEvent::LOAD_PUB_INTERNAL) {
+			return $url;
+		}
+		if (!$url) {
 			return '';
+		}
+		if (isset($cache[$url])) {
+			return $cache[$url];
 		}
 
 		$data = json_decode(xoctRequest::root()->security()->sign($url));
@@ -25,6 +37,7 @@ class xoctSecureLink {
 		if ($data->error) {
 			return '';
 		}
+		$cache[$url] = $data->url;
 
 		return $data->url;
 	}
