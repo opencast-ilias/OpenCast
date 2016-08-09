@@ -66,6 +66,15 @@ class xoctLog extends ilLog {
 	}
 
 
+	public function writeTrace() {
+		try {
+			throw new Exception();
+		} catch (Exception $e) {
+			parent::write($e->getTraceAsString());
+		}
+	}
+
+
 	/**
 	 * @return mixed
 	 */
