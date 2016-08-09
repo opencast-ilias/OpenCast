@@ -115,7 +115,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xE        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$xE = $a_set['object'];
+		$xE = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
 
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);
@@ -341,7 +341,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN)) {
 			// Cut Event
 			$cutting_link = $xoctEvent->getCuttingLink();
-			if ($cutting_link  && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
+			if ($cutting_link && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED) {
 				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
 			}
 			// Delete Event
@@ -404,10 +404,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
 		$user = '';
-		//		$xoctUser = xoctUser::getInstance($ilUser);
-		//		if ($this->xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER) {
-		//			$user = $xoctUser->getIVTRoleName();
-		//		}
+
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		$a_data = xoctEvent::getFiltered($filter, null, $user ? array( $user ) : null, $this->getOffset(), $this->getLimit());
 
