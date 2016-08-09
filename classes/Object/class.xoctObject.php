@@ -38,10 +38,41 @@ abstract class xoctObject {
 			return $existing;
 		}
 		xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
-		$var = new $class_name($identifier);
-		self::cache($identifier, $var);
+		$instance = new $class_name($identifier);
+		self::cache($identifier, $instance);
 
-		return $var;
+		return $instance;
+	}
+
+
+	/**
+	 * @param $identifier
+	 * @param \stdClass $stdClass
+	 * @return xoctObject
+	 */
+	public function findOrLoadFromStdClass($identifier, stdClass $stdClass) {
+		$class_name = get_called_class();
+		$key = $class_name . '-' . $identifier;
+		if (self::$cache[$key] instanceof $class_name) {
+			return self::$cache[$key];
+		}
+		$existing = xoctCache::getInstance()->get($key);
+
+		if ($existing) {
+			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
+
+			return $existing;
+		}
+
+		xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
+		/**
+		 * @var $instance xoctObject
+		 */
+		$instance = new $class_name();
+		$instance->loadFromStdClass($stdClass);
+		self::cache($identifier, $instance);
+
+		return $instance;
 	}
 
 
@@ -198,6 +229,7 @@ abstract class xoctObject {
 		}
 		$array = (array)$class;
 		$this->loadFromArray($array);
+		$this->setLoaded(true);
 	}
 
 
@@ -207,6 +239,7 @@ abstract class xoctObject {
 	public function loadFromJson($json_string) {
 		$array = json_decode($json_string, true);
 		$this->loadFromArray($array);
+		$this->setLoaded(true);
 	}
 
 
@@ -264,4 +297,3 @@ abstract class xoctObject {
 	}
 }
 
-?>

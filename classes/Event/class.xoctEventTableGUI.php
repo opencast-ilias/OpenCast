@@ -115,7 +115,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $xE        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$xE = xoctEvent::find($a_set['identifier']);
+		$xE = $a_set['object'];
 
 		if ($xE->getThumbnailUrl() == xoctEvent::NO_PREVIEW) {
 			$this->tpl->setVariable('PREVIEW', xoctEvent::NO_PREVIEW);

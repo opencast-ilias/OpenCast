@@ -347,7 +347,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$h->setTitle('ACL');
 		$this->addItem($h);
 
-		foreach ($this->object->getAcls() as $acl) {
+		foreach ($this->object->getAcl() as $acl) {
 			$te = new ilCustomInputGUI($acl->getRole(), $acl->getRole());
 			$te->setHtml('<table><tr><td>' . $acl->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
 			$this->addItem($te);
