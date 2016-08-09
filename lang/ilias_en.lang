@@ -102,7 +102,7 @@ group_none_available#:#None available
 group_none_available_all#:#None available
 group_select_group#:#Select Group
 invitations_back#:#Back
-invitations_header#:#Share Event
+invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
 obj_xoct#:#OpenCast
 publication_usage_add#:#Add
