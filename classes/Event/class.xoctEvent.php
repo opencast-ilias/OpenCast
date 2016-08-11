@@ -70,16 +70,6 @@ class xoctEvent extends xoctObject {
 		 */
 		$xoctEvent = parent::find($identifier);
 
-		if (!in_array($xoctEvent->getProcessingState(), array(
-			self::STATE_SUCCEEDED,
-			self::STATE_OFFLINE,
-		))
-		) {
-			xoctLog::getInstance()->write('CACHE, not valid: ' . $identifier, xoctLog::DEBUG_LEVEL_1);
-			self::removeFromCache($identifier);
-			self::cache($identifier, $xoctEvent);
-		}
-
 		return $xoctEvent;
 	}
 
@@ -119,6 +109,9 @@ class xoctEvent extends xoctObject {
 
 		foreach ($data as $d) {
 			$xoctEvent = xoctEvent::findOrLoadFromStdClass($d->identifier, $d);
+			if (!in_array($xoctEvent->getProcessingState(), array( self::STATE_SUCCEEDED, self::STATE_OFFLINE, ))) {
+				self::removeFromCache($xoctEvent->getIdentifier());
+			}
 			$return[] = $xoctEvent->getArrayForTable();
 		}
 
