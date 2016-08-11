@@ -106,7 +106,7 @@ obj_xoct#:#OpenCast
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen
-publication_usage_channel#:#Serie
+publication_usage_channel#:#Channel
 publication_usage_create#:#Erstellen
 publication_usage_delete#:#Löschen
 publication_usage_description#:#Beschreibung
@@ -129,6 +129,7 @@ publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
+publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen

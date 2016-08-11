@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             }
         },
         "config": {
@@ -267,7 +267,7 @@
                     "de": "Annotieren",
                     "en": "Annotate"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "11.08.2016"
             },
             "auto_publish": {
                 "translations": {
@@ -294,7 +294,7 @@
                     "de": "Aufzeichnungen",
                     "en": "Events"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "create": {
                 "translations": {
@@ -321,21 +321,21 @@
                     "de": "Aufzeichnung schneiden",
                     "en": "Cut Event"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "date": {
                 "translations": {
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Aufzeichung löschen",
                     "en": "Delete Event"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "delete_confirm": {
                 "translations": {
@@ -349,14 +349,14 @@
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "download": {
                 "translations": {
                     "de": "Download",
                     "en": "Download"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "11.08.2016"
             },
             "duration": {
                 "translations": {
@@ -369,14 +369,14 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "edit_owner": {
                 "translations": {
                     "de": "Besitzer bearbeiten",
                     "en": "Edit Owner"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "file_presenter": {
                 "translations": {
@@ -397,14 +397,14 @@
                     "de": "Zugriffsrechte erteilen",
                     "en": "Grant access rights"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "location": {
                 "translations": {
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "msg_created": {
                 "translations": {
@@ -438,7 +438,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "owner_select": {
                 "translations": {
@@ -452,14 +452,14 @@
                     "de": "Abspielen",
                     "en": "Play"
                 },
-                "last_used": "14.07.2016"
+                "last_used": "11.08.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Referent/in",
                     "en": "Presenter"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "presenters": {
                 "translations": {
@@ -473,7 +473,7 @@
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "processing_state": {
                 "translations": {
@@ -533,7 +533,7 @@
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "update": {
                 "translations": {
@@ -596,7 +596,7 @@
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "created_unix": {
                 "translations": {
@@ -760,7 +760,8 @@
                 "translations": {
                     "de": "Hinzufügen",
                     "en": "Add"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_add_new": {
                 "translations": {
@@ -772,41 +773,43 @@
                 "translations": {
                     "de": "Abbrechen",
                     "en": "Cancel"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_channel": {
                 "translations": {
-                    "de": "Serie",
-                    "en": "Series"
+                    "de": "Channel",
+                    "en": "Channel"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_create": {
                 "translations": {
                     "de": "Erstellen",
                     "en": "Create"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_delete": {
                 "translations": {
                     "de": "Löschen",
                     "en": "Delete"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_description": {
                 "translations": {
                     "de": "Beschreibung",
                     "en": "Description"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_edit": {
                 "translations": {
                     "de": "Bearbeiten",
                     "en": "Edit"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_ext_id": {
                 "translations": {
@@ -819,35 +822,35 @@
                     "de": "Flavor",
                     "en": "Flavor"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_md_type": {
                 "translations": {
                     "de": "Typ",
                     "en": "Type"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_md_type_0": {
                 "translations": {
                     "de": "Publikation",
                     "en": "Publication itself"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_md_type_1": {
                 "translations": {
                     "de": "Attachment",
                     "en": "Attachment"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_md_type_2": {
                 "translations": {
                     "de": "Media",
                     "en": "Media"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_md_type_select": {
                 "translations": {
@@ -859,7 +862,8 @@
                 "translations": {
                     "de": "Gespeichert",
                     "en": "Saved"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_publication_id": {
                 "translations": {
@@ -871,14 +875,15 @@
                 "translations": {
                     "de": "Verwendungszweck",
                     "en": "Usage"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_title": {
                 "translations": {
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "usage_type_annotate": {
                 "translations": {
@@ -914,14 +919,22 @@
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
-                }
+                },
+                "last_used": "11.08.2016"
             },
             "usage_usage_id": {
                 "translations": {
                     "de": "Nutzung",
                     "en": "Usage"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
+            },
+            "usage_type_thumbnail_fallback_2": {
+                "translations": {
+                    "de": "Thumbnail Fallback 2",
+                    "en": "Thumbnail Fallback 2"
+                },
+                "last_used": "11.08.2016"
             }
         },
         "series": {
@@ -1248,28 +1261,28 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "export": {
                 "translations": {
                     "de": "Import/Export",
                     "en": "Import/Export"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "groups": {
                 "translations": {
                     "de": "Gruppen",
                     "en": "Groups"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "info": {
                 "translations": {
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "list_all": {
                 "translations": {
@@ -1290,28 +1303,28 @@
                     "de": "Publikationen",
                     "en": "Publications"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "series_settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "system_accounts": {
                 "translations": {
                     "de": "System-Accounts",
                     "en": "System-Accounts"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "11.08.2016"
             },
             "back": {
                 "translations": {

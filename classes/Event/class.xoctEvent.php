@@ -462,17 +462,19 @@ class xoctEvent extends xoctObject {
 	 * @return string
 	 */
 	public function getThumbnailUrl() {
-		if (!$this->thumbnail_url) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL))->getUrl();
+		$possible_publications = array(
+			xoctPublicationUsage::USAGE_THUMBNAIL,
+			xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK,
+			xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
+		);
+		$i = 0;
+		while (!$this->thumbnail_url && $i < count($possible_publications)) {
+			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
 			$this->thumbnail_url = xoctSecureLink::sign($url);
-			if (!$this->thumbnail_url) {
-				$fallback = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK))
-				                 ->getUrl();
-				$this->thumbnail_url = xoctSecureLink::sign($fallback);
-			}
-			if (!$this->thumbnail_url) {
-				$this->thumbnail_url = self::NO_PREVIEW;
-			}
+			$i ++;
+		}
+		if (!$this->thumbnail_url) {
+			$this->thumbnail_url = self::NO_PREVIEW;
 		}
 
 		return $this->thumbnail_url;
