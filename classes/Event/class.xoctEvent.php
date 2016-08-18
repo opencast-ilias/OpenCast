@@ -131,8 +131,7 @@ class xoctEvent extends xoctObject {
 			'location'         => $this->getLocation(),
 			'created'          => $this->getCreated()->format(DATE_ATOM),
 			'created_unix'     => $this->getCreated()->format('U'),
-			'owner'            => $this->getOwnerUsername(),
-			'owner_username'   => $this->getOwnerUsername(), // For Sorting
+			'owner_username'   => $this->getOwnerUsername(),
 			'processing_state' => $this->getProcessingState(),
 			'object'           => $this,
 		);

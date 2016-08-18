@@ -505,8 +505,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillHeaderCSV($a_csv) {
 		$data = $this->getData();
 		foreach ($data[0] as $k => $v) {
-			if ($k == 'created_unix') {
-				continue;
+			switch ($k) {
+				case 'created_unix';
+				case 'object';
+					continue 2;
 			}
 			$a_csv->addColumn($this->pl->txt('event_' . $k));
 		}
@@ -521,10 +523,13 @@ class xoctEventTableGUI extends ilTable2GUI {
 	protected function fillRowCSV($a_csv, $a_set) {
 		$set = array();
 		foreach ($a_set as $k => $value) {
-			if ($k == 'created_unix') {
-				continue;
+			switch ($k) {
+				case 'created_unix';
+				case 'object';
+					continue 2;
 			}
-			$set[$k] = $value;
+
+			$set[$k] = utf8_decode($value);
 		}
 		parent::fillRowCSV($a_csv, $set);
 	}
