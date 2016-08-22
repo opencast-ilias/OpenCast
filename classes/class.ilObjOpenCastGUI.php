@@ -284,7 +284,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} else {
 			$cast->create();
 		}
-		if (xoctOpenCast::where(array( 'series_identifier' => $cast->getSeriesIdentifier() ))->count() > 1) {
+		if ($cast->hasDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
 		}
 
@@ -353,8 +353,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$info = new ilInfoScreenGUI($this);
 		$info->enablePrivateNotes();
 		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		$activeRecordList = xoctOpenCast::where(array( 'series_identifier' => $xoctOpenCast->getSeriesIdentifier() ));
-		if ($activeRecordList->count() > 1) {
+		$activeRecordList = xoctOpenCast::where(array( 'series_identifier' => $xoctOpenCast->getSeriesIdentifier() ))->where('obj_id != 0');
+		if ($xoctOpenCast->hasDuplicatesOnSystem()) {
 			$info->addSection($this->pl->txt('info_linked_items'));
 			$i = 1;
 			foreach ($activeRecordList->get() as $item) {

@@ -80,9 +80,15 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @return bool
 	 */
-	public function hasDuplicatesOnSystem() {
+	public function hasDuplicatesOnSystem()
+	{
+		if (!$this->getObjId())
+		{
+			return false;
+		}
+
 		return ($this->getSeriesIdentifier()
-		        && (self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->where('obj_id != 0')->count() > 1));
+		        && (self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->where(array( 'obj_id' => 0 ), '!=')->count() > 1));
 	}
 
 
