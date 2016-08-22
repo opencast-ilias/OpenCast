@@ -6,7 +6,8 @@ require_once('./Services/ActiveRecord/class.ActiveRecord.php');
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctGroupParticipant extends ActiveRecord {
+class xoctGroupParticipant extends ActiveRecord
+{
 
 	const STATUS_ACTIVE = 1;
 
@@ -14,7 +15,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	static function returnDbTableName() {
+	static function returnDbTableName()
+	{
 		return 'xoct_group_participant';
 	}
 
@@ -49,7 +51,7 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @var xoctUser
 	 */
-	protected $xoct_user = NULL;
+	protected $xoct_user = null;
 	/**
 	 * @var int
 	 *
@@ -63,24 +65,28 @@ class xoctGroupParticipant extends ActiveRecord {
 	 */
 	protected static $crs_members_cache = array();
 
+
 	/**
 	 * @param $ref_id
-	 *
-	 * @return xoctGroupParticipant[]
-	 * @throws xoctException
+	 * @param $group_id
+	 * @return array
+	 * @throws \xoctException
 	 */
-	public static function getAvailable($ref_id) {
-
-		if (isset(self::$crs_members_cache[$ref_id])) {
-			return self::$crs_members_cache[$ref_id];
+	public static function getAvailable($ref_id, $group_id = null)
+	{
+		if (isset(self::$crs_members_cache[$ref_id][$group_id]))
+		{
+			return self::$crs_members_cache[$ref_id][$group_id];
 		}
-		$existing = self::getAllUserIdsForOpenCastObjId(ilObject2::_lookupObjId($ref_id));
+		$existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
 		global $tree;
 		/**
 		 * @var $tree ilTree
 		 */
-		while (ilObject2::_lookupType($ref_id, true) != 'crs') {
-			if ($ref_id == 1) {
+		while (ilObject2::_lookupType($ref_id, true) != 'crs')
+		{
+			if ($ref_id == 1)
+			{
 				throw new xoctException(xoctException::OBJECT_WRONG_PARENT);
 			}
 			$ref_id = $tree->getParentId($ref_id);
@@ -88,8 +94,10 @@ class xoctGroupParticipant extends ActiveRecord {
 
 		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
 		$return = array();
-		foreach ($p->getMembers() as $user_id) {
-			if (in_array($user_id, $existing)) {
+		foreach ($p->getMembers() as $user_id)
+		{
+			if (in_array($user_id, $existing))
+			{
 				continue;
 			}
 			$obj = new self();
@@ -97,7 +105,7 @@ class xoctGroupParticipant extends ActiveRecord {
 			$return[] = $obj;
 		}
 
-		self::$crs_members_cache[$ref_id] = $return;
+		self::$crs_members_cache[$ref_id][$group_id] = $return;
 
 		return $return;
 	}
@@ -108,20 +116,40 @@ class xoctGroupParticipant extends ActiveRecord {
 	 *
 	 * @return array
 	 */
-	public function getAllUserIdsForOpenCastObjId($obj_id) {
-		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(NULL, 'id');
-		if (count($all) == 0) {
+	public function getAllUserIdsForOpenCastObjId($obj_id)
+	{
+		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(null, 'id');
+		if (count($all) == 0)
+		{
 			return array();
 		}
 
-		return self::where(array( 'group_id' => $all ))->getArray(NULL, 'user_id');
+		return self::where(array( 'group_id' => $all ))->getArray(null, 'user_id');
+	}
+
+
+	/**
+	 * @param $obj_id
+	 * @param $group_id
+	 * @return array
+	 */
+	public function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
+	{
+		$all = xoctGroup::where(array( 'serie_id' => $obj_id))->getArray(null, 'id');
+		if (count($all) == 0)
+		{
+			return array();
+		}
+
+		return self::where(array( 'group_id' => $group_id ))->getArray(null, 'user_id');
 	}
 
 
 	/**
 	 * @return int
 	 */
-	public function getId() {
+	public function getId()
+	{
 		return $this->id;
 	}
 
@@ -129,7 +157,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @param int $id
 	 */
-	public function setId($id) {
+	public function setId($id)
+	{
 		$this->id = $id;
 	}
 
@@ -137,7 +166,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getUserId() {
+	public function getUserId()
+	{
 		return $this->user_id;
 	}
 
@@ -145,7 +175,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @param int $user_id
 	 */
-	public function setUserId($user_id) {
+	public function setUserId($user_id)
+	{
 		$this->user_id = $user_id;
 	}
 
@@ -153,7 +184,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getGroupId() {
+	public function getGroupId()
+	{
 		return $this->group_id;
 	}
 
@@ -161,7 +193,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @param $group_id
 	 */
-	public function setGroupId($group_id) {
+	public function setGroupId($group_id)
+	{
 		$this->group_id = $group_id;
 	}
 
@@ -169,7 +202,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getStatus() {
+	public function getStatus()
+	{
 		return $this->status;
 	}
 
@@ -177,7 +211,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @param int $status
 	 */
-	public function setStatus($status) {
+	public function setStatus($status)
+	{
 		$this->status = $status;
 	}
 
@@ -185,8 +220,10 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @return xoctUser
 	 */
-	public function getXoctUser() {
-		if (! $this->xoct_user AND $this->getUserId()) {
+	public function getXoctUser()
+	{
+		if (!$this->xoct_user AND $this->getUserId())
+		{
 			$this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
 		}
 
@@ -197,7 +234,8 @@ class xoctGroupParticipant extends ActiveRecord {
 	/**
 	 * @param xoctUser $xoct_user
 	 */
-	public function setXoctUser($xoct_user) {
+	public function setXoctUser($xoct_user)
+	{
 		$this->xoct_user = $xoct_user;
 	}
 }

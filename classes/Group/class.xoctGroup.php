@@ -7,14 +7,16 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctGroup extends ActiveRecord {
+class xoctGroup extends ActiveRecord
+{
 
 	/**
 	 * @return string
 	 * @description Return the Name of your Database Table
 	 * @deprecated
 	 */
-	static function returnDbTableName() {
+	static function returnDbTableName()
+	{
 		return 'xoct_group';
 	}
 
@@ -24,7 +26,8 @@ class xoctGroup extends ActiveRecord {
 	 *
 	 * @return xoctGroup[]
 	 */
-	public static function getAllForObjId($obj_id) {
+	public static function getAllForObjId($obj_id)
+	{
 		return self::where(array( 'serie_id' => $obj_id ))->orderBy('title')->get();
 	}
 
@@ -46,42 +49,53 @@ class xoctGroup extends ActiveRecord {
 	protected $id = 0;
 
 
-
 	/**
 	 * @param          $series_identifier
 	 * @param xoctUser $xoctUser
 	 *
 	 * @return xoctGroupParticipant[]
 	 */
-	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser) {
-		if (! isset(self::$series_id_to_groups_map[$series_identifier])) {
-			$xoctOpenCast = xoctOpenCast::where(array(
-				'series_identifier' => $series_identifier,
-				'obj_id' => ilObject2::_lookupObjectId($_GET['ref_id'])
-				// TODO refoctor to series_id direct in group
-			))->last();
-			if (! $xoctOpenCast instanceof xoctOpenCast) {
-				return array();
-			}
-			$array = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(NULL, 'id');
+	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser)
+	{
+		self::loadGroupIdsForSeriesId($series_identifier);
+		$group_ids = self::$series_id_to_groups_map[$series_identifier];
 
-			self::$series_id_to_groups_map[$series_identifier] = $array;
-		}
-		$group_id = self::$series_id_to_groups_map[$series_identifier];
-
-		if (count($group_id) == 0) {
+		if (count($group_ids) == 0)
+		{
 			return array();
 		}
 
-		$my_groups = xoctGroupParticipant::where(array(
-			'user_id' => $xoctUser->getIliasUserId(),
-			'group_id' => $group_id
-		))->getArray(NULL, 'group_id');
-		if (count($my_groups) == 0) {
+		$my_groups = xoctGroupParticipant::where(array( 'user_id' => $xoctUser->getIliasUserId(), ))->where(array( 'group_id' => $group_ids ))
+		                                 ->getArray(null, 'group_id');
+		if (count($my_groups) == 0)
+		{
 			return array();
 		}
 
 		return xoctGroupParticipant::where(array( 'group_id' => $my_groups ))->get();
+	}
+
+
+	/**
+	 * @param $series_identifier
+	 * @return array
+	 */
+	protected static function loadGroupIdsForSeriesId($series_identifier)
+	{
+		if (!isset(self::$series_id_to_groups_map[$series_identifier]))
+		{
+			$xoctOpenCast = xoctOpenCast::where(array(
+				'series_identifier' => $series_identifier,
+				'obj_id'            => ilObject2::_lookupObjectId($_GET['ref_id']),
+			))->last();
+			if (!$xoctOpenCast instanceof xoctOpenCast)
+			{
+				return array();
+			}
+			$array = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(null, 'id');
+
+			self::$series_id_to_groups_map[$series_identifier] = $array;
+		}
 	}
 
 
@@ -119,11 +133,13 @@ class xoctGroup extends ActiveRecord {
 	protected $user_count = 0;
 
 
-	public function delete() {
+	public function delete()
+	{
 		/**
 		 * @var $gp xoctGroupParticipant
 		 */
-		foreach (xoctGroupParticipant::where(array( 'group_id' => $this->getId() ))->get() as $gp) {
+		foreach (xoctGroupParticipant::where(array( 'group_id' => $this->getId() ))->get() as $gp)
+		{
 			$gp->delete();
 		}
 		parent::delete();
@@ -133,7 +149,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getId() {
+	public function getId()
+	{
 		return $this->id;
 	}
 
@@ -141,7 +158,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @param int $id
 	 */
-	public function setId($id) {
+	public function setId($id)
+	{
 		$this->id = $id;
 	}
 
@@ -149,7 +167,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getSerieId() {
+	public function getSerieId()
+	{
 		return $this->serie_id;
 	}
 
@@ -157,7 +176,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @param int $serie_id
 	 */
-	public function setSerieId($serie_id) {
+	public function setSerieId($serie_id)
+	{
 		$this->serie_id = $serie_id;
 	}
 
@@ -165,7 +185,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function getTitle()
+	{
 		return $this->title;
 	}
 
@@ -173,7 +194,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @param string $title
 	 */
-	public function setTitle($title) {
+	public function setTitle($title)
+	{
 		$this->title = $title;
 	}
 
@@ -181,7 +203,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription()
+	{
 		return $this->description;
 	}
 
@@ -189,7 +212,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @param string $description
 	 */
-	public function setDescription($description) {
+	public function setDescription($description)
+	{
 		$this->description = $description;
 	}
 
@@ -197,7 +221,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getStatus() {
+	public function getStatus()
+	{
 		return $this->status;
 	}
 
@@ -205,7 +230,8 @@ class xoctGroup extends ActiveRecord {
 	/**
 	 * @param int $status
 	 */
-	public function setStatus($status) {
+	public function setStatus($status)
+	{
 		$this->status = $status;
 	}
 }
