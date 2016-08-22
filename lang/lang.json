@@ -340,7 +340,7 @@
             "delete_confirm": {
                 "translations": {
                     "de": "Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast und in allfälligen anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?",
-                    "en": "This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to preceed?"
+                    "en": "This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to proceed?"
                 },
                 "last_used": "09.08.2016"
             },
