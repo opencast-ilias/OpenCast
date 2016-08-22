@@ -436,7 +436,7 @@ class xoctEventTableGUI extends ilTable2GUI
 		$this->addAndReadFilterItem($te);
 
 		// OWNER
-		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner');
+		$te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner_username');
 		$this->addAndReadFilterItem($te);
 
 		// DATE
@@ -451,13 +451,10 @@ class xoctEventTableGUI extends ilTable2GUI
 
 	protected function parseData()
 	{
-		global $ilUser;
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
 
-		$user = '';
-
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, null, $user ? array( $user ) : null, $this->getOffset(), $this->getLimit());
+		$a_data = xoctEvent::getFiltered($filter, null, null, $this->getOffset(), $this->getLimit());
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
