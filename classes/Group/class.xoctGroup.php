@@ -46,6 +46,7 @@ class xoctGroup extends ActiveRecord {
 	protected $id = 0;
 
 
+
 	/**
 	 * @param          $series_identifier
 	 * @param xoctUser $xoctUser
@@ -53,8 +54,7 @@ class xoctGroup extends ActiveRecord {
 	 * @return xoctGroupParticipant[]
 	 */
 	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser) {
-		if (! isset($series_id_to_groups_map[$series_identifier])) {
-
+		if (! isset(self::$series_id_to_groups_map[$series_identifier])) {
 			$xoctOpenCast = xoctOpenCast::where(array(
 				'series_identifier' => $series_identifier,
 				'obj_id' => ilObject2::_lookupObjectId($_GET['ref_id'])
@@ -65,9 +65,9 @@ class xoctGroup extends ActiveRecord {
 			}
 			$array = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(NULL, 'id');
 
-			$series_id_to_groups_map[$series_identifier] = $array;
+			self::$series_id_to_groups_map[$series_identifier] = $array;
 		}
-		$group_id = $series_id_to_groups_map[$series_identifier];
+		$group_id = self::$series_id_to_groups_map[$series_identifier];
 
 		if (count($group_id) == 0) {
 			return array();
