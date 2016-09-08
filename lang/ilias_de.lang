@@ -33,6 +33,9 @@ config_upload_token#:#Aktiviere Upload-Token
 config_user_mapping#:#User-Mapping
 config_use_modals#:#Player in Modal öffnen
 config_workflow#:#Workflow-ID
+config_advanced#:#Erweitert
+config_sign_annotation_links#:#Annotationslink signieren
+config_request_comb_lv#:#Request Kombinations Level
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren

@@ -67,10 +67,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
 		$te->setOptions(array(
 			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
-			xoctLog::DEBUG_LEVEL_1 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
-			xoctLog::DEBUG_LEVEL_2 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_2),
-			xoctLog::DEBUG_LEVEL_3 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
-			xoctLog::DEBUG_LEVEL_4 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
+			xoctLog::DEBUG_LEVEL_1     => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
+			xoctLog::DEBUG_LEVEL_2     => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_2),
+			xoctLog::DEBUG_LEVEL_3     => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
+			xoctLog::DEBUG_LEVEL_4     => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
 		));
 		$this->addItem($te);
 
@@ -90,7 +90,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_USER_MAPPING), xoctConf::F_USER_MAPPING);
 		$te->setOptions(array(
 			xoctUser::MAP_EXT_ID => 'External-ID',
-			xoctUser::MAP_EMAIL => 'E-Mail'
+			xoctUser::MAP_EMAIL  => 'E-Mail',
 		));
 		$this->addItem($te);
 
@@ -100,7 +100,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRteTags(array(
 			'p',
 			'a',
-			'br'
+			'br',
 		));
 		$te->usePurifier(true);
 		$te->disableButtons(array(
@@ -117,7 +117,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'copy',
 			'paste',
 			'pastetext',
-			'formatselect'
+			'formatselect',
 		));
 
 		$te->setRows(5);
@@ -133,7 +133,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRteTags(array(
 			'p',
 			'a',
-			'br'
+			'br',
 		));
 		$te->usePurifier(true);
 		$te->disableButtons(array(
@@ -150,7 +150,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'copy',
 			'paste',
 			'pastetext',
-			'formatselect'
+			'formatselect',
 		));
 
 		$te->setRows(5);
@@ -165,6 +165,20 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			$te->setRequired(true);
 			$this->addItem($te);
 		}
+
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('advanced'));
+		$this->addItem($h);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS), xoctConf::F_SIGN_ANNOTATION_LINKS);
+		$this->addItem($cb);
+
+		$cb = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_REQUEST_COMBINATION_LEVEL), xoctConf::F_REQUEST_COMBINATION_LEVEL);
+		$cb->setOptions(array( xoctConf::SEP_EVERYTHING    => 'Everything separate',
+		                       xoctConf::SEP_EV_ACL_MD     => 'Event + ACL + MD',
+		                       xoctConf::SEP_EV_ACL_MD_PUB => 'Event + ACL + MD + PUB',
+		));
+		$this->addItem($cb);
 	}
 
 

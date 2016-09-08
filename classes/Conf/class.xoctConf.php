@@ -32,6 +32,11 @@ class xoctConf extends ActiveRecord {
 	const F_LICENSE_INFO = 'license_info';
 	const F_LICENSES = 'licenses';
 	const F_UPLOAD_TOKEN = 'upload_token';
+	const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
+	const F_REQUEST_COMBINATION_LEVEL = 'request_comb_lv';
+	const SEP_EVERYTHING = 1;
+	const SEP_EV_ACL_MD = 2;
+	const SEP_EV_ACL_MD_PUB = 3;
 	/**
 	 * @var array
 	 */
@@ -71,6 +76,26 @@ class xoctConf extends ActiveRecord {
 
 		// USER
 		xoctUser::setUserMapping(self::get(self::F_USER_MAPPING) ? self::get(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);
+
+		// EVENT REQUEST LEVEL
+		switch (self::get(self::F_REQUEST_COMBINATION_LEVEL)) {
+			default:
+			case xoctConf::SEP_EVERYTHING:
+				xoctEvent::$LOAD_ACL_SEPARATE = true;
+				xoctEvent::$LOAD_PUB_SEPARATE = true;
+				xoctEvent::$LOAD_MD_SEPARATE = true;
+				break;
+			case xoctConf::SEP_EV_ACL_MD:
+				xoctEvent::$LOAD_ACL_SEPARATE = false;
+				xoctEvent::$LOAD_PUB_SEPARATE = true;
+				xoctEvent::$LOAD_MD_SEPARATE = false;
+				break;
+			case xoctConf::SEP_EV_ACL_MD_PUB:
+				xoctEvent::$LOAD_ACL_SEPARATE = false;
+				xoctEvent::$LOAD_PUB_SEPARATE = false;
+				xoctEvent::$LOAD_MD_SEPARATE = false;
+				break;
+		}
 	}
 
 
@@ -117,7 +142,7 @@ class xoctConf extends ActiveRecord {
 	 * @return mixed
 	 */
 	public static function get($name) {
-		if (! self::$cache_loaded[$name]) {
+		if (!self::$cache_loaded[$name]) {
 			$obj = new self($name);
 			self::$cache[$name] = json_decode($obj->getValue());
 			self::$cache_loaded[$name] = true;

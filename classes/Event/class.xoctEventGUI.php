@@ -383,6 +383,8 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function clearCache() {
 		xoctCache::getInstance()->flush();
+		$this->xoctOpenCast->getSeriesIdentifier();
+		xoctEvent::getFiltered(array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() ));
 		$this->cancel();
 	}
 
