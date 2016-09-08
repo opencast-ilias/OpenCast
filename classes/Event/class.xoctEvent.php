@@ -14,9 +14,9 @@ require_once('class.xoctEventAdditions.php');
  */
 class xoctEvent extends xoctObject {
 
-	const LOAD_MD_INTERNAL = true;
-	const LOAD_ACL_INTERNAL = false;
-	const LOAD_PUB_INTERNAL = true;
+	public static $LOAD_MD_SEPARATE = true;
+	public static $LOAD_ACL_SEPARATE = false;
+	public static $LOAD_PUB_SEPARATE = true;
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
@@ -69,6 +69,7 @@ class xoctEvent extends xoctObject {
 		 * @var $xoctEvent xoctEvent
 		 */
 		$xoctEvent = parent::find($identifier);
+		$xoctEvent->afterObjectLoad();
 
 		return $xoctEvent;
 	}
@@ -93,13 +94,13 @@ class xoctEvent extends xoctObject {
 			$request->parameter('filter', $filter_string);
 		}
 		$request->parameter('limit', 1000);
-		if (!self::LOAD_MD_INTERNAL) {
+		if (!self::$LOAD_MD_SEPARATE) {
 			$request->parameter('withmetadata', true);
 		}
-		if (!self::LOAD_ACL_INTERNAL) {
+		if (!self::$LOAD_ACL_SEPARATE) {
 			$request->parameter('withacl', true);
 		}
-		if (!self::LOAD_PUB_INTERNAL) {
+		if (!self::$LOAD_PUB_SEPARATE) {
 			$request->parameter('sign', true);
 			$request->parameter('withpublications', true);
 		}
@@ -166,9 +167,11 @@ class xoctEvent extends xoctObject {
 		if (!$this->getPublications()) {
 			$this->loadPublications();
 		}
-		if (!$this->getIdentifier()) {
+
+		if (!$this->getSeriesIdentifier()) {
 			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
 		}
+
 		if (!$this->getAcl()) {
 			$this->loadAcl();
 		}
@@ -251,12 +254,11 @@ class xoctEvent extends xoctObject {
 		}
 
 		$role_names = array();
-		foreach (xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser) as $xoctGroupParticipant) {
+		$this->afterObjectLoad();
+
+		$xoctGroupParticipants = xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser);
+		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
-		}
-		if ($this->getOwnerAcl() instanceof xoctAcl) {
-			//			echo '<pre>' . print_r($role_names, 1) . '</pre>';
-			//			echo '<pre>' . print_r($this->getOwnerAcl()->getRole(), 1) . '</pre>';
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
@@ -486,7 +488,12 @@ class xoctEvent extends xoctObject {
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
-			$this->annotation_url = xoctSecureLink::sign($url);
+			if (xoctConf::get(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
+				$this->annotation_url = xoctSecureLink::sign($url);
+			} else {
+
+				$this->annotation_url = $url;
+			}
 		}
 
 		return $this->annotation_url;

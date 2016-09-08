@@ -9,16 +9,20 @@ require_once('class.xoctUser.php');
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  * @ilCtrl_IsCalledBy xoctGroupParticipantGUI:ilObjOpenCastGUI
  */
-class xoctGroupParticipantGUI extends xoctGUI {
+class xoctGroupParticipantGUI extends xoctGUI
+{
 
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+	public function __construct(xoctOpenCast $xoctOpenCast = null)
+	{
 		parent::__construct();
-		if ($xoctOpenCast instanceof xoctOpenCast) {
+		if ($xoctOpenCast instanceof xoctOpenCast)
+		{
 			$this->xoctOpenCast = $xoctOpenCast;
-		} else {
+		} else
+		{
 			$this->xoctOpenCast = new xoctOpenCast ();
 		}
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
@@ -30,21 +34,27 @@ class xoctGroupParticipantGUI extends xoctGUI {
 	/**
 	 * @param $data
 	 */
-	protected function outJson($data) {
+	protected function outJson($data)
+	{
 		header('Content-type: application/json');
 		echo json_encode($data);
 		exit;
 	}
 
 
-	protected function index() {
+	protected function index()
+	{
 	}
 
 
-	protected function getAvailable() {
+	protected function getAvailable()
+	{
 		$data = array();
-
-		foreach (xoctGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant) {
+		/**
+		 * @var $xoctGroupParticipant xoctGroupParticipant
+		 */
+		foreach (xoctGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
+		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
 			$data[] = $stdClass;
@@ -54,13 +64,19 @@ class xoctGroupParticipantGUI extends xoctGUI {
 	}
 
 
-	protected function getPerGroup() {
+	protected function getPerGroup()
+	{
 		$data = array();
 		$group_id = $_GET['group_id'];
-		if (! $group_id) {
-			$this->outJson(NULL);
+		if (!$group_id)
+		{
+			$this->outJson(null);
 		}
-		foreach (xoctGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant) {
+		/**
+		 * @var $xoctGroupParticipant xoctGroupParticipant
+		 */
+		foreach (xoctGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
+		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
 			$data[] = $stdClass;
@@ -69,13 +85,16 @@ class xoctGroupParticipantGUI extends xoctGUI {
 	}
 
 
-	protected function add() {
+	protected function add()
+	{
 		// TODO: Implement add() method.
 	}
 
 
-	protected function create() {
-		if (! $_POST['user_id'] OR ! $_POST['group_id']) {
+	protected function create()
+	{
+		if (!$_POST['user_id'] OR !$_POST['group_id'])
+		{
 			$this->outJson(false);
 		}
 		$xoctGroupParticipant = new xoctGroupParticipant();
@@ -86,23 +105,28 @@ class xoctGroupParticipantGUI extends xoctGUI {
 	}
 
 
-	protected function edit() {
+	protected function edit()
+	{
 		// TODO: Implement edit() method.
 	}
 
 
-	protected function update() {
+	protected function update()
+	{
 		// TODO: Implement update() method.
 	}
 
 
-	protected function confirmDelete() {
+	protected function confirmDelete()
+	{
 		// TODO: Implement confirmDelete() method.
 	}
 
 
-	protected function delete() {
-		if (! $_POST['id']) {
+	protected function delete()
+	{
+		if (!$_POST['id'])
+		{
 			$this->outJson(false);
 		}
 		$o = new xoctGroupParticipant($_POST['id']);

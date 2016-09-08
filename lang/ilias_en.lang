@@ -33,6 +33,9 @@ config_upload_token#:#Activate Upload-Token
 config_user_mapping#:#User-Mapping
 config_use_modals#:#Open Player in Modal
 config_workflow#:#Workflow-ID
+config_advanced#:#Advanced
+config_sign_annotation_links#:#Sign Annotation Link
+config_request_comb_lv#:#Request Combination Level
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -45,7 +48,7 @@ event_creator#:#Creator
 event_cut#:#Cut Event
 event_date#:#Date
 event_delete#:#Delete Event
-event_delete_confirm#:#This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to preceed?
+event_delete_confirm#:#This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration

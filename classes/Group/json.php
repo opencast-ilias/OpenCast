@@ -16,4 +16,4 @@ switch($_GET['cmd']) {
 		break;
 }
 
-echo $xoctSeries->__toJson();
+echo $xoctSeries->__toJSON();

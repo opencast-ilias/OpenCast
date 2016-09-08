@@ -22,7 +22,7 @@ class xoctSecureLink {
 	 * @return mixed
 	 */
 	public static function sign($url) {
-		if (!xoctEvent::LOAD_PUB_INTERNAL) {
+		if (!xoctEvent::$LOAD_PUB_SEPARATE) {
 			return $url;
 		}
 		if (!$url) {
