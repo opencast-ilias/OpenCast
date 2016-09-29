@@ -42,6 +42,52 @@ class xoctCache extends ilGlobalCache {
 	}
 
 
+	protected function initCachingService() {
+		/**
+		 * @var $ilGlobalCacheService ilGlobalCacheService
+		 */
+		if (!$this->getComponent()) {
+			$this->setComponent('default');
+		}
+		$serviceName = self::lookupServiceClassName($this->getServiceType());
+		$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
+		$ilGlobalCacheService->setServiceType($this->getServiceType());
+		$this->global_cache = $ilGlobalCacheService;
+		$this->setActive(in_array($this->getComponent(), self::getActiveComponents()));
+	}
+
+
+	/**
+	 * @param $service_type
+	 *
+	 * @return string
+	 */
+	public static function lookupServiceClassName($service_type) {
+		switch ($service_type) {
+			case self::TYPE_APC:
+				return 'ilApc';
+				break;
+			case self::TYPE_MEMCACHED:
+				return 'ilMemcache';
+				break;
+			case self::TYPE_XCACHE:
+				return 'ilXcache';
+				break;
+			default:
+				return 'ilStaticCache';
+				break;
+		}
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public static function getActiveComponents() {
+		return self::$active_components;
+	}
+
+
 	/**
 	 * @param bool $complete
 	 *
@@ -103,8 +149,8 @@ class xoctCache extends ilGlobalCache {
 	 *
 	 * @return bool
 	 */
-	public function set($key, $value, $ttl = NULL) {
-//		$ttl = $ttl ? $ttl : 480;
+	public function set($key, $value, $ttl = null) {
+		//		$ttl = $ttl ? $ttl : 480;
 		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
@@ -131,7 +177,7 @@ class xoctCache extends ilGlobalCache {
 			}
 		}
 
-		return NULL;
+		return null;
 	}
 }
 
