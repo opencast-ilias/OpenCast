@@ -18,13 +18,15 @@ config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Gespeichert
+config_groups#:#OpenCast-Gruppen
+config_group_producers#:#ILIAS Producers (identifier)
 config_roles#:#OpenCast-Rollen
 config_role_anonymous#:#Anonym
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Mitglied
-config_role_ivt_email_prefix#:#Präfix für IVT-Benutzer-Rolle (E-Mail wird ergänzt)
-config_role_ivt_external_prefix#:#Präfix für IVT-Benutzer-Rolle (Ext-Account wird ergänzt)
+config_role_ivt_email_prefix#:#Präfix für Besitzer-Rolle (E-Mail wird ergänzt)
+config_role_ivt_external_prefix#:#Präfix für Besitzer-Rolle (Ext-Account wird ergänzt)
 config_role_organisation_prefix#:#Präfix für Organisations-Rolle (Domain des Mapping wird angehängt)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Präfix für Benutzer-Rolle (Mapping wird angehängt)

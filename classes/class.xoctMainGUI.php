@@ -17,7 +17,6 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 class xoctMainGUI extends xoctGUI {
 
 	const TAB_SETTINGS = 'settings';
-	const TAB_SYSTEM_ACCOUNTS = 'system_accounts';
 	const TAB_PUBLICATION_USAGE = 'publication_usage';
 	const TAB_EXPORT = 'export';
 
@@ -29,8 +28,6 @@ class xoctMainGUI extends xoctGUI {
 		$nextClass = $this->ctrl->getNextClass();
 
 		$this->tabs->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_' . self::TAB_SETTINGS), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->tabs->addTab(self::TAB_SYSTEM_ACCOUNTS, $this->pl->txt('tab_'
-			. self::TAB_SYSTEM_ACCOUNTS), $this->ctrl->getLinkTarget(new xoctSystemAccountGUI()));
 		$this->tabs->addTab(self::TAB_PUBLICATION_USAGE, $this->pl->txt('tab_'
 			. self::TAB_PUBLICATION_USAGE), $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI()));
 		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
@@ -40,11 +37,6 @@ class xoctMainGUI extends xoctGUI {
 				$this->tabs->setTabActive(self::TAB_PUBLICATION_USAGE);
 				$xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
 				$this->ctrl->forwardCommand($xoctPublicationUsageGUI);
-				break;
-			case 'xoctsystemaccountgui':
-				$this->tabs->setTabActive(self::TAB_SYSTEM_ACCOUNTS);
-				$xoctSystemAccountGUI = new xoctSystemAccountGUI();
-				$this->ctrl->forwardCommand($xoctSystemAccountGUI);
 				break;
 			case 'xoctconfexportgui':
 				$this->tabs->setTabActive(self::TAB_EXPORT);
