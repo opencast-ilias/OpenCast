@@ -354,62 +354,41 @@ class xoctEventTableGUI extends ilTable2GUI
 		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 		$this->ctrl->setParameterByClass('xoctInvitationGUI', xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 
-		if (ilObjOpenCast::DEV)
-		{
+		if (ilObjOpenCast::DEV) {
 			$ac->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
-		$admin = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN;
-		$tutor = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_TUTOR;
-		if ($admin && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED)
-		{
-			// Edit Owner
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING)
-			{
-				if ($this->xoctOpenCast->getPermissionPerClip())
-				{
-					$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
-				}
-			}
+		// Edit Owner
+		if (ilObjOpenCastAccess::checkAction('edit_owner', $xoctEvent, $xoctUser) && $this->xoctOpenCast->getPermissionPerClip()) {
+			$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 		}
+
 		// Share event
-		if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED)
-		{
-			if ($this->xoctOpenCast->getPermissionAllowSetOwn() && ($xoctEvent->isOwner($xoctUser) || $tutor || $admin))
-			{
-				$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
-			}
+		if (ilObjOpenCastAccess::checkAction('share_event', $xoctEvent, $xoctUser) && $this->xoctOpenCast->getPermissionAllowSetOwn()) {
+			$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
-		if ((ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN))
-		{
-			// Cut Event
-			$cutting_link = $xoctEvent->getCuttingLink();
-			if ($cutting_link && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED)
-			{
-				$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $cutting_link, '', '', '_blank');
-			}
-			// Delete Event
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING)
-			{
-				$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
-			}
 
-			// Edit Event
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED)
-			{
-				$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
-			}
+		// Cut Event
+		if (ilObjOpenCastAccess::checkAction('cut', $xoctEvent, $xoctUser)) {
+			$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT));
+		}
 
-			// Online/offline
-			if ($xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING && $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED)
-			{
-				if ($xoctEvent->getXoctEventAdditions()->getIsOnline())
-				{
-					$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
-				} else
-				{
-					$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
-				}
+		// Delete Event
+		if (ilObjOpenCastAccess::checkAction('delete_event', $xoctEvent, $xoctUser)) {
+			$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
+		}
+
+		// Edit Event
+		if (ilObjOpenCastAccess::checkAction('edit_event', $xoctEvent, $xoctUser)) {
+			$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+		}
+
+		// Online/offline
+		if (ilObjOpenCastAccess::checkAction('set_online_offline', $xoctEvent, $xoctUser)) {
+			if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+				$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
+			} else {
+				$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
 			}
 		}
 

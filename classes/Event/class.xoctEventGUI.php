@@ -1,5 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroup.php');
 require_once('class.xoctEventTableGUI.php');
 require_once('class.xoctEventFormGUI.php');
 require_once('class.xoctEventOwnerFormGUI.php');
@@ -22,6 +23,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
+	const CMD_CUT = 'cut';
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -46,7 +48,7 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function index() {
 		global $ilUser;
-		if (ilObjOpenCastAccess::hasWriteAccess()) {
+		if (ilObjOpenCastAccess::checkAction('add_event')) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
 			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
@@ -153,6 +155,15 @@ class xoctEventGUI extends xoctGUI {
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
+	public function cut() {
+		global $ilUser;
+		//TODO check for rights & add to series producers
+		$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+		$ilias_producers->addMember(xoctUser::getInstance($ilUser));
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$cutting_link = $xoctEvent->getCuttingLink();
+		header('Location: ' . $cutting_link);
+	}
 
 	public function setOnline() {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);

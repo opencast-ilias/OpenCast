@@ -38,6 +38,14 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ROLE_ADMIN = 2;
 	const ROLE_TUTOR = 3;
 	const TXT_PERMISSION_DENIED = 'permission_denied';
+
+	/**
+	 * @var array
+	 */
+	protected static $custom_rights = array(
+		'upload',
+		'edit_videos',
+	);
 	/**
 	 * @var array
 	 */
@@ -135,6 +143,64 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $ilAccess->checkAccess('write', '', $ref_id);
 	}
 
+	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, $ref_id = NULL) {
+		if ($xoctUser === NULL) {
+			global $ilUser;
+			$xoctUser = xoctUser::getInstance($ilUser);
+		}
+
+		switch ($cmd) {
+			case 'edit_owner':
+				return
+					self::hasPermission('edit_videos', $ref_id)
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
+			case 'share_event':
+				return
+					self::hasPermission('edit_videos', $ref_id)
+					&& $xoctEvent->isOwner($xoctUser)
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
+			case 'cut':
+				return
+					self::hasPermission('edit_videos', $ref_id)
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
+			case 'delete_event':
+				return
+					(self::hasPermission('edit_videos') || (self::hasPermission('upload') && $xoctEvent->isOwner($xoctUser)))
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
+			case 'edit_event':
+			case 'set_online_offline':
+				return
+					self::hasPermission('edit_videos')
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
+			case 'add_event':
+				return
+					self::hasPermission('upload')
+					|| self::hasPermission('edit_videos');
+
+		}
+	}
+
+
+	/**
+	 * @param      $right
+	 * @param null $ref_id
+	 *
+	 * @return bool
+	 */
+	public static function hasPermission($right, $ref_id = NULL) {
+		if ($ref_id === NULL) {
+			$ref_id = $_GET['ref_id'];
+		}
+		global $ilAccess;
+
+		$prefix = in_array($right, self::$custom_rights) ? "rep_robj_xoct_" : "";
+		/**
+		 * @var $ilAccess ilAccesshandler
+		 */
+		return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
+	}
 
 	/**
 	 * @return int

@@ -38,6 +38,7 @@ config_workflow#:#Workflow-ID
 config_advanced#:#Erweitert
 config_sign_annotation_links#:#Annotationslink signieren
 config_request_comb_lv#:#Request Kombinations Level
+edit_videos#:#Videos editieren
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -193,6 +194,7 @@ tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
+upload#:#Upload
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
