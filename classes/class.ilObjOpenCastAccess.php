@@ -22,6 +22,7 @@
 */
 
 require_once('./Services/Repository/classes/class.ilObjectPluginAccess.php');
+require_once('./Modules/Course/classes/class.ilCourseParticipants.php');
 require_once('class.ilObjOpenCast.php');
 
 /**
