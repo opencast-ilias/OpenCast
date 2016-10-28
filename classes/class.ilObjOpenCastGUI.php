@@ -328,7 +328,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} else {
 			$this->tpl->setTitle($this->pl->txt('series_create'));
 		}
-		$this->tpl->setTitleIcon(ilUtil::getImagePath('icon_xoct.svg', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'));
+		$this->tpl->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
 		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
 
 		return $xoctOpenCast;
