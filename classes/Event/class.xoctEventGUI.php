@@ -158,9 +158,12 @@ class xoctEventGUI extends xoctGUI {
 	public function cut() {
 		global $ilUser;
 		//TODO check for rights & add to series producers
+		$xoctUser = xoctUser::getInstance($ilUser);
 		$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
-		$ilias_producers->addMember(xoctUser::getInstance($ilUser));
+		$ilias_producers->addMember($xoctUser);
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
+		$xoctSeries->addProducer($xoctUser);
 		$cutting_link = $xoctEvent->getCuttingLink();
 		header('Location: ' . $cutting_link);
 	}

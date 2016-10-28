@@ -25,6 +25,14 @@ class xoctSeries extends xoctObject {
 
 
 	protected function afterObjectLoad() {
+		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->acl()->get());
+		$acls = array();
+		foreach ($data as $d) {
+			$p = new xoctAcl();
+			$p->loadFromStdClass($d);
+			$acls[] = $p;
+		}
+		$this->setAccessPolicies($acls);
 	}
 
 
@@ -48,6 +56,41 @@ class xoctSeries extends xoctObject {
 		$this->loadMetadata();
 		$this->updateFieldsFromMetadata();
 		$this->loadProperties();
+	}
+
+	public function addProducer(xoctUser $xoctUser) {
+		$already_has_read = false;
+		$already_has_write = false;
+		foreach ($this->getAccessPolicies() as $acl) {
+			if ($acl->getRole() == $xoctUser->getUserRoleName()) {
+				if ($acl->getAction() == xoctAcl::READ) {
+					$already_has_read = true;
+				} else if ($acl->getAction() == xoctAcl::WRITE) {
+					$already_has_write = true;
+				}
+			}
+		}
+
+		if (!$already_has_read) {
+			$new_read_acl = new xoctAcl();
+			$new_read_acl->setAction(xoctAcl::READ);
+			$new_read_acl->setAllow(true);
+			$new_read_acl->setRole($xoctUser->getUserRoleName());
+			$this->addAccessPolicy($new_read_acl);
+		}
+
+		if (!$already_has_write) {
+			$new_write_acl = new xoctAcl();
+			$new_write_acl->setAction(xoctAcl::WRITE);
+			$new_write_acl->setAllow(true);
+			$new_write_acl->setRole($xoctUser->getUserRoleName());
+			$this->addAccessPolicy($new_write_acl);
+		}
+
+		if (!$already_has_read || !$already_has_write) {
+			$this->update();
+		}
+
 	}
 
 
@@ -109,6 +152,11 @@ class xoctSeries extends xoctObject {
 		);
 
 		xoctRequest::root()->series($this->getIdentifier())->properties()->put($array);
+
+		$array = array(
+			'acl' => json_encode($this->getAccessPolicies())
+		);
+		xoctRequest::root()->series($this->getIdentifier())->acl()->put($array);
 
 		self::removeFromCache($this->getIdentifier());
 	}
