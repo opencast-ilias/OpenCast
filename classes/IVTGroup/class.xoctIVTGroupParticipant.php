@@ -133,7 +133,7 @@ class xoctIVTGroupParticipant extends ActiveRecord
 	 * @param $group_id
 	 * @return array
 	 */
-	public function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
+	public static function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
 	{
 		$all = xoctIVTGroup::where(array( 'serie_id' => $obj_id))->getArray(null, 'id');
 		if (count($all) == 0)

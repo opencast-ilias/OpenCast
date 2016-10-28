@@ -52,13 +52,13 @@ class xoctUser {
 	/**
 	 * @return mixed
 	 */
-	public static function getIdentifierPrefix() {
+	public static function getOwnerRolePrefix() {
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
 				return xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);
 				break;
 			case self::MAP_EMAIL:
-				xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
+				return xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
 				break;
 		}
 	}

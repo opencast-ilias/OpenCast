@@ -223,31 +223,28 @@ class xoctEventTableGUI extends ilTable2GUI
 
 		//		$this->tpl->setVariable('RECORDING_STATION', $xE->getMetadata()->getField('recording_station')->getValue());
 
-		if ($this->xoctOpenCast->getPermissionPerClip())
+		if ($this->isColumsSelected('event_owner'))
 		{
 
-			if ($this->isColumsSelected('event_owner'))
+			$this->tpl->setCurrentBlock('event_owner');
+
+			$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
+			if ($xE->isOwner($xoctUser))
 			{
-
-				$this->tpl->setCurrentBlock('event_owner');
-
-				$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
-				if ($xE->isOwner($xoctUser))
+				$this->tpl->setCurrentBlock('invitations');
+				$in = xoctInvitation::where(array(
+					'owner_id'         => $xoctUser->getIliasUserId(),
+					'event_identifier' => $xE->getIdentifier(),
+				))->count();
+				if ($in > 0)
 				{
-					$this->tpl->setCurrentBlock('invitations');
-					$in = xoctInvitation::where(array(
-						'owner_id'         => $xoctUser->getIliasUserId(),
-						'event_identifier' => $xE->getIdentifier(),
-					))->count();
-					if ($in > 0)
-					{
-						$this->tpl->setVariable('INVITATIONS', $in);
-					}
-					$this->tpl->parseCurrentBlock();
+					$this->tpl->setVariable('INVITATIONS', $in);
 				}
 				$this->tpl->parseCurrentBlock();
 			}
+			$this->tpl->parseCurrentBlock();
 		}
+
 		$this->addActionMenu($xE);
 	}
 
@@ -296,11 +293,6 @@ class xoctEventTableGUI extends ilTable2GUI
 				'selectable' => false,
 			),
 		);
-
-		if (!$this->xoctOpenCast->getPermissionPerClip())
-		{
-			unset($columns['event_owner']);
-		}
 
 		return $columns;
 	}
@@ -493,25 +485,22 @@ class xoctEventTableGUI extends ilTable2GUI
 		{
 			global $ilUser;
 
-			if (ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_MEMBER)
-			{
-				$xoctUser = xoctUser::getInstance($ilUser);
-				$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
-				if (!$xoctEvent->getXoctEventAdditions()->getIsOnline())
-				{
-					return false;
-				}
-				if ($this->xoctOpenCast->getPermissionPerClip() && !$xoctEvent->hasReadAccess($xoctUser))
-				{
-					return false;
-				}
-				if ($xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED)
-				{
-					return false;
-				}
+			$xoctUser = xoctUser::getInstance($ilUser);
+			$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
+
+			// edit_videos and write access see all videos
+			if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
+				return true;
 			}
 
-			return true;
+			// no ivt mode: only show online and published videos
+			if (!$this->xoctOpenCast->getPermissionPerClip()) {
+				return $xoctEvent->getXoctEventAdditions()->getIsOnline()
+					&& $xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED;
+			}
+
+			// ivt mode: if user is owner, show video
+			return $xoctEvent->hasReadAccess($xoctUser);
 		};
 	}
 

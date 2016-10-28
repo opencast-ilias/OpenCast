@@ -42,6 +42,20 @@ class xoctOpenCast extends ActiveRecord {
 		return false;
 	}
 
+	/**
+	 * @param $obj_id
+	 *
+	 * @return int
+	 */
+	public static function lookupSeriesIdentifier($obj_id) {
+		$xoctOpenCast = xoctOpenCast::where(array( 'obj_id' => $obj_id ))->last();
+		if ($xoctOpenCast instanceof xoctOpenCast) {
+			return $xoctOpenCast->getSeriesIdentifier();
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * @return xoctSeries
