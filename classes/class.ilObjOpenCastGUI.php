@@ -257,7 +257,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
 			global $ilUser;
-			$xoctAclStandardSets = new xoctAclStandardSets(xoctUser::getInstance($ilUser));
+			// TODO: add all admins and tutors of course/group
+			$series_producers = array(xoctUser::getInstance($ilUser)->getUserRoleName());
+			$xoctAclStandardSets = new xoctAclStandardSets($series_producers);
 			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
 		}
 

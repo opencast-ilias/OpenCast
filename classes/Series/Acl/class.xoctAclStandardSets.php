@@ -22,7 +22,7 @@ class xoctAclStandardSets {
 	 * @param xoctUser|null $user
 	 * @param xoctUser|null $ivt_owner
 	 */
-	public function __construct(xoctUser $user = null, xoctUser $ivt_owner = null) {
+	public function __construct($role_names = array()) {
 		$acls = array();
 		$acl = new xoctAcl();
 		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
@@ -49,31 +49,16 @@ class xoctAclStandardSets {
 		$acls[] = $acl;
 
 		// User Specific
-		if ($user instanceof xoctUser) {
+		foreach ($role_names as $role) {
 
 			$acl = new xoctAcl();
-			$acl->setRole($user->getRoleName());
+			$acl->setRole($role);
 			$acl->setAllow(true);
 			$acl->setAction(xoctAcl::WRITE);
 			$acls[] = $acl;
 
 			$acl = new xoctAcl();
-			$acl->setRole($user->getRoleName());
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::READ);
-			$acls[] = $acl;
-		}
-
-		if ($ivt_owner instanceof xoctUser) {
-
-			$acl = new xoctAcl();
-			$acl->setRole($ivt_owner->getIVTRoleName());
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::WRITE);
-			$acls[] = $acl;
-
-			$acl = new xoctAcl();
-			$acl->setRole($ivt_owner->getIVTRoleName());
+			$acl->setRole($role);
 			$acl->setAllow(true);
 			$acl->setAction(xoctAcl::READ);
 			$acls[] = $acl;

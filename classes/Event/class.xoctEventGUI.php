@@ -119,7 +119,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function create() {
 		global $ilUser;
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
-		$xoctAclStandardSets = new xoctAclStandardSets(xoctUser::getInstance($ilUser));
+		$xoctAclStandardSets = new xoctAclStandardSets(array(xoctUser::getInstance($ilUser)->getOwnerRoleName()));
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
 
 		if ($xoctEventFormGUI->saveObject()) {
