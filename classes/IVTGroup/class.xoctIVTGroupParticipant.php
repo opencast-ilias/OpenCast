@@ -2,11 +2,11 @@
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 
 /**
- * Class xoctGroupParticipant
+ * Class xoctIVTGroupParticipant
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctGroupParticipant extends ActiveRecord
+class xoctIVTGroupParticipant extends ActiveRecord
 {
 
 	const STATUS_ACTIVE = 1;
@@ -118,7 +118,7 @@ class xoctGroupParticipant extends ActiveRecord
 	 */
 	public function getAllUserIdsForOpenCastObjId($obj_id)
 	{
-		$all = xoctGroup::where(array( 'serie_id' => $obj_id ))->getArray(null, 'id');
+		$all = xoctIVTGroup::where(array( 'serie_id' => $obj_id ))->getArray(null, 'id');
 		if (count($all) == 0)
 		{
 			return array();
@@ -135,7 +135,7 @@ class xoctGroupParticipant extends ActiveRecord
 	 */
 	public function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
 	{
-		$all = xoctGroup::where(array( 'serie_id' => $obj_id))->getArray(null, 'id');
+		$all = xoctIVTGroup::where(array( 'serie_id' => $obj_id))->getArray(null, 'id');
 		if (count($all) == 0)
 		{
 			return array();

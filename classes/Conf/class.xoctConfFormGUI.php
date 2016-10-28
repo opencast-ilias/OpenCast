@@ -2,7 +2,7 @@
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Request/class.xoctCurl.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctUser.php');
 
 /**
  * Class xoctConfFormGUI
@@ -155,6 +155,16 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$te->setRows(5);
 		$this->addItem($te);
+
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('groups'));
+		$this->addItem($h);
+
+		foreach (xoctConf::$groups as $group) {
+			$te = new ilTextInputGUI($this->parent_gui->txt($group), $group);
+			$te->setRequired(true);
+			$this->addItem($te);
+		}
 
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('roles'));

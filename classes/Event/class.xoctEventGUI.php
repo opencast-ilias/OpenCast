@@ -231,7 +231,7 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
-		 * @var $xoctGroup      xoctGroup
+		 * @var $xoctGroup      xoctIVTGroup
 		 */
 		foreach ($a_data as $i => $d) {
 			$xoctEvent = xoctEvent::find($d['identifier']);
@@ -247,7 +247,7 @@ class xoctEventGUI extends xoctGUI {
 				$xoctInvitation->delete();
 			}
 		}
-		foreach (xoctGroup::where(array( 'serie_id' => $this->xoctOpenCast->getObjId() ))->get() as $xoctGroup) {
+		foreach (xoctIVTGroup::where(array( 'serie_id' => $this->xoctOpenCast->getObjId() ))->get() as $xoctGroup) {
 			$xoctGroup->delete();
 		}
 
@@ -261,7 +261,7 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
-		 * @var $xoctGroup      xoctGroup
+		 * @var $xoctGroup      xoctIVTGroup
 		 */
 		$errors = 'Folgende Clips konnten nicht upgedatet werde: ';
 		foreach ($a_data as $i => $d) {

@@ -1,7 +1,6 @@
 <?php
 require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctUser.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEvent.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctUser.php');
 
 /**
  * Class xoctConf
@@ -21,15 +20,12 @@ class xoctConf extends ActiveRecord {
 	const F_API_BASE = 'api_base';
 	const F_ACTIVATE_CACHE = 'activate_cache';
 	const F_USER_MAPPING = 'user_mapping';
+	const F_GROUP_PRODUCERS = 'group_producers';
 	const F_ROLE_PRODUCER = 'role_producer';
 	const F_ROLE_EXT_APPLICATION = 'role_ext_application';
 	const F_ROLE_USER_PREFIX = 'role_user_prefix';
-	const F_ROLE_ORGANIZATION_PREFIX = 'role_organisation_prefix';
-	const F_ROLE_ANONYMOUS = 'role_anonymous';
-	const F_ROLE_FEDERATION_MEMBER = 'role_federation_member';
-	const F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER = 'role_external_application_member';
-	const F_ROLE_USER_IVT_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
-	const F_ROLE_USER_IVT_EMAIL_PREFIX = 'role_ivt_email_prefix';
+	const F_ROLE_OWNER_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
+	const F_ROLE_OWNER_EMAIL_PREFIX = 'role_ivt_email_prefix';
 	const F_LICENSE_INFO = 'license_info';
 	const F_LICENSES = 'licenses';
 	const F_UPLOAD_TOKEN = 'upload_token';
@@ -45,12 +41,14 @@ class xoctConf extends ActiveRecord {
 		self::F_ROLE_PRODUCER,
 		self::F_ROLE_EXT_APPLICATION,
 		self::F_ROLE_USER_PREFIX,
-		self::F_ROLE_ORGANIZATION_PREFIX,
-		self::F_ROLE_ANONYMOUS,
-		self::F_ROLE_FEDERATION_MEMBER,
-		self::F_ROLE_ROLE_EXTERNAL_APPLICATION_MEMBER,
-		self::F_ROLE_USER_IVT_EXTERNAL_PREFIX,
-		self::F_ROLE_USER_IVT_EMAIL_PREFIX,
+		self::F_ROLE_OWNER_EXTERNAL_PREFIX,
+		self::F_ROLE_OWNER_EMAIL_PREFIX,
+	);
+	/**
+	 * @var array
+	 */
+	public static $groups = array(
+		self::F_GROUP_PRODUCERS,
 	);
 
 

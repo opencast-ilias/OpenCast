@@ -1,237 +1,213 @@
 <?php
-require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupParticipant.php');
-
+/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+require_once "Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Object/class.xoctObject.php";
 /**
  * Class xoctGroup
  *
- * @author Fabian Schmid <fs@studer-raimann.ch>
+ * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctGroup extends ActiveRecord
-{
+class xoctGroup extends xoctObject {
 
 	/**
-	 * @return string
-	 * @description Return the Name of your Database Table
-	 * @deprecated
+	 * @var String
 	 */
-	static function returnDbTableName()
-	{
-		return 'xoct_group';
-	}
-
-
+	protected $identifier;
 	/**
-	 * @param $obj_id
-	 *
-	 * @return xoctGroup[]
+	 * @var String
 	 */
-	public static function getAllForObjId($obj_id)
-	{
-		return self::where(array( 'serie_id' => $obj_id ))->orderBy('title')->get();
-	}
-
-
+	protected $role;
+	/**
+	 * @var String
+	 */
+	protected $organization;
 	/**
 	 * @var array
 	 */
-	protected static $series_id_to_groups_map = array();
+	protected $roles;
 	/**
-	 * @var int
-	 *
-	 * @con_is_primary true
-	 * @con_is_unique  true
-	 * @con_has_field  true
-	 * @con_fieldtype  integer
-	 * @con_length     8
-	 * @con_sequence   true
+	 * @var array
 	 */
-	protected $id = 0;
-
-
+	protected $members;
 	/**
-	 * @param          $series_identifier
-	 * @param xoctUser $xoctUser
-	 *
-	 * @return xoctGroupParticipant[]
+	 * @var String
 	 */
-	public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser)
-	{
-		self::loadGroupIdsForSeriesId($series_identifier);
-		$group_ids = self::$series_id_to_groups_map[$series_identifier];
-
-		if (count($group_ids) == 0)
-		{
-			return array();
-		}
-
-		$my_groups = xoctGroupParticipant::where(array( 'user_id' => $xoctUser->getIliasUserId(), ))->where(array( 'group_id' => $group_ids ))
-		                                 ->getArray(null, 'group_id');
-		if (count($my_groups) == 0)
-		{
-			return array();
-		}
-
-		return xoctGroupParticipant::where(array( 'group_id' => $my_groups ))->get();
-	}
-
-
+	protected $name;
 	/**
-	 * @param $series_identifier
-	 * @return array
-	 */
-	protected static function loadGroupIdsForSeriesId($series_identifier)
-	{
-		if (!isset(self::$series_id_to_groups_map[$series_identifier]))
-		{
-			$xoctOpenCast = xoctOpenCast::where(array(
-				'series_identifier' => $series_identifier,
-				'obj_id'            => ilObject2::_lookupObjectId($_GET['ref_id']),
-			))->last();
-			if (!$xoctOpenCast instanceof xoctOpenCast)
-			{
-				return array();
-			}
-			$array = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(null, 'id');
-
-			self::$series_id_to_groups_map[$series_identifier] = $array;
-		}
-	}
-
-
-	/**
-	 * @var int
-	 * @con_has_field  true
-	 * @con_length     8
-	 * @con_fieldtype  integer
-	 */
-	protected $serie_id;
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_length     1024
-	 * @con_fieldtype  text
-	 */
-	protected $title;
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_length     4000
-	 * @con_fieldtype  text
+	 * @var String
 	 */
 	protected $description;
-	/**
-	 * @var int
-	 * @con_has_field  true
-	 * @con_length     1
-	 * @con_fieldtype  integer
-	 */
-	protected $status;
-	/**
-	 * @var int
-	 */
-	protected $user_count = 0;
 
-
-	public function delete()
-	{
-		/**
-		 * @var $gp xoctGroupParticipant
-		 */
-		foreach (xoctGroupParticipant::where(array( 'group_id' => $this->getId() ))->get() as $gp)
-		{
-			$gp->delete();
+	/**
+	 * @param string $identifier
+	 */
+	public function __construct($identifier = '') {
+		if ($identifier) {
+			$this->setIdentifier($identifier);
+			$this->read();
 		}
-		parent::delete();
+	}
+
+	protected function read() {
+		$data = json_decode(xoctRequest::root()->groups($this->getIdentifier())->get());
+		$this->loadFromStdClass($data);
 	}
 
 
 	/**
-	 * @return int
+	 * @param xoctUser $user
 	 */
-	public function getId()
-	{
-		return $this->id;
+	public function addMember(xoctUser $user) {
+		if (!in_array($user->getIdentifier(), $this->getMembers())) {
+			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $user->getIdentifier()));
+		}
+	}
+
+
+//	/**
+//	 * only allow changes on members for now, so we don't break anything
+//	 */
+//	public function update() {
+//		$data['members'] = json_encode(array($this->getMembers()->__toStdClass()));
+//		xoctRequest::root()->groups($this->getIdentifier())->put($data);
+//		self::removeFromCache($this->getIdentifier());
+//	}
+
+
+	protected function wakeup($fieldname, $value) {
+		switch ($fieldname) {
+			case 'members':
+			case 'roles':
+				return explode(',', $value);
+				break;
+			default:
+				return $value;
+		}
+	}
+
+
+	protected function sleep($fieldname, $value) {
+		switch ($fieldname) {
+			case 'members':
+			case 'roles':
+				return implode(',', $value);
+				break;
+			default:
+				return $value;
+		}
 	}
 
 
 	/**
-	 * @param int $id
+	 * @return mixed
 	 */
-	public function setId($id)
-	{
-		$this->id = $id;
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 
 	/**
-	 * @return int
+	 * @param mixed $identifier
 	 */
-	public function getSerieId()
-	{
-		return $this->serie_id;
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
 	}
 
 
 	/**
-	 * @param int $serie_id
+	 * @return mixed
 	 */
-	public function setSerieId($serie_id)
-	{
-		$this->serie_id = $serie_id;
+	public function getRole() {
+		return $this->role;
+	}
+
+
+//	/**
+//	 * @param mixed $role
+//	 */
+//	public function setRole($role) {
+//		$this->role = $role;
+//	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getOrganization() {
+		return $this->organization;
+	}
+
+
+//	/**
+//	 * @param mixed $organization
+//	 */
+//	public function setOrganization($organization) {
+//		$this->organization = $organization;
+//	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getRoles() {
+		return $this->roles;
+	}
+
+
+//	/**
+//	 * @param mixed $roles
+//	 */
+//	public function setRoles($roles) {
+//		$this->roles = $roles;
+//	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getMembers() {
+		return $this->members;
 	}
 
 
 	/**
-	 * @return string
+	 * @param mixed $members
 	 */
-	public function getTitle()
-	{
-		return $this->title;
+	public function setMembers($members) {
+		$this->members = $members;
 	}
 
 
 	/**
-	 * @param string $title
+	 * @return mixed
 	 */
-	public function setTitle($title)
-	{
-		$this->title = $title;
+	public function getName() {
+		return $this->name;
 	}
 
 
+//	/**
+//	 * @param mixed $name
+//	 */
+//	public function setName($name) {
+//		$this->name = $name;
+//	}
+
+
 	/**
-	 * @return string
+	 * @return mixed
 	 */
-	public function getDescription()
-	{
+	public function getDescription() {
 		return $this->description;
 	}
 
 
-	/**
-	 * @param string $description
-	 */
-	public function setDescription($description)
-	{
-		$this->description = $description;
-	}
+//	/**
+//	 * @param mixed $description
+//	 */
+//	public function setDescription($description) {
+//		$this->description = $description;
+//	}
 
 
-	/**
-	 * @return int
-	 */
-	public function getStatus()
-	{
-		return $this->status;
-	}
 
-
-	/**
-	 * @param int $status
-	 */
-	public function setStatus($status)
-	{
-		$this->status = $status;
-	}
 }

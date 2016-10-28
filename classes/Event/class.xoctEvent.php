@@ -256,9 +256,9 @@ class xoctEvent extends xoctObject {
 		$role_names = array();
 		$this->afterObjectLoad();
 
-		$xoctGroupParticipants = xoctGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser);
+		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser);
 		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
-			$role_names[] = $xoctGroupParticipant->getXoctUser()->getIVTRoleName();
+			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
@@ -268,7 +268,7 @@ class xoctEvent extends xoctObject {
 		$role_names_invitations = array();
 		foreach (xoctInvitation::getAllInvitationsOfUser($this->getIdentifier(), $xoctUser) as $xoctIntivation) {
 			$xoctUserInvitation = xoctUser::getInstance(new ilObjUser($xoctIntivation->getOwnerId()));
-			$role_names_invitations[] = $xoctUserInvitation->getIVTRoleName();
+			$role_names_invitations[] = $xoctUserInvitation->getOwnerRoleName();
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
@@ -289,7 +289,7 @@ class xoctEvent extends xoctObject {
 		if (!$xoctAcl instanceof xoctAcl) {
 			return false;
 		}
-		if ($xoctAcl->getRole() == $xoctUser->getIVTRoleName()) {
+		if ($xoctAcl->getRole() == $xoctUser->getOwnerRoleName()) {
 			return true;
 		}
 	}
@@ -388,7 +388,7 @@ class xoctEvent extends xoctObject {
 	public function getOwner() {
 		$acl = $this->getOwnerAcl();
 		if ($acl instanceof xoctAcl) {
-			$usr_id = xoctUser::lookupUserIdForIVTRole($acl->getRole());
+			$usr_id = xoctUser::lookupUserIdForOwnerRole($acl->getRole());
 			if ($usr_id) {
 				return xoctUser::getInstance(new ilObjUser($usr_id));
 			}
@@ -408,13 +408,13 @@ class xoctEvent extends xoctObject {
 		$acl = new xoctAcl();
 		$acl->setAction(xoctAcl::READ);
 		$acl->setAllow(true);
-		$acl->setRole($xoctUser->getIVTRoleName());
+		$acl->setRole($xoctUser->getOwnerRoleName());
 		$this->addAcl($acl);
 
 		$acl = new xoctAcl();
 		$acl->setAction(xoctAcl::WRITE);
 		$acl->setAllow(true);
-		$acl->setRole($xoctUser->getIVTRoleName());
+		$acl->setRole($xoctUser->getOwnerRoleName());
 		$this->addAcl($acl);
 
 		$acl = new xoctAcl();

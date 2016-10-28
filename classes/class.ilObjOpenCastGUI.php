@@ -33,7 +33,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupGUI.php');
 
 /**
  * User Interface class for example repository object.
@@ -132,8 +132,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			switch ($next_class) {
 				case 'xoctseriesgui':
 				case 'xocteventgui':
-				case 'xoctgroupgui':
-				case 'xoctgroupparticipantgui':
+				case 'xoctivtgroupgui':
+				case 'xoctivtgroupparticipantgui':
 				case 'xoctinvitationgui':
 					$xoctOpenCast = $this->initHeader();
 					$this->setTabs();
@@ -201,7 +201,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($this->checkPermissionBool('write')) {
 			$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
 			if ($xoctOpenCast->getPermissionPerClip()) {
-				$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctGroupGUI()));
+				$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctIVTGroupGUI()));
 			}
 			if ($ilUser->getId() == 6 AND ilObjOpenCast::DEV) {
 				$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));

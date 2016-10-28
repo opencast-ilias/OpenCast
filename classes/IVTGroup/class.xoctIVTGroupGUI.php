@@ -1,17 +1,17 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('class.xoctGroup.php');
+require_once('class.xoctIVTGroup.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
-require_once('class.xoctGroupParticipantGUI.php');
+require_once('class.xoctIVTGroupParticipantGUI.php');
 
 /**
- * Class xoctGroupGUI
+ * Class xoctIVTGroupGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctGroupGUI: ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctIVTGroupGUI: ilObjOpenCastGUI
  */
-class xoctGroupGUI extends xoctGUI {
+class xoctIVTGroupGUI extends xoctGUI {
 
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
@@ -49,7 +49,7 @@ class xoctGroupGUI extends xoctGUI {
 		$temp->setVariable('PH_FILTER', $this->pl->txt('groups_participants_filter_placeholder'));
 		$temp->setVariable('BUTTON_GROUP_NAME', $this->pl->txt('groups_new_button'));
 		$temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
-		$temp->setVariable('GP_BASE_URL', ($this->ctrl->getLinkTarget(new xoctGroupParticipantGUI($this->xoctOpenCast), '', '', true)));
+		$temp->setVariable('GP_BASE_URL', ($this->ctrl->getLinkTarget(new xoctIVTGroupParticipantGUI($this->xoctOpenCast), '', '', true)));
 		$temp->setVariable('GROUP_LANGUAGE', json_encode(array(
 			'no_title' => $this->pl->txt('group_alert_no_title'),
 			'delete_group' => $this->pl->txt('group_alert_delete_group'),
@@ -84,9 +84,9 @@ class xoctGroupGUI extends xoctGUI {
 
 	public function getAll() {
 		$arr = array();
-		foreach (xoctGroup::getAllForObjId($this->xoctOpenCast->getObjId()) as $group) {
+		foreach (xoctIVTGroup::getAllForObjId($this->xoctOpenCast->getObjId()) as $group) {
 			$stdClass = $group->__asStdClass();
-			$stdClass->user_count = xoctGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
+			$stdClass->user_count = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
 			$arr[] = $stdClass;
 		}
 		$this->outJson($arr);
@@ -94,7 +94,7 @@ class xoctGroupGUI extends xoctGUI {
 
 
 	protected function create() {
-		$obj = new xoctGroup();
+		$obj = new xoctIVTGroup();
 		$obj->setSerieId($this->xoctOpenCast->getObjId());
 		$obj->setTitle($_POST['title']);
 		$obj->create();
@@ -119,12 +119,12 @@ class xoctGroupGUI extends xoctGUI {
 
 	protected function delete() {
 		/**
-		 * @var $xoctGroup xoctGroup
+		 * @var $xoctIVTGroup xoctIVTGroup
 		 */
 		$status = false;
-		$xoctGroup = xoctGroup::find($_GET['id']);
-		if ($xoctGroup->getSerieId() == $this->xoctOpenCast->getObjId()) {
-			$xoctGroup->delete();
+		$xoctIVTGroup = xoctIVTGroup::find($_GET['id']);
+		if ($xoctIVTGroup->getSerieId() == $this->xoctOpenCast->getObjId()) {
+			$xoctIVTGroup->delete();
 			$status = true;
 		}
 		$this->outJson($status);

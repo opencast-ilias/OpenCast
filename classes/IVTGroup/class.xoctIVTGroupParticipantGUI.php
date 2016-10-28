@@ -1,15 +1,15 @@
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroupParticipant.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php');
 require_once('class.xoctUser.php');
 
 /**
- * Class xoctGroupParticipantGUI
+ * Class xoctIVTGroupParticipantGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
- * @ilCtrl_IsCalledBy xoctGroupParticipantGUI:ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctIVTGroupParticipantGUI:ilObjOpenCastGUI
  */
-class xoctGroupParticipantGUI extends xoctGUI
+class xoctIVTGroupParticipantGUI extends xoctGUI
 {
 
 	/**
@@ -51,9 +51,9 @@ class xoctGroupParticipantGUI extends xoctGUI
 	{
 		$data = array();
 		/**
-		 * @var $xoctGroupParticipant xoctGroupParticipant
+		 * @var $xoctGroupParticipant xoctIVTGroupParticipant
 		 */
-		foreach (xoctGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
+		foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
@@ -73,9 +73,9 @@ class xoctGroupParticipantGUI extends xoctGUI
 			$this->outJson(null);
 		}
 		/**
-		 * @var $xoctGroupParticipant xoctGroupParticipant
+		 * @var $xoctGroupParticipant xoctIVTGroupParticipant
 		 */
-		foreach (xoctGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
+		foreach (xoctIVTGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->display_name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
@@ -97,7 +97,7 @@ class xoctGroupParticipantGUI extends xoctGUI
 		{
 			$this->outJson(false);
 		}
-		$xoctGroupParticipant = new xoctGroupParticipant();
+		$xoctGroupParticipant = new xoctIVTGroupParticipant();
 		$xoctGroupParticipant->setUserId($_POST['user_id']);
 		$xoctGroupParticipant->setGroupId($_POST['group_id']);
 		$xoctGroupParticipant->create();
@@ -129,7 +129,7 @@ class xoctGroupParticipantGUI extends xoctGUI
 		{
 			$this->outJson(false);
 		}
-		$o = new xoctGroupParticipant($_POST['id']);
+		$o = new xoctIVTGroupParticipant($_POST['id']);
 		$o->delete();
 		$this->outJson(true);
 	}

@@ -20,10 +20,10 @@ class xoctAcl extends xoctObject {
 	public function isIVTAcl() {
 		switch (xoctUser::getUserMapping()) {
 			case xoctUser::MAP_EMAIL:
-				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX)) === 0);
+				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX)) === 0);
 				break;
 			case xoctUser::MAP_EXT_ID:
-				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX)) === 0);
+				return (strpos($this->getRole(), xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX)) === 0);
 				break;
 		}
 

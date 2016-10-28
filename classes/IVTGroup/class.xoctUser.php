@@ -55,10 +55,10 @@ class xoctUser {
 	public static function getIdentifierPrefix() {
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
-				return xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX);
+				return xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);
 				break;
 			case self::MAP_EMAIL:
-				xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
+				xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
 				break;
 		}
 	}
@@ -69,17 +69,17 @@ class xoctUser {
 	 *
 	 * @return int
 	 */
-	public static function lookupUserIdForIVTRole($role) {
+	public static function lookupUserIdForOwnerRole($role) {
 		if (!$role) {
 			return NULL;
 		}
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
-				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX));
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX));
 				$field = 'ext_account';
 				break;
 			case self::MAP_EMAIL:
-				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX));
+				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX));
 				$field = 'email';
 				break;
 		}
@@ -269,20 +269,6 @@ class xoctUser {
 
 
 	/**
-	 * @return string
-	 * @throws xoctException
-	 */
-	public function getRoleName() {
-		$prefix = xoctConf::get(xoctConf::F_ROLE_USER_PREFIX);
-		if (!$prefix) {
-			//			throw new xoctException(xoctException::NO_USER_MAPPING);
-		}
-
-		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
-	}
-
-
-	/**
 	 * @param $string
 	 *
 	 * @return mixed
@@ -304,13 +290,13 @@ class xoctUser {
 	 * @return string
 	 * @throws xoctException
 	 */
-	public function getIVTRoleName() {
+	public function getOwnerRoleName() {
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
-				$prefix = xoctConf::get(xoctConf::F_ROLE_USER_IVT_EXTERNAL_PREFIX);
+				$prefix = xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);
 				break;
 			default:
-				$prefix = xoctConf::get(xoctConf::F_ROLE_USER_IVT_EMAIL_PREFIX);
+				$prefix = xoctConf::get(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
 				break;
 		}
 		if (!$prefix) {
@@ -318,21 +304,6 @@ class xoctUser {
 		}
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
-	}
-
-
-	/**
-	 * @return string
-	 * @throws xoctException
-	 */
-	public function getOrganisationRoleName() {
-		$prefix = xoctConf::get(xoctConf::F_ROLE_ORGANIZATION_PREFIX);
-		if (!$prefix) {
-			throw new xoctException(xoctException::NO_USER_MAPPING);
-		}
-		$cut = explode('@', $this->getIdentifier());
-
-		return str_replace('{IDENTIFIER}', $this->modify($cut[1]), $prefix);
 	}
 
 
