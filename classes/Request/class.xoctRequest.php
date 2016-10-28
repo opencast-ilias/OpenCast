@@ -144,6 +144,7 @@ class xoctRequest {
 	const BRANCH_EVENTS = 2;
 	const BRANCH_BASE = 3;
 	const BRANCH_SECURITY = 4;
+	const BRANCH_GROUPS = 5;
 	/**
 	 * @var array
 	 */
@@ -227,6 +228,26 @@ class xoctRequest {
 		if ($series_id) {
 			$this->addPart($series_id);
 		}
+
+		return $this;
+	}
+
+	public function groups($group_id = '') {
+		$this->checkRoot();
+		$this->checkBranch(array( self::BRANCH_GROUPS ));
+		$this->branch = self::BRANCH_GROUPS;
+		$this->addPart('groups');
+		if ($group_id) {
+			$this->addPart($group_id);
+		}
+
+		return $this;
+	}
+
+
+	public function members() {
+		$this->checkBranch(array( self::BRANCH_GROUPS ));
+		$this->addPart('members');
 
 		return $this;
 	}
