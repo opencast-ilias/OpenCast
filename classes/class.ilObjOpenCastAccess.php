@@ -271,6 +271,45 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	/**
+	 * @param $action
+	 * @param $role String member|tutor|admin
+	 *
+	 * @return bool
+	 */
+	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
+		global $rbacreview, $tree;
+		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_" : "";
+		if (!$parent_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+			return false;
+		}
+		$fetch_role_method = "getDefault{$role}Role";
+		$active_operations = $rbacreview->getActiveOperationsOfRole($ref_id ? $ref_id : $_GET['ref_id'], $parent_obj->$fetch_role_method());
+		foreach ($active_operations as $op_id) {
+			$operation = $rbacreview->getOperation($op_id);
+			if ($operation['operation'] ==  $prefix.$action) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * used at object creation
+	 *
+	 * @param $ref_id
+	 * @param $parent_ref_id
+	 */
+	public static function activateMemberUpload($ref_id) {
+		global $rbacadmin, $rbacreview;
+		$parent_obj = ilObjOpenCast::getParentCourseOrGroup($ref_id);
+		$member_role_id = $parent_obj->getDefaultMemberRole();
+		$ops = array($rbacreview::_getOperationIdByName('rep_robj_xoct_upload'));
+		$rbacadmin->grantPermission($member_role_id, $ops, $ref_id);
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public static function getParentId($get_ref_id = false) {
