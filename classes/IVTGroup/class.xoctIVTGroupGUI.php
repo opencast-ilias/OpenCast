@@ -84,7 +84,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 	public function getAll() {
 		$arr = array();
-		foreach (xoctIVTGroup::getAllForObjId($this->xoctOpenCast->getObjId()) as $group) {
+		foreach (xoctIVTGroup::getAllForId($this->xoctOpenCast->getObjId()) as $group) {
 			$stdClass = $group->__asStdClass();
 			$stdClass->user_count = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
 			$arr[] = $stdClass;

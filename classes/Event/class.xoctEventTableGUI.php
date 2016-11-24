@@ -233,11 +233,11 @@ class xoctEventTableGUI extends ilTable2GUI
 			$this->tpl->setCurrentBlock('event_owner');
 
 			$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
-			if ($xE->isOwner($xoctUser))
+			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $xE, $xoctUser, $this->xoctOpenCast))
 			{
 				$this->tpl->setCurrentBlock('invitations');
 				$in = xoctInvitation::where(array(
-					'owner_id'         => $xoctUser->getIliasUserId(),
+//					'owner_id'         => $xoctUser->getIliasUserId(),
 					'event_identifier' => $xE->getIdentifier(),
 				))->count();
 				if ($in > 0)
@@ -355,32 +355,32 @@ class xoctEventTableGUI extends ilTable2GUI
 		}
 
 		// Edit Owner
-		if (ilObjOpenCastAccess::checkAction('edit_owner', $xoctEvent, $xoctUser) && $this->xoctOpenCast->getPermissionPerClip()) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 			$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT_OWNER));
 		}
 
 		// Share event
-		if (ilObjOpenCastAccess::checkAction('share_event', $xoctEvent, $xoctUser) && $this->xoctOpenCast->getPermissionAllowSetOwn()) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 			$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass('xoctInvitationGUI', xoctInvitationGUI::CMD_STANDARD));
 		}
 
 		// Cut Event
-		if (ilObjOpenCastAccess::checkAction('cut', $xoctEvent, $xoctUser)) {
-			$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT));
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $xoctEvent, $xoctUser)) {
+			$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT), '', '', '_blank');
 		}
 
 		// Delete Event
-		if (ilObjOpenCastAccess::checkAction('delete_event', $xoctEvent, $xoctUser)) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {
 			$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
 		}
 
 		// Edit Event
-		if (ilObjOpenCastAccess::checkAction('edit_event', $xoctEvent, $xoctUser)) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
 			$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 		}
 
 		// Online/offline
-		if (ilObjOpenCastAccess::checkAction('set_online_offline', $xoctEvent, $xoctUser)) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $xoctEvent, $xoctUser)) {
 			if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
 				$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
 			} else {
@@ -503,8 +503,8 @@ class xoctEventTableGUI extends ilTable2GUI
 					&& $xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED;
 			}
 
-			// ivt mode: if user is owner, show video
-			return $xoctEvent->hasReadAccess($xoctUser);
+			// ivt mode: if user is owner, same group as owner or has invitation, show video
+			return $xoctEvent->hasReadAccess($xoctUser, $this->xoctOpenCast->getPermissionAllowSetOwn());
 		};
 	}
 
@@ -532,6 +532,15 @@ class xoctEventTableGUI extends ilTable2GUI
 				$this->filter[$item->getPostVar()] = $item->getValue();
 				break;
 		}
+	}
+
+
+	public function exportData($format, $send = false) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
+			echo "Access Denied";
+			exit;
+		}
+		parent::exportData($format, $send);
 	}
 
 

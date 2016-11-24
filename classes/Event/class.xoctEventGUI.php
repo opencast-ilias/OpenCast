@@ -48,7 +48,7 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function index() {
 		global $ilUser;
-		if (ilObjOpenCastAccess::checkAction('add_event')) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
 			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
@@ -146,24 +146,42 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+
+		// check access
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+
+		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		$this->tpl->setContent($xoctEventFormGUI->getHTML());
 	}
 
 	public function cut() {
 		global $ilUser;
-		//TODO check for rights & add to series producers
 		$xoctUser = xoctUser::getInstance($ilUser);
-		$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
-		$ilias_producers->addMember($xoctUser);
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+
+		// check access
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $xoctEvent, $xoctUser)) {
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
+
+		// add user to ilias producers
+		try {
+			$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers->addMember($xoctUser);
+		} catch (xoctException $e) {
+			// TODO do something (log?)
+		}
+
+		// add user to series producers
 		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
 		$xoctSeries->addProducer($xoctUser);
+
+		// redirect
 		$cutting_link = $xoctEvent->getCuttingLink();
 		header('Location: ' . $cutting_link);
 	}

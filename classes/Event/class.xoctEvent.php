@@ -248,9 +248,9 @@ class xoctEvent extends xoctObject {
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public function hasReadAccess(xoctUser $xoctUser) {
+	public function hasReadAccess(xoctUser $xoctUser, $invitations_active = false) {
 		if ($this->isOwner($xoctUser)) {
-			return true;
+			return true; // is owner
 		}
 
 		$role_names = array();
@@ -262,7 +262,12 @@ class xoctEvent extends xoctObject {
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
-			return true;
+			return true; // same group as owner
+		}
+
+		// if invitations are deactivated, stop here
+		if (!$invitations_active) {
+			return false;
 		}
 
 		$role_names_invitations = array();
@@ -272,7 +277,7 @@ class xoctEvent extends xoctObject {
 		}
 
 		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
-			return true;
+			return true; // has invitation
 		}
 
 		return false;
@@ -299,6 +304,7 @@ class xoctEvent extends xoctObject {
 	 * @param bool|false $auto_publish
 	 */
 	public function create($auto_publish = false) {
+		global $ilUser;
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
@@ -309,6 +315,7 @@ class xoctEvent extends xoctObject {
 		}
 		$this->setCreated($created);
 		$this->setStartTime($created);
+		$this->setOwner(xoctUser::getInstance($ilUser));
 		$this->updateMetadataFromFields();
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
@@ -370,7 +377,7 @@ class xoctEvent extends xoctObject {
 			return $owner_acl[$this->getIdentifier()];
 		}
 		foreach ($this->getAcl() as $acl) {
-			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getIdentifierPrefix())) !== false) {
+			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
 				$owner_acl[$this->getIdentifier()] = $acl;
 
 				return $acl;
@@ -403,7 +410,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @throws xoctException
 	 */
-	public function setOwner(xoctUser $xoctUser) {
+	public function setOwner($xoctUser) {
 		$this->removeAllOwnerAcls();
 		$acl = new xoctAcl();
 		$acl->setAction(xoctAcl::READ);
@@ -415,18 +422,6 @@ class xoctEvent extends xoctObject {
 		$acl->setAction(xoctAcl::WRITE);
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
-		$this->addAcl($acl);
-
-		$acl = new xoctAcl();
-		$acl->setAction(xoctAcl::READ);
-		$acl->setAllow(true);
-		$acl->setRole($xoctUser->getUserRoleName());
-		$this->addAcl($acl);
-
-		$acl = new xoctAcl();
-		$acl->setAction(xoctAcl::WRITE);
-		$acl->setAllow(true);
-		$acl->setRole($xoctUser->getUserRoleName());
 		$this->addAcl($acl);
 
 		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
@@ -441,7 +436,7 @@ class xoctEvent extends xoctObject {
 
 	public function removeAllOwnerAcls() {
 		foreach ($this->getAcl() as $i => $acl) {
-			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getIdentifierPrefix())) !== false) {
+			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
 				unset($this->acl[$i]);
 			}
 		}

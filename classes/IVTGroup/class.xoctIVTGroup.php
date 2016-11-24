@@ -22,13 +22,16 @@ class xoctIVTGroup extends ActiveRecord
 
 
 	/**
-	 * @param $obj_id
+	 * @param $id
 	 *
 	 * @return xoctIVTGroup[]
 	 */
-	public static function getAllForObjId($obj_id)
+	public static function getAllForId($id, $call_by_reference = false)
 	{
-		return self::where(array( 'serie_id' => $obj_id ))->orderBy('title')->get();
+		if ($call_by_reference) {
+			$id = ilObject::_lookupObjectId($id);
+		}
+		return self::where(array( 'serie_id' => $id ))->orderBy('title')->get();
 	}
 
 
@@ -181,6 +184,13 @@ class xoctIVTGroup extends ActiveRecord
 		$this->serie_id = $serie_id;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getNamePresentation() {
+		return $this->getTitle();
+	}
 
 	/**
 	 * @return string
