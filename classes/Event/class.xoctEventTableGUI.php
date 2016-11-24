@@ -70,8 +70,12 @@ class xoctEventTableGUI extends ilTable2GUI
 		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
 		$this->initColums();
 		$this->initFilters();
-		$this->setDefaultOrderField('title');
-		$this->setExportFormats(array( self::EXPORT_CSV ));
+		$this->setDefaultOrderField('created_unix');
+
+
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
+			$this->setExportFormats(array( self::EXPORT_CSV ));
+		}
 
 		$this->parseData();
 	}
