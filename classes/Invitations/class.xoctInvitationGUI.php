@@ -83,7 +83,7 @@ class xoctInvitationGUI extends xoctGUI {
 		}
 		$invited_user_ids = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
-			'owner_id' => $ilUser->getId()
+//			'owner_id' => $ilUser->getId()
 		))->getArray(NULL, 'user_id');
 
 		$available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
@@ -133,7 +133,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$obj = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
 			'user_id' => $_POST['id'],
-			'owner_id' => $ilUser->getId()
+//			'owner_id' => $ilUser->getId()
 		))->first();
 		$new = false;
 		if (! $obj instanceof xoctInvitation) {
