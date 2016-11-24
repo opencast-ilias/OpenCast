@@ -58,7 +58,23 @@ class xoctSeries extends xoctObject {
 		$this->loadProperties();
 	}
 
-	public function addProducer(xoctUser $xoctUser) {
+
+	/**
+	 * @param array $xoctUsers
+	 */
+	public function addProducers(array $xoctUsers) {
+		foreach ($xoctUsers as $xoctUser) {
+			$this->addProducer($xoctUser, true);
+		}
+		$this->update();
+	}
+
+
+	/**
+	 * @param xoctUser $xoctUser
+	 * @param bool     $omit_update
+	 */
+	public function addProducer(xoctUser $xoctUser, $omit_update = false) {
 		$already_has_read = false;
 		$already_has_write = false;
 		foreach ($this->getAccessPolicies() as $acl) {
@@ -87,7 +103,7 @@ class xoctSeries extends xoctObject {
 			$this->addAccessPolicy($new_write_acl);
 		}
 
-		if (!$already_has_read || !$already_has_write) {
+		if (!$omit_update && (!$already_has_read || !$already_has_write)) {
 			$this->update();
 		}
 
@@ -189,7 +205,7 @@ class xoctSeries extends xoctObject {
 
 
 	public function delete() {
-		// TODO: Implement delete() method.
+		xoctRequest::root()->series($this->identifier)->delete();
 	}
 
 
