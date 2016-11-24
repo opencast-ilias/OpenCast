@@ -211,14 +211,6 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $obj_online = false;
-	/**
-	 * @var bool
-	 *
-	 * @con_has_field true
-	 * @con_fieldtype integer
-	 * @con_length    1
-	 */
-	protected $show_upload_token = false;
 
 
 	/**
@@ -364,21 +356,6 @@ class xoctOpenCast extends ActiveRecord {
 		$this->permission_allow_set_own = $permission_allow_set_own;
 	}
 
-
-	/**
-	 * @return boolean
-	 */
-	public function isShowUploadToken() {
-		return $this->show_upload_token;
-	}
-
-
-	/**
-	 * @param boolean $show_upload_token
-	 */
-	public function setShowUploadToken($show_upload_token) {
-		$this->show_upload_token = $show_upload_token;
-	}
 }
 
 ?>

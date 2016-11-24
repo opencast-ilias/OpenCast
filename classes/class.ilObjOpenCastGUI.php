@@ -370,16 +370,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		}
 
-		/**
-		 * @var $xoctOpenCast xoctOpenCast
-		 */
-		$daily_token = strtoupper(substr(md5($xoctOpenCast->getSeriesIdentifier() . date('d-m-Y')), 0, 6));
-
-		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN) && $xoctOpenCast->isShowUploadToken()) {
-			$info->addSection($this->pl->txt('upload_token_upload_token'));
-			$info->addProperty($this->pl->txt('upload_token_channel_id'), $xoctOpenCast->getSeriesIdentifier());
-			$info->addProperty($this->pl->txt('upload_token_daily_upload_token'), $daily_token);
-		}
 
 		// general information
 		$lng->loadLanguageModule("meta");

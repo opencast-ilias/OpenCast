@@ -6,23 +6,23 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 
-xoctPublicationUsage::installDB();
-xoctSystemAccount::installDB();
-xoctConf::installDB();
-xoctIVTGroup::installDB();
-xoctOpenCast::installDB();
+xoctPublicationUsage::updateDB();
+xoctSystemAccount::updateDB();
+xoctConf::updateDB();
+xoctIVTGroup::updateDB();
+xoctOpenCast::updateDB();
 ?>
 <#2>
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php');
-xoctIVTGroupParticipant::installDB();
+xoctIVTGroupParticipant::updateDB();
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php');
-xoctInvitation::installDB();
+xoctInvitation::updateDB();
 ?>
 <#3>
 <?php
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventAdditions.php');
-xoctEventAdditions::installDB();
+xoctEventAdditions::updateDB();
 ?>
 <#4>
 <?php
@@ -44,4 +44,9 @@ if($offering_admin)
 {
 	ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
 }
+?>
+<#5>
+<?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
+xoctOpenCast::updateDB();
 ?>

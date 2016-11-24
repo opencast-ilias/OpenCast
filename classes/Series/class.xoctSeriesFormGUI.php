@@ -224,7 +224,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_STREAMING_ONLY           => true,
 			self::F_PERMISSION_PER_CLIP      => true,
 			self::F_PERMISSION_ALLOW_SET_OWN => true,
-			self::F_SHOW_UPLOAD_TOKEN        => true,
 			self::F_ACCEPT_EULA              => true,
 		);
 
@@ -245,7 +244,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
 			self::F_OBJ_ONLINE               => $this->cast->isObjOnline(),
 			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
-			self::F_SHOW_UPLOAD_TOKEN        => $this->cast->isShowUploadToken(),
 		);
 
 		$this->setValuesByArray($array);
@@ -280,7 +278,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
-		$this->cast->setShowUploadToken($this->getInput(self::F_SHOW_UPLOAD_TOKEN));
 		$this->cast->setAgreementAccepted(true);
 
 		return true;
