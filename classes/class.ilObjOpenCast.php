@@ -113,7 +113,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$xoctOpenCastNew->setAgreementAccepted($xoctOpenCastOld->getAgreementAccepted());
 		$xoctOpenCastNew->setObjOnline(false);
 		$xoctOpenCastNew->setPermissionAllowSetOwn($xoctOpenCastOld->getPermissionAllowSetOwn());
-		$xoctOpenCastNew->setShowUploadToken($xoctOpenCastOld->isShowUploadToken());
 		$xoctOpenCastNew->setStreamingOnly($xoctOpenCastOld->getStreamingOnly());
 		$xoctOpenCastNew->setUseAnnotations($xoctOpenCastOld->getUseAnnotations());
 		$xoctOpenCastNew->setPermissionPerClip($xoctOpenCastOld->getPermissionPerClip());
