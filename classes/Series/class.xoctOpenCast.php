@@ -91,18 +91,47 @@ class xoctOpenCast extends ActiveRecord {
 	}
 
 
+	public function delete() {
+		foreach (xoctIVTGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
+			$ivt_group->delete();
+		}
+		parent::delete();
+	}
+
+
 	/**
 	 * @return bool
 	 */
 	public function hasDuplicatesOnSystem()
 	{
-		if (!$this->getObjId())
+		if (!$this->getObjId() || !$this->getSeriesIdentifier())
 		{
 			return false;
 		}
 
-		return ($this->getSeriesIdentifier()
-		        && (self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->where(array( 'obj_id' => 0 ), '!=')->count() > 1));
+		$duplicates_ar = self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->where(array( 'obj_id' => 0 ), '!=');
+		if ($duplicates_ar->count() < 2) {
+			return false;
+		}
+
+		// check if duplicates are actually deleted
+		foreach ($duplicates_ar->get() as $oc) {
+			/** @var xoctOpenCast $oc */
+			if ($oc->getObjId() != $this->getObjId()) {
+				global $ilDB;
+
+				$query = "SELECT deleted FROM object_reference".
+					" WHERE obj_id = ".$ilDB->quote($oc->getObjId(), "integer");
+				$set = $ilDB->query($query);
+				$rec = $ilDB->fetchAssoc($set);
+
+				if (!$rec['deleted']) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 
