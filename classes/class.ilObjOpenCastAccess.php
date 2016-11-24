@@ -23,6 +23,8 @@
 
 require_once('./Services/Repository/classes/class.ilObjectPluginAccess.php');
 require_once('./Modules/Course/classes/class.ilCourseParticipants.php');
+require_once('./Modules/Course/classes/class.ilObjCourse.php');
+require_once('./Modules/Group/classes/class.ilObjGroup.php');
 require_once('class.ilObjOpenCast.php');
 
 /**
@@ -38,6 +40,17 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ROLE_ADMIN = 2;
 	const ROLE_TUTOR = 3;
 	const TXT_PERMISSION_DENIED = 'permission_denied';
+
+	const ACTION_EDIT_OWNER = 'edit_owner';
+	const ACTION_SHARE_EVENT = 'share_event';
+	const ACTION_CUT = 'cut';
+	const ACTION_DELETE_EVENT = 'delete_event';
+	const ACTION_EDIT_EVENT = 'edit_event';
+	const ACTION_SET_ONLINE_OFFLINE = 'set_online_offline';
+	const ACTION_ADD_EVENT = 'add_event';
+	const ACTION_MANAGE_IVT_GROUPS = 'manage_ivt_groups';
+	const ACTION_EDIT_SETTINGS = 'edit_settings';
+	const ACTION_EXPORT_CSV = 'export_csv';
 
 	/**
 	 * @var array
@@ -143,44 +156,59 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $ilAccess->checkAccess('write', '', $ref_id);
 	}
 
-	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, $ref_id = NULL) {
+	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) {
 		if ($xoctUser === NULL) {
 			global $ilUser;
 			$xoctUser = xoctUser::getInstance($ilUser);
 		}
 
+		if ($ref_id === NULL) {
+			$ref_id = $_GET['ref_id'];
+		}
+
 		switch ($cmd) {
-			case 'edit_owner':
+			case self::ACTION_EDIT_OWNER:
 				return
 					self::hasPermission('edit_videos', $ref_id)
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
-			case 'share_event':
-				return
-					self::hasPermission('edit_videos', $ref_id)
-					&& $xoctEvent->isOwner($xoctUser)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
-			case 'cut':
+					&& ilObjOpenCast::getParentCourseOrGroup($ref_id);
+			case self::ACTION_SHARE_EVENT:
+				return
+					self::hasPermission('edit_videos', $ref_id)
+					|| ($xoctEvent->isOwner($xoctUser)
+						&& $xoctOpenCast->getPermissionAllowSetOwn()
+						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED);
+			case self::ACTION_CUT:
 				return
 					self::hasPermission('edit_videos', $ref_id)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
-			case 'delete_event':
+			case self::ACTION_DELETE_EVENT:
 				return
 					(self::hasPermission('edit_videos') || (self::hasPermission('upload') && $xoctEvent->isOwner($xoctUser)))
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
-			case 'edit_event':
-			case 'set_online_offline':
+			case self::ACTION_EDIT_EVENT:
+			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
 					self::hasPermission('edit_videos')
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
-			case 'add_event':
+			case self::ACTION_ADD_EVENT:
 				return
 					self::hasPermission('upload')
 					|| self::hasPermission('edit_videos');
-
+			case self::ACTION_MANAGE_IVT_GROUPS:
+				return
+					self::hasPermission('edit_videos');
+			case self::ACTION_EDIT_SETTINGS:
+				return
+					self::hasWriteAccess(); // = permission: 'edit settings'
+			case self::ACTION_EXPORT_CSV:
+				return
+					self::hasPermission('edit_videos');
 		}
 	}
+
 
 
 	/**
@@ -234,7 +262,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		$cp = new ilCourseParticipants(self::getCourseId());
+		$cp = new ilCourseParticipants(self::getParentId());
 		self::setAdmins($cp->getAdmins());
 		self::setTutors($cp->getTutors());
 		self::setMembers($cp->getMembers());
@@ -245,10 +273,10 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	/**
 	 * @return int
 	 */
-	public static function getCourseId() {
-		static $obj_id;
-		if ($obj_id) {
-			return $obj_id;
+	public static function getParentId($get_ref_id = false) {
+		static $id;
+		if ($id) {
+			return $id;
 		}
 		global $tree;
 		/**
@@ -256,11 +284,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		 */
 		foreach ($tree->getNodePath($_GET['ref_id']) as $node) {
 			if ($node['type'] == 'crs') {
-				$obj_id = $node['obj_id'];
+				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}
 		}
 
-		return $obj_id;
+		return $id;
 	}
 
 
