@@ -292,6 +292,7 @@ class xoctEventTableGUI extends ilTable2GUI
 			'event_owner'       => array(
 				'selectable' => true,
 				'sort_field' => 'owner_username',
+				'default' => $this->getOwnerColDefault(),
 			),
 			'common_actions'    => array(
 				'selectable' => false,
@@ -301,6 +302,14 @@ class xoctEventTableGUI extends ilTable2GUI
 		return $columns;
 	}
 
+	protected function getOwnerColDefault() {
+		static $owner_visible;
+		if ($owner_visible !== NULL) {
+			return $owner_visible;
+		}
+		$owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->xoctOpenCast->getPermissionPerClip());
+		return $owner_visible;
+	}
 
 	protected function initColums()
 	{
@@ -591,19 +600,23 @@ class xoctEventTableGUI extends ilTable2GUI
 	 */
 	public function getSelectableColumns()
 	{
-		$return = array();
+		static $selectable_columns;
+		if ($selectable_columns !== NULL) {
+			return $selectable_columns;
+		}
+		$selectable_columns = array();
 		foreach ($this->getAllColums() as $text => $col)
 		{
 			if ($col['selectable'])
 			{
-				$return[$text] = array(
+				$selectable_columns[$text] = array(
 					'txt'     => $this->pl->txt($text),
 					'default' => isset($col['default']) ? $col['default'] : true,
 				);
 			}
 		}
 
-		return $return;
+		return $selectable_columns;
 	}
 }
 
