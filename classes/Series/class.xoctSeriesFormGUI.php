@@ -32,6 +32,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
 	const F_OBJ_ONLINE = 'obj_online';
 	const F_CHANNEL_ID = 'channel_id';
+	const F_MEMBER_UPLOAD = 'member_upload';
 	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
 	/**
 	 * @var  xoctSeries
@@ -193,10 +194,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$this->addItem($permission_per_clip);
 
-		if (xoctConf::get(xoctConf::F_UPLOAD_TOKEN)) {
-			$show_upload_token = new ilCheckboxInputGUI($this->txt(self::F_SHOW_UPLOAD_TOKEN), self::F_SHOW_UPLOAD_TOKEN);
-			$show_upload_token->setInfo($this->infoTxt(self::F_SHOW_UPLOAD_TOKEN));
-			$this->addItem($show_upload_token);
+		if ($this->is_new && ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+			$crs_member_upload = new ilCheckboxInputGUI($this->txt(self::F_MEMBER_UPLOAD), self::F_MEMBER_UPLOAD);
+			$crs_member_upload->setInfo($this->infoTxt(self::F_MEMBER_UPLOAD));
+			$this->addItem($crs_member_upload);
 		}
 
 		if ($this->is_new) {
@@ -319,7 +320,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 			$this->series->update();
 			if ($this->is_new) {
-				$this->cast->create();
+				$this->cast->create(); //TODO check if unnecessary, since the cast will be created later in afterSave
 			} else {
 				$this->cast->update();
 			}
@@ -328,7 +329,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 		}
 
-		return $this->cast;
+		return array($this->cast, $this->getInput(self::F_MEMBER_UPLOAD));
 	}
 
 

@@ -257,14 +257,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
 			global $ilUser;
-			// TODO: add all admins and tutors of course/group
+			// TODO: remove/move to aftersave?
 			$series_producers = array(xoctUser::getInstance($ilUser)->getUserRoleName());
 			$xoctAclStandardSets = new xoctAclStandardSets($series_producers);
 			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
 		}
 
-		if ($identifier = $creation_form->saveObject()) {
-			$this->saveObject($identifier);
+		if ($return = $creation_form->saveObject()) {
+			$this->saveObject($return[0], $return[1]);
 		} else {
 			$this->tpl->setContent($creation_form->getHTML());
 		}
@@ -276,9 +276,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @param               $additional_args
 	 */
 	public function afterSave(ilObjOpenCast $newObj, $additional_args) {
+		global $ilUser;
 		/**
 		 * @var $cast xoctOpenCast
 		 */
+		// set object id for xoctOpenCast object
 		$cast = $additional_args[0];
 		$cast->setObjId($newObj->getId());
 		if (xoctOpenCast::where(array( 'obj_id' => $newObj->getId() ))->hasSets()) {
@@ -286,9 +288,41 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} else {
 			$cast->create();
 		}
+
+		// set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
+		$producers = array();
+		$producers[] = xoctUser::getInstance($ilUser);
+		if ($crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($newObj->getRefId())) {
+
+			//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group
+			foreach (array('admin', 'tutor') as $role) {
+				if (ilObjOpenCastAccess::isActionAllowedForRole('edit_videos', $role, $newObj->getRefId())) {
+					$getter_method = "get{$role}s";
+					foreach ($crs_or_grp_obj->getMembersObject()->$getter_method() as $participant_id) {
+						$producers[] = xoctUser::getInstance($participant_id);
+					}
+				}
+			}
+		}
+		$cast->getSeries()->addProducers($producers);
+		try {
+			$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers->addMembers($producers);
+		} catch (xoctException $e) {
+			//TODO log?
+		}
+
 		if ($cast->hasDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
 		}
+
+		// checkbox from creation gui to activate "upload" permission for members
+		$is_memberupload_enabled = $additional_args[1];
+		if ($is_memberupload_enabled) {
+			ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
+		}
+
+
 
 		$newObj->setTitle($cast->getSeries()->getTitle());
 		$newObj->setDescription($cast->getSeries()->getDescription());
