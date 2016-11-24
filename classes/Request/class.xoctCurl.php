@@ -122,14 +122,11 @@ class xoctCurl {
 					throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS);
 					break;
 				case 404:
-					$this->setResponseBody(json_encode(null));
+					throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig);
 					break;
 				default:
 					throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
 					break;
-			}
-			if ($this->getResponseStatus() == 403) {
-			} else {
 			}
 		}
 		//		curl_close($ch);
