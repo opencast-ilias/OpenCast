@@ -54,11 +54,21 @@ class xoctGroup extends xoctObject {
 
 
 	/**
+	 * @param array $xoctUsers
+	 */
+	public function addMembers(array $xoctUsers) {
+		foreach ($xoctUsers as $xoctUser) {
+			$this->addMember($xoctUser);
+		}
+	}
+
+	/**
 	 * @param xoctUser $user
 	 */
-	public function addMember(xoctUser $user) {
-		if (!in_array($user->getIdentifier(), $this->getMembers())) {
-			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $user->getIdentifier()));
+	public function addMember(xoctUser $xoctUser) {
+		if (!in_array($xoctUser->getIdentifier(), $this->getMembers())) {
+			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $xoctUser->getIdentifier()));
+			$this->members[] = $xoctUser->getIdentifier();
 		}
 	}
 
