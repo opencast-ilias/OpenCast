@@ -100,12 +100,12 @@ class xoctUser {
 
 
 	/**
-	 * @param ilObjUser $ilUser
+	 * @param ilObjUser|integer $ilUser
 	 *
 	 * @return xoctUser
 	 */
-	public static function getInstance(ilObjUser $ilUser) {
-		$key = $ilUser->getId();
+	public static function getInstance($ilUser) {
+		$key = (is_numeric($ilUser)) ? $ilUser : $ilUser->getId();
 		if (!isset(self::$instances[$key])) {
 			self::$instances[$key] = new self($key);
 		}
