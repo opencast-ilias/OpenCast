@@ -186,7 +186,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return bool
 	 */
 	protected function setTabs() {
-		global $lng, $ilUser;
+		global $lng, $ilUser, $tree;
 
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
@@ -198,15 +198,19 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		$this->tabs_gui->addTab(self::TAB_EVENTS, $this->pl->txt('tab_event_index'), $this->ctrl->getLinkTarget(new xoctEventGUI(), xoctEventGUI::CMD_STANDARD));
 		$this->tabs_gui->addTab(self::TAB_INFO, $this->pl->txt('tab_info'), $this->ctrl->getLinkTarget($this, 'infoScreen'));
-		if ($this->checkPermissionBool('write')) {
+
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_SETTINGS)) {
 			$this->tabs_gui->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_series_settings'), $this->ctrl->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT));
-			if ($xoctOpenCast->getPermissionPerClip()) {
-				$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctIVTGroupGUI()));
-			}
-			if ($ilUser->getId() == 6 AND ilObjOpenCast::DEV) {
-				$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
-				$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
-			}
+		}
+
+		if ($xoctOpenCast->getPermissionPerClip()
+			&& ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS)
+			&& ($tree->checkForParentType($this->ref_id, 'crs') || $tree->checkForParentType($this->ref_id, 'grp'))) {
+			$this->tabs_gui->addTab(self::TAB_GROUPS, $this->pl->txt('tab_groups'), $this->ctrl->getLinkTarget(new xoctIVTGroupGUI()));
+		}
+		if ($ilUser->getId() == 6 AND ilObjOpenCast::DEV) {
+			$this->tabs_gui->addTab('migrate_event', $this->pl->txt('tab_migrate_event'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'search'));
+			$this->tabs_gui->addTab('list_all', $this->pl->txt('tab_list_all'), $this->ctrl->getLinkTarget(new xoctEventGUI(), 'listAll'));
 		}
 
 		if ($this->checkPermissionBool("edit_permission")) {
