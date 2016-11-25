@@ -36,10 +36,8 @@ class xoctInvitationGUI extends xoctGUI {
 
 	protected function index() {
 		global $ilUser;
-		$admin = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_ADMIN;
-		$tutor = ilObjOpenCastAccess::getCourseRole() == ilObjOpenCastAccess::ROLE_TUTOR;
-		$oxtUser = xoctUser::getInstance($ilUser);
-		if (!$this->xoctEvent->isOwner($oxtUser) && !$admin && !$tutor) {
+		$xoctUser = xoctUser::getInstance($ilUser);
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 			ilUtil::sendFailure('Access denied', true);
 			$this->ctrl->redirectByClass('xoctEventGUI');
 		}
@@ -121,8 +119,8 @@ class xoctInvitationGUI extends xoctGUI {
 	 * @return array
 	 */
 	protected function getCourseMembers() {
-		$ref_id = ilObjOpenCast::returnParentCrsRefId($_GET['ref_id']);
-		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
+		$parent = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
+		$p = $parent->getMembersObject();
 
 		return $p->getMembers();
 	}

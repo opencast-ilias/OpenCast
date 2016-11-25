@@ -209,7 +209,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -232,7 +232,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -315,7 +315,7 @@ class xoctEventGUI extends xoctGUI {
 		 */
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -334,7 +334,7 @@ class xoctEventGUI extends xoctGUI {
 		global $ilUser;
 		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
-		if (!$xoctEvent->hasWriteAccess($xoctUser) && ilObjOpenCastAccess::getCourseRole() != ilObjOpenCastAccess::ROLE_ADMIN) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}

@@ -130,29 +130,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$xoctOpenCastNew->create();
 	}
 
-
-	/**
-	 * @param $ref_id
-	 *
-	 * @return int
-	 */
-	public static function returnParentCrsRefId($ref_id) {
-		global $tree;
-		/**
-		 * @var $tree ilTree
-		 */
-		while (ilObject2::_lookupType($ref_id, true) != 'crs') {
-			if ($ref_id == 1) {
-				ilUtil::sendFailure('OpenCast-Objects can be created in courses only.', true);
-				ilUtil::redirect('/');
-			}
-			$ref_id = $tree->getParentId($ref_id);
-		}
-
-		return $ref_id;
-	}
-
-
 	/**
 	 * @param $ref_id
 	 *

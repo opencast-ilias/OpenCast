@@ -230,31 +230,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
 	}
 
-	/**
-	 * @return int
-	 */
-	public static function getCourseRole() {
-		static $role;
-		if ($role) {
-			return $role;
-		}
-		global $ilUser;
-		self::initRoleMembers();
-		switch (true) {
-			case in_array($ilUser->getId(), self::$admins):
-				$role = self::ROLE_ADMIN;
-				break;
-			case in_array($ilUser->getId(), self::$members):
-				$role = self::ROLE_MEMBER;
-				break;
-			case in_array($ilUser->getId(), self::$tutors):
-				$role = self::ROLE_ADMIN;
-				break;
-		}
-
-		return $role;
-	}
-
 
 	protected static function initRoleMembers() {
 		static $init;
@@ -277,7 +252,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 */
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
-		global $rbacreview, $tree;
+		global $rbacreview;
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
 		if (!$parent_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
 			return false;
