@@ -59,6 +59,9 @@ class xoctCurl {
 		$request_start_time = microtime(true);
 		if (!isset($ch)) {
 			$ch = curl_init();
+			// following is needed if opencast's own user management is used
+//			$this->addHeader("X-Requested-Auth: Digest");
+//			$this->addHeader("X-Opencast-Matterhorn-Authorization: true");
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			if (self::$ip_v4) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
@@ -87,7 +90,8 @@ class xoctCurl {
 		if ($this->getRequestContentType()) {
 			$this->addHeader('Content-Type: ' . $this->getRequestContentType());
 		}
-
+		// following is needed if opencast's own user management is used
+//		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
 		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
