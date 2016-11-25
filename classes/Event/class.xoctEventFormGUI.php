@@ -158,10 +158,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 	public function fillForm() {
 		$createdDateTime = $this->object->getCreated();
-		if (!$this->is_new) {
-			$createdDateTime->add(new DateInterval('PT7200S'));
-		} // OpenCast FIX
-
 		$created = array(
 			'date' => $createdDateTime->format('Y-m-d'),
 			'time' => $createdDateTime->format('H:i:s'),
@@ -214,7 +210,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_CREATED);
 		$created = $ilDateTimeInputGUI->getDate();
 		$default_datetime = $this->object->getDefaultDateTimeObject($created->get(IL_CAL_ISO_8601));
-		$default_datetime->sub(new DateInterval('PT7200S'));
 
 		$this->object->setCreated($default_datetime);
 

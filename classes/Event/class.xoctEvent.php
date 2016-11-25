@@ -26,6 +26,7 @@ class xoctEvent extends xoctObject {
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
+	const TZ_UTC = 'UTC';
 	/**
 	 * @var array
 	 */
@@ -1132,8 +1133,8 @@ class xoctEvent extends xoctObject {
 		$source->setValue($this->getSource());
 
 		$created = $this->getMetadata()->getField('created');
-		$dateTime = $this->getCreated()->sub(new DateInterval('PT7200S')); // OpenCast FIX
-		$created->setValue($dateTime->format("Y-m-d\TH:i:s\Z"));
+		$dateTime = $this->getCreated()->setTimezone(new DateTimeZone(self::TZ_UTC));
+		$created->setValue($dateTime->format("Y-m-d\TH:i:s\Z")); //Timezone "Z" is equal to "UTC"
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
@@ -1145,6 +1146,7 @@ class xoctEvent extends xoctObject {
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
+		global $ilIliasIniFile;
 		if ($input instanceof DateTime) {
 			$input = $input->format(DATE_ATOM);
 		}
@@ -1152,12 +1154,14 @@ class xoctEvent extends xoctObject {
 			$input = 'now';
 		}
 		try {
-			$timezone = new DateTimeZone(self::TZ_EUROPE_ZURICH);
+			$timezone = new DateTimeZone($ilIliasIniFile->readVariable('server', 'timezone'));
 		} catch (Exception $e) {
 			$timezone = null;
 		}
 
-		return new DateTime($input, $timezone);
+		$datetime = new DateTime($input);
+		$datetime->setTimezone($timezone);
+		return $datetime;
 	}
 
 
