@@ -223,7 +223,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 		global $ilAccess;
 
-		$prefix = in_array($right, self::$custom_rights) ? "rep_robj_xoct_" : "";
+		$prefix = in_array($right, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
 		/**
 		 * @var $ilAccess ilAccesshandler
 		 */
@@ -278,7 +278,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
 		global $rbacreview, $tree;
-		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_" : "";
+		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
 		if (!$parent_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
 			return false;
 		}
@@ -304,7 +304,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		global $rbacadmin, $rbacreview;
 		$parent_obj = ilObjOpenCast::getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
-		$ops = array($rbacreview::_getOperationIdByName('rep_robj_xoct_upload'));
+		$ops = array($rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload'));
 		$rbacadmin->grantPermission($member_role_id, $ops, $ref_id);
 	}
 

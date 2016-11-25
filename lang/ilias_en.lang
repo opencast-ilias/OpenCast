@@ -18,15 +18,13 @@ config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Saved
-config_groups#:#OpenCast-Groups
-config_group_producers#:#ILIAS Producers (identifier)
-config_roles#:#OpenCast-Roles
+config_roles#:#OpenCast Roles
 config_role_anonymous#:#Anonymous
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Member
-config_role_ivt_email_prefix#:#Prefix for owner role (E-Mail is attached)
-config_role_ivt_external_prefix#:#Prefix for owner role (Ext-Account is attached)
+config_role_ivt_email_prefix#:#Prefix for IVT-User-role (E-Mail is attached)
+config_role_ivt_external_prefix#:#Prefix for IVT-User-role (Ext-Account is attached)
 config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
@@ -38,7 +36,8 @@ config_workflow#:#Workflow-ID
 config_advanced#:#Advanced
 config_sign_annotation_links#:#Sign Annotation Link
 config_request_comb_lv#:#Request Combination Level
-edit_videos#:#Edit videos
+config_groups#:#Opencast Groups
+config_group_producers#:#ILIAS Producers
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -51,7 +50,7 @@ event_creator#:#Creator
 event_cut#:#Cut Event
 event_date#:#Date
 event_delete#:#Delete Event
-event_delete_confirm#:#This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to proceed?
+event_delete_confirm#:#This will delete the Event in ILIAS and in OpenCast. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration
@@ -93,6 +92,7 @@ event_created_unix#:#Date
 event_event_created_unix#:#Date
 event_event_event_created_unix#:#Date
 event_set_online#:#Set online
+event_delete_confirm_w_duplicates#:#This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group
@@ -111,6 +111,8 @@ invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
 obj_xoct#:#OpenCast
+perm_upload#:#Upload
+perm_edit_videos#:#Edit Videos
 publication_usage_add#:#Add
 publication_usage_add_new#:#Add new
 publication_usage_cancel#:#Cancel
@@ -160,8 +162,8 @@ series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Series-Infos
 series_obj_online#:#Online
-series_permission_allow_set_own#:#Share Event
-series_permission_allow_set_own_info#:#Owners can share their Events (read-only)
+series_permission_allow_set_own#:#Grant Access Rights
+series_permission_allow_set_own_info#:#An owner can give other students the right to watch his/her video.
 series_permission_per_clip#:#Set permissions for an Event
 series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
 series_save#:#Save
@@ -175,6 +177,8 @@ series_use_annotations#:#Activate Annotations
 series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
 series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 series_has_duplicates_events_delete#:#MISSING
+series_member_upload#:#Upload by members
+series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
 system_account_add_new#:#Add System-Account
 system_account_cancel#:#Cancel
 system_account_create#:#Create
@@ -196,7 +200,6 @@ tab_series_settings#:#Settings
 tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
 tab_back#:#Back
-upload#:#Upload
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token

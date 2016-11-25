@@ -18,15 +18,13 @@ config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Gespeichert
-config_groups#:#OpenCast-Gruppen
-config_group_producers#:#ILIAS Producers (identifier)
 config_roles#:#OpenCast-Rollen
 config_role_anonymous#:#Anonym
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Mitglied
-config_role_ivt_email_prefix#:#Präfix für Besitzer-Rolle (E-Mail wird ergänzt)
-config_role_ivt_external_prefix#:#Präfix für Besitzer-Rolle (Ext-Account wird ergänzt)
+config_role_ivt_email_prefix#:#Präfix für IVT-Benutzer-Rolle (E-Mail wird ergänzt)
+config_role_ivt_external_prefix#:#Präfix für IVT-Benutzer-Rolle (Ext-Account wird ergänzt)
 config_role_organisation_prefix#:#Präfix für Organisations-Rolle (Domain des Mapping wird angehängt)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Präfix für Benutzer-Rolle (Mapping wird angehängt)
@@ -38,7 +36,8 @@ config_workflow#:#Workflow-ID
 config_advanced#:#Erweitert
 config_sign_annotation_links#:#Annotationslink signieren
 config_request_comb_lv#:#Request Kombinations Level
-edit_videos#:#Videos editieren
+config_groups#:#Opencast-Gruppen
+config_group_producers#:#ILIAS Producers
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -51,7 +50,7 @@ event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
 event_delete#:#Aufzeichung löschen
-event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast und in allfälligen anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
+event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
@@ -91,6 +90,7 @@ event_supported_filetypes#:#Unterstützte Dateitypen
 event_set_offline#:#Offline schalten
 event_created_unix#:#Datum
 event_set_online#:#Online schalten
+event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf OpenCast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
@@ -109,6 +109,8 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 obj_xoct#:#OpenCast
+perm_upload#:#Upload
+perm_edit_videos#:#Videos Editieren
 publication_usage_add#:#Hinzufügen
 publication_usage_add_new#:#Hinzufügen
 publication_usage_cancel#:#Abbrechen
@@ -159,7 +161,7 @@ series_license#:#Lizenz
 series_metadata#:#Serie-Infos
 series_obj_online#:#Online
 series_permission_allow_set_own#:#Leserechte erteilen
-series_permission_allow_set_own_info#:#Aufzeichnungs-Besitzer können Leserechte auf ihre Aufzeichnungen erteilen
+series_permission_allow_set_own_info#:#Ein Aufzeichnungs-Besitzer/in kann anderen Studierenden das Recht geben, seine/ihre Aufzeichnung anzusehen.
 series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
 series_save#:#Speichern
@@ -173,6 +175,8 @@ series_use_annotations#:#Annotationen aktivieren
 series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
 series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
 series_has_duplicates_events_delete#:#MISSING
+series_member_upload#:#Upload durch Mitglieder
+series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
 system_account_create#:#Erstellen
@@ -194,7 +198,6 @@ tab_series_settings#:#Einstellungen
 tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
-upload#:#Upload
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token

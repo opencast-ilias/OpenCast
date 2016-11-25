@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             }
         },
         "config": {
@@ -35,112 +35,112 @@
                     "de": "Cache aktivieren",
                     "en": "Activate Cache"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "api_base": {
                 "translations": {
                     "de": "API-Basis-URL",
                     "en": "Api-Base-URL"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "cancel": {
                 "translations": {
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "curl": {
                 "translations": {
                     "de": "cURL",
                     "en": "cURL"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "curl_debug_level": {
                 "translations": {
                     "de": "Debug-Level",
                     "en": "Debug-Level"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "curl_password": {
                 "translations": {
                     "de": "API-Passwort",
                     "en": "API-Password"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "curl_username": {
                 "translations": {
                     "de": "API-Benutzername",
                     "en": "API-Username"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "eula": {
                 "translations": {
                     "de": "Nutzungsvereinbarung",
                     "en": "EULA"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "licenses": {
                 "translations": {
                     "de": "Lizenzen",
                     "en": "Licenses"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "licenses_info": {
                 "translations": {
                     "de": "Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen",
                     "en": "Add new lines with URL#Name"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "license_info": {
                 "translations": {
                     "de": "Lizenz-Informationen",
                     "en": "License-Info"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "log_level_0": {
                 "translations": {
                     "de": "Deaktiviert",
                     "en": "Deactivated"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "log_level_1": {
                 "translations": {
                     "de": "LOW",
                     "en": "LOW"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "log_level_2": {
                 "translations": {
                     "de": "MEDIUM",
                     "en": "MEDIUM"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "log_level_3": {
                 "translations": {
                     "de": "HIGH",
                     "en": "HIGH"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "log_level_4": {
                 "translations": {
                     "de": "ULTRA",
                     "en": "ULTRA"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "msg_success": {
                 "translations": {
@@ -152,9 +152,9 @@
             "roles": {
                 "translations": {
                     "de": "OpenCast-Rollen",
-                    "en": "OpenCast-Roles"
+                    "en": "OpenCast Roles"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "role_anonymous": {
                 "translations": {
@@ -175,7 +175,7 @@
                     "de": "External Application",
                     "en": "External Application"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "role_federation_member": {
                 "translations": {
@@ -189,14 +189,14 @@
                     "de": "Präfix für IVT-Benutzer-Rolle (E-Mail wird ergänzt)",
                     "en": "Prefix for IVT-User-role (E-Mail is attached)"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "role_ivt_external_prefix": {
                 "translations": {
                     "de": "Präfix für IVT-Benutzer-Rolle (Ext-Account wird ergänzt)",
                     "en": "Prefix for IVT-User-role (Ext-Account is attached)"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "role_organisation_prefix": {
                 "translations": {
@@ -210,21 +210,21 @@
                     "de": "Producer",
                     "en": "Producer"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "role_user_prefix": {
                 "translations": {
                     "de": "Präfix für Benutzer-Rolle (Mapping wird angehängt)",
                     "en": "Prefix for User-Roles (Mapping is attached)"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "update": {
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "upload_token": {
                 "translations": {
@@ -238,42 +238,56 @@
                     "de": "User-Mapping",
                     "en": "User-Mapping"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "use_modals": {
                 "translations": {
                     "de": "Player in Modal öffnen",
                     "en": "Open Player in Modal"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "workflow": {
                 "translations": {
                     "de": "Workflow-ID",
                     "en": "Workflow-ID"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "advanced": {
                 "translations": {
                     "de": "Erweitert",
                     "en": "Advanced"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "sign_annotation_links": {
                 "translations": {
                     "de": "Annotationslink signieren",
                     "en": "Sign Annotation Link"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "request_comb_lv": {
                 "translations": {
                     "de": "Request Kombinations Level",
                     "en": "Request Combination Level"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
+            },
+            "groups": {
+                "translations": {
+                    "de": "Opencast-Gruppen",
+                    "en": "Opencast Groups"
+                },
+                "last_used": "25.11.2016"
+            },
+            "group_producers": {
+                "translations": {
+                    "de": "ILIAS Producers",
+                    "en": "ILIAS Producers"
+                },
+                "last_used": "25.11.2016"
             }
         },
         "event": {
@@ -302,7 +316,7 @@
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "clear_cache": {
                 "translations": {
@@ -315,7 +329,7 @@
                     "de": "Aufzeichnungen",
                     "en": "Events"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "create": {
                 "translations": {
@@ -342,42 +356,42 @@
                     "de": "Aufzeichnung schneiden",
                     "en": "Cut Event"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "date": {
                 "translations": {
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Aufzeichung löschen",
                     "en": "Delete Event"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "delete_confirm": {
                 "translations": {
-                    "de": "Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast und in allfälligen anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?",
-                    "en": "This will delete the Event in ILIAS (in every linked series) and in OpenCast. Do you want to proceed?"
+                    "de": "Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?",
+                    "en": "This will delete the Event in ILIAS and in OpenCast. Do you want to proceed?"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "description": {
                 "translations": {
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "download": {
                 "translations": {
                     "de": "Download",
                     "en": "Download"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "duration": {
                 "translations": {
@@ -390,14 +404,14 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "edit_owner": {
                 "translations": {
                     "de": "Besitzer bearbeiten",
                     "en": "Edit Owner"
                 },
-                "last_used": "11.08.2016"
+                "last_used": "25.11.2016"
             },
             "file_presenter": {
                 "translations": {
@@ -418,14 +432,14 @@
                     "de": "Zugriffsrechte erteilen",
                     "en": "Grant access rights"
                 },
-                "last_used": "11.08.2016"
+                "last_used": "25.11.2016"
             },
             "location": {
                 "translations": {
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "msg_created": {
                 "translations": {
@@ -459,7 +473,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "owner_select": {
                 "translations": {
@@ -473,14 +487,14 @@
                     "de": "Abspielen",
                     "en": "Play"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Referent/in",
                     "en": "Presenter"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "presenters": {
                 "translations": {
@@ -494,7 +508,7 @@
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "processing_state": {
                 "translations": {
@@ -554,7 +568,7 @@
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "update": {
                 "translations": {
@@ -617,7 +631,7 @@
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "created_unix": {
                 "translations": {
@@ -642,6 +656,13 @@
                     "en": "Set online"
                 },
                 "last_used": "27.05.2016"
+            },
+            "delete_confirm_w_duplicates": {
+                "translations": {
+                    "de": "Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf OpenCast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?",
+                    "en": "This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?"
+                },
+                "last_used": "25.11.2016"
             }
         },
         "groups": {
@@ -774,6 +795,22 @@
                     "de": "OpenCast",
                     "en": "OpenCast"
                 }
+            }
+        },
+        "perm": {
+            "upload": {
+                "translations": {
+                    "de": "Upload",
+                    "en": "Upload"
+                },
+                "last_used": "25.11.2016"
+            },
+            "edit_videos": {
+                "translations": {
+                    "de": "Videos Editieren",
+                    "en": "Edit Videos"
+                },
+                "last_used": "25.11.2016"
             }
         },
         "publication": {
@@ -964,7 +1001,7 @@
                     "de": "Ich akzeptiere die Nutzungsvereinbarungen",
                     "en": "I accept the agreement"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "alert_eula": {
                 "translations": {
@@ -977,49 +1014,49 @@
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "channel_id": {
                 "translations": {
                     "de": "Series ID",
                     "en": "Series ID"
                 },
-                "last_used": "12.07.2016"
+                "last_used": "25.11.2016"
             },
             "channel_type": {
                 "translations": {
                     "de": "Serie-Typ",
                     "en": "Series-Type"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "create": {
                 "translations": {
                     "de": "Serie anlegen",
                     "en": "Create Series"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "department": {
                 "translations": {
                     "de": "Department",
                     "en": "Department"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "department_info": {
                 "translations": {
                     "de": "Name Ihrer Institution",
                     "en": "How is the name of your department?"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "description": {
                 "translations": {
                     "de": "Beschreibung",
                     "en": "Description"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "discipline": {
                 "translations": {
@@ -1032,7 +1069,7 @@
                     "de": "Serie bearbeiten",
                     "en": "Edit Series"
                 },
-                "last_used": "12.07.2016"
+                "last_used": "25.11.2016"
             },
             "est_video_length": {
                 "translations": {
@@ -1051,21 +1088,21 @@
                     "de": "Neue Serie anlegen",
                     "en": "Create new Series"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "existing_channel_yes": {
                 "translations": {
                     "de": "Bestehende Serie wählen",
                     "en": "Choose existing Series"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "existing_identifier": {
                 "translations": {
                     "de": "Bestehende Serie",
                     "en": "Existing Series"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "intended_lifetime": {
                 "translations": {
@@ -1084,14 +1121,14 @@
                     "de": "Arbeitsanweisung",
                     "en": "Work instruction"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "license": {
                 "translations": {
                     "de": "Lizenz",
                     "en": "License"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "metadata": {
                 "translations": {
@@ -1104,35 +1141,35 @@
                     "de": "Online",
                     "en": "Online"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "permission_allow_set_own": {
                 "translations": {
                     "de": "Leserechte erteilen",
-                    "en": "Share Event"
+                    "en": "Grant Access Rights"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "permission_allow_set_own_info": {
                 "translations": {
-                    "de": "Aufzeichnungs-Besitzer können Leserechte auf ihre Aufzeichnungen erteilen",
-                    "en": "Owners can share their Events (read-only)"
+                    "de": "Ein Aufzeichnungs-Besitzer/in kann anderen Studierenden das Recht geben, seine/ihre Aufzeichnung anzusehen.",
+                    "en": "An owner can give other students the right to watch his/her video."
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "permission_per_clip": {
                 "translations": {
                     "de": "Rechte pro Aufzeichnung setzen",
                     "en": "Set permissions for an Event"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "permission_per_clip_info": {
                 "translations": {
                     "de": "Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.",
                     "en": "This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series."
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "save": {
                 "translations": {
@@ -1166,35 +1203,35 @@
                     "de": "Nur Streaming",
                     "en": "Streaming only"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "title": {
                 "translations": {
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "update": {
                 "translations": {
                     "de": "Aktualisieren",
                     "en": "Update"
                 },
-                "last_used": "12.07.2016"
+                "last_used": "25.11.2016"
             },
             "use_annotations": {
                 "translations": {
                     "de": "Annotationen aktivieren",
                     "en": "Activate Annotations"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             },
             "has_duplicates": {
                 "translations": {
                     "de": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.",
                     "en": "This Series has several links in ILIAS. Changes affect all links."
                 },
-                "last_used": "12.07.2016"
+                "last_used": "25.11.2016"
             },
             "has_duplicates_events": {
                 "translations": {
@@ -1208,6 +1245,20 @@
                     "de": "MISSING",
                     "en": "MISSING"
                 }
+            },
+            "member_upload": {
+                "translations": {
+                    "de": "Upload durch Mitglieder",
+                    "en": "Upload by members"
+                },
+                "last_used": "25.11.2016"
+            },
+            "member_upload_info": {
+                "translations": {
+                    "de": "Kurs- bzw. Gruppenmitglieder erhalten durch das Recht \"Upload\" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.",
+                    "en": "Course- or groupmembers are given the permission \"Upload\", which allows them to upload videos and delete own videos. This setting can be changed later in the tab \"Permissions\"."
+                },
+                "last_used": "25.11.2016"
             }
         },
         "system": {
@@ -1282,28 +1333,28 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "export": {
                 "translations": {
                     "de": "Import/Export",
                     "en": "Import/Export"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "groups": {
                 "translations": {
                     "de": "Gruppen",
                     "en": "Groups"
                 },
-                "last_used": "11.08.2016"
+                "last_used": "25.11.2016"
             },
             "info": {
                 "translations": {
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "list_all": {
                 "translations": {
@@ -1324,21 +1375,21 @@
                     "de": "Publikationen",
                     "en": "Publications"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "series_settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "settings": {
                 "translations": {
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "08.09.2016"
+                "last_used": "25.11.2016"
             },
             "system_accounts": {
                 "translations": {
@@ -1384,7 +1435,7 @@
                     "de": "OpenCast-Series erstellen",
                     "en": "Create openCast-Series"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "25.11.2016"
             }
         },
         "form": {
@@ -1425,7 +1476,7 @@
                     "de": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.",
                     "en": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen."
                 },
-                "last_used": "05.07.2016"
+                "last_used": "25.11.2016"
             }
         }
     }
