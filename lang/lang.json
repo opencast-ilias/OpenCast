@@ -1477,6 +1477,13 @@
                     "en": "Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen."
                 },
                 "last_used": "25.11.2016"
+            },
+            "creation_failed": {
+                "translations": {
+                    "de": "Objekte vom Typ \"OpenCast\" können nur innerhalb von Kursen oder Gruppen angelegt werden.",
+                    "en": "Objects of type \"OpenCast\" can only be created in courses or groups."
+                },
+                "last_used": "25.11.2016"
             }
         }
     }

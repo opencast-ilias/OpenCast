@@ -209,3 +209,4 @@ form_msg_not_supported#:#Filetype is not supported
 info_linked_items#:#Links
 info_linked_item#:#Link
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
+msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.

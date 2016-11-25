@@ -230,6 +230,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return array
 	 */
 	protected function initCreationForms($a_new_type) {
+		if (!ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+			ilUtil::sendFailure($this->pl->txt('msg_creation_failed'), true);
+			ilUtil::redirect('/');
+		}
 		$this->ctrl->setParameter($this, 'new_type', ilOpenCastPlugin::XOCT);
 
 		return array( self::CFORM_NEW => $this->initCreateForm($a_new_type) );

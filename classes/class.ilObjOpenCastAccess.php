@@ -156,6 +156,16 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $ilAccess->checkAccess('write', '', $ref_id);
 	}
 
+
+	/**
+	 * @param                   $cmd
+	 * @param xoctEvent|NULL    $xoctEvent
+	 * @param xoctUser|NULL     $xoctUser
+	 * @param xoctOpenCast|NULL $xoctOpenCast
+	 * @param null              $ref_id
+	 *
+	 * @return bool
+	 */
 	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) {
 		if ($xoctUser === NULL) {
 			global $ilUser;
