@@ -271,14 +271,8 @@ class xoctEvent extends xoctObject {
 			return false;
 		}
 
-		$role_names_invitations = array();
-		foreach (xoctInvitation::getAllInvitationsOfUser($this->getIdentifier(), $xoctUser) as $xoctIntivation) {
-			$xoctUserInvitation = xoctUser::getInstance(new ilObjUser($xoctIntivation->getOwnerId()));
-			$role_names_invitations[] = $xoctUserInvitation->getOwnerRoleName();
-		}
-
-		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names_invitations)) {
-			return true; // has invitation
+		if (!empty(xoctInvitation::getAllInvitationsOfUser($this->getIdentifier(), $xoctUser))) {
+			return true; //has invitations
 		}
 
 		return false;
