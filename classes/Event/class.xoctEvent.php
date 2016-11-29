@@ -408,7 +408,7 @@ class xoctEvent extends xoctObject {
 	public function setOwner($xoctUser) {
 		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
 
-		if (!$xoctUser->getIdentifier()) {
+		if (!$xoctUser->getOwnerRoleName()) {
 			return;
 		}
 
