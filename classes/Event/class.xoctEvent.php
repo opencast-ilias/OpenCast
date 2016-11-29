@@ -412,6 +412,12 @@ class xoctEvent extends xoctObject {
 	 * @throws xoctException
 	 */
 	public function setOwner($xoctUser) {
+		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
+
+		if (!$xoctUser->getIdentifier()) {
+			return;
+		}
+
 		$this->removeAllOwnerAcls();
 		$acl = new xoctAcl();
 		$acl->setAction(xoctAcl::READ);
@@ -424,8 +430,6 @@ class xoctEvent extends xoctObject {
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
 		$this->addAcl($acl);
-
-		$this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
 	}
 
 
@@ -450,7 +454,9 @@ class xoctEvent extends xoctObject {
 	 */
 	public function delete() {
 		xoctRequest::root()->events($this->getIdentifier())->delete();
-
+		foreach (xoctInvitation::where(array('event_identifier' => $this->getIdentifier()))->get() as $invitation) {
+			$invitation->delete();
+		}
 		return true;
 	}
 

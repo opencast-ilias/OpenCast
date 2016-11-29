@@ -75,6 +75,10 @@ class xoctSeries extends xoctObject {
 	 * @param bool     $omit_update
 	 */
 	public function addProducer(xoctUser $xoctUser, $omit_update = false) {
+		if (!$xoctUser->getUserRoleName()) {
+			return false;
+		}
+
 		$already_has_read = false;
 		$already_has_write = false;
 		foreach ($this->getAccessPolicies() as $acl) {

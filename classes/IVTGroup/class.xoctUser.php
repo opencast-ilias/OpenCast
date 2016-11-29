@@ -282,7 +282,9 @@ class xoctUser {
 	 * @return string
 	 */
 	public function getUserRoleName() {
-		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), xoctConf::get(xoctConf::F_ROLE_USER_PREFIX));
+		return $this->getIdentifier() ?
+			str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), xoctConf::get(xoctConf::F_ROLE_USER_PREFIX))
+			: null;
 	}
 
 
@@ -291,6 +293,10 @@ class xoctUser {
 	 * @throws xoctException
 	 */
 	public function getOwnerRoleName() {
+		if (!$this->getIdentifier()) {
+			return null;
+		}
+
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
 				$prefix = xoctConf::get(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);

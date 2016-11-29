@@ -264,10 +264,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$creation_form = $this->initCreateForm($this->getType(), true);
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
-			global $ilUser;
-			// TODO: remove/move to aftersave?
-			$series_producers = array(xoctUser::getInstance($ilUser)->getUserRoleName());
-			$xoctAclStandardSets = new xoctAclStandardSets($series_producers);
+			$xoctAclStandardSets = new xoctAclStandardSets();
 			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
 		}
 
