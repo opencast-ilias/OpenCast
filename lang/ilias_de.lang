@@ -109,6 +109,7 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 obj_xoct#:#OpenCast
+objs_xoct#:#OpenCast
 perm_upload#:#Upload
 perm_edit_videos#:#Videos Editieren
 publication_usage_add#:#Hinzufügen

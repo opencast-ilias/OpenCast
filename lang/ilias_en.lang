@@ -111,6 +111,7 @@ invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
 obj_xoct#:#OpenCast
+objs_xoct#:#OpenCast
 perm_upload#:#Upload
 perm_edit_videos#:#Edit Videos
 publication_usage_add#:#Add

@@ -797,6 +797,14 @@
                 }
             }
         },
+        "objs": {
+            "xoct": {
+                "translations": {
+                    "de": "OpenCast",
+                    "en": "OpenCast"
+                }
+            }
+        },
         "perm": {
             "upload": {
                 "translations": {
