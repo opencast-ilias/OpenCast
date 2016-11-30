@@ -169,7 +169,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$obj = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
 			'user_id' => $_POST['id'],
-			'owner_id' => $ilUser->getId()
+//			'owner_id' => $ilUser->getId()
 		))->first();
 		if ($obj instanceof xoctInvitation) {
 			$obj->delete();
