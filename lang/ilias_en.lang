@@ -204,6 +204,13 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#Create openCast-Series
+xoct_rep_robj_xoct_perm_upload#:#User can upload videos
+xoct_rep_robj_xoct_perm_edit_videos#:#User can edit videos
+xoct_visible#:#OpenCast object is visible
+xoct_read#:#User has read access to OpenCast and can watch videos
+xoct_write#:#User can edit setting of OpenCast object
+xoct_delete#:#User can move or delete OpenCast object
+xoct_edit_permission#:#User can change permission settings
 form_msg_select#:#Please select fist a Videofile
 form_msg_not_supported#:#Filetype is not supported
 info_linked_items#:#Links

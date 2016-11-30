@@ -202,6 +202,13 @@ upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
 xoct_new#:#OpenCast-Series erstellen
+xoct_rep_robj_xoct_perm_upload#:#Benutzer kann Videos hochladen
+xoct_rep_robj_xoct_perm_edit_videos#:#Benutzer kann Videos editieren
+xoct_visible#:#OpenCast-Objekt ist sichtbar
+xoct_read#:#Lesezugriff auf OpenCast-Objekt
+xoct_write#:#Einstellungen eines OpenCast-Objekts bearbeiten
+xoct_delete#:#OpenCast-Objekt löschen oder verschieben
+xoct_edit_permission#:#Rechteeinstellungen des OpenCast-Objektes ändern
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 form_msg_not_supported#:#Dateityp wird nicht unterstützt
 info_linked_items#:#Verlinkungen
