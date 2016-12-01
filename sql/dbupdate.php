@@ -31,7 +31,7 @@ $xoct_type_id = ilDBUpdateNewObjectType::addNewType('xoct', 'Plugin OpenCast');
 
 //Adding a new Permission rep_robj_xoct_upload ("Upload")
 $offering_admin = ilDBUpdateNewObjectType::addCustomRBACOperation( //$a_id, $a_title, $a_class, $a_pos
-	'rep_robj_xoct_perm_upload', 'upload', 'object', 1);
+	'rep_robj_xoct_perm_upload', 'upload', 'object', 2010);
 if($offering_admin)
 {
 	ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
@@ -39,7 +39,7 @@ if($offering_admin)
 
 //Adding a new Permission rep_robj_xoct_edit_videos ("Edit Videos")
 $offering_admin = ilDBUpdateNewObjectType::addCustomRBACOperation( //$a_id, $a_title, $a_class, $a_pos
-	'rep_robj_xoct_perm_edit_videos', 'edit videos', 'object', 2);
+	'rep_robj_xoct_perm_edit_videos', 'edit videos', 'object', 2020);
 if($offering_admin)
 {
 	ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
