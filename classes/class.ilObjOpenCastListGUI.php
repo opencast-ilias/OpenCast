@@ -66,7 +66,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		// Always set
 		$this->timings_enabled = true;
-		$this->subscribe_enabled = false;
+		$this->subscribe_enabled = true;
 		$this->payment_enabled = false;
 		$this->link_enabled = false;
 		$this->info_screen_enabled = true;
@@ -88,7 +88,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 				'permission' => 'write',
 				'cmd' => ilObjOpenCastGUI::CMD_REDIRECT_SETTING,
 				'lang_var' => 'edit'
-			),
+			)
 		);
 
 		return $commands;
