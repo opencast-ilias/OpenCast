@@ -69,7 +69,7 @@ class xoctEventGUI extends xoctGUI {
 		$intro_text = '';
 		if ($this->xoctOpenCast->getIntroText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-			$intro->setVariable('INTRO', $this->xoctOpenCast->getIntroText());
+			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroText()));
 			$intro_text = $intro->get();
 		}
 
