@@ -618,6 +618,35 @@ class xoctEventTableGUI extends ilTable2GUI
 
 		return $selectable_columns;
 	}
+
+
+	/**
+	 * @param $visible
+	 * @param $xoctOpenCast
+	 */
+	public static function setOwnerFieldVisibility($visible, $xoctOpenCast) {
+		global $ilDB;
+		$table_id = self::getGeneratedPrefix($xoctOpenCast);
+		$query = $ilDB->query("SELECT * FROM table_properties WHERE table_id = " . $ilDB->quote($table_id, "text") . " AND property = 'selfields'");
+		while ($rec = $ilDB->fetchAssoc($query)) {
+			$selfields = unserialize($rec['value']);
+			if ($selfields['event_owner'] == $visible) {
+				continue;
+			}
+			$selfields['event_owner'] = (bool) $visible;
+			$usr_id = $rec['user_id'];
+			$ilDB->update('table_properties',
+				array(
+					'value' => array('text', serialize($selfields))
+				),
+				array(
+					'table_id' => array('text', $table_id),
+					'user_id' => array('integer', $usr_id),
+					'property' => array('text', 'selfields'),
+				)
+			);
+		}
+	}
 }
 
 ?>
