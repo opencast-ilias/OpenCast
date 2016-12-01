@@ -286,11 +286,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @param $parent_ref_id
 	 */
 	public static function activateMemberUpload($ref_id) {
-		global $rbacadmin, $rbacreview;
+		global $ilDB, $rbacreview, $rbacadmin;
 		$parent_obj = ilObjOpenCast::getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
-		$ops = array($rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload'));
-		$rbacadmin->grantPermission($member_role_id, $ops, $ref_id);
+		$ops_id_upload = $rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload');
+		$ops_ids = $rbacreview->getActiveOperationsOfRole($ref_id, $member_role_id);
+		$ops_ids[] = $ops_id_upload;
+		$rbacadmin->grantPermission($member_role_id, $ops_ids, $ref_id);
 	}
 
 
