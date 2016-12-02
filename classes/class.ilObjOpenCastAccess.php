@@ -240,6 +240,58 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
 	}
 
+	/**
+	 * @param xoctUser $xoctUser
+	 *
+	 * @return bool
+	 * @throws xoctException
+	 */
+	public static function hasReadAccessOnEvent(xoctEvent $xoctEvent, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
+		// edit_videos and write access see all videos
+		if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
+			return true;
+		}
+
+		// always show own videos
+		if ($xoctEvent->isOwner($xoctUser)) {
+			return true;
+		}
+
+		// if not owner or edit_videos, don't show offline and proceeding videos
+		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || !$xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+			return false;
+		}
+
+		// no ivt mode: show residual videos
+		if (!$xoctOpenCast->getPermissionPerClip()) {
+			return true;
+		}
+
+		// with ivt mode: show videos of ivt group and invitations (own videos already checked)
+		$role_names = array();
+		$xoctEvent->afterObjectLoad();
+
+		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($xoctEvent->getSeriesIdentifier(), $xoctUser);
+		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
+			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
+		}
+
+		if ($xoctEvent->getOwnerAcl() instanceof xoctAcl && in_array($xoctEvent->getOwnerAcl()->getRole(), $role_names)) {
+			return true; // same group as owner
+		}
+
+		// if invitations are deactivated, stop here
+		if (!$xoctOpenCast->getPermissionAllowSetOwn()) {
+			return false;
+		}
+
+		if (!empty(xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser))) {
+			return true; //has invitations
+		}
+
+		return false;
+	}
+
 
 	protected static function initRoleMembers() {
 		static $init;

@@ -161,7 +161,7 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	protected function afterObjectLoad() {
+	public function afterObjectLoad() {
 		if (!$this->getMetadata()) {
 			$this->loadMetadata();
 		}

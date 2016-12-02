@@ -501,19 +501,7 @@ class xoctEventTableGUI extends ilTable2GUI
 			$xoctUser = xoctUser::getInstance($ilUser);
 			$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
 
-			// edit_videos and write access see all videos
-			if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
-				return true;
-			}
-
-			// no ivt mode: only show online and published videos
-			if (!$this->xoctOpenCast->getPermissionPerClip()) {
-				return $xoctEvent->getXoctEventAdditions()->getIsOnline()
-					&& $xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED;
-			}
-
-			// ivt mode: if user is owner, same group as owner or has invitation, show video
-			return $xoctEvent->hasReadAccess($xoctUser, $this->xoctOpenCast->getPermissionAllowSetOwn());
+			return ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast);
 		};
 	}
 
