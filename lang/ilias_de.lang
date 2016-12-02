@@ -66,6 +66,7 @@ event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
+event_owner_username#:#Besitzer
 event_player#:#Abspielen
 event_presenter#:#Referent/in
 event_presenters#:#Referent/in
