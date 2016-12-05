@@ -162,7 +162,7 @@ series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
 series_metadata#:#Serie-Infos
 series_obj_online#:#Online
-series_permission_allow_set_own#:#Leserechte erteilen
+series_permission_allow_set_own#:#Zugriffsrechte erteilen
 series_permission_allow_set_own_info#:#Ein Aufzeichnungs-Besitzer/in kann anderen Studierenden das Recht geben, seine/ihre Aufzeichnung anzusehen.
 series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.

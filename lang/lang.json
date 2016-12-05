@@ -1159,7 +1159,7 @@
             },
             "permission_allow_set_own": {
                 "translations": {
-                    "de": "Leserechte erteilen",
+                    "de": "Zugriffsrechte erteilen",
                     "en": "Grant Access Rights"
                 },
                 "last_used": "25.11.2016"
