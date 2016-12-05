@@ -87,8 +87,12 @@ class xoctInvitationGUI extends xoctGUI {
 		$available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
 		$invited_users = array();
 		$available_users = array();
+		$owner = $this->xoctEvent->getOwner();
 		foreach ($available_user_ids as $user_id) {
 			if ($user_id == $ilUser->getId()) {
+				continue;
+			}
+			if ($owner && $user_id == $owner->getIliasUserId()) {
 				continue;
 			}
 			$user = new stdClass();
