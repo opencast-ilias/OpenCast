@@ -316,7 +316,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		// show / disable owner field if ivt mode has changed
 		$ivt_mode_after_update = $this->cast->getPermissionPerClip();
-		if ($ivt_mode_after_update != $ivt_mode_before_update && !ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member')) {
+		if ($ivt_mode_after_update != $ivt_mode_before_update &&
+			($ivt_mode_after_update == 1 || !ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member'))) {
 			xoctEventTableGUI::setOwnerFieldVisibility($ivt_mode_after_update, $this->cast);
 		}
 
