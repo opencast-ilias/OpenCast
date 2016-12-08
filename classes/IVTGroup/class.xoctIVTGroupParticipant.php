@@ -94,7 +94,7 @@ class xoctIVTGroupParticipant extends ActiveRecord
 
 		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
 		$return = array();
-		foreach ($p->getMembers() as $user_id)
+		foreach (array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins()) as $user_id)
 		{
 			if (in_array($user_id, $existing))
 			{
