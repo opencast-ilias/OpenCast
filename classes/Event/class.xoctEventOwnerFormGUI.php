@@ -134,7 +134,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 		if (!$this->fillObject()) {
 			return false;
 		}
-		$this->object->update();
+		$this->object->updateAcls();
 
 		return true;
 	}
