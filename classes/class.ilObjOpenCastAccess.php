@@ -258,7 +258,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// if not owner or edit_videos, don't show offline and proceeding videos
-		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || !$xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
+		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || !($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)) {
 			return false;
 		}
 
