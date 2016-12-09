@@ -228,7 +228,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 *
 	 * @return bool
 	 */
-	public static function hasPermission($right, $ref_id = NULL) {
+	public static function hasPermission($right, $ref_id = NULL, $usr_id = 0) {
 		if ($ref_id === NULL) {
 			$ref_id = $_GET['ref_id'];
 		}
@@ -238,7 +238,10 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		/**
 		 * @var $ilAccess ilAccesshandler
 		 */
-		return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
+		if ($usr_id == 0) {
+			return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
+		}
+		return $ilAccess->checkAccessOfUser($usr_id, $prefix.$right, '', $ref_id);
 	}
 
 	/**
@@ -281,12 +284,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true; // same group as owner
 		}
 
-		// if invitations are deactivated, stop here
-		if (!$xoctOpenCast->getPermissionAllowSetOwn()) {
-			return false;
-		}
-
-		if (!empty(xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser))) {
+		if (!empty(xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn()))) {
 			return true; //has invitations
 		}
 

@@ -233,13 +233,10 @@ class xoctEventTableGUI extends ilTable2GUI
 			$this->tpl->setCurrentBlock('event_owner');
 
 			$this->tpl->setVariable('OWNER', $xE->getOwnerUsername());
-			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $xE, $xoctUser, $this->xoctOpenCast))
+			if ($this->xoctOpenCast->getPermissionPerClip())
 			{
 				$this->tpl->setCurrentBlock('invitations');
-				$in = xoctInvitation::where(array(
-//					'owner_id'         => $xoctUser->getIliasUserId(),
-					'event_identifier' => $xE->getIdentifier(),
-				))->count();
+				$in = xoctInvitation::getActiveInvitationsForEvent($xE, $this->xoctOpenCast->getPermissionAllowSetOwn(),true);
 				if ($in > 0)
 				{
 					$this->tpl->setVariable('INVITATIONS', $in);

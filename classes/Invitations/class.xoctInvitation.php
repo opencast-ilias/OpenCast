@@ -78,14 +78,60 @@ class xoctInvitation extends ActiveRecord {
 	 *
 	 * @return array
 	 */
-	public static function getAllInvitationsOfUser($event_identifier, xoctUser $xoctUser) {
-		return self::where(array(
+	public static function getAllInvitationsOfUser($event_identifier, xoctUser $xoctUser, $grant_access_rights = true) {
+		$invitations = self::where(array(
 			'user_id' => $xoctUser->getIliasUserId(),
 			'event_identifier' => $event_identifier
 		))->get();
+
+		if ($grant_access_rights) {
+			return $invitations;
+		}
+
+		$active_invitations = array();
+		foreach ($invitations as $inv) {
+			if (ilObjOpenCastAccess::hasPermission('edit_videos', null, $inv->getOwnerId())) {
+				$active_invitations[] = $inv;
+			}
+		}
+		return $active_invitations;
 	}
 
 
+	/**
+	 * @param xoctEvent $xoctEvent
+	 * @param bool      $grant_access_rights
+	 * @param bool      $count
+	 *
+	 * @return mixed
+	 */
+	public static function getActiveInvitationsForEvent(xoctEvent $xoctEvent, $grant_access_rights = false, $count = false) {
+		$all_invitations = self::where(array(
+			'event_identifier' => $xoctEvent->getIdentifier(),
+		));
+
+		if ($grant_access_rights) {
+			if ($count) {
+				return $all_invitations->count();
+			}
+
+			return $all_invitations->get();
+		}
+
+		// if grant_access_rights is deactivated, only admins' invitations are active
+		$active_invitations = array();
+		foreach ($all_invitations->get() as $inv) {
+			if (ilObjOpenCastAccess::hasPermission('edit_videos', null, $inv->getOwnerId())) {
+				$active_invitations[] = $inv;
+			}
+		}
+
+		if ($count) {
+			return count($active_invitations);
+		}
+
+		return $active_invitations;
+	}
 
 
 	/**

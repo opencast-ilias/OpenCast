@@ -79,10 +79,12 @@ class xoctInvitationGUI extends xoctGUI {
 		foreach ($course_members_user_ids as $user_id) {
 			$xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
 		}
-		$invited_user_ids = xoctInvitation::where(array(
-			'event_identifier' => $this->xoctEvent->getIdentifier(),
-//			'owner_id' => $ilUser->getId()
-		))->getArray(NULL, 'user_id');
+		$active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->xoctEvent, $this->xoctOpenCast->getPermissionAllowSetOwn());
+		$invited_user_ids = array();
+		foreach ($active_invitations as $inv) {
+			$invited_user_ids[] = $inv->getUserId();
+		}
+
 
 		$available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
 		$invited_users = array();

@@ -182,7 +182,7 @@ class xoctEvent extends xoctObject {
 		} elseif ($owner = $this->getMetadata()->getField('rightsHolder')->getValue()) {
 			$this->setOwnerUsername($owner);
 		}
-		
+
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
 		if (!$this->getXoctEventAdditions()) {
@@ -243,42 +243,6 @@ class xoctEvent extends xoctObject {
 	public function hasWriteAccess(xoctUser $xoctUser) {
 		if ($this->isOwner($xoctUser)) {
 			return true;
-		}
-
-		return false;
-	}
-
-
-	/**
-	 * @param xoctUser $xoctUser
-	 *
-	 * @return bool
-	 * @throws xoctException
-	 */
-	public function hasReadAccess(xoctUser $xoctUser, $invitations_active = false) {
-		if ($this->isOwner($xoctUser)) {
-			return true; // is owner
-		}
-
-		$role_names = array();
-		$this->afterObjectLoad();
-
-		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($this->getSeriesIdentifier(), $xoctUser);
-		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
-			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
-		}
-
-		if ($this->getOwnerAcl() instanceof xoctAcl && in_array($this->getOwnerAcl()->getRole(), $role_names)) {
-			return true; // same group as owner
-		}
-
-		// if invitations are deactivated, stop here
-		if (!$invitations_active) {
-			return false;
-		}
-
-		if (!empty(xoctInvitation::getAllInvitationsOfUser($this->getIdentifier(), $xoctUser))) {
-			return true; //has invitations
 		}
 
 		return false;
