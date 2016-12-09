@@ -181,10 +181,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				return
 					self::hasPermission('edit_videos', $ref_id)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& ilObjOpenCast::getParentCourseOrGroup($ref_id);
+					&& ilObjOpenCast::getParentCourseOrGroup($ref_id)
+					&& $xoctOpenCast->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
-					self::hasPermission('edit_videos', $ref_id)
+					(self::hasPermission('edit_videos', $ref_id) && $xoctOpenCast->getPermissionPerClip())
 					|| ($xoctEvent->isOwner($xoctUser)
 						&& $xoctOpenCast->getPermissionAllowSetOwn()
 						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
