@@ -176,10 +176,8 @@ class xoctEvent extends xoctObject {
 		if (!$this->getAcl()) {
 			$this->loadAcl();
 		}
-		$this->setOwnerUsername($this->getMetadata()->getField('rightsHolder')->getValue());
-		if (!$this->getOwnerUsername()) {
-			$this->setOwnerUsername($this->getOwner()->getNamePresentation());
-		}
+
+		$this->setOwnerUsername($this->getOwner()->getNamePresentation());
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
 		$this->initProcessingState();
 		if (!$this->getXoctEventAdditions()) {
