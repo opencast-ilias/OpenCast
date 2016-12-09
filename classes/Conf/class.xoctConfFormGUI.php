@@ -127,11 +127,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-		$te->setRteTags(array(
-			'p',
-			'a',
-			'br',
-		));
+//		$te->setRteTags(array(
+//			'p',
+//			'a',
+//			'br',
+//		));
 		$te->usePurifier(true);
 		$te->disableButtons(array(
 			'charmap',
