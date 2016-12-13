@@ -256,13 +256,18 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		// always show own videos
+		// don't show offline and failed videos
+		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || $xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED) {
+			return false;
+		}
+
+		// if owner, show video
 		if ($xoctEvent->isOwner($xoctUser)) {
 			return true;
 		}
 
-		// if not owner or edit_videos, don't show offline and proceeding videos
-		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || !($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)) {
+		// if not owner or edit_videos, don't show proceeding videos
+		if (!($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)) {
 			return false;
 		}
 
