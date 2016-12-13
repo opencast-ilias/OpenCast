@@ -130,6 +130,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 			$cb = new ilCheckboxInputGUI($this->txt(self::F_AUTO_PUBLISH), self::F_AUTO_PUBLISH);
 			$cb->setChecked(true);
+			if (!ilObjOpenCastAccess::hasPermission('edit_videos')) {
+				$cb->setDisabled(true);
+				$cb->setInfo($this->pl->txt('info_auto_publish_forced'));
+			}
 			$this->addItem($cb);
 		} else {
 			//			$cb = new ilCheckboxInputGUI($this->txt(self::F_ONLINE), self::F_ONLINE);
