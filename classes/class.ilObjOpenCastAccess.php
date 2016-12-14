@@ -193,6 +193,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_CUT:
 				return
 					self::hasPermission('edit_videos', $ref_id)
+					&& $xoctEvent->getMetadata()->getField('has_previews')->getValue()
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
 			case self::ACTION_DELETE_EVENT:
 				return
@@ -257,7 +258,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// don't show offline and failed videos
-		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline() || $xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED) {
+		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline()) {
 			return false;
 		}
 

@@ -74,7 +74,7 @@ event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
-event_state_failed#:#failed
+event_state_failed#:#Failed
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:#Not published, not yet visible to students
 event_state_running#:#Converting, not yet visible to students
@@ -94,6 +94,8 @@ event_event_created_unix#:#Date
 event_event_event_created_unix#:#Date
 event_set_online#:#Set online
 event_delete_confirm_w_duplicates#:#This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?
+event_state_failed_owner#:#Publication failed. Please contact the Podcast support.
+event_state_running_owner#:#Converting, not yet visible to other students
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group

@@ -26,7 +26,7 @@
                     "de": "Aktionen",
                     "en": "Actions"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             }
         },
         "config": {
@@ -309,14 +309,14 @@
                     "de": "Automatisch publizieren",
                     "en": "Auto publish"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "cancel": {
                 "translations": {
                     "de": "Abbrechen",
                     "en": "Cancel"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "clear_cache": {
                 "translations": {
@@ -329,21 +329,21 @@
                     "de": "Aufzeichnungen",
                     "en": "Events"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "create": {
                 "translations": {
                     "de": "Aufzeichnung hochladen",
                     "en": "Upload Event"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "created": {
                 "translations": {
                     "de": "Erstellt",
                     "en": "Created"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "creator": {
                 "translations": {
@@ -363,14 +363,14 @@
                     "de": "Datum",
                     "en": "Date"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "delete": {
                 "translations": {
                     "de": "Aufzeichung l\u00f6schen",
                     "en": "Delete Event"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "delete_confirm": {
                 "translations": {
@@ -384,14 +384,14 @@
                     "de": "Untertitel",
                     "en": "Subtitle"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "download": {
                 "translations": {
                     "de": "Download",
                     "en": "Download"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "duration": {
                 "translations": {
@@ -404,21 +404,21 @@
                     "de": "Metadaten bearbeiten",
                     "en": "Edit Metadata"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "edit_owner": {
                 "translations": {
                     "de": "Besitzer bearbeiten",
                     "en": "Edit Owner"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "file_presenter": {
                 "translations": {
                     "de": "Datei",
                     "en": "File"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "identifier": {
                 "translations": {
@@ -432,21 +432,21 @@
                     "de": "Zugriffsrechte erteilen",
                     "en": "Grant access rights"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "location": {
                 "translations": {
                     "de": "Aufnahmestation",
                     "en": "Recording Station"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "msg_created": {
                 "translations": {
                     "de": "Upload abgeschlossen",
                     "en": "Upload finished"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "14.12.2016"
             },
             "msg_deleted": {
                 "translations": {
@@ -473,7 +473,7 @@
                     "de": "Besitzer",
                     "en": "Owner"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "owner_select": {
                 "translations": {
@@ -493,28 +493,28 @@
                     "de": "Abspielen",
                     "en": "Play"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "presenter": {
                 "translations": {
                     "de": "Referent\/in",
                     "en": "Presenter"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "presenters": {
                 "translations": {
                     "de": "Referent\/in",
                     "en": "Presenters"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "preview": {
                 "translations": {
                     "de": "Vorschau",
                     "en": "Preview"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "processing_state": {
                 "translations": {
@@ -537,10 +537,10 @@
             },
             "state_failed": {
                 "translations": {
-                    "de": "fehlgeschlagen",
-                    "en": "failed"
+                    "de": "Fehlgeschlagen",
+                    "en": "Failed"
                 },
-                "last_used": "09.08.2016"
+                "last_used": "14.12.2016"
             },
             "state_instantiated": {
                 "translations": {
@@ -554,7 +554,7 @@
                     "de": "Nicht publiziert, f\u00fcr Studierende noch nicht sichtbar",
                     "en": "Not published, not yet visible to students"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "state_running": {
                 "translations": {
@@ -568,14 +568,14 @@
                     "de": "Offline, f\u00fcr Studierende nicht sichtbar",
                     "en": "Offline, not visible to students"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "title": {
                 "translations": {
                     "de": "Titel",
                     "en": "Title"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "update": {
                 "translations": {
@@ -617,28 +617,28 @@
                     "de": "Datei ausw\u00e4hlen",
                     "en": "Select file"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "upload_clear": {
                 "translations": {
                     "de": "Zur\u00fccksetzen",
                     "en": "Reset"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "supported_filetypes": {
                 "translations": {
                     "de": "Unterst\u00fctzte Dateitypen",
                     "en": "Supported Filetypes"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "set_offline": {
                 "translations": {
                     "de": "Offline schalten",
                     "en": "Set offline"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "created_unix": {
                 "translations": {
@@ -662,7 +662,7 @@
                     "de": "Online schalten",
                     "en": "Set online"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "delete_confirm_w_duplicates": {
                 "translations": {
@@ -670,6 +670,20 @@
                     "en": "This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?"
                 },
                 "last_used": "25.11.2016"
+            },
+            "state_failed_owner": {
+                "translations": {
+                    "de": "Publikation fehlgeschlagen. Bitte melden Sie sich beim Podcast-Support.",
+                    "en": "Publication failed. Please contact the Podcast support."
+                },
+                "last_used": "14.12.2016"
+            },
+            "state_running_owner": {
+                "translations": {
+                    "de": "Wird konvertiert, f\u00fcr andere Studierende noch nicht sichtbar",
+                    "en": "Converting, not yet visible to other students"
+                },
+                "last_used": "14.12.2016"
             }
         },
         "groups": {
@@ -1348,7 +1362,7 @@
                     "de": "Inhalt",
                     "en": "Content"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "export": {
                 "translations": {
@@ -1362,14 +1376,14 @@
                     "de": "Gruppen",
                     "en": "Groups"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "info": {
                 "translations": {
                     "de": "Info",
                     "en": "Info"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "list_all": {
                 "translations": {
@@ -1397,7 +1411,7 @@
                     "de": "Einstellungen",
                     "en": "Settings"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "settings": {
                 "translations": {
@@ -1501,14 +1515,14 @@
                     "de": "Bitte w\u00e4hlen Sie zuerst eine Videodatei aus",
                     "en": "Please select fist a Videofile"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             },
             "msg_not_supported": {
                 "translations": {
                     "de": "Dateityp wird nicht unterst\u00fctzt",
                     "en": "Filetype is not supported"
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             }
         },
         "info": {
@@ -1531,7 +1545,7 @@
                     "de": "Das Video wird automatisch publiziert, da Sie nicht \u00fcber gen\u00fcgend Rechte verf\u00fcgen, um es sp\u00e4ter manuell zu publizieren.",
                     "en": "The video will be published automatically, since you don't own the rights to publish it manually."
                 },
-                "last_used": "13.12.2016"
+                "last_used": "14.12.2016"
             }
         },
         "msg": {
