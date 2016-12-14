@@ -53,18 +53,22 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($h);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_BASE), xoctConf::F_API_BASE);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_API_BASE. '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_CURL_USERNAME), xoctConf::F_CURL_USERNAME);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_USERNAME. '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD), xoctConf::F_CURL_PASSWORD);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD. '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL. '_info'));
 		$te->setOptions(array(
 			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
 			xoctLog::DEBUG_LEVEL_1     => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
@@ -75,16 +79,20 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE. '_info'));
 		$this->addItem($cb);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS. '_info'));
 		$this->addItem($cb);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_WORKFLOW), xoctConf::F_WORKFLOW);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_WORKFLOW. '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_USER_MAPPING), xoctConf::F_USER_MAPPING);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_USER_MAPPING. '_info'));
 		$te->setOptions(array(
 			xoctUser::MAP_EXT_ID => 'External-ID',
 			xoctUser::MAP_EMAIL  => 'E-Mail',
@@ -157,8 +165,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('groups'));
 		$this->addItem($h);
 
+		// groups
 		foreach (xoctConf::$groups as $group) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($group), $group);
+			$te->setInfo($this->parent_gui->txt($group . '_info'));
 			$te->setRequired(true);
 			$this->addItem($te);
 		}
@@ -167,8 +177,17 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('roles'));
 		$this->addItem($h);
 
+		// standard roles
+		$te = new ilTextInputGUI($this->parent_gui->txt('std_roles'), xoctConf::F_STD_ROLES);
+		$te->setInfo($this->parent_gui->txt('std_roles_info'));
+		$te->setMulti(true);
+		$te->setInlineStyle('min-width:250px');
+		$this->addItem($te);
+
+		// other roles
 		foreach (xoctConf::$roles as $role) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($role), $role);
+			$te->setInfo($this->parent_gui->txt($role . '_info'));
 			$te->setRequired(true);
 			$this->addItem($te);
 		}

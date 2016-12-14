@@ -23,8 +23,8 @@ config_role_anonymous#:#Anonymous
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Member
-config_role_ivt_email_prefix#:#Prefix for IVT-User-role (E-Mail is attached)
-config_role_ivt_external_prefix#:#Prefix for IVT-User-role (Ext-Account is attached)
+config_role_ivt_email_prefix#:#Prefix for Owner-role (E-Mail is attached)
+config_role_ivt_external_prefix#:#Prefix for Owner-role (Ext-Account is attached)
 config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
@@ -38,6 +38,20 @@ config_sign_annotation_links#:#Sign Annotation Link
 config_request_comb_lv#:#Request Combination Level
 config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
+config_std_roles#:#Standard roles
+config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
+config_api_base_info#:#e.g.: https://myopencast.com/api
+config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
+config_curl_password_info#:#Password for above account.
+config_curl_debug_level_info#:#Level of detail for log entries.
+config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
+config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
+config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
+config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in OpenCast.
+config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast. 
+config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant the user permission on a series in OpenCast. Example: ROLE_USER_&#123IDENTIFIER}
+config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in OpenCast. Example: ROLE_OWNER_&#123IDENTIFIER}
+config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish

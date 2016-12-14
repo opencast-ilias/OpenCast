@@ -22,8 +22,7 @@ class xoctConf extends ActiveRecord {
 	const F_ACTIVATE_CACHE = 'activate_cache';
 	const F_USER_MAPPING = 'user_mapping';
 	const F_GROUP_PRODUCERS = 'group_producers';
-	const F_ROLE_PRODUCER = 'role_producer';
-	const F_ROLE_EXT_APPLICATION = 'role_ext_application';
+	const F_STD_ROLES = 'std_roles';
 	const F_ROLE_USER_PREFIX = 'role_user_prefix';
 	const F_ROLE_OWNER_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
 	const F_ROLE_OWNER_EMAIL_PREFIX = 'role_ivt_email_prefix';
@@ -39,8 +38,6 @@ class xoctConf extends ActiveRecord {
 	 * @var array
 	 */
 	public static $roles = array(
-		self::F_ROLE_PRODUCER,
-		self::F_ROLE_EXT_APPLICATION,
 		self::F_ROLE_USER_PREFIX,
 		self::F_ROLE_OWNER_EXTERNAL_PREFIX,
 		self::F_ROLE_OWNER_EMAIL_PREFIX,

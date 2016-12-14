@@ -122,10 +122,9 @@ class xoctEventGUI extends xoctGUI {
 		global $ilUser;
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
-		if ($xoctUser->getOwnerRoleName()) {
-			$xoctAclStandardSets = new xoctAclStandardSets(array(xoctUser::getInstance($ilUser)->getOwnerRoleName()));
-			$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
-		}
+
+		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName()) : array());
+		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_created'), true);

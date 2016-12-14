@@ -24,33 +24,23 @@ class xoctAclStandardSets {
 	 */
 	public function __construct($role_names = array()) {
 		$acls = array();
-		$acl = new xoctAcl();
-		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
-		$acl->setAllow(true);
-		$acl->setAction(xoctAcl::READ);
-		$acls[] = $acl;
+		// standard roles
+		foreach (xoctConf::get(xoctConf::F_STD_ROLES) as $std_role) {
+			$acl = new xoctAcl();
+			$acl->setRole($std_role);
+			$acl->setAllow(true);
+			$acl->setAction(xoctAcl::READ);
+			$acls[] = $acl;
 
-		$acl = new xoctAcl();
-		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_EXT_APPLICATION));
-		$acl->setAllow(true);
-		$acl->setAction(xoctAcl::WRITE);
-		$acls[] = $acl;
-
-		$acl = new xoctAcl();
-		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_PRODUCER));
-		$acl->setAllow(true);
-		$acl->setAction(xoctAcl::WRITE);
-		$acls[] = $acl;
-
-		$acl = new xoctAcl();
-		$acl->setRole(xoctConf::get(xoctConf::F_ROLE_PRODUCER));
-		$acl->setAllow(true);
-		$acl->setAction(xoctAcl::READ);
-		$acls[] = $acl;
+			$acl = new xoctAcl();
+			$acl->setRole($std_role);
+			$acl->setAllow(true);
+			$acl->setAction(xoctAcl::WRITE);
+			$acls[] = $acl;
+		}
 
 		// User Specific
 		foreach ($role_names as $role) {
-
 			$acl = new xoctAcl();
 			$acl->setRole($role);
 			$acl->setAllow(true);
