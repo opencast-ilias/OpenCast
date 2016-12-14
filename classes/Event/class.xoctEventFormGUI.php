@@ -253,7 +253,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->object->getXoctEventAdditions()->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-			$this->object->create($this->getInput(self::F_AUTO_PUBLISH) ? true : false);
+			// auto publish always true for member upload
+			$this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
 			$xoctEventAdditions = $this->object->getXoctEventAdditions();
 			$xoctEventAdditions->setId($this->object->getIdentifier());
 			$xoctEventAdditions->setIsOnline(true);
