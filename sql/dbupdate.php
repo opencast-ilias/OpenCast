@@ -50,3 +50,16 @@ if($offering_admin)
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 xoctOpenCast::updateDB();
 ?>
+<#6>
+<?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+if (!xoctConf::get(xoctConf::F_STD_ROLES)) {
+	$std_roles = array();
+	$std_roles[] = xoctConf::get('role_ext_application');
+	$std_roles[] = xoctConf::get('role_producer');
+	$std_roles = array_filter($std_roles);
+	if (!empty($std_roles)) {
+		xoctConf::set(xoctConf::F_STD_ROLES, $std_roles);
+	}
+}
+?>
