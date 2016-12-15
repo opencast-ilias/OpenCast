@@ -44,33 +44,8 @@ class xoctConfExportGUI extends xoctGUI {
 			$name = $node->getElementsByTagName('name')->item(0)->nodeValue;
 			$value = $node->getElementsByTagName('value')->item(0)->nodeValue;
 			if ($name) {
+				$value = (is_array(json_decode($value))) ? json_decode($value) : $value;
 				xoctConf::set($name, $value);
-			}
-		}
-
-		/**
-		 * @var $xoctSystemAccount xoctSystemAccount
-		 */
-		$xoct_system_accounts = $domxml->getElementsByTagName('xoct_system_account');
-
-		foreach ($xoct_system_accounts as $node) {
-			$domain = $node->getElementsByTagName('domain')->item(0)->nodeValue;
-			if (!$domain) {
-				continue;
-			}
-			$xoctSystemAccount = xoctSystemAccount::find($domain);
-			if (!$xoctSystemAccount instanceof xoctSystemAccount) {
-				$xoctSystemAccount = new xoctSystemAccount();
-			}
-			$xoctSystemAccount->setDomain($domain);
-			$xoctSystemAccount->setExtId($node->getElementsByTagName('ext_id')->item(0)->nodeValue);
-			$xoctSystemAccount->setStatus($node->getElementsByTagName('status')->item(0)->nodeValue);
-			$xoctSystemAccount->setStandard($node->getElementsByTagName('standard')->item(0)->nodeValue);
-
-			if (!xoctSystemAccount::where(array( 'domain' => $xoctSystemAccount->getDomain() ))->hasSets()) {
-				$xoctSystemAccount->create();
-			} else {
-				$xoctSystemAccount->update();
 			}
 		}
 
@@ -121,19 +96,9 @@ class xoctConfExportGUI extends xoctGUI {
 			$xml_xoctConf = $xml_xoctConfs->appendChild(new DOMElement('xoct_conf'));
 			$xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
 			//			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
-			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection(xoctConf::get($xoctConf->getName())));
-		}
-		// xoctSystemAccounts
-		$xml_xoctSystemAccounts = $config->appendChild(new DOMElement('xoct_system_accounts'));
-		/**
-		 * @var $xoctSystemAccount xoctSystemAccount
-		 */
-		foreach (xoctSystemAccount::get() as $xoctSystemAccount) {
-			$xml_xoctSystemAccount = $xml_xoctSystemAccounts->appendChild(new DOMElement('xoct_system_account'));
-			$xml_xoctSystemAccount->appendChild(new DOMElement('domain'))->appendChild(new DOMCdataSection($xoctSystemAccount->getDomain()));
-			$xml_xoctSystemAccount->appendChild(new DOMElement('ext_id'))->appendChild(new DOMCdataSection($xoctSystemAccount->getExtId()));
-			$xml_xoctSystemAccount->appendChild(new DOMElement('status'))->appendChild(new DOMCdataSection($xoctSystemAccount->getStatus()));
-			$xml_xoctSystemAccount->appendChild(new DOMElement('standard'))->appendChild(new DOMCdataSection($xoctSystemAccount->isStandard()));
+			$value = xoctConf::get($xoctConf->getName());
+			$value = is_array($value) ? json_encode($value) : $value;
+			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
 		}
 
 		// xoctPublicationUsages
