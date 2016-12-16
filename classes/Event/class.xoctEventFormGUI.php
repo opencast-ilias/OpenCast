@@ -1,5 +1,6 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/class.xoct.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 
 /**
@@ -152,7 +153,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
-		$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		if (!xoct::is52()) {
+			$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		}
 		$date->setShowTime(true);
 		$date->setShowSeconds(false);
 
@@ -162,10 +165,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 	public function fillForm() {
 		$createdDateTime = $this->object->getCreated();
-		$created = array(
-			'date' => $createdDateTime->format('Y-m-d'),
-			'time' => $createdDateTime->format('H:i:s'),
-		);
+		if (xoct::is52()) {
+			$created = $createdDateTime->format('Y-m-d H:i:s');
+		} else {
+			$created = array(
+				'date' => $createdDateTime->format('Y-m-d'),
+				'time' => $createdDateTime->format('H:i:s'),
+			);
+		}
 
 		$array = array(
 			self::F_TITLE            => $this->object->getTitle(),
@@ -180,7 +187,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_LOCATION         => $this->object->getLocation(),
 			self::F_SOURCE           => $this->object->getSource(),
 			self::F_CREATED          => $created,
-			//			self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
+//						self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
 		$this->setValuesByArray($array);
