@@ -27,14 +27,14 @@ class xoctCache extends ilGlobalCache {
 	 */
 	public static function getInstance() {
 		require_once('./include/inc.ilias_version.php');
-
+		$service_type = extension_loaded('apc') ? self::TYPE_APC : self::TYPE_STATIC;
 		if (str_replace('.', '', ILIAS_VERSION_NUMERIC) >= 510) {
 			//			$xoctCache = parent::getInstance(self::COMP_OPENCAST);
-			$xoctCache = new self(self::TYPE_APC);
+			$xoctCache = new self($service_type);
 			$xoctCache->initCachingService();
 			$xoctCache->setActive(true);
 		} else {
-			$xoctCache = new self(self::TYPE_APC);
+			$xoctCache = new self($service_type);
 		}
 		$xoctCache->setActive(true);
 
