@@ -5,7 +5,6 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/SystemAccount/class.xoctSystemAccountGUI.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/Export/class.xoctConfExportGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Migration/class.xoctScaMigrationGUI.php');
 
 /**
  * Class xoctMainGUI
@@ -33,7 +32,10 @@ class xoctMainGUI extends xoctGUI {
 		$this->tabs->addTab(self::TAB_PUBLICATION_USAGE, $this->pl->txt('tab_'
 			. self::TAB_PUBLICATION_USAGE), $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI()));
 		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
-//		$this->tabs->addTab(self::TAB_MIGRATION, $this->pl->txt('tab_' . self::TAB_MIGRATION), $this->ctrl->getLinkTarget(new xoctScaMigrationGUI()));
+		if (is_file('./Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/class.ilScastPlugin.php')) {
+			require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Migration/class.xoctScaMigrationGUI.php');
+			$this->tabs->addTab(self::TAB_MIGRATION, $this->pl->txt('tab_' . self::TAB_MIGRATION), $this->ctrl->getLinkTarget(new xoctScaMigrationGUI()));
+		}
 
 		switch ($nextClass) {
 			case 'xoctpublicationusagegui':
