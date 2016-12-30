@@ -44,30 +44,21 @@ class xoctScaMigration {
 	 */
 	protected $db;
 
+	protected $migrated_count = 0;
+
+	protected $skipped_count = 0;
+
 
 	/**
 	 * xoctScaMigration constructor.
 	 */
-	public function __construct() {
+	public function __construct($migration_data) {
 		global $ilDB;
 		xoct::initILIAS();
-		$this->migration_data = file_get_contents('/vagrant/migration_data.json');
+		$this->migration_data = $migration_data;
 		$this->log = xoctMigrationLog::getInstance();
 		$this->db = $ilDB;
 	}
-
-
-	public static function initAndRun() {
-		require_once(dirname(__FILE__) . '/../class.xoct.php');
-		$migration = new self();
-		try {
-			$migration->run();
-		} catch (ilException $e) {
-			xoctMigrationLog::getInstance()->write($e->getMessage());
-			xoctMigrationLog::getInstance()->write('***Migration failed***');
-		}
-	}
-
 
 
 	public function run() {
@@ -81,6 +72,7 @@ class xoctScaMigration {
 		$this->migrateObjectData();
 		$this->migrateInvitations();
 		$this->log->write('***Migration Succeeded***');
+		return array('migrated' => $this->migrated_count, 'skipped' => $this->skipped_count);
 		//TODO config?
 	}
 
@@ -114,6 +106,7 @@ class xoctScaMigration {
 			if (!$series_id) {
 				$this->log->write("WARNING: no mapping found for channel_id {$rec['ext_id']}");
 				$this->log->write("skip and proceed with next object");
+				$this->skipped_count++;
 				continue;
 			}
 
@@ -121,6 +114,7 @@ class xoctScaMigration {
 			if (!$parent_id) {
 				$this->log->write("WARNING: no parent id found for ref_id {$rec['ref_id']}");
 				$this->log->write("skip and proceed with next object");
+				$this->skipped_count++;
 				continue;
 			}
 			$this->log->write("create ilObjOpenCast..");
@@ -153,7 +147,7 @@ class xoctScaMigration {
 
 			//TODO set producers (crs-admins etc.)
 			$this->log->write("opencast creation succeeded: ref_id={$ilObjOpenCast->getRefId()} obj_id={$ilObjOpenCast->getId()} series_id={$cast->getSeriesIdentifier()}");
-
+			$this->migrated_count++;
 			$this->migrateGroups($ilObjSCast->getId(), $ilObjOpenCast->getId());
 		}
 		$this->log->write('Migration of Object Data Succeeded');
@@ -168,7 +162,7 @@ class xoctScaMigration {
 			$xoct_group->setTitle($sca_group->getTitle());
 			$xoct_group->create();
 			foreach ($sca_group->getMemberIds() as $member_id) {
-				$this->log->write("creating group member $member_id..");
+				$this->log->write("adding group member $member_id..");
 				$xoct_group_participant = new xoctIVTGroupParticipant();
 				$xoct_group_participant->setUserId($member_id);
 				$xoct_group_participant->setGroupId($xoct_group->getId());
