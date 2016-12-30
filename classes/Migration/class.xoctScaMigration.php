@@ -146,28 +146,28 @@ class xoctScaMigration {
 			$cast->update();
 
 			// add producers
-//			$producers = array();
-//			if ($crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($ilObjOpenCast->getRefId())) {
-//
-//				//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group
-//				foreach (array('admin', 'tutor') as $role) {
-//					if (ilObjOpenCastAccess::isActionAllowedForRole('edit_videos', $role, $ilObjOpenCast->getRefId())) {
-//						$getter_method = "get{$role}s";
-//						foreach ($crs_or_grp_obj->getMembersObject()->$getter_method() as $participant_id) {
-//							$producers[] = xoctUser::getInstance($participant_id);
-//						}
-//					}
-//				}
-//			}
-//			if (!empty($producers)) {
-//				$cast->getSeries()->addProducers($producers);
-//				try {
-//					$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
-//					$ilias_producers->addMembers($producers);
-//				} catch (xoctException $e) {
-//					$this->log->write('WARNING: ' . $e->getMessage());
-//				}
-//			}
+			$producers = array();
+			if ($crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($ilObjOpenCast->getRefId())) {
+
+				//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group
+				foreach (array('admin', 'tutor') as $role) {
+					if (ilObjOpenCastAccess::isActionAllowedForRole('edit_videos', $role, $ilObjOpenCast->getRefId())) {
+						$getter_method = "get{$role}s";
+						foreach ($crs_or_grp_obj->getMembersObject()->$getter_method() as $participant_id) {
+							$producers[] = xoctUser::getInstance($participant_id);
+						}
+					}
+				}
+			}
+			if (!empty($producers)) {
+				$cast->getSeries()->addProducers($producers);
+				try {
+					$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+					$ilias_producers->addMembers($producers);
+				} catch (xoctException $e) {
+					$this->log->write('WARNING: ' . $e->getMessage());
+				}
+			}
 
 
 			$this->log->write("opencast creation succeeded: ref_id={$ilObjOpenCast->getRefId()} obj_id={$ilObjOpenCast->getId()} series_id={$cast->getSeriesIdentifier()}");
