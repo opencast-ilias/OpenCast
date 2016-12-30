@@ -60,7 +60,7 @@ class xoctMigrationLog extends ilLog {
 	 * @param null $log_level
 	 */
 	function write($a_msg, $log_level = null) {
-		echo $a_msg;
+		echo $a_msg."\r\n";
 		parent::write($a_msg);
 	}
 

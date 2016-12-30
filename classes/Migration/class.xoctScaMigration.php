@@ -1,7 +1,14 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
-
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Migration/class.xoctMigrationLog.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoct.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/class.ilObjScast.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCast.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/Group/class.xscaGroup.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php';
 /**
  * Class xoctScaMigration
  *
@@ -41,9 +48,10 @@ class xoctScaMigration {
 	/**
 	 * xoctScaMigration constructor.
 	 */
-	public function __construct($migration_data = null) {
+	public function __construct() {
 		global $ilDB;
-		$this->migration_data = $migration_data;
+		xoct::initILIAS();
+		$this->migration_data = file_get_contents('/vagrant/migration_data.json');
 		$this->log = xoctMigrationLog::getInstance();
 		$this->db = $ilDB;
 	}
@@ -51,8 +59,6 @@ class xoctScaMigration {
 
 	public static function initAndRun() {
 		require_once(dirname(__FILE__) . '/../class.xoct.php');
-		xoct::initILIAS();
-		self::doInclude();
 		$migration = new self();
 		try {
 			$migration->run();
@@ -62,17 +68,7 @@ class xoctScaMigration {
 		}
 	}
 
-	public static function doInclude() {
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Migration/class.xoctMigrationLog.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoct.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/class.ilObjScast.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCast.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/Group/class.xscaGroup.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php';
-		require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php';
-	}
+
 
 	public function run() {
 		$this->log->write('***Migration start***');
@@ -85,6 +81,7 @@ class xoctScaMigration {
 		$this->migrateObjectData();
 		$this->migrateInvitations();
 		$this->log->write('***Migration Succeeded***');
+		//TODO config?
 	}
 
 	protected function createMapping($migration_data) {
@@ -95,7 +92,7 @@ class xoctScaMigration {
 			}
 		}
 
-		if (!$clips = $migration_data['clips']) {
+		if (!$clips = $mapping['clips']) {
 			throw new ilException('Mapping of ids failed: field "clips" not found');
 		}
 
@@ -109,18 +106,25 @@ class xoctScaMigration {
 	protected function migrateObjectData() {
 		global $tree;
 		$this->log->write('*Migrate Object Data*');
-		$sql = $this->db->query('SELECT * FROM rep_robj_xsca_data');
+		$sql = $this->db->query('SELECT rep_robj_xsca_data.*, object_reference.ref_id FROM rep_robj_xsca_data INNER JOIN object_reference on rep_robj_xsca_data.id = object_reference.obj_id');
 		while ($rec = $this->db->fetchAssoc($sql)) {
-			$ilObjSCast = new ilObjScast($rec['id']);
-			$series_id = $this->id_mapping[self::SERIES][$ilObjSCast->getExtId()];
-			$parent_id = $tree->getParentId($ilObjSCast->getRefId());
-			$this->log->write("migrating scast: title={$ilObjSCast->getTitle()} ref_id={$ilObjSCast->getRefId()} obj_id={$rec['id']} channel_id={$rec['ext_id']} parent_id=$parent_id");
+			$ilObjSCast = new ilObjScast($rec['ref_id']);
+			$series_id = $this->id_mapping[self::SERIES][$rec['ext_id']];
+
 			if (!$series_id) {
 				$this->log->write("WARNING: no mapping found for channel_id {$rec['ext_id']}");
 				$this->log->write("skip and proceed with next object");
 				continue;
 			}
+
+			$parent_id = $tree->getParentId($ilObjSCast->getRefId());
+			if (!$parent_id) {
+				$this->log->write("WARNING: no parent id found for ref_id {$rec['ref_id']}");
+				$this->log->write("skip and proceed with next object");
+				continue;
+			}
 			$this->log->write("create ilObjOpenCast..");
+			$this->log->write("migrating scast: title={$ilObjSCast->getTitle()} ref_id={$ilObjSCast->getRefId()} obj_id={$rec['id']} channel_id={$rec['ext_id']} parent_id=$parent_id");
 			$ilObjOpenCast = new ilObjOpenCast();
 			$ilObjOpenCast->setTitle($ilObjSCast->getTitle());
 			$ilObjOpenCast->setDescription($ilObjSCast->getDescription());
@@ -134,15 +138,18 @@ class xoctScaMigration {
 
 
 			$this->log->write("create xoctOpenCast..");
-			$cast = new xoctOpenCast($ilObjOpenCast->getId());
+			$cast = new xoctOpenCast();
+			$cast->setObjId($ilObjOpenCast->getId());
 			$cast->setSeriesIdentifier($series_id);
+			$cast->create();
+
 			$cast->setObjOnline($ilObjSCast->getOnline());
 			$cast->setPermissionPerClip($ilObjSCast->getIvt());
 			$cast->setPermissionAllowSetOwn($ilObjSCast->getInvitingPossible());
 			$cast->setIntroText($ilObjSCast->getIntroductionText());
 			$cast->setUseAnnotations($ilObjSCast->getAllowAnnotations());
 			$cast->setStreamingOnly($ilObjSCast->getStreamingOnly());
-			$cast->create();
+			$cast->update();
 
 			//TODO set producers (crs-admins etc.)
 			$this->log->write("opencast creation succeeded: ref_id={$ilObjOpenCast->getRefId()} obj_id={$ilObjOpenCast->getId()} series_id={$cast->getSeriesIdentifier()}");
@@ -164,7 +171,7 @@ class xoctScaMigration {
 				$this->log->write("creating group member $member_id..");
 				$xoct_group_participant = new xoctIVTGroupParticipant();
 				$xoct_group_participant->setUserId($member_id);
-				$xoct_group_participant->setGroupId($xoct_group);
+				$xoct_group_participant->setGroupId($xoct_group->getId());
 				$xoct_group_participant->create();
 			}
 		}
