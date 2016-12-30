@@ -1,6 +1,11 @@
 # ILIAS-Plugin OpenCast
 
-
+###Requirements
+This Plugin requires the PHP Extension '*mbstring*'. To install the extension on linux systems, try executing the following in your linux shell:
+```
+sudo apt-get install php7.0-mbstring
+```
+If you're using another operating system, search google on how to install the *mbstring* extension.
 
 ###Installation
 Start at your ILIAS root directory
