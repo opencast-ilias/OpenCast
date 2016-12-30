@@ -108,19 +108,29 @@ class xoctInvitation extends ActiveRecord {
 	public static function getActiveInvitationsForEvent(xoctEvent $xoctEvent, $grant_access_rights = false, $count = false) {
 		$all_invitations = self::where(array(
 			'event_identifier' => $xoctEvent->getIdentifier(),
-		));
+		))->get();
+
+		// filter out users which are not part of this course/group
+		$parent = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
+		$p = $parent->getMembersObject();
+		$crs_participants = array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
+		foreach ($all_invitations as $key => $invitation) {
+			if (!in_array($invitation->getUserId(), $crs_participants)) {
+				unset($all_invitations[$key]);
+			}
+		}
 
 		if ($grant_access_rights) {
 			if ($count) {
-				return $all_invitations->count();
+				return count($all_invitations);
 			}
 
-			return $all_invitations->get();
+			return $all_invitations;
 		}
 
 		// if grant_access_rights is deactivated, only admins' invitations are active
 		$active_invitations = array();
-		foreach ($all_invitations->get() as $inv) {
+		foreach ($all_invitations as $inv) {
 			if (ilObjOpenCastAccess::hasPermission('edit_videos', null, $inv->getOwnerId())) {
 				$active_invitations[] = $inv;
 			}

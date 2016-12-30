@@ -105,9 +105,6 @@ class xoctInvitationGUI extends xoctGUI {
 		}
 
 		foreach ($invited_user_ids as $user_id) {
-			if (!isset($xoctUsers[$user_id])) {
-				continue;
-			}
 			$user = new stdClass();
 			$xoctUser = $xoctUsers[$user_id];
 			$user->id = $user_id;
