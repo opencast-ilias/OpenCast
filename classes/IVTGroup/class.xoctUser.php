@@ -264,7 +264,7 @@ class xoctUser {
 			//			throw new xoctException(xoctException::NO_USER_MAPPING);
 		}
 
-		return $this->identifier;
+		return xoctConf::get(xoctConf::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper($this->identifier) : $this->identifier;
 	}
 
 

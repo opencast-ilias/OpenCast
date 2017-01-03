@@ -52,6 +52,7 @@ config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden v
 config_role_user_prefix_info#:#Benutzereigene Rolle in OpenCast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in OpenCast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
 config_role_ivt_external_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}
 config_role_ivt_email_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_EMAIL_&#123IDENTIFIER}
+config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren

@@ -26,6 +26,7 @@ class xoctConf extends ActiveRecord {
 	const F_ROLE_USER_PREFIX = 'role_user_prefix';
 	const F_ROLE_OWNER_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
 	const F_ROLE_OWNER_EMAIL_PREFIX = 'role_ivt_email_prefix';
+	const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
 	const F_LICENSE_INFO = 'license_info';
 	const F_LICENSES = 'licenses';
 	const F_UPLOAD_TOKEN = 'upload_token';
