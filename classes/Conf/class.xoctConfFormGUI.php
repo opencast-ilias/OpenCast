@@ -192,6 +192,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			$this->addItem($te);
 		}
 
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_IDENTIFIER_TO_UPPERCASE), xoctConf::F_IDENTIFIER_TO_UPPERCASE);
+		$this->addItem($cb);
+
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('advanced'));
 		$this->addItem($h);
