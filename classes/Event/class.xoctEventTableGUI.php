@@ -191,7 +191,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
 			if ($xE->getProcessingState() != xoctEvent::STATE_SUCCEEDED)
 			{
-				$owner = $xE->isOwner($xoctUser) ? '_owner' : '';
+				$owner = $xE->isOwner($xoctUser) && in_array($xE->getProcessingState(), array(xoctEvent::STATE_FAILED, xoctEvent::STATE_ENCODING)) ? '_owner' : '';
 				$this->tpl->setVariable('STATE', $this->parent_obj->txt('state_' . strtolower($xE->getProcessingState()) . $owner));
 			}
 			$this->tpl->setVariable('TITLE', $xE->getTitle());
