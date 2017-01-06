@@ -242,8 +242,12 @@ class xoctSeries extends xoctObject {
 		$data = json_decode(xoctRequest::root()->series()->get('', array( $user_string )));
 		foreach ($data as $d) {
 			$obj = new self();
-			$obj->loadFromStdClass($d);
-			$return[] = $obj;
+			try {
+				$obj->loadFromStdClass($d);
+				$return[] = $obj;
+			} catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
+				continue;
+			}
 		}
 		xoctCache::getInstance()->set('series-' . $user_string, $return, 60);
 
