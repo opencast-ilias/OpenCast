@@ -211,11 +211,11 @@ abstract class xoctObject {
 	 * @return string
 	 */
 	public static function convertToUtf8($string) {
-		if (is_object($string)) {
+		if (is_object($string) || ilStr::isUtf8($string)) {
 			return $string;
 		}
 
-		return iconv(mb_detect_encoding($string, mb_detect_order(), true), "UTF-8", $string);
+		return utf8_encode($string);
 	}
 
 
