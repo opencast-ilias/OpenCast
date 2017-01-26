@@ -71,18 +71,22 @@ class xoctSeries extends xoctObject {
 
 
 	/**
-	 * @param xoctUser $xoctUser
+	 * @param xoctUser|string $xoctUser
 	 * @param bool     $omit_update
 	 */
-	public function addProducer(xoctUser $xoctUser, $omit_update = false) {
-		if (!$xoctUser->getUserRoleName()) {
+	public function addProducer($xoctUser, $omit_update = false) {
+		if ($xoctUser instanceof xoctUser) {
+			$xoctUser = $xoctUser->getUserRoleName();
+		}
+
+		if (!$xoctUser) {
 			return false;
 		}
 
 		$already_has_read = false;
 		$already_has_write = false;
 		foreach ($this->getAccessPolicies() as $acl) {
-			if ($acl->getRole() == $xoctUser->getUserRoleName()) {
+			if ($acl->getRole() == $xoctUser) {
 				if ($acl->getAction() == xoctAcl::READ) {
 					$already_has_read = true;
 				} else if ($acl->getAction() == xoctAcl::WRITE) {
@@ -95,7 +99,7 @@ class xoctSeries extends xoctObject {
 			$new_read_acl = new xoctAcl();
 			$new_read_acl->setAction(xoctAcl::READ);
 			$new_read_acl->setAllow(true);
-			$new_read_acl->setRole($xoctUser->getUserRoleName());
+			$new_read_acl->setRole($xoctUser);
 			$this->addAccessPolicy($new_read_acl);
 		}
 
@@ -103,7 +107,7 @@ class xoctSeries extends xoctObject {
 			$new_write_acl = new xoctAcl();
 			$new_write_acl->setAction(xoctAcl::WRITE);
 			$new_write_acl->setAllow(true);
-			$new_write_acl->setRole($xoctUser->getUserRoleName());
+			$new_write_acl->setRole($xoctUser);
 			$this->addAccessPolicy($new_write_acl);
 		}
 

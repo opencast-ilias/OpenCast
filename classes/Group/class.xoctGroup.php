@@ -54,6 +54,8 @@ class xoctGroup extends xoctObject {
 
 
 	/**
+	 * objects xoctUser or uniqueIds as string possible
+	 *
 	 * @param array $xoctUsers
 	 */
 	public function addMembers(array $xoctUsers) {
@@ -62,13 +64,20 @@ class xoctGroup extends xoctObject {
 		}
 	}
 
+
 	/**
-	 * @param xoctUser $user
+	 * object xoctUser or uniqueId as string possible
+	 *
+	 * @param $xoctUser|string
 	 */
-	public function addMember(xoctUser $xoctUser) {
-		if ($xoctUser->getIdentifier() && !in_array($xoctUser->getIdentifier(), $this->getMembers())) {
-			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $xoctUser->getIdentifier()));
-			$this->members[] = $xoctUser->getIdentifier();
+	public function addMember($xoctUser) {
+		if ($xoctUser instanceof xoctUser) {
+			$xoctUser = $xoctUser->getIdentifier();
+		}
+
+		if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
+			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $xoctUser));
+			$this->members[] = $xoctUser;
 		}
 	}
 
