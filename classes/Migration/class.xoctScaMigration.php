@@ -6,6 +6,7 @@ require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Sc
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCast.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Scast/classes/Group/class.xscaGroup.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroup.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php';
