@@ -78,6 +78,7 @@ class xoctScaMigration {
 			throw new ilException('Migration failed: no migration data given');
 		}
 
+		$this->migratePermissions();
 		$this->migrateObjectData();
 		$this->migrateInvitations();
 		$this->log->write('***Migration Succeeded***', null, $this->command_line);
@@ -228,5 +229,19 @@ class xoctScaMigration {
 			echo "\n";
 		}
 		$this->log->write('migration of invitations succeeded', null, $this->command_line);
+	}
+
+	protected function migratePermissions() {
+		$this->log->write('migrate permissions..', null, $this->command_line);
+		$sql = $this->db->query('SELECT * FROM rbac_templates WHERE type = ' . $this->db->quote('xsca', 'text'));
+		while ($rec = $this->db->fetchAssoc($sql)) {
+			$this->db->insert('rbac_templates', array(
+				'rol_id' => array('integer', $rec['rol_id']),
+				'type' => array('text', 'xoct'),
+				'ops_id' => array('integer', $rec['ops_id']),
+				'parent' => array('integer', $rec['parent']),
+			));
+		}
+		$this->log->write('migration of permissions succeeded', null, $this->command_line);
 	}
 }
