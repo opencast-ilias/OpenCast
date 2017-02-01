@@ -1,0 +1,29 @@
+{
+  "organization": "unibe.ch",
+  "date": "2017-01-25 21:55:06 +0100",
+  "clips": [
+    {
+      "title": "Übungsvideo FEA126",
+      "id": 17064,
+      "ext_id": "uj9582sv0",
+      "channel_name": "Annotation FE A126a.2013SZ.3701",
+      "channel_id": 7042,
+      "channel_ext_id": "yf4y4o9jw",
+      "cast2_event_id": "21ad3d91-0e00-4d9a-9f32-c10004d3707a",
+      "cast2_series_id": "27d87b93-a12b-41c6-b5a5-115ee347a433"
+    },
+    {
+      "title": "HJSalamon",
+      "id": 17065,
+      "ext_id": "uj12312382sv0",
+      "channel_name": "Annotation FE A126a.2013SZ.3701",
+      "channel_id": 7042,
+      "channel_ext_id": "yf4y4o9jw",
+      "cast2_event_id": "21ad3d91-1231231232-c10004d3707a",
+      "cast2_series_id": "27d87b93-a12b-41c6-b5a5-115ee347a433"
+    }
+  ],
+  "errors": [
+
+  ]
+}

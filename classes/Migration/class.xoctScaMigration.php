@@ -23,6 +23,8 @@ class xoctScaMigration {
 	const EVENT_ID_NEW = 'cast2_event_id';
 	const SERIES_ID_OLD = 'channel_ext_id';
 	const SERIES_ID_NEW = 'cast2_series_id';
+	const ALLOW_ANNOTATIONS = 'channel_allow_annotations';
+	const STREAMING_ONLY = 'channel_streaming_only';
 
 
 	/**
@@ -32,6 +34,10 @@ class xoctScaMigration {
 		"series" => array(),
 		"events" => array()
 	);
+	/**
+	 * @var array
+	 */
+	protected $channel_config = array();
 	/**
 	 * @var null
 	 */
@@ -49,21 +55,23 @@ class xoctScaMigration {
 
 	protected $skipped_count = 0;
 
+	protected $command_line;
 
 	/**
 	 * xoctScaMigration constructor.
 	 */
-	public function __construct($migration_data) {
+	public function __construct($migration_data, $command_line_execution = false) {
 		global $ilDB;
-		xoct::initILIAS();
+//		xoct::initILIAS();
 		$this->migration_data = $migration_data;
 		$this->log = xoctMigrationLog::getInstance();
 		$this->db = $ilDB;
+		$this->command_line = $command_line_execution;
 	}
 
 
 	public function run() {
-		$this->log->write('***Migration start***');
+		$this->log->write('***Migration Start***', null, $this->command_line);
 		if ($this->migration_data) {
 			$this->createMapping($this->migration_data);
 		} else {
@@ -72,9 +80,8 @@ class xoctScaMigration {
 
 		$this->migrateObjectData();
 		$this->migrateInvitations();
-		$this->log->write('***Migration Succeeded***');
+		$this->log->write('***Migration Succeeded***', null, $this->command_line);
 		return array('migrated' => $this->migrated_count, 'skipped' => $this->skipped_count);
-		//TODO config?
 	}
 
 	protected function createMapping($migration_data) {
@@ -93,13 +100,18 @@ class xoctScaMigration {
 		foreach ($clips as $clip) {
 			$this->id_mapping[self::EVENTS][$clip[self::EVENT_ID_OLD]] = $clip[self::EVENT_ID_NEW];
 			$this->id_mapping[self::SERIES][$clip[self::SERIES_ID_OLD]] = $clip[self::SERIES_ID_NEW];
+			$this->channel_config[$clip[self::SERIES_ID_NEW]][self::STREAMING_ONLY] = ($clip[self::STREAMING_ONLY] == 'yes');
+			$this->channel_config[$clip[self::SERIES_ID_NEW]][self::ALLOW_ANNOTATIONS] = ($clip[self::ALLOW_ANNOTATIONS] == 'yes');
 		}
 	}
 
 	protected function migrateObjectData() {
 		global $tree;
-		$this->log->write('*Migrate Object Data*');
+		$this->log->write('migrate Object Data..', null, $this->command_line);
 		$sql = $this->db->query('SELECT rep_robj_xsca_data.*, object_reference.ref_id FROM rep_robj_xsca_data INNER JOIN object_reference on rep_robj_xsca_data.id = object_reference.obj_id');
+		if ($this->command_line) {
+			echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
+		}
 		while ($rec = $this->db->fetchAssoc($sql)) {
 			$ilObjSCast = new ilObjScast($rec['ref_id']);
 			$series_id = $this->id_mapping[self::SERIES][$rec['ext_id']];
@@ -142,8 +154,8 @@ class xoctScaMigration {
 			$cast->setPermissionPerClip($ilObjSCast->getIvt());
 			$cast->setPermissionAllowSetOwn($ilObjSCast->getInvitingPossible());
 			$cast->setIntroText($ilObjSCast->getIntroductionText());
-			$cast->setUseAnnotations($ilObjSCast->getAllowAnnotations());
-			$cast->setStreamingOnly($ilObjSCast->getStreamingOnly());
+			$cast->setUseAnnotations($this->channel_config[$series_id][self::ALLOW_ANNOTATIONS]);
+			$cast->setStreamingOnly($this->channel_config[$series_id][self::STREAMING_ONLY]);
 			$cast->update();
 
 			// add producers
@@ -161,9 +173,12 @@ class xoctScaMigration {
 			$this->migrated_count++;
 			$this->migrateGroups($ilObjSCast->getId(), $ilObjOpenCast->getId());
 
-
+			if ($this->command_line) {
+				echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
+			}
 		}
-		$this->log->write('Migration of Object Data Succeeded');
+		echo "\n";
+		$this->log->write('Migration of Object Data Succeeded', null, $this->command_line);
 	}
 
 	protected function migrateGroups($sca_id, $xoct_id) {
@@ -186,13 +201,19 @@ class xoctScaMigration {
 	}
 
 	protected function migrateInvitations() {
-		$this->log->write('migrate invitations..');
+		$this->log->write('migrate invitations..', null, $this->command_line);
 		$sql = $this->db->query('SELECT * FROM rep_robj_xsca_cmember');
+		$skipped = 0;
+		$migrated = 0;
 		while ($rec = $this->db->fetchAssoc($sql)) {
+			if ($this->command_line) {
+				echo "Processed: $migrated, Skipped: $skipped \r";
+			}
 			$event_id = $this->id_mapping[self::EVENTS][$rec['clip_ext_id']];
 			if (!$event_id) {
 				$this->log->write("WARNING: no mapping found for clip_id {$rec['clip_ext_id']}");
 				$this->log->write("skip and proceed with next invitation");
+				$skipped++;
 				continue;
 			}
 			$this->log->write("creating invitation for user {$rec['user_id']} and event $event_id");
@@ -201,7 +222,11 @@ class xoctScaMigration {
 			$invitation->setUserId($rec['user_id']);
 			$invitation->setOwnerId(0);
 			$invitation->create();
+			$migrated++;
 		}
-		$this->log->write('migration of invitations succeeded');
+		if ($this->command_line) {
+			echo "\n";
+		}
+		$this->log->write('migration of invitations succeeded', null, $this->command_line);
 	}
 }
