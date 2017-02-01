@@ -193,7 +193,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_CUT:
 				return
 					self::hasPermission('edit_videos', $ref_id)
-					&& $xoctEvent->getMetadata()->getField('has_previews')->getValue()
+					&& $xoctEvent->hasPreviews()
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
 			case self::ACTION_DELETE_EVENT:
 				return

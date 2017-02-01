@@ -836,7 +836,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @return boolean
 	 */
-	public function isHasPreviews() {
+	public function hasPreviews() {
 		return $this->has_previews;
 	}
 
