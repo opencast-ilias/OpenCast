@@ -50,22 +50,37 @@ class xoctScaMigration {
 	 * @var ilDB|ilDBInnoDB|ilDBMySQL|ilDBOracle|ilDBPostgreSQL
 	 */
 	protected $db;
-
+	/**
+	 * @var ilRbacAdmin
+	 */
+	protected $rbac_admin;
+	/**
+	 * @var ilRbacReview
+	 */
+	protected $rbac_review;
+	/**
+	 * @var int
+	 */
 	protected $migrated_count = 0;
-
+	/**
+	 * @var int
+	 */
 	protected $skipped_count = 0;
-
+	/**
+	 * @var bool
+	 */
 	protected $command_line;
 
 	/**
 	 * xoctScaMigration constructor.
 	 */
 	public function __construct($migration_data, $command_line_execution = false) {
-		global $ilDB;
-//		xoct::initILIAS();
+		global $ilDB, $rbacadmin, $rbacreview;
 		$this->migration_data = $migration_data;
 		$this->log = xoctMigrationLog::getInstance();
 		$this->db = $ilDB;
+		$this->rbac_admin = $rbacadmin;
+		$this->rbac_review = $rbacreview;
 		$this->command_line = $command_line_execution;
 	}
 
@@ -78,7 +93,7 @@ class xoctScaMigration {
 			throw new ilException('Migration failed: no migration data given');
 		}
 
-		$this->migratePermissions();
+//		$this->migratePermissions();
 		$this->migrateObjectData();
 		$this->migrateInvitations();
 		$this->log->write('***Migration Succeeded***', null, $this->command_line);
@@ -114,6 +129,9 @@ class xoctScaMigration {
 			echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
 		}
 		while ($rec = $this->db->fetchAssoc($sql)) {
+//			if ($rec['ref_id'] != 1320646) {
+//				continue;
+//			}
 			$ilObjSCast = new ilObjScast($rec['ref_id']);
 			$series_id = $this->id_mapping[self::SERIES][$rec['ext_id']];
 
@@ -177,6 +195,24 @@ class xoctScaMigration {
 			if ($this->command_line) {
 				echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
 			}
+
+			//permissions
+			$parent_ref_id = ilObjOpenCastAccess::getParentId(true, $ilObjOpenCast->getRefId());
+			if (!$parent_ref_id) {
+				continue;
+			}
+			
+			$parent_obj = new ilObjCourse($parent_ref_id);
+			$roles = $parent_obj->getDefaultCourseRoles();
+
+			foreach ($roles as $role_id) {
+				$role_ops = $this->rbac_review->getRoleOperationsOnObject($role_id, $rec['ref_id']);
+
+				$this->rbac_admin->revokePermission($ilObjOpenCast->getRefId(), $role_id);
+				$this->rbac_admin->grantPermission($role_id, $role_ops, $ilObjOpenCast->getRefId());
+			}
+
+
 		}
 		echo "\n";
 		$this->log->write('Migration of Object Data Succeeded', null, $this->command_line);
@@ -232,7 +268,7 @@ class xoctScaMigration {
 	}
 
 	protected function migratePermissions() {
-		$this->log->write('migrate permissions..', null, $this->command_line);
+		$this->log->write('migrate permission templates..', null, $this->command_line);
 		$sql = $this->db->query('SELECT * FROM rbac_templates WHERE type = ' . $this->db->quote('xsca', 'text'));
 		while ($rec = $this->db->fetchAssoc($sql)) {
 			$this->db->insert('rbac_templates', array(
@@ -242,6 +278,6 @@ class xoctScaMigration {
 				'parent' => array('integer', $rec['parent']),
 			));
 		}
-		$this->log->write('migration of permissions succeeded', null, $this->command_line);
+		$this->log->write('migration of permission templates succeeded', null, $this->command_line);
 	}
 }

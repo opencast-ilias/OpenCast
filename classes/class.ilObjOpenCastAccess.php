@@ -356,16 +356,16 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	/**
 	 * @return int
 	 */
-	public static function getParentId($get_ref_id = false) {
-		static $id;
-		if ($id) {
-			return $id;
-		}
+	public static function getParentId($get_ref_id = false, $ref_id = false) {
+//		static $id;
+//		if ($id) {
+//			return $id;
+//		}
 		global $tree;
 		/**
 		 * @var $tree ilTree
 		 */
-		foreach ($tree->getNodePath($_GET['ref_id']) as $node) {
+		foreach ($tree->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
 			if ($node['type'] == 'crs') {
 				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}
