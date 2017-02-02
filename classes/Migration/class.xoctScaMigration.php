@@ -201,7 +201,7 @@ class xoctScaMigration {
 			if (!$parent_ref_id) {
 				continue;
 			}
-			
+
 			$parent_obj = new ilObjCourse($parent_ref_id);
 			$roles = $parent_obj->getDefaultCourseRoles();
 

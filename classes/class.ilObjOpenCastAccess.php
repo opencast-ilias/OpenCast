@@ -290,7 +290,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true; // same group as owner
 		}
 
-		if (!empty(xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn()))) {
+		$invitations = xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn());
+		if (!empty($invitations)) {
 			return true; //has invitations
 		}
 
@@ -366,7 +367,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		 * @var $tree ilTree
 		 */
 		foreach ($tree->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
-			if ($node['type'] == 'crs') {
+			if ($node['type'] == 'crs' || $node['type'] == 'grp') {
 				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}
 		}
