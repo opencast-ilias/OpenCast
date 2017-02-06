@@ -305,10 +305,17 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		$cp = new ilCourseParticipants(self::getParentId());
-		self::setAdmins($cp->getAdmins());
-		self::setTutors($cp->getTutors());
-		self::setMembers($cp->getMembers());
+		global $rbacreview;
+		$crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
+		$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
+		foreach ($roles as $role) {
+			$getter_method = "getDefault{$role}Role";
+			$role_id = $crs_or_grp_obj->$getter_method();
+			$participants = $rbacreview->assignedUsers($role_id);
+			$setter_method = "set{$role}s";
+			self::$setter_method($participants);
+		}
+
 		$init = true;
 	}
 
@@ -375,6 +382,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $id;
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public static function getAllParticipants() {
+		return array_merge(self::getMembers(), self::getTutors(), self::getAdmins());
+	}
 
 	/**
 	 * @return array

@@ -281,7 +281,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @param               $additional_args
 	 */
 	public function afterSave(ilObjOpenCast $newObj, $additional_args) {
-		global $ilUser;
+		global $ilUser, $rbacreview;
 		/**
 		 * @var $cast xoctOpenCast
 		 */
@@ -300,10 +300,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($newObj->getRefId())) {
 
 			//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group
-			foreach (array('admin', 'tutor') as $role) {
+			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
+			foreach ($roles as $role) {
 				if (ilObjOpenCastAccess::isActionAllowedForRole('edit_videos', $role, $newObj->getRefId())) {
-					$getter_method = "get{$role}s";
-					foreach ($crs_or_grp_obj->getMembersObject()->$getter_method() as $participant_id) {
+					$getter_method = "getDefault{$role}Role";
+					$role_id = $crs_or_grp_obj->$getter_method();
+					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
 						$producers[] = xoctUser::getInstance($participant_id);
 					}
 				}

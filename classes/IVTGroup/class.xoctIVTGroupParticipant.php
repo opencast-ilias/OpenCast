@@ -79,22 +79,9 @@ class xoctIVTGroupParticipant extends ActiveRecord
 			return self::$crs_members_cache[$ref_id][$group_id];
 		}
 		$existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
-		global $tree;
-		/**
-		 * @var $tree ilTree
-		 */
-		while (ilObject2::_lookupType($ref_id, true) != 'crs')
-		{
-			if ($ref_id == 1)
-			{
-				throw new xoctException(xoctException::OBJECT_WRONG_PARENT);
-			}
-			$ref_id = $tree->getParentId($ref_id);
-		}
 
-		$p = new ilCourseParticipants(ilObject2::_lookupObjId($ref_id));
 		$return = array();
-		foreach (array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins()) as $user_id)
+		foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id)
 		{
 			if (in_array($user_id, $existing))
 			{
