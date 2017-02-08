@@ -125,7 +125,7 @@ class xoctInvitationGUI extends xoctGUI {
 	 * @return array
 	 */
 	protected function getCourseMembers() {
-		$parent = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
+		$parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
 		$p = $parent->getMembersObject();
 
 		return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());

@@ -181,7 +181,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				return
 					self::hasPermission('edit_videos', $ref_id)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& ilObjOpenCast::getParentCourseOrGroup($ref_id)
+					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
 					&& $xoctOpenCast->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
@@ -306,7 +306,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		global $rbacreview;
-		$crs_or_grp_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
+		$crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
 		$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
 		foreach ($roles as $role) {
 			$getter_method = "getDefault{$role}Role";
@@ -329,7 +329,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
 		global $rbacreview;
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
-		if (!$parent_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
@@ -352,7 +352,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function activateMemberUpload($ref_id) {
 		global $ilDB, $rbacreview, $rbacadmin;
-		$parent_obj = ilObjOpenCast::getParentCourseOrGroup($ref_id);
+		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
 		$ops_id_upload = $rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload');
 		$ops_ids = $rbacreview->getActiveOperationsOfRole($ref_id, $member_role_id);

@@ -35,6 +35,18 @@ class xoctScaMigration {
 		"events" => array()
 	);
 	/**
+	 * @var Integer
+	 */
+	protected $ops_id_write;
+	/**
+	 * @var Integer
+	 */
+	protected $ops_id_edit_videos;
+	/**
+	 * @var Integer
+	 */
+	protected $ops_id_upload;
+	/**
 	 * @var array
 	 */
 	protected $channel_config = array();
@@ -93,11 +105,30 @@ class xoctScaMigration {
 			throw new ilException('Migration failed: no migration data given');
 		}
 
+		$this->initRoles();
 //		$this->migratePermissions();
 		$this->migrateObjectData();
 		$this->migrateInvitations();
 		$this->log->write('***Migration Succeeded***', null, $this->command_line);
 		return array('migrated' => $this->migrated_count, 'skipped' => $this->skipped_count);
+	}
+
+	protected function initRoles() {
+		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'write'");
+		while ($rec = $this->db->fetchAssoc($query)) {
+			$this->ops_id_write = $rec['ops_id'];
+		}
+		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_edit_videos'");
+		while ($rec = $this->db->fetchAssoc($query)) {
+			$this->ops_id_edit_videos = $rec['ops_id'];
+		}
+		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_upload'");
+		while ($rec = $this->db->fetchAssoc($query)) {
+			$this->ops_id_upload = $rec['ops_id'];
+		}
+		if (!$this->ops_id_write || !$this->ops_id_edit_videos || !$this->ops_id_upload) {
+			throw new ilException('Migration failed: rbac operation id(s) not found!');
+		}
 	}
 
 	protected function createMapping($migration_data) {
@@ -197,16 +228,17 @@ class xoctScaMigration {
 			}
 
 			//permissions
-			$parent_ref_id = ilObjOpenCastAccess::getParentId(true, $ilObjOpenCast->getRefId());
-			if (!$parent_ref_id) {
-				continue;
-			}
-
-			$parent_obj = new ilObjCourse($parent_ref_id);
-			$roles = $parent_obj->getDefaultCourseRoles();
+			$parent_obj = $ilObjOpenCast->getParentCourseOrGroup();
+			$roles = ($parent_obj instanceof ilObjCourse) ? $parent_obj->getDefaultCourseRoles() : $parent_obj->getDefaultGroupRoles();
 
 			foreach ($roles as $role_id) {
 				$role_ops = $this->rbac_review->getRoleOperationsOnObject($role_id, $rec['ref_id']);
+
+				// if the role has write permissions, the new permissions 'edit_videos' and 'upload' are also granted
+				if (in_array($this->ops_id_write, $role_ops)) {
+					$role_ops[] = $this->ops_id_edit_videos;
+					$role_ops[] = $this->ops_id_upload;
+				}
 
 				$this->rbac_admin->revokePermission($ilObjOpenCast->getRefId(), $role_id);
 				$this->rbac_admin->grantPermission($role_id, $role_ops, $ilObjOpenCast->getRefId());

@@ -194,7 +194,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		$this->addItem($permission_per_clip);
 
-		if ($this->is_new && ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+		if ($this->is_new && ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
 			$crs_member_upload = new ilCheckboxInputGUI($this->txt(self::F_MEMBER_UPLOAD), self::F_MEMBER_UPLOAD);
 			$crs_member_upload->setInfo($this->infoTxt(self::F_MEMBER_UPLOAD));
 			$this->addItem($crs_member_upload);
