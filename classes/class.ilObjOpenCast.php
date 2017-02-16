@@ -130,12 +130,16 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$xoctOpenCastNew->create();
 	}
 
+	public function getParentCourseOrGroup() {
+		return self::_getParentCourseOrGroup($this->ref_id);
+	}
+
 	/**
 	 * @param $ref_id
 	 *
 	 * @return bool|ilObjCourse|ilObjGroup
 	 */
-	public static function getParentCourseOrGroup($ref_id) {
+	public static function _getParentCourseOrGroup($ref_id) {
 		global $tree;
 		static $crs_or_grp_object;
 		if (!is_array($crs_or_grp_object)) {

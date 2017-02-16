@@ -181,7 +181,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				return
 					self::hasPermission('edit_videos', $ref_id)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& ilObjOpenCast::getParentCourseOrGroup($ref_id)
+					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
 					&& $xoctOpenCast->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
@@ -290,7 +290,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true; // same group as owner
 		}
 
-		if (!empty(xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn()))) {
+		$invitations = xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn());
+		if (!empty($invitations)) {
 			return true; //has invitations
 		}
 
@@ -304,10 +305,17 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		$cp = new ilCourseParticipants(self::getParentId());
-		self::setAdmins($cp->getAdmins());
-		self::setTutors($cp->getTutors());
-		self::setMembers($cp->getMembers());
+		global $rbacreview;
+		$crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
+		$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
+		foreach ($roles as $role) {
+			$getter_method = "getDefault{$role}Role";
+			$role_id = $crs_or_grp_obj->$getter_method();
+			$participants = $rbacreview->assignedUsers($role_id);
+			$setter_method = "set{$role}s";
+			self::$setter_method($participants);
+		}
+
 		$init = true;
 	}
 
@@ -321,7 +329,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
 		global $rbacreview;
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
-		if (!$parent_obj = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id'])) {
+		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
@@ -344,7 +352,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function activateMemberUpload($ref_id) {
 		global $ilDB, $rbacreview, $rbacadmin;
-		$parent_obj = ilObjOpenCast::getParentCourseOrGroup($ref_id);
+		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
 		$ops_id_upload = $rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload');
 		$ops_ids = $rbacreview->getActiveOperationsOfRole($ref_id, $member_role_id);
@@ -356,17 +364,17 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	/**
 	 * @return int
 	 */
-	public static function getParentId($get_ref_id = false) {
-		static $id;
-		if ($id) {
-			return $id;
-		}
+	public static function getParentId($get_ref_id = false, $ref_id = false) {
+//		static $id;
+//		if ($id) {
+//			return $id;
+//		}
 		global $tree;
 		/**
 		 * @var $tree ilTree
 		 */
-		foreach ($tree->getNodePath($_GET['ref_id']) as $node) {
-			if ($node['type'] == 'crs') {
+		foreach ($tree->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
+			if ($node['type'] == 'crs' || $node['type'] == 'grp') {
 				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}
 		}
@@ -374,6 +382,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return $id;
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public static function getAllParticipants() {
+		return array_merge(self::getMembers(), self::getTutors(), self::getAdmins());
+	}
 
 	/**
 	 * @return array

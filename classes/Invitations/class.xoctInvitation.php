@@ -111,9 +111,7 @@ class xoctInvitation extends ActiveRecord {
 		))->get();
 
 		// filter out users which are not part of this course/group
-		$parent = ilObjOpenCast::getParentCourseOrGroup($_GET['ref_id']);
-		$p = $parent->getMembersObject();
-		$crs_participants = array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
+		$crs_participants = ilObjOpenCastAccess::getAllParticipants();
 		foreach ($all_invitations as $key => $invitation) {
 			if (!in_array($invitation->getUserId(), $crs_participants)) {
 				unset($all_invitations[$key]);
