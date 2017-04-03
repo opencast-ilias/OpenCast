@@ -23,11 +23,11 @@ class xoctGroup extends xoctObject {
 	/**
 	 * @var array
 	 */
-	protected $roles;
+	protected $roles = array();
 	/**
 	 * @var array
 	 */
-	protected $members;
+	protected $members = array();
 	/**
 	 * @var String
 	 */
@@ -168,7 +168,7 @@ class xoctGroup extends xoctObject {
 	 * @return mixed
 	 */
 	public function getRoles() {
-		return $this->roles;
+		return (array) $this->roles;
 	}
 
 
@@ -184,7 +184,7 @@ class xoctGroup extends xoctObject {
 	 * @return mixed
 	 */
 	public function getMembers() {
-		return $this->members;
+		return (array) $this->members;
 	}
 
 
