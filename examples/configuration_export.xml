@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opencast_settings>
   <info>
-    <plugin_version>1.1.00</plugin_version>
+    <plugin_version>1.1.21</plugin_version>
     <plugin_db_version>6</plugin_db_version>
     <config_version/>
   </info>
@@ -36,11 +36,11 @@
     </xoct_conf>
     <xoct_conf>
       <name>group_producers</name>
-      <value><![CDATA[unibe_ch_producers]]></value>
+      <value><![CDATA[ilias_producers]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>license_info</name>
-      <value><![CDATA[<p>Für detaillierte Informationen siehe Creative Commons International (Switzerland)</p>]]></value>
+      <name>identifier_to_uppercase</name>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>licenses</name>
@@ -52,6 +52,10 @@ http://creativecommons.org/licenses/by-nd/2.5/ch/#CC: Attribution-No Derivative 
 http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>license_info</name>
+      <value><![CDATA[<p>Für detaillierte Informationen siehe Creative Commons International (Switzerland)</p>]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>request_comb_lv</name>
       <value><![CDATA[1]]></value>
     </xoct_conf>
@@ -60,12 +64,12 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[ROLE_ANONYMOUS]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>role_ext_application</name>
-      <value><![CDATA[ROLE_EXTERNAL_APPLICATION]]></value>
-    </xoct_conf>
-    <xoct_conf>
       <name>role_external_application_member</name>
       <value><![CDATA[ROLE_EXTERNAL_APPLICATION_MEMBER]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>role_ext_application</name>
+      <value><![CDATA[ROLE_EXTERNAL_APPLICATION]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>role_federation_member</name>
@@ -104,12 +108,12 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[1]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>use_modals</name>
-      <value><![CDATA[]]></value>
-    </xoct_conf>
-    <xoct_conf>
       <name>user_mapping</name>
       <value><![CDATA[2]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>use_modals</name>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>workflow</name>
