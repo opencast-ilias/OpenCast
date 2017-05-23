@@ -54,29 +54,29 @@ class xoctConf extends ActiveRecord {
 	public static function setApiSettings() {
 		// CURL
 		$xoctCurlSettings = new xoctCurlSettings();
-		$xoctCurlSettings->setUsername(self::get(self::F_CURL_USERNAME));
-		$xoctCurlSettings->setPassword(self::get(self::F_CURL_PASSWORD));
+		$xoctCurlSettings->setUsername(self::getConfig(self::F_CURL_USERNAME));
+		$xoctCurlSettings->setPassword(self::getConfig(self::F_CURL_PASSWORD));
 		$xoctCurlSettings->setVerifyPeer(true);
 		$xoctCurlSettings->setVerifyHost(true);
 		xoctCurl::init($xoctCurlSettings);
 
 		//CACHE
-		xoctCache::setOverrideActive(self::get(self::F_ACTIVATE_CACHE));
+		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
 		//		xoctCache::setOverrideActive(true);
 
 		// API
 		$xoctRequestSettings = new xoctRequestSettings();
-		$xoctRequestSettings->setApiBase(self::get(self::F_API_BASE));
+		$xoctRequestSettings->setApiBase(self::getConfig(self::F_API_BASE));
 		xoctRequest::init($xoctRequestSettings);
 
 		// LOG
-		xoctLog::init(self::get(self::F_CURL_DEBUG_LEVEL));
+		xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
 		// USER
-		xoctUser::setUserMapping(self::get(self::F_USER_MAPPING) ? self::get(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);
+		xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);
 
 		// EVENT REQUEST LEVEL
-		switch (self::get(self::F_REQUEST_COMBINATION_LEVEL)) {
+		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
 			default:
 			case xoctConf::SEP_EVERYTHING:
 				xoctEvent::$LOAD_ACL_SEPARATE = true;
@@ -125,7 +125,7 @@ class xoctConf extends ActiveRecord {
 	 * @return bool
 	 */
 	public static function isConfigUpToDate() {
-		return self::get(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
+		return self::getConfig(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
 	}
 
 
@@ -139,7 +139,7 @@ class xoctConf extends ActiveRecord {
 	 *
 	 * @return mixed
 	 */
-	public static function get($name) {
+	public static function getConfig($name) {
 		if (!self::$cache_loaded[$name]) {
 			$obj = new self($name);
 			self::$cache[$name] = json_decode($obj->getValue());

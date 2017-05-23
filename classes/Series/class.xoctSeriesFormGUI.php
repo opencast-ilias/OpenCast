@@ -161,8 +161,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$options = array(
 			null => 'As defined in content',
 		);
-		$licenses = xoctConf::get(xoctConf::F_LICENSES);
-		$license_info = xoctConf::get(xoctConf::F_LICENSE_INFO);
+		$licenses = xoctConf::getConfig(xoctConf::F_LICENSES);
+		$license_info = xoctConf::getConfig(xoctConf::F_LICENSE_INFO);
 		if ($licenses) {
 			foreach (explode("\n", $licenses) as $nl) {
 				$lic = explode("#", $nl);
@@ -202,7 +202,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
-			$accept_eula->setInfo(xoctConf::get(xoctConf::F_EULA));
+			$accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
 			$accept_eula->setRequired(true);
 			$this->addItem($accept_eula);
 		}

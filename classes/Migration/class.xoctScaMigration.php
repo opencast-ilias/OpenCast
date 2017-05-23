@@ -212,7 +212,7 @@ class xoctScaMigration {
 			$producers = $ilObjSCast->getProducers();
 			$cast->getSeries()->addProducers($producers);
 			try {
-				$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+				$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 				$ilias_producers->addMembers($producers);
 			} catch (xoctException $e) {
 				$this->log->write('WARNING: ' . $e->getMessage());

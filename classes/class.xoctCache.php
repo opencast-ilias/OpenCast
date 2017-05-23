@@ -25,7 +25,7 @@ class xoctCache extends ilGlobalCache {
 	/**
 	 * @return xoctCache
 	 */
-	public static function getInstance() {
+	public static function getInstance($component) {
 		require_once('./include/inc.ilias_version.php');
 		$service_type = extension_loaded('apc') ? self::TYPE_APC : self::TYPE_STATIC;
 		if (str_replace('.', '', ILIAS_VERSION_NUMERIC) >= 510) {

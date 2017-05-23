@@ -29,7 +29,7 @@ class xoctPublication extends xoctObject {
 	 * @param \stdClass $class
 	 * @throws \xoctException
 	 */
-	public function loadFromStdClass(stdClass $class) {
+	public function loadFromStdClass($class) {
 		parent::loadFromStdClass($class);
 	}
 
