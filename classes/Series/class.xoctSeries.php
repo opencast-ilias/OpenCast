@@ -177,10 +177,13 @@ class xoctSeries extends xoctObject {
 
 		xoctRequest::root()->series($this->getIdentifier())->properties()->put($array);
 
-		$array = array(
-			'acl' => json_encode($this->getAccessPolicies())
-		);
-		xoctRequest::root()->series($this->getIdentifier())->acl()->put($array);
+		// when creating objects with existing series, the access policies are empty (=no change)
+		if ($this->getAccessPolicies()) {
+			$array = array(
+				'acl' => json_encode($this->getAccessPolicies())
+			);
+			xoctRequest::root()->series($this->getIdentifier())->acl()->put($array);
+		}
 
 		self::removeFromCache($this->getIdentifier());
 	}
