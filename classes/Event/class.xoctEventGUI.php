@@ -173,7 +173,7 @@ class xoctEventGUI extends xoctGUI {
 
 		// add user to ilias producers
 		try {
-			$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMember($xoctUser);
 		} catch (xoctException $e) {
 			// TODO do something (log?)

@@ -59,7 +59,7 @@ class xoctLog extends ilLog {
 	 * @param      $a_msg
 	 * @param null $log_level
 	 */
-	function write($a_msg, $log_level) {
+	function write($a_msg, $log_level = null) {
 		if (self::relevant($log_level)) {
 			parent::write($a_msg);
 		}

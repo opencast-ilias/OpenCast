@@ -25,7 +25,7 @@ class xoctAclStandardSets {
 	public function __construct($role_names = array()) {
 		$acls = array();
 		// standard roles
-		foreach (xoctConf::get(xoctConf::F_STD_ROLES) as $std_role) {
+		foreach (xoctConf::getConfig(xoctConf::F_STD_ROLES) as $std_role) {
 			$acl = new xoctAcl();
 			$acl->setRole($std_role);
 			$acl->setAllow(true);

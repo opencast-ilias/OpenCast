@@ -10,6 +10,7 @@ require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/Op
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php';
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php';
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventTableGUI.php';
 /**
  * Class xoctScaMigration
  *
@@ -155,7 +156,11 @@ class xoctScaMigration {
 	protected function migrateObjectData() {
 		global $tree;
 		$this->log->write('migrate Object Data..', null, $this->command_line);
-		$sql = $this->db->query('SELECT rep_robj_xsca_data.*, object_reference.ref_id FROM rep_robj_xsca_data INNER JOIN object_reference on rep_robj_xsca_data.id = object_reference.obj_id');
+		$sql = $this->db->query('
+			SELECT rep_robj_xsca_data.*, object_reference.ref_id, object_data.* 
+			FROM rep_robj_xsca_data 
+			INNER JOIN object_reference on rep_robj_xsca_data.id = object_reference.obj_id 
+			INNER JOIN object_data on object_data.obj_id = object_reference.obj_id');
 		if ($this->command_line) {
 			echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
 		}
@@ -163,7 +168,6 @@ class xoctScaMigration {
 //			if ($rec['ref_id'] != 1320646) {
 //				continue;
 //			}
-			$ilObjSCast = new ilObjScast($rec['ref_id']);
 			$series_id = $this->id_mapping[self::SERIES][$rec['ext_id']];
 
 			if (!$series_id) {
@@ -173,7 +177,7 @@ class xoctScaMigration {
 				continue;
 			}
 
-			$parent_id = $tree->getParentId($ilObjSCast->getRefId());
+			$parent_id = $tree->getParentId($rec['ref_id']);
 			if (!$parent_id) {
 				$this->log->write("WARNING: no parent id found for ref_id {$rec['ref_id']}");
 				$this->log->write("skip and proceed with next object");
@@ -181,11 +185,11 @@ class xoctScaMigration {
 				continue;
 			}
 			$this->log->write("create ilObjOpenCast..");
-			$this->log->write("migrating scast: title={$ilObjSCast->getTitle()} ref_id={$ilObjSCast->getRefId()} obj_id={$rec['id']} channel_id={$rec['ext_id']} parent_id=$parent_id");
+			$this->log->write("migrating scast: title={$rec['title']} ref_id={$rec['ref_id']} obj_id={$rec['id']} channel_id={$rec['ext_id']} parent_id=$parent_id");
 			$ilObjOpenCast = new ilObjOpenCast();
-			$ilObjOpenCast->setTitle($ilObjSCast->getTitle());
-			$ilObjOpenCast->setDescription($ilObjSCast->getDescription());
-			$ilObjOpenCast->setOwner($ilObjSCast->getOwner());
+//			$ilObjOpenCast->setTitle($rec['title']);
+//			$ilObjOpenCast->setDescription($rec['description']);
+			$ilObjOpenCast->setOwner($rec['owner']);
 			$ilObjOpenCast->create();
 			$ilObjOpenCast->createReference();
 
@@ -200,28 +204,28 @@ class xoctScaMigration {
 			$cast->setSeriesIdentifier($series_id);
 			$cast->create();
 
-			$cast->setObjOnline($ilObjSCast->getOnline());
-			$cast->setPermissionPerClip($ilObjSCast->getIvt());
-			$cast->setPermissionAllowSetOwn($ilObjSCast->getInvitingPossible());
-			$cast->setIntroText($ilObjSCast->getIntroductionText());
+			$cast->setObjOnline($rec['is_online']);
+			$cast->setPermissionPerClip($rec['is_ivt']);
+			$cast->setPermissionAllowSetOwn($rec['inviting']);
+			$cast->setIntroText($rec['introduction_text']);
 			$cast->setUseAnnotations($this->channel_config[$series_id][self::ALLOW_ANNOTATIONS]);
 			$cast->setStreamingOnly($this->channel_config[$series_id][self::STREAMING_ONLY]);
 			$cast->update();
 
-			// add producers
-			$producers = $ilObjSCast->getProducers();
-			$cast->getSeries()->addProducers($producers);
-			try {
-				$ilias_producers = xoctGroup::find(xoctConf::get(xoctConf::F_GROUP_PRODUCERS));
-				$ilias_producers->addMembers($producers);
-			} catch (xoctException $e) {
-				$this->log->write('WARNING: ' . $e->getMessage());
-			}
+			$this->log->write("update series' description..");
+			$series = $cast->getSeries();
+			$series->setDescription($rec['description']);
+			$series->update();
+			$ilObjOpenCast->setDescription($rec['description']);
+			$ilObjOpenCast->update();
 
+
+			// PLOPENCAST-49
+			xoctEventTableGUI::setOwnerFieldVisibility($rec['is_ivt'], $cast);
 
 			$this->log->write("opencast creation succeeded: ref_id={$ilObjOpenCast->getRefId()} obj_id={$ilObjOpenCast->getId()} series_id={$cast->getSeriesIdentifier()}");
 			$this->migrated_count++;
-			$this->migrateGroups($ilObjSCast->getId(), $ilObjOpenCast->getId());
+			$this->migrateGroups($rec['obj_id'], $ilObjOpenCast->getId());
 
 			if ($this->command_line) {
 				echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";

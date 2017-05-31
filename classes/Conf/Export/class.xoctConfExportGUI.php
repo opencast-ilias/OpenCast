@@ -85,7 +85,7 @@ class xoctConfExportGUI extends xoctGUI {
 		$xml_info = $config->appendChild(new DOMElement('info'));
 		$xml_info->appendChild(new DOMElement('plugin_version', $this->pl->getVersion()));
 		$xml_info->appendChild(new DOMElement('plugin_db_version', $this->pl->getDBVersion()));
-		$xml_info->appendChild(new DOMElement('config_version', xoctConf::get(xoctConf::CONFIG_VERSION)));
+		$xml_info->appendChild(new DOMElement('config_version', xoctConf::getConfig(xoctConf::CONFIG_VERSION)));
 
 		// xoctConf
 		$xml_xoctConfs = $config->appendChild(new DOMElement('xoct_confs'));
@@ -96,7 +96,7 @@ class xoctConfExportGUI extends xoctGUI {
 			$xml_xoctConf = $xml_xoctConfs->appendChild(new DOMElement('xoct_conf'));
 			$xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
 			//			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
-			$value = xoctConf::get($xoctConf->getName());
+			$value = xoctConf::getConfig($xoctConf->getName());
 			$value = is_array($value) ? json_encode($value) : $value;
 			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
 		}

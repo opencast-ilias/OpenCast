@@ -144,7 +144,7 @@ class xoctEventTableGUI extends ilTable2GUI
 				$this->tpl->setCurrentBlock('link');
 				$this->tpl->setVariable('LINK_URL', $playerLink);
 				$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('player'));
-				if (xoctConf::get(xoctConf::F_USE_MODALS))
+				if (xoctConf::getConfig(xoctConf::F_USE_MODALS))
 				{
 					require_once('./Services/UIComponent/Modal/classes/class.ilModalGUI.php');
 					$modal = ilModalGUI::getInstance();

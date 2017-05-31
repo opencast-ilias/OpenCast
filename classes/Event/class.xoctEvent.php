@@ -454,7 +454,7 @@ class xoctEvent extends xoctObject {
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
-			if (xoctConf::get(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
+			if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
 				$this->annotation_url = xoctSecureLink::sign($url);
 			} else {
 
@@ -502,7 +502,7 @@ class xoctEvent extends xoctObject {
 				$this->cutting_url = $url;
 			} else {
 
-				$base = rtrim(xoctConf::get(xoctConf::F_API_BASE), "/");
+				$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 				$base = str_replace('/api', '', $base);
 				$this->cutting_url = $base . '/admin-ng/index.html#/events/events/' . $this->getIdentifier() . '/tools/editor';
 			}
@@ -1159,7 +1159,7 @@ class xoctEvent extends xoctObject {
 	protected function getProcessing($auto_publish = false) {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 		$processing = new stdClass();
-		$processing->workflow = xoctConf::get(xoctConf::F_WORKFLOW);
+		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
 		$processing->configuration->flagForCutting = 'false';
 		$processing->configuration->flagForReview = 'false';
