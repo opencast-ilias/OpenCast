@@ -187,8 +187,8 @@ class xoctScaMigration {
 			$this->log->write("create ilObjOpenCast..");
 			$this->log->write("migrating scast: title={$rec['title']} ref_id={$rec['ref_id']} obj_id={$rec['id']} channel_id={$rec['ext_id']} parent_id=$parent_id");
 			$ilObjOpenCast = new ilObjOpenCast();
-			$ilObjOpenCast->setTitle($rec['title']);
-			$ilObjOpenCast->setDescription($rec['description']); // ??
+//			$ilObjOpenCast->setTitle($rec['title']);
+//			$ilObjOpenCast->setDescription($rec['description']);
 			$ilObjOpenCast->setOwner($rec['owner']);
 			$ilObjOpenCast->create();
 			$ilObjOpenCast->createReference();
@@ -211,6 +211,14 @@ class xoctScaMigration {
 			$cast->setUseAnnotations($this->channel_config[$series_id][self::ALLOW_ANNOTATIONS]);
 			$cast->setStreamingOnly($this->channel_config[$series_id][self::STREAMING_ONLY]);
 			$cast->update();
+
+			$this->log->write("update series' description..");
+			$series = $cast->getSeries();
+			$series->setDescription($rec['description']);
+			$series->update();
+			$ilObjOpenCast->setDescription($rec['description']);
+			$ilObjOpenCast->update();
+
 
 			// PLOPENCAST-49
 			xoctEventTableGUI::setOwnerFieldVisibility($rec['is_ivt'], $cast);
