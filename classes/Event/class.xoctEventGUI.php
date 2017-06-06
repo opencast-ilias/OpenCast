@@ -56,7 +56,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
-		if (xoctCache::getInstance()->isActive()) {
+		if (xoctCache::getCacheInstance()->isActive()) {
 			xoctWaiterGUI::initJS();
 			xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
 			$b = ilLinkButton::getInstance();
@@ -417,7 +417,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function clearCache() {
-		xoctCache::getInstance()->flush();
+		xoctCache::getCacheInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
 		xoctEvent::getFiltered(array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() ));
 		$this->cancel();

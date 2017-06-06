@@ -242,7 +242,7 @@ class xoctSeries extends xoctObject {
 	 * @return xoctSeries[]
 	 */
 	public static function getAllForUser($user_string) {
-		if ($existing = xoctCache::getInstance()->get('series-' . $user_string)) {
+		if ($existing = xoctCache::getCacheInstance()->get('series-' . $user_string)) {
 			return $existing;
 		}
 		$return = array();
@@ -256,7 +256,7 @@ class xoctSeries extends xoctObject {
 				continue;
 			}
 		}
-		xoctCache::getInstance()->set('series-' . $user_string, $return, 60);
+		xoctCache::getCacheInstance()->set('series-' . $user_string, $return, 60);
 
 		return $return;
 	}
