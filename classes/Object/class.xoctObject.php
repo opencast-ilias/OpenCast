@@ -31,7 +31,7 @@ abstract class xoctObject {
 		if (self::$cache[$key] instanceof $class_name) {
 			return self::$cache[$key];
 		}
-		$existing = xoctCache::getInstance()->get($key);
+		$existing = xoctCache::getCacheInstance()->get($key);
 
 		if ($existing) {
 			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -57,7 +57,7 @@ abstract class xoctObject {
 		if (self::$cache[$key] instanceof $class_name) {
 			return self::$cache[$key];
 		}
-		$existing = xoctCache::getInstance()->get($key);
+		$existing = xoctCache::getCacheInstance()->get($key);
 
 		if ($existing) {
 			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -87,7 +87,7 @@ abstract class xoctObject {
 		$key = $class_name . '-' . $identifier;
 		self::$cache[$key] = null;
 		xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-		xoctCache::getInstance()->delete($key);
+		xoctCache::getCacheInstance()->delete($key);
 	}
 
 
@@ -100,7 +100,7 @@ abstract class xoctObject {
 		$key = $class_name . '-' . $identifier;
 		self::$cache[$key] = $object;
 		xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-		xoctCache::getInstance()->set($key, $object);
+		xoctCache::getCacheInstance()->set($key, $object);
 	}
 
 
