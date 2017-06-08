@@ -69,10 +69,12 @@ var xoctGroupParticipant = {
         };
 
         this.filter_container.keyup(function () {
-            if (!self.filtering) {
-                self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
-            }
             self.filter($(this).val());
+            if (self.filtering && !$('#xoct_filter').length) {
+                self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
+            } else if (!self.filtering) {
+                $('#xoct_filter').remove();
+            }
         });
 
 
