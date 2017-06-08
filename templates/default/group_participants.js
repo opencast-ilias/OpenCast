@@ -143,7 +143,9 @@ var xoctGroupParticipant = {
                 self.container_available.append(
                     '<li class="list-group-item xoct_participant_available" data-user-id="' + data[i].user_id + '">'
                     //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
+                    + '<div style="margin-right:30px;">'
                     + data[i].display_name + ''
+                    + '</div>'
                     + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
                     + '</li>');
             }
@@ -166,7 +168,9 @@ var xoctGroupParticipant = {
             for (var i in data) {
                 self.container_per_group.append('<li class="list-group-item" data-id="'
                     + data[i].id
-                    + '">' + data[i].display_name + ''
+                    + '"><div style="margin-right:30px;">'
+                    + data[i].display_name
+                    + '</div>'
                     + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
             }
             if (!data || data.length == 0) {
