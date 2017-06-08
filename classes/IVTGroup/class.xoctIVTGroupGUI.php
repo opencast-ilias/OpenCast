@@ -26,6 +26,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		//		xoctGroup::installDB();
 		xoctWaiterGUI::loadLib();
+		$this->tpl->addCss($this->pl->getStyleSheetLocation('default/groups.css'));
 		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/groups.js'));
 	}
 

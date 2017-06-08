@@ -1,60 +1,66 @@
-.xsca_loader{
+.xoct_add_user, .xoct_remove_user {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.xoct_loader{
     float: right;
     display: none;
     top: 0%;
 }
 
-.xsca_loaded{
+.xoct_loaded{
     float: right;
     display: none;
     top: 0%;
 }
 
-.xsca_members{
+.xoct_members{
     display: none;
     margin: 5px;
     padding: 5px;
 }
 
-.xsca_groups_title{
+.xoct_groups_title{
     font-weight: bold;
     font-size: 18px;
 }
 
-.xsca_clear_groups_filter{
+.xoct_clear_groups_filter{
     cursor: pointer;
 }
 
-.xsca_clear_participants_filter{
+.xoct_clear_participants_filter{
     cursor: pointer;
 }
 
-.xsca_participants_title{
+.xoct_participants_title{
     font-weight: bold;
     font-size: 18px;
 }
 
-.xsca_group{
+.xoct_group{
     padding: 5px;
     background-color: #FAFAFA;
     border-top: 1px solid #F0F0F0;
     overflow: auto;
 }
 
-.xsca_participants{
+.xoct_participants{
     /*margin: 10px;*/
     padding: 5px 5px 5px 20px;
     float: left;
     width: 45%;
 }
 
-.xsca_participants_holder{
+.xoct_participants_holder{
     margin: 5px;
     padding: 5px;
     overflow: auto;
 }
 
-.xsca_groups{
+.xoct_groups{
     /*margin: 10px;*/
     padding: 5px 20px 5px 5px;
     float: left;
@@ -62,13 +68,13 @@
 
 }
 
-.xsca_group_info{
+.xoct_group_info{
     background-color: yellow;
     display: none;
     font-weight: bold;
 }
 
-.xsca_member {
+.xoct_member {
     background-color: #BBBBBB;
     float: left;
     font-size: 75%;
@@ -91,7 +97,7 @@
     /*border-radius:5px;*/ /* CSS3 */
 }
 
-.xsca_participant {
+.xoct_participant {
     background-color: #BBBBBB;
     float: left;
     font-size: 75%;
@@ -107,20 +113,20 @@
 }
 
 
-.xsca_plus{
+.xoct_plus{
     font-weight: bold;
     color: green;
 }
-.xsca_minus{
+.xoct_minus{
     font-weight: bold;
     color: red;
 }
 
-#xsca_group_name_container{
+#xoct_group_name_container{
     cursor: pointer;
 }
 
-.xsca_delete_group{
+.xoct_delete_group{
     cursor: pointer;
     clear: both;
     float: right;
