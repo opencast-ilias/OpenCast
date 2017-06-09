@@ -29,6 +29,7 @@ class xoctInvitationGUI extends xoctGUI {
 
 		$this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass('xoctEventGUI'));
 		xoctWaiterGUI::loadLib();
+		$this->tpl->addCss($this->pl->getStyleSheetLocation('default/invitations.css'));
 		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/invitations.js'));
 		$this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
 	}
