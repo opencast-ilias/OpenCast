@@ -56,14 +56,18 @@ var xoctInvitation = {
 			self.clear();
 			for (var i in data.available) {
 				self.container_available.append('<a class="list-group-item" data-invitation-id="' + data.available[i].id + '">'
+					+ '<div style="margin-right:30px;">'
 					+ data.available[i].name
+					+ '</div>'
 					+ '<button class="btn btn-primary xoct_invite pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
 					+ '</li>');
 			}
 
 			for (var i in data.invited) {
 				self.container_invited.append('<a class="list-group-item" data-invitation-id="' + data.invited[i].id + '">'
+					+ '<div style="margin-right:30px;">'
 					+ data.invited[i].name
+					+ '</div>'
 					+ '<button class="btn btn-danger xoct_remove pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
 					+ '</li>');
 			}
