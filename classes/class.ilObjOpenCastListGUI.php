@@ -165,7 +165,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 *                        'property' (string) => property name
 	 *                        'value' (string) => property value
 	 */
-	public function getCustomProperties() {
+	public function getCustomProperties($a_prop) {
 
 		$props = parent::getCustomProperties(array());
 		try {
@@ -205,7 +205,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 */
 	public function getAlertProperties() {
 		$alert = array();
-		foreach ((array)$this->getCustomProperties() as $prop) {
+		foreach ((array)$this->getCustomProperties(array()) as $prop) {
 			if ($prop['alert'] == true) {
 				$alert[] = $prop;
 			}
