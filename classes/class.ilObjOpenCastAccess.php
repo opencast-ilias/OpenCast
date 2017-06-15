@@ -258,7 +258,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// owner can see failed videos
-		if ($xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED && $xoctEvent->isOwner($xoctUser)) {
+		if ($xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED) {
+			if ($xoctEvent->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission('upload')))
 			return true;
 		}
 
