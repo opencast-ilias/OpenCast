@@ -89,7 +89,7 @@ event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
-event_state_failed#:#Publikation fehlgeschlagen. Bitte melden Sie sich beim Podcast-Support.
+event_state_failed#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
@@ -107,7 +107,7 @@ event_set_offline#:#Offline schalten
 event_created_unix#:#Datum
 event_set_online#:#Online schalten
 event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf OpenCast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
-event_state_failed_owner#:#Publikation fehlgeschlagen. Bitte melden Sie sich beim Podcast-Support.
+event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
