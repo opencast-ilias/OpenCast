@@ -89,7 +89,7 @@ event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
 event_start_time#:#Start
-event_state_failed#:#Failed
+event_state_failed#:#Publication failed. Please contact the Podcast support.
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:#Not published, not yet visible to students
 event_state_running#:#Converting, not yet visible to students
