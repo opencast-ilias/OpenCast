@@ -79,11 +79,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE. '_info'));
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE. '_info'));
 		$this->addItem($cb);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS. '_info'));
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS. '_info'));
 		$this->addItem($cb);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_WORKFLOW), xoctConf::F_WORKFLOW);
