@@ -89,7 +89,7 @@ event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
-event_state_failed#:#Fehlgeschlagen
+event_state_failed#:#Publikation fehlgeschlagen. Bitte melden Sie sich beim Podcast-Support.
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
