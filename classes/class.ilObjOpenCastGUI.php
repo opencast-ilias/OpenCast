@@ -280,12 +280,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @param ilObjOpenCast $newObj
 	 * @param               $additional_args
 	 */
-	public function afterSave(ilObjOpenCast $newObj, $additional_args) {
+	public function afterSave(ilObject $newObj) {
 		global $ilUser, $rbacreview;
 		/**
 		 * @var $cast xoctOpenCast
 		 */
 		// set object id for xoctOpenCast object
+		$args = func_get_args();
+		$additional_args = $args[1];
 		$cast = $additional_args[0];
 		$cast->setObjId($newObj->getId());
 		if (xoctOpenCast::where(array( 'obj_id' => $newObj->getId() ))->hasSets()) {
