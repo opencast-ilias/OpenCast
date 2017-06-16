@@ -246,7 +246,7 @@ class xoctSeries extends xoctObject {
 			return $existing;
 		}
 		$return = array();
-		$data = json_decode(xoctRequest::root()->series()->get('', array( $user_string )));
+		$data = (array) json_decode(xoctRequest::root()->series()->get('', array( $user_string )));
 		foreach ($data as $d) {
 			$obj = new self();
 			try {
