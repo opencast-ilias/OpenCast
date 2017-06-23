@@ -497,15 +497,17 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getCuttingLink() {
 		if (!isset($this->cutting_url)) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
-			if ($url) {
-				$this->cutting_url = $url;
-			} else {
-
+			$url = str_replace('{event_id}', $this->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
+			if (!$url) {
+				$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+			}
+			if (!$url) {
 				$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 				$base = str_replace('/api', '', $base);
-				$this->cutting_url = $base . '/admin-ng/index.html#/events/events/' . $this->getIdentifier() . '/tools/editor';
+				$this->cutting_url = $base . '/external-url/events/' . $this->getIdentifier() . '/editor';
 			}
+
+			$this->cutting_url = $url;
 		}
 
 		return $this->cutting_url;
