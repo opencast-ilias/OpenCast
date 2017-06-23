@@ -67,6 +67,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$this->addItem($te);
 
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_EDITOR_LINK), xoctConf::F_EDITOR_LINK);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_EDITOR_LINK. '_info'));
+		$te->setRequired(true);
+		$this->addItem($te);
+
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL. '_info'));
 		$te->setOptions(array(

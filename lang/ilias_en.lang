@@ -8,6 +8,8 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_editor_link#:#Link to OpenCast Video Editor
+config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
 config_licenses#:#Licenses
 config_licenses_info#:#Add new lines with URL#Name
