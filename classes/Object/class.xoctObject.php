@@ -51,7 +51,7 @@ abstract class xoctObject {
 	 * @param \stdClass $stdClass
 	 * @return xoctObject
 	 */
-	public function findOrLoadFromStdClass($identifier, stdClass $stdClass) {
+	public static function findOrLoadFromStdClass($identifier, stdClass $stdClass) {
 		$class_name = get_called_class();
 		$key = $class_name . '-' . $identifier;
 		if (self::$cache[$key] instanceof $class_name) {
