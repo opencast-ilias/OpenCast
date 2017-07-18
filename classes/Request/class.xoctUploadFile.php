@@ -27,14 +27,14 @@ class xoctUploadFile {
 
 
 	/**
-	 * @return string
+	 * @return CURLFile
 	 */
-	public function getCurlString() {
+	public function getCURLFile() {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 		$xoctPlupload = new xoctPlupload();
-		$str = '@' . $xoctPlupload->getTargetDir() . '/' . $this->getTitle() . ';filename=' . $this->getTitle();
+		$CURLFile = new CURLFile($xoctPlupload->getTargetDir() . '/' . $this->getTitle());
 
-		return $str;
+		return $CURLFile;
 	}
 
 

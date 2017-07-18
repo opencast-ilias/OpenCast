@@ -288,7 +288,7 @@ class xoctEvent extends xoctObject {
 		$data['acl'] = json_encode($this->getAcl());
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
-		$data['presenter'] = $presenter->getCurlString();
+		$data['presenter'] = $presenter->getCURLFile();
 		//		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
 		$return = json_decode(xoctRequest::root()->events()->post($data));
 		//		}

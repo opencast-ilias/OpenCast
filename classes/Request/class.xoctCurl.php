@@ -580,7 +580,7 @@ class xoctCurl {
 		if (count($this->getFiles()) > 0) {
 			curl_getinfo($ch, CURLOPT_SAFE_UPLOAD, false);
 			foreach ($this->getFiles() as $file) {
-				$this->addPostField($file->getPostVar(), $file->getCurlString());
+				$this->addPostField($file->getPostVar(), $file->getCURLFile());
 			}
 		}
 		$post_body_string = '';
