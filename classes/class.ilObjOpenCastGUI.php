@@ -127,6 +127,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		try {
 			xoctConf::setApiSettings();
 			$next_class = $this->ctrl->getNextClass();
+			$cmd = $this->ctrl->getCmd();
 			$this->tpl->getStandardTemplate();
 
 			switch ($next_class) {
@@ -146,6 +147,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					parent::executeCommand();
 					break;
 				default:
+					// workaround for object deletion; 'parent::executeCommand()' shows the template and leads to "Headers already sent" error
+					if ($next_class == "" && $cmd == 'deleteObject') {
+						$this->deleteObject();
+						break;
+					}
 					parent::executeCommand();
 					break;
 			}
