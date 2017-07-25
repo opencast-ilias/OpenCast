@@ -53,7 +53,7 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	protected function edit() {
-		if ($this->xoctOpenCast->hasDuplicatesOnSystem()) {
+		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('series_has_duplicates'));
 		}
 		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_SETTINGS);

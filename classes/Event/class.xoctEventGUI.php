@@ -109,7 +109,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function add() {
-		if ($this->xoctOpenCast->hasDuplicatesOnSystem()) {
+		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('series_has_duplicates_events'));
 		}
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
@@ -323,7 +323,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$ilConfirmationGUI = new ilConfirmationGUI();
 		$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-		$header_text = $this->xoctOpenCast->hasDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
+		$header_text = $this->xoctOpenCast->getDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
 		$ilConfirmationGUI->setHeaderText($header_text);
 		$ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
 		$ilConfirmationGUI->setConfirm($this->txt('delete'), self::CMD_DELETE);

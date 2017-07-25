@@ -580,21 +580,14 @@ class xoctCurl {
 		if (count($this->getFiles()) > 0) {
 			curl_getinfo($ch, CURLOPT_SAFE_UPLOAD, false);
 			foreach ($this->getFiles() as $file) {
-				$this->addPostField($file->getPostVar(), $file->getCurlString());
+				$this->addPostField($file->getPostVar(), $file->getCURLFile());
 			}
 		}
-		$post_body_string = '';
 
-		foreach ($this->getPostFields() as $key => $value) {
-			$post_body_string .= $key . '=' . $value . '&';
-		}
-
-		$post_body_string = rtrim($post_body_string, '&');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
-		$this->setPostBody($post_body_string);
 
 		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_3);
-		xoctLog::getInstance()->write($this->getPostBody(), xoctLog::DEBUG_LEVEL_3);
+		xoctLog::getInstance()->write(print_r($this->getPostFields(), true), xoctLog::DEBUG_LEVEL_3);
 	}
 
 

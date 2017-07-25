@@ -101,9 +101,9 @@ class xoctOpenCast extends ActiveRecord {
 
 
 	/**
-	 * @return bool
+	 * @return bool | int[]
 	 */
-	public function hasDuplicatesOnSystem()
+	public function getDuplicatesOnSystem()
 	{
 		if (!$this->getObjId() || !$this->getSeriesIdentifier())
 		{
@@ -115,21 +115,26 @@ class xoctOpenCast extends ActiveRecord {
 			return false;
 		}
 
+		$duplicates_ids = array();
 		// check if duplicates are actually deleted
 		foreach ($duplicates_ar->get() as $oc) {
 			/** @var xoctOpenCast $oc */
 			if ($oc->getObjId() != $this->getObjId()) {
 				global $ilDB;
 
-				$query = "SELECT deleted FROM object_reference".
+				$query = "SELECT deleted, ref_id FROM object_reference".
 					" WHERE obj_id = ".$ilDB->quote($oc->getObjId(), "integer");
 				$set = $ilDB->query($query);
 				$rec = $ilDB->fetchAssoc($set);
 
 				if (!$rec['deleted']) {
-					return true;
+					$duplicates_ids[] = $rec['ref_id'];
 				}
 			}
+		}
+
+		if (!empty($duplicates_ids)) {
+			return $duplicates_ids;
 		}
 
 		return false;
