@@ -113,8 +113,10 @@ class xoctSeries extends xoctObject {
 
 		if (!$omit_update && (!$already_has_read || !$already_has_write)) {
 			$this->update();
+			return true;
 		}
 
+		return false;
 	}
 
 

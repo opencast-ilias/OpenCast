@@ -171,17 +171,24 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
+		// will be set true if the user role is added to producers, since in that case there must be a short sleep() before redirecting
+		$sleep = false;
+
 		// add user to ilias producers
 		try {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-			$ilias_producers->addMember($xoctUser);
+			$sleep = $ilias_producers->addMember($xoctUser);
 		} catch (xoctException $e) {
-			// TODO do something (log?)
+			$sleep = false;
 		}
 
 		// add user to series producers
 		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
-		$xoctSeries->addProducer($xoctUser);
+		$sleep = $xoctSeries->addProducer($xoctUser);
+
+		if ($sleep) {
+			sleep(3);
+		}
 
 		// redirect
 		$cutting_link = $xoctEvent->getCuttingLink();
