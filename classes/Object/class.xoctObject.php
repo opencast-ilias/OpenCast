@@ -1,6 +1,6 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctCache.php');
 require_once('./Services/Utilities/classes/class.ilStr.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
 
 /**
  * Class xoctObject
@@ -31,7 +31,7 @@ abstract class xoctObject {
 		if (self::$cache[$key] instanceof $class_name) {
 			return self::$cache[$key];
 		}
-		$existing = xoctCache::getCacheInstance()->get($key);
+		$existing = xoctCacheFactory::getInstance()->get($key);
 
 		if ($existing) {
 			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -57,7 +57,7 @@ abstract class xoctObject {
 		if (self::$cache[$key] instanceof $class_name) {
 			return self::$cache[$key];
 		}
-		$existing = xoctCache::getCacheInstance()->get($key);
+		$existing = xoctCacheFactory::getInstance()->get($key);
 
 		if ($existing) {
 			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -87,7 +87,7 @@ abstract class xoctObject {
 		$key = $class_name . '-' . $identifier;
 		self::$cache[$key] = null;
 		xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-		xoctCache::getCacheInstance()->delete($key);
+		xoctCacheFactory::getInstance()->delete($key);
 	}
 
 
@@ -100,7 +100,7 @@ abstract class xoctObject {
 		$key = $class_name . '-' . $identifier;
 		self::$cache[$key] = $object;
 		xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-		xoctCache::getCacheInstance()->set($key, $object);
+		xoctCacheFactory::getInstance()->set($key, $object);
 	}
 
 

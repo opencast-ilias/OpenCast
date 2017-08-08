@@ -6,6 +6,7 @@ require_once('class.xoctEventFormGUI.php');
 require_once('class.xoctEventOwnerFormGUI.php');
 require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
 require_once('class.xoctEventAdditions.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
 
 /**
  * Class xoctEventGUI
@@ -56,7 +57,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
-		if (xoctCache::getCacheInstance()->isActive()) {
+		if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE)) {
 			xoctWaiterGUI::initJS();
 			xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
 			$b = ilLinkButton::getInstance();
@@ -424,7 +425,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function clearCache() {
-		xoctCache::getCacheInstance()->flush();
+		xoctCacheFactory::getInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
 		xoctEvent::getFiltered(array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() ));
 		$this->cancel();

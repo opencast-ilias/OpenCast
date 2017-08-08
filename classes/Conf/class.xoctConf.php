@@ -62,7 +62,7 @@ class xoctConf extends ActiveRecord {
 		xoctCurl::init($xoctCurlSettings);
 
 		//CACHE
-		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
+//		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
 		//		xoctCache::setOverrideActive(true);
 
 		// API

@@ -5,6 +5,7 @@ require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAcl.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Properties/class.xoctProperties.php');
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctUser.php');
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
 
 /**
  * Class xoctSeries
@@ -244,7 +245,7 @@ class xoctSeries extends xoctObject {
 	 * @return xoctSeries[]
 	 */
 	public static function getAllForUser($user_string) {
-		if ($existing = xoctCache::getCacheInstance()->get('series-' . $user_string)) {
+		if ($existing = xoctCacheFactory::getInstance()->get('series-' . $user_string)) {
 			return $existing;
 		}
 		$return = array();
@@ -258,7 +259,7 @@ class xoctSeries extends xoctObject {
 				continue;
 			}
 		}
-		xoctCache::getCacheInstance()->set('series-' . $user_string, $return, 60);
+		xoctCacheFactory::getInstance()->set('series-' . $user_string, $return, 60);
 
 		return $return;
 	}
