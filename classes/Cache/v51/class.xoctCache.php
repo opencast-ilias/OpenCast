@@ -37,6 +37,7 @@ class xoctCache extends ilGlobalCache {
 			$xoctCache = new self($service_type);
 		}
 		$xoctCache->setActive(true);
+		$xoctCache->setOverrideActive(true);
 
 		return $xoctCache;
 	}
