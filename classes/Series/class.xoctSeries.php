@@ -56,7 +56,7 @@ class xoctSeries extends xoctObject {
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
 		$this->updateFieldsFromMetadata();
-		$this->loadProperties();
+//		$this->loadProperties();
 	}
 
 
@@ -173,12 +173,12 @@ class xoctSeries extends xoctObject {
 
 		xoctRequest::root()->series($this->getIdentifier())->metadata()->parameter('type', $this->getMetadata()->getFlavor())->put($array);
 
-		$this->loadProperties();
-		$array = array(
-			'properties' => json_encode($this->getProperties()->__toStdClass())
-		);
-
-		xoctRequest::root()->series($this->getIdentifier())->properties()->put($array);
+//		$this->loadProperties();
+//		$array = array(
+//			'properties' => json_encode($this->getProperties()->__toStdClass())
+//		);
+//
+//		xoctRequest::root()->series($this->getIdentifier())->properties()->put($array);
 
 		// when creating objects with existing series, the access policies are empty (=no change)
 		if ($this->getAccessPolicies()) {
@@ -543,20 +543,20 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	/**
-	 * @return xoctProperties
-	 */
-	public function getProperties() {
-		return $this->properties;
-	}
-
-
-	/**
-	 * @param xoctProperties $properties
-	 */
-	public function setProperties($properties) {
-		$this->properties = $properties;
-	}
+//	/**
+//	 * @return xoctProperties
+//	 */
+//	public function getProperties() {
+//		return $this->properties;
+//	}
+//
+//
+//	/**
+//	 * @param xoctProperties $properties
+//	 */
+//	public function setProperties($properties) {
+//		$this->properties = $properties;
+//	}
 
 
 	/**
@@ -575,16 +575,16 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	protected function loadProperties() {
-		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->properties()->get());
-		$xoctProperties = new xoctProperties();
-		$xoctProperties->loadFromStdClass($data);
-		$this->setProperties($xoctProperties);
-		$this->updateFieldsFromProperties();
-	}
-
-
-	protected function updateFieldsFromProperties() {
-		$this->setTheme($this->getProperties()->getTheme());
-	}
+//	protected function loadProperties() {
+//		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->properties()->get());
+//		$xoctProperties = new xoctProperties();
+//		$xoctProperties->loadFromStdClass($data);
+//		$this->setProperties($xoctProperties);
+//		$this->updateFieldsFromProperties();
+//	}
+//
+//
+//	protected function updateFieldsFromProperties() {
+//		$this->setTheme($this->getProperties()->getTheme());
+//	}
 }
