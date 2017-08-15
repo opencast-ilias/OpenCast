@@ -17,6 +17,7 @@ class xoctEvent extends xoctObject {
 	public static $LOAD_MD_SEPARATE = true;
 	public static $LOAD_ACL_SEPARATE = false;
 	public static $LOAD_PUB_SEPARATE = true;
+	public static $NO_METADATA = false;
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
@@ -95,12 +96,17 @@ class xoctEvent extends xoctObject {
 			$request->parameter('filter', $filter_string);
 		}
 		$request->parameter('limit', 1000);
-		if (!self::$LOAD_MD_SEPARATE) {
+
+		if (self::$LOAD_MD_SEPARATE || self::$NO_METADATA) {
+			$request->parameter('withmetadata', false);
+		} else {
 			$request->parameter('withmetadata', true);
 		}
+
 		if (!self::$LOAD_ACL_SEPARATE) {
 			$request->parameter('withacl', true);
 		}
+
 		if (!self::$LOAD_PUB_SEPARATE) {
 			$request->parameter('sign', true);
 			$request->parameter('withpublications', true);
@@ -162,19 +168,30 @@ class xoctEvent extends xoctObject {
 
 
 	public function afterObjectLoad() {
-		if (!$this->getMetadata()) {
-			$this->loadMetadata();
-		}
+
+
 		if (!$this->getPublications()) {
 			$this->loadPublications();
 		}
 
-		if (!$this->getSeriesIdentifier()) {
-			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
-		}
-
 		if (!$this->getAcl()) {
 			$this->loadAcl();
+		}
+
+		$this->initProcessingState();
+		if (!$this->getXoctEventAdditions()) {
+			$this->initAdditions();
+		}
+
+		$this->loadMetadata();
+
+		// if no_metadata option is set, the metadata below will already be initialized
+		if (self::$NO_METADATA) {
+			return;
+		}
+
+		if (!$this->getSeriesIdentifier()) {
+			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
 		}
 
 		if ($this->getOwner()) {
@@ -184,12 +201,24 @@ class xoctEvent extends xoctObject {
 		}
 
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
-		$this->initProcessingState();
-		if (!$this->getXoctEventAdditions()) {
-			$this->initAdditions();
-		}
 	}
 
+
+	/**
+	 * @param $key
+	 *
+	 * @return string
+	 */
+	protected function mapKey($key) {
+		switch ($key) {
+			case 'is_part_of':
+				return 'series_identifier';
+			case 'rightsHolder':
+				return 'owner_username';
+			default:
+				return $key;
+		}
+	}
 
 	/**
 	 * @param $fieldname
@@ -588,7 +617,7 @@ class xoctEvent extends xoctObject {
 
 
 	public function loadMetadata() {
-		if ($this->getIdentifier()) {
+		if ($this->getIdentifier() && !self::$NO_METADATA) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
 			if (is_array($data)) {
 				foreach ($data as $d) {
@@ -600,8 +629,8 @@ class xoctEvent extends xoctObject {
 				}
 			}
 		}
-		if (!$this->getMetadata()) {
-			$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES));
+		if (!$this->metadata) {
+			$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
 		}
 	}
 
@@ -985,6 +1014,9 @@ class xoctEvent extends xoctObject {
 	 * @return xoctMetadata
 	 */
 	public function getMetadata() {
+		if (!$this->metadata) {
+			$this->loadMetadata();
+		}
 		return $this->metadata;
 	}
 

@@ -36,6 +36,8 @@ class xoctConf extends ActiveRecord {
 	const SEP_EVERYTHING = 1;
 	const SEP_EV_ACL_MD = 2;
 	const SEP_EV_ACL_MD_PUB = 3;
+	const F_NO_METADATA = 'no_metadata';
+
 	/**
 	 * @var array
 	 */
@@ -95,6 +97,9 @@ class xoctConf extends ActiveRecord {
 				xoctEvent::$LOAD_MD_SEPARATE = false;
 				break;
 		}
+
+		// META DATA
+		xoctEvent::$NO_METADATA = self::getConfig(self::F_NO_METADATA);
 	}
 
 
