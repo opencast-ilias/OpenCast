@@ -6,6 +6,7 @@ require_once('class.xoctEventFormGUI.php');
 require_once('class.xoctEventOwnerFormGUI.php');
 require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
 require_once('class.xoctEventAdditions.php');
+require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
 
 /**
  * Class xoctEventGUI
@@ -56,7 +57,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
-		if (xoctCache::getCacheInstance()->isActive()) {
+		if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE)) {
 			xoctWaiterGUI::initJS();
 			xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
 			$b = ilLinkButton::getInstance();
@@ -171,17 +172,24 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
+		// will be set true if the user role is added to producers, since in that case there must be a short sleep() before redirecting
+		$sleep = false;
+
 		// add user to ilias producers
 		try {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-			$ilias_producers->addMember($xoctUser);
+			$sleep = $ilias_producers->addMember($xoctUser);
 		} catch (xoctException $e) {
-			// TODO do something (log?)
+			$sleep = false;
 		}
 
 		// add user to series producers
 		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
-		$xoctSeries->addProducer($xoctUser);
+		$sleep = $xoctSeries->addProducer($xoctUser);
+
+		if ($sleep) {
+			sleep(3);
+		}
 
 		// redirect
 		$cutting_link = $xoctEvent->getCuttingLink();
@@ -417,7 +425,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	protected function clearCache() {
-		xoctCache::getCacheInstance()->flush();
+		xoctCacheFactory::getInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
 		xoctEvent::getFiltered(array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() ));
 		$this->cancel();

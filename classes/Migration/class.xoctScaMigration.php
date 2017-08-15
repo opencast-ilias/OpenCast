@@ -202,7 +202,14 @@ class xoctScaMigration {
 			$cast = new xoctOpenCast();
 			$cast->setObjId($ilObjOpenCast->getId());
 			$cast->setSeriesIdentifier($series_id);
-			$cast->create();
+
+			try {
+				$cast->create();
+			} catch (Exception $e) {
+				$this->log->write("WARNING: " . $e->getMessage());
+				$ilObjOpenCast->delete();
+				continue;
+			}
 
 			$cast->setObjOnline($rec['is_online']);
 			$cast->setPermissionPerClip($rec['is_ivt']);

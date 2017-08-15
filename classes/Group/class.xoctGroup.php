@@ -78,7 +78,10 @@ class xoctGroup extends xoctObject {
 		if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
 			xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $xoctUser));
 			$this->members[] = $xoctUser;
+			return true;
 		}
+
+		return false;
 	}
 
 
