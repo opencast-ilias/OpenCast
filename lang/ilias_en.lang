@@ -55,6 +55,8 @@ config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant 
 config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in OpenCast. Example: ROLE_OWNER_&#123IDENTIFIER}
 config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User mapping in uppercase
+config_no_metadata#:#Without Metadata
+config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish

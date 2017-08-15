@@ -249,10 +249,20 @@ abstract class xoctObject {
 	 */
 	public function loadFromArray($array) {
 		foreach ($array as $k => $v) {
-			$this->{$k} = $this->wakeup($k, $v);
+			$this->{$this->mapKey($k)} = $this->wakeup($k, $v);
 		}
 		$this->afterObjectLoad();
 		$this->setLoaded(true);
+	}
+
+
+	/**
+	 * @param $key
+	 *
+	 * @return mixed
+	 */
+	protected function mapKey($key) {
+		return $key;
 	}
 
 
