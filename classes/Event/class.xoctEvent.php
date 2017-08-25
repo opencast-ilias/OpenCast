@@ -214,6 +214,7 @@ class xoctEvent extends xoctObject {
 			case 'is_part_of':
 				return 'series_identifier';
 			case 'rightsHolder':
+			case 'rights':
 				return 'owner_username';
 			default:
 				return $key;
