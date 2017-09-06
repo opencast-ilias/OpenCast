@@ -212,6 +212,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		                       xoctConf::SEP_EV_ACL_MD     => 'Event + ACL + MD',
 		                       xoctConf::SEP_EV_ACL_MD_PUB => 'Event + ACL + MD + PUB',
 		));
+		$cb->setInfo($this->parent_gui->txt(xoctconf::F_REQUEST_COMBINATION_LEVEL . '_info'));
 		$this->addItem($cb);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_NO_METADATA), xoctConf::F_NO_METADATA);
