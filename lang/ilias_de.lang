@@ -39,6 +39,7 @@ config_advanced#:#Erweitert
 config_sign_annotation_links#:#Annotationslink signieren
 config_sign_player_links#:#Playerlink signieren
 config_sign_download_links#:#Downloadlink signieren
+config_sign_thumbnail_links#:#Thumbnaillink signieren
 config_request_comb_lv#:#Request Kombinations Level
 config_request_comb_lv_info#:#Definiert die Zusammensetzung der Anfragen, mit welchen die Events von OpenCast geholt werden (viele kleine/wenige grosse Anfragen). Dies hat keinen Einfluss auf die Funktionalität, beeinflusst jedoch die Performanz.
 config_groups#:#Opencast-Gruppen

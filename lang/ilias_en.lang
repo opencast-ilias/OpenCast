@@ -39,6 +39,7 @@ config_advanced#:#Advanced
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_player_links#:#Sign Player Link
 config_sign_download_links#:#Sign Download Link
+config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_request_comb_lv#:#Request Combination Level
 config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from OpenCast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
 config_groups#:#Opencast Groups

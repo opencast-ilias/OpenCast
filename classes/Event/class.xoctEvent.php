@@ -467,7 +467,11 @@ class xoctEvent extends xoctObject {
 		$i = 0;
 		while (!$this->thumbnail_url && $i < count($possible_publications)) {
 			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
-			$this->thumbnail_url = xoctSecureLink::sign($url);
+			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+				$this->thumbnail_url = xoctSecureLink::sign($url);
+			} else {
+				$this->thumbnail_url = $url;
+			}
 			$i ++;
 		}
 		if (!$this->thumbnail_url) {
