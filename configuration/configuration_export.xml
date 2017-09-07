@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opencast_settings>
   <info>
-    <plugin_version>1.1.21</plugin_version>
-    <plugin_db_version>6</plugin_db_version>
+    <plugin_version>1.2</plugin_version>
+    <plugin_db_version>7</plugin_db_version>
     <config_version/>
   </info>
   <xoct_confs>
@@ -20,7 +20,7 @@
     </xoct_conf>
     <xoct_conf>
       <name>curl_debug_level</name>
-      <value><![CDATA[1]]></value>
+      <value><![CDATA[2]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>curl_password</name>
@@ -31,16 +31,24 @@
       <value><![CDATA[apiusername]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>editor_link</name>
+      <value><![CDATA[https://urltoyoutopencast.tdl/admin-ng/index.html#/events/events/bd83af65-ce73-476f-882f-31df3bb6b7df/tools/editor]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>eula</name>
-      <value><![CDATA[<p>I accept the SWITCHcast service conditions and the Betriebskonzept Podcasting.</p>]]></value>
+      <value><![CDATA[<p>I accept the OpenCast service conditions.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>group_producers</name>
-      <value><![CDATA[ilias_producers]]></value>
+      <value><![CDATA[ilias-producers]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>identifier_to_uppercase</name>
       <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>internal_player</name>
+      <value><![CDATA[1]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>licenses</name>
@@ -53,7 +61,11 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>license_info</name>
-      <value><![CDATA[<p>Für detaillierte Informationen siehe Creative Commons International (Switzerland)</p>]]></value>
+      <value><![CDATA[I accept the OpenCast service conditions.]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>no_metadata</name>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>request_comb_lv</name>
@@ -81,7 +93,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>role_ivt_external_prefix</name>
-      <value><![CDATA[ROLE_AAI_IVT_OWNER_{IDENTIFIER}]]></value>
+      <value><![CDATA[ROLE_IVT_OWNER_AAI_{IDENTIFIER}]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>role_organisation_prefix</name>
@@ -97,7 +109,19 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>sign_annotation_links</name>
-      <value><![CDATA[1]]></value>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_download_links</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_player_links</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_thumbnail_links</name>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>std_roles</name>
@@ -117,7 +141,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>workflow</name>
-      <value><![CDATA[switchcast-import-api-1.0]]></value>
+      <value><![CDATA[ng-schedule-and-upload]]></value>
     </xoct_conf>
   </xoct_confs>
   <xoct_publication_usages>
@@ -125,7 +149,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <usage_id><![CDATA[annotate]]></usage_id>
       <title><![CDATA[Annotate]]></title>
       <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-annotate]]></channel>
+      <channel><![CDATA[annotate]]></channel>
       <flavor><![CDATA[]]></flavor>
       <md_type><![CDATA[0]]></md_type>
     </xoct_publication_usage>
@@ -133,15 +157,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <usage_id><![CDATA[api]]></usage_id>
       <title><![CDATA[API]]></title>
       <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-api]]></channel>
-      <flavor><![CDATA[]]></flavor>
-      <md_type><![CDATA[0]]></md_type>
-    </xoct_publication_usage>
-    <xoct_publication_usage>
-      <usage_id><![CDATA[cutting]]></usage_id>
-      <title><![CDATA[Cutting-Tool]]></title>
-      <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-api]]></channel>
+      <channel><![CDATA[api]]></channel>
       <flavor><![CDATA[]]></flavor>
       <md_type><![CDATA[0]]></md_type>
     </xoct_publication_usage>
@@ -149,15 +165,15 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <usage_id><![CDATA[download]]></usage_id>
       <title><![CDATA[Download]]></title>
       <description><![CDATA[-]]></description>
-      <channel><![CDATA[switchcast-api]]></channel>
-      <flavor><![CDATA[delivery/h264-720p]]></flavor>
+      <channel><![CDATA[api]]></channel>
+      <flavor><![CDATA[presenter/delivery]]></flavor>
       <md_type><![CDATA[2]]></md_type>
     </xoct_publication_usage>
     <xoct_publication_usage>
       <usage_id><![CDATA[player]]></usage_id>
       <title><![CDATA[Player]]></title>
       <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-player]]></channel>
+      <channel><![CDATA[engage-player]]></channel>
       <flavor><![CDATA[]]></flavor>
       <md_type><![CDATA[0]]></md_type>
     </xoct_publication_usage>
@@ -165,7 +181,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <usage_id><![CDATA[thumbnail]]></usage_id>
       <title><![CDATA[Thumbnail]]></title>
       <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-api]]></channel>
+      <channel><![CDATA[api]]></channel>
       <flavor><![CDATA[presenter/segment+preview+lowres]]></flavor>
       <md_type><![CDATA[1]]></md_type>
     </xoct_publication_usage>
@@ -173,7 +189,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <usage_id><![CDATA[thumbnail_fallback]]></usage_id>
       <title><![CDATA[Thumbnail Fallback]]></title>
       <description><![CDATA[]]></description>
-      <channel><![CDATA[switchcast-api]]></channel>
+      <channel><![CDATA[api]]></channel>
       <flavor><![CDATA[presenter/search+preview]]></flavor>
       <md_type><![CDATA[1]]></md_type>
     </xoct_publication_usage>
