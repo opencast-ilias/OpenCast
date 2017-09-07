@@ -36,6 +36,8 @@ config_user_mapping#:#User-Mapping
 config_use_modals#:#Open Player in Modal
 config_workflow#:#Workflow-ID
 config_advanced#:#Advanced
+config_security#:#Security
+config_security_info#:#Improves the security by using OpenCasts "Stream Security". Only activate, if OpenCast is configured to use it.
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_player_links#:#Sign Player Link
 config_sign_download_links#:#Sign Download Link

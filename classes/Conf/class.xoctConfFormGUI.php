@@ -204,8 +204,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_IDENTIFIER_TO_UPPERCASE), xoctConf::F_IDENTIFIER_TO_UPPERCASE);
 		$this->addItem($cb);
 
+
 		$h = new ilFormSectionHeaderGUI();
-		$h->setTitle($this->parent_gui->txt('advanced'));
+		$h->setTitle($this->parent_gui->txt('security'));
+		$h->setInfo($this->parent_gui->txt('security_info'));
 		$this->addItem($h);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
@@ -219,6 +221,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS), xoctConf::F_SIGN_ANNOTATION_LINKS);
 		$this->addItem($cb);
+
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('advanced'));
+		$this->addItem($h);
 
 		$cb = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_REQUEST_COMBINATION_LEVEL), xoctConf::F_REQUEST_COMBINATION_LEVEL);
 		$cb->setOptions(array( xoctConf::SEP_EVERYTHING    => 'Everything separate',
