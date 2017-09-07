@@ -87,6 +87,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE. '_info'));
 		$this->addItem($cb);
 
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
+		$this->addItem($cb);
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS. '_info'));
 		$this->addItem($cb);
@@ -203,6 +207,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('advanced'));
 		$this->addItem($h);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
+		$this->addItem($cb);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS), xoctConf::F_SIGN_DOWNLOAD_LINKS);
+		$this->addItem($cb);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS), xoctConf::F_SIGN_ANNOTATION_LINKS);
 		$this->addItem($cb);

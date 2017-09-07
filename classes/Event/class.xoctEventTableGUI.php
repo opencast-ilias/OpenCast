@@ -137,8 +137,13 @@ class xoctEventTableGUI extends ilTable2GUI
 		}
 		if ($xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED)
 		{
-			// PLAYER LINK
-			$playerLink = $xE->getPlayerLink();
+			if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+				$this->ctrl->setParameter($this->parent_obj,xoctEventGUI::IDENTIFIER,$xE->getIdentifier());
+				$playerLink = $this->ctrl->getLinkTarget($this->parent_obj,'streamVideo');
+			} else {
+				$playerLink = $xE->getPlayerLink();
+			}
+
 			if ($playerLink)
 			{
 				$this->tpl->setCurrentBlock('link');
@@ -150,7 +155,7 @@ class xoctEventTableGUI extends ilTable2GUI
 					$modal = ilModalGUI::getInstance();
 					$modal->setId('modal_' . $xE->getIdentifier());
 					$modal->setHeading($xE->getTitle());
-					$modal->setBody('<iframe class="xoct_iframe" src="' . $xE->getPlayerLink() . '"></iframe>');
+					$modal->setBody('<iframe class="xoct_iframe" src="' . $playerLink . '"></iframe>');
 					$this->tpl->setVariable('MODAL', $modal->getHTML());
 					$this->tpl->setVariable('LINK_URL', '#');
 					$this->tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $xE->getIdentifier() . '"');

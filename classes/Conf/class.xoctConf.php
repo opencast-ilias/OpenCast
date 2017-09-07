@@ -37,6 +37,11 @@ class xoctConf extends ActiveRecord {
 	const SEP_EV_ACL_MD = 2;
 	const SEP_EV_ACL_MD_PUB = 3;
 	const F_NO_METADATA = 'no_metadata';
+	const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
+	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
+	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
+	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
+
 
 	/**
 	 * @var array

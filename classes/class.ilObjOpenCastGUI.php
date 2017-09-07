@@ -682,5 +682,3 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 }
-
-?>

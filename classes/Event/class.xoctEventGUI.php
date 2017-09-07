@@ -212,6 +212,44 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
+	public function streamVideo() {
+		global $ilUser;
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		// check access
+		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent,xoctUser::getInstance($ilUser), $this->xoctOpenCast)) {
+			ilUtil::sendFailure($this->txt('msg_no_access'), true);
+			$this->cancel();
+		}
+
+		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API));
+
+		foreach ($publication_metadata->getMedia() as $media) {
+			$url = $media->getUrl();
+
+			// DELETE AFTER TESTING !!!!
+//			$url = str_replace("localhost",'10.0.2.2',$url);
+			// DELETE AFTER TESTING !!!!
+
+			// find first media publication with video content
+			if (strpos($media->getMediatype(),'video') !== false) {
+				// set the necessary headers from the original url
+				$origin_headers = get_headers($url);
+				foreach ($origin_headers as $origin_header) {
+					if (strpos($origin_header,'Content-Length') !== false || strpos($origin_header,'Accept-Ranges') !== false) {
+						header($origin_header);
+					}
+				}
+				header('Content-Type: ' . $media->getMediatype());
+				readfile($url);
+				exit;
+			}
+		}
+
+	}
+
 	protected function saveAndStay() {
 		global $ilUser;
 		/**

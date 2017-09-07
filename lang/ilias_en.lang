@@ -37,6 +37,8 @@ config_use_modals#:#Open Player in Modal
 config_workflow#:#Workflow-ID
 config_advanced#:#Advanced
 config_sign_annotation_links#:#Sign Annotation Link
+config_sign_player_links#:#Sign Player Link
+config_sign_download_links#:#Sign Download Link
 config_request_comb_lv#:#Request Combination Level
 config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from OpenCast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
 config_groups#:#Opencast Groups
@@ -58,6 +60,8 @@ config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User mapping in uppercase
 config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
+config_internal_player#:#Internal Video-Player
+config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to OpenCast.
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
