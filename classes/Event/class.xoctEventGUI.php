@@ -235,6 +235,9 @@ class xoctEventGUI extends xoctGUI {
 
 			// find first media publication with video content
 			if (strpos($media->getMediatype(),'video') !== false) {
+				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+					$url = xoctSecureLink::sign($url);
+				}
 				// set the necessary headers from the original url
 				$origin_headers = get_headers($url);
 				foreach ($origin_headers as $origin_header) {
