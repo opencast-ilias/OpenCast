@@ -49,8 +49,9 @@ class xoctEventTableGUI extends ilTable2GUI
 	 * @param \xoctEventGUI $a_parent_obj
 	 * @param string $a_parent_cmd
 	 * @param \xoctOpenCast $xoctOpenCast
+	 * @param $load_data bool
 	 */
-	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast)
+	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true)
 	{
 		/**
 		 * @var $ilCtrl ilCtrl
@@ -77,7 +78,9 @@ class xoctEventTableGUI extends ilTable2GUI
 			$this->setExportFormats(array( self::EXPORT_CSV ));
 		}
 
-		$this->parseData();
+		if ($load_data) {
+			$this->parseData();
+		}
 	}
 
 
