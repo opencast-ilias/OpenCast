@@ -22,9 +22,10 @@ class xoctSecureLink {
 	 * @return mixed
 	 */
 	public static function sign($url) {
-		if (!xoctEvent::$LOAD_PUB_SEPARATE) {
-			return $url;
-		}
+		// this should not be necessary anymore, since you can activate/deactivate the url signing in the config
+//		if (!xoctEvent::$LOAD_PUB_SEPARATE) {
+//			return $url;
+//		}
 		if (!$url) {
 			return '';
 		}
