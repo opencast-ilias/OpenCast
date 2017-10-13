@@ -7,6 +7,7 @@ require_once('class.xoctEventOwnerFormGUI.php');
 require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
 require_once('class.xoctEventAdditions.php');
 require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
+require_once('Services/Table/classes/class.ilTablePropertiesStorage.php');
 
 /**
  * Class xoctEventGUI
@@ -120,21 +121,39 @@ class xoctEventGUI extends xoctGUI {
 		//		$b->setUrl($this->ctrl->getLinkTarget($this, 'resetPermissions'));
 		//		$this->toolbar->addButtonInstance($b);
 
-		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, false);
-		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
+		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
+			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
+			return;
+		}
+
+		$this->tpl->setContent($intro_text . '<div id="xoct_table_placeholder"></div>');
+		$this->tpl->addJavascript("./Services/Table/js/ServiceTable.js");
 		$this->loadAjaxCode();
-//		$this->tpl->setContent($intro_text);
 	}
 
 	protected function loadAjaxCode() {
+		foreach ($_GET as $para => $value) {
+			$this->ctrl->setParameter($this, $para, $value);
+		}
+
 		$ajax_link = $this->ctrl->getLinkTarget($this, 'asyncGetTableGUI', "", true);
+
+		// hacky stuff to allow asynchronous rendering of tableGUI
+		$table_id = xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast);
+		$user_id = $this->user->getId();
+		$tab_prop = new ilTablePropertiesStorage();
+		if ($tab_prop->getProperty($table_id, $user_id, 'filter')) {
+			$activate_filter_commmand = "ilShowTableFilter('tfil_$table_id', './ilias.php?baseClass=ilTablePropertiesStorage&table_id=$table_id&cmd=showFilter&user_id=$user_id');";
+		}
+
 		$ajax = "$.ajax({
 				    url: '{$ajax_link}',
 				    dataType: 'html',
 				    success: function(data){
 				        xoctWaiter.hide();
-				        $('div.ilTableOuter').replaceWith($(data).find('div.ilTableOuter'));
-				        console.log($(data).find('div.ilTableOuter'));
+				        $('div#xoct_table_placeholder').replaceWith($(data));
+				        $activate_filter_commmand
 				    }
 				});";
 		$this->tpl->addOnLoadCode('xoctWaiter.show();');

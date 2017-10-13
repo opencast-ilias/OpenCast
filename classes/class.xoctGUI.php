@@ -22,7 +22,7 @@ abstract class xoctGUI {
 
 
 	public function __construct() {
-		global $tpl, $ilCtrl, $ilTabs, $ilToolbar;
+		global $tpl, $ilCtrl, $ilTabs, $ilToolbar, $ilUser;
 		/**
 		 * @var $ilCtrl    ilCtrl
 		 * @var $ilTabs    ilTabsGUI
@@ -33,6 +33,7 @@ abstract class xoctGUI {
 		$this->tabs = $ilTabs;
 		$this->ctrl = $ilCtrl;
 		$this->toolbar = $ilToolbar;
+		$this->user = $ilUser;
 		$this->pl = ilOpenCastPlugin::getInstance();
 	}
 
