@@ -61,6 +61,12 @@ class xoctEventGUI extends xoctGUI {
 
 	protected function prepareContent() {
 		global $ilUser;
+
+		// init waiter
+		xoctWaiterGUI::initJS();
+		xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
+
+		// add "add" button
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
@@ -69,9 +75,8 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
+		// add "clear cache" button
 		if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE)) {
-			xoctWaiterGUI::initJS();
-			xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
 			$b = ilLinkButton::getInstance();
 			$b->setId('rep_robj_xoct_event_clear_cache');
 			$b->setCaption('rep_robj_xoct_event_clear_cache');
@@ -79,6 +84,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->toolbar->addButtonInstance($b);
 		}
 
+		// add "clear clips" button (devmode)
 		if ($ilUser->getId() == 6 && ilObjOpenCast::DEV) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_clear_clips_develop');
