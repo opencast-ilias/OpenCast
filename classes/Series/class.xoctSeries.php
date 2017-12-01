@@ -288,7 +288,7 @@ class xoctSeries extends xoctObject {
 	/**
 	 * @var xoctAcl[]
 	 */
-	public $access_policies;
+	public $access_policies = array();
 	/**
 	 * @var DateTime
 	 */
@@ -296,15 +296,15 @@ class xoctSeries extends xoctObject {
 	/**
 	 * @var array
 	 */
-	public $organizers;
+	public $organizers = array();
 	/**
 	 * @var array
 	 */
-	public $contributors;
+	public $contributors = array();
 	/**
 	 * @var array
 	 */
-	public $publishers;
+	public $publishers = array();
 	/**
 	 * @var bool
 	 */
