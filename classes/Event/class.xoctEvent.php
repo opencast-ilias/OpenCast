@@ -573,8 +573,10 @@ class xoctEvent extends xoctObject {
 		$medias = array();
 		$attachments = array();
 		foreach ($this->getPublications() as $publication) {
-			$medias = array_merge($medias, $publication->getMedia());
-			$attachments = array_merge($attachments, $publication->getAttachments());
+			if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
+				$medias = array_merge($medias, $publication->getMedia());
+				$attachments = array_merge($attachments, $publication->getAttachments());
+			}
 		}
 		switch ($xoctPublicationUsage->getMdType()) {
 			case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
