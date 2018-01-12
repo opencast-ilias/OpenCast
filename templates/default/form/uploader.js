@@ -95,7 +95,8 @@ var xoctFileuploader = {
                     var self = this;
                     plupload.each(files, function (file) {
                         console.log(file);
-                        if (!inArray(file.type, xoctFileuploaderSettings.mime_types_array) && !file.type.startsWith('video/')) {
+                        console.log(xoctFileuploaderSettings.mime_types_array);
+                        if (!inArray(file.type, xoctFileuploaderSettings.mime_types_array)) {
                             alert(xoctFileuploaderSettings.lng.msg_not_supported)
                         } else {
                             self.has_files = true;
