@@ -112,6 +112,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'flv',
 				'mpeg',
 				'avi',
+				'mp4',
+				'm4a'
 			));
 			$te->setMimeTypes(array(
 				'video/avi',
@@ -125,6 +127,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'video/x-matroska',
 				'video/x-msvideo',
 				'video/x-dv',
+				'audio/mp4',
+				'audio/x-m4a',
 			));
 			$te->setRequired(true);
 			$this->addItem($te);
