@@ -265,6 +265,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 
 		// add user to series producers
+		/** @var xoctSeries $xoctSeries */
 		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
 		$sleep = $xoctSeries->addProducer($xoctUser);
 

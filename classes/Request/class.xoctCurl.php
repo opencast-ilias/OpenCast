@@ -586,8 +586,8 @@ class xoctCurl {
 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
 
-		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_3);
-		xoctLog::getInstance()->write(print_r($this->getPostFields(), true), xoctLog::DEBUG_LEVEL_3);
+		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_2);
+		xoctLog::getInstance()->write(print_r($this->getPostFields(), true), xoctLog::DEBUG_LEVEL_2);
 	}
 
 

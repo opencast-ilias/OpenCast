@@ -101,6 +101,7 @@ event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
 event_start_time#:#Start
+event_start#:#Start
 event_state_failed#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
 event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
