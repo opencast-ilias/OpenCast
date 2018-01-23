@@ -139,6 +139,8 @@ class xoctEvent extends xoctObject {
 			'location'         => $this->getLocation(),
 			'created'          => $this->getCreated()->format(DATE_ATOM),
 			'created_unix'     => $this->getCreated()->format('U'),
+			'start'            => $this->getStart()->format(DATE_ATOM),
+			'start_unix'       => $this->getStart()->format('U'),
 			'owner_username'   => $this->getOwnerUsername(),
 			'processing_state' => $this->getProcessingState(),
 			'object'           => $this,
@@ -303,13 +305,6 @@ class xoctEvent extends xoctObject {
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
-
-		$created = $this->getCreated();
-		if (!$created instanceof DateTime) {
-			$created = $this->getDefaultDateTimeObject();
-		}
-		$this->setCreated($created);
-		$this->setStartTime($created);
 		$this->setOwner(xoctUser::getInstance($ilUser));
 		$this->updateMetadataFromFields();
 
@@ -743,6 +738,10 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $start_time;
 	/**
+	 * @var DateTime
+	 */
+	protected $start;
+	/**
 	 * @var array
 	 */
 	protected $subjects;
@@ -775,6 +774,21 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $source = '';
 
+
+	/**
+	 * @return DateTime
+	 */
+	public function getStart() {
+		return ($this->start instanceof DateTime) ? $this->start : $this->getDefaultDateTimeObject($this->start);
+	}
+
+
+	/**
+	 * @param DateTime $start
+	 */
+	public function setStart($start) {
+		$this->start = $start;
+	}
 
 	/**
 	 * @return string
@@ -1151,18 +1165,16 @@ class xoctEvent extends xoctObject {
 		$is_part_of = $this->getMetadata()->getField('isPartOf');
 		$is_part_of->setValue($this->getSeriesIdentifier());
 
+		$start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
+
 		$startDate = $this->getMetadata()->getField('startDate');
-		$startDate->setValue(date('Y-m-d'));
+		$startDate->setValue($start->format('Y-m-d'));
 
 		$startTime = $this->getMetadata()->getField('startTime');
-		$startTime->setValue(date('H:i'));
+		$startTime->setValue($start->format('H:i'));
 
 		$source = $this->getMetadata()->getField('source');
 		$source->setValue($this->getSource());
-
-		$created = $this->getMetadata()->getField('created');
-		$dateTime = $this->getCreated()->setTimezone(new DateTimeZone(self::TZ_UTC));
-		$created->setValue($dateTime->format("Y-m-d\TH:i:s\Z")); //Timezone "Z" is equal to "UTC"
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));

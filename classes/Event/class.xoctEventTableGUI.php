@@ -69,7 +69,7 @@ class xoctEventTableGUI extends ilTable2GUI
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
-		$this->initColums();
+		$this->initColumns();
 		$this->initFilters();
 		$this->setDefaultOrderField('created_unix');
 
@@ -227,10 +227,10 @@ class xoctEventTableGUI extends ilTable2GUI
 			$this->tpl->parseCurrentBlock();
 		}
 
-		if ($this->isColumsSelected('event_date'))
+		if ($this->isColumsSelected('event_start'))
 		{
-			$this->tpl->setCurrentBlock('event_date');
-			$this->tpl->setVariable('DATE', $xE->getCreated()->format('d.m.Y - H:i:s'));
+			$this->tpl->setCurrentBlock('event_start');
+			$this->tpl->setVariable('START', $xE->getStart()->format('d.m.Y - H:i:s'));
 			$this->tpl->parseCurrentBlock();
 		}
 
@@ -291,9 +291,9 @@ class xoctEventTableGUI extends ilTable2GUI
 				'selectable' => true,
 				'sort_field' => 'location',
 			),
-			'event_date'        => array(
+			'event_start'        => array(
 				'selectable' => true,
-				'sort_field' => 'created_unix',
+				'sort_field' => 'start_unix',
 			),
 			'event_owner'       => array(
 				'selectable' => true,
@@ -317,7 +317,7 @@ class xoctEventTableGUI extends ilTable2GUI
 		return $owner_visible;
 	}
 
-	protected function initColums()
+	protected function initColumns()
 	{
 		$selected_colums = $this->getSelectedColumns();
 

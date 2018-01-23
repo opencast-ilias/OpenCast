@@ -20,7 +20,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_PROCESSING_STATE = 'processing_state';
 	const F_START_TIME = 'start_time';
 	const F_PRESENTERS = 'presenters';
-	const F_CREATED = 'created';
+	const F_START = 'start';
 	const F_LOCATION = 'location';
 	const F_SOURCE = 'source';
 	const F_AUTO_PUBLISH = 'auto_publish';
@@ -86,7 +86,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		 * @var $item ilTextInputGUI
 		 */
 		foreach ($this->getItems() as $item) {
-			if ($item->getPostVar() != self::F_CREATED) {
+			if ($item->getPostVar() != self::F_START) {
 				$item->setValueByArray($_POST);
 			}
 		}
@@ -156,25 +156,26 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
 		$this->addItem($te);
 
-		$date = new ilDateTimeInputGUI($this->txt(self::F_CREATED), self::F_CREATED);
+		$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
 		if (!xoct::is52()) {
 			$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		}
 		$date->setShowTime(true);
 		$date->setShowSeconds(false);
+		$date->setMinuteStepSize(1);
 
 		$this->addItem($date);
 	}
 
 
 	public function fillForm() {
-		$createdDateTime = $this->object->getCreated();
+		$startDateTime = $this->object->getStart();
 		if (xoct::is52()) {
-			$created = $createdDateTime->format('Y-m-d H:i:s');
+			$start = $startDateTime->format('Y-m-d H:i:s');
 		} else {
-			$created = array(
-				'date' => $createdDateTime->format('Y-m-d'),
-				'time' => $createdDateTime->format('H:i:s'),
+			$start = array(
+				'date' => $startDateTime->format('Y-m-d'),
+				'time' => $startDateTime->format('H:i:s'),
 			);
 		}
 
@@ -186,11 +187,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_DURATION         => $this->object->getDuration(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
 			self::F_AUTO_PUBLISH     => true,
-			self::F_START_TIME       => $this->object->getStartTime(),
+//			self::F_START_TIME       => $this->object->getStartTime(),
 			self::F_PRESENTERS       => $this->object->getPresenter(),
 			self::F_LOCATION         => $this->object->getLocation(),
 			self::F_SOURCE           => $this->object->getSource(),
-			self::F_CREATED          => $created,
+			self::F_START          => $start,
 //						self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
@@ -219,14 +220,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		//		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
 
 		/**
-		 * @var $created            ilDateTime
+		 * @var $start            ilDateTime
 		 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
 		 */
-		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_CREATED);
-		$created = $ilDateTimeInputGUI->getDate();
-		$default_datetime = $this->object->getDefaultDateTimeObject($created->get(IL_CAL_ISO_8601));
+		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_START);
+		$start = $ilDateTimeInputGUI->getDate();
+		$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601));
 
-		$this->object->setCreated($default_datetime);
+		$this->object->setStart($default_datetime);
 
 		return true;
 	}
@@ -308,7 +309,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATOR), self::F_CREATOR);
 		$this->addItem($te);
 
-		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATED), self::F_CREATED);
+		$te = new ilNonEditableValueGUI($this->txt(self::F_START), self::F_START);
 		$this->addItem($te);
 
 		$te = new ilNonEditableValueGUI($this->txt(self::F_DURATION), self::F_DURATION);
