@@ -3,6 +3,7 @@ admin_import#:#Import Settings
 common_actions#:#Actions
 config_activate_cache#:#Activate Cache
 config_api_base#:#Api-Base-URL
+config_audio_allowed_info#:#Audio Files
 config_cancel#:#Cancel
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
@@ -49,6 +50,7 @@ config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
 config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
 config_api_base_info#:#e.g.: https://myopencast.com/api
+config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
 config_curl_debug_level_info#:#Level of detail for log entries.
@@ -83,7 +85,8 @@ event_download#:#Download
 event_duration#:#Duration
 event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
-event_file_presenter#:#File
+event_file_presenter#:#Video File
+event_file_presenter_w_audio#:#Video/Audio File
 event_identifier#:#ID
 event_invite_others#:#Grant access rights
 event_location#:#Recording Station

@@ -103,9 +103,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		if ($this->is_new) {
-			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER), self::F_FILE_PRESENTER);
+			$allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
+
+			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
 			$te->setUrl($this->ctrl->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_UPLOAD_CHUNKS));
-			$te->setSuffixes(array(
+			$te->setSuffixes($allow_audio ? array(
 				'mov',
 				'mp4',
 				'm4v',
@@ -113,9 +115,24 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'mpeg',
 				'avi',
 				'mp4',
-				'm4a'
+				'mp3',
+				'm4a',
+				'wma',
+				'aac',
+				'ogg',
+				'flac',
+				'aiff',
+				'wav'
+			) : array(
+				'mov',
+				'mp4',
+				'm4v',
+				'flv',
+				'mpeg',
+				'avi',
+				'mp4',
 			));
-			$te->setMimeTypes(array(
+			$te->setMimeTypes($allow_audio ? array(
 				'video/avi',
 				'video/quicktime',
 				'video/mpeg',
@@ -129,6 +146,25 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'video/x-dv',
 				'audio/mp4',
 				'audio/x-m4a',
+				'audio/ogg',
+				'audio/mpeg',
+				'audio/x-aiff',
+				'audio/x-wav',
+				'audio/aac',
+				'audio/flac',
+			) : array(
+				'video/avi',
+				'video/quicktime',
+				'video/mpeg',
+				'video/mp4',
+				'video/ogg',
+				'video/webm',
+				'video/x-ms-wmv',
+				'video/x-flv',
+				'video/x-matroska',
+				'video/x-msvideo',
+				'video/x-dv',
+
 			));
 			$te->setRequired(true);
 			$this->addItem($te);
