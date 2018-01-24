@@ -42,6 +42,7 @@ class xoctConf extends ActiveRecord {
 	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
+	const F_AUDIO_ALLOWED = 'audio_allowed';
 
 
 	/**

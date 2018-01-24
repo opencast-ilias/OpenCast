@@ -3,6 +3,7 @@ admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
 config_activate_cache#:#Cache aktivieren
 config_api_base#:#API-Basis-URL
+config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
@@ -49,6 +50,7 @@ config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standardrollen
 config_std_roles_info#:#Die hier angegebenen Rollen erhalten Schreib- und Leserechte beim Erstellen eines Events oder einer Serie.
 config_api_base_info#:#z.B.: https://myopencast.com/api
+config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Audio-Dateien hochgeladen werden.
 config_curl_username_info#:#Benutzeraccount in OpenCast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
 config_curl_password_info#:#Passwort zum oben angegebenen Account. 
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
@@ -83,7 +85,8 @@ event_download#:#Download
 event_duration#:#Dauer
 event_edit#:#Metadaten bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
-event_file_presenter#:#Datei
+event_file_presenter#:#Video-Datei
+event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
 event_invite_others#:#Zugriffsrechte erteilen
 event_location#:#Aufnahmestation
