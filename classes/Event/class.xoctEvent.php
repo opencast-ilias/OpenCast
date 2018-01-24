@@ -20,11 +20,13 @@ class xoctEvent extends xoctObject {
 	public static $NO_METADATA = false;
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
+	const STATE_SCHEDULED = 'SCHEDULED';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
 	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
+	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.svg';
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';
@@ -36,6 +38,7 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_INSTANTIATED  => 'info',
 		xoctEvent::STATE_ENCODING      => 'info',
 		xoctEvent::STATE_NOT_PUBLISHED => 'info',
+		xoctEvent::STATE_SCHEDULED     => 'scheduled',
 		xoctEvent::STATE_FAILED        => 'danger',
 		xoctEvent::STATE_OFFLINE       => 'info',
 	);
@@ -454,6 +457,11 @@ class xoctEvent extends xoctObject {
 	 * @return string
 	 */
 	public function getThumbnailUrl() {
+		if ($this->getProcessingState() == self::STATE_SCHEDULED) {
+			$this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
+			return $this->thumbnail_url;
+		}
+
 		$possible_publications = array(
 			xoctPublicationUsage::USAGE_THUMBNAIL,
 			xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK,
@@ -668,7 +676,7 @@ class xoctEvent extends xoctObject {
 					if (($conf_internal_player && !in_array($publication_api->getChannel(),$this->publication_status))
 						|| (!$conf_internal_player && !in_array($publication_player->getChannel(),$this->publication_status)))
 					{
-						$this->setProcessingState(xoctEvent::STATE_NOT_PUBLISHED);
+						$this->setProcessingState(self::STATE_NOT_PUBLISHED);
 					}
 				}
 				break;
@@ -676,7 +684,7 @@ class xoctEvent extends xoctObject {
 				if (!$this->getXoctEventAdditions()->getIsOnline()) {
 					$this->setProcessingState(self::STATE_OFFLINE);
 				} else {
-					$this->setProcessingState(xoctEvent::STATE_SUCCEEDED);
+					$this->setProcessingState(self::STATE_SCHEDULED);
 				}
 				break;
 		}
