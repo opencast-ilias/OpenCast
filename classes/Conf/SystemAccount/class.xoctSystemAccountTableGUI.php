@@ -1,13 +1,5 @@
 <?php
-
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
-require_once('class.xoctSystemAccount.php');
-require_once('./Services/Table/classes/class.ilTable2GUI.php');
-require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
-require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
-
-
 /**
  * Class xoctEventTableGUI
  *

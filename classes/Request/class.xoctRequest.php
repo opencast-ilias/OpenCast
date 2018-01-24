@@ -1,7 +1,4 @@
 <?php
-require_once('class.xoctCurl.php');
-require_once('class.xoctRequestSettings.php');
-
 /**
  * Class xoctRequest
  *

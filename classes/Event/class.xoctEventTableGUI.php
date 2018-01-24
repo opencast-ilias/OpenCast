@@ -1,15 +1,5 @@
 <?php
-
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctSecureLink.php');
-require_once('class.xoctEvent.php');
-require_once('./Services/Table/classes/class.ilTable2GUI.php');
-require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
-require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
-require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitationGUI.php');
-
 /**
  * Class xoctEventTableGUI
  *

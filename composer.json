@@ -1,0 +1,49 @@
+{
+  "name": "studer-raimann.ch/opencast",
+  "description": "ILIAS 5.x Opencast plugin",
+  "type": "project",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "Theodor Truffer",
+      "email": "tt@studer-raimann.ch",
+      "homepage": "https://studer-raimann.ch",
+      "role": "Project Manager, Software Engineer"
+    }
+  ],
+  "support": {
+    "email": "info@studer-raimann.ch"
+  },
+  "minimum-stability": "beta",
+  "prefer-stable": true,
+  "require": {
+    "php": "^5.5.9 || ^7.0"
+  },
+  "autoload": {
+    "classmap": [
+      "./classes/",
+      "../../../../../../../Services/Table",
+      "../../../../../../../Services/Form",
+      "../../../../../../../Services/Repository",
+      "../../../../../../../Services/Component",
+      "../../../../../../../Services/ActiveRecord",
+      "../../../../../../../Services/UIComponent",
+      "../../../../../../../Services/Utilities",
+      "../../../../../../../Services/GlobalCache",
+      "../../../../../../../Services/Tracking",
+      "../../../../../../../Services/Calendar",
+      "../../../../../../../Services/WebAccessChecker",
+      "../../../../../../../Services/AccessControl",
+      "../../../../../../../Services/InfoScreen",
+      "../../../../../../../Services/Link",
+      "../../../../../../../Services/Logging",
+      "../../../../../../../Modules/Course",
+      "../../../../../../../Modules/Group"
+    ]
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "classmap-authoritative": true
+  }
+}

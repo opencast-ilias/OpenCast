@@ -1,9 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('class.xoctPublicationUsage.php');
-require_once('class.xoctPublicationUsageTableGUI.php');
-require_once('class.xoctPublicationUsageFormGUI.php');
-
 /**
  * Class xoctPublicationUsageGUI
  *

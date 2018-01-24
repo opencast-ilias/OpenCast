@@ -1,6 +1,5 @@
 <?php
-require_once('./Services/Logging/classes/class.ilLog.php');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * Class xoctLog
  *

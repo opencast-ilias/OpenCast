@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-require_once 'Services/Component/classes/class.ilComponent.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once('./include/inc.ilias_version.php');
 /**
  * Class xoct

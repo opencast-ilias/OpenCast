@@ -1,6 +1,5 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * Class xoctGUI
  *

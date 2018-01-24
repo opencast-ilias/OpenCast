@@ -1,7 +1,4 @@
 <?php
-require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php');
-
 /**
  * Class xoctIVTGroup
  *

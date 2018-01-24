@@ -1,7 +1,5 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php';
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Migration/class.xoctScaMigration.php';
 /**
  * Class xoctScaMigrationGUI
  *

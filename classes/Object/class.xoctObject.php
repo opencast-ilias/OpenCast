@@ -1,7 +1,4 @@
 <?php
-require_once('./Services/Utilities/classes/class.ilStr.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
-
 /**
  * Class xoctObject
  *

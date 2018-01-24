@@ -1,6 +1,4 @@
 <?php
-require_once('class.xoctPublicationMetadata.php');
-
 /**
  * Class xoctMedia
  *

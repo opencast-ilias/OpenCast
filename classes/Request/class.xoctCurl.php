@@ -1,9 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctLog.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctException.php');
-require_once('class.xoctCurlSettings.php');
-require_once('class.xoctCurlError.php');
-
 /**
  * Class xoctCurl
  *
