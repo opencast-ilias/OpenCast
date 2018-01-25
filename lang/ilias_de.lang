@@ -111,6 +111,7 @@ event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtb
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
 event_state_offline#:#Offline, für Studierende nicht sichtbar
 event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar. Bitte NICHT löschen.
+event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar. Bitte NICHT löschen.
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
