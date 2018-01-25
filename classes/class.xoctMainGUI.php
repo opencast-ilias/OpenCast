@@ -35,22 +35,27 @@ class xoctMainGUI extends xoctGUI {
 
 		switch ($nextClass) {
 			case 'xoctpublicationusagegui':
-				$this->tabs->setTabActive(self::TAB_PUBLICATION_USAGE);
+				$this->tabs->activateTab(self::TAB_PUBLICATION_USAGE);
 				$xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
 				$this->ctrl->forwardCommand($xoctPublicationUsageGUI);
 				break;
+			case 'xoctpermissiontemplategui':
+				$this->tabs->activateTab(self::TAB_PERMISSION_TEMPLATES);
+				$xoctPermissionTemplateGUI = new xoctPermissionTemplateGUI();
+				$this->ctrl->forwardCommand($xoctPermissionTemplateGUI);
+				break;
 			case 'xoctconfexportgui':
-				$this->tabs->setTabActive(self::TAB_EXPORT);
+				$this->tabs->activateTab(self::TAB_EXPORT);
 				$xoctConfExportGUI = new xoctConfExportGUI();
 				$this->ctrl->forwardCommand($xoctConfExportGUI);
 				break;
 			case 'xoctscamigrationgui':
-				$this->tabs->setTabActive(self::TAB_MIGRATION);
+				$this->tabs->activateTab(self::TAB_MIGRATION);
 				$xoctScaMigrationGUI = new xoctScaMigrationGUI();
 				$this->ctrl->forwardCommand($xoctScaMigrationGUI);
 				break;
 			default:
-				$this->tabs->setTabActive(self::TAB_SETTINGS);
+				$this->tabs->activateTab(self::TAB_SETTINGS);
 				$xoctConfGUI = new xoctConfGUI();
 				$this->ctrl->forwardCommand($xoctConfGUI);
 				break;

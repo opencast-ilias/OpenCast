@@ -69,3 +69,8 @@ xoctConf::set(xoctConf::F_SIGN_PLAYER_LINKS, 1);
 xoctConf::set(xoctConf::F_SIGN_DOWNLOAD_LINKS, 1);
 xoctConf::set(xoctConf::F_SIGN_THUMBNAIL_LINKS, 1);
 ?>
+<#8>
+<?php
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
+xoctPermissionTemplate::updateDB();
+?>
