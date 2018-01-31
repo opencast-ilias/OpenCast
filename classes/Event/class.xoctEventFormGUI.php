@@ -149,9 +149,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				'audio/ogg',
 				'audio/mpeg',
 				'audio/x-aiff',
+				'audio/aiff',
 				'audio/x-wav',
+				'audio/wav',
 				'audio/aac',
 				'audio/flac',
+				'audio/x-ms-wma',
+				'audio/basic'
 			) : array(
 				'video/avi',
 				'video/quicktime',
