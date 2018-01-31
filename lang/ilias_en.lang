@@ -198,10 +198,12 @@ series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Series-Infos
 series_obj_online#:#Online
+series_none#:#None
 series_permission_allow_set_own#:#Grant Access Rights
 series_permission_allow_set_own_info#:#An owner can give other students the right to watch his/her video.
 series_permission_per_clip#:#Set permissions for an Event
 series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
+series_permission_template#:#Permission Template
 series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
@@ -256,3 +258,22 @@ info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
+table_column_title#:#Title
+table_column_info#:#Info
+table_column_role#:#Role
+table_column_read#:#Read
+table_column_write#:#Write
+table_column_additional_acl_actions#:#Additional ACL Actions
+button_new_permission_template#:#Add New Template
+perm_tpl_form_title#:#Title
+perm_tpl_form_title_info#:#Will be used for presentation inside ILIAS.
+perm_tpl_form_info#:#Info
+perm_tpl_form_info_info#:#Will be used for presentation inside ILIAS.
+perm_tpl_form_role#:#Role
+perm_tpl_form_role_info#:#Defines the role which will be set in Opencast.
+perm_tpl_form_read#:#Read
+perm_tpl_form_read_info#:#Defines if the above role will be given read permissions.
+perm_tpl_form_write#:#Write
+perm_tpl_form_write_info#:#Defines if the above role will be given write permissions.
+perm_tpl_form_additional_acl_actions#:#Additional ACL Actions
+perm_tpl_form_additional_acl_actions_info#:#Additional ACL Actions which will be set for the above role (comma-separated).

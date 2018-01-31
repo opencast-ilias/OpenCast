@@ -17,7 +17,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 */
 	protected function index() {
 		$b = ilLinkButton::getInstance();
-		$b->setCaption($this->pl->txt('add_new_permission_template'), false);
+		$b->setCaption($this->pl->txt('button_new_permission_template'), false);
 		$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
 		$this->toolbar->addButtonInstance($b);
 
@@ -42,7 +42,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new xoctPermissionTemplate());
 		$xoctPermissionTemplateFormGUI->setValuesByPost();
 		if ($xoctPermissionTemplateFormGUI->saveForm()) {
-			ilUtil::sendSuccess($this->pl->txt('permission_template_msg_success'), true);
+			ilUtil::sendSuccess($this->pl->txt('config_msg_success'), true);
 			$this->ctrl->redirect($this);
 		}
 		$this->tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());

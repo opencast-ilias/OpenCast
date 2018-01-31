@@ -76,6 +76,26 @@ class xoctPermissionTemplate extends ActiveRecord {
 	protected $additional_acl_actions;
 
 
+	public function getAcls() {
+		$acls = array();
+
+		$acl = new xoctAcl();
+		$acl->setRole($this->getRole());
+		$acl->setAction(xoctAcl::READ);
+		$acl->setAllow($this->getRead());
+		$acls[] = $acl;
+
+		$acl = new xoctAcl();
+		$acl->setRole($this->getRole());
+		$acl->setAction(xoctAcl::WRITE);
+		$acl->setAllow($this->getWrite());
+		$acls[] = $acl;
+
+		foreach (explode(',', $this->getAdditionalAclActions()) as $additional_action) {
+
+		}
+	}
+
 	/**
 	 * @return int
 	 */

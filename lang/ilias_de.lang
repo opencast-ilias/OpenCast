@@ -195,11 +195,13 @@ series_intended_lifetime_info#:#Wie lange soll das Videomaterial publiziert blei
 series_introduction_text#:#Arbeitsanweisung
 series_license#:#Lizenz
 series_metadata#:#Serie-Infos
+series_none#:#Keins
 series_obj_online#:#Online
 series_permission_allow_set_own#:#Zugriffsrechte erteilen
 series_permission_allow_set_own_info#:#Ein Aufzeichnungs-Besitzer/in kann anderen Studierenden das Recht geben, seine/ihre Aufzeichnung anzusehen.
 series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
+series_permission_template#:#Permission Template
 series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
@@ -254,3 +256,22 @@ info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
+table_column_title#:#Titel
+table_column_info#:#Info
+table_column_role#:#Rolle
+table_column_read#:#Leserechte
+table_column_write#:#Schreibrechte
+table_column_additional_acl_actions#:#Zusätzliche ACL-Actions
+button_new_permission_template#:#Neues Template hinzufügen
+perm_tpl_form_title#:#Titel
+perm_tpl_form_title_info#:#Wird für die Anzeige in ILIAS verwendet.
+perm_tpl_form_info#:#Info
+perm_tpl_form_info_info#:#Wird für die Anzeige in ILIAS verwendet.
+perm_tpl_form_role#:#Rolle
+perm_tpl_form_role_info#:#Rolle, welche in Opencast gesetzt wird.
+perm_tpl_form_read#:#Leserechte
+perm_tpl_form_read_info#:#Bestimmt, ob obiger Rolle Leserechte zugeschrieben werden.
+perm_tpl_form_write#:#Schreibrechte
+perm_tpl_form_write_info#:#Bestimmt, ob obiger Rolle Schreibrechte zugeschrieben werden.
+perm_tpl_form_additional_acl_actions#:#Zusätzliche ACL-Actions
+perm_tpl_form_additional_acl_actions_info#:#Zusätzliche ACL-Actions, welche obiger Rolle zugeschrieben werden (kommasepariert).

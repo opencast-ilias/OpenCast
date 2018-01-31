@@ -74,3 +74,8 @@ xoctConf::set(xoctConf::F_SIGN_THUMBNAIL_LINKS, 1);
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
 xoctPermissionTemplate::updateDB();
 ?>
+<#9>
+<?php
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
+xoctOpenCast::updateDB();
+?>

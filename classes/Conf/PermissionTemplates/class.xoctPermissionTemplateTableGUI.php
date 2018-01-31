@@ -27,9 +27,12 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		$this->parent_obj = $a_parent_obj;
 		$this->pl = ilOpenCastPlugin::getInstance();
 
+		$this->setId('test');
 		parent::__construct($a_parent_obj, $a_parent_cmd, $a_template_context);
 
-		$this->setId('test');
+		$this->setEnableNumInfo(false);
+		$this->setLimit(0);
+		$this->setShowRowsSelector(false);
 
 		$this->setRowTemplate($this->pl->getDirectory() . '/templates/default/tpl.permission_templates.html');
 

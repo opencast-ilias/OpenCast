@@ -29,6 +29,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_CHANNEL_ID = 'channel_id';
 	const F_MEMBER_UPLOAD = 'member_upload';
 	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
+	const F_PERMISSION_TEMPLATE = 'permission_template';
+
 	/**
 	 * @var  xoctSeries
 	 */
@@ -49,6 +51,14 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @var bool
 	 */
 	protected $external = true;
+	/**
+	 * @var xoctOpenCast
+	 */
+	protected $cast;
+	/**
+	 * @var bool
+	 */
+	protected $is_new;
 
 
 	/**
@@ -195,6 +205,21 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($crs_member_upload);
 		}
 
+		if (xoctPermissionTemplate::count()) {
+			$permission_template = new ilRadioGroupInputGUI($this->txt(self::F_PERMISSION_TEMPLATE), self::F_PERMISSION_TEMPLATE);
+			$radio_opt = new ilRadioOption($this->txt('none'), 0);
+			$permission_template->addOption($radio_opt);
+			/** @var xoctPermissionTemplate $ptpl */
+			foreach (xoctPermissionTemplate::get() as $ptpl) {
+				$radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
+				if ($ptpl->getInfo()) {
+					$radio_opt->setInfo($ptpl->getInfo());
+				}
+				$permission_template->addOption($radio_opt);
+			}
+			$this->addItem($permission_template);
+		}
+
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
 			$accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
@@ -240,6 +265,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
 			self::F_OBJ_ONLINE               => $this->cast->isObjOnline(),
 			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
+			self::F_PERMISSION_TEMPLATE      => $this->cast->getPermissionTemplate(),
 		);
 
 		$this->setValuesByArray($array);
@@ -275,6 +301,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
 		$this->cast->setAgreementAccepted(true);
+		$this->cast->setPermissionTemplate($this->getInput(self::F_PERMISSION_TEMPLATE));
 
 		return true;
 	}
@@ -305,6 +332,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 */
 	public function saveObject($obj_id = null) {
 		$ivt_mode_before_update = $this->cast->getPermissionPerClip();
+		$perm_tpl_before_update = $this->cast->getPermissionTemplate();
+
 		if (!$this->fillObject()) {
 			return false;
 		}
@@ -331,6 +360,11 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		} else {
 			$this->series->create();
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
+		}
+
+		$perm_tpl_after_update = $this->cast->getPermissionTemplate();
+		if ($perm_tpl_before_update != $perm_tpl_after_update) {
+
 		}
 
 		return array($this->cast, $this->getInput(self::F_MEMBER_UPLOAD));

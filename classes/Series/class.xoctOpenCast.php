@@ -83,12 +83,31 @@ class xoctOpenCast extends ActiveRecord {
 			parent::create();
 			xoctDataMapper::xoctOpenCastupdated($this);
 		}
+		if ($this->getPermissionTemplate() != 0) {
+			$this->writePermissionTemplate();
+		}
 	}
 
 
 	public function update() {
+		$old_perm_tpl = $this->getPermissionTemplate();
 		parent::update();
 		xoctDataMapper::xoctOpenCastupdated($this);
+		if ($this->getPermissionTemplate() != $old_perm_tpl) {
+			$this->writePermissionTemplate($old_perm_tpl);
+		}
+	}
+
+	protected function writePermissionTemplate($old_perm_tpl = 0) {
+		/** @var xoctPermissionTemplate $xoctPermissionTemplate */
+		$xoctPermissionTemplate = xoctPermissionTemplate::find($this->getPermissionTemplate());
+		$series_acls = $this->getSeries()->getAccessPolicies();
+		foreach ($series_acls as $key => $acl) {
+			if ($acl->getRole() == $xoctPermissionTemplate->getRole()) {
+				unset($series_acls[$key]);
+			}
+		}
+		$series_acls[] = $xoctPermissionTemplate->getAcls();
 	}
 
 
@@ -216,6 +235,14 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $obj_online = false;
+	/**
+	 * @var int
+	 *
+	 * @con_has_field true
+	 * @con_fieldtype integer
+	 * @con_length    8
+	 */
+	protected $permission_template = 0;
 
 
 	/**
@@ -359,6 +386,22 @@ class xoctOpenCast extends ActiveRecord {
 	 */
 	public function setPermissionAllowSetOwn($permission_allow_set_own) {
 		$this->permission_allow_set_own = $permission_allow_set_own;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getPermissionTemplate() {
+		return $this->permission_template;
+	}
+
+
+	/**
+	 * @param int $permission_template
+	 */
+	public function setPermissionTemplate($permission_template) {
+		$this->permission_template = $permission_template;
 	}
 
 }

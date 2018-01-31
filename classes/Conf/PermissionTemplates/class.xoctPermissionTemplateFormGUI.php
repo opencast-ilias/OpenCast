@@ -65,30 +65,30 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$this->initButtons();
 
 		$input = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$input->setInfo($this->pl->txt(self::F_TITLE) . '_info');
+		$input->setInfo($this->txt(self::F_TITLE . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 
 		$input = new ilTextInputGUI($this->txt(self::F_INFO), self::F_INFO);
-		$input->setInfo($this->pl->txt(self::F_INFO) . '_info');
+		$input->setInfo($this->txt(self::F_INFO . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 
 		$input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ROLE);
-		$input->setInfo($this->pl->txt(self::F_ROLE) . '_info');
+		$input->setInfo($this->txt(self::F_ROLE . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 
 		$input = new ilCheckboxInputGUI($this->txt(self::F_READ), self::F_READ);
-		$input->setInfo($this->pl->txt(self::F_READ) . '_info');
+		$input->setInfo($this->txt(self::F_READ . '_info'));
 		$this->addItem($input);
 
 		$input = new ilCheckboxInputGUI($this->txt(self::F_WRITE), self::F_WRITE);
-		$input->setInfo($this->pl->txt(self::F_WRITE) . '_info');
+		$input->setInfo($this->txt(self::F_WRITE . '_info'));
 		$this->addItem($input);
 
 		$input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACL_ACTIONS), self::F_ADDITIONAL_ACL_ACTIONS);
-		$input->setInfo($this->pl->txt(self::F_ADDITIONAL_ACL_ACTIONS) . '_info');
+		$input->setInfo($this->txt(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 	}
