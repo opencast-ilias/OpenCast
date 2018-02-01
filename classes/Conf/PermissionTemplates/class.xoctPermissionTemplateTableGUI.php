@@ -22,7 +22,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 	protected $pl;
 
 	public function __construct(xoctPermissionTemplateGUI $a_parent_obj, $a_parent_cmd = "", $a_template_context = "") {
-		global $ilCtrl;
+		global $ilCtrl, $tpl;
 		$this->ctrl = $ilCtrl;
 		$this->parent_obj = $a_parent_obj;
 		$this->pl = ilOpenCastPlugin::getInstance();
@@ -36,11 +36,17 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 		$this->setRowTemplate($this->pl->getDirectory() . '/templates/default/tpl.permission_templates.html');
 
+		xoctWaiterGUI::initJS();
+		$tpl->addJavaScript($this->pl->getDirectory() . '/templates/default/sortable.js');
+		$base_link = $this->ctrl->getLinkTarget($this->parent_obj, 'reorder', '', true);
+		$tpl->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
+
 		$this->initColumns();
-		$this->setData(xoctPermissionTemplate::getArray());
+		$this->setData(xoctPermissionTemplate::orderBy('sort')->getArray());
 	}
 
 	protected function initColumns() {
+		$this->addColumn("", "", "10px", true);
 		$this->addColumn($this->pl->txt('table_column_title'));
 		$this->addColumn($this->pl->txt('table_column_info'));
 		$this->addColumn($this->pl->txt('table_column_role'));

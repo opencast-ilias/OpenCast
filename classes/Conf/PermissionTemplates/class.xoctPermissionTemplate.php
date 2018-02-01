@@ -27,6 +27,14 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	protected $id = 0;
 	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           8
+	 */
+	protected $sort;
+	/**
 	 * @var String
 	 *
 	 * @db_has_field        true
@@ -91,6 +99,16 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	protected $additional_actions_annotate;
 
+
+	public function create() {
+		$this->setSort(self::count() + 1);
+		parent::create();
+	}
+
+
+	/**
+	 * @param array $acls
+	 */
 	public static function removeAllTemplatesFromAcls(array &$acls) {
 		if (empty($acls)) {
 			return;
@@ -349,6 +367,22 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	public function setAdditionalActionsAnnotate($additional_actions_annotate) {
 		$this->additional_actions_annotate = $additional_actions_annotate;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getSort() {
+		return $this->sort;
+	}
+
+
+	/**
+	 * @param int $sort
+	 */
+	public function setSort($sort) {
+		$this->sort = $sort;
 	}
 
 }

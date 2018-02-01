@@ -88,4 +88,21 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	protected function delete() {
 		// TODO: Implement delete() method.
 	}
+
+
+	/**
+	 * ajax
+	 */
+	protected function reorder() {
+		$ids = $_POST['ids'];
+		$sort = 1;
+		foreach ($ids as $id) {
+			/** @var xoctPermissionTemplate $perm_tpl */
+			$perm_tpl = xoctPermissionTemplate::find($id);
+			$perm_tpl->setSort($sort);
+			$perm_tpl->update();
+			$sort++;
+		}
+		exit;
+	}
 }

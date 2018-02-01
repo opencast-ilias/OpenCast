@@ -214,7 +214,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$radio_opt = new ilRadioOption($this->txt('none'), 0);
 			$permission_template->addOption($radio_opt);
 			/** @var xoctPermissionTemplate $ptpl */
-			foreach (xoctPermissionTemplate::get() as $ptpl) {
+			foreach (xoctPermissionTemplate::orderBy('sort')->get() as $ptpl) {
 				$radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
 				if ($ptpl->getInfo()) {
 					$radio_opt->setInfo($ptpl->getInfo());
