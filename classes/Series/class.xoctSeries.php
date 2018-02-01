@@ -44,6 +44,7 @@ class xoctSeries extends xoctObject {
 
 
 	public function read() {
+
 		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
@@ -65,7 +66,9 @@ class xoctSeries extends xoctObject {
 
 	/**
 	 * @param xoctUser|string $xoctUser
-	 * @param bool     $omit_update
+	 * @param bool $omit_update
+	 *
+	 * @return bool
 	 */
 	public function addProducer($xoctUser, $omit_update = false) {
 		if ($xoctUser instanceof xoctUser) {
@@ -124,6 +127,7 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->__toStdClass(),
 		));
 
+		$acls = array();
 		foreach ($this->getAccessPolicies() as $acl) {
 			$acls[] = $acl->__toStdClass();
 		}
@@ -241,7 +245,7 @@ class xoctSeries extends xoctObject {
 			return $existing;
 		}
 		$return = array();
-		$data = (array) json_decode(xoctRequest::root()->series()->get('', array( $user_string )));
+		$data = (array) json_decode(xoctRequest::root()->series()->get(array( $user_string )));
 		foreach ($data as $d) {
 			$obj = new self();
 			try {
@@ -579,4 +583,9 @@ class xoctSeries extends xoctObject {
 //	protected function updateFieldsFromProperties() {
 //		$this->setTheme($this->getProperties()->getTheme());
 //	}
+
+	public function getPermissionTemplateId() {
+		$template = xoctPermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
+		return $template ? $template->getId() : 0;
+	}
 }

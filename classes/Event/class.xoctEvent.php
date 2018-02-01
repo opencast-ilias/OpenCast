@@ -107,7 +107,7 @@ class xoctEvent extends xoctObject {
 			$request->parameter('withpublications', true);
 		}
 
-		$data = json_decode($request->get($for_user, array( $for_role )));
+		$data = json_decode($request->get());
 		$return = array();
 
 		foreach ($data as $d) {

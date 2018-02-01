@@ -47,6 +47,8 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		$this->addColumn($this->pl->txt('table_column_read'));
 		$this->addColumn($this->pl->txt('table_column_write'));
 		$this->addColumn($this->pl->txt('table_column_additional_acl_actions'));
+		$this->addColumn($this->pl->txt('table_column_additional_actions_download'));
+		$this->addColumn($this->pl->txt('table_column_additional_actions_annotate'));
 		$this->addColumn("", "", '30px', true);
 	}
 

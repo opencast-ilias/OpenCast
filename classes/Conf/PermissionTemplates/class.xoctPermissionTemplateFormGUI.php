@@ -14,6 +14,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	const F_READ = 'read';
 	const F_WRITE = 'write';
 	const F_ADDITIONAL_ACL_ACTIONS = 'additional_acl_actions';
+	const F_ADDITIONAL_ACTIONS_DOWNLOAD = 'additional_actions_download';
+	const F_ADDITIONAL_ACTIONS_ANNOTATE = 'additional_actions_annotate';
 
 	/**
 	 * @var  xoctPermissionTemplate
@@ -91,6 +93,14 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$input->setInfo($this->txt(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
+
+		$input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD), self::F_ADDITIONAL_ACTIONS_DOWNLOAD);
+		$input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
+		$this->addItem($input);
+
+		$input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE), self::F_ADDITIONAL_ACTIONS_ANNOTATE);
+		$input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
+		$this->addItem($input);
 	}
 
 	/**
@@ -116,6 +126,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 			self::F_READ => $this->object->getRead(),
 			self::F_WRITE => $this->object->getWrite(),
 			self::F_ADDITIONAL_ACL_ACTIONS => $this->object->getAdditionalAclActions(),
+			self::F_ADDITIONAL_ACTIONS_DOWNLOAD => $this->object->getAdditionalActionsDownload(),
+			self::F_ADDITIONAL_ACTIONS_ANNOTATE => $this->object->getAdditionalActionsAnnotate(),
 		);
 
 		$this->setValuesByArray($array);
@@ -132,6 +144,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$this->object->setRead($this->getInput(self::F_READ));
 		$this->object->setWrite($this->getInput(self::F_WRITE));
 		$this->object->setAdditionalAclActions($this->getInput(self::F_ADDITIONAL_ACL_ACTIONS));
+		$this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
+		$this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
 
 		$this->object->store();
 		return true;

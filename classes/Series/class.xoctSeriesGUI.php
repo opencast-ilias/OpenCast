@@ -9,7 +9,10 @@
 class xoctSeriesGUI extends xoctGUI {
 
 	const SERIES_ID = 'series_id';
-
+	/**
+	 * @var xoctOpenCast
+	 */
+	protected $xoctOpenCast;
 
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
@@ -38,12 +41,10 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	protected function add() {
-		// TODO: Implement add() method.
 	}
 
 
 	protected function create() {
-		// TODO: Implement create() method.
 	}
 
 
@@ -75,12 +76,10 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
 	}
 
 
 	protected function delete() {
-		// TODO: Implement delete() method.
 	}
 
 

@@ -8,6 +8,10 @@ class xoctRequest {
 
 	const X_RUN_AS_USER = 'X-RUN-AS-USER';
 	const X_RUN_WITH_ROLES = 'X-RUN-WITH-ROLES';
+	/**
+	 * @var int
+	 */
+	static $series_owner;
 
 
 	/**
@@ -24,7 +28,7 @@ class xoctRequest {
 	 *
 	 * @return string
 	 */
-	public function get($as_user = '', array $roles = array()) {
+	public function get(array $roles = array(), $as_user = '') {
 		$url = $this->getUrl();
 
 		$xoctCurl = new xoctCurl();
@@ -35,6 +39,9 @@ class xoctRequest {
 
 		if (count($roles) > 0) {
 			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
+		} elseif (isset(self::$series_owner)) {
+			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		$xoctCurl->get();
@@ -46,17 +53,25 @@ class xoctRequest {
 
 
 	/**
-	 * @param array $post_data
+	 * @param array  $post_data
+	 * @param array  $roles
 	 * @param string $as_user
 	 *
 	 * @return string
 	 */
-	public function post(array $post_data, $as_user = '') {
+	public function post(array $post_data, array $roles = array(), $as_user = '') {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
+		}
+
+		if (count($roles) > 0) {
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
+		} elseif (isset(self::$series_owner)) {
+			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		$xoctCurl->post();
@@ -66,20 +81,30 @@ class xoctRequest {
 
 
 	/**
-	 * @param array $post_data
+	 * @param array            $post_data
 	 * @param xoctUploadFile[] $files
-	 * @param string $as_user
+	 * @param array            $roles
+	 * @param string           $as_user
 	 *
 	 * @return string
 	 */
-	public function postFiles(array $post_data, array $files, $as_user = '') {
+	public function postFiles(array $post_data, array $files, array $roles = array(), $as_user = '') {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
 		$xoctCurl->setRequestContentType('multipart/form-data');
+
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
 		}
+
+		if (count($roles) > 0) {
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
+		} elseif (isset(self::$series_owner)) {
+			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
+		}
+
 		foreach ($files as $file) {
 			if ($file instanceof xoctUploadFile) {
 				$xoctCurl->addFile($file);
@@ -93,17 +118,26 @@ class xoctRequest {
 
 
 	/**
-	 * @param array $post_data
+	 * @param array  $post_data
+	 * @param array  $roles
 	 * @param string $as_user
 	 *
 	 * @return string
 	 */
-	public function put(array $post_data, $as_user = '') {
+	public function put(array $post_data, array $roles = array(), $as_user = '') {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
+
 		if ($as_user) {
-			$xoctCurl->addHeader('X-API-AS-USER: ' . $as_user);
+			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
+		}
+
+		if (count($roles) > 0) {
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
+		} elseif (isset(self::$series_owner)) {
+			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
+			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		$xoctCurl->put();

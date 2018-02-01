@@ -258,6 +258,7 @@ info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
+msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
 table_column_title#:#Title
 table_column_info#:#Info
 table_column_role#:#Role

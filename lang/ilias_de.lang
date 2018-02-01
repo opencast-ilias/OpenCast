@@ -256,12 +256,15 @@ info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
+msg_permission_templates_info#:#Die erstellten Templates können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Templates werden dabei entfernt.
 table_column_title#:#Titel
 table_column_info#:#Info
 table_column_role#:#Rolle
 table_column_read#:#Leserechte
 table_column_write#:#Schreibrechte
-table_column_additional_acl_actions#:#Zusätzliche ACL-Actions
+table_column_additional_acl_actions#:#Zus. ACL-Actions
+table_column_additional_actions_download#:#Zus. Actions Download
+table_column_additional_actions_annotate#:#Zus. Actions Annotate
 button_new_permission_template#:#Neues Template hinzufügen
 perm_tpl_form_title#:#Titel
 perm_tpl_form_title_info#:#Wird für die Anzeige in ILIAS verwendet.
@@ -275,3 +278,7 @@ perm_tpl_form_write#:#Schreibrechte
 perm_tpl_form_write_info#:#Bestimmt, ob obiger Rolle Schreibrechte zugeschrieben werden.
 perm_tpl_form_additional_acl_actions#:#Zusätzliche ACL-Actions
 perm_tpl_form_additional_acl_actions_info#:#Zusätzliche ACL-Actions, welche obiger Rolle zugeschrieben werden (kommasepariert).
+perm_tpl_form_additional_actions_download#:#Zus. Actions bei aktivem Download
+perm_tpl_form_additional_actions_download_info#:#Zusätzliche ACL-Actions, welche bei aktivem Download (also "Nur Streaming" deaktiviert) obiger Rolle zugeschrieben werden (kommasepariert).
+perm_tpl_form_additional_actions_annotate#:#Zus. Actions bei aktivem Annotate
+perm_tpl_form_additional_actions_annotate_info#:#Zusätzliche ACL-Actions, welche bei aktivem Annotieren obiger Rolle zugeschrieben werden (kommasepariert).

@@ -59,6 +59,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @var bool
 	 */
 	protected $is_new;
+	/**
+	 * @var ilLanguage
+	 */
+	protected $lng;
 
 
 	/**
@@ -265,7 +269,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
 			self::F_OBJ_ONLINE               => $this->cast->isObjOnline(),
 			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
-			self::F_PERMISSION_TEMPLATE      => $this->cast->getPermissionTemplate(),
+			self::F_PERMISSION_TEMPLATE      => $this->series->getPermissionTemplateId(),
 		);
 
 		$this->setValuesByArray($array);
@@ -301,7 +305,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
 		$this->cast->setAgreementAccepted(true);
-		$this->cast->setPermissionTemplate($this->getInput(self::F_PERMISSION_TEMPLATE));
 
 		return true;
 	}
@@ -328,11 +331,12 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	/**
+	 * @param null $obj_id
+	 *
 	 * @return bool|string
 	 */
 	public function saveObject($obj_id = null) {
 		$ivt_mode_before_update = $this->cast->getPermissionPerClip();
-		$perm_tpl_before_update = $this->cast->getPermissionTemplate();
 
 		if (!$this->fillObject()) {
 			return false;
@@ -349,6 +353,19 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->cast->setObjId($obj_id);
 		}
 
+		// set chosen permission template, remove existing templates
+		$series_acls = $this->series->getAccessPolicies() ? $this->series->getAccessPolicies() : array();
+		xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
+		$perm_tpl_id = $this->getInput(self::F_PERMISSION_TEMPLATE);
+		if ($perm_tpl_id) {
+			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
+			$xoctPermissionTemplate = xoctPermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
+			$xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
+		}
+
+		$this->series->setAccessPolicies($series_acls);
+
+		// create / update
 		if ($this->series->getIdentifier()) {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 			$this->series->update();
@@ -360,11 +377,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		} else {
 			$this->series->create();
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
-		}
-
-		$perm_tpl_after_update = $this->cast->getPermissionTemplate();
-		if ($perm_tpl_before_update != $perm_tpl_after_update) {
-
 		}
 
 		return array($this->cast, $this->getInput(self::F_MEMBER_UPLOAD));
@@ -557,5 +569,3 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		return true;
 	}
 }
-
-?>

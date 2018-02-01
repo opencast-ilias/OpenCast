@@ -73,6 +73,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @var ilAccessHandler
 	 */
 	protected $access;
+	/**
+	 * @var ilObjOpenCast
+	 */
+	public $object;
 
 
 	protected function afterConstructor() {
@@ -89,6 +93,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->ctrl = $ilCtrl;
 		$this->tabs_gui = $ilTabs;
 		$this->pl = ilOpenCastPlugin::getInstance();
+		if ($this->object) {
+			xoctRequest::$series_owner = $this->object->getOwner();
+		}
 	}
 
 
