@@ -336,6 +336,7 @@ class xoctEventTableGUI extends ilTable2GUI
 			xoctEvent::STATE_OFFLINE,
 			xoctEvent::STATE_FAILED,
 			xoctEvent::STATE_SCHEDULED,
+			xoctEvent::STATE_SCHEDULED_OFFLINE,
 			//			xoctEvent::STATE_ENCODING,
 		))
 		)

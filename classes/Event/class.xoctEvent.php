@@ -13,6 +13,7 @@ class xoctEvent extends xoctObject {
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_SCHEDULED = 'SCHEDULED';
+	const STATE_SCHEDULED_OFFLINE = 'SCHEDULED_OFFLINE';
 	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
@@ -24,15 +25,18 @@ class xoctEvent extends xoctObject {
 	const TZ_UTC = 'UTC';
 	/**
 	 * @var array
+	 *
+	 * used for colouring
 	 */
 	public static $state_mapping = array(
-		xoctEvent::STATE_SUCCEEDED     => 'success',
-		xoctEvent::STATE_INSTANTIATED  => 'info',
-		xoctEvent::STATE_ENCODING      => 'info',
-		xoctEvent::STATE_NOT_PUBLISHED => 'info',
-		xoctEvent::STATE_SCHEDULED     => 'scheduled',
-		xoctEvent::STATE_FAILED        => 'danger',
-		xoctEvent::STATE_OFFLINE       => 'info',
+		xoctEvent::STATE_SUCCEEDED          => 'success',
+		xoctEvent::STATE_INSTANTIATED       => 'info',
+		xoctEvent::STATE_ENCODING           => 'info',
+		xoctEvent::STATE_NOT_PUBLISHED      => 'info',
+		xoctEvent::STATE_SCHEDULED          => 'scheduled',
+		xoctEvent::STATE_SCHEDULED_OFFLINE  => 'scheduled',
+		xoctEvent::STATE_FAILED             => 'danger',
+		xoctEvent::STATE_OFFLINE            => 'info',
 	);
 	/**
 	 * @var string
@@ -449,7 +453,7 @@ class xoctEvent extends xoctObject {
 	 * @return string
 	 */
 	public function getThumbnailUrl() {
-		if ($this->getProcessingState() == self::STATE_SCHEDULED) {
+		if ($this->getProcessingState() == self::STATE_SCHEDULED || $this->getProcessingState() == self::STATE_SCHEDULED_OFFLINE) {
 			$this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
 			return $this->thumbnail_url;
 		}
@@ -674,7 +678,7 @@ class xoctEvent extends xoctObject {
 				break;
 			case '': // FIX: OpenCast delivers sometimes a empty state. this patch will be removed after fix on OpenCast
 				if (!$this->getXoctEventAdditions()->getIsOnline()) {
-					$this->setProcessingState(self::STATE_OFFLINE);
+					$this->setProcessingState(self::STATE_SCHEDULED_OFFLINE);
 				} else {
 					$this->setProcessingState(self::STATE_SCHEDULED);
 				}
@@ -702,7 +706,7 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $creator;
 	/**
-	 * @var Array
+	 * @var array
 	 */
 	protected $contributors;
 	/**
@@ -730,7 +734,7 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $publication_status;
 	/**
-	 * @var array
+	 * @var String
 	 */
 	protected $processing_state;
 	/**
@@ -855,7 +859,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @return Array
+	 * @return array
 	 */
 	public function getContributors() {
 		return $this->contributors;
@@ -863,7 +867,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @param Array $contributors
+	 * @param array $contributors
 	 */
 	public function setContributors($contributors) {
 		$this->contributors = $contributors;
@@ -967,7 +971,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @return array
+	 * @return String
 	 */
 	public function getProcessingState() {
 		$this->initProcessingState();
@@ -977,7 +981,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @param array $processing_state
+	 * @param String $processing_state
 	 */
 	public function setProcessingState($processing_state) {
 		$this->processing_state = $processing_state;
