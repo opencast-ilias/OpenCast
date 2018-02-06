@@ -676,7 +676,7 @@ class xoctEvent extends xoctObject {
 					}
 				}
 				break;
-			case '': // FIX: OpenCast delivers sometimes a empty state. this patch will be removed after fix on OpenCast
+			case '': // empty state means it's a scheduled event
 				if (!$this->getXoctEventAdditions()->getIsOnline()) {
 					$this->setProcessingState(self::STATE_SCHEDULED_OFFLINE);
 				} else {

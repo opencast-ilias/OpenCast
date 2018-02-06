@@ -550,6 +550,7 @@ class xoctEventTableGUI extends ilTable2GUI
 			switch ($k)
 			{
 				case 'created_unix';
+				case 'start_unix';
 				case 'object';
 					continue 2;
 			}
@@ -571,6 +572,7 @@ class xoctEventTableGUI extends ilTable2GUI
 			switch ($k)
 			{
 				case 'created_unix';
+				case 'start_unix';
 				case 'object';
 					continue 2;
 			}
