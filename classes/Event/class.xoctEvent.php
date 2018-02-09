@@ -1125,7 +1125,13 @@ class xoctEvent extends xoctObject {
 	 * @return string
 	 */
 	public function getOwnerUsername() {
-		return $this->owner_username;
+		if ($this->owner_username) {
+			return $this->owner_username;
+		} elseif ($this->getOwner()) {
+			return $this->getOwner()->getNamePresentation();
+		} else {
+			return '&nbsp';
+		}
 	}
 
 
