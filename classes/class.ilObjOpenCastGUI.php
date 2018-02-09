@@ -296,7 +296,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		// set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
 		$producers = array();
-		$producers[] = xoctUser::getInstance($ilUser);
 		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($newObj->getRefId())) {
 
 			//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group

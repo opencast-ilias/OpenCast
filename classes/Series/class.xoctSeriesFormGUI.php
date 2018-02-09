@@ -336,6 +336,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool|string
 	 */
 	public function saveObject($obj_id = null) {
+		global $ilUser;
 		$ivt_mode_before_update = $this->cast->getPermissionPerClip();
 
 		if (!$this->fillObject()) {
@@ -364,6 +365,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		$this->series->setAccessPolicies($series_acls);
+
+		// add current user to producers
+		$xoct_user = xoctUser::getInstance($ilUser);
+		$this->series->addProducer($xoct_user, true);
 
 		// create / update
 		if ($this->series->getIdentifier()) {
