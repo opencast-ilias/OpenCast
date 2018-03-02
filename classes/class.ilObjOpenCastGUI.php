@@ -318,13 +318,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 				}
 			}
 		}
-		$cast->getSeries()->addProducers($producers);
 		try {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMembers($producers);
 		} catch (xoctException $e) {
 			//TODO log?
 		}
+		$cast->getSeries()->addProducers($producers);
 
 		if ($cast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
