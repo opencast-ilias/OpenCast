@@ -1,6 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
 
 /**
  * Class xoctConfExportGUI

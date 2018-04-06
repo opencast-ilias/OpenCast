@@ -20,10 +20,7 @@
 	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
 	+-----------------------------------------------------------------------------+
 */
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilOpenCastPlugin.php');
-include_once('./Services/Repository/classes/class.ilObjectPluginListGUI.php');
-require_once('class.ilObjOpenCastGUI.php');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * ListGUI implementation for OpenCast object plugin. This one
  * handles the presentation in container items (categories, courses, ...)

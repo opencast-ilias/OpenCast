@@ -1,13 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Group/class.xoctGroup.php');
-require_once('class.xoctEventTableGUI.php');
-require_once('class.xoctEventFormGUI.php');
-require_once('class.xoctEventOwnerFormGUI.php');
-require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
-require_once('class.xoctEventAdditions.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/class.xoctCacheFactory.php');
-require_once('Services/Table/classes/class.ilTablePropertiesStorage.php');
 
 /**
  * Class xoctEventGUI

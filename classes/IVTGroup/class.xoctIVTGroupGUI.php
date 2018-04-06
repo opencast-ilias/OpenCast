@@ -1,8 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('class.xoctIVTGroup.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctWaiterGUI.php');
-require_once('class.xoctIVTGroupParticipantGUI.php');
 
 /**
  * Class xoctIVTGroupGUI

@@ -1,9 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctGUI.php');
-require_once('class.xoctSystemAccountTableGUI.php');
-require_once('class.xoctSystemAccountFormGUI.php');
-require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
-require_once('./Services/Utilities/classes/class.ilConfirmationGUI.php');
 
 /**
  * Class xoctSystemAccountGUI

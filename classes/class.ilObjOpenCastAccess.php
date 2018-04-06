@@ -20,13 +20,7 @@
 	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
 	+-----------------------------------------------------------------------------+
 */
-
-require_once('./Services/Repository/classes/class.ilObjectPluginAccess.php');
-require_once('./Modules/Course/classes/class.ilCourseParticipants.php');
-require_once('./Modules/Course/classes/class.ilObjCourse.php');
-require_once('./Modules/Group/classes/class.ilObjGroup.php');
-require_once('class.ilObjOpenCast.php');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * Access/Condition checking for OpenCast object
  *

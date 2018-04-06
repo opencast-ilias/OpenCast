@@ -1,6 +1,4 @@
 <?php
-require_once('./Services/Logging/classes/class.ilLog.php');
-
 /**
  * Class xoctLog
  *

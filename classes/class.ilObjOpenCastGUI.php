@@ -20,21 +20,7 @@
 	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
 	+-----------------------------------------------------------------------------+
 */
-require_once('./Services/Repository/classes/class.ilObjectPluginGUI.php');
-require_once('class.ilOpenCastPlugin.php');
-require_once('./Services/Link/classes/class.ilLink.php');
-require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
-require_once('class.ilObjOpenCast.php');
-require_once('./Services/InfoScreen/classes/class.ilInfoScreenGUI.php');
-require_once('./Services/Repository/classes/class.ilRepUtilGUI.php');
-require_once('./Services/AccessControl/classes/class.ilPermissionGUI.php');
-
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctSeriesGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventGUI.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/Acl/class.xoctAclStandardSets.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupGUI.php');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 /**
  * User Interface class for example repository object.
  *
