@@ -303,7 +303,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_TEXT), xoctConf::F_REPORT_QUALITY_TEXT);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_TEXT . '_info'));
 		$te->setRequired(true);
-		$te->setRows(10);
+		$te->setRows(8);
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS), xoctConf::F_REPORT_QUALITY_ACCESS);
@@ -311,6 +311,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$ri->addOption($ro);
 		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS . '_' . xoctConf::ACCESS_OWNER_ADMIN), xoctConf::ACCESS_OWNER_ADMIN);
 		$ri->addOption($ro);
+		$ri->setRequired(true);
 		$cb->addSubItem($ri);
 
 		// DATE REPORT
@@ -326,7 +327,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT), xoctConf::F_REPORT_DATE_TEXT);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT . '_info'));
 		$te->setRequired(true);
-		$te->setRows(10);
+		$te->setRows(8);
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE), xoctConf::F_SCHEDULED_METADATA_EDITABLE);
