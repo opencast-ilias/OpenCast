@@ -487,6 +487,7 @@ return array(
     'xoctPublicationUsageFormGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageFormGUI.php',
     'xoctPublicationUsageGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php',
     'xoctPublicationUsageTableGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageTableGUI.php',
+    'xoctReportingModalGUI' => $baseDir . '/classes/Event/class.xoctReportingModalGUI.php',
     'xoctRequest' => $baseDir . '/classes/Request/class.xoctRequest.php',
     'xoctRequestDummy' => $baseDir . '/classes/Request/class.xoctRequestDummy.php',
     'xoctRequestSettings' => $baseDir . '/classes/Request/class.xoctRequestSettings.php',

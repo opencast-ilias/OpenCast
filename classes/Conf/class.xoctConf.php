@@ -41,6 +41,22 @@ class xoctConf extends ActiveRecord {
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
 	const F_AUDIO_ALLOWED = 'audio_allowed';
 
+	const F_REPORT_QUALITY = 'report_quality';
+	const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
+	const F_REPORT_QUALITY_TEXT = 'report_quality_text';
+	const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
+	const ACCESS_ALL = 1;
+	const ACCESS_OWNER_ADMIN = 2;
+
+	const F_REPORT_DATE = 'report_date';
+	const F_REPORT_DATE_EMAIL = 'report_date_email';
+	const F_REPORT_DATE_TEXT = 'report_date_text';
+
+	const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
+	const ALL_METADATA = 0;
+	const METADATA_EXCEPT_DATE_PLACE = 1;
+	const NO_METADATA = 2;
+
 
 	/**
 	 * @var array

@@ -18,6 +18,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
 	const CMD_CUT = 'cut';
+	const CMD_REPORT_DATE = 'reportDate';
+	const CMD_REPORT_QUALITY = 'reportQuality';
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -82,6 +84,15 @@ class xoctEventGUI extends xoctGUI {
 			$b->setUrl($this->ctrl->getLinkTarget($this, 'clearAllClips'));
 			$this->toolbar->addButtonInstance($b);
 		}
+
+		// add "report date change" button
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+			$b = ilButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_report_date_modification');
+			$b->setOnClick("$('#xoct_report_date_modal').modal('show');");
+
+			$this->toolbar->addButtonInstance($b);
+		}
 	}
 
 
@@ -97,7 +108,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, true);
-		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
+		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 	}
 
 
@@ -120,11 +131,11 @@ class xoctEventGUI extends xoctGUI {
 
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML());
+			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 			return;
 		}
 
-		$this->tpl->setContent($intro_text . '<div id="xoct_table_placeholder"></div>');
+		$this->tpl->setContent($intro_text . '<div id="xoct_table_placeholder"></div>' . $this->getModalsHTML());
 		$this->tpl->addJavascript("./Services/Table/js/ServiceTable.js");
 		$this->loadAjaxCode();
 	}
@@ -562,6 +573,44 @@ class xoctEventGUI extends xoctGUI {
 		}
 	}
 
+	protected function getModalsHTML() {
+		$modal_date_html = $modal_quality_html = '';
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+			$modal_date = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_DATE);
+			$modal_date_html = $modal_date->getHTML();
+		}
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
+			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
+			$modal_quality_html = $modal_quality->getHTML();
+		}
+
+
+		return $modal_date_html . $modal_quality_html;
+	}
+
+	protected function reportDate() {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+			$mail = new ilMimeMail();
+			$mail->Subject('test');
+			$mail->Body($_POST['message']);
+			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_DATE_EMAIL));
+			$mail->From(ilSetting::_lookupValue('common', 'mail_external_sender_noreply'));
+			$mail->Send();
+		}
+		$this->ctrl->redirect($this);
+	}
+
+	protected function reportQuality() {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+			$mail = new ilMimeMail();
+			$mail->Subject('test');
+			$mail->Body($_POST['message']);
+			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL));
+			$mail->From(ilSetting::_lookupValue('common', 'mail_external_sender_noreply'));
+			$mail->Send();
+		}
+		$this->ctrl->redirect($this);
+	}
 
 	/**
 	 * @param $key

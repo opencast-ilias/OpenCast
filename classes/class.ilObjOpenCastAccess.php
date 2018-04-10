@@ -45,6 +45,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ACTION_MANAGE_IVT_GROUPS = 'manage_ivt_groups';
 	const ACTION_EDIT_SETTINGS = 'edit_settings';
 	const ACTION_EXPORT_CSV = 'export_csv';
+	const ACTION_REPORT_QUALITY_PROBLEM = 'report_quality_problem';
+	const ACTION_REPORT_DATE_CHANGE = 'report_date_change';
 
 	/**
 	 * @var array
@@ -212,6 +214,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_EXPORT_CSV:
 				return
 					self::hasPermission('edit_videos');
+			case self::ACTION_REPORT_QUALITY_PROBLEM:
+				return
+					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
+					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos'));
+			case self::ACTION_REPORT_DATE_CHANGE:
+				return
+					xoctConf::getConfig(xoctConf::F_REPORT_DATE);
 		}
 	}
 

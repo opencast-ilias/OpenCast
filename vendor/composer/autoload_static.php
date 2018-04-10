@@ -488,6 +488,7 @@ class ComposerStaticInitb4cd37740f532673354219196d2cc4a9
         'xoctPublicationUsageFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageFormGUI.php',
         'xoctPublicationUsageGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php',
         'xoctPublicationUsageTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageTableGUI.php',
+        'xoctReportingModalGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctReportingModalGUI.php',
         'xoctRequest' => __DIR__ . '/../..' . '/classes/Request/class.xoctRequest.php',
         'xoctRequestDummy' => __DIR__ . '/../..' . '/classes/Request/class.xoctRequestDummy.php',
         'xoctRequestSettings' => __DIR__ . '/../..' . '/classes/Request/class.xoctRequestSettings.php',

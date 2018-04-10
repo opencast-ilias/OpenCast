@@ -395,6 +395,15 @@ class xoctEventTableGUI extends ilTable2GUI
 			}
 		}
 
+		// Report Quality
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
+			$ac->addItem(
+				$this->pl->txt('event_report_quality_problem'),
+				'event_report_quality',
+				'#', '', '', '', '', false,
+				"($('input#xoct_report_quality_event_id').val('".$xoctEvent->getIdentifier()."') && $('#xoct_report_quality_modal').modal('show'))");
+		}
+
 		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
 	}
 
