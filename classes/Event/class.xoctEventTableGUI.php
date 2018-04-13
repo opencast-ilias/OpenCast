@@ -396,7 +396,7 @@ class xoctEventTableGUI extends ilTable2GUI
 		}
 
 		// Report Quality
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $xoctEvent)) {
 			$ac->addItem(
 				$this->pl->txt('event_report_quality_problem'),
 				'event_report_quality',

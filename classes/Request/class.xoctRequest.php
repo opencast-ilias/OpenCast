@@ -370,6 +370,23 @@ class xoctRequest {
 
 
 	/**
+	 * @return $this
+	 */
+	public function agents() {
+		$this->checkBranch(array( self::BRANCH_BASE ));
+		$this->addPart('agents');
+
+		return $this;
+	}
+
+	public function scheduling() {
+		$this->checkBranch(array( self::BRANCH_EVENTS ));
+		$this->addPart('scheduling');
+
+		return $this;
+	}
+
+	/**
 	 * @param $part
 	 */
 	protected function addPart($part) {

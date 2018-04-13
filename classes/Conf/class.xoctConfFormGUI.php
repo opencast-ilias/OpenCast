@@ -35,6 +35,18 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	public function __construct(xoctConfGUI $parent_gui, $subtab_active) {
 		global $ilCtrl, $lng;
+//		xoctConf::setApiSettings();
+//		var_dump(xoctRequest::root()->agents()->get());exit;
+//		var_dump(xoctRequest::root()->version()->get());exit;
+		xoctInternalAPI::getInstance()->events()->setOnline(
+			'4e6adac3-4865-4cc0-b1dc-b35ae76513fc',true
+//			array(
+//				'title' => 'TT Test Internal API 2',
+//				'location' => 'testagent',
+//				'presenters' => "it's-a-me"
+//			)
+		);
+		exit;
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
@@ -160,6 +172,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('curl'));
 		$this->addItem($h);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_VERSION), xoctConf::F_API_VERSION);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_API_VERSION . '_info'));
+		$te->setRequired(true);
+		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_BASE), xoctConf::F_API_BASE);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_API_BASE . '_info'));

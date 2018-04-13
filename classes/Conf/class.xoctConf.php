@@ -15,6 +15,7 @@ class xoctConf extends ActiveRecord {
 	const F_WORKFLOW = 'workflow';
 	const F_EULA = 'eula';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+	const F_API_VERSION = 'api_version';
 	const F_API_BASE = 'api_base';
 	const F_ACTIVATE_CACHE = 'activate_cache';
 	const F_USER_MAPPING = 'user_mapping';

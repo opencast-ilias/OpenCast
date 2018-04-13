@@ -196,6 +196,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					(self::hasPermission('edit_videos') || (self::hasPermission('upload') && $xoctEvent->isOwner($xoctUser)))
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
 			case self::ACTION_EDIT_EVENT:
+				return
+					self::hasPermission('edit_videos')
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED
+					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
 			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
 					self::hasPermission('edit_videos')
@@ -217,7 +222,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_REPORT_QUALITY_PROBLEM:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
-					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos'));
+					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos') || $xoctEvent->isOwner($xoctUser));
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_DATE);

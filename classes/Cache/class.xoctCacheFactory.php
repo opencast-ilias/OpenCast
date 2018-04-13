@@ -16,7 +16,7 @@ class xoctCacheFactory {
 
 		if(self::$cache_instance === null)
 		{
-			if (xoct::is52()) {
+			if (xoct::isIlias52()) {
 				require ('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Cache/v52/class.xoctCache.php');
 				self::$cache_instance = xoctCache::getInstance('');
 				self::$cache_instance->init();

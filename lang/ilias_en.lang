@@ -3,6 +3,8 @@ admin_import#:#Import Settings
 common_actions#:#Actions
 config_activate_cache#:#Activate Cache
 config_api_base#:#Api-Base-URL
+config_api_version#:#API Version
+config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
 config_audio_allowed_info#:#Audio Files
 config_cancel#:#Cancel
 config_curl#:#cURL
@@ -105,6 +107,7 @@ event_download#:#Download
 event_duration#:#Duration
 event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
+event_end#:#End
 event_file_presenter#:#Video File
 event_file_presenter_w_audio#:#Video/Audio File
 event_identifier#:#ID
@@ -283,3 +286,5 @@ info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
+msg_date_report_sent#:#The report has been sent. You will receive a confirmation email when the modifications will be done.
+msg_quality_report_sent#:#The report has been sent. The support has been informed and will contact you.

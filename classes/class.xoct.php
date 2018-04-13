@@ -39,24 +39,34 @@ class xoct {
 	/**
 	 * @return bool
 	 */
-	public static function is50() {
+	public static function isIlias50() {
 		return self::getILIASVersion() >= self::ILIAS_50;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function is51() {
+	public static function isIlias51() {
 		return self::getILIASVersion() >= self::ILIAS_51;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function is52() {
+	public static function isIlias52() {
 		return self::getILIASVersion() >= self::ILIAS_52;
 	}
 
+	public static function isApiVersionGreaterThan($api_version) {
+		return version_compare(xoctConf::getConfig(xoctConf::F_API_VERSION), $api_version, '>=');
+	}
+
+	/**
+	 *
+	 */
+	public static function isApi11() {
+		return self::isApiVersionGreaterThan('v1.1.0');
+	}
 
 	/**
 	 *
