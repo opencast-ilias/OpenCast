@@ -35,18 +35,24 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	public function __construct(xoctConfGUI $parent_gui, $subtab_active) {
 		global $ilCtrl, $lng;
-//		xoctConf::setApiSettings();
 //		var_dump(xoctRequest::root()->agents()->get());exit;
 //		var_dump(xoctRequest::root()->version()->get());exit;
-		xoctInternalAPI::getInstance()->events()->setOnline(
-			'4e6adac3-4865-4cc0-b1dc-b35ae76513fc',true
-//			array(
-//				'title' => 'TT Test Internal API 2',
-//				'location' => 'testagent',
-//				'presenters' => "it's-a-me"
+//		xoctInternalAPI::getInstance()->events()->create(
+//			'8919734f-9c56-454f-8025-4604c3cca87b',
+//			'TT Scheduled 1. Juni',
+//			'2018-06-01T14:00:00Z',
+//			'2018-06-01T14:30:00Z',
+//			'test_sven'
+//		);
+//		xoctInternalAPI::getInstance()->series()->update(
+//			171,array(
+//				'online' => false,
+//				'use_annotations' => false,
+//				'streaming_only' => true,
+//				'permission_per_clip' => true
 //			)
-		);
-		exit;
+//		);
+//		exit;
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();

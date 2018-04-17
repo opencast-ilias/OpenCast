@@ -130,7 +130,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		 */
 		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
 
-		return (bool)$xoctOpenCast->isObjOnline();
+		return (bool)$xoctOpenCast->isOnline();
 	}
 
 

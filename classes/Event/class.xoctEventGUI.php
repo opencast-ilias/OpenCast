@@ -109,9 +109,9 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function showContent() {
 		$intro_text = '';
-		if ($this->xoctOpenCast->getIntroText()) {
+		if ($this->xoctOpenCast->getIntroductionText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroText()));
+			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
 			$intro_text = $intro->get();
 		}
 
@@ -126,9 +126,9 @@ class xoctEventGUI extends xoctGUI {
 	protected function index() {
 
 		$intro_text = '';
-		if ($this->xoctOpenCast->getIntroText()) {
+		if ($this->xoctOpenCast->getIntroductionText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroText()));
+			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
 			$intro_text = $intro->get();
 		}
 		// DELETE AFTER USAGE

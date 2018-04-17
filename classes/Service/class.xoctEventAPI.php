@@ -41,7 +41,7 @@ class xoctEventAPI {
 	 * @return xoctEvent
 	 *
 	 */
-	public function schedule($series_id, $title, $start, $end, $location, $additional_data = array()) {
+	public function create($series_id, $title, $start, $end, $location, $additional_data = array()) {
 		$event = new xoctEvent();
 		$event->setSeriesIdentifier($series_id);
 		$event->setTitle($title);
@@ -57,21 +57,6 @@ class xoctEventAPI {
 		$event->schedule();
 		return $event;
 	}
-
-
-	/**
-	 * @param $event_id
-	 * @param $online
-	 *
-	 * @return xoctEvent
-	 */
-	public function setOnline($event_id, $online) {
-		$event = new xoctEvent($event_id);
-		$event->getXoctEventAdditions()->setIsOnline($online);
-		$event->getXoctEventAdditions()->update();
-		return $event;
-	}
-
 
 	/**
 	 * @param $event_id
@@ -101,11 +86,23 @@ class xoctEventAPI {
 	 */
 	public function update($event_id, $data) {
 		$event = new xoctEvent($event_id);
+
+		// field 'online' is stored in ILIAS, not in Opencast
+		if (isset($data['online'])) {
+			$event->getXoctEventAdditions()->setIsOnline($data['online']);
+			$event->getXoctEventAdditions()->update();
+			unset($data['online']);
+		}
+
 		foreach ($data as $title => $value) {
 			$setter = 'set'.$title;
 			$event->$setter($value);
 		}
-		$event->update();
+
+		if (count($data)) { // this prevents an update, if only 'online' has changed
+			$event->update();
+		}
+
 		return $event;
 	}
 

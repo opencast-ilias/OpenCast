@@ -313,7 +313,7 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @return boolean
 	 */
-	public function isObjOnline() {
+	public function isOnline() {
 		return $this->obj_online;
 	}
 
@@ -321,15 +321,14 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @param boolean $obj_online
 	 */
-	public function setObjOnline($obj_online) {
+	public function setOnline($obj_online) {
 		$this->obj_online = $obj_online;
 	}
-
 
 	/**
 	 * @return string
 	 */
-	public function getIntroText() {
+	public function getIntroductionText() {
 		return $this->intro_text;
 	}
 
@@ -337,7 +336,7 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @param string $intro_text
 	 */
-	public function setIntroText($intro_text) {
+	public function setIntroductionText($intro_text) {
 		$this->intro_text = $intro_text;
 	}
 

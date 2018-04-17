@@ -73,6 +73,7 @@ class xoctScheduling extends xoctObject {
 		$stdClass->agent_id = $this->getAgentId();
 		$stdClass->start = $this->getStart()->format('Y-m-d\TH:i:s\Z');
 		$stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
+		$stdClass->inputs = array("default");
 
 		return $stdClass;
 	}

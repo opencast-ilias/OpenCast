@@ -17,7 +17,7 @@ class xoctSeriesAPI {
 	 */
 	protected $tree;
 	/**
-	 * @var
+	 * @var ilObjectDefinition
 	 */
 	protected $objDefinition;
 
@@ -46,6 +46,7 @@ class xoctSeriesAPI {
 	/**
 	 * possible additional data:
 	 *
+	 *  series_id => text
 	 *  description => text
 	 *  online => boolean
 	 *  introduction_text => text
@@ -53,6 +54,7 @@ class xoctSeriesAPI {
 	 *  use_annotations => boolean
 	 *  streaming_only => boolean
 	 *  permission_per_clip => boolean
+	 *  permission_allow_set_own => boolean
 	 *  member_upload => boolean
 	 *
 	 *
@@ -64,15 +66,49 @@ class xoctSeriesAPI {
 	 * @throws xoctInternalApiException
 	 */
 	public function create($parent_ref_id, $title, $additional_data = array()) {
-		$parent_type = ilObject2::_lookupType($parent_ref_id);
+		$parent_type = ilObject2::_lookupType($parent_ref_id, true);
 		if (!$this->objDefinition->isContainer($parent_type)) {
 			throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is of type $parent_type but should be a container");
 		}
+		if (!ilObjOpenCast::_getParentCourseOrGroup($parent_ref_id)) {
+			throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
+		}
+
+		$cast = new xoctOpenCast();
+		$cast->setOnline(isset($additional_data['online']) ? $additional_data['online'] : false);
+		$cast->setAgreementAccepted(true);
+		$cast->setIntroductionText(isset($additional_data['introduction_text']) ? $additional_data['introduction_text'] : '');
+		$cast->setUseAnnotations(isset($additional_data['use_annotations']) ? $additional_data['use_annotations'] : false);
+		$cast->setStreamingOnly(isset($additional_data['streaming_only']) ? $additional_data['streaming_only'] : false);
+		$cast->setPermissionPerClip(isset($additional_data['permission_per_clip']) ? $additional_data['permission_per_clip'] : false);
+		$cast->setPermissionAllowSetOwn(isset($additional_data['permission_allow_set_own']) ? $additional_data['permission_allow_set_own'] : false);
+
+		$series = $cast->getSeries();
+		$series->setIdentifier(isset($additional_data['series_id']) ? $additional_data['series_id'] : '');
+		$series->setTitle($title);
+		$series->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
+		$series->setLicense(isset($additional_data['license']) ? $additional_data['license'] : '');
+
+		$std_acls = new xoctAclStandardSets();
+		$series->setAccessPolicies($std_acls->getAcls());
+
+		if ($series->getIdentifier()) {
+			$series->update();
+		} else {
+			$series->create();
+		}
+		$cast->setSeriesIdentifier($series->getIdentifier());
 
 		$object = new ilObjOpenCast();
 		$object->setTitle($title);
 		$object->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
+		$object->create();
+		$object->createReference();
 
+		$cast->setObjId($object->getId());
+		$cast->create();
+
+		$object->putInTree($parent_ref_id);
 	}
 
 
@@ -90,7 +126,8 @@ class xoctSeriesAPI {
 	 * @param $ref_id
 	 */
 	public function delete($ref_id) {
-
+		$object = new ilObjOpenCast($ref_id);
+		$object->delete();
 	}
 
 
@@ -108,8 +145,40 @@ class xoctSeriesAPI {
 	 *  member_upload => boolean
 	 *
 	 * @param $ref_id
+	 * @param $data
+	 *
+	 * @return bool
 	 */
 	public function update($ref_id, $data) {
+		$object = new ilObjOpenCast($ref_id);
+		/** @var xoctOpenCast $cast */
+		$cast = xoctOpenCast::where(array('obj_id' => $object->getId()))->first();
+		$series = $cast->getSeries();
 
+		$update_offline = $update_online = false;
+
+		foreach (array('online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'member_upload') as $field) {
+			if (isset($data[$field])) {
+				$setter = 'set' . str_replace('_', '', $field);
+				$cast->$setter($data[$field]);
+				$update_offline = true;
+			}
+		}
+		if ($update_offline) {
+			$cast->update();
+		}
+
+		foreach (array('title', 'description') as $field) {
+			if (isset($data[$field])) {
+				$setter = 'set' . str_replace('_', '', $field);
+				$series->$setter($data[$field]);
+				$update_online = true;
+			}
+		}
+		if ($update_online) {
+			$series->update();
+		}
+
+		return true;
 	}
 }

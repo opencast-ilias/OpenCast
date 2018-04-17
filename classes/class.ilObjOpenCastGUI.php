@@ -358,7 +358,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
-			if (!$xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isOnline()) {
 				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {

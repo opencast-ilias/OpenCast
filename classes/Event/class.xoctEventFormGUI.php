@@ -238,16 +238,16 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$endDateTime = $this->object->getEnd();
 		if (xoct::isIlias52()) {
 			$start = $startDateTime->format('Y-m-d H:i:s');
-			$end = $endDateTime->format('Y-m-d H:i:s');
+			$end = $endDateTime ? $endDateTime->format('Y-m-d H:i:s') : '';
 		} else {
 			$start = array(
 				'date' => $startDateTime->format('Y-m-d'),
 				'time' => $startDateTime->format('H:i:s'),
 			);
-			$end = array(
+			$end = $endDateTime ? array(
 				'date' => $endDateTime->format('Y-m-d'),
 				'time' => $endDateTime->format('H:i:s'),
-			);
+			) : array();
 		}
 
 		$array = array(
