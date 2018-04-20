@@ -3,6 +3,8 @@ admin_import#:#Import Settings
 common_actions#:#Actions
 config_activate_cache#:#Activate Cache
 config_api_base#:#Api-Base-URL
+config_api_version#:#API Version
+config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
 config_audio_allowed_info#:#Audio Files
 config_cancel#:#Cancel
 config_curl#:#cURL
@@ -67,6 +69,26 @@ config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
 config_internal_player#:#Internal Video-Player
 config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to OpenCast.
+config_general#:#General
+config_report_quality#:#Enable "Report Quality Problems"
+config_report_quality_info#:#Enables the possibility to report quality problems of videos inside Opencast objects.
+config_report_quality_email#:#Email
+config_report_quality_email_info#:#Address to which the report will be sent.
+config_report_quality_text#:#Info Text
+config_report_quality_text_info#:#Text which will be display as an info in the reporting form.
+config_report_quality_access#:#Access
+config_report_quality_access_1#:#All users
+config_report_quality_access_2#:#Only users with the permission "Edit Videos".
+config_report_date#:#Enable "Report Date Modification"
+config_report_date_info#:#Enables the possibility to report wrong dates of events inside Opencast objects.
+config_report_date_email#:#Email
+config_report_date_email_info#:#Address to which the report will be sent.
+config_report_date_text#:#Info Text
+config_report_date_text_info#:#ext which will be display as an info in the reporting form.
+config_scheduled_metadata_editable#:#Metadata of scheduled events editable
+config_scheduled_metadata_editable_0#:#Yes
+config_scheduled_metadata_editable_1#:#All, except date and recording station.
+config_scheduled_metadata_editable_2#:#No
 event_add_new#:#Add Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -85,6 +107,7 @@ event_download#:#Download
 event_duration#:#Duration
 event_edit#:#Edit Metadata
 event_edit_owner#:#Edit Owner
+event_end#:#End
 event_file_presenter#:#Video File
 event_file_presenter_w_audio#:#Video/Audio File
 event_identifier#:#ID
@@ -129,6 +152,8 @@ event_set_online#:#Set online
 event_delete_confirm_w_duplicates#:#This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?
 event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
+event_report_date_modification#:#Report Date Modifications
+event_report_quality_problem#:#Report Quality Problems
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group
@@ -241,6 +266,11 @@ tab_system_accounts#:#System-Accounts
 tab_back#:#Back
 tab_migration#:#Migration
 tab_permission_templates#:#Permission Templates
+subtab_api#:#API
+subtab_general#:#General
+subtab_groups_roles#:#Groups & Roles
+subtab_security#:#Security
+subtab_advanced#:#Advanced
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -279,3 +309,5 @@ perm_tpl_form_write#:#Write
 perm_tpl_form_write_info#:#Defines if the above role will be given write permissions.
 perm_tpl_form_additional_acl_actions#:#Additional ACL Actions
 perm_tpl_form_additional_acl_actions_info#:#Additional ACL Actions which will be set for the above role (comma-separated).
+msg_date_report_sent#:#The report has been sent. You will receive a confirmation email when the modifications will be done.
+msg_quality_report_sent#:#The report has been sent. The support has been informed and will contact you.

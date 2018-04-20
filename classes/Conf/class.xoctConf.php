@@ -14,6 +14,7 @@ class xoctConf extends ActiveRecord {
 	const F_WORKFLOW = 'workflow';
 	const F_EULA = 'eula';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+	const F_API_VERSION = 'api_version';
 	const F_API_BASE = 'api_base';
 	const F_ACTIVATE_CACHE = 'activate_cache';
 	const F_USER_MAPPING = 'user_mapping';
@@ -39,6 +40,22 @@ class xoctConf extends ActiveRecord {
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
 	const F_AUDIO_ALLOWED = 'audio_allowed';
+
+	const F_REPORT_QUALITY = 'report_quality';
+	const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
+	const F_REPORT_QUALITY_TEXT = 'report_quality_text';
+	const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
+	const ACCESS_ALL = 1;
+	const ACCESS_OWNER_ADMIN = 2;
+
+	const F_REPORT_DATE = 'report_date';
+	const F_REPORT_DATE_EMAIL = 'report_date_email';
+	const F_REPORT_DATE_TEXT = 'report_date_text';
+
+	const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
+	const NO_METADATA = 0;
+	const ALL_METADATA = 1;
+	const METADATA_EXCEPT_DATE_PLACE = 2;
 
 
 	/**

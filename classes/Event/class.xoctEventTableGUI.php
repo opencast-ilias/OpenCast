@@ -1,5 +1,4 @@
 <?php
-/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 /**
  * Class xoctEventTableGUI
  *
@@ -393,6 +392,15 @@ class xoctEventTableGUI extends ilTable2GUI
 			} else {
 				$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
 			}
+		}
+
+		// Report Quality
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $xoctEvent)) {
+			$ac->addItem(
+				$this->pl->txt('event_report_quality_problem'),
+				'event_report_quality',
+				'#', '', '', '', '', false,
+				"($('input#xoct_report_quality_event_id').val('".$xoctEvent->getIdentifier()."') && $('#xoct_report_quality_modal').modal('show'))");
 		}
 
 		$this->tpl->setVariable('ACTIONS', $ac->getHTML());

@@ -111,9 +111,9 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$xoctOpenCastOld = xoctOpenCast::find($this->getId());
 
 		$xoctOpenCastNew->setSeriesIdentifier($xoctOpenCastOld->getSeriesIdentifier());
-		$xoctOpenCastNew->setIntroText($xoctOpenCastOld->getIntroText());
+		$xoctOpenCastNew->setIntroductionText($xoctOpenCastOld->getIntroductionText());
 		$xoctOpenCastNew->setAgreementAccepted($xoctOpenCastOld->getAgreementAccepted());
-		$xoctOpenCastNew->setObjOnline(false);
+		$xoctOpenCastNew->setOnline(false);
 		$xoctOpenCastNew->setPermissionAllowSetOwn($xoctOpenCastOld->getPermissionAllowSetOwn());
 		$xoctOpenCastNew->setStreamingOnly($xoctOpenCastOld->getStreamingOnly());
 		$xoctOpenCastNew->setUseAnnotations($xoctOpenCastOld->getUseAnnotations());

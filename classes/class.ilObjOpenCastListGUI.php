@@ -205,7 +205,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			}
 			$xoctOpenCast->getSeries();
 
-			if (!$xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isOnline()) {
 				$props[] = array(
 					'alert' => true,
 					'newline' => true,

@@ -1,8 +1,4 @@
 <?php
-require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-require_once('class.xoctSeries.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.xoctDataMapper.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php');
 
 /**
  * Class xoctOpenCast
@@ -137,6 +133,14 @@ class xoctOpenCast extends ActiveRecord {
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * @return ilObjOpenCast
+	 */
+	public function getILIASObject() {
+		return new ilObjOpenCast($this->getObjId());
 	}
 
 
@@ -315,7 +319,7 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @return boolean
 	 */
-	public function isObjOnline() {
+	public function isOnline() {
 		return $this->obj_online;
 	}
 
@@ -323,15 +327,14 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @param boolean $obj_online
 	 */
-	public function setObjOnline($obj_online) {
+	public function setOnline($obj_online) {
 		$this->obj_online = $obj_online;
 	}
-
 
 	/**
 	 * @return string
 	 */
-	public function getIntroText() {
+	public function getIntroductionText() {
 		return $this->intro_text;
 	}
 
@@ -339,7 +342,7 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @param string $intro_text
 	 */
-	public function setIntroText($intro_text) {
+	public function setIntroductionText($intro_text) {
 		$this->intro_text = $intro_text;
 	}
 

@@ -17,6 +17,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_START_TIME = 'start_time';
 	const F_PRESENTERS = 'presenters';
 	const F_START = 'start';
+	const F_END = 'end';
 	const F_LOCATION = 'location';
 	const F_SOURCE = 'source';
 	const F_AUTO_PUBLISH = 'auto_publish';
@@ -188,30 +189,63 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$this->addItem($te);
+
+		// show location and start date for scheduled events only if configured
+		$date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
+
+		if (xoct::isApiVersionGreaterThan('v1.1.0')) {
+			$input = new ilSelectInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+			$options = array();
+			/** @var xoctAgent $agent */
+			foreach (xoctAgent::getAllAgents() as $agent) {
+				$options[$agent->getAgentId()] = $agent->getAgentId();
+			}
+			$input->setOptions($options);
+		} else {
+			$input = new ilTextInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
+		}
+		$input->setDisabled($date_and_location_disabled);
+		$this->addItem($input);
 
 		$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
-		if (!xoct::is52()) {
+		if (!xoct::isIlias52()) {
 			$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
 		}
 		$date->setShowTime(true);
 		$date->setShowSeconds(false);
 		$date->setMinuteStepSize(1);
-
+		$date->setDisabled($date_and_location_disabled);
 		$this->addItem($date);
+
+		if ($this->object->isScheduled()) {
+			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
+			if (!xoct::isIlias52()) {
+				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			}
+			$date->setShowTime(true);
+			$date->setShowSeconds(false);
+			$date->setMinuteStepSize(1);
+			$date->setDisabled($date_and_location_disabled);
+			$this->addItem($date);
+		}
 	}
 
 
 	public function fillForm() {
 		$startDateTime = $this->object->getStart();
-		if (xoct::is52()) {
+		$endDateTime = $this->object->getEnd();
+		if (xoct::isIlias52()) {
 			$start = $startDateTime->format('Y-m-d H:i:s');
+			$end = $endDateTime ? $endDateTime->format('Y-m-d H:i:s') : '';
 		} else {
 			$start = array(
 				'date' => $startDateTime->format('Y-m-d'),
 				'time' => $startDateTime->format('H:i:s'),
 			);
+			$end = $endDateTime ? array(
+				'date' => $endDateTime->format('Y-m-d'),
+				'time' => $endDateTime->format('H:i:s'),
+			) : array();
 		}
 
 		$array = array(
@@ -219,7 +253,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_DESCRIPTION      => $this->object->getDescription(),
 			self::F_IDENTIFIER       => $this->object->getIdentifier(),
 			self::F_CREATOR          => $this->object->getCreator(),
-			self::F_DURATION         => $this->object->getDuration(),
+			self::F_DURATION         => $this->object->getDurationArrayForInput(),
 			self::F_PROCESSING_STATE => $this->object->getProcessingState(),
 			self::F_AUTO_PUBLISH     => true,
 //			self::F_START_TIME       => $this->object->getStartTime(),
@@ -227,6 +261,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_LOCATION         => $this->object->getLocation(),
 			self::F_SOURCE           => $this->object->getSource(),
 			self::F_START          => $start,
+			self::F_END          => $end,
 //						self::F_ONLINE           => $this->object->getXoctEventAdditions()->getIsOnline(),
 		);
 
@@ -261,8 +296,18 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_START);
 		$start = $ilDateTimeInputGUI->getDate();
 		$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601));
-
 		$this->object->setStart($default_datetime);
+
+		if ($this->object->isScheduled()) {
+			/**
+			 * @var $start            ilDateTime
+			 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
+			 */
+			$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_END);
+			$end = $ilDateTimeInputGUI->getDate();
+			$default_datetime = $this->object->getDefaultDateTimeObject($end->get(IL_CAL_ISO_8601));
+			$this->object->setEnd($default_datetime);
+		}
 
 		return true;
 	}

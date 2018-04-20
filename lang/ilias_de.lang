@@ -3,6 +3,8 @@ admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
 config_activate_cache#:#Cache aktivieren
 config_api_base#:#API-Basis-URL
+config_api_version#:#API-Version
+config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_curl#:#cURL
@@ -67,6 +69,26 @@ config_no_metadata#:#Ohne Metadaten
 config_no_metadata_info#:#In den neusten API-Versionen müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an OpenCast weiterzuleiten.
+config_general#:#Allgemeines
+config_report_quality#:#"Qualitätsprobleme melden" aktivieren
+config_report_quality_info#:#Aktiviert die Möglichkeit, Qualitätsprobleme von Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
+config_report_quality_email#:#Email
+config_report_quality_email_info#:#Adresse, an welche die Meldung des Problems geschickt wird.
+config_report_quality_text#:#Info-Text
+config_report_quality_text_info#:#Text, welcher als Info im Formular zum Melden von Qualitätsproblemen angezeigt wird.
+config_report_quality_access#:#Zugriff
+config_report_quality_access_1#:#Alle Benutzer
+config_report_quality_access_2#:#Nur Benutzer mit dem Recht "Videos editieren"
+config_report_date#:#"Terminanpassungen melden" aktivieren
+config_report_date_info#:#Aktiviert die Möglichkeit, Terminanpassungen von geplanten Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
+config_report_date_email#:#Email
+config_report_date_email_info#:#Adresse, an welche die Meldung der Anpassung geschickt wird.
+config_report_date_text#:#Info-Text
+config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
+config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
+config_scheduled_metadata_editable_0#:#Ja
+config_scheduled_metadata_editable_1#:#Alle, außer Datum und Aufnahmestation
+config_scheduled_metadata_editable_2#:#Nein
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -85,6 +107,7 @@ event_download#:#Download
 event_duration#:#Dauer
 event_edit#:#Metadaten bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
+event_end#:#Ende
 event_file_presenter#:#Video-Datei
 event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
@@ -127,6 +150,8 @@ event_set_online#:#Online schalten
 event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf OpenCast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
+event_report_date_modification#:#Terminanpassungen melden
+event_report_quality_problem#:#Qualitätsprobleme melden
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
@@ -239,6 +264,11 @@ tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
 tab_migration#:#Migration
 tab_permission_templates#:#Permission Templates
+subtab_api#:#API
+subtab_general#:#Allgemeines
+subtab_groups_roles#:#Gruppen & Rollen
+subtab_security#:#Security
+subtab_advanced#:#Erweitert
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -283,3 +313,5 @@ perm_tpl_form_additional_actions_download#:#Zus. Actions bei aktivem Download
 perm_tpl_form_additional_actions_download_info#:#Zusätzliche ACL-Actions, welche bei aktivem Download (also "Nur Streaming" deaktiviert) obiger Rolle zugeschrieben werden (kommasepariert).
 perm_tpl_form_additional_actions_annotate#:#Zus. Actions bei aktivem Annotate
 perm_tpl_form_additional_actions_annotate_info#:#Zusätzliche ACL-Actions, welche bei aktivem Annotieren obiger Rolle zugeschrieben werden (kommasepariert).
+msg_date_report_sent#:#Die Meldung wurde abgeschickt. Die Anpassungen werden Ihnen per Mail bestätigt, sobald sie vorgenommen wurden.
+msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benachrichtigt und meldet sich bei Ihnen.

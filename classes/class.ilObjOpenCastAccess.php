@@ -45,6 +45,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ACTION_MANAGE_IVT_GROUPS = 'manage_ivt_groups';
 	const ACTION_EDIT_SETTINGS = 'edit_settings';
 	const ACTION_EXPORT_CSV = 'export_csv';
+	const ACTION_REPORT_QUALITY_PROBLEM = 'report_quality_problem';
+	const ACTION_REPORT_DATE_CHANGE = 'report_date_change';
 
 	/**
 	 * @var array
@@ -128,7 +130,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		 */
 		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
 
-		return (bool)$xoctOpenCast->isObjOnline();
+		return (bool)$xoctOpenCast->isOnline();
 	}
 
 
@@ -194,6 +196,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					(self::hasPermission('edit_videos') || (self::hasPermission('upload') && $xoctEvent->isOwner($xoctUser)))
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
 			case self::ACTION_EDIT_EVENT:
+				return
+					self::hasPermission('edit_videos')
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED
+					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
 			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
 					self::hasPermission('edit_videos')
@@ -212,6 +219,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_EXPORT_CSV:
 				return
 					self::hasPermission('edit_videos');
+			case self::ACTION_REPORT_QUALITY_PROBLEM:
+				return
+					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
+					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos') || $xoctEvent->isOwner($xoctUser));
+			case self::ACTION_REPORT_DATE_CHANGE:
+				return
+					xoctConf::getConfig(xoctConf::F_REPORT_DATE);
 		}
 	}
 
@@ -343,6 +357,33 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			}
 		}
 		return false;
+	}
+
+
+	/**
+	 * returns array of xoctUsers who have the permission 'edit_videos' in this context
+	 *
+	 * @param $ref_id
+	 *
+	 * @return xoctUser[]
+	 */
+	public static function getProducersForRefID($ref_id) {
+		global $rbacreview;
+		$producers = [];
+		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+			//check each role (admin,tutor,member) for perm edit_videos, add to producers
+			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
+			foreach ($roles as $role) {
+				if (self::isActionAllowedForRole('edit_videos', $role, $ref_id)) {
+					$getter_method = "getDefault{$role}Role";
+					$role_id = $crs_or_grp_obj->$getter_method();
+					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
+						$producers[] = xoctUser::getInstance($participant_id);
+					}
+				}
+			}
+		}
+		return $producers;
 	}
 
 

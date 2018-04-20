@@ -158,6 +158,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function read() {
 		if (!$this->isLoaded()) {
 			xoctLog::getInstance()->writeTrace();
@@ -168,9 +171,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function afterObjectLoad() {
-
-
 		if (!$this->getPublications()) {
 			$this->loadPublications();
 		}
@@ -180,6 +184,11 @@ class xoctEvent extends xoctObject {
 		}
 
 		$this->initProcessingState();
+
+		if ($this->isScheduled()) {
+			$this->loadScheduling();
+		}
+
 		if (!$this->getXoctEventAdditions()) {
 			$this->initAdditions();
 		}
@@ -305,7 +314,7 @@ class xoctEvent extends xoctObject {
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
 		$this->setOwner(xoctUser::getInstance($ilUser));
-		$this->updateMetadataFromFields();
+		$this->updateMetadataFromFields(false);
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing($auto_publish));
@@ -321,14 +330,47 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
+	public function schedule() {
+		global $ilUser;
+		$data = array();
+
+		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+		$this->setOwner(xoctUser::getInstance($ilUser));
+		$this->updateMetadataFromFields(true);
+		$this->updateSchedulingFromFields();
+
+		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+		$data['processing'] = json_encode($this->getProcessing());
+		$data['acl'] = json_encode($this->getAcl());
+		$data['scheduling'] = json_encode($this->getScheduling()->__toStdClass());
+
+		//		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
+		$return = json_decode(xoctRequest::root()->events()->post($data));
+		//		}
+
+		$this->setIdentifier($return->identifier);
+	}
+
+
+	/**
+	 *
+	 */
 	public function update() {
 		// Metadata
-		$this->updateMetadataFromFields();
+		$this->updateMetadataFromFields($this->isScheduled());
 		$this->getMetadata()->removeField('identifier');
 		$this->getMetadata()->removeField('isPartOf');
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+
+		if ($this->isScheduled()) {
+			$this->updateSchedulingFromFields();
+			$data['scheduling'] = json_encode( $this->getScheduling()->__toStdClass());
+		}
 
 		// All Data
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
@@ -337,6 +379,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function updateAcls() {
 		$xoctAclStandardSets = new xoctAclStandardSets();
 		foreach ($xoctAclStandardSets->getAcls() as $acl) {
@@ -348,8 +393,11 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function updateSeries() {
-		$this->updateMetadataFromFields();
+		$this->updateMetadataFromFields(false);
 		$this->getMetadata()->getField('isPartOf')->setValue($this->getSeriesIdentifier());
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		xoctRequest::root()->events($this->getIdentifier())->post($data);
@@ -421,12 +469,18 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function removeOwner() {
 		$this->removeAllOwnerAcls();
 		$this->getMetadata()->getField('rightsHolder')->setValue('');
 	}
 
 
+	/**
+	 *
+	 */
 	public function removeAllOwnerAcls() {
 		foreach ($this->getAcl() as $i => $acl) {
 			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
@@ -605,6 +659,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function loadPublications() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->publications()->get());
 
@@ -618,6 +675,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function loadAcl() {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->acl()->get());
 		$acls = array();
@@ -630,6 +690,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	public function loadMetadata() {
 		if ($this->getIdentifier() && !self::$NO_METADATA) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
@@ -650,12 +713,33 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 *
+	 */
+	public function loadScheduling() {
+		if ($this->getIdentifier()) {
+			$this->scheduling = new xoctScheduling($this->getIdentifier());
+			$this->setStart($this->scheduling->getStart());
+			$this->setEnd($this->scheduling->getEnd());
+			$this->setLocation($this->scheduling->getAgentId());
+		} else {
+			$this->scheduling = new xoctScheduling();
+		}
+	}
+
+
+	/**
 	 * @var bool
 	 */
 	protected $processing_state_init = false;
 
 
+	/**
+	 *
+	 */
 	protected function initProcessingState() {
+		if (!$this->getIdentifier()) {
+			return 0;
+		}
 		if ($this->processing_state_init) {
 			//			return true;
 		}
@@ -746,6 +830,10 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $start;
 	/**
+	 * @var DateTime
+	 */
+	protected $end;
+	/**
 	 * @var array
 	 */
 	protected $subjects;
@@ -765,6 +853,10 @@ class xoctEvent extends xoctObject {
 	 * @var xoctAcl[]
 	 */
 	protected $acl = array();
+	/**
+	 * @var xoctScheduling
+	 */
+	protected $scheduling = null;
 	/**
 	 * @var string
 	 */
@@ -788,10 +880,28 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * this should only be called on scheduled events
+	 *
+	 * @return DateTime
+	 */
+	public function getEnd() {
+		return $this->end;
+	}
+
+
+	/**
+	 * @param $end
+	 */
+	public function setEnd($end) {
+		$this->end = $end instanceof DateTime ? $end : new DateTime($end);;
+	}
+
+
+	/**
 	 * @param DateTime $start
 	 */
 	public function setStart($start) {
-		$this->start = $start;
+		$this->start = $start instanceof DateTime ? $start : new DateTime($start);
 	}
 
 	/**
@@ -899,6 +1009,24 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 *
+	 */
+	public function getDurationArrayForInput() {
+		if (!$this->getDuration()) {
+			return 0;
+		}
+		$seconds = floor($this->getDuration() / 1000);
+		$minutes = floor($seconds / 60);
+		$hours = floor($minutes / 60);
+
+		return array (
+			'hh' => $hours,
+			'mm' => $minutes % 60,
+			'ss' => $seconds % 60
+		);
+	}
+
+	/**
 	 * @param int $duration
 	 */
 	public function setDuration($duration) {
@@ -939,7 +1067,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @return Array
+	 * @return String
 	 */
 	public function getPresenter() {
 		return $this->presenter;
@@ -947,10 +1075,14 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @param Array $presenter
+	 * @param String $presenter
 	 */
 	public function setPresenter($presenter) {
 		$this->presenter = $presenter;
+	}
+
+	public function setPresenters($presenter) {
+		$this->setPresenter($presenter);
 	}
 
 
@@ -1106,6 +1238,26 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @return xoctScheduling
+	 */
+	public function getScheduling() {
+		if (!$this->scheduling) {
+			$this->loadScheduling();
+		}
+		return $this->scheduling;
+	}
+
+
+	/**
+	 * @param xoctScheduling $scheduling
+	 */
+	public function setScheduling($scheduling) {
+		$this->scheduling = $scheduling;
+	}
+
+
+
+	/**
 	 * @return string
 	 */
 	public function getSeriesIdentifier() {
@@ -1159,15 +1311,16 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	protected function updateMetadataFromFields() {
+	/**
+	 *
+	 */
+	protected function updateMetadataFromFields($scheduled) {
 		$title = $this->getMetadata()->getField('title');
 		$title->setValue($this->getTitle());
 
 		$description = $this->getMetadata()->getField('description');
 		$description->setValue($this->getDescription());
 
-		$location = $this->getMetadata()->getField('location');
-		$location->setValue($this->getLocation());
 
 		$subjects = $this->getMetadata()->getField('subjects');
 		$subjects->setValue(array());
@@ -1175,19 +1328,36 @@ class xoctEvent extends xoctObject {
 		$is_part_of = $this->getMetadata()->getField('isPartOf');
 		$is_part_of->setValue($this->getSeriesIdentifier());
 
-		$start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
-
-		$startDate = $this->getMetadata()->getField('startDate');
-		$startDate->setValue($start->format('Y-m-d'));
-
-		$startTime = $this->getMetadata()->getField('startTime');
-		$startTime->setValue($start->format('H:i'));
 
 		$source = $this->getMetadata()->getField('source');
 		$source->setValue($this->getSource());
 
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
+
+		if (!$scheduled) { // TODO: check if this data has to be sent with scheduled events
+			$location = $this->getMetadata()->getField('location');
+			$location->setValue($this->getLocation());
+
+			$start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
+
+			$startDate = $this->getMetadata()->getField('startDate');
+			$startDate->setValue($start->format('Y-m-d'));
+
+			$startTime = $this->getMetadata()->getField('startTime');
+			$startTime->setValue($start->format('H:i'));
+		}
+
+	}
+
+
+	/**
+	 *
+	 */
+	protected function updateSchedulingFromFields() {
+		$this->getScheduling()->setEnd($this->getEnd());
+		$this->getScheduling()->setStart($this->getStart());
+		$this->getScheduling()->setAgentId($this->getLocation());
 	}
 
 
@@ -1271,6 +1441,9 @@ class xoctEvent extends xoctObject {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initAdditions() {
 		if ($this->xoctEventAdditions instanceof xoctEventAdditions) {
 			return;
@@ -1281,5 +1454,13 @@ class xoctEvent extends xoctObject {
 			$xoctEventAdditions->setId($this->getIdentifier());
 		}
 		$this->setXoctEventAdditions($xoctEventAdditions);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isScheduled() {
+		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE));
 	}
 }

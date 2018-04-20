@@ -261,13 +261,13 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_CHANNEL_TYPE             => self::EXISTING_NO,
 			self::F_TITLE                    => $this->series->getTitle(),
 			self::F_DESCRIPTION              => $this->series->getDescription(),
-			self::F_INTRODUCTION_TEXT        => $this->cast->getIntroText(),
+			self::F_INTRODUCTION_TEXT        => $this->cast->getIntroductionText(),
 			self::F_LICENSE                  => $this->series->getLicense(),
 			self::F_USE_ANNOTATIONS          => $this->cast->getUseAnnotations(),
 			self::F_STREAMING_ONLY           => $this->cast->getStreamingOnly(),
 			self::F_PERMISSION_PER_CLIP      => $this->cast->getPermissionPerClip(),
 			self::F_PERMISSION_ALLOW_SET_OWN => $this->cast->getPermissionAllowSetOwn(),
-			self::F_OBJ_ONLINE               => $this->cast->isObjOnline(),
+			self::F_OBJ_ONLINE               => $this->cast->isOnline(),
 			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
 			self::F_PERMISSION_TEMPLATE      => $this->series->getPermissionTemplateId(),
 		);
@@ -298,12 +298,12 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->series->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->series->setLicense($this->getInput(self::F_LICENSE));
 
-		$this->cast->setIntroText($this->getInput(self::F_INTRODUCTION_TEXT));
+		$this->cast->setIntroductionText($this->getInput(self::F_INTRODUCTION_TEXT));
 		$this->cast->setUseAnnotations($this->getInput(self::F_USE_ANNOTATIONS));
 		$this->cast->setStreamingOnly($this->getInput(self::F_STREAMING_ONLY));
 		$this->cast->setPermissionPerClip($this->getInput(self::F_PERMISSION_PER_CLIP));
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
-		$this->cast->setObjOnline($this->getInput(self::F_OBJ_ONLINE));
+		$this->cast->setOnline($this->getInput(self::F_OBJ_ONLINE));
 		$this->cast->setAgreementAccepted(true);
 
 		return true;

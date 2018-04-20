@@ -295,28 +295,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 
 		// set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
-		$producers = array();
-		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($newObj->getRefId())) {
+		$producers = ilObjOpenCastAccess::getProducersForRefID($newObj->getRefId());
+		$producers[] = xoctUser::getInstance($ilUser);
 
-			//check each role (admin,tutor,member) for perm edit_videos, add to series and producer group
-			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
-			foreach ($roles as $role) {
-				if (ilObjOpenCastAccess::isActionAllowedForRole('edit_videos', $role, $newObj->getRefId())) {
-					$getter_method = "getDefault{$role}Role";
-					$role_id = $crs_or_grp_obj->$getter_method();
-					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
-						$producers[] = xoctUser::getInstance($participant_id);
-					}
-				}
-			}
-		}
-		$cast->getSeries()->addProducers($producers);
 		try {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMembers($producers);
 		} catch (xoctException $e) {
 			//TODO log?
 		}
+		$cast->getSeries()->addProducers($producers);
 
 		if ($cast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
@@ -364,7 +352,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
-			if (!$xoctOpenCast->isObjOnline()) {
+			if (!$xoctOpenCast->isOnline()) {
 				$this->tpl->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {
