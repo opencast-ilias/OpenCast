@@ -44,6 +44,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 //			'2018-06-01T14:30:00Z',
 //			'test_sven'
 //		);
+//		xoctInternalAPI::getInstance()->series()->delete(168, false);
+//		xoctInternalAPI::getInstance()->series()->delete(169, false);
+//		xoctInternalAPI::getInstance()->series()->delete(170, false);
 //		xoctInternalAPI::getInstance()->series()->update(
 //			171,array(
 //				'online' => false,
@@ -52,6 +55,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 //				'permission_per_clip' => true
 //			)
 //		);
+//		xoctInternalAPI::getInstance()->events()->create('8919734f-9c56-454f-8025-4604c3cca87b', 'TT: event via internal API2', new DateTime('2018-06-01 09:00:00'), new DateTime('2018-06-01 09:30:00'), 'test_sven');
 //		exit;
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
@@ -254,28 +258,28 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-		$te->setRteTags(array(
-			'p',
-			'a',
-			'br',
-		));
-		$te->usePurifier(true);
-		$te->disableButtons(array(
-			'charmap',
-			'undo',
-			'redo',
-			'justifyleft',
-			'justifycenter',
-			'justifyright',
-			'justifyfull',
-			'anchor',
-			'fullscreen',
-			'cut',
-			'copy',
-			'paste',
-			'pastetext',
-			'formatselect',
-		));
+//		$te->setRteTags(array(
+//			'p',
+//			'a',
+//			'br',
+//		));
+//		$te->usePurifier(true);
+//		$te->disableButtons(array(
+//			'charmap',
+//			'undo',
+//			'redo',
+//			'justifyleft',
+//			'justifycenter',
+//			'justifyright',
+//			'justifyfull',
+//			'anchor',
+//			'fullscreen',
+//			'cut',
+//			'copy',
+//			'paste',
+//			'pastetext',
+//			'formatselect',
+//		));
 
 		$te->setRows(5);
 		$this->addItem($te);
@@ -286,29 +290,29 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
 		$te->setRequired(true);
-		//		$te->setUseRte(true);
-		////		$te->setRteTags(array(
-		////			'p',
-		////			'a',
-		////			'br',
-		////		));
-		//		$te->usePurifier(true);
-		//		$te->disableButtons(array(
-		//			'charmap',
-		//			'undo',
-		//			'redo',
-		//			'justifyleft',
-		//			'justifycenter',
-		//			'justifyright',
-		//			'justifyfull',
-		//			'anchor',
-		//			'fullscreen',
-		//			'cut',
-		//			'copy',
-		//			'paste',
-		//			'pastetext',
-		//			'formatselect',
+		$te->setUseRte(true);
+		//		$te->setRteTags(array(
+		//			'p',
+		//			'a',
+		//			'br',
 		//		));
+//		$te->usePurifier(true);
+//		$te->disableButtons(array(
+//			'charmap',
+//			'undo',
+//			'redo',
+//			'justifyleft',
+//			'justifycenter',
+//			'justifyright',
+//			'justifyfull',
+//			'anchor',
+//			'fullscreen',
+//			'cut',
+//			'copy',
+//			'paste',
+//			'pastetext',
+//			'formatselect',
+//		));
 
 		$te->setRows(5);
 		$this->addItem($te);
@@ -327,6 +331,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_TEXT . '_info'));
 		$te->setRequired(true);
 		$te->setRows(8);
+		$te->setUseRte(1);
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS), xoctConf::F_REPORT_QUALITY_ACCESS);
@@ -351,6 +356,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT . '_info'));
 		$te->setRequired(true);
 		$te->setRows(8);
+		$te->setUseRte(1);
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE), xoctConf::F_SCHEDULED_METADATA_EDITABLE);

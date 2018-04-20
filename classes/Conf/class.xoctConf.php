@@ -54,9 +54,9 @@ class xoctConf extends ActiveRecord {
 	const F_REPORT_DATE_TEXT = 'report_date_text';
 
 	const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
-	const ALL_METADATA = 0;
-	const METADATA_EXCEPT_DATE_PLACE = 1;
-	const NO_METADATA = 2;
+	const NO_METADATA = 0;
+	const ALL_METADATA = 1;
+	const METADATA_EXCEPT_DATE_PLACE = 2;
 
 
 	/**

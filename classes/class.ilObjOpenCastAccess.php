@@ -361,6 +361,33 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	/**
+	 * returns array of xoctUsers who have the permission 'edit_videos' in this context
+	 *
+	 * @param $ref_id
+	 *
+	 * @return xoctUser[]
+	 */
+	public static function getProducersForRefID($ref_id) {
+		global $rbacreview;
+		$producers = [];
+		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+			//check each role (admin,tutor,member) for perm edit_videos, add to producers
+			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
+			foreach ($roles as $role) {
+				if (self::isActionAllowedForRole('edit_videos', $role, $ref_id)) {
+					$getter_method = "getDefault{$role}Role";
+					$role_id = $crs_or_grp_obj->$getter_method();
+					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
+						$producers[] = xoctUser::getInstance($participant_id);
+					}
+				}
+			}
+		}
+		return $producers;
+	}
+
+
+	/**
 	 * used at object creation
 	 *
 	 * @param $ref_id

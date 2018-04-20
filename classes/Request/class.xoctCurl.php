@@ -124,6 +124,9 @@ class xoctCurl {
 				case 404:
 					throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig);
 					break;
+				case 409:
+					throw new xoctException(xoctException::API_CALL_STATUS_409, $resp_orig);
+					break;
 				default:
 					throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
 					break;

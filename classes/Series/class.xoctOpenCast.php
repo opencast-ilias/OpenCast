@@ -138,6 +138,14 @@ class xoctOpenCast extends ActiveRecord {
 
 
 	/**
+	 * @return ilObjOpenCast
+	 */
+	public function getILIASObject() {
+		return new ilObjOpenCast($this->getObjId());
+	}
+
+
+	/**
 	 * @var
 	 *
 	 * @con_has_field  true
@@ -212,7 +220,6 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $obj_online = false;
-
 
 	/**
 	 * @return int

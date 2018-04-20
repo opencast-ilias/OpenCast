@@ -46,6 +46,7 @@ class xoctSeriesAPI {
 	/**
 	 * possible additional data:
 	 *
+	 *  owner => integer
 	 *  series_id => text
 	 *  description => text
 	 *  online => boolean
@@ -62,7 +63,7 @@ class xoctSeriesAPI {
 	 * @param       $title
 	 * @param array $additional_data
 	 *
-	 * @return ilObjOpencast
+	 * @return xoctOpenCast
 	 * @throws xoctInternalApiException
 	 */
 	public function create($parent_ref_id, $title, $additional_data = array()) {
@@ -100,6 +101,9 @@ class xoctSeriesAPI {
 		$cast->setSeriesIdentifier($series->getIdentifier());
 
 		$object = new ilObjOpenCast();
+		if (isset($additional_data['owner'])) {
+			$object->setOwner($additional_data['owner']);
+		}
 		$object->setTitle($title);
 		$object->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
 		$object->create();
@@ -109,24 +113,51 @@ class xoctSeriesAPI {
 		$cast->create();
 
 		$object->putInTree($parent_ref_id);
+
+		// add producers
+		$producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
+		if (isset($additional_data['owner'])) {
+			$producers[] = xoctUser::getInstance($additional_data['owner']);
+		}
+
+		try {
+			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers->addMembers($producers);
+		} catch (xoctException $e) {
+			//TODO log?
+		}
+		$cast->getSeries()->addProducers($producers);
+
+		//member upload
+		if (isset($additional_data['member_upload'])) {
+			ilObjOpenCastAccess::activateMemberUpload($object->getRefId());
+		}
+
+		return $cast;
 	}
 
 
 	/**
 	 * @param $ref_id
 	 *
-	 * @return ilObjOpencast
+	 * @return xoctOpenCast
 	 */
 	public function read($ref_id) {
-
+		/** @var xoctOpenCast $cast */
+		$cast = xoctOpenCast::find(ilObjOpenCast::_lookupObjectId($ref_id));
+		return $cast;
 	}
 
 
 	/**
-	 * @param $ref_id
+	 * @param      $ref_id
+	 * @param bool $delete_opencast_series
 	 */
-	public function delete($ref_id) {
+	public function delete($ref_id, $delete_opencast_series) {
 		$object = new ilObjOpenCast($ref_id);
+		if ($delete_opencast_series) {
+			xoctOpenCast::find($object->getId())->getSeries()->delete();
+		}
 		$object->delete();
 	}
 
@@ -142,12 +173,13 @@ class xoctSeriesAPI {
 	 *  use_annotations => boolean
 	 *  streaming_only => boolean
 	 *  permission_per_clip => boolean
+	 *  permission_allow_set_own => boolean
 	 *  member_upload => boolean
 	 *
 	 * @param $ref_id
 	 * @param $data
 	 *
-	 * @return bool
+	 * @return xoctOpenCast
 	 */
 	public function update($ref_id, $data) {
 		$object = new ilObjOpenCast($ref_id);
@@ -155,30 +187,37 @@ class xoctSeriesAPI {
 		$cast = xoctOpenCast::where(array('obj_id' => $object->getId()))->first();
 		$series = $cast->getSeries();
 
-		$update_offline = $update_online = false;
+		$update_ilias_data = $update_opencast_data = false;
 
-		foreach (array('online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'member_upload') as $field) {
+		// ilias data
+		foreach (array('online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'permission_allow_set_own') as $field) {
 			if (isset($data[$field])) {
 				$setter = 'set' . str_replace('_', '', $field);
 				$cast->$setter($data[$field]);
-				$update_offline = true;
+				$update_ilias_data = true;
 			}
 		}
-		if ($update_offline) {
+		if ($update_ilias_data) {
 			$cast->update();
 		}
 
+		// opencast data
 		foreach (array('title', 'description') as $field) {
 			if (isset($data[$field])) {
 				$setter = 'set' . str_replace('_', '', $field);
 				$series->$setter($data[$field]);
-				$update_online = true;
+				$update_opencast_data = true;
 			}
 		}
-		if ($update_online) {
+		if ($update_opencast_data) {
 			$series->update();
 		}
 
-		return true;
+		//member upload
+		if (isset($additional_data['member_upload'])) {
+			ilObjOpenCastAccess::activateMemberUpload($object->getRefId());
+		}
+
+		return $cast;
 	}
 }
