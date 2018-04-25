@@ -86,9 +86,9 @@ config_report_date_email_info#:#Adresse, an welche die Meldung der Anpassung ges
 config_report_date_text#:#Info-Text
 config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
-config_scheduled_metadata_editable_0#:#Ja
-config_scheduled_metadata_editable_1#:#Alle, außer Datum und Aufnahmestation
-config_scheduled_metadata_editable_2#:#Nein
+config_scheduled_metadata_editable_0#:#Nein
+config_scheduled_metadata_editable_1#:#Ja
+config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren

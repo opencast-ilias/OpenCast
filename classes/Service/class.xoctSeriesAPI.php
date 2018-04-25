@@ -47,6 +47,7 @@ class xoctSeriesAPI {
 	 * possible additional data:
 	 *
 	 *  owner => integer
+	 *  permission_template_id => integer
 	 *  series_id => text
 	 *  description => text
 	 *  online => boolean
@@ -91,7 +92,14 @@ class xoctSeriesAPI {
 		$series->setLicense(isset($additional_data['license']) ? $additional_data['license'] : '');
 
 		$std_acls = new xoctAclStandardSets();
-		$series->setAccessPolicies($std_acls->getAcls());
+		$series_acls = $std_acls->getAcls();
+		if (isset($additional_data['permission_template_id'])) {
+			xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
+			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
+			$xoctPermissionTemplate = xoctPermissionTemplate::find($additional_data['permission_template_id']);
+			$xoctPermissionTemplate->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
+		}
+		$series->setAccessPolicies($series_acls);
 
 		if ($series->getIdentifier()) {
 			$series->update();

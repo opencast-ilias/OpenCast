@@ -65,6 +65,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
@@ -91,12 +94,18 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initButtons() {
 		$this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
 		$this->addCommandButton(xoctConfGUI::CMD_CANCEL, $this->parent_gui->txt(xoctConfGUI::CMD_CANCEL));
 	}
 
 
+	/**
+	 *
+	 */
 	public function fillForm() {
 		$array = array();
 		foreach ($this->getItems() as $item) {
@@ -177,6 +186,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initAPISection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('curl'));
@@ -209,21 +221,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initGeneralSection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('general'));
 		$this->addItem($h);
-
-		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL . '_info'));
-		$te->setOptions(array(
-			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
-			xoctLog::DEBUG_LEVEL_1 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
-			xoctLog::DEBUG_LEVEL_2 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_2),
-			xoctLog::DEBUG_LEVEL_3 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
-			xoctLog::DEBUG_LEVEL_4 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
-		));
-		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED), xoctConf::F_AUDIO_ALLOWED);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
@@ -359,9 +363,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE), xoctConf::F_SCHEDULED_METADATA_EDITABLE);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::ALL_METADATA), xoctConf::ALL_METADATA);
-		$ri->addOption($ro);
 		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::NO_METADATA), xoctConf::NO_METADATA);
+		$ri->addOption($ro);
+		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::ALL_METADATA), xoctConf::ALL_METADATA);
 		$ri->addOption($ro);
 		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::METADATA_EXCEPT_DATE_PLACE), xoctConf::METADATA_EXCEPT_DATE_PLACE);
 		$ri->addOption($ro);
@@ -370,6 +374,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initGroupsRolesSection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('groups'));
@@ -407,6 +414,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initSecuritySection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('security'));
@@ -427,10 +437,24 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initAdvancedSection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('advanced'));
 		$this->addItem($h);
+
+		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL . '_info'));
+		$te->setOptions(array(
+			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
+			xoctLog::DEBUG_LEVEL_1 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
+			xoctLog::DEBUG_LEVEL_2 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_2),
+			xoctLog::DEBUG_LEVEL_3 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
+			xoctLog::DEBUG_LEVEL_4 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
+		));
+		$this->addItem($te);
 
 		$cb = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_REQUEST_COMBINATION_LEVEL), xoctConf::F_REQUEST_COMBINATION_LEVEL);
 		$cb->setOptions(array(

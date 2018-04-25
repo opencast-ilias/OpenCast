@@ -34,17 +34,6 @@ class xoctMainGUI extends xoctGUI {
 		$this->tabs->addTab(self::TAB_PERMISSION_TEMPLATES, $this->pl->txt('tab_' . self::TAB_PERMISSION_TEMPLATES), $this->ctrl->getLinkTarget(new xoctPermissionTemplateGUI()));
 		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
 
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
-		$this->tabs->addSubTab(self::SUBTAB_API, $this->pl->txt('subtab_' . self::SUBTAB_API), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GENERAL);
-		$this->tabs->addSubTab(self::SUBTAB_GENERAL, $this->pl->txt('subtab_' . self::SUBTAB_GENERAL), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
-		$this->tabs->addSubTab(self::SUBTAB_GROUPS_ROLES, $this->pl->txt('subtab_' . self::SUBTAB_GROUPS_ROLES), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);
-		$this->tabs->addSubTab(self::SUBTAB_SECURITY, $this->pl->txt('subtab_' . self::SUBTAB_SECURITY), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
-		$this->tabs->addSubTab(self::SUBTAB_ADVANCED, $this->pl->txt('subtab_' . self::SUBTAB_ADVANCED), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->clearParametersByClass(xoctConfGUI::class);
 
 		switch ($nextClass) {
 			case 'xoctpublicationusagegui':
@@ -64,10 +53,25 @@ class xoctMainGUI extends xoctGUI {
 				break;
 			default:
 				$this->tabs->activateTab(self::TAB_SETTINGS);
+				$this->setSubTabs();
 				$xoctConfGUI = new xoctConfGUI();
 				$this->ctrl->forwardCommand($xoctConfGUI);
 				break;
 		}
+	}
+
+	protected function setSubTabs() {
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
+		$this->tabs->addSubTab(self::SUBTAB_API, $this->pl->txt('subtab_' . self::SUBTAB_API), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GENERAL);
+		$this->tabs->addSubTab(self::SUBTAB_GENERAL, $this->pl->txt('subtab_' . self::SUBTAB_GENERAL), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
+		$this->tabs->addSubTab(self::SUBTAB_GROUPS_ROLES, $this->pl->txt('subtab_' . self::SUBTAB_GROUPS_ROLES), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);
+		$this->tabs->addSubTab(self::SUBTAB_SECURITY, $this->pl->txt('subtab_' . self::SUBTAB_SECURITY), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
+		$this->tabs->addSubTab(self::SUBTAB_ADVANCED, $this->pl->txt('subtab_' . self::SUBTAB_ADVANCED), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->clearParametersByClass(xoctConfGUI::class);
 	}
 
 
