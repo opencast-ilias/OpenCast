@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctPublicationUsage
  *
@@ -6,6 +7,7 @@
  */
 class xoctPublicationUsage extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_publication_usage';
 	const USAGE_ANNOTATE = 'annotate';
 	const USAGE_PLAYER = 'player';
 	const USAGE_API = 'api';
@@ -33,6 +35,23 @@ class xoctPublicationUsage extends ActiveRecord {
 
 
 	/**
+	 * @return string
+	 * @deprecated
+	 */
+	static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
 	 * @param $usage
 	 *
 	 * @return xoctPublicationUsage
@@ -49,16 +68,6 @@ class xoctPublicationUsage extends ActiveRecord {
 		$missing = array_diff(self::$usage_ids, self::getArray(NULL, 'usage_id'));
 
 		return $missing;
-	}
-
-
-	/**
-	 * @return string
-	 * @description Return the Name of your Database Table
-	 * @deprecated
-	 */
-	static function returnDbTableName() {
-		return 'xoct_publication_usage';
 	}
 
 

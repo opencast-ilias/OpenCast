@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctConf
  *
@@ -6,6 +7,7 @@
  */
 class xoctConf extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_config';
 	const CONFIG_VERSION = 1;
 	const F_CONFIG_VERSION = 'config_version';
 	const F_USE_MODALS = 'use_modals';
@@ -40,24 +42,19 @@ class xoctConf extends ActiveRecord {
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
 	const F_AUDIO_ALLOWED = 'audio_allowed';
-
 	const F_REPORT_QUALITY = 'report_quality';
 	const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
 	const F_REPORT_QUALITY_TEXT = 'report_quality_text';
 	const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
 	const ACCESS_ALL = 1;
 	const ACCESS_OWNER_ADMIN = 2;
-
 	const F_REPORT_DATE = 'report_date';
 	const F_REPORT_DATE_EMAIL = 'report_date_email';
 	const F_REPORT_DATE_TEXT = 'report_date_text';
-
 	const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
 	const NO_METADATA = 0;
 	const ALL_METADATA = 1;
 	const METADATA_EXCEPT_DATE_PLACE = 2;
-
-
 	/**
 	 * @var array
 	 */
@@ -74,6 +71,23 @@ class xoctConf extends ActiveRecord {
 	);
 
 
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
 	public static function setApiSettings() {
 		// CURL
 		$xoctCurlSettings = new xoctCurlSettings();
@@ -84,7 +98,7 @@ class xoctConf extends ActiveRecord {
 		xoctCurl::init($xoctCurlSettings);
 
 		//CACHE
-//		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
+		//		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
 		//		xoctCache::setOverrideActive(true);
 
 		// API
@@ -120,16 +134,6 @@ class xoctConf extends ActiveRecord {
 
 		// META DATA
 		xoctEvent::$NO_METADATA = self::getConfig(self::F_NO_METADATA);
-	}
-
-
-	/**
-	 * @return string
-	 * @description Return the Name of your Database Table
-	 * @deprecated
-	 */
-	static function returnDbTableName() {
-		return 'xoct_config';
 	}
 
 

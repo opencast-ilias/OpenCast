@@ -8,12 +8,25 @@
  */
 class xoctPermissionTemplate extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_perm_template';
+
+
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
 	/**
 	 * @return string
 	 */
-	public static function returnDbTableName() {
-		return 'xoct_perm_template';
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
 	}
+
 
 	/**
 	 * @var int
@@ -138,12 +151,13 @@ class xoctPermissionTemplate extends ActiveRecord {
 		/** @var xoctPermissionTemplate $perm_tpl */
 		foreach (self::get() as $perm_tpl) {
 			$acl = $acls_formatted[$perm_tpl->getRole()];
-			if ($acl && (isset($acl[xoctAcl::READ]) == (bool) $perm_tpl->getRead()) && (isset($acl[xoctAcl::WRITE]) == (bool) $perm_tpl->getWrite())) {
+			if ($acl && (isset($acl[xoctAcl::READ]) == (bool)$perm_tpl->getRead()) && (isset($acl[xoctAcl::WRITE]) == (bool)$perm_tpl->getWrite())) {
 				foreach (explode(',', $perm_tpl->getAdditionalAclActions()) as $action) {
 					if (!$acl[trim($action)]) {
 						continue 2;
 					}
 				}
+
 				return $perm_tpl;
 			}
 		}
@@ -223,8 +237,10 @@ class xoctPermissionTemplate extends ActiveRecord {
 		$acl->setRole($this->getRole());
 		$acl->setAction($action);
 		$acl->setAllow(true);
+
 		return $acl;
 	}
+
 
 	/**
 	 * @return int
@@ -384,5 +400,4 @@ class xoctPermissionTemplate extends ActiveRecord {
 	public function setSort($sort) {
 		$this->sort = $sort;
 	}
-
 }

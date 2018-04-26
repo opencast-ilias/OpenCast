@@ -7,7 +7,7 @@
  */
 class xoctCache extends ilGlobalCache {
 
-	const COMP_OPENCAST = 'xoct';
+	const COMP_OPENCAST = ilOpenCastPlugin::PLUGIN_ID;
 	/**
 	 * @var bool
 	 */

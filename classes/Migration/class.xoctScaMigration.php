@@ -305,7 +305,7 @@ class xoctScaMigration {
 		while ($rec = $this->db->fetchAssoc($sql)) {
 			$this->db->insert('rbac_templates', array(
 				'rol_id' => array('integer', $rec['rol_id']),
-				'type' => array('text', 'xoct'),
+				'type' => array('text', ilOpenCastPlugin::PLUGIN_ID),
 				'ops_id' => array('integer', $rec['ops_id']),
 				'parent' => array('integer', $rec['parent']),
 			));

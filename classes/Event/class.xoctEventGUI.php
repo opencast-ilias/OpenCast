@@ -686,7 +686,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function reportDate() {
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$message = $_POST['message'];
-			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
 				true);
 			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 			$mail = new ilMimeMail();
@@ -710,7 +710,7 @@ class xoctEventGUI extends xoctGUI {
 			$event_id = $_POST['event_id'];
 			$event = new xoctEvent($event_id);
 			$event_title = $event->getTitle();
-			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
 				true);
 			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 

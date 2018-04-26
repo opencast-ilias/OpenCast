@@ -8,12 +8,15 @@
  */
 class xoctOpenCast extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_data';
+
+
 	/**
 	 * @return string
 	 * @deprecated
 	 */
 	static function returnDbTableName() {
-		return 'xoct_data';
+		return self::TABLE_NAME;
 	}
 
 
@@ -21,7 +24,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @return string
 	 */
 	public function getConnectorContainerName() {
-		return 'xoct_data';
+		return self::TABLE_NAME;
 	}
 
 
@@ -38,6 +41,7 @@ class xoctOpenCast extends ActiveRecord {
 
 		return false;
 	}
+
 
 	/**
 	 * @param $obj_id
@@ -87,8 +91,9 @@ class xoctOpenCast extends ActiveRecord {
 		xoctDataMapper::xoctOpenCastupdated($this);
 	}
 
+
 	public function delete() {
-		foreach (xoctIVTGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
+		foreach (xoctIVTGroup::where(array( 'serie_id' => $this->obj_id ))->get() as $ivt_group) {
 			$ivt_group->delete();
 		}
 		parent::delete();
@@ -98,10 +103,8 @@ class xoctOpenCast extends ActiveRecord {
 	/**
 	 * @return bool | int[]
 	 */
-	public function getDuplicatesOnSystem()
-	{
-		if (!$this->getObjId() || !$this->getSeriesIdentifier())
-		{
+	public function getDuplicatesOnSystem() {
+		if (!$this->getObjId() || !$this->getSeriesIdentifier()) {
 			return false;
 		}
 
@@ -117,8 +120,7 @@ class xoctOpenCast extends ActiveRecord {
 			if ($oc->getObjId() != $this->getObjId()) {
 				global $ilDB;
 
-				$query = "SELECT deleted, ref_id FROM object_reference".
-					" WHERE obj_id = ".$ilDB->quote($oc->getObjId(), "integer");
+				$query = "SELECT deleted, ref_id FROM object_reference" . " WHERE obj_id = " . $ilDB->quote($oc->getObjId(), "integer");
 				$set = $ilDB->query($query);
 				$rec = $ilDB->fetchAssoc($set);
 
@@ -219,6 +221,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $obj_online = false;
+
 
 	/**
 	 * @return int
@@ -331,6 +334,7 @@ class xoctOpenCast extends ActiveRecord {
 		$this->obj_online = $obj_online;
 	}
 
+
 	/**
 	 * @return string
 	 */
@@ -361,7 +365,6 @@ class xoctOpenCast extends ActiveRecord {
 	public function setPermissionAllowSetOwn($permission_allow_set_own) {
 		$this->permission_allow_set_own = $permission_allow_set_own;
 	}
-
 }
 
 ?>
