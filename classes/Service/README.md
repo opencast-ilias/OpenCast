@@ -1,19 +1,19 @@
-#Internal API
+# Internal API
 
-##Description
+## Description
 The internal API contains CRUD-Methods (create, read, update, delete) for opencast events and series/objects. It aims to offer a simple way to 
 interact with Opencast objects, without knowing much about their structure or which fields are stored in ILIAS and which in Opencast.
 
-##Usage
-###Basic
+## Usage
+### Basic
 Every call starts either with a `xoctInternalAPI::getInstance()->series()` or with a `xoctInternalAPI::getInstance()->events()` depending on which kind of objects should be handled. 
 
 These calls return instances of the classes `xoctSeriesAPI` or `xoctEventAPI`, respectively, but: never call these classes directly! The function `xoctInternalAPI::getInstance()` initializes the API settings needed to interact with the Opencast API.
 
-##Series
+## Series
 The SeriesAPI always handles both, the ILIAS object and the Opencast series and decides on it's own which data has to be changed where. However, the ILIAS reference ID is required as an identifier to find the objects and not the Opencast series ID, since multiple ILIAS objects can reference one Opencast series.
 
-####create
+#### create
 *Parameters*: 
 * $parent_ref_id (integer): ILIAS reference ID of the container in which the series should be created. If this id does not belong to a container, or the container is not a course/group or a subobject of such, an exception will be thrown.
 * $title (String): This will be the title of the series, in ILIAS as well as in Opencast.
@@ -42,7 +42,7 @@ Create a series with a few options in parent directory with reference id 83 and 
 `$series_id = $xoctOpencast->getSeries()->getIdentifier();`
 `$ref_id = $xoctOpencast->getILIASObject()->getRefID();`
 
-####read
+#### read
 *Parameters*:
 * $ref_id (integer): Reference ID of the ILIAS object to be read.
 
@@ -56,7 +56,7 @@ An object of type *xoctOpenCast*. The *xoctOpenCast* object contains metadata of
 `$use_annotations = $xoctOpencast->getUseAnnotations();`\
 `$series_id = $xoctOpencast->getSeries()->getIdentifier();`
 
-####update
+#### update
 
 *Parameters*: 
 * $ref_id (integer): Reference ID of the ILIAS object to be updated
@@ -84,7 +84,7 @@ Set object with ref_id 172 online:\
 Change title and description of object with ref_id 183:\
 `xoctInternalAPI::getInstance()->series()->update(183, array('title' => 'Lectures 01', 'description' => 'Lecture Recordings'));`
 
-####delete
+#### delete
 
 *Parameters*:
 * $ref_id (integer): reference ID of the ILIAS object to be deleted.
@@ -99,12 +99,12 @@ None. If the object is not found, an exception is thrown.
 Delete object with ref_id 183 including opencast series:\
 `xoctInternalAPI::getInstance()->series()->delete(183, true);`
 
-##Events
+## Events
 Since no information about an event is stored in ILIAS (except for online/offline), the events do not have something like an ILIAS ID. Therefore, the identifier used for the following actions is the Opencast unique event identifier.
 
 All data is stored in Opencast, except for an online/offline flag.
 
-####create
+#### create
 This method only creates single scheduled events.
 
 *Parameters*
@@ -129,7 +129,7 @@ If no exception is thrown, the event was created successfully and an object of t
 `xoctInternalAPI::getInstance()->events()->create('8919734f-9c56-454f-8025-4604c3cca87b', 'Lecture 07', $start, $end, 'building_A_room_01', $additional_data);`
 
 
-####read
+#### read
 *Parameters*:
 * event_id (String): Opencast unique event identifier
 
@@ -144,7 +144,7 @@ Object of type xoctEvent.
 `$series_id = $xoctEvent->getSeriesIdentifier();`
 
 
-####update
+#### update
 *Parameters*:
 * event_id (String): Opencast unique event identifier
 * data (array): List of fields to be updated. Every field is optional. The following fields are accepted:
@@ -169,7 +169,7 @@ Change start and end date:\
 `$end = new DateTime('2018-06-02 16:30:00');`\
 `$xoctEvent = xoctInternalAPI::getInstance()->events()->update('8192f3-2183cb-123l', array('start' => $start, 'end' => $end));`
 
-####delete
+#### delete
 *Parameters*
 * event_id (String): Opencast unique event identifier
 
