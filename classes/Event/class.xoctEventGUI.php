@@ -364,7 +364,8 @@ class xoctEventGUI extends xoctGUI {
 			return (strpos($media->getMediatype(), 'video') !== false);
 		}));
 
-		$streams = array_map(function ($media) use ($xoctEvent) {
+		$duration = 0;
+		$streams = array_map(function ($media) use ($xoctEvent, &$duration) {
 			/**
 			 * @var xoctMedia $media
 			 */
@@ -372,6 +373,10 @@ class xoctEventGUI extends xoctGUI {
 			$url = $media->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 				$url = xoctSecureLink::sign($url);
+			}
+
+			if ($duration == 0) {
+				$duration = $media->getDuration();
 			}
 
 			return [
@@ -401,7 +406,7 @@ class xoctEventGUI extends xoctGUI {
 			"streams" => $streams,
 			"frameList" => [
 				[
-					"id" => "thubbnail",
+					"id" => "thumbnail",
 					"mimetype" => "image/png",
 					"time" => 0,
 					"url" => $xoctEvent->getThumbnailUrl(),
@@ -410,7 +415,7 @@ class xoctEventGUI extends xoctGUI {
 			],
 			"metadata" => [
 				"title" => $xoctEvent->getTitle(),
-				"duration" => 0
+				"duration" => $duration
 			]
 		];
 		$tpl->setVariable("DATA", json_encode($data));
