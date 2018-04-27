@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctEventGUI
  *
@@ -19,6 +20,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CUT = 'cut';
 	const CMD_REPORT_DATE = 'reportDate';
 	const CMD_REPORT_QUALITY = 'reportQuality';
+	const CMD_STREAM_VIDEO = 'streamVideo';
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -28,7 +30,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = null) {
+	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
 		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
@@ -139,6 +141,7 @@ class xoctEventGUI extends xoctGUI {
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
+
 			return;
 		}
 
@@ -234,7 +237,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 
-		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName()) : array());
+		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array( $xoctUser->getOwnerRoleName() ) : array());
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
 
 		if ($xoctEventFormGUI->saveObject()) {
@@ -347,7 +350,7 @@ class xoctEventGUI extends xoctGUI {
 		global $ilUser;
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		// check access
-		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent,xoctUser::getInstance($ilUser), $this->xoctOpenCast)) {
+		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, xoctUser::getInstance($ilUser), $this->xoctOpenCast)) {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
@@ -358,27 +361,62 @@ class xoctEventGUI extends xoctGUI {
 			$url = $media->getUrl();
 
 			// DELETE AFTER TESTING !!!!
-//			$url = str_replace("localhost",'10.0.2.2',$url);
+			//			$url = str_replace("localhost",'10.0.2.2',$url);
 			// DELETE AFTER TESTING !!!!
 
 			// find first media publication with video content
-			if (strpos($media->getMediatype(),'video') !== false) {
+			if (strpos($media->getMediatype(), 'video') !== false) {
 				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 					$url = xoctSecureLink::sign($url);
 				}
-				// set the necessary headers from the original url
+
+				$tpl = $this->pl->getTemplate("paella_player.html");
+
+				$tpl->setVariable("TITLE", $xoctEvent->getTitle());
+
+				$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
+
+				$data = [
+					"streams" => [
+						[
+							"sources" => [
+								explode("/", $media->getMediatype())[1] => [
+									[
+										"src" => $url,
+										"mimetype" => $media->getMediatype(),
+										"res" => [
+											"w" => $media->getSize(),
+											"h" => $media->getSize()
+										]
+									]
+								]
+							],
+							"preview" => $xoctEvent->getThumbnailUrl()
+						]
+					],
+					"frameList" => [],
+					"metadata" => [
+						"title" => $xoctEvent->getTitle(),
+						"duration" => $media->getDuration()
+					]
+				];
+				$tpl->setVariable("DATA", json_encode($data));
+
+				$tpl->show();
+
+				exit;
+				/*// set the necessary headers from the original url
 				$origin_headers = get_headers($url);
 				foreach ($origin_headers as $origin_header) {
-					if (strpos($origin_header,'Content-Length') !== false || strpos($origin_header,'Accept-Ranges') !== false) {
+					if (strpos($origin_header, 'Content-Length') !== false || strpos($origin_header, 'Accept-Ranges') !== false) {
 						header($origin_header);
 					}
 				}
 				header('Content-Type: ' . $media->getMediatype());
 				readfile($url);
-				exit;
+				exit;*/
 			}
 		}
-
 	}
 
 
@@ -451,7 +489,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, null, null);
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -484,7 +522,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, null, null);
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -675,7 +713,6 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality_html = $modal_quality->getHTML();
 		}
 
-
 		return $modal_date_html . $modal_quality_html;
 	}
 
@@ -686,8 +723,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function reportDate() {
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$message = $_POST['message'];
-			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
-				true);
+			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID, true);
 			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 			$mail = new ilMimeMail();
 			$mail->Subject('test');
@@ -710,8 +746,7 @@ class xoctEventGUI extends xoctGUI {
 			$event_id = $_POST['event_id'];
 			$event = new xoctEvent($event_id);
 			$event_title = $event->getTitle();
-			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
-				true);
+			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID, true);
 			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 
 			$mail = new ilMimeMail();
@@ -724,6 +759,7 @@ class xoctEventGUI extends xoctGUI {
 		ilUtil::sendSuccess($this->pl->txt('msg_quality_report_sent'), true);
 		$this->ctrl->redirect($this);
 	}
+
 
 	/**
 	 * @param $key
