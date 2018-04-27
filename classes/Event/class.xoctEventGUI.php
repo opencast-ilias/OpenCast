@@ -357,7 +357,68 @@ class xoctEventGUI extends xoctGUI {
 
 		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API));
 
-		foreach ($publication_metadata->getMedia() as $media) {
+		$medias = array_values(array_filter($publication_metadata->getMedia(), function ($media) {
+			/**
+			 * @var xoctMedia $media
+			 */
+			return (strpos($media->getMediatype(), 'video') !== false);
+		}));
+
+		$streams = array_map(function ($media) use ($xoctEvent) {
+			/**
+			 * @var xoctMedia $media
+			 */
+
+			$url = $media->getUrl();
+			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+				$url = xoctSecureLink::sign($url);
+			}
+
+			return [
+				"sources" => [
+					"mp4" => [
+						[
+							"src" => $url,
+							"mimetype" => $media->getMediatype(),
+							"res" => [
+								"w" => $media->getSize(),
+								"h" => $media->getSize()
+							]
+						]
+					]
+				],
+				"preview" => $xoctEvent->getThumbnailUrl()
+			];
+		}, $medias);
+
+		$tpl = $this->pl->getTemplate("paella_player.html");
+
+		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
+
+		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
+
+		$data = [
+			"streams" => $streams,
+			"frameList" => [
+				[
+					"id" => "thubbnail",
+					"mimetype" => "image/png",
+					"time" => 0,
+					"url" => $xoctEvent->getThumbnailUrl(),
+					"thumb" => $xoctEvent->getThumbnailUrl()
+				]
+			],
+			"metadata" => [
+				"title" => $xoctEvent->getTitle(),
+				"duration" => 0
+			]
+		];
+		$tpl->setVariable("DATA", json_encode($data));
+
+		$tpl->show();
+
+		exit;
+		/*foreach ($publication_metadata->getMedia() as $media) {
 			$url = $media->getUrl();
 
 			// DELETE AFTER TESTING !!!!
@@ -369,43 +430,7 @@ class xoctEventGUI extends xoctGUI {
 				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 					$url = xoctSecureLink::sign($url);
 				}
-
-				$tpl = $this->pl->getTemplate("paella_player.html");
-
-				$tpl->setVariable("TITLE", $xoctEvent->getTitle());
-
-				$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
-
-				$data = [
-					"streams" => [
-						[
-							"sources" => [
-								explode("/", $media->getMediatype())[1] => [
-									[
-										"src" => $url,
-										"mimetype" => $media->getMediatype(),
-										"res" => [
-											"w" => $media->getSize(),
-											"h" => $media->getSize()
-										]
-									]
-								]
-							],
-							"preview" => $xoctEvent->getThumbnailUrl()
-						]
-					],
-					"frameList" => [],
-					"metadata" => [
-						"title" => $xoctEvent->getTitle(),
-						"duration" => $media->getDuration()
-					]
-				];
-				$tpl->setVariable("DATA", json_encode($data));
-
-				$tpl->show();
-
-				exit;
-				/*// set the necessary headers from the original url
+				// set the necessary headers from the original url
 				$origin_headers = get_headers($url);
 				foreach ($origin_headers as $origin_header) {
 					if (strpos($origin_header, 'Content-Length') !== false || strpos($origin_header, 'Accept-Ranges') !== false) {
@@ -414,9 +439,9 @@ class xoctEventGUI extends xoctGUI {
 				}
 				header('Content-Type: ' . $media->getMediatype());
 				readfile($url);
-				exit;*/
+				exit;
 			}
-		}
+		}*/
 	}
 
 
