@@ -355,7 +355,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API));
+		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
 		$medias = array_values(array_filter($publication_metadata->getMedia(), function ($media) {
 			/**
@@ -423,7 +423,9 @@ class xoctEventGUI extends xoctGUI {
 		$tpl->show();
 
 		exit;
-		/*foreach ($publication_metadata->getMedia() as $media) {
+		/*$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API));
+
+		foreach ($publication_metadata->getMedia() as $media) {
 			$url = $media->getUrl();
 
 			// DELETE AFTER TESTING !!!!
