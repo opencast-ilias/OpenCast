@@ -14,6 +14,8 @@ config_curl_username#:#API-Benutzername
 config_editor_link#:#Link zum OpenCast-Video-Editor
 config_editor_link_info#:#Als Platzhalter kann &#123event_id} verwendet werden. Bsp: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#Nutzungsvereinbarung
+config_events#:#Aufzeichnungen
+config_series#:#Serien
 config_licenses#:#Lizenzen
 config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
 config_license_info#:#Lizenz-Informationen
@@ -88,6 +90,7 @@ config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja
+config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
 event_add_new#:#Aufzeichnung hinzufügen
 event_annotate#:#Annotieren
@@ -200,6 +203,7 @@ publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
+publication_usage_type_video_portal#:#Video Portal
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
@@ -265,6 +269,8 @@ tab_back#:#Zurück
 tab_migration#:#Migration
 tab_permission_templates#:#Permission Templates
 subtab_api#:#API
+subtab_events#:#Aufzeichnungen
+subtab_series#:#Serien
 subtab_general#:#Allgemeines
 subtab_groups_roles#:#Gruppen & Rollen
 subtab_security#:#Security

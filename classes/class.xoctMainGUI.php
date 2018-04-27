@@ -16,7 +16,8 @@ class xoctMainGUI extends xoctGUI {
 	const TAB_EXPORT = 'export';
 
 	const SUBTAB_API = 'api';
-	const SUBTAB_GENERAL = 'general';
+	const SUBTAB_SERIES = 'series';
+	const SUBTAB_EVENTS = 'events';
 	const SUBTAB_GROUPS_ROLES = 'groups_roles';
 	const SUBTAB_SECURITY = 'security';
 	const SUBTAB_ADVANCED = 'advanced';
@@ -63,8 +64,10 @@ class xoctMainGUI extends xoctGUI {
 	protected function setSubTabs() {
 		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
 		$this->tabs->addSubTab(self::SUBTAB_API, $this->pl->txt('subtab_' . self::SUBTAB_API), $this->ctrl->getLinkTarget(new xoctConfGUI()));
-		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GENERAL);
-		$this->tabs->addSubTab(self::SUBTAB_GENERAL, $this->pl->txt('subtab_' . self::SUBTAB_GENERAL), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_EVENTS);
+		$this->tabs->addSubTab(self::SUBTAB_EVENTS, $this->pl->txt('subtab_' . self::SUBTAB_EVENTS), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SERIES);
+		$this->tabs->addSubTab(self::SUBTAB_SERIES, $this->pl->txt('subtab_' . self::SUBTAB_SERIES), $this->ctrl->getLinkTarget(new xoctConfGUI()));
 		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
 		$this->tabs->addSubTab(self::SUBTAB_GROUPS_ROLES, $this->pl->txt('subtab_' . self::SUBTAB_GROUPS_ROLES), $this->ctrl->getLinkTarget(new xoctConfGUI()));
 		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);

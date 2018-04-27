@@ -26,6 +26,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_EXISTING_IDENTIFIER = 'existing_identifier';
 	const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
 	const F_OBJ_ONLINE = 'obj_online';
+	const F_VIDEO_PORTAL_LINK = 'video_portal_link';
 	const F_CHANNEL_ID = 'channel_id';
 	const F_MEMBER_UPLOAD = 'member_upload';
 	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
@@ -232,6 +233,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		if (!$this->is_new) {
+//			if (xoctPublication::find(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_VIDEO_PORTAL))
+//			$video_portal_link = new ilNonEditableValueGUI($this->txt(self::F_VIDEO_PORTAL_LINK), self::F_VIDEO_PORTAL_LINK);
+//			$this->addItem($video_portal_link);
+
 			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
 			$this->addItem($channel_id);
 		}
@@ -365,6 +370,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		$this->series->setAccessPolicies($series_acls);
+
 
 		// add current user to producers
 		$xoct_user = xoctUser::getInstance($ilUser);

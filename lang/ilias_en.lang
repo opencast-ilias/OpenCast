@@ -14,6 +14,8 @@ config_curl_username#:#API-Username
 config_editor_link#:#Link to OpenCast Video Editor
 config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
+config_events#:#Events
+config_series#:#Series
 config_licenses#:#Licenses
 config_licenses_info#:#Add new lines with URL#Name
 config_license_info#:#License-Info
@@ -88,6 +90,7 @@ config_report_date_text_info#:#ext which will be display as an info in the repor
 config_scheduled_metadata_editable#:#Metadata of scheduled events editable
 config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes
+config_scheduled_metadata_editable_1_info#:#Warning: possible only with API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
 event_add_new#:#Add Event
 event_annotate#:#Annotate
@@ -202,6 +205,7 @@ publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
+publication_usage_type_video_portal#:#Video-Portal
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
@@ -268,6 +272,8 @@ tab_migration#:#Migration
 tab_permission_templates#:#Permission Templates
 subtab_api#:#API
 subtab_general#:#General
+subtab_events#:#Events
+subtab_series#:#Series
 subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security
 subtab_advanced#:#Advanced

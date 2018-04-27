@@ -174,6 +174,7 @@ class xoctSeriesAPI {
 	 * possible data:
 	 *
 	 *  title => text
+	 *  permission_template_id => integer
 	 *  description => text
 	 *  online => boolean
 	 *  introduction_text => text
@@ -210,6 +211,17 @@ class xoctSeriesAPI {
 		}
 
 		// opencast data
+		if (isset($data['permission_template_id']) ||
+			($series->getPermissionTemplateId() && (isset($data['use_annotations']) || isset($data['streaming_only'])))) {
+			$series_acls = $series->getAccessPolicies();
+			xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
+			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
+			$xoctPermissionTemplate = xoctPermissionTemplate::find($data['permission_template_id'] ? $data['permission_template_id'] : $series->getPermissionTemplateId());
+			$xoctPermissionTemplate->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
+			$series->setAccessPolicies($series_acls);
+			$update_opencast_data = true;
+		}
+
 		foreach (array('title', 'description') as $field) {
 			if (isset($data[$field])) {
 				$setter = 'set' . str_replace('_', '', $field);
@@ -217,13 +229,14 @@ class xoctSeriesAPI {
 				$update_opencast_data = true;
 			}
 		}
+
 		if ($update_opencast_data) {
 			$series->update();
 		}
 
 		//member upload
-		if (isset($additional_data['member_upload'])) {
-			ilObjOpenCastAccess::activateMemberUpload($object->getRefId());
+		if (isset($data['member_upload'])) {
+			ilObjOpenCastAccess::activateMemberUpload($ref_id);
 		}
 
 		return $cast;
