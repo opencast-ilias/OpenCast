@@ -433,6 +433,10 @@ class xoctEventGUI extends xoctGUI {
 			 */
 			$high = $segment["presentation/segment+preview+highres"];
 			$low = $segment["presentation/segment+preview+lowres"];
+			if ($high === NULL || $low === NULL) {
+				$high = $segment["presenter/segment+preview+highres"];
+				$low = $segment["presenter/segment+preview+lowres"];
+			}
 
 			$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
 			$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
