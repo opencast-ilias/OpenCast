@@ -355,7 +355,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
+		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER)); // TODO
 
 		$medias = array_values(array_filter($publication_metadata->getMedia(), function ($media) {
 			/**
@@ -386,15 +386,26 @@ class xoctEventGUI extends xoctGUI {
 							"src" => $url,
 							"mimetype" => $media->getMediatype(),
 							"res" => [
-								"w" => $media->getSize(),
-								"h" => $media->getSize()
+								"w" => $media->width,
+								"h" => $media->height
 							]
 						]
 					]
 				],
-				"preview" => $xoctEvent->getThumbnailUrl()
+				"preview" => $xoctEvent->getThumbnailUrl() // TODO
 			];
 		}, $medias);
+
+		// TODO
+		$frameList = [
+			[
+				"id" => "thumbnail",
+				"mimetype" => "image/png",
+				"time" => 0,
+				"url" => $xoctEvent->getThumbnailUrl(),
+				"thumb" => $xoctEvent->getThumbnailUrl()
+			]
+		];
 
 		$tpl = $this->pl->getTemplate("paella_player.html");
 
@@ -404,15 +415,7 @@ class xoctEventGUI extends xoctGUI {
 
 		$data = [
 			"streams" => $streams,
-			"frameList" => [
-				[
-					"id" => "thumbnail",
-					"mimetype" => "image/png",
-					"time" => 0,
-					"url" => $xoctEvent->getThumbnailUrl(),
-					"thumb" => $xoctEvent->getThumbnailUrl()
-				]
-			],
+			"frameList" => $frameList,
 			"metadata" => [
 				"title" => $xoctEvent->getTitle(),
 				"duration" => $duration
