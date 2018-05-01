@@ -7,6 +7,8 @@ config_api_version#:#API-Version
 config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
+config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
+config_create_scheduled_allowed_info#:#Achtung: Das planen von Aufzeichnungsterminen ist erst ab API v1.1.0 möglich.
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
@@ -92,7 +94,7 @@ config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
-event_add_new#:#Aufzeichnung hinzufügen
+event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
@@ -120,6 +122,10 @@ event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
+event_multiple#:#Termin Wiederholen
+event_multiple_start#:#Startdatum
+event_multiple_end#:#Enddatum
+event_multiple_weekdays#:#Wiederholungen
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_owner_username#:#Besitzer
@@ -129,6 +135,7 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
+event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start
 event_state_failed#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.

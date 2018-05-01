@@ -19,6 +19,9 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CUT = 'cut';
 	const CMD_REPORT_DATE = 'reportDate';
 	const CMD_REPORT_QUALITY = 'reportQuality';
+	const CMD_SCHEDULE = 'schedule';
+	const CMD_CREATE_SCHEDULED = 'createScheduled';
+
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -71,6 +74,15 @@ class xoctEventGUI extends xoctGUI {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_add_new');
 			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
+			$b->setPrimary(true);
+			$this->toolbar->addButtonInstance($b);
+		}
+
+		// add "schedule" button
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && xoctConf::getConfig(xoctConf::F_CREATE_SCHEDULED_ALLOWED)) {
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_schedule_new');
+			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SCHEDULE));
 			$b->setPrimary(true);
 			$this->toolbar->addButtonInstance($b);
 		}
@@ -254,6 +266,38 @@ class xoctEventGUI extends xoctGUI {
 		$xoctPlupload->handleUpload();
 	}
 
+
+	/**
+	 *
+	 */
+	protected function schedule() {
+		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+			ilUtil::sendInfo($this->pl->txt('series_has_duplicates_events'));
+		}
+		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+		$xoctEventFormGUI->fillForm();
+		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
+
+
+	/**
+	 *
+	 */
+	protected function createScheduled() {
+		global $ilUser;
+		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+
+		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
+		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
+
+		if ($xoctEventFormGUI->saveObject()) {
+			ilUtil::sendSuccess($this->txt('msg_created'), true);
+			$this->ctrl->redirect($this, self::CMD_STANDARD);
+		}
+		$xoctEventFormGUI->setValuesByPost();
+		$this->tpl->setContent($xoctEventFormGUI->getHTML());
+	}
 
 	/**
 	 *

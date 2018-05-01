@@ -28,6 +28,10 @@ class xoctScheduling extends xoctObject {
 	 * @var
 	 */
 	protected $inputs;
+	/**
+	 * @var String
+	 */
+	protected $rrule;
 
 	/**
 	 * @param string $event_id
@@ -74,6 +78,10 @@ class xoctScheduling extends xoctObject {
 		$stdClass->start = $this->getStart()->format('Y-m-d\TH:i:s\Z');
 		$stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
 		$stdClass->inputs = array("default");
+
+		if ($this->rrule) {
+			$stdClass->rrule = $this->rrule;
+		}
 
 		return $stdClass;
 	}
@@ -156,6 +164,22 @@ class xoctScheduling extends xoctObject {
 	 */
 	public function setInputs($inputs) {
 		$this->inputs = $inputs;
+	}
+
+
+	/**
+	 * @return String
+	 */
+	public function getRrule() {
+		return $this->rrule;
+	}
+
+
+	/**
+	 * @param String $rrule
+	 */
+	public function setRRule($rrule) {
+		$this->rrule = $rrule;
 	}
 
 

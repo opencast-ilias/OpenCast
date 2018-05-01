@@ -22,6 +22,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	const F_SOURCE = 'source';
 	const F_AUTO_PUBLISH = 'auto_publish';
 	const F_ONLINE = 'online';
+	const F_MULTIPLE = 'multiple';
+	const F_MULTIPLE_START = 'multiple_start';
+	const F_MULTIPLE_START_TIME = 'multiple_start_time';
+	const F_MULTIPLE_END = 'multiple_end';
+	const F_MULTIPLE_END_TIME = 'multiple_end_time';
+	const F_MULTIPLE_WEEKDAYS = 'multiple_weekdays';
+
 	/**
 	 * @var  xoctEvent
 	 */
@@ -42,6 +49,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @var bool
 	 */
 	protected $external = true;
+	/**
+	 * @var bool
+	 */
+	protected $schedule;
 
 
 	/**
@@ -52,7 +63,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @param bool|false $infopage
 	 * @param bool|true $external
 	 */
-	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $view = false, $infopage = false, $external = true) {
+	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $schedule = false,$view = false, $infopage = false, $external = true) {
 		global $ilCtrl, $lng, $tpl;
 		$this->object = $object;
 		$this->xoctOpenCast = $xoctOpenCast;
@@ -62,6 +73,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->ctrl->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
 		$this->lng = $lng;
 		$this->is_new = ($this->object->getIdentifier() == '');
+		$this->schedule = $schedule;
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
@@ -99,7 +111,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(!$this->is_new);
 		$this->addItem($te);
 
-		if ($this->is_new) {
+		if ($this->is_new && !$this->schedule) {
 			$allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
 
 			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
@@ -207,17 +219,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$input->setDisabled($date_and_location_disabled);
 		$this->addItem($input);
 
-		$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
-		if (!xoct::isIlias52()) {
-			$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+		if (!$this->schedule) {
+			$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
+			if (!xoct::isIlias52()) {
+				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			}
+			$date->setShowTime(true);
+			$date->setShowSeconds(false);
+			$date->setMinuteStepSize(1);
+			$date->setDisabled($date_and_location_disabled);
+			$this->addItem($date);
 		}
-		$date->setShowTime(true);
-		$date->setShowSeconds(false);
-		$date->setMinuteStepSize(1);
-		$date->setDisabled($date_and_location_disabled);
-		$this->addItem($date);
 
-		if ($this->object->isScheduled()) {
+		if ($this->object->isScheduled() && !$this->schedule) {
 			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
 			if (!xoct::isIlias52()) {
 				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
@@ -227,6 +241,64 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setMinuteStepSize(1);
 			$date->setDisabled($date_and_location_disabled);
 			$this->addItem($date);
+		}
+
+		if ($this->schedule) {
+			$radio = new ilRadioGroupInputGUI($this->txt(self::F_MULTIPLE), self::F_MULTIPLE);
+
+			// SINGLE EVENT
+			$opt = new ilRadioOption($this->lng->txt('no'), 0);
+
+			$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
+			if (!xoct::isIlias52()) {
+				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			}
+			$date->setShowTime(true);
+			$date->setShowSeconds(false);
+			$date->setMinuteStepSize(1);
+			$opt->addSubItem($date);
+
+			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
+			if (!xoct::isIlias52()) {
+				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
+			}
+			$date->setShowTime(true);
+			$date->setShowSeconds(false);
+			$date->setMinuteStepSize(1);
+			$opt->addSubItem($date);
+
+			$radio->addOption($opt);
+
+			// MULTIPLE EVENTS
+			$opt = new ilRadioOption($this->lng->txt('yes'), 1);
+
+			$subinput = new ilDateTimeInputGUI($this->txt(self::F_MULTIPLE_START), self::F_MULTIPLE_START);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$subinput = new ilDateTimeInputGUI($this->txt(self::F_MULTIPLE_END), self::F_MULTIPLE_END);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$subinput = new ilDateTimeInputGUI($this->txt(self::F_MULTIPLE_END), self::F_MULTIPLE_END);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$subinput = new ilInteractiveVideoTimePicker($this->txt(self::F_MULTIPLE_START_TIME), self::F_MULTIPLE_START_TIME);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$subinput = new ilInteractiveVideoTimePicker($this->txt(self::F_MULTIPLE_END_TIME), self::F_MULTIPLE_END_TIME);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$subinput = new srWeekdayInputGUI($this->txt(self::F_MULTIPLE_WEEKDAYS), self::F_MULTIPLE_WEEKDAYS);
+			$subinput->setRequired(true);
+			$opt->addSubItem($subinput);
+
+			$radio->addOption($opt);
+
+			$this->addItem($radio);
 		}
 	}
 
@@ -346,7 +418,11 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 			// auto publish always true for member upload
-			$this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
+			if ($this->schedule) {
+				$this->object->schedule();
+			} else {
+				$this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
+			}
 			$xoctEventAdditions = $this->object->getXoctEventAdditions();
 			$xoctEventAdditions->setId($this->object->getIdentifier());
 			$xoctEventAdditions->setIsOnline(true);
@@ -359,9 +435,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 	protected function initButtons() {
 		switch (true) {
-			case  $this->is_new AND !$this->view:
+			case  $this->is_new AND !$this->view AND !$this->schedule:
 				$this->setTitle($this->txt('create'));
 				$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
+				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				break;
+			case $this->is_new AND $this->schedule:
+				$this->setTitle($this->txt('schedule_new'));
+				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE_SCHEDULED));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
 			case  !$this->is_new AND !$this->view:

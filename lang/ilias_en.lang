@@ -92,7 +92,7 @@ config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes
 config_scheduled_metadata_editable_1_info#:#Warning: possible only with API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
-event_add_new#:#Add Event
+event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
 event_cancel#:#Cancel
@@ -120,6 +120,10 @@ event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
+event_multiple#:#Repeat Event
+event_multiple_start#:#Start Date
+event_multiple_end#:#End Date
+event_multiple_weekdays#:#Repeat on
 event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_owner_username#:#Owner
@@ -129,6 +133,7 @@ event_presenters#:#Presenters
 event_preview#:#Preview
 event_processing_state#:#State
 event_recording_station#:#Recording Station
+event_schedule_new#:#Schedule Event(s)
 event_start_time#:#Start
 event_start#:#Start
 event_state_failed#:#Publication failed. Please contact the support.

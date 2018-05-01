@@ -333,7 +333,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 *
 	 */
-	public function schedule() {
+	public function schedule($rrule = '') {
 		global $ilUser;
 		$data = array();
 
@@ -341,6 +341,10 @@ class xoctEvent extends xoctObject {
 		$this->setOwner(xoctUser::getInstance($ilUser));
 		$this->updateMetadataFromFields(true);
 		$this->updateSchedulingFromFields();
+
+		if ($rrule) {
+			$this->getScheduling()->setRRule($rrule);
+		}
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing());
