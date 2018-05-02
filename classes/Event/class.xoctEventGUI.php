@@ -474,7 +474,7 @@ class xoctEventGUI extends xoctGUI {
 		];
 		$tpl->setVariable("DATA", json_encode($data));
 
-		$tpl->show();
+		echo $tpl->get();
 
 		exit();
 	}
