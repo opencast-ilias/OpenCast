@@ -108,7 +108,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->initButtons();
 
 		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$te->setRequired(!$this->is_new);
+		$te->setRequired(!$this->is_new || $this->schedule);
 		$this->addItem($te);
 
 		if ($this->is_new && !$this->schedule) {
@@ -280,7 +280,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$subinput->setRequired(true);
 			$opt->addSubItem($subinput);
 
-			$subinput = new ilDateTimeInputGUI($this->txt(self::F_MULTIPLE_END), self::F_MULTIPLE_END);
+			$subinput = new srWeekdayInputGUI($this->txt(self::F_MULTIPLE_WEEKDAYS), self::F_MULTIPLE_WEEKDAYS);
 			$subinput->setRequired(true);
 			$opt->addSubItem($subinput);
 
@@ -289,10 +289,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$opt->addSubItem($subinput);
 
 			$subinput = new ilInteractiveVideoTimePicker($this->txt(self::F_MULTIPLE_END_TIME), self::F_MULTIPLE_END_TIME);
-			$subinput->setRequired(true);
-			$opt->addSubItem($subinput);
-
-			$subinput = new srWeekdayInputGUI($this->txt(self::F_MULTIPLE_WEEKDAYS), self::F_MULTIPLE_WEEKDAYS);
 			$subinput->setRequired(true);
 			$opt->addSubItem($subinput);
 
@@ -361,24 +357,39 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
 		//		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
 
-		/**
-		 * @var $start            ilDateTime
-		 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
-		 */
-		$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_START);
-		$start = $ilDateTimeInputGUI->getDate();
-		$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601));
-		$this->object->setStart($default_datetime);
+		if ($this->getInput(self::F_MULTIPLE)) {
+			$start_date = $this->getInput(self::F_MULTIPLE_START);
+			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
+			$start = $start_date . ' ' . floor($start_time/3600) . ':' . floor($start_time/60%60) . ':' . $start_time%60;
+			$this->object->setStart($start);
 
-		if ($this->object->isScheduled()) {
+			// the start date is used for end date, since the enddate defines the end of the recurrence, not of the actual event
+			$end_time = $this->getInput(self::F_MULTIPLE_END_TIME);
+			$end = $start_date . ' ' . floor($end_time/3600) . ':' . floor($end_time/60%60) . ':' . ($end_time%60);
+			$this->object->setEnd($end);
+
+			$duration = ($end_time - $start_time);
+			$this->object->setDuration($duration);
+		} else {
 			/**
 			 * @var $start            ilDateTime
 			 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
 			 */
-			$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_END);
-			$end = $ilDateTimeInputGUI->getDate();
-			$default_datetime = $this->object->getDefaultDateTimeObject($end->get(IL_CAL_ISO_8601));
-			$this->object->setEnd($default_datetime);
+			$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_START);
+			$start = $ilDateTimeInputGUI->getDate();
+			$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601));
+			$this->object->setStart($default_datetime);
+
+			if ($this->object->isScheduled() || $this->schedule) {
+				/**
+				 * @var $start            ilDateTime
+				 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
+				 */
+				$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_END);
+				$end = $ilDateTimeInputGUI->getDate();
+				$default_datetime = $this->object->getDefaultDateTimeObject($end->get(IL_CAL_ISO_8601));
+				$this->object->setEnd($default_datetime);
+			}
 		}
 
 		return true;
@@ -413,13 +424,21 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			return false;
 		}
 		if ($this->object->getIdentifier()) {
-			$this->object->update();
+			try {
+				$this->object->update();
+			} catch (xoctException $e) {
+				return $this->checkAndShowConflictMessage($e);
+			}
 			$this->object->getXoctEventAdditions()->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 			// auto publish always true for member upload
 			if ($this->schedule) {
-				$this->object->schedule();
+				try {
+					$this->object->schedule($this->buildRRule());
+				} catch (xoctException $e) {
+					return $this->checkAndShowConflictMessage($e);
+				}
 			} else {
 				$this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
 			}
@@ -432,6 +451,19 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return $this->object->getIdentifier();
 	}
 
+	protected function buildRRule() {
+		if ($this->getInput(self::F_MULTIPLE)) {
+			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
+			$byhour = floor($start_time / 3600);
+			$byminute = floor($start_time / 60) % 60;
+
+			$weekdays = $this->getInput(self::F_MULTIPLE_WEEKDAYS);
+			$byday = implode(',', $weekdays);
+			$rrule = "FREQ=WEEKLY;BYDAY=$byday;BYHOUR=$byhour;BYMINUTE=$byminute;";
+			return $rrule;
+		}
+		return false;
+	}
 
 	protected function initButtons() {
 		switch (true) {
@@ -442,7 +474,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				break;
 			case $this->is_new AND $this->schedule:
 				$this->setTitle($this->txt('schedule_new'));
-				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE_SCHEDULED));
+				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
 			case  !$this->is_new AND !$this->view:
@@ -541,6 +573,27 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 */
 	public function setObject($object) {
 		$this->object = $object;
+	}
+
+
+	/**
+	 * @param $e
+	 *
+	 * @return bool
+	 */
+	protected function checkAndShowConflictMessage($e) {
+		if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
+			$conflicts = json_decode(substr($e->getMessage(), 10), true);
+			$message = $this->txt('msg_scheduling_conflict') . '<br>';
+			foreach ($conflicts as $conflict) {
+				$message .= '<br>' . $conflict['title'] . '<br>' . date('Y.m.d H:i:s', strtotime($conflict['start'])) . ' - '
+					. date('Y.m.d H:i:s', strtotime($conflict['end'])) . '<br>';
+			}
+			ilUtil::sendFailure($message);
+
+			return false;
+		}
+		throw $e;
 	}
 }
 

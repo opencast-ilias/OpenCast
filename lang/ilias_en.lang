@@ -120,9 +120,13 @@ event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
+event_msg_scheduled#:#Event(s) scheduled
+event_msg_scheduling_conflict#:#Event(s) could not be scheduled, due to an overlap with existing events:
 event_multiple#:#Repeat Event
 event_multiple_start#:#Start Date
+event_multiple_start_time#:#Start Time
 event_multiple_end#:#End Date
+event_multiple_end_time#:#End Time
 event_multiple_weekdays#:#Repeat on
 event_owner#:#Owner
 event_owner_select#:#--not assigned--

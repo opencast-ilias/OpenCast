@@ -292,7 +292,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
 
 		if ($xoctEventFormGUI->saveObject()) {
-			ilUtil::sendSuccess($this->txt('msg_created'), true);
+			ilUtil::sendSuccess($this->txt('msg_scheduled'), true);
 			$this->ctrl->redirect($this, self::CMD_STANDARD);
 		}
 		$xoctEventFormGUI->setValuesByPost();

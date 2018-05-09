@@ -34,29 +34,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	public function __construct(xoctConfGUI $parent_gui, $subtab_active) {
 		global $ilCtrl, $lng;
-//		var_dump(xoctRequest::root()->agents()->get());exit;
-//		var_dump(xoctRequest::root()->version()->get());exit;
-//		xoctInternalAPI::getInstance()->events()->create(
-//			'8919734f-9c56-454f-8025-4604c3cca87b',
-//			'TT Scheduled 1. Juni',
-//			'2018-06-01T14:00:00Z',
-//			'2018-06-01T14:30:00Z',
-//			'test_sven'
-//		);
-//		xoctInternalAPI::getInstance()->series()->delete(168, false);
-//		xoctInternalAPI::getInstance()->series()->delete(169, false);
-//		xoctInternalAPI::getInstance()->series()->delete(170, false);
-//		xoctInternalAPI::getInstance()->series()->update(
-//			177,array(
-//				'use_annotations' => true,
-//				'permission_template_id' => 2
-//			)
-//		);
-//		xoctInternalAPI::getInstance()->events()->create('8919734f-9c56-454f-8025-4604c3cca87b', 'TT: event via internal API2', new DateTime('2018-06-01 09:00:00'), new DateTime('2018-06-01 09:30:00'), 'test_sven');
-//		exit;
-		xoctInternalAPI::getInstance()->series()->create(83, 'Test TT Internal API 5', array(
-			'owner' => 6
-		));
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();

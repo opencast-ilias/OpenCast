@@ -25,6 +25,10 @@ class xoctScheduling extends xoctObject {
 	 */
 	protected $end;
 	/**
+	 * @var int
+	 */
+	protected $duration;
+	/**
 	 * @var
 	 */
 	protected $inputs;
@@ -76,14 +80,39 @@ class xoctScheduling extends xoctObject {
 		$stdClass = new stdClass();
 		$stdClass->agent_id = $this->getAgentId();
 		$stdClass->start = $this->getStart()->format('Y-m-d\TH:i:s\Z');
-		$stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
-		$stdClass->inputs = array("default");
+		if ($this->getEnd()) {
+			$stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
+		}
+
+		if ($this->getDuration()) {
+			$stdClass->duration = $this->getDuration();
+		}
+
+		if ($this->getInputs()) {
+			$stdClass->inputs = $this->getInputs();
+		}
 
 		if ($this->rrule) {
 			$stdClass->rrule = $this->rrule;
 		}
 
 		return $stdClass;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getDuration() {
+		return $this->duration;
+	}
+
+
+	/**
+	 * @param int $duration
+	 */
+	public function setDuration($duration) {
+		$this->duration = $duration;
 	}
 
 
