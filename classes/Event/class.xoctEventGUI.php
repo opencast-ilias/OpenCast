@@ -734,7 +734,7 @@ class xoctEventGUI extends xoctGUI {
 				true);
 			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 			$mail = new ilMimeMail();
-			$mail->Subject('test');
+			$mail->Subject("ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»");
 			$mail->Body($message . '<br>' . $series_id . '<br>' . $link);
 			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_DATE_EMAIL));
 			$mail->From(ilSetting::_lookupValue('common', 'mail_external_sender_noreply'));
@@ -753,14 +753,10 @@ class xoctEventGUI extends xoctGUI {
 			$message = $_POST['message'];
 			$event_id = $_POST['event_id'];
 			$event = new xoctEvent($event_id);
-			$event_title = $event->getTitle();
-			$link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
-				true);
-			$series_id = $this->xoctOpenCast->getSeriesIdentifier();
 
 			$mail = new ilMimeMail();
-			$mail->Subject('test');
-			$mail->Body($message . '<br>' . $event_id . '<br>' . $event_title . '<br>' . $series_id . '<br>' . $link);
+			$mail->Subject("ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»");
+			$mail->Body($this->getQualityReportMessage($event, $message));
 			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL));
 			$mail->From(ilSetting::_lookupValue('common', 'mail_external_sender_noreply'));
 			$mail->Send();
@@ -768,6 +764,55 @@ class xoctEventGUI extends xoctGUI {
 		ilUtil::sendSuccess($this->pl->txt('msg_quality_report_sent'), true);
 		$this->ctrl->redirect($this);
 	}
+
+    /**
+     * @param xoctEvent $event
+     * @param $message
+     * @return string
+     */
+    protected function getQualityReportMessage(xoctEvent $event, $message) {
+        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+            true);
+        $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
+	    $mail_body =
+            "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
+            . "Es gab eine neue Meldung im Bereich «Qualitätsprobleme melden». <br><br>"
+            . "<b>Benutzer/in:</b> {$this->user->getLogin()}, {$this->user->getEmail()} <br>"
+            . "<b>Rolle im ILIAS-Kurs:</b> Kursadministrator / Kurstutor / Kursmitglied <br><br>"
+            . "<b>Opencast Serie in ILIAS:</b> $link<br>"
+            . "<b>Titel Opencast Event:</b> {$event->getTitle()}<br>"
+            . "<b>ID Opencast Event:</b> {$event->getIdentifier()}<br>"
+            . "<b>Titel Opencast Serie:</b> {$series->getILIASObject()->getTitle()}<br>"
+            . "<b>ID Opencast Serie:</b> {$series->getSeriesIdentifier()}<br><br>"
+            . "<b>Nachrichtentext:</b> <br>"
+            . "<hr>"
+            . $message . "<br>"
+            . "<hr>";
+	    return $mail_body;
+    }
+
+    /**
+     * @param xoctEvent $event
+     * @param $message
+     * @return string
+     */
+    protected function getDateReportMessage(xoctEvent $event, $message) {
+        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+            true);
+        $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
+        $mail_body =
+            "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
+            . "Es gab eine neue Meldung im Bereich «geplante Termine anpassen». <br><br>"
+            . "<b>Benutzer/in:</b> {$this->user->getLogin()}, {$this->user->getEmail()} <br><br>"
+            . "<b>Opencast Serie in ILIAS:</b> $link<br>"
+            . "<b>Titel Opencast Serie:</b> {$series->getILIASObject()->getTitle()}<br>"
+            . "<b>ID Opencast Serie:</b> {$series->getSeriesIdentifier()}<br><br>"
+            . "<b>Nachrichtentext:</b> <br>"
+            . "<hr>"
+            . $message . "<br>"
+            . "<hr>";
+        return $mail_body;
+    }
 
 	/**
 	 * @param $key
