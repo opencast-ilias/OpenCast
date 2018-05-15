@@ -35,7 +35,7 @@ class xoctRequest {
 
 		if (count($roles) > 0) {
 			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
-		} 
+		}
 
 		$xoctCurl->get();
 
@@ -62,9 +62,6 @@ class xoctRequest {
 
 		if (count($roles) > 0) {
 			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
-		} elseif (isset(self::$series_owner)) {
-			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
-			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		$xoctCurl->post();
@@ -93,9 +90,6 @@ class xoctRequest {
 
 		if (count($roles) > 0) {
 			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
-		} elseif (isset(self::$series_owner)) {
-			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
-			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		foreach ($files as $file) {
@@ -128,9 +122,6 @@ class xoctRequest {
 
 		if (count($roles) > 0) {
 			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . implode(',', $roles));
-		} elseif (isset(self::$series_owner)) {
-			$xoctUser = xoctUser::getInstance(new ilObjUser(self::$series_owner));
-			$xoctCurl->addHeader(self::X_RUN_WITH_ROLES . ': ' . $xoctUser->getUserRoleName());
 		}
 
 		$xoctCurl->put();
