@@ -94,6 +94,8 @@ config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
+config_video_portal_link#:#Link zu externem Videoportal
+config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -215,7 +217,6 @@ publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
-publication_usage_type_video_portal#:#Video Portal
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
@@ -257,6 +258,8 @@ series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (si
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload durch Mitglieder
 series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
+series_video_portal_link#:#Link zum Video Portal
+series_links#:#Links
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
 system_account_create#:#Erstellen

@@ -136,6 +136,17 @@ class xoctOpenCast extends ActiveRecord {
 		return false;
 	}
 
+    /**
+     * @return mixed|string
+     */
+	public function getVideoPortalLink() {
+		if ($link_template = xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK)) {
+			$link = str_replace('{series_id}', $this->getSeriesIdentifier(), $link_template);
+			return '<a target="_blank" href="' . $link . '">' . $link . '</a>';
+		}
+		return '';
+	}
+
 
 	/**
 	 * @return ilObjOpenCast

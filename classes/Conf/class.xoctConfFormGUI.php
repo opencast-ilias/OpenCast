@@ -300,6 +300,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
 		$this->addItem($te);
 
+		// VIDEO PORTAL LINK
+        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_LINK), xoctConf::F_VIDEO_PORTAL_LINK);
+        $te->setInfo($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_LINK . '_info'));
+        $te->setRequired(false);
+        $this->addItem($te);
+
 		// DATE REPORT
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_DATE), xoctConf::F_REPORT_DATE);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE . '_info'));

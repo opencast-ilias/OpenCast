@@ -405,15 +405,17 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		}
 
-
+        if ($link = $xoctOpenCast->getVideoPortalLink()) {
+		    $info->addSection($this->pl->txt('series_links'));
+		    $info->addProperty($this->pl->txt('series_video_portal_link'), $link);
+        }
 		// general information
 		$lng->loadLanguageModule("meta");
 
 		$this->addInfoItems($info);
 
 		// forward the command
-		$ret = $ilCtrl->forwardCommand($info);
-		//		$this->initHeader();
+		$ilCtrl->forwardCommand($info);
 	}
 
 

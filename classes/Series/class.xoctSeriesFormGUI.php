@@ -237,13 +237,15 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		if (!$this->is_new) {
-//			if (xoctPublication::find(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_VIDEO_PORTAL))
-//			$video_portal_link = new ilNonEditableValueGUI($this->txt(self::F_VIDEO_PORTAL_LINK), self::F_VIDEO_PORTAL_LINK);
-//			$this->addItem($video_portal_link);
-
-			$channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
-			$this->addItem($channel_id);
-		}
+			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK)) {
+                $video_portal_link = new ilCustomInputGUI($this->txt(self::F_VIDEO_PORTAL_LINK), self::F_VIDEO_PORTAL_LINK);
+                $video_portal_link->setHtml($this->cast->getVideoPortalLink());
+                $this->addItem($video_portal_link);
+            }
+            
+            $channel_id = new ilNonEditableValueGUI($this->txt(self::F_CHANNEL_ID), self::F_CHANNEL_ID);
+            $this->addItem($channel_id);
+        }
 	}
 
 

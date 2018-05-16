@@ -670,7 +670,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctAgent' => __DIR__ . '/../..' . '/classes/Object/class.xoctAgent.php',
         'xoctAttachment' => __DIR__ . '/../..' . '/classes/Event/Publication/class.xoctAttachment.php',
         'xoctBase' => __DIR__ . '/../..' . '/classes/Request/class.xoctBase.php',
-        'xoctCache' => __DIR__ . '/../..' . '/classes/Cache/v51/class.xoctCache.php',
+        'xoctCache' => __DIR__ . '/../..' . '/classes/Cache/v52/class.xoctCache.php',
         'xoctCacheFactory' => __DIR__ . '/../..' . '/classes/Cache/class.xoctCacheFactory.php',
         'xoctConf' => __DIR__ . '/../..' . '/classes/Conf/class.xoctConf.php',
         'xoctConfExportGUI' => __DIR__ . '/../..' . '/classes/Conf/Export/class.xoctConfExportGUI.php',

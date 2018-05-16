@@ -669,7 +669,7 @@ return array(
     'xoctAgent' => $baseDir . '/classes/Object/class.xoctAgent.php',
     'xoctAttachment' => $baseDir . '/classes/Event/Publication/class.xoctAttachment.php',
     'xoctBase' => $baseDir . '/classes/Request/class.xoctBase.php',
-    'xoctCache' => $baseDir . '/classes/Cache/v51/class.xoctCache.php',
+    'xoctCache' => $baseDir . '/classes/Cache/v52/class.xoctCache.php',
     'xoctCacheFactory' => $baseDir . '/classes/Cache/class.xoctCacheFactory.php',
     'xoctConf' => $baseDir . '/classes/Conf/class.xoctConf.php',
     'xoctConfExportGUI' => $baseDir . '/classes/Conf/Export/class.xoctConfExportGUI.php',
