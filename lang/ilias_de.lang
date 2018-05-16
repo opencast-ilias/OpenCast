@@ -111,6 +111,7 @@ event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
 event_edit#:#Metadaten bearbeiten
+event_edit_date#:#Metadaten und Termin bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_end#:#Ende
 event_file_presenter#:#Video-Datei

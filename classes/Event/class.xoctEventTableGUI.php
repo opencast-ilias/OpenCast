@@ -108,9 +108,10 @@ class xoctEventTableGUI extends ilTable2GUI
 	}
 
 
-	/**
-	 * @param array $a_set
-	 */
+    /**
+     * @param array $a_set
+     * @throws xoctException
+     */
 	public function fillRow($a_set)
 	{
 		global $DIC;
@@ -385,7 +386,13 @@ class xoctEventTableGUI extends ilTable2GUI
 
 		// Edit Event
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
-			$ac->addItem($this->pl->txt('event_edit'), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			if ($xoctEvent->isScheduled() && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) {
+				// show different langvar when date is editable
+				$lang_var = 'event_edit_date';
+			} else {
+				$lang_var = 'event_edit';
+			}
+			$ac->addItem($this->pl->txt($lang_var), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 		}
 
 		// Online/offline

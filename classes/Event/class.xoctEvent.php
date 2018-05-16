@@ -76,11 +76,15 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @param array $filter
-	 *
-	 * @return xoctEvent[]
-	 */
+    /**
+     * @param array $filter
+     * @param null $for_user
+     * @param null $for_role
+     * @param int $from
+     * @param int $to
+     * @return array
+     * @throws xoctException
+     */
 	public static function getFiltered(array $filter, $for_user = null, $for_role = null, $from = 0, $to = 99999) {
 		/**
 		 * @var $xoctEvent xoctEvent
@@ -231,12 +235,12 @@ class xoctEvent extends xoctObject {
 		}
 	}
 
-	/**
-	 * @param $fieldname
-	 * @param $value
-	 *
-	 * @return mixed
-	 */
+    /**
+     * @param $fieldname
+     * @param $value
+     * @return array|DateTime|mixed|string|xoctMetadata
+     * @throws xoctException
+     */
 	protected function wakeup($fieldname, $value) {
 		switch ($fieldname) {
 			case 'created':
@@ -289,11 +293,11 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @param xoctUser $xoctUser
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param xoctUser $xoctUser
+     * @return bool
+     * @throws xoctException
+     */
 	public function isOwner(xoctUser $xoctUser) {
 		$xoctAcl = $this->getOwnerAcl();
 		if (!$xoctAcl instanceof xoctAcl) {
@@ -305,9 +309,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @param bool|false $auto_publish
-	 */
+    /**
+     * @param bool $auto_publish
+     * @throws xoctException
+     */
 	public function create($auto_publish = false) {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
@@ -496,10 +501,10 @@ class xoctEvent extends xoctObject {
 		sort($this->acl);
 	}
 
-
-	/**
-	 * @return bool
-	 */
+    /**
+     * @return bool
+     * @throws xoctException
+     */
 	public function delete() {
 		xoctRequest::root()->events($this->getIdentifier())->delete();
 		foreach (xoctInvitation::where(array('event_identifier' => $this->getIdentifier()))->get() as $invitation) {
@@ -1341,19 +1346,16 @@ class xoctEvent extends xoctObject {
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
 
-		if (!$scheduled) { // TODO: check if this data has to be sent with scheduled events
-			$location = $this->getMetadata()->getField('location');
-			$location->setValue($this->getLocation());
+        $location = $this->getMetadata()->getField('location');
+        $location->setValue($this->getLocation());
 
-			$start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
+        $start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
 
-			$startDate = $this->getMetadata()->getField('startDate');
-			$startDate->setValue($start->format('Y-m-d'));
+        $startDate = $this->getMetadata()->getField('startDate');
+        $startDate->setValue($start->format('Y-m-d'));
 
-			$startTime = $this->getMetadata()->getField('startTime');
-			$startTime->setValue($start->format('H:i'));
-		}
-
+        $startTime = $this->getMetadata()->getField('startTime');
+        $startTime->setValue($start->format('H:i'));
 	}
 
 
