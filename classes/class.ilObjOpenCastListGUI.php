@@ -252,7 +252,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 */
 
 	public static function format_date_time($unix_timestamp) {
-		global $lng;
+		global $DIC;
+		$lng = $DIC['lng'];
 
 		$now = time();
 		$today = $now - $now % (60 * 60 * 24);

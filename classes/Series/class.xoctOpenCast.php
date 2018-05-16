@@ -115,7 +115,8 @@ class xoctOpenCast extends ActiveRecord {
 		foreach ($duplicates_ar->get() as $oc) {
 			/** @var xoctOpenCast $oc */
 			if ($oc->getObjId() != $this->getObjId()) {
-				global $ilDB;
+				global $DIC;
+				$ilDB = $DIC['ilDB'];
 
 				$query = "SELECT deleted, ref_id FROM object_reference".
 					" WHERE obj_id = ".$ilDB->quote($oc->getObjId(), "integer");

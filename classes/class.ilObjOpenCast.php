@@ -44,7 +44,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 		/**
 		 * @var $ilDB ilDB
 		 */
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC['ilDB'];
 
 		parent::__construct($a_ref_id);
 		$this->db = $ilDB;
@@ -132,7 +133,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|ilObjCourse|ilObjGroup
 	 */
 	public static function _getParentCourseOrGroup($ref_id) {
-		global $tree;
+		global $DIC;
+		$tree = $DIC['tree'];
 		static $crs_or_grp_object;
 		if (!is_array($crs_or_grp_object)) {
 			$crs_or_grp_object = array();

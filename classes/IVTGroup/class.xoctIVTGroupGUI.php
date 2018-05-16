@@ -27,7 +27,8 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 
 	public function executeCommand() {
-		global $tree;
+		global $DIC;
+		$tree = $DIC['tree'];
 		if (! ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS) ||
 			!($tree->checkForParentType($_GET['ref_id'], 'crs') || $tree->checkForParentType($_GET['ref_id'], 'grp'))) {
 			$this->ctrl->redirectByClass('xoctEventGUI');

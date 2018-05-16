@@ -26,7 +26,9 @@ class xoctSeriesAPI {
 	 * xoctSeriesAPI constructor.
 	 */
 	public function __construct() {
-		global $tree, $objDefinition;
+		global $DIC;
+		$tree = $DIC['tree'];
+		$objDefinition = $DIC['objDefinition'];
 		$this->tree = $tree;
 		$this->objDefinition = $objDefinition;
 	}

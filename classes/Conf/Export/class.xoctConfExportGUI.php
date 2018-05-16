@@ -10,7 +10,8 @@
 class xoctConfExportGUI extends xoctGUI {
 
 	protected function index() {
-		global $ilToolbar;
+		global $DIC;
+		$ilToolbar = $DIC['ilToolbar'];
 		/**
 		 * @var $ilToolbar ilToolbarGUI
 		 */

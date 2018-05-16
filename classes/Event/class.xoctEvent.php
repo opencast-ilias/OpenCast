@@ -309,7 +309,8 @@ class xoctEvent extends xoctObject {
 	 * @param bool|false $auto_publish
 	 */
 	public function create($auto_publish = false) {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
@@ -334,7 +335,8 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	public function schedule($rrule = '') {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
@@ -1370,7 +1372,8 @@ class xoctEvent extends xoctObject {
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
-		global $ilIliasIniFile;
+		global $DIC;
+		$ilIliasIniFile = $DIC['ilIliasIniFile'];
 		if ($input instanceof DateTime) {
 			$input = $input->format(DATE_ATOM);
 		}

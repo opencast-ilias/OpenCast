@@ -10,7 +10,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 
 	public function executeCommand() {
-		global $ilCtrl, $ilTabs, $lng, $tpl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
+		$ilTabs = $DIC['ilTabs'];
+		$lng = $DIC['lng'];
+		$tpl = $DIC['tpl'];
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */

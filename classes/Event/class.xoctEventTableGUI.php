@@ -45,7 +45,8 @@ class xoctEventTableGUI extends ilTable2GUI
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */
-		global $ilCtrl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
@@ -112,7 +113,8 @@ class xoctEventTableGUI extends ilTable2GUI
 	 */
 	public function fillRow($a_set)
 	{
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		/**
 		 * @var $xE        xoctEvent
@@ -342,7 +344,8 @@ class xoctEventTableGUI extends ilTable2GUI
 		{
 			return;
 		}
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var $xoctUser xoctUser
 		 */
@@ -502,7 +505,8 @@ class xoctEventTableGUI extends ilTable2GUI
 	{
 		return function ($array)
 		{
-			global $ilUser;
+			global $DIC;
+			$ilUser = $DIC['ilUser'];
 
 			$xoctUser = xoctUser::getInstance($ilUser);
 			$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
@@ -621,7 +625,8 @@ class xoctEventTableGUI extends ilTable2GUI
 	 * @param $xoctOpenCast
 	 */
 	public static function setOwnerFieldVisibility($visible, $xoctOpenCast) {
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC['ilDB'];
 		$table_id = self::getGeneratedPrefix($xoctOpenCast);
 		$query = $ilDB->query("SELECT * FROM table_properties WHERE table_id = " . $ilDB->quote($table_id, "text") . " AND property = 'selfields'");
 		while ($rec = $ilDB->fetchAssoc($query)) {

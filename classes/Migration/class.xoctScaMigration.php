@@ -77,7 +77,10 @@ class xoctScaMigration {
 	 * xoctScaMigration constructor.
 	 */
 	public function __construct($migration_data, $command_line_execution = false) {
-		global $ilDB, $rbacadmin, $rbacreview;
+		global $DIC;
+		$ilDB = $DIC['ilDB'];
+		$rbacadmin = $DIC['rbacadmin'];
+		$rbacreview = $DIC['rbacreview'];
 		$this->migration_data = $migration_data;
 		$this->log = xoctMigrationLog::getInstance();
 		$this->db = $ilDB;
@@ -143,7 +146,8 @@ class xoctScaMigration {
 	}
 
 	protected function migrateObjectData() {
-		global $tree;
+		global $DIC;
+		$tree = $DIC['tree'];
 		$this->log->write('migrate Object Data..', null, $this->command_line);
 		$sql = $this->db->query('
 			SELECT rep_robj_xsca_data.*, object_reference.ref_id, object_data.* 

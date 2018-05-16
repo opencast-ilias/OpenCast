@@ -80,7 +80,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	protected function afterConstructor() {
-		global $tpl, $ilCtrl, $ilAccess, $ilNavigationHistory, $ilTabs;
+		global $DIC;
+		$tpl = $DIC['tpl'];
+		$ilCtrl = $DIC['ilCtrl'];
+		$ilAccess = $DIC['ilAccess'];
+		$ilNavigationHistory = $DIC['ilNavigationHistory'];
+		$ilTabs = $DIC['ilTabs'];
 		/**
 		 * @var $tpl                 ilTemplate
 		 * @var $ilCtrl              ilCtrl
@@ -93,9 +98,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$this->ctrl = $ilCtrl;
 		$this->tabs_gui = $ilTabs;
 		$this->pl = ilOpenCastPlugin::getInstance();
-		if ($this->object) {
-			xoctRequest::$series_owner = $this->object->getOwner();
-		}
 	}
 
 
@@ -185,7 +187,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return bool
 	 */
 	protected function setTabs() {
-		global $lng, $ilUser, $tree;
+		global $DIC;
+		$lng = $DIC['lng'];
+		$ilUser = $DIC['ilUser'];
+		$tree = $DIC['tree'];
 
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
@@ -279,7 +284,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @param               $additional_args
 	 */
 	public function afterSave(ilObject $newObj) {
-		global $ilUser, $rbacreview;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
+		$rbacreview = $DIC['rbacreview'];
 		/**
 		 * @var $cast xoctOpenCast
 		 */
@@ -369,7 +376,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * show information screen
 	 */
 	function infoScreen() {
-		global $lng, $ilCtrl, $ilTabs, $tree;
+		global $DIC;
+		$lng = $DIC['lng'];
+		$ilCtrl = $DIC['ilCtrl'];
+		$ilTabs = $DIC['ilTabs'];
+		$tree = $DIC['tree'];
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
 		 * @var $item         xoctOpenCast
@@ -412,7 +423,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @param bool $a_error
 	 */
 	public function deleteObject($a_error = false) {
-		global $ilCtrl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
 
 		if ($_GET["item_ref_id"] != "")
 		{
@@ -441,7 +453,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	function showDeleteConfirmation($a_ids, $a_supress_message = false)
 	{
-		global $lng, $ilSetting, $ilCtrl, $tpl, $objDefinition;
+		global $DIC;
+		$lng = $DIC['lng'];
+		$ilSetting = $DIC['ilSetting'];
+		$ilCtrl = $DIC['ilCtrl'];
+		$tpl = $DIC['tpl'];
+		$objDefinition = $DIC['objDefinition'];
 
 		if (!is_array($a_ids) || count($a_ids) == 0)
 		{
@@ -512,7 +529,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	function handleMultiReferences($a_obj_id, $a_ref_id, $a_form_name)
 	{
-		global $lng, $ilAccess, $tree;
+		global $DIC;
+		$lng = $DIC['lng'];
+		$ilAccess = $DIC['ilAccess'];
+		$tree = $DIC['tree'];
 
 		// process
 
@@ -623,7 +643,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	protected function buildPath($ref_ids)
 	{
-		global $tree;
+		global $DIC;
+		$tree = $DIC['tree'];
 
 		include_once 'Services/Link/classes/class.ilLink.php';
 

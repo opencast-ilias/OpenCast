@@ -22,7 +22,8 @@ class xoctWaiterGUI {
 	 *
 	 */
 	public static function loadLib() {
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC['tpl'];
 		if (!self::$init) {
 			$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
 			$tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
@@ -37,7 +38,8 @@ class xoctWaiterGUI {
 	public static function initJS($type = 'waiter') {
 		self::loadLib();
 		if (!self::$init_js) {
-			global $tpl;
+			global $DIC;
+			$tpl = $DIC['tpl'];
 			$code = 'xoctWaiter.init(\'' . $type . '\');';
 			$tpl->addOnLoadCode($code);
 			self::$init_js = true;
@@ -49,7 +51,8 @@ class xoctWaiterGUI {
 	 * @param $dom_selector_string
 	 */
 	public static function addListener($dom_selector_string) {
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC['tpl'];
 		$code = 'xoctWaiter.addListener("' . $dom_selector_string . '");';
 		$tpl->addOnLoadCode($code);
 	}
@@ -59,14 +62,16 @@ class xoctWaiterGUI {
 	 * @param $dom_selector_string
 	 */
 	public static function addLinkOverlay($dom_selector_string) {
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC['tpl'];
 		$code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
 		$tpl->addOnLoadCode($code);
 	}
 
 
 	public static function show() {
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC['tpl'];
 		self::initJS();
 		$code = 'xoctWaiter.show();';
 		$tpl->addOnLoadCode($code);

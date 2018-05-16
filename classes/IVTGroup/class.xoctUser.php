@@ -87,7 +87,8 @@ class xoctUser {
 		/**
 		 * @var $ilDB ilDB
 		 */
-		global $ilDB;
+		global $DIC;
+		$ilDB = $DIC['ilDB'];
 
 		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $ilDB->quote($matches[1], 'text');
 		$set = $ilDB->query($sql);

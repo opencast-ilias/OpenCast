@@ -47,7 +47,9 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 * @param xoctPermissionTemplate $xoctPermissionTemplate
 	 */
 	public function __construct($parent_gui, xoctPermissionTemplate $xoctPermissionTemplate) {
-		global $ilCtrl, $lng;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
+		$lng = $DIC['lng'];
 		$this->object = $xoctPermissionTemplate;
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;

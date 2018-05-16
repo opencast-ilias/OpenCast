@@ -74,7 +74,10 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @param bool $external
 	 */
 	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
-		global $ilCtrl, $lng, $tpl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
+		$lng = $DIC['lng'];
+		$tpl = $DIC['tpl'];
 		$this->cast = $cast;
 		$this->series = $cast->getSeries();
 		$this->parent_gui = $parent_gui;
@@ -98,7 +101,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	protected function initForm() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
@@ -341,7 +345,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return bool|string
 	 */
 	public function saveObject($obj_id = null) {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$ivt_mode_before_update = $this->cast->getPermissionPerClip();
 
 		if (!$this->fillObject()) {

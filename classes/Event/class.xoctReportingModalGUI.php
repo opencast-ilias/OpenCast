@@ -27,7 +27,8 @@ class xoctReportingModalGUI extends ilModalGUI {
 	 * xoctReportingFormGUI constructor.
 	 */
 	public function __construct($parent_gui, $type) {
-		global $ilCtrl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->parent_gui = $parent_gui;

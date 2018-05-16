@@ -27,7 +27,8 @@ class xoctSystemAccountTableGUI extends ilTable2GUI {
 		/**
 		 * @var $ilCtrl ilCtrl
 		 */
-		global $ilCtrl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
 		$this->ctrl = $ilCtrl;
 		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->setId(self::TBL_ID);

@@ -63,7 +63,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function prepareContent() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 
 		// init waiter
 		xoctWaiterGUI::initJS();
@@ -242,7 +243,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function create() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 
@@ -284,7 +286,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function createScheduled() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 
@@ -303,7 +306,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function edit() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var xoctEvent $xoctEvent
 		 */
@@ -326,7 +330,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	public function cut() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 
@@ -388,7 +393,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	public function streamVideo() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		// check access
 		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent,xoctUser::getInstance($ilUser), $this->xoctOpenCast)) {
@@ -430,7 +436,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function saveAndStay() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var xoctEvent $xoctEvent
 		 */
@@ -456,7 +463,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function update() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var xoctEvent $xoctEvent
 		 */
@@ -551,7 +559,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function confirmDelete() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var xoctEvent $xoctEvent
 		 */
@@ -576,7 +585,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function delete() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
 		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {

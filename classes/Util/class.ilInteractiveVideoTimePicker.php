@@ -87,7 +87,8 @@ class ilInteractiveVideoTimePicker extends ilSubEnabledFormPropertyGUI
 		/**
 		 * @var ilTemplate $tpl
 		 */
-		global $tpl;
+		global $DIC;
+		$tpl = $DIC['tpl'];
 
 		$tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/libs/bootstrap-timepicker/css/bootstrap-timepicker.css');
 		$tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/bootstrap_timepicker.css');

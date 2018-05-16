@@ -21,7 +21,12 @@ abstract class xoctGUI {
 
 
 	public function __construct() {
-		global $tpl, $ilCtrl, $ilTabs, $ilToolbar, $ilUser;
+		global $DIC;
+		$tpl = $DIC['tpl'];
+		$ilCtrl = $DIC['ilCtrl'];
+		$ilTabs = $DIC['ilTabs'];
+		$ilToolbar = $DIC['ilToolbar'];
+		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var $ilCtrl    ilCtrl
 		 * @var $ilTabs    ilTabsGUI

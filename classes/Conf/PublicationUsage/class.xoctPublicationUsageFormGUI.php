@@ -38,7 +38,10 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	 * @param xoctPublicationUsage $xoctPublicationUsage
 	 */
 	public function __construct($parent_gui, xoctPublicationUsage $xoctPublicationUsage) {
-		global $ilCtrl, $lng, $tpl;
+		global $DIC;
+		$ilCtrl = $DIC['ilCtrl'];
+		$lng = $DIC['lng'];
+		$tpl = $DIC['tpl'];
 		$this->object = $xoctPublicationUsage;
 		$this->parent_gui = $parent_gui;
 		$this->ctrl = $ilCtrl;
