@@ -22,6 +22,10 @@ class xoctAclStandardSets {
 		$acls = array();
 		// standard roles
 		foreach (xoctConf::getConfig(xoctConf::F_STD_ROLES) as $std_role) {
+			if (!$std_role) {
+				continue;
+			}
+
 			$acl = new xoctAcl();
 			$acl->setRole($std_role);
 			$acl->setAllow(true);
