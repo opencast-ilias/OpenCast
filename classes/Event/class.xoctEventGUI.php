@@ -764,13 +764,32 @@ class xoctEventGUI extends xoctGUI {
 			$event_id = $_POST['event_id'];
 			$event = new xoctEvent($event_id);
 
-			$mail = new ilMimeMail();
-			$mail->Subject("ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»");
-			$mail->Body($this->getQualityReportMessage($event, $message));
-			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL));
-			$sender = class_exists('ilMailMimeSenderSystem') ? new ilMailMimeSenderSystem(new ilSetting()) : ilSetting::_lookupValue('common', 'mail_external_sender_noreply');
-			$mail->From($sender);
-			$mail->Send();
+
+            $mail = new ilMail(ANONYMOUS_USER_ID);
+            $type = array('system');
+
+            $mail->setSaveInSentbox(false);
+            $mail->appendInstallationSignature(true);
+
+            $mail->sendMail(
+                xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL),
+                '',
+                '',
+                'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»',
+                $this->getQualityReportMessage($event, $message),
+                array(),
+                $type
+            );
+
+//            ilUtil::sendSuccess($this->lng->txt('mail_external_test_sent'));
+//            $this->showExternalSettingsFormObject();
+//			$mail = new ilMimeMail();
+//			$mail->Subject("ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»");
+//			$mail->Body($this->getQualityReportMessage($event, $message));
+//			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL));
+//			$sender = class_exists('ilMailMimeSenderSystem') ? new ilMailMimeSenderSystem(new ilSetting()) : ilSetting::_lookupValue('common', 'mail_external_sender_noreply');
+//			$mail->From($sender);
+//			$mail->Send();
 		}
 		ilUtil::sendSuccess($this->pl->txt('msg_quality_report_sent'), true);
 		$this->ctrl->redirect($this);
@@ -787,7 +806,7 @@ class xoctEventGUI extends xoctGUI {
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
 	    $mail_body =
             "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
-            . "Es gab eine neue Meldung im Bereich «Qualitätsprobleme melden». <br><br>"
+            . "Es gab eine neue Meldung im Bereich \"Qualitätsprobleme melden\". <br><br>"
             . "<b>Benutzer/in:</b> {$this->user->getLogin()}, {$this->user->getEmail()} <br>"
             . "<b>Rolle im ILIAS-Kurs:</b> Kursadministrator / Kurstutor / Kursmitglied <br><br>"
             . "<b>Opencast Serie in ILIAS:</b> $link<br>"
