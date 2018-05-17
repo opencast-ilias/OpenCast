@@ -768,7 +768,8 @@ class xoctEventGUI extends xoctGUI {
 			$mail->Subject("ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»");
 			$mail->Body($this->getQualityReportMessage($event, $message));
 			$mail->To(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL));
-			$mail->From(ilSetting::_lookupValue('common', 'mail_external_sender_noreply'));
+			$sender = class_exists('ilMailMimeSenderSystem') ? new ilMailMimeSenderSystem(new ilSetting()) : ilSetting::_lookupValue('common', 'mail_external_sender_noreply');
+			$mail->From($sender);
 			$mail->Send();
 		}
 		ilUtil::sendSuccess($this->pl->txt('msg_quality_report_sent'), true);
