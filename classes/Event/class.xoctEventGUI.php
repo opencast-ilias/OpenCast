@@ -747,7 +747,7 @@ class xoctEventGUI extends xoctGUI {
             $mail->setSaveInSentbox(false);
             $mail->appendInstallationSignature(true);
             $mail->sendMail(
-                xoctConf::getConfig(xoctConf::F_REPORT_DATE),
+                xoctConf::getConfig(xoctConf::F_REPORT_DATE_EMAIL),
                 '',
                 '',
                 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»',
@@ -812,11 +812,10 @@ class xoctEventGUI extends xoctGUI {
             . "<hr>"
             . $message . "<br>"
             . "<hr>";
-	    return utf8_encode($mail_body);
+	    return $mail_body;
     }
 
     /**
-     * @param xoctEvent $event
      * @param $message
      * @return string
      */
