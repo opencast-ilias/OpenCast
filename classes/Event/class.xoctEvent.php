@@ -362,7 +362,7 @@ class xoctEvent extends xoctObject {
 		$return = json_decode(xoctRequest::root()->events()->post($data));
 		//		}
 
-		$this->setIdentifier($return->identifier);
+		$this->setIdentifier(is_array($return) ? $return[0]->identifier : $return->identifier);
 	}
 
 
@@ -1346,16 +1346,18 @@ class xoctEvent extends xoctObject {
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
 
-        $location = $this->getMetadata()->getField('location');
-        $location->setValue($this->getLocation());
+		if (!$scheduled) {
+            $location = $this->getMetadata()->getField('location');
+            $location->setValue($this->getLocation());
 
-        $start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
+            $start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
 
-        $startDate = $this->getMetadata()->getField('startDate');
-        $startDate->setValue($start->format('Y-m-d'));
+            $startDate = $this->getMetadata()->getField('startDate');
+            $startDate->setValue($start->format('Y-m-d'));
 
-        $startTime = $this->getMetadata()->getField('startTime');
-        $startTime->setValue($start->format('H:i'));
+            $startTime = $this->getMetadata()->getField('startTime');
+            $startTime->setValue($start->format('H:i'));
+        }
 	}
 
 
@@ -1363,6 +1365,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	protected function updateSchedulingFromFields() {
+	    $this->getScheduling()->setDuration($this->getDuration());
 		$this->getScheduling()->setEnd($this->getEnd());
 		$this->getScheduling()->setStart($this->getStart());
 		$this->getScheduling()->setAgentId($this->getLocation());

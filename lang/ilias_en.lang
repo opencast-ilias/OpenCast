@@ -236,7 +236,7 @@ series_existing_channel_no#:#Create new Series
 series_existing_channel_yes#:#Choose existing Series
 series_existing_identifier#:#Existing Series
 series_intended_lifetime#:#Intended lifetime of content
-series_intended_lifetime_info#:#How long shoud the video material be published?
+series_intended_lifetime_info#:#How long should the video material be published?
 series_introduction_text#:#Work instruction
 series_license#:#License
 series_metadata#:#Series-Infos

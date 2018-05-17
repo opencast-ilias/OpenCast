@@ -84,16 +84,16 @@ class xoctScheduling extends xoctObject {
 			$stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
 		}
 
-		if ($this->getDuration()) {
-			$stdClass->duration = $this->getDuration();
-		}
-
 		if ($this->getInputs()) {
 			$stdClass->inputs = $this->getInputs();
 		}
 
-		if ($this->rrule) {
+		if ($this->getRrule()) {
 			$stdClass->rrule = $this->rrule;
+
+            if ($this->getDuration()) {
+                $stdClass->duration = (String) $this->getDuration();
+            }
 		}
 
 		return $stdClass;

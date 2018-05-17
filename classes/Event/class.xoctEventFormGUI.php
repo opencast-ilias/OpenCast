@@ -367,11 +367,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->object->setStart($start);
 
 			// the start date is used for end date, since the enddate defines the end of the recurrence, not of the actual event
-			$end_time = $this->getInput(self::F_MULTIPLE_END_TIME);
-			$end = $start_date . ' ' . floor($end_time/3600) . ':' . floor($end_time/60%60) . ':' . ($end_time%60);
+            $end_date = $this->getInput(self::F_MULTIPLE_END);
+            $end_time = $this->getInput(self::F_MULTIPLE_END_TIME);
+			$end = $end_date . ' ' . floor($end_time/3600) . ':' . floor($end_time/60%60) . ':' . ($end_time%60);
 			$this->object->setEnd($end);
 
-			$duration = ($end_time - $start_time);
+			$duration = ($end_time - $start_time) * 1000;
 			$this->object->setDuration($duration);
 		} else {
 			/**
@@ -419,9 +420,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 * @return bool|string
-	 */
+    /**
+     * @return bool|string
+     * @throws xoctException
+     */
 	public function saveObject() {
 		if (!$this->fillObject()) {
 			return false;
@@ -429,26 +431,22 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if ($this->object->getIdentifier()) {
 			try {
 				$this->object->update();
-			} catch (xoctException $e) {
+			} catch (Exception $e) {
 				return $this->checkAndShowConflictMessage($e);
 			}
 			$this->object->getXoctEventAdditions()->update();
 		} else {
 			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-			// auto publish always true for member upload
-			if ($this->schedule) {
-				try {
-					$this->object->schedule($this->buildRRule());
-				} catch (xoctException $e) {
-					return $this->checkAndShowConflictMessage($e);
-				}
-			} else {
-				$this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
+            if ($this->schedule) {
+                try {
+                    $this->object->schedule($this->buildRRule());
+                } catch (Exception $e) {
+                    return $this->checkAndShowConflictMessage($e);
+                }
+            } else {
+                // auto publish always true for member upload
+                $this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
 			}
-			$xoctEventAdditions = $this->object->getXoctEventAdditions();
-			$xoctEventAdditions->setId($this->object->getIdentifier());
-			$xoctEventAdditions->setIsOnline(true);
-			$xoctEventAdditions->create();
 		}
 
 		return $this->object->getIdentifier();
