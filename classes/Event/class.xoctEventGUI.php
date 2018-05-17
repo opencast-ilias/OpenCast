@@ -740,8 +740,6 @@ class xoctEventGUI extends xoctGUI {
 	protected function reportDate() {
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
             $message = $_POST['message'];
-            $event_id = $_POST['event_id'];
-            $event = new xoctEvent($event_id);
 
             $mail = new ilMail(ANONYMOUS_USER_ID);
             $type = array('system');
@@ -753,7 +751,7 @@ class xoctEventGUI extends xoctGUI {
                 '',
                 '',
                 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»',
-                $this->getDateReportMessage($event, $message),
+                $this->getDateReportMessage($message),
                 array(),
                 $type
             );
@@ -822,7 +820,7 @@ class xoctEventGUI extends xoctGUI {
      * @param $message
      * @return string
      */
-    protected function getDateReportMessage(xoctEvent $event, $message) {
+    protected function getDateReportMessage($message) {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
             true);
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
