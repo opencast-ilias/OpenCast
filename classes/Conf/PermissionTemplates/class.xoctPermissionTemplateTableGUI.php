@@ -16,6 +16,10 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 	 * @var ilCtrl
 	 */
 	protected $ctrl;
+    /**
+     * @var ilObjUser
+     */
+	protected $user;
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -27,6 +31,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		$tpl = $DIC['tpl'];
 		$this->ctrl = $ilCtrl;
 		$this->parent_obj = $a_parent_obj;
+		$this->user = $DIC['ilUser'];
 		$this->pl = ilOpenCastPlugin::getInstance();
 
 		$this->setId('test');
@@ -70,6 +75,8 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 
 	protected function fillRow($a_set) {
+
+	    $a_set['title'] = $this->user->getLanguage() == 'de' ? $a_set['title_de'] : $a_set['title_en'];
 		$a_set['actions'] = $this->buildActions($a_set);
 		$a_set['default'] = $a_set['default'] ? 'ok' : 'not_ok';
 		$a_set['read'] = $a_set['read_access'] ? 'ok' : 'not_ok';

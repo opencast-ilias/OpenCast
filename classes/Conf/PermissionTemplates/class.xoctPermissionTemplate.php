@@ -49,7 +49,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @db_fieldtype        text
 	 * @db_length           256
 	 */
-	protected $title;
+	protected $title_de;
 	/**
 	 * @var String
 	 *
@@ -57,7 +57,23 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @db_fieldtype        text
 	 * @db_length           256
 	 */
-	protected $info;
+	protected $title_en;
+	/**
+	 * @var String
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        text
+	 * @db_length           256
+	 */
+	protected $info_de;
+	/**
+	 * @var String
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        text
+	 * @db_length           256
+	 */
+	protected $info_en;
 	/**
 	 * @var String
 	 *
@@ -254,33 +270,81 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @return String
 	 */
 	public function getTitle() {
-		return $this->title;
+	    global $DIC;
+        return $DIC['ilUser']->getLanguage() == 'de' ? $this->title_de : $this->title_en;
 	}
 
 
-	/**
-	 * @param String $title
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
+    /**
+     * @return String
+     */
+    public function getTitleDE()
+    {
+        return $this->title_de;
+    }
 
+    /**
+     * @param String $title_de
+     */
+    public function setTitleDE($title_de)
+    {
+        $this->title_de = $title_de;
+    }
+
+    /**
+     * @return String
+     */
+    public function getTitleEN()
+    {
+        return $this->title_en;
+    }
+
+    /**
+     * @param String $title_en
+     */
+    public function setTitleEN($title_en)
+    {
+        $this->title_en = $title_en;
+    }
 
 	/**
 	 * @return String
 	 */
 	public function getInfo() {
-		return $this->info;
+		return ilLanguage::getGlobalInstance()->getLangKey() == 'de' ? $this->info_de : $this->info_en;
 	}
 
+    /**
+     * @return String
+     */
+    public function getInfoDE()
+    {
+        return $this->info_de;
+    }
 
-	/**
-	 * @param String $info
-	 */
-	public function setInfo($info) {
-		$this->info = $info;
-	}
+    /**
+     * @param String $info_de
+     */
+    public function setInfoDE($info_de)
+    {
+        $this->info_de = $info_de;
+    }
 
+    /**
+     * @return String
+     */
+    public function getInfoEN()
+    {
+        return $this->info_en;
+    }
+
+    /**
+     * @param String $info_en
+     */
+    public function setInfoEN($info_en)
+    {
+        $this->info_en = $info_en;
+    }
 
 	/**
 	 * @return String

@@ -9,8 +9,10 @@
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
     const F_DEFAULT = 'default';
-	const F_TITLE = 'title';
-	const F_INFO = 'info';
+	const F_TITLE_DE = 'title_de';
+	const F_TITLE_EN = 'title_en';
+	const F_INFO_DE = 'info_de';
+	const F_INFO_EN = 'info_en';
 	const F_ROLE = 'role';
 	const F_READ = 'read';
 	const F_WRITE = 'write';
@@ -73,12 +75,21 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$input->setInfo($this->txt(self::F_DEFAULT . '_info'));
 		$this->addItem($input);
 
-		$input = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
-		$input->setInfo($this->txt(self::F_TITLE . '_info'));
+		$input = new ilTextInputGUI($this->txt(self::F_TITLE_DE), self::F_TITLE_DE);
+		$input->setInfo($this->txt(self::F_TITLE_DE . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 
-		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO), self::F_INFO);
+		$input = new ilTextInputGUI($this->txt(self::F_TITLE_EN), self::F_TITLE_EN);
+		$input->setInfo($this->txt(self::F_TITLE_EN . '_info'));
+		$input->setRequired(true);
+		$this->addItem($input);
+
+		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO_DE), self::F_INFO_DE);
+		$input->setRequired(false);
+		$this->addItem($input);
+
+		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO_EN), self::F_INFO_EN);
 		$input->setRequired(false);
 		$this->addItem($input);
 
@@ -127,8 +138,10 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	public function fillForm() {
 		$array = array(
 			self::F_DEFAULT => $this->object->isDefault(),
-			self::F_TITLE => $this->object->getTitle(),
-			self::F_INFO => $this->object->getInfo(),
+			self::F_TITLE_DE => $this->object->getTitleDE(),
+			self::F_TITLE_EN => $this->object->getTitleEN(),
+			self::F_INFO_DE => $this->object->getInfoDE(),
+			self::F_INFO_EN => $this->object->getInfoEN(),
 			self::F_ROLE => $this->object->getRole(),
 			self::F_READ => $this->object->getRead(),
 			self::F_WRITE => $this->object->getWrite(),
@@ -146,8 +159,10 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		}
 
 		$this->object->setDefault($this->getInput(self::F_DEFAULT));
-		$this->object->setTitle($this->getInput(self::F_TITLE));
-		$this->object->setInfo($this->getInput(self::F_INFO));
+		$this->object->setTitleDE($this->getInput(self::F_TITLE_DE));
+		$this->object->setTitleEN($this->getInput(self::F_TITLE_EN));
+		$this->object->setInfoDE($this->getInput(self::F_INFO_DE));
+		$this->object->setInfoEN($this->getInput(self::F_INFO_EN));
 		$this->object->setRole($this->getInput(self::F_ROLE));
 		$this->object->setRead($this->getInput(self::F_READ));
 		$this->object->setWrite($this->getInput(self::F_WRITE));

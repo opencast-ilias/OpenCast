@@ -329,10 +329,14 @@ table_column_additional_actions_annotate#:#Additional Actions Annotate
 button_new_permission_template#:#Add New Template
 perm_tpl_form_default#:#Default Template
 perm_tpl_form_default_info#:#This template will be used if the series should not be published to the external video portal. Therefore, only one template can be defined as the default template.
-perm_tpl_form_title#:#Title
-perm_tpl_form_title_info#:#Will be used for presentation inside ILIAS.
-perm_tpl_form_info#:#Info
-perm_tpl_form_info_info#:#Will be used for presentation inside ILIAS.
+perm_tpl_form_title_de#:#Title DE
+perm_tpl_form_title_en#:#Title EN
+perm_tpl_form_title_de_info#:#Will be used for presentation inside ILIAS (German).
+perm_tpl_form_title_en_info#:#Will be used for presentation inside ILIAS (English).
+perm_tpl_form_info_de#:#Info (DE)
+perm_tpl_form_info_en#:#Info (EN)
+perm_tpl_form_info_de_info#:#Will be used for presentation inside ILIAS (German).
+perm_tpl_form_info_en_info#:#Will be used for presentation inside ILIAS (English).
 perm_tpl_form_role#:#Role
 perm_tpl_form_role_info#:#Defines the role which will be set in Opencast.
 perm_tpl_form_read#:#Read
