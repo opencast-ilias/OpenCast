@@ -70,7 +70,7 @@ config_role_ivt_external_prefix_info#:#Gibt den Besitzer eines Events an. Diese 
 config_role_ivt_email_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
 config_no_metadata#:#Ohne Metadaten
-config_no_metadata_info#:#In den neusten API-Versionen müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
+config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an OpenCast weiterzuleiten.
 config_general#:#Allgemeines
