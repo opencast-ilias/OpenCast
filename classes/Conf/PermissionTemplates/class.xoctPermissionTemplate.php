@@ -311,7 +311,8 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @return String
 	 */
 	public function getInfo() {
-		return ilLanguage::getGlobalInstance()->getLangKey() == 'de' ? $this->info_de : $this->info_en;
+        global $DIC;
+		return $DIC['ilUser']->getLanguage() == 'de' ? $this->info_de : $this->info_en;
 	}
 
     /**
