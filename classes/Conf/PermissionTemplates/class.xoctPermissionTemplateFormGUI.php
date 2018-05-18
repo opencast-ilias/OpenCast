@@ -86,11 +86,13 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$this->addItem($input);
 
 		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO_DE), self::F_INFO_DE);
+        $input->setInfo($this->txt(self::F_INFO_DE . '_info'));
 		$input->setRequired(false);
 		$this->addItem($input);
 
 		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO_EN), self::F_INFO_EN);
-		$input->setRequired(false);
+        $input->setInfo($this->txt(self::F_INFO_EN . '_info'));
+        $input->setRequired(false);
 		$this->addItem($input);
 
 		$input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ROLE);
