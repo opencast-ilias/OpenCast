@@ -94,6 +94,7 @@ config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
+config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
 event_add_new#:#Aufzeichnung hochladen
@@ -244,7 +245,9 @@ series_permission_allow_set_own#:#Zugriffsrechte erteilen
 series_permission_allow_set_own_info#:#Ein Aufzeichnungs-Besitzer/in kann anderen Studierenden das Recht geben, seine/ihre Aufzeichnung anzusehen.
 series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
-series_permission_template#:#Permission Template
+series_permission_template#:#Berechtigungen
+series_publish_on_video_portal#:#Serie auf %s publizieren
+series_publish_on_video_portal_info#:#Diese Einstellung führt zu einer Publikation auf dem Videoportal Ihrer Universität. Lassen Sie die Einstellung deaktiviert, wenn die Aufzeichnungen nur in ILIAS zu sehen sein sollen.
 series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
@@ -282,7 +285,7 @@ tab_settings#:#Einstellungen
 tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
 tab_migration#:#Migration
-tab_permission_templates#:#Permission Templates
+tab_video_portal#:#Videoportal
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien
@@ -308,7 +311,8 @@ info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
-msg_permission_templates_info#:#Die erstellten Templates können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Templates werden dabei entfernt.
+msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
+table_column_default#:#Default
 table_column_title#:#Titel
 table_column_info#:#Info
 table_column_role#:#Rolle
@@ -317,7 +321,9 @@ table_column_write#:#Schreibrechte
 table_column_additional_acl_actions#:#Zus. ACL-Actions
 table_column_additional_actions_download#:#Zus. Actions Download
 table_column_additional_actions_annotate#:#Zus. Actions Annotate
-button_new_permission_template#:#Neues Template hinzufügen
+button_new_permission_template#:#Neue Vorlage hinzufügen
+perm_tpl_form_default#:#Default-Vorlage
+perm_tpl_form_default_info#:#Diese Vorlage wird angewendet, wenn die Serie nicht auf dem externen Videoportal publiziert werden soll. Es kann daher jeweils nur eine Vorlage als Default-Vorlage definiert werden.
 perm_tpl_form_title#:#Titel
 perm_tpl_form_title_info#:#Wird für die Anzeige in ILIAS verwendet.
 perm_tpl_form_info#:#Info

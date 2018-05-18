@@ -584,8 +584,19 @@ class xoctSeries extends xoctObject {
 //		$this->setTheme($this->getProperties()->getTheme());
 //	}
 
+    /**
+     * @return int
+     */
 	public function getPermissionTemplateId() {
 		$template = xoctPermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
 		return $template ? $template->getId() : 0;
 	}
+
+    /**
+     * @return bool
+     */
+	public function isPublishedOnVideoPortal() {
+        $template = xoctPermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
+	    return $template && !$template->isDefault();
+    }
 }

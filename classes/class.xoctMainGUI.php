@@ -12,7 +12,7 @@ class xoctMainGUI extends xoctGUI {
 
 	const TAB_SETTINGS = 'settings';
 	const TAB_PUBLICATION_USAGE = 'publication_usage';
-	const TAB_PERMISSION_TEMPLATES = 'permission_templates';
+	const TAB_VIDEO_PORTAL = 'video_portal';
 	const TAB_EXPORT = 'export';
 
 	const SUBTAB_API = 'api';
@@ -32,7 +32,7 @@ class xoctMainGUI extends xoctGUI {
 		$this->tabs->addTab(self::TAB_SETTINGS, $this->pl->txt('tab_' . self::TAB_SETTINGS), $this->ctrl->getLinkTarget(new xoctConfGUI()));
 		$this->tabs->addTab(self::TAB_PUBLICATION_USAGE, $this->pl->txt('tab_'
 			. self::TAB_PUBLICATION_USAGE), $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI()));
-		$this->tabs->addTab(self::TAB_PERMISSION_TEMPLATES, $this->pl->txt('tab_' . self::TAB_PERMISSION_TEMPLATES), $this->ctrl->getLinkTarget(new xoctPermissionTemplateGUI()));
+		$this->tabs->addTab(self::TAB_VIDEO_PORTAL, $this->pl->txt('tab_' . self::TAB_VIDEO_PORTAL), $this->ctrl->getLinkTarget(new xoctPermissionTemplateGUI()));
 		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
 
 
@@ -43,7 +43,7 @@ class xoctMainGUI extends xoctGUI {
 				$this->ctrl->forwardCommand($xoctPublicationUsageGUI);
 				break;
 			case 'xoctpermissiontemplategui':
-				$this->tabs->activateTab(self::TAB_PERMISSION_TEMPLATES);
+				$this->tabs->activateTab(self::TAB_VIDEO_PORTAL);
 				$xoctPermissionTemplateGUI = new xoctPermissionTemplateGUI();
 				$this->ctrl->forwardCommand($xoctPermissionTemplateGUI);
 				break;

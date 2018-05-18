@@ -86,3 +86,8 @@ xoctConf::set(xoctConf::F_REPORT_DATE_TEXT,
 );
 
 ?>
+<#10>
+<?php
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
+xoctPermissionTemplate::updateDB();
+?>

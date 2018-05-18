@@ -49,6 +49,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 	protected function initColumns() {
 		$this->addColumn("", "", "10px", true);
+		$this->addColumn($this->pl->txt('table_column_default'));
 		$this->addColumn($this->pl->txt('table_column_title'));
 		$this->addColumn($this->pl->txt('table_column_info'));
 		$this->addColumn($this->pl->txt('table_column_role'));
@@ -63,6 +64,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 	protected function fillRow($a_set) {
 		$a_set['actions'] = $this->buildActions($a_set);
+		$a_set['default'] = $a_set['default'] ? 'ok' : 'not_ok';
 		$a_set['read'] = $a_set['read_access'] ? 'ok' : 'not_ok';
 		$a_set['write'] = $a_set['write_access'] ? 'ok' : 'not_ok';
 		parent::fillRow($a_set);

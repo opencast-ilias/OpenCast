@@ -30,6 +30,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_CHANNEL_ID = 'channel_id';
 	const F_MEMBER_UPLOAD = 'member_upload';
 	const F_SHOW_UPLOAD_TOKEN = 'show_upload_token';
+	const F_PUBLISH_ON_VIDEO_PORTAL = 'publish_on_video_portal';
 	const F_PERMISSION_TEMPLATE = 'permission_template';
 
 	/**
@@ -193,6 +194,24 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
 		// $this->addItem($department);
 
+        if (xoctPermissionTemplate::count()) {
+            $publish_on_video_portal = new ilCheckboxInputGUI(sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), self::F_PUBLISH_ON_VIDEO_PORTAL);
+            $publish_on_video_portal->setInfo($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'));
+
+            $permission_template = new ilRadioGroupInputGUI($this->txt(self::F_PERMISSION_TEMPLATE), self::F_PERMISSION_TEMPLATE);
+            $permission_template->setRequired(true);
+            /** @var xoctPermissionTemplate $ptpl */
+            foreach (xoctPermissionTemplate::where(array('default' => 0))->orderBy('sort')->get() as $ptpl) {
+                $radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
+                if ($ptpl->getInfo()) {
+                    $radio_opt->setInfo($ptpl->getInfo());
+                }
+                $permission_template->addOption($radio_opt);
+            }
+            $publish_on_video_portal->addSubItem($permission_template);
+            $this->addItem($publish_on_video_portal);
+        }
+
 		$use_annotations = new ilCheckboxInputGUI($this->txt(self::F_USE_ANNOTATIONS), self::F_USE_ANNOTATIONS);
 		$this->addItem($use_annotations);
 
@@ -214,21 +233,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($crs_member_upload);
 		}
 
-		if (xoctPermissionTemplate::count()) {
-			$permission_template = new ilRadioGroupInputGUI($this->txt(self::F_PERMISSION_TEMPLATE), self::F_PERMISSION_TEMPLATE);
-			$radio_opt = new ilRadioOption($this->txt('none'), 0);
-			$permission_template->addOption($radio_opt);
-			/** @var xoctPermissionTemplate $ptpl */
-			foreach (xoctPermissionTemplate::orderBy('sort')->get() as $ptpl) {
-				$radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
-				if ($ptpl->getInfo()) {
-					$radio_opt->setInfo($ptpl->getInfo());
-				}
-				$permission_template->addOption($radio_opt);
-			}
-			$this->addItem($permission_template);
-		}
-
 		if ($this->is_new) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
 			$accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
@@ -237,7 +241,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		if (!$this->is_new) {
-			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK)) {
+			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK) && $this->series->isPublishedOnVideoPortal()) {
                 $video_portal_link = new ilCustomInputGUI($this->txt(self::F_VIDEO_PORTAL_LINK), self::F_VIDEO_PORTAL_LINK);
                 $video_portal_link->setHtml($this->cast->getVideoPortalLink());
                 $this->addItem($video_portal_link);
@@ -268,6 +272,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	public function fillForm() {
+
 		$array = array(
 			self::F_CHANNEL_TYPE             => self::EXISTING_NO,
 			self::F_TITLE                    => $this->series->getTitle(),
@@ -281,6 +286,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_OBJ_ONLINE               => $this->cast->isOnline(),
 			self::F_CHANNEL_ID               => $this->cast->getSeriesIdentifier(),
 			self::F_PERMISSION_TEMPLATE      => $this->series->getPermissionTemplateId(),
+            self::F_PUBLISH_ON_VIDEO_PORTAL  => $this->series->isPublishedOnVideoPortal(),
 		);
 
 		$this->setValuesByArray($array);
@@ -341,11 +347,11 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 * @param null $obj_id
-	 *
-	 * @return bool|string
-	 */
+    /**
+     * @param null $obj_id
+     * @return array|bool
+     * @throws xoctException
+     */
 	public function saveObject($obj_id = null) {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
@@ -369,12 +375,16 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		// set chosen permission template, remove existing templates
 		$series_acls = $this->series->getAccessPolicies() ? $this->series->getAccessPolicies() : array();
 		xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
-		$perm_tpl_id = $this->getInput(self::F_PERMISSION_TEMPLATE);
-		if ($perm_tpl_id) {
-			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
-			$xoctPermissionTemplate = xoctPermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
-			$xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
-		}
+		if ($this->getInput(self::F_PUBLISH_ON_VIDEO_PORTAL)) {
+            $perm_tpl_id = $this->getInput(self::F_PERMISSION_TEMPLATE);
+            if ($perm_tpl_id) {
+                /** @var xoctPermissionTemplate $xoctPermissionTemplate */
+                $xoctPermissionTemplate = xoctPermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
+                $xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
+            }
+        } elseif ($default_template = xoctPermissionTemplate::where(array('default' => 1))->first()) {
+		    $default_template->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
+        }
 
 		$this->series->setAccessPolicies($series_acls);
 

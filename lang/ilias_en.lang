@@ -94,6 +94,7 @@ config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes
 config_scheduled_metadata_editable_1_info#:#Warning: possible only with API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
+config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
 event_add_new#:#Upload Event
@@ -246,7 +247,9 @@ series_permission_allow_set_own#:#Grant Access Rights
 series_permission_allow_set_own_info#:#An owner can give other students the right to watch his/her video.
 series_permission_per_clip#:#Set permissions for an Event
 series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
-series_permission_template#:#Permission Template
+series_permission_template#:#Permissions
+series_publish_on_video_portal#:#Publish Series on %s
+series_publish_on_video_portal_info#:#This setting leads to a publication on the video portal of your university. Leave this setting deactivated if the recordings are only to be viewed in ILIAS.
 series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
@@ -284,7 +287,7 @@ tab_settings#:#Settings
 tab_system_accounts#:#System-Accounts
 tab_back#:#Back
 tab_migration#:#Migration
-tab_permission_templates#:#Permission Templates
+tab_video_portal#:#Video Portal
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events
@@ -311,6 +314,7 @@ info_auto_publish_forced#:#The video will be published automatically, since you 
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
 msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
+table_column_default#:#Default
 table_column_title#:#Title
 table_column_info#:#Info
 table_column_role#:#Role
@@ -320,6 +324,8 @@ table_column_additional_acl_actions#:#Additional ACL Actions
 table_column_additional_actions_download#:#Additional Actions Download
 table_column_additional_actions_annotate#:#Additional Actions Annotate
 button_new_permission_template#:#Add New Template
+perm_tpl_form_default#:#Default Template
+perm_tpl_form_default_info#:#This template will be used if the series should not be published to the external video portal. Therefore, only one template can be defined as the default template.
 perm_tpl_form_title#:#Title
 perm_tpl_form_title_info#:#Will be used for presentation inside ILIAS.
 perm_tpl_form_info#:#Info

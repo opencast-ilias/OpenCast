@@ -34,6 +34,14 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @db_length           8
 	 */
 	protected $sort;
+    /**
+     * @var bool
+     *
+     * @db_has_field        true
+     * @db_fieldtype        integer
+     * @db_length           1
+     */
+    protected $default;
 	/**
 	 * @var String
 	 *
@@ -384,5 +392,21 @@ class xoctPermissionTemplate extends ActiveRecord {
 	public function setSort($sort) {
 		$this->sort = $sort;
 	}
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param int $default
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+    }
 
 }

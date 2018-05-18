@@ -8,6 +8,7 @@
  */
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
+    const F_DEFAULT = 'default';
 	const F_TITLE = 'title';
 	const F_INFO = 'info';
 	const F_ROLE = 'role';
@@ -68,13 +69,17 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
 
+		$input = new ilCheckboxInputGUI($this->txt(self::F_DEFAULT), self::F_DEFAULT);
+		$input->setInfo($this->txt(self::F_DEFAULT . '_info'));
+		$this->addItem($input);
+
 		$input = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
 		$input->setInfo($this->txt(self::F_TITLE . '_info'));
 		$input->setRequired(true);
 		$this->addItem($input);
 
 		$input = new ilTextAreaInputGUI($this->txt(self::F_INFO), self::F_INFO);
-		$input->setRequired(true);
+		$input->setRequired(false);
 		$this->addItem($input);
 
 		$input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ROLE);
@@ -120,6 +125,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
 	public function fillForm() {
 		$array = array(
+			self::F_DEFAULT => $this->object->isDefault(),
 			self::F_TITLE => $this->object->getTitle(),
 			self::F_INFO => $this->object->getInfo(),
 			self::F_ROLE => $this->object->getRole(),
@@ -138,6 +144,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 			return false;
 		}
 
+		$this->object->setDefault($this->getInput(self::F_DEFAULT));
 		$this->object->setTitle($this->getInput(self::F_TITLE));
 		$this->object->setInfo($this->getInput(self::F_INFO));
 		$this->object->setRole($this->getInput(self::F_ROLE));
@@ -147,8 +154,20 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 		$this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
 		$this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
 
-		$this->object->store();
-		return true;
+		// reset other default template(s) if this one is set as default
+        if ($this->getInput(self::F_DEFAULT)) {
+           foreach(xoctPermissionTemplate::where(array('default' => 1))->get() as $default_template) {
+               /** @var $default_template xoctPermissionTemplate */
+               $default_template->setDefault(0);
+               $default_template->update();
+           }
+
+        }
+
+        $this->object->store();
+
+
+        return true;
 	}
 
 	/**
