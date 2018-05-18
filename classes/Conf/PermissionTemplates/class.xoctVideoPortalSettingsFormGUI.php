@@ -77,7 +77,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      */
     protected function initButtons() {
         $this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
-        $this->addCommandButton(xoctConfGUI::CMD_CANCEL, $this->parent_gui->txt(xoctConfGUI::CMD_CANCEL));
     }
 
 

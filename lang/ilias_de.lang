@@ -294,6 +294,7 @@ subtab_general#:#Allgemeines
 subtab_groups_roles#:#Gruppen & Rollen
 subtab_security#:#Security
 subtab_advanced#:#Erweitert
+subtab_permission_templates#:#Berechtigungsvorlagen
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -313,6 +314,7 @@ info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht �
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
 msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
+msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
 table_column_default#:#Default
 table_column_title#:#Titel
 table_column_info#:#Info

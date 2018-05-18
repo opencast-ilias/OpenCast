@@ -296,6 +296,7 @@ subtab_series#:#Series
 subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security
 subtab_advanced#:#Advanced
+subtab_permission_templates#:#Permission Templates
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -315,6 +316,7 @@ info_auto_publish_forced#:#The video will be published automatically, since you 
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
 msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
+msg_confirm_delete_perm_template#:#Do you really want to delete the following template?
 table_column_default#:#Default
 table_column_title#:#Title
 table_column_info#:#Info

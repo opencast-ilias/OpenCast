@@ -112,12 +112,13 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	protected function initButtons() {
+	    $this->ctrl->setParameter($this->parent_gui, 'subtab_active', xoctPermissionTemplateGUI::SUBTAB_PERMISSION_TEMPLATES);
 		if ($this->is_new) {
 			$this->setTitle($this->lng->txt('create'));
 			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CREATE, $this->lng->txt(xoctPermissionTemplateGUI::CMD_CREATE));
 		} else {
 			$this->setTitle($this->lng->txt('edit'));
-			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_UPDATE, $this->lng->txt(xoctPermissionTemplateGUI::CMD_UPDATE));
+			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE, $this->lng->txt(xoctPermissionTemplateGUI::CMD_UPDATE));
 		}
 
 		$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CANCEL, $this->lng->txt(xoctPermissionTemplateGUI::CMD_CANCEL));

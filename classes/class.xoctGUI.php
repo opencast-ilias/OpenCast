@@ -27,6 +27,7 @@ abstract class xoctGUI {
 		$ilTabs = $DIC['ilTabs'];
 		$ilToolbar = $DIC['ilToolbar'];
 		$ilUser = $DIC['ilUser'];
+		$lng = $DIC['lng'];
 		/**
 		 * @var $ilCtrl    ilCtrl
 		 * @var $ilTabs    ilTabsGUI
@@ -39,6 +40,7 @@ abstract class xoctGUI {
 		$this->toolbar = $ilToolbar;
 		$this->user = $ilUser;
 		$this->pl = ilOpenCastPlugin::getInstance();
+		$this->lng = $lng;
 	}
 
 
