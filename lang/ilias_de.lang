@@ -97,6 +97,7 @@ config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
 config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
+config_permission_templates#:#Berechtigungsvorlagen
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -261,7 +262,7 @@ series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (si
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload durch Mitglieder
 series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
-series_video_portal_link#:#Link zum Video Portal
+series_video_portal_link#:#Link zur Serie in %s
 series_links#:#Links
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen

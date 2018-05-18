@@ -97,6 +97,7 @@ config_scheduled_metadata_editable_2#:#All, except date and recording station.
 config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
+config_permission_templates#:#Permission Templates
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -263,7 +264,7 @@ series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads w
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload by members
 series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
-series_video_portal_link#:#Link to Video Portal
+series_video_portal_link#:#Link to Series in %s
 series_links#:#Links
 system_account_add_new#:#Add System-Account
 system_account_cancel#:#Cancel

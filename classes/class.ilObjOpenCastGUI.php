@@ -405,9 +405,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		}
 
-        if ($link = $xoctOpenCast->getVideoPortalLink()) {
+        if ($xoctOpenCast->getVideoPortalLink() && $xoctOpenCast->getSeries()->isPublishedOnVideoPortal()) {
 		    $info->addSection($this->pl->txt('series_links'));
-		    $info->addProperty($this->pl->txt('series_video_portal_link'), $link);
+		    $info->addProperty(sprintf($this->pl->txt('series_video_portal_link'), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), $xoctOpenCast->getVideoPortalLink());
         }
 		// general information
 		$lng->loadLanguageModule("meta");

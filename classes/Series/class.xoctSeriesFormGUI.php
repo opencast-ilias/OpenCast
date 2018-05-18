@@ -242,7 +242,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		if (!$this->is_new) {
 			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK) && $this->series->isPublishedOnVideoPortal()) {
-                $video_portal_link = new ilCustomInputGUI($this->txt(self::F_VIDEO_PORTAL_LINK), self::F_VIDEO_PORTAL_LINK);
+                $video_portal_link = new ilCustomInputGUI(sprintf($this->txt(self::F_VIDEO_PORTAL_LINK), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), self::F_VIDEO_PORTAL_LINK);
                 $video_portal_link->setHtml($this->cast->getVideoPortalLink());
                 $this->addItem($video_portal_link);
             }

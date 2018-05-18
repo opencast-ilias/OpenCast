@@ -30,6 +30,8 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		$this->pl = ilOpenCastPlugin::getInstance();
 
 		$this->setId('test');
+		$this->setTitle($a_parent_obj->txt('permission_templates'));
+		$this->setDescription($this->pl->txt('msg_permission_templates_info'));
 		parent::__construct($a_parent_obj, $a_parent_cmd, $a_template_context);
 
 		$this->setEnableNumInfo(false);
@@ -37,6 +39,11 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		$this->setShowRowsSelector(false);
 
 		$this->setRowTemplate($this->pl->getDirectory() . '/templates/default/tpl.permission_templates.html');
+
+        $b = ilLinkButton::getInstance();
+        $b->setCaption($this->pl->txt('button_new_permission_template'), false);
+        $b->setUrl($this->ctrl->getLinkTarget($a_parent_obj, xoctPermissionTemplateGUI::CMD_ADD));
+        $this->addCommandButtonInstance($b);
 
 		xoctWaiterGUI::initJS();
 		$tpl->addJavaScript($this->pl->getDirectory() . '/templates/default/sortable.js');

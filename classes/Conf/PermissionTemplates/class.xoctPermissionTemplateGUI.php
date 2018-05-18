@@ -16,14 +16,10 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 *
 	 */
 	protected function index() {
-		ilUtil::sendInfo($this->pl->txt('msg_permission_templates_info'));
-		$b = ilLinkButton::getInstance();
-		$b->setCaption($this->pl->txt('button_new_permission_template'), false);
-		$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
-		$this->toolbar->addButtonInstance($b);
-
 		$xoctPermissionTemplateTableGUI = new xoctPermissionTemplateTableGUI($this);
-		$this->tpl->setContent($xoctPermissionTemplateTableGUI->getHTML());
+		$xoctVideoPortalSettingsFormGUI = new xoctVideoPortalSettingsFormGUI($this);
+		$xoctVideoPortalSettingsFormGUI->fillForm();
+		$this->tpl->setContent($xoctVideoPortalSettingsFormGUI->getHTML() . $xoctPermissionTemplateTableGUI->getHTML());
 	}
 
 
@@ -105,4 +101,13 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 		}
 		exit;
 	}
+
+    /**
+     * @param $key
+     *
+     * @return string
+     */
+    public function txt($key) {
+        return $this->pl->txt('config_' . $key);
+    }
 }
