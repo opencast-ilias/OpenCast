@@ -152,7 +152,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
-			$this->tpl->show();
 		}
 	}
 
@@ -279,14 +278,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * @param ilObjOpenCast $newObj
-	 * @param               $additional_args
-	 */
+    /**
+     * @param ilObject $newObj
+     * @throws Exception
+     */
 	public function afterSave(ilObject $newObj) {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
-		$rbacreview = $DIC['rbacreview'];
 		/**
 		 * @var $cast xoctOpenCast
 		 */
@@ -311,7 +309,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} catch (xoctException $e) {
 			//TODO log?
 		}
-		$cast->getSeries()->addProducers($producers);
+		$cast->getSeries()->addProducers($producers, true);
+		$cast->getSeries()->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
+		$cast->getSeries()->addContributor($this->user->getFirstname() . ' ' . $this->user->getLastname(), true);
+		$cast->getSeries()->update();
 
 		if ($cast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo($this->pl->txt('msg_info_multiple_aftersave'), true);
@@ -333,9 +334,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * @return xoctOpenCast
-	 */
+    /**
+     * @param bool $render_locator
+     * @return xoctOpenCast
+     */
 	protected function initHeader($render_locator = true) {
 		if ($render_locator) {
 			$this->setLocator();

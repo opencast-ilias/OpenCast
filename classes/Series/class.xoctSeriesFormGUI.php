@@ -114,8 +114,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 				$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
 				{
 					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
-					require_once('class.xoctSeries.php');
 					$existing_series = array();
+					// TODO: user doesn't have access to /api/series (403 error)
 					foreach (xoctSeries::getAllForUser($xoctUser->getUserRoleName()) as $serie) {
 						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
 					}
@@ -310,6 +310,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		if ($this->getInput(self::F_CHANNEL_TYPE) == self::EXISTING_YES) {
 			$this->series->setIdentifier($this->getInput(self::F_EXISTING_IDENTIFIER));
+			$this->series->read();
 		}
 		$this->series->setTitle($this->getInput(self::F_TITLE));
 		$this->series->setDescription($this->getInput(self::F_DESCRIPTION));

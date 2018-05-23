@@ -44,23 +44,23 @@ class xoctSeries extends xoctObject {
 
 
 	public function read() {
-
 		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
 		$this->updateFieldsFromMetadata();
-//		$this->loadProperties();
 	}
 
-
-	/**
-	 * @param array $xoctUsers
-	 */
-	public function addProducers(array $xoctUsers) {
+    /**
+     * @param array $xoctUsers
+     * @param bool $omit_update
+     */
+	public function addProducers(array $xoctUsers, $omit_update = false) {
 		foreach ($xoctUsers as $xoctUser) {
 			$this->addProducer($xoctUser, true);
 		}
-		$this->update();
+		if (!$omit_update) {
+            $this->update();
+        }
 	}
 
 
@@ -115,6 +115,65 @@ class xoctSeries extends xoctObject {
 		return false;
 	}
 
+    /**
+     * @param $organizer
+     * @param bool $omit_update
+     */
+	public function addOrganizer($organizer, $omit_update = false) {
+	    $organizers_array = array_map('trim', $this->getOrganizers());
+	    if (!in_array($organizer, $organizers_array)) {
+	        $organizers_array[] = $organizer;
+	        $this->setOrganizers($organizers_array);
+        }
+        if (!$omit_update) {
+	        $this->update();
+        }
+    }
+
+    /**
+     * @param $contributor
+     * @param bool $omit_update
+     */
+	public function addContributor($contributor, $omit_update = false) {
+	    $contributors_array = array_map('trim', $this->getContributors());
+	    if (!in_array($contributor, $contributors_array)) {
+            $contributors_array[] = $contributor;
+	        $this->setContributors($contributors_array);
+        }
+        if (!$omit_update) {
+	        $this->update();
+        }
+    }
+
+    /**
+     * @param $organizer
+     * @param bool $omit_update
+     */
+    public function removeOrganizer($organizer, $omit_update = false) {
+        $organizers_array = array_map('trim', $this->getOrganizers());
+        if (in_array($organizer, $organizers_array)) {
+            unset($organizers_array[array_search($organizer, $organizers_array)]);
+            $this->setOrganizers($organizers_array);
+        }
+        if (!$omit_update) {
+            $this->update();
+        }
+    }
+
+    /**
+     * @param $contributor
+     * @param bool $omit_update
+     */
+    public function removeContributor($contributor, $omit_update = false) {
+        $contributors_array = array_map('trim', $this->getContributors());
+        if (!in_array($contributor, $contributors_array)) {
+            unset($contributors_array[array_search($contributor, $contributors_array)]);
+            $this->setContributors($contributors_array);
+        }
+        if (!$omit_update) {
+            $this->update();
+        }
+    }
 
 	public function create() {
 		$metadata = xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES);
@@ -134,18 +193,6 @@ class xoctSeries extends xoctObject {
 		$array['acl'] = json_encode($acls);
 		$array['theme'] = $this->getTheme();
 
-//		echo $array['acl'];
-//		exit;
-//		foreach ($array as $k => $item) {
-//			echo $k . ':<br>';
-//			echo $item;
-//
-//			echo '<br>';
-//			echo '<br>';
-//		}
-//
-//		exit;
-
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 
 		if ($data->identifier) {
@@ -164,17 +211,12 @@ class xoctSeries extends xoctObject {
 			$this->getMetadata()->getField('description')->__toStdClass(),
 			$this->getMetadata()->getField('license')->__toStdClass(),
 			$this->getMetadata()->getField('identifier')->__toStdClass(),
+			$this->getMetadata()->getField('creator')->__toStdClass(),
+			$this->getMetadata()->getField('contributor')->__toStdClass(),
 			// identifier is needed as workaround
 		));
 
 		xoctRequest::root()->series($this->getIdentifier())->metadata()->parameter('type', $this->getMetadata()->getFlavor())->put($array);
-
-//		$this->loadProperties();
-//		$array = array(
-//			'properties' => json_encode($this->getProperties()->__toStdClass())
-//		);
-//
-//		xoctRequest::root()->series($this->getIdentifier())->properties()->put($array);
 
 		// when creating objects with existing series, the access policies are empty (=no change)
 		if ($this->getAccessPolicies()) {
@@ -204,6 +246,14 @@ class xoctSeries extends xoctObject {
 		$subjects = $this->getMetadata()->getField('identifier');
 		$subjects->setValue($this->getIdentifier());
 		$this->getMetadata()->addOrReplaceField($subjects);
+
+		$organizers = $this->getMetadata()->getField('creator');
+        $organizers->setValue($this->getOrganizers());
+		$this->getMetadata()->addOrReplaceField($organizers);
+
+		$contributors = $this->getMetadata()->getField('contributor');
+        $contributors->setValue($this->getContributors());
+		$this->getMetadata()->addOrReplaceField($contributors);
 	}
 
 
@@ -211,6 +261,8 @@ class xoctSeries extends xoctObject {
 		$this->setTitle($this->getMetadata()->getField('title')->getValue());
 		$this->setDescription($this->getMetadata()->getField('description')->getValue());
 		$this->setLicense($this->getMetadata()->getField('license')->getValue());
+		$this->setOrganizers($this->getMetadata()->getField('creator')->getValue());
+		$this->setContributors($this->getMetadata()->getField('contributor')->getValue());
 	}
 
 
@@ -219,9 +271,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	/**
-	 * @return xoctSeries[]
-	 */
+    /**
+     * @return xoctSeries[]
+     * @throws xoctException
+     */
 	public static function getAll() {
 		$return = array();
 		$data = json_decode(xoctRequest::root()->series()->get());
@@ -569,20 +622,6 @@ class xoctSeries extends xoctObject {
 	public function setTheme($theme) {
 		$this->theme = $theme;
 	}
-
-
-//	protected function loadProperties() {
-//		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->properties()->get());
-//		$xoctProperties = new xoctProperties();
-//		$xoctProperties->loadFromStdClass($data);
-//		$this->setProperties($xoctProperties);
-//		$this->updateFieldsFromProperties();
-//	}
-//
-//
-//	protected function updateFieldsFromProperties() {
-//		$this->setTheme($this->getProperties()->getTheme());
-//	}
 
     /**
      * @return int

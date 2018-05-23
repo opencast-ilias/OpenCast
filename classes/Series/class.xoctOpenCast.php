@@ -72,7 +72,10 @@ class xoctOpenCast extends ActiveRecord {
 	}
 
 
-	public function create() {
+    /**
+     *
+     */
+    public function create() {
 		if ($this->getObjId() === 0) {
 			$this->update();
 		} else {
@@ -82,12 +85,19 @@ class xoctOpenCast extends ActiveRecord {
 	}
 
 
-	public function update() {
+    /**
+     *
+     */
+    public function update() {
 		parent::update();
 		xoctDataMapper::xoctOpenCastupdated($this);
 	}
 
-	public function delete() {
+    /**
+     *
+     */
+    public function delete() {
+//        $this->removeOrganizerAndContributor();
 		foreach (xoctIVTGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
 			$ivt_group->delete();
 		}
@@ -95,9 +105,10 @@ class xoctOpenCast extends ActiveRecord {
 	}
 
 
-	/**
-	 * @return bool | int[]
-	 */
+    /**
+     * @return Int[]|bool
+     * @throws Exception
+     */
 	public function getDuplicatesOnSystem()
 	{
 		if (!$this->getObjId() || !$this->getSeriesIdentifier())
@@ -374,6 +385,32 @@ class xoctOpenCast extends ActiveRecord {
 		$this->permission_allow_set_own = $permission_allow_set_own;
 	}
 
-}
+    /**
+     * @throws Exception
+     */
+    protected function removeOrganizerAndContributor()
+    {
+        $organizers = array();
+        $contributors = array();
+        foreach (array_filter($this->getDuplicatesOnSystem()) as $duplicate_ref_id) {
+            $organizers[] = ilObjOpenCast::_getParentCourseOrGroup($duplicate_ref_id)->getTitle();
+            $contributor = new ilObjUser(ilObjOpenCast::_lookupOwner(ilObjOpenCast::_lookupObjectId($duplicate_ref_id)));
+            $contributors = $contributor->getFirstname() . ' ' . $contributor->getLastname();
+        }
+        $this_organizer = ilObjOpenCast::_getParentCourseOrGroup($this->getILIASObject()->getRefId());
+        $this_contributor = new ilObjUser($this->getILIASObject()->getOwner());
+        $this_contributor = $this_contributor->getFirstname() . ' ' . $this_contributor->getLastname();
 
+        if (!in_array($this_organizer, $organizers)) {
+            $this->getSeries()->removeOrganizer($this_organizer, true);
+        }
+
+        if (!in_array($this_contributor, $contributors)) {
+            $this->getSeries()->removeContributor($this_contributor, true);
+        }
+
+        $this->getSeries()->update();
+    }
+
+}
 ?>
