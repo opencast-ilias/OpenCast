@@ -810,7 +810,7 @@ class xoctEventGUI extends xoctGUI {
             . "<b>ID Opencast Serie:</b> {$series->getSeriesIdentifier()}<br><br>"
             . "<b>Nachrichtentext:</b> <br>"
             . "<hr>"
-            . $message . "<br>"
+            . nl2br($message) . "<br>"
             . "<hr>";
 	    return $mail_body;
     }
@@ -832,7 +832,7 @@ class xoctEventGUI extends xoctGUI {
             . "<b>ID Opencast Serie:</b> {$series->getSeriesIdentifier()}<br><br>"
             . "<b>Nachrichtentext:</b> <br>"
             . "<hr>"
-            . $message . "<br>"
+            . nl2br($message) . "<br>"
             . "<hr>";
         return $mail_body;
     }
