@@ -82,7 +82,7 @@ config_report_quality_text#:#Info Text
 config_report_quality_text_info#:#Text which will be display as an info in the reporting form.
 config_report_quality_access#:#Access
 config_report_quality_access_1#:#All users
-config_report_quality_access_2#:#Only users with the permission "Edit Videos".
+config_report_quality_access_2#:#Only vide owner and users with the permission "Edit Videos".
 config_report_date#:#Enable "Report Date Modification"
 config_report_date_info#:#Enables the possibility to report wrong dates of events inside Opencast objects.
 config_report_date_email#:#Email

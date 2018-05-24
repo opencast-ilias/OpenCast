@@ -82,7 +82,7 @@ config_report_quality_text#:#Info-Text
 config_report_quality_text_info#:#Text, welcher als Info im Formular zum Melden von Qualitätsproblemen angezeigt wird.
 config_report_quality_access#:#Zugriff
 config_report_quality_access_1#:#Alle Benutzer
-config_report_quality_access_2#:#Nur Benutzer mit dem Recht "Videos editieren"
+config_report_quality_access_2#:#Nur Besitzer des Videos und Benutzer mit dem Recht "Videos editieren"
 config_report_date#:#"Terminanpassungen melden" aktivieren
 config_report_date_info#:#Aktiviert die Möglichkeit, Terminanpassungen von geplanten Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
 config_report_date_email#:#Email
