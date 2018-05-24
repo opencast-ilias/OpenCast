@@ -6,9 +6,24 @@
  */
 class xoctSeries extends xoctObject {
 
-	/**
-	 * @param string $identifier
-	 */
+    /**
+     * @param $identifier
+     * @return xoctSeries
+     */
+    public static function find($identifier)
+    {
+        $series = parent::find($identifier);
+        $series->afterObjectLoad();
+
+        return $series;
+    }
+
+
+    /**
+     * xoctSeries constructor.
+     * @param string $identifier
+     * @throws xoctException
+     */
 	public function __construct($identifier = '') {
 		if ($identifier) {
 			$this->setIdentifier($identifier);
@@ -17,7 +32,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	protected function afterObjectLoad() {
+    /**
+     * @throws xoctException
+     */
+    protected function afterObjectLoad() {
 		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->acl()->get());
 		$acls = array();
 		foreach ($data as $d) {
@@ -29,7 +47,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	public function loadMetadata() {
+    /**
+     * @throws xoctException
+     */
+    public function loadMetadata() {
 		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->metadata()->get());
 			foreach ($data as $d) {
@@ -43,7 +64,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	public function read() {
+    /**
+     * @throws xoctException
+     */
+    public function read() {
 		$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->get());
 		$this->loadFromStdClass($data);
 		$this->loadMetadata();
@@ -51,8 +75,9 @@ class xoctSeries extends xoctObject {
 	}
 
     /**
-     * @param array $xoctUsers
+     * @param xoctUser[] $xoctUsers
      * @param bool $omit_update
+     * @throws xoctException
      */
 	public function addProducers(array $xoctUsers, $omit_update = false) {
 		foreach ($xoctUsers as $xoctUser) {
@@ -175,7 +200,10 @@ class xoctSeries extends xoctObject {
         }
     }
 
-	public function create() {
+    /**
+     * @throws xoctException
+     */
+    public function create() {
 		$metadata = xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES);
 		$metadata->setLabel('Opencast Series DublinCore');
 		$this->setMetadata($metadata);
@@ -203,7 +231,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	public function update() {
+    /**
+     * @throws xoctException
+     */
+    public function update() {
 		$this->loadMetadata();
 		$this->updateMetadataFromFields();
 		$array['metadata'] = json_encode(array(
@@ -230,7 +261,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	protected function updateMetadataFromFields() {
+    /**
+     *
+     */
+    protected function updateMetadataFromFields() {
 		$title = $this->getMetadata()->getField('title');
 		$title->setValue($this->getTitle());
 		$this->getMetadata()->addOrReplaceField($title);
@@ -257,7 +291,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	protected function updateFieldsFromMetadata() {
+    /**
+     *
+     */
+    protected function updateFieldsFromMetadata() {
 		$this->setTitle($this->getMetadata()->getField('title')->getValue());
 		$this->setDescription($this->getMetadata()->getField('description')->getValue());
 		$this->setLicense($this->getMetadata()->getField('license')->getValue());
@@ -266,7 +303,10 @@ class xoctSeries extends xoctObject {
 	}
 
 
-	public function delete() {
+    /**
+     *
+     */
+    public function delete() {
 		xoctRequest::root()->series($this->identifier)->delete();
 	}
 
