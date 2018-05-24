@@ -209,7 +209,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		// show location and start date for scheduled events only if configured
 		$date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 
-		if (xoct::isApiVersionGreaterThan('v1.1.0')) {
+		if (xoct::isApiVersionGreaterThan('v1.1.0') && ($this->schedule || $this->object->isScheduled())) {
 			$input = new ilSelectInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
 			$options = array();
 			/** @var xoctAgent $agent */
