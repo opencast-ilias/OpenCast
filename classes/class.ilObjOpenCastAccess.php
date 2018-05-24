@@ -230,7 +230,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos') || $xoctEvent->isOwner($xoctUser));
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
-					xoctConf::getConfig(xoctConf::F_REPORT_DATE);
+					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission('edit_videos');
 		}
 	}
 
