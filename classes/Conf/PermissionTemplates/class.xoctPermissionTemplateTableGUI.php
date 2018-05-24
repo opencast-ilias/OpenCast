@@ -75,8 +75,8 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 
 	protected function fillRow($a_set) {
-
 	    $a_set['title'] = $this->user->getLanguage() == 'de' ? $a_set['title_de'] : $a_set['title_en'];
+	    $a_set['info'] = $this->user->getLanguage() == 'de' ? $a_set['info_de'] : $a_set['info_en'];
 		$a_set['actions'] = $this->buildActions($a_set);
 		$a_set['default'] = $a_set['default'] ? 'ok' : 'not_ok';
 		$a_set['read'] = $a_set['read_access'] ? 'ok' : 'not_ok';
