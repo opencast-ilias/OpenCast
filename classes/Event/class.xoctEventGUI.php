@@ -108,8 +108,10 @@ class xoctEventGUI extends xoctGUI {
 		// add "report date change" button
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$b = ilButton::getInstance();
+			$b->setId('xoct_report_date_button');
 			$b->setCaption('rep_robj_xoct_event_report_date_modification');
 			$b->setOnClick("$('#xoct_report_date_modal').modal('show');");
+			$b->addCSSClass('hidden');
 
 			$this->toolbar->addButtonInstance($b);
 		}
@@ -143,11 +145,6 @@ class xoctEventGUI extends xoctGUI {
 			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
 			$intro_text = $intro->get();
 		}
-		// DELETE AFTER USAGE
-		//		$b = ilLinkButton::getInstance();
-		//		$b->setCaption('rechte_neuladen_hack');
-		//		$b->setUrl($this->ctrl->getLinkTarget($this, 'resetPermissions'));
-		//		$this->toolbar->addButtonInstance($b);
 
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
@@ -198,8 +195,12 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	public function asyncGetTableGUI() {
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-		echo $xoctEventTableGUI->getHTML();
-		exit();
+        $html = $xoctEventTableGUI->getHTML();
+        if ($xoctEventTableGUI->hasScheduledEvents()) {
+            $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
+        }
+        echo $html;
+        exit();
 	}
 
 

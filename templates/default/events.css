@@ -30,3 +30,7 @@
 .label-scheduled {
 	background-color: #C4AA0A !important;
 }
+
+.hidden {
+	display:none;
+}

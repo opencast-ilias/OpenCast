@@ -30,7 +30,10 @@ class xoctEventTableGUI extends ilTable2GUI
 	 * @var \xoctEventGUI
 	 */
 	protected $parent_obj;
-
+    /**
+     * @var bool
+     */
+	protected $has_scheduled_events = false;
 
 	/**
 	 * xoctEventTableGUI constructor.
@@ -458,6 +461,12 @@ class xoctEventTableGUI extends ilTable2GUI
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
+
+        foreach ($a_data as $row) {
+			if ($row['object']->isScheduled()) {
+				$this->has_scheduled_events = true;
+			}
+		}
 		$this->setData($a_data);
 	}
 
@@ -655,6 +664,16 @@ class xoctEventTableGUI extends ilTable2GUI
 			);
 		}
 	}
+
+    /**
+     * @return bool
+     */
+    public function hasScheduledEvents()
+    {
+        return $this->has_scheduled_events;
+    }
+
+
 }
 
 ?>
