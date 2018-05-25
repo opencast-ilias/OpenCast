@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctEventGUI
  *
@@ -22,6 +23,10 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_SCHEDULE = 'schedule';
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
 
+	const CMD_STREAM_VIDEO = 'streamVideo';
+	const ROLE_MASTER = "master";
+	const ROLE_SLAVE = "slave";
+
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -31,7 +36,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = null) {
+	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
 		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
@@ -149,6 +154,7 @@ class xoctEventGUI extends xoctGUI {
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
+
 			return;
 		}
 
@@ -396,40 +402,146 @@ class xoctEventGUI extends xoctGUI {
 	public function streamVideo() {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
-		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
+
 		// check access
-		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent,xoctUser::getInstance($ilUser), $this->xoctOpenCast)) {
-			ilUtil::sendFailure($this->txt('msg_no_access'), true);
+		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, xoctUser::getInstance($this->user), $this->xoctOpenCast)) {
+			ilUtil::sendFailure($this->txt("msg_no_access"), true);
 			$this->cancel();
 		}
 
-		$publication_metadata = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API));
+		$publication = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
-		foreach ($publication_metadata->getMedia() as $media) {
-			$url = $media->getUrl();
-
-			// DELETE AFTER TESTING !!!!
-//			$url = str_replace("localhost",'10.0.2.2',$url);
-			// DELETE AFTER TESTING !!!!
-
-			// find first media publication with video content
-			if (strpos($media->getMediatype(),'video') !== false) {
-				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-					$url = xoctSecureLink::sign($url);
-				}
-				// set the necessary headers from the original url
-				$origin_headers = get_headers($url);
-				foreach ($origin_headers as $origin_header) {
-					if (strpos($origin_header,'Content-Length') !== false || strpos($origin_header,'Accept-Ranges') !== false) {
-						header($origin_header);
-					}
-				}
-				header('Content-Type: ' . $media->getMediatype());
-				readfile($url);
-				exit;
-			}
+		// Multi stream
+		$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
+			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
+				&& in_array(xoctPublicationUsage::USAGE_DUAL_IMAGE_SOURCE, $media->getTags()));
+		}));
+		if (count($medias) === 0) {
+			// Single stream
+			$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
+				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
+					&& in_array(xoctPublicationUsage::USAGE_DOWNLOAD, $media->getTags()));
+			}));
 		}
 
+		/**
+		 * @var xoctAttachment[] $previews
+		 */
+		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
+			return ($attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTER_PLAYER_PREVIEW
+				|| $attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTATION_PLAYER_PREVIEW);
+		});
+		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
+			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
+
+			return $previews;
+		}, []);
+
+		$duration = 0;
+		$streams = array_map(function (xoctMedia $media) use (&$duration, &$previews) {
+			$url = $media->getUrl();
+			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+				$url = xoctSecureLink::sign($url);
+			}
+
+			$role = (strpos($url, xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
+
+			if ($duration == 0) {
+				$duration = $media->getDuration();
+			}
+
+			$preview_url = $previews[$role];
+			if ($preview_url !== NULL) {
+				$preview_url = $preview_url->getUrl();
+				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+					$preview_url = xoctSecureLink::sign($preview_url);
+				}
+			} else {
+				$preview_url = "";
+			}
+
+			return [
+				"type" => xoctMedia::MEDIA_TYPE_VIDEO,
+				"role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+				"sources" => [
+					"mp4" => [
+						[
+							"src" => $url,
+							"mimetype" => $media->getMediatype(),
+							"res" => [
+								"w" => $media->getWidth(),
+								"h" => $media->getHeight()
+							]
+						]
+					]
+				],
+				"preview" => $preview_url
+			];
+		}, $medias);
+
+		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
+			return (in_array("segments", $attachment->getTags()));
+		});
+		$segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
+			if (!isset($segments[$segment->getRef()])) {
+				$segments[$segment->getRef()] = [];
+			}
+			$segments[$segment->getRef()][$segment->getFlavor()] = $segment;
+
+			return $segments;
+		}, []);
+		ksort($segments);
+		$frameList = array_values(array_map(function (array $segment) {
+			/**
+			 * @var xoctAttachment[] $segment
+			 */
+			$high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+			$low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
+			if ($high === NULL || $low === NULL) {
+				$high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+				$low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+			}
+
+			$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
+			$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+			$time = $time->getTimestamp();
+
+			$high_url = $high->getUrl();
+			$low_url = $low->getUrl();
+			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+				$high_url = xoctSecureLink::sign($high_url);
+				$low_url = xoctSecureLink::sign($low_url);
+			}
+
+			return [
+				"id" => "frame_" . $time,
+				"mimetype" => $high->getMediatype(),
+				"time" => $time,
+				"url" => $high_url,
+				"thumb" => $low_url
+			];
+		}, $segments));
+
+		$tpl = $this->pl->getTemplate("paella_player.html");
+
+		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
+
+		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
+
+		$data = [
+			"streams" => $streams,
+			"frameList" => $frameList,
+			"metadata" => [
+				"title" => $xoctEvent->getTitle(),
+				"duration" => $duration
+			]
+		];
+		$tpl->setVariable("DATA", json_encode($data));
+
+		echo $tpl->get();
+
+		exit();
 	}
 
 
@@ -504,7 +616,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, null, null);
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -537,7 +649,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, null, null);
+		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -729,7 +841,6 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
 			$modal_quality_html = $modal_quality->getHTML();
 		}
-
 
 		return $modal_date_html . $modal_quality_html;
 	}

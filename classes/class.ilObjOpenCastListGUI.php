@@ -44,7 +44,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	public function initType() {
-		$this->setType(ilOpenCastPlugin::XOCT);
+		$this->setType(ilOpenCastPlugin::PLUGIN_ID);
 	}
 
 

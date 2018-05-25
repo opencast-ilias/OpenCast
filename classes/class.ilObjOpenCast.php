@@ -53,7 +53,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	final function initType() {
-		$this->setType(ilOpenCastPlugin::XOCT);
+		$this->setType(ilOpenCastPlugin::PLUGIN_ID);
 	}
 
 

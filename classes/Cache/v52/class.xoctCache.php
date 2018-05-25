@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctCache
  *
@@ -7,7 +8,7 @@
  */
 class xoctCache extends ilGlobalCache {
 
-	const COMP_PREFIX = 'xoct';
+	const COMP_PREFIX = ilOpenCastPlugin::PLUGIN_ID;
 	/**
 	 * @var bool
 	 */
@@ -34,15 +35,15 @@ class xoctCache extends ilGlobalCache {
 	}
 
 
-//	/**
-//	 * @param null $component
-//	 *
-//	 * @return ilGlobalCache|void
-//	 * @throws ilException
-//	 */
-//	public static function getInstance($component) {
-//		throw new ilException('xoctCache::getInstance() should not be called. Please call xoctCache::getCacheInstance() instead.');
-//	}
+	//	/**
+	//	 * @param null $component
+	//	 *
+	//	 * @return ilGlobalCache|void
+	//	 * @throws ilException
+	//	 */
+	//	public static function getInstance($component) {
+	//		throw new ilException('xoctCache::getInstance() should not be called. Please call xoctCache::getCacheInstance() instead.');
+	//	}
 
 	public function init() {
 		$this->initCachingService();
@@ -50,22 +51,20 @@ class xoctCache extends ilGlobalCache {
 		self::setOverrideActive(true);
 	}
 
+
 	protected function initCachingService() {
 		/**
 		 * @var $ilGlobalCacheService ilGlobalCacheService
 		 */
 		if (!$this->getComponent()) {
-			$this->setComponent('OpenCast');
+			$this->setComponent(ilOpenCastPlugin::PLUGIN_NAME);
 		}
 
-		if($this->isOpenCastCacheEnabled())
-		{
+		if ($this->isOpenCastCacheEnabled()) {
 			$serviceName = self::lookupServiceClassName($this->getServiceType());
 			$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
 			$ilGlobalCacheService->setServiceType($this->getServiceType());
-		}
-		else
-		{
+		} else {
 			$serviceName = self::lookupServiceClassName(self::TYPE_STATIC);
 			$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
 			$ilGlobalCacheService->setServiceType(self::TYPE_STATIC);
@@ -75,22 +74,21 @@ class xoctCache extends ilGlobalCache {
 		$this->setActive(in_array($this->getComponent(), self::getActiveComponents()));
 	}
 
+
 	/**
 	 * Checks if live voting is able to use the global cache.
 	 *
 	 * @return bool
 	 */
-	private function isOpenCastCacheEnabled()
-	{
-		try
-		{
+	private function isOpenCastCacheEnabled() {
+		try {
 			return (int)xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE);
-		}
-		catch (Exception $exceptione) //catch exception while dbupdate is running. (xlvoConf is not ready at that time).
+		} catch (Exception $exceptione) //catch exception while dbupdate is running. (xlvoConf is not ready at that time).
 		{
 			return false;
 		}
 	}
+
 
 	/**
 	 * @param $service_type
@@ -187,13 +185,14 @@ class xoctCache extends ilGlobalCache {
 	 *
 	 * @return bool
 	 */
-	public function set($key, $value, $ttl = null) {
+	public function set($key, $value, $ttl = NULL) {
 		//		$ttl = $ttl ? $ttl : 480;
 		if (!$this->global_cache instanceof ilGlobalCacheService || !$this->isActive()) {
 			return false;
 		}
 
 		$return = $this->global_cache->set($key, $this->global_cache->serialize($value), $ttl);
+
 		return $return;
 	}
 
@@ -213,7 +212,7 @@ class xoctCache extends ilGlobalCache {
 			return $unserialized_return;
 		}
 
-		return null;
+		return NULL;
 	}
 }
 

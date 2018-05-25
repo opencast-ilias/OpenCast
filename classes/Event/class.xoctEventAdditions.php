@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctEventAdditions
  *
@@ -6,13 +7,23 @@
  */
 class xoctEventAdditions extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_event_additions';
+
+
 	/**
 	 * @return string
-	 * @description Return the Name of your Database Table
 	 * @deprecated
 	 */
 	static function returnDbTableName() {
-		return 'xoct_event_additions';
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
 	}
 
 
@@ -41,7 +52,7 @@ class xoctEventAdditions extends ActiveRecord {
 	/**
 	 * @var string
 	 *
-	 * @description Unique identifier from opencast
+	 * @description    Unique identifier from opencast
 	 *
 	 * @con_is_primary true
 	 * @con_is_unique  true

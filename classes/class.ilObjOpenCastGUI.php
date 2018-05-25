@@ -21,6 +21,7 @@
 	+-----------------------------------------------------------------------------+
 */
 require_once __DIR__ . '/../vendor/autoload.php';
+
 /**
  * User Interface class for example repository object.
  *
@@ -105,7 +106,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 * @return string
 	 */
 	final function getType() {
-		return ilOpenCastPlugin::XOCT;
+		return ilOpenCastPlugin::PLUGIN_ID;
 	}
 
 
@@ -226,6 +227,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		return true;
 	}
 
+
 	/**
 	 * @param string $a_new_type
 	 *
@@ -236,15 +238,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			ilUtil::sendFailure($this->pl->txt('msg_creation_failed'), true);
 			ilUtil::redirect('/');
 		}
-		$this->ctrl->setParameter($this, 'new_type', ilOpenCastPlugin::XOCT);
+		$this->ctrl->setParameter($this, 'new_type', ilOpenCastPlugin::PLUGIN_ID);
 
 		return array( self::CFORM_NEW => $this->initCreateForm($a_new_type) );
 	}
 
 
 	/**
-	 * @param string $type
+	 * @param string     $type
 	 * @param bool|false $from_post
+	 *
 	 * @return xoctSeriesFormGUI
 	 */
 	public function initCreateForm($type, $from_post = false) {
@@ -324,8 +327,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
 		}
 
-
-
 		$newObj->setTitle($cast->getSeries()->getTitle());
 		$newObj->setDescription($cast->getSeries()->getDescription());
 		$newObj->update();
@@ -354,10 +355,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->setDescription($xoctOpenCast->getSeries()->getDescription());
 			if ($this->access->checkAccess('read', '', $_GET['ref_id'])) {
 				$this->history->addItem($_GET['ref_id'], $this->ctrl->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()
-				                                                                                                                                    ->getTitle());
+					->getTitle());
 			}
 			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
-			$list_gui = ilObjectListGUIFactory::_getListGUIByType('xoct');
+			$list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpenCastPlugin::PLUGIN_ID);
 			/**
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
@@ -368,7 +369,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->setTitle($this->pl->txt('series_create'));
 		}
 		$this->tpl->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
-		$this->tpl->setPermanentLink('xoct', $_GET['ref_id']);
+		$this->tpl->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
 
 		return $xoctOpenCast;
 	}
@@ -402,7 +403,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			foreach ($refs as $ref) {
 				$parent = $tree->getParentId($ref);
 				$info->addProperty(($i) . '. '
-				                   . $this->pl->txt('info_linked_item'), ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)), ilLink::_getStaticLink($parent));
+					. $this->pl->txt('info_linked_item'), ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)), ilLink::_getStaticLink($parent));
 				$i ++;
 			}
 		}
@@ -411,6 +412,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		    $info->addSection($this->pl->txt('series_links'));
 		    $info->addProperty(sprintf($this->pl->txt('series_video_portal_link'), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), $xoctOpenCast->getVideoPortalLink());
         }
+
 		// general information
 		$lng->loadLanguageModule("meta");
 
@@ -430,15 +432,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		global $DIC;
 		$ilCtrl = $DIC['ilCtrl'];
 
-		if ($_GET["item_ref_id"] != "")
-		{
-			$_POST["id"] = array($_GET["item_ref_id"]);
+		if ($_GET["item_ref_id"] != "") {
+			$_POST["id"] = array( $_GET["item_ref_id"] );
 		}
 
-		if(is_array($_POST["id"]))
-		{
-			foreach($_POST["id"] as $idx => $id)
-			{
+		if (is_array($_POST["id"])) {
+			foreach ($_POST["id"] as $idx => $id) {
 				$_POST["id"][$idx] = (int)$id;
 			}
 		}
@@ -446,11 +445,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		// SAVE POST VALUES (get rid of this
 		ilSession::set("saved_post", $_POST["id"]);
 
-		if (!$this->showDeleteConfirmation($_POST["id"], $a_error))
-		{
+		if (!$this->showDeleteConfirmation($_POST["id"], $a_error)) {
 			$ilCtrl->returnToParent($this);
 		}
 	}
+
 
 	/**
 	 * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
@@ -464,25 +463,23 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$tpl = $DIC['tpl'];
 		$objDefinition = $DIC['objDefinition'];
 
-		if (!is_array($a_ids) || count($a_ids) == 0)
-		{
+		if (!is_array($a_ids) || count($a_ids) == 0) {
 			ilUtil::sendFailure($lng->txt("no_checkbox"), true);
+
 			return false;
 		}
 
 		// Remove duplicate entries
-		$a_ids = array_unique((array) $a_ids);
+		$a_ids = array_unique((array)$a_ids);
 
 		include_once("./Services/Utilities/classes/class.ilConfirmationGUI.php");
 		$cgui = new ilConfirmationGUI();
 
-		if(!$a_supress_message)
-		{
+		if (!$a_supress_message) {
 			$msg = $lng->txt("info_delete_sure");
 
-			if (!$ilSetting->get('enable_trash'))
-			{
-				$msg .= "<br/>".$lng->txt("info_delete_warning_no_trash");
+			if (!$ilSetting->get('enable_trash')) {
+				$msg .= "<br/>" . $lng->txt("info_delete_warning_no_trash");
 			}
 
 			$cgui->setHeaderText($msg);
@@ -491,44 +488,43 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$cgui->setCancel($lng->txt("cancel"), "cancelDelete");
 		$cgui->setConfirm($lng->txt("confirm"), "confirmedDelete");
 
-		$form_name = "cgui_".md5(uniqid());
+		$form_name = "cgui_" . md5(uniqid());
 		$cgui->setFormName($form_name);
 
 		$deps = array();
-		foreach ($a_ids as $ref_id)
-		{
+		foreach ($a_ids as $ref_id) {
 			$obj_id = ilObject::_lookupObjId($ref_id);
 			$type = ilObject::_lookupType($obj_id);
-			$title = call_user_func(array(ilObjectFactory::getClassByType($type),'_lookupTitle'),$obj_id);
-			$alt = $lng->txt("icon")." ".ilPlugin::lookupTxt("rep_robj", $type, "obj_".$type);
+			$title = call_user_func(array( ilObjectFactory::getClassByType($type), '_lookupTitle' ), $obj_id);
+			$alt = $lng->txt("icon") . " " . ilPlugin::lookupTxt("rep_robj", $type, "obj_" . $type);
 
 			$title .= $this->handleMultiReferences($obj_id, $ref_id, $form_name);
 
-			$cgui->addItem("id[]", $ref_id, $title,
-				ilObject::_getIcon($obj_id, "small", $type),
-				$alt);
+			$cgui->addItem("id[]", $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), $alt);
 
 			ilObject::collectDeletionDependencies($deps, $ref_id, $obj_id, $type);
 		}
 		$deps_html = "";
 
-		if (is_array($deps) && count($deps) > 0)
-		{
+		if (is_array($deps) && count($deps) > 0) {
 			include_once("./Services/Repository/classes/class.ilRepDependenciesTableGUI.php");
 			$tab = new ilRepDependenciesTableGUI($deps);
-			$deps_html = "<br/><br/>".$tab->getHTML();
+			$deps_html = "<br/><br/>" . $tab->getHTML();
 		}
 
-		$tpl->setContent($cgui->getHTML().$deps_html);
+		$tpl->setContent($cgui->getHTML() . $deps_html);
+
 		return true;
 	}
+
 
 	/**
 	 * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
 	 *
-	 * @param int $a_obj_id
-	 * @param int $a_ref_id
+	 * @param int    $a_obj_id
+	 * @param int    $a_ref_id
 	 * @param string $a_form_name
+	 *
 	 * @return string
 	 */
 	function handleMultiReferences($a_obj_id, $a_ref_id, $a_form_name)
@@ -542,38 +538,32 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		/** @var xoctOpenCast $xoctOpenCast */
 		$xoctOpenCast = xoctOpenCast::find($a_obj_id);
-		if($all_refs = $xoctOpenCast->getDuplicatesOnSystem())
-		{
+		if ($all_refs = $xoctOpenCast->getDuplicatesOnSystem()) {
 			$lng->loadLanguageModule("rep");
 
 			$may_delete_any = 0;
 			$counter = 0;
 			$items = array();
-			foreach($all_refs as $mref_id)
-			{
+			foreach ($all_refs as $mref_id) {
 				// not the already selected reference, no refs from trash
-				if($mref_id != $a_ref_id && !$tree->isDeleted($mref_id))
-				{
-					if($ilAccess->checkAccess("read", "", $mref_id))
-					{
+				if ($mref_id != $a_ref_id && !$tree->isDeleted($mref_id)) {
+					if ($ilAccess->checkAccess("read", "", $mref_id)) {
 						$may_delete = false;
-						if($ilAccess->checkAccess("delete", "", $mref_id))
-						{
+						if ($ilAccess->checkAccess("delete", "", $mref_id)) {
 							$may_delete = true;
-							$may_delete_any++;
+							$may_delete_any ++;
 						}
 
-						$items[] = array("id" => $mref_id,
-							"path" => array_shift($this->buildPath(array($mref_id))),
-							"delete" => $may_delete);
-					}
-					else
-					{
-						$counter++;
+						$items[] = array(
+							"id" => $mref_id,
+							"path" => array_shift($this->buildPath(array( $mref_id ))),
+							"delete" => $may_delete
+						);
+					} else {
+						$counter ++;
 					}
 				}
 			}
-
 
 			// render
 
@@ -581,26 +571,20 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 			$tpl->setVariable("TXT_INTRO", $lng->txt("rep_multiple_reference_deletion_intro"));
 
-			if($may_delete_any)
-			{
+			if ($may_delete_any) {
 				$tpl->setVariable("TXT_INSTRUCTION", $lng->txt("rep_multiple_reference_deletion_instruction"));
 			}
 
-			if($items)
-			{
+			if ($items) {
 				$var_name = "mref_id[]";
 
-				foreach($items as $item)
-				{
-					if($item["delete"])
-					{
+				foreach ($items as $item) {
+					if ($item["delete"]) {
 						$tpl->setCurrentBlock("cbox");
 						$tpl->setVariable("ITEM_NAME", $var_name);
 						$tpl->setVariable("ITEM_VALUE", $item["id"]);
 						$tpl->parseCurrentBlock();
-					}
-					else
-					{
+					} else {
 						$tpl->setCurrentBlock("item_info");
 						$tpl->setVariable("TXT_ITEM_INFO", $lng->txt("rep_no_permission_to_delete"));
 						$tpl->parseCurrentBlock();
@@ -611,14 +595,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 					$tpl->parseCurrentBlock();
 				}
 
-				if($may_delete_any > 1)
-				{
+				if ($may_delete_any > 1) {
 					$tpl->setCurrentBlock("cbox");
-					$tpl->setVariable("ITEM_NAME", "sall_".$a_ref_id);
+					$tpl->setVariable("ITEM_NAME", "sall_" . $a_ref_id);
 					$tpl->setVariable("ITEM_VALUE", "");
-					$tpl->setVariable("ITEM_ADD", " onclick=\"il.Util.setChecked('".
-						$a_form_name."', '".$var_name."', document.".$a_form_name.
-						".sall_".$a_ref_id.".checked)\"");
+					$tpl->setVariable("ITEM_ADD", " onclick=\"il.Util.setChecked('" . $a_form_name . "', '" . $var_name . "', document."
+						. $a_form_name . ".sall_" . $a_ref_id . ".checked)\"");
 					$tpl->parseCurrentBlock();
 
 					$tpl->setCurrentBlock("item");
@@ -627,11 +609,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 				}
 			}
 
-			if($counter)
-			{
+			if ($counter) {
 				$tpl->setCurrentBlock("add_info");
-				$tpl->setVariable("TXT_ADDITIONAL_INFO",
-					sprintf($lng->txt("rep_object_references_cannot_be_read"), $counter));
+				$tpl->setVariable("TXT_ADDITIONAL_INFO", sprintf($lng->txt("rep_object_references_cannot_be_read"), $counter));
 				$tpl->parseCurrentBlock();
 			}
 
@@ -639,11 +619,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 	}
 
+
 	/**
 	 * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
 	 *
-	 * @param	array	$ref_ids
-	 * @return	array
+	 * @param    array $ref_ids
+	 *
+	 * @return    array
 	 */
 	protected function buildPath($ref_ids)
 	{
@@ -652,38 +634,28 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		include_once 'Services/Link/classes/class.ilLink.php';
 
-		if(!count($ref_ids))
-		{
+		if (!count($ref_ids)) {
 			return false;
 		}
 
 		$result = array();
-		foreach($ref_ids as $ref_id)
-		{
+		foreach ($ref_ids as $ref_id) {
 			$path = "";
 			$path_full = $tree->getPathFull($ref_id);
-			foreach($path_full as $idx => $data)
-			{
-				if($idx)
-				{
+			foreach ($path_full as $idx => $data) {
+				if ($idx) {
 					$path .= " &raquo; ";
 				}
-				if($ref_id != $data['ref_id'])
-				{
+				if ($ref_id != $data['ref_id']) {
 					$path .= $data['title'];
+				} else {
+					$path .= ('<a target="_top" href="' . ilLink::_getLink($data['ref_id'], $data['type']) . '">' . $data['title'] . '</a>');
 				}
-				else
-				{
-					$path .= ('<a target="_top" href="'.
-						ilLink::_getLink($data['ref_id'],$data['type']).'">'.
-						$data['title'].'</a>');
-				}
-
 			}
 
 			$result[] = $path;
 		}
+
 		return $result;
 	}
-
 }

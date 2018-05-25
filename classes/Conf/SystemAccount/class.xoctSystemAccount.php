@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctSystemAccount
  *
@@ -6,16 +7,24 @@
  */
 class xoctSystemAccount extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_system_account';
 	const STATUS_ACTIVE = 1;
 
 
 	/**
 	 * @return string
-	 * @description Return the Name of your Database Table
 	 * @deprecated
 	 */
 	static function returnDbTableName() {
-		return 'xoct_system_account';
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
 	}
 
 

@@ -8,12 +8,15 @@
  */
 class xoctOpenCast extends ActiveRecord {
 
+	const TABLE_NAME = 'xoct_data';
+
+
 	/**
 	 * @return string
 	 * @deprecated
 	 */
 	static function returnDbTableName() {
-		return 'xoct_data';
+		return self::TABLE_NAME;
 	}
 
 
@@ -21,7 +24,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @return string
 	 */
 	public function getConnectorContainerName() {
-		return 'xoct_data';
+		return self::TABLE_NAME;
 	}
 
 
@@ -38,6 +41,7 @@ class xoctOpenCast extends ActiveRecord {
 
 		return false;
 	}
+
 
 	/**
 	 * @param $obj_id
@@ -129,8 +133,7 @@ class xoctOpenCast extends ActiveRecord {
 				global $DIC;
 				$ilDB = $DIC['ilDB'];
 
-				$query = "SELECT deleted, ref_id FROM object_reference".
-					" WHERE obj_id = ".$ilDB->quote($oc->getObjId(), "integer");
+				$query = "SELECT deleted, ref_id FROM object_reference" . " WHERE obj_id = " . $ilDB->quote($oc->getObjId(), "integer");
 				$set = $ilDB->query($query);
 				$rec = $ilDB->fetchAssoc($set);
 
@@ -243,6 +246,7 @@ class xoctOpenCast extends ActiveRecord {
 	 */
 	protected $obj_online = false;
 
+
 	/**
 	 * @return int
 	 */
@@ -353,6 +357,7 @@ class xoctOpenCast extends ActiveRecord {
 	public function setOnline($obj_online) {
 		$this->obj_online = $obj_online;
 	}
+
 
 	/**
 	 * @return string
