@@ -15,6 +15,10 @@ class xoctReportingModalGUI extends ilModalGUI {
 	 * @var ilCtrl
 	 */
 	protected $ctrl;
+    /**
+     * @var ilTemplate
+     */
+	protected $tpl;
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -30,11 +34,14 @@ class xoctReportingModalGUI extends ilModalGUI {
 		global $DIC;
 		$ilCtrl = $DIC['ilCtrl'];
 		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->parent_gui = $parent_gui;
-		$this->setType(ilModalGUI::TYPE_LARGE);
+        $this->tpl = $DIC['tpl'];
+        $this->pl = ilOpenCastPlugin::getInstance();
+        $this->parent_gui = $parent_gui;
 
-		$send_button = ilSubmitButton::getInstance();
+        $this->setType(ilModalGUI::TYPE_LARGE);
+        $this->tpl->addCss($this->pl->getDirectory() . '/templates/default/reporting_modal.css');
+
+        $send_button = ilSubmitButton::getInstance();
 		$send_button->setCaption('send');
 
 		$this->addButton($send_button);

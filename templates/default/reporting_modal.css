@@ -1,0 +1,6 @@
+div.modal-content textarea.xoct_reporting_message {
+    width: calc(100% - 30px);
+    margin: auto auto 20px auto;
+    height: 160px;
+    resize: none;
+}
