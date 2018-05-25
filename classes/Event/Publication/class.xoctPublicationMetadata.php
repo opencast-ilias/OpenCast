@@ -1,10 +1,16 @@
 <?php
+
 /**
  * Class xoctPublicationMetadata
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctPublicationMetadata extends xoctObject {
+
+	const MEDIA_TYPE_VIDEO = "video";
+	const ROLE_PRESENTATION = "presentation";
+	const ROLE_PRESENTER = "presenter";
+
 
 	/**
 	 * @param string $id

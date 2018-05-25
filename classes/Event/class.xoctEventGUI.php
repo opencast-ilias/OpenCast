@@ -21,6 +21,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_REPORT_DATE = 'reportDate';
 	const CMD_REPORT_QUALITY = 'reportQuality';
 	const CMD_STREAM_VIDEO = 'streamVideo';
+	const ROLE_MASTER = "master";
+	const ROLE_SLAVE = "slave";
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -357,15 +359,25 @@ class xoctEventGUI extends xoctGUI {
 
 		$publication = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
+		// Multi stream
 		$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
-			return (strpos($media->getMediatype(), "video") !== false && in_array("dual-image-source", $media->getTags()));
+			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
+				&& in_array(xoctPublicationUsage::USAGE_DUAL_IMAGE_SOURCE, $media->getTags()));
 		}));
+		if (count($medias) === 0) {
+			// Single stream
+			$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
+				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
+					&& in_array(xoctPublicationUsage::USAGE_DOWNLOAD, $media->getTags()));
+			}));
+		}
 
 		/**
 		 * @var xoctAttachment[] $previews
 		 */
 		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
-			return ($attachment->getFlavor() === "presenter/player+preview" || $attachment->getFlavor() === "presentation/player+preview");
+			return ($attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTER_PLAYER_PREVIEW
+				|| $attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTATION_PLAYER_PREVIEW);
 		});
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
 			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
@@ -380,7 +392,7 @@ class xoctEventGUI extends xoctGUI {
 				$url = xoctSecureLink::sign($url);
 			}
 
-			$role = (strpos($url, "presentation") !== false ? "presentation" : "presenter");
+			$role = (strpos($url, xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
 
 			if ($duration == 0) {
 				$duration = $media->getDuration();
@@ -397,8 +409,8 @@ class xoctEventGUI extends xoctGUI {
 			}
 
 			return [
-				"type" => "video",
-				"role" => ($role !== "presentation" ? "master" : "slave"),
+				"type" => xoctMedia::MEDIA_TYPE_VIDEO,
+				"role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
 				"sources" => [
 					"mp4" => [
 						[
@@ -431,11 +443,11 @@ class xoctEventGUI extends xoctGUI {
 			/**
 			 * @var xoctAttachment[] $segment
 			 */
-			$high = $segment["presentation/segment+preview+highres"];
-			$low = $segment["presentation/segment+preview+lowres"];
+			$high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+			$low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
 			if ($high === NULL || $low === NULL) {
-				$high = $segment["presenter/segment+preview+highres"];
-				$low = $segment["presenter/segment+preview+lowres"];
+				$high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+				$low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
 			}
 
 			$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
