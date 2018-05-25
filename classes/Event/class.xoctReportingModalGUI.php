@@ -39,6 +39,12 @@ class xoctReportingModalGUI extends ilModalGUI {
 
 		$this->addButton($send_button);
 
+		$cancel_button = ilButton::getInstance();
+        $cancel_button->setCaption('cancel');
+        $type_title = $type == self::REPORTING_TYPE_DATE ? 'date' : 'quality';
+        $cancel_button->setOnClick("$('#xoct_report_{$type_title}_modal').modal('hide');event.preventDefault();");
+		$this->addButton($cancel_button);
+
 		switch ($type) {
 			case self::REPORTING_TYPE_DATE:
 				$this->setId('xoct_report_date_modal');
