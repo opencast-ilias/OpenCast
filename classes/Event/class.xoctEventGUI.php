@@ -22,7 +22,6 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_REPORT_QUALITY = 'reportQuality';
 	const CMD_SCHEDULE = 'schedule';
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
-
 	const CMD_STREAM_VIDEO = 'streamVideo';
 	const ROLE_MASTER = "master";
 	const ROLE_SLAVE = "slave";
@@ -400,8 +399,6 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	public function streamVideo() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		$xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
 
 		// check access
