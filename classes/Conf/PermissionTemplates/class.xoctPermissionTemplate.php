@@ -231,7 +231,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 			$acls[] = $this->constructAclForAction(xoctAcl::WRITE);
 		}
 
-		foreach (explode(',', $this->getAdditionalAclActions()) as $additional_action) {
+		foreach (array_filter(explode(',', $this->getAdditionalAclActions())) as $additional_action) {
 			$acls[] = $this->constructAclForAction($additional_action);
 		}
 
