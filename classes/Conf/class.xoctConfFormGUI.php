@@ -249,6 +249,27 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$te->setRows(8);
 		$te->setUseRte(1);
+        $te->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ));
+        $te->setRteTags(array(
+            'p',
+            'a',
+            'br',
+        ));
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS), xoctConf::F_REPORT_QUALITY_ACCESS);
@@ -285,14 +306,46 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-
+        $te->setRteTagSet("extended");
+        $te->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ));
 		$te->setRows(5);
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-
+        $te->setRteTagSet("extended");
+        $te->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ));
 		$te->setRows(5);
 		$this->addItem($te);
 
@@ -314,7 +367,24 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT . '_info'));
 		$te->setRequired(true);
 		$te->setRows(8);
-		$te->setUseRte(1);
+		$te->setUseRte(true);
+		$te->setRteTagSet("extended");
+        $te->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ));
 		$cb->addSubItem($te);
 	}
 
