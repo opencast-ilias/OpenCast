@@ -1012,7 +1012,7 @@ class xoctEventGUI extends xoctGUI {
      * @return string
      */
     protected function getQualityReportMessage(xoctEvent $event, $message) {
-        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
             true);
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $crs_grp_role = ilObjOpenCast::_getCourseOrGroupRole();
@@ -1038,7 +1038,7 @@ class xoctEventGUI extends xoctGUI {
      * @return string
      */
     protected function getDateReportMessage($message) {
-        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
+        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
             true);
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $mail_body =
