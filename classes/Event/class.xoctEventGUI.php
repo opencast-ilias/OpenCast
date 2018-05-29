@@ -135,6 +135,9 @@ class xoctEventGUI extends xoctGUI {
 		}
 
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, true);
+        if ($xoctEventTableGUI->hasScheduledEvents()) {
+            $this->tpl->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
+        }
 		$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 	}
 
@@ -153,8 +156,10 @@ class xoctEventGUI extends xoctGUI {
 
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+            if ($xoctEventTableGUI->hasScheduledEvents()) {
+                $this->tpl->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
+            }
 			$this->tpl->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
-
 			return;
 		}
 

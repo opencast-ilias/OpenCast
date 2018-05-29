@@ -58,9 +58,10 @@ class xoctOpenCast extends ActiveRecord {
 	}
 
 
-	/**
-	 * @return xoctSeries
-	 */
+    /**
+     * @return xoctSeries
+     * @throws xoctException
+     */
 	public function getSeries() {
 		/**
 		 * @var $xoctSeries xoctSeries
