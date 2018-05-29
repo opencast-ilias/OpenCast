@@ -158,6 +158,31 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
 		return $crs_or_grp_object[$ref_id];
 	}
+
+    /**
+     * @return string
+     */
+    public static function _getCourseOrGroupRole() {
+		global $DIC;
+		/** @var ilObjUser $user */
+		$user = $DIC['ilUser'];
+		/** @var ilRbacReview $rbacreview */
+		$rbacreview = $DIC['rbacreview'];
+
+		$crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
+
+		if ($rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultAdminRole())) {
+			return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';
+        }
+        if ($rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultMemberRole())) {
+			return $crs_or_group instanceof ilObjCourse ? 'Kursmitglied' : 'Gruppenmitglied';
+        }
+        if (($crs_or_group instanceof ilObjCourse) && $rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultTutorRole())) {
+			return 'Kurstutor';
+        }
+
+        return 'Unbekannt';
+   	}
 }
 
 ?>

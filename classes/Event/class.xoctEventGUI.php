@@ -1015,11 +1015,12 @@ class xoctEventGUI extends xoctGUI {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::XOCT,
             true);
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
+        $crs_grp_role = ilObjOpenCast::_getCourseOrGroupRole();
 	    $mail_body =
             "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
             . "Es gab eine neue Meldung im Bereich «Qualitätsprobleme melden». <br><br>"
             . "<b>Benutzer/in:</b> {$this->user->getLogin()}, {$this->user->getEmail()} <br>"
-            . "<b>Rolle im ILIAS-Kurs:</b> Kursadministrator / Kurstutor / Kursmitglied <br><br>"
+            . "<b>Rolle im ILIAS-Kurs:</b> $crs_grp_role <br><br>"
             . "<b>Opencast Serie in ILIAS:</b> $link<br>"
             . "<b>Titel Opencast Event:</b> {$event->getTitle()}<br>"
             . "<b>ID Opencast Event:</b> {$event->getIdentifier()}<br>"
