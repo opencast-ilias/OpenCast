@@ -384,6 +384,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
                 $xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
             }
         } elseif ($default_template = xoctPermissionTemplate::where(array('default' => 1))->first()) {
+            /** @var xoctPermissionTemplate $default_template */
 		    $default_template->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
         }
 
