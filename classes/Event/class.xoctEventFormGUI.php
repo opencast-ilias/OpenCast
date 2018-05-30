@@ -361,7 +361,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
 		//		$this->object->getXoctEventAdditions()->setIsOnline($this->getInput(self::F_ONLINE));
 
-		if ($this->getInput(self::F_MULTIPLE)) {
+        $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
+
+        if ($this->getInput(self::F_MULTIPLE)) {
 			$start_date = $this->getInput(self::F_MULTIPLE_START);
 			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
 			$start = $start_date . ' ' . floor($start_time/3600) . ':' . floor($start_time/60%60) . ':' . $start_time%60;
@@ -375,8 +377,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 			$duration = ($end_time - $start_time) * 1000;
 			$this->object->setDuration($duration);
-		} else {
-			/**
+		} else if (!$date_and_location_disabled) {
+            /**
 			 * @var $start            ilDateTime
 			 * @var $ilDateTimeInputGUI ilDateTimeInputGUI
 			 */

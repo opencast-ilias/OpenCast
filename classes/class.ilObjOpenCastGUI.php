@@ -153,6 +153,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
+			$this->tpl->show();
 		}
 	}
 

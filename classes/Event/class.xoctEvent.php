@@ -380,7 +380,9 @@ class xoctEvent extends xoctObject {
 
 		if ($this->isScheduled()) {
 			$this->updateSchedulingFromFields();
-			$data['scheduling'] = json_encode( $this->getScheduling()->__toStdClass());
+			if ($this->getScheduling()->hasChanged()) {
+                $data['scheduling'] = json_encode( $this->getScheduling()->__toStdClass());
+            }
 		}
 
 		// All Data

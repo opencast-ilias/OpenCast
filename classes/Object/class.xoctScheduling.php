@@ -37,6 +37,11 @@ class xoctScheduling extends xoctObject {
 	 */
 	protected $rrule;
 
+    /**
+     * @var bool
+     */
+	protected $has_changed = false;
+
 	/**
 	 * @param string $event_id
 	 */
@@ -112,6 +117,9 @@ class xoctScheduling extends xoctObject {
 	 * @param int $duration
 	 */
 	public function setDuration($duration) {
+//	    if ($this->duration != $duration) {
+//	        $this->has_changed = true;
+//        }
 		$this->duration = $duration;
 	}
 
@@ -144,6 +152,9 @@ class xoctScheduling extends xoctObject {
 	 * @param mixed $agent_id
 	 */
 	public function setAgentId($agent_id) {
+        if ($this->agent_id != $agent_id) {
+            $this->has_changed = true;
+        }
 		$this->agent_id = $agent_id;
 	}
 
@@ -160,6 +171,9 @@ class xoctScheduling extends xoctObject {
 	 * @param DateTime $start
 	 */
 	public function setStart($start) {
+        if ($this->start != $start) {
+            $this->has_changed = true;
+        }
 		$this->start = $start;
 	}
 
@@ -176,6 +190,9 @@ class xoctScheduling extends xoctObject {
 	 * @param DateTime $end
 	 */
 	public function setEnd($end) {
+        if ($this->end != $end) {
+            $this->has_changed = true;
+        }
 		$this->end = $end;
 	}
 
@@ -192,6 +209,9 @@ class xoctScheduling extends xoctObject {
 	 * @param mixed $inputs
 	 */
 	public function setInputs($inputs) {
+	    if ($this->inputs != $inputs) {
+	        $this->has_changed = true;
+        }
 		$this->inputs = $inputs;
 	}
 
@@ -211,5 +231,11 @@ class xoctScheduling extends xoctObject {
 		$this->rrule = $rrule;
 	}
 
+    /**
+     * @return bool
+     */
+    public function hasChanged() {
+        return $this->has_changed;
+    }
 
 }
