@@ -982,7 +982,7 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function reportQuality() {
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
 			$message = $_POST['message'];
 			$event_id = $_POST['event_id'];
 			$event = new xoctEvent($event_id);
