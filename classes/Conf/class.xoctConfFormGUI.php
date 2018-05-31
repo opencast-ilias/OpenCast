@@ -249,6 +249,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$te->setRows(8);
 		$te->setUseRte(1);
+        $te->setRteTagSet("extended");
         $te->disableButtons(array(
             'charmap',
             'undo',
@@ -264,11 +265,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
             'paste',
             'pastetext',
             'formatselect',
-        ));
-        $te->setRteTags(array(
-            'p',
-            'a',
-            'br',
         ));
 		$cb->addSubItem($te);
 
@@ -306,23 +302,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-        $te->setRteTagSet("extended");
-        $te->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-        ));
 		$te->setRows(5);
 		$this->addItem($te);
 
