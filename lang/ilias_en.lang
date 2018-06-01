@@ -91,7 +91,7 @@ config_report_date_text#:#Info Text
 config_report_date_text_info#:#ext which will be display as an info in the reporting form.
 config_scheduled_metadata_editable#:#Metadata of scheduled events editable
 config_scheduled_metadata_editable_0#:#No
-config_scheduled_metadata_editable_1#:#Yes
+config_scheduled_metadata_editable_1#:#Yes, with effective changes to event dates
 config_scheduled_metadata_editable_1_info#:#Warning: possible only with API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
 config_video_portal_title#:#Title of external Video Portal

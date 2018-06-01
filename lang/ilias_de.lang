@@ -91,7 +91,7 @@ config_report_date_text#:#Info-Text
 config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
-config_scheduled_metadata_editable_1#:#Ja
+config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
 config_video_portal_title#:#Bezeichung des externen Videoportals
