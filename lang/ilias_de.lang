@@ -8,7 +8,7 @@ config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
-config_create_scheduled_allowed_info#:#Achtung: Das planen von Aufzeichnungsterminen ist erst ab API v1.1.0 möglich.
+config_create_scheduled_allowed_info#:#Achtung: Das planen von Aufzeichnungsterminen ist erst ab Opencast API-Version 1.1.0 möglich.
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
@@ -92,7 +92,7 @@ config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
-config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab API-Version 1.1.0 möglich
+config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab Opencast API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
 config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal

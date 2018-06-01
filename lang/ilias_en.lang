@@ -8,7 +8,7 @@ config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
 config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
-config_create_scheduled_allowed_info#:#Warning: Scheduling events requires API v1.1.0.
+config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
@@ -92,7 +92,7 @@ config_report_date_text_info#:#ext which will be display as an info in the repor
 config_scheduled_metadata_editable#:#Metadata of scheduled events editable
 config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes, with effective changes to event date and location
-config_scheduled_metadata_editable_1_info#:#Warning: possible only with API v1.1.0 or higher
+config_scheduled_metadata_editable_1_info#:#Warning: possible only with Opencast API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
 config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
