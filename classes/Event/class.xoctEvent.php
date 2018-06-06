@@ -1362,7 +1362,7 @@ class xoctEvent extends xoctObject {
 		$presenter = $this->getMetadata()->getField('creator');
 		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
 
-		if (!$scheduled) {
+//		if (!$scheduled) {
             $location = $this->getMetadata()->getField('location');
             $location->setValue($this->getLocation());
 
@@ -1373,7 +1373,7 @@ class xoctEvent extends xoctObject {
 
             $startTime = $this->getMetadata()->getField('startTime');
             $startTime->setValue($start->format('H:i'));
-        }
+//        }
 	}
 
 
