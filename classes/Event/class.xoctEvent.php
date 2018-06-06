@@ -902,19 +902,33 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @param $end
-	 */
+    /**
+     * @param $end
+     * @throws ilTimeZoneException
+     */
 	public function setEnd($end) {
-		$this->end = $end instanceof DateTime ? $end : new DateTime($end);;
+        $date_time_zone = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
+        if ($end instanceof DateTime) {
+            $end->setTimezone($date_time_zone);
+            $this->end = $end;
+        } else {
+            $this->end = new DateTime($end, $date_time_zone);;
+        }
 	}
 
 
-	/**
-	 * @param DateTime $start
-	 */
+    /**
+     * @param $start
+     * @throws ilTimeZoneException
+     */
 	public function setStart($start) {
-		$this->start = $start instanceof DateTime ? $start : new DateTime($start);
+	    $date_time_zone = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
+        if ($start instanceof DateTime) {
+            $start->setTimezone($date_time_zone);
+            $this->start = $start;
+        } else {
+            $this->start = new DateTime($start, $date_time_zone);
+        }
 	}
 
 	/**

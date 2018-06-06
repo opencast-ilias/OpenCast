@@ -72,7 +72,7 @@ class xoctScheduling extends xoctObject {
 		switch ($fieldname) {
 			case 'start':
 			case 'end':
-				return new DateTime($value);
+				return new DateTime($value, new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier()));
 			default:
 				return $value;
 		}
@@ -82,6 +82,9 @@ class xoctScheduling extends xoctObject {
 	 * @return stdClass
 	 */
 	public function __toStdClass() {
+	    $this->getStart()->setTimezone(new DateTimeZone('GMT'));
+	    $this->getEnd()->setTimezone(new DateTimeZone('GMT'));
+
 		$stdClass = new stdClass();
 		$stdClass->agent_id = $this->getAgentId();
 		$stdClass->start = $this->getStart()->format('Y-m-d\TH:i:s\Z');

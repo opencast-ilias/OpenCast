@@ -384,7 +384,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			 */
 			$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_START);
 			$start = $ilDateTimeInputGUI->getDate();
-			$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601));
+			$default_datetime = $this->object->getDefaultDateTimeObject($start->get(IL_CAL_ISO_8601, '', ilTimeZone::_getInstance()->getIdentifier()));
 			$this->object->setStart($default_datetime);
 
 			if ($this->object->isScheduled() || $this->schedule) {
@@ -394,7 +394,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				 */
 				$ilDateTimeInputGUI = $this->getItemByPostVar(self::F_END);
 				$end = $ilDateTimeInputGUI->getDate();
-				$default_datetime = $this->object->getDefaultDateTimeObject($end->get(IL_CAL_ISO_8601));
+				$default_datetime = $this->object->getDefaultDateTimeObject($end->get(IL_CAL_ISO_8601, '', ilTimeZone::_getInstance()->getIdentifier()));
 				$this->object->setEnd($default_datetime);
 			}
 		}
