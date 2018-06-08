@@ -178,13 +178,12 @@ class xoctEventTableGUI extends ilTable2GUI
 				}
 			}
 			// ANNOTATIONS LINK
-			if ($this->xoctOpenCast->getUseAnnotations())
-			{
-				$annotationLink = $xE->getAnnotationLink();
-				if ($annotationLink)
-				{
+			if ($this->xoctOpenCast->getUseAnnotations()) {
+				if ($xE->getAnnotationLink()) {
+                    $this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
+                    $annotations_link = $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_ANNOTATE);
 					$this->tpl->setCurrentBlock('link');
-					$this->tpl->setVariable('LINK_URL', $annotationLink);
+					$this->tpl->setVariable('LINK_URL', $annotations_link);
 					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
 
 					$this->tpl->parseCurrentBlock();

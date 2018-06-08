@@ -27,6 +27,16 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
 	const CMD_CUT = 'cut';
+	const CMD_ANNOTATE = 'annotate';
+	const CMD_REPORT_DATE = 'reportDate';
+	const CMD_REPORT_QUALITY = 'reportQuality';
+	const CMD_SCHEDULE = 'schedule';
+	const CMD_CREATE_SCHEDULED = 'createScheduled';
+    const CMD_DELIVER_VIDEO = 'deliverVideo';
+	const CMD_STREAM_VIDEO = 'streamVideo';
+	const ROLE_MASTER = "master";
+	const ROLE_SLAVE = "slave";
+
 	/**
 	 * @var \xoctOpenCast
 	 */
@@ -253,9 +263,6 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		// will be set true if the user role is added to producers, since in that case there must be a short sleep() before redirecting
-		$sleep = false;
-
 		// add user to ilias producers
 		try {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
@@ -267,7 +274,9 @@ class xoctEventGUI extends xoctGUI {
 		// add user to series producers
 		/** @var xoctSeries $xoctSeries */
 		$xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
-		$sleep = $xoctSeries->addProducer($xoctUser);
+		if ($xoctSeries->addProducer($xoctUser)) {
+            $sleep = true;
+        }
 
 		if ($sleep) {
 			sleep(3);
@@ -278,6 +287,47 @@ class xoctEventGUI extends xoctGUI {
 		header('Location: ' . $cutting_link);
 	}
 
+	/**
+	 *
+	 */
+	public function annotate() {
+		global $DIC;
+		$ilUser = $DIC['ilUser'];
+		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+
+		// check access
+		if (ilObjOpenCastAccess::hasWriteAccess()) {
+            // add user to ilias producers
+            try {
+                $ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+                $sleep = $ilias_producers->addMember($xoctUser);
+            } catch (xoctException $e) {
+                $sleep = false;
+            }
+
+            // add user to series producers
+            /** @var xoctSeries $xoctSeries */
+            $xoctSeries = xoctSeries::find($xoctEvent->getSeriesIdentifier());
+            if ($xoctSeries->addProducer($xoctUser)) {
+                $sleep = true;
+            }
+
+            if ($sleep) {
+                sleep(3);
+            }
+        }
+
+
+		// redirect
+		$cutting_link = $xoctEvent->getAnnotationLink();
+		header('Location: ' . $cutting_link);
+	}
+
+
+	/**
+	 *
+	 */
 	public function setOnline() {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		$xoctEvent->getXoctEventAdditions()->setIsOnline(true);
