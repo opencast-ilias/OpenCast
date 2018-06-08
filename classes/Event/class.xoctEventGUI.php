@@ -297,7 +297,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 
 		// check access
-		if (ilObjOpenCastAccess::hasWriteAccess()) {
+		if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
             // add user to ilias producers
             try {
                 $ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
