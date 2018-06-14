@@ -207,7 +207,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 
 		// show location and start date for scheduled events only if configured
-		$date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
+        $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 
 		if (xoct::isApiVersionGreaterThan('v1.1.0') && ($this->schedule || $this->object->isScheduled())) {
 			$input = new ilSelectInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
@@ -403,7 +403,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
      * @return bool
      */
     protected function checkDates() {
-        if ($this->object->isScheduled() || $this->schedule) {
+        $date_and_location_disabled = xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;;
+        if (($this->object->isScheduled() && !$date_and_location_disabled) || $this->schedule) {
             if ($this->getInput(self::F_MULTIPLE)) {
                 $start_date = $this->getInput(self::F_MULTIPLE_START);
                 $start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
@@ -428,6 +429,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
                 return false;
             }
         }
+
+        return true;
 	}
 
 	/**
