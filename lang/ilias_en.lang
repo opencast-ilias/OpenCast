@@ -129,6 +129,8 @@ event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_msg_scheduled#:#Event(s) scheduled
 event_msg_scheduling_conflict#:#Event(s) could not be scheduled, due to an overlap with existing events:
+event_msg_scheduled_in_past#:#Start and end date must be in the future when scheduling events.
+event_msg_end_before_start#:#The end date must be after the start.
 event_multiple#:#Repeat Event
 event_multiple_start#:#Start Date
 event_multiple_start_time#:#Start Time

@@ -254,21 +254,17 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$opt = new ilRadioOption($this->lng->txt('no'), 0);
 
 			$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
-			if (!xoct::isIlias52()) {
-				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
-			}
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
-			$opt->addSubItem($date);
+            $date->setDate(new ilDateTime(time(), IL_CAL_UNIX), IL_CAL_DATETIME);
+            $opt->addSubItem($date);
 
 			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
-			if (!xoct::isIlias52()) {
-				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
-			}
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
+			$date->setDate(new ilDateTime(time(), IL_CAL_UTC));
 			$opt->addSubItem($date);
 
 			$radio->addOption($opt);
@@ -341,16 +337,17 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 * returns whether checkinput was successful or not.
-	 *
-	 * @return bool
-	 */
+    /**
+     * @return bool
+     * @throws ilTimeZoneException
+     */
 	public function fillObject() {
-		if (!$this->checkInput()) {
-
+	    $check_input = $this->checkInput();
+	    $check_date = $this->checkDates();
+		if (!$check_input || !$check_date) {
 			return false;
 		}
+
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$title = $this->getInput(self::F_TITLE);
@@ -402,6 +399,36 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return true;
 	}
 
+    /**
+     * @return bool
+     */
+    protected function checkDates() {
+        if ($this->object->isScheduled() || $this->schedule) {
+            if ($this->getInput(self::F_MULTIPLE)) {
+                $start_date = $this->getInput(self::F_MULTIPLE_START);
+                $start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
+                $start = $start_date . ' ' . floor($start_time/3600) . ':' . floor($start_time/60%60) . ':' . $start_time%60;
+
+                $end_date = $this->getInput(self::F_MULTIPLE_END);
+                $end_time = $this->getInput(self::F_MULTIPLE_END_TIME);
+                $end = $end_date . ' ' . floor($end_time/3600) . ':' . floor($end_time/60%60) . ':' . ($end_time%60);
+            } else {
+                $start = $this->getInput(self::F_START);
+                $end = $this->getInput(self::F_END);
+            }
+
+            if ($end < $start) {
+                ilUtil::sendFailure($this->pl->txt('event_msg_end_before_start'), true);
+                return false;
+            }
+
+            $now = date('Y-m-d H:i:s');
+            if (($start < $now) || ($end < $now)) {
+                ilUtil::sendFailure($this->pl->txt('event_msg_scheduled_in_past'), true);
+                return false;
+            }
+        }
+	}
 
 	/**
 	 * @param $key
