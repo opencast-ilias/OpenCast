@@ -129,8 +129,8 @@ event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_msg_scheduled#:#Aufzeichungstermin(e) erstellt.
 event_msg_scheduling_conflict#:#Termin(e) konnte(n) nicht erstellt werden, da es Überschneidungen mit existierenden Terminen gibt:
-event_msg_scheduled_in_past#:#Start- und Enddatum müssen bei geplanten Aufzeichnungsterminen in der Zukunft liegen.
-event_msg_end_before_start#:#Das Enddatum darf nicht vor dem Startdatum liegen.
+event_msg_scheduled_in_past#:#Planungskonflikt: Aufzeichnungen können nicht in der Vergangenheit geplant werden.
+event_msg_end_before_start#:#Planungskonflikt: Der Endzeitpunkt der Aufzeichnung muss nach dem Anfangszeitpunkt liegen.
 event_multiple#:#Termin Wiederholen
 event_multiple_start#:#Startdatum
 event_multiple_start_time#:#Startzeit
