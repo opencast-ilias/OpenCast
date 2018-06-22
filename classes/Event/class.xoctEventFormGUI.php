@@ -258,6 +258,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
             $date->setDate(new ilDateTime(time(), IL_CAL_UNIX), IL_CAL_DATETIME);
+            $date->setRequired(true);
             $opt->addSubItem($date);
 
 			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
@@ -265,6 +266,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
 			$date->setDate(new ilDateTime(time(), IL_CAL_UTC));
+            $date->setRequired(true);
 			$opt->addSubItem($date);
 
 			$radio->addOption($opt);
@@ -418,13 +420,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
                 $end = $this->getInput(self::F_END);
             }
 
-            if ($end < $start) {
+            if ($end && ($end < $start)) {
                 ilUtil::sendFailure($this->pl->txt('event_msg_end_before_start'), true);
                 return false;
             }
 
             $now = date('Y-m-d H:i:s');
-            if (($start < $now) || ($end < $now)) {
+            if (($start && ($start < $now)) || ($end && ($end < $now))) {
                 ilUtil::sendFailure($this->pl->txt('event_msg_scheduled_in_past'), true);
                 return false;
             }
