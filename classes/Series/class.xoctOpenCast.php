@@ -138,7 +138,7 @@ class xoctOpenCast extends ActiveRecord {
 				$set = $ilDB->query($query);
 				$rec = $ilDB->fetchAssoc($set);
 
-				if (!$rec['deleted']) {
+				if (!$rec['deleted'] && $rec['ref_id']) {
 					$duplicates_ids[] = $rec['ref_id'];
 				}
 			}

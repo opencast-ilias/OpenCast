@@ -521,15 +521,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-	 *
-	 * @param int    $a_obj_id
-	 * @param int    $a_ref_id
-	 * @param string $a_form_name
-	 *
-	 * @return string
-	 */
+    /**
+     * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
+     *
+     * @param int $a_obj_id
+     * @param int $a_ref_id
+     * @param string $a_form_name
+     *
+     * @return string
+     * @throws Exception
+     */
 	function handleMultiReferences($a_obj_id, $a_ref_id, $a_form_name)
 	{
 		global $DIC;
