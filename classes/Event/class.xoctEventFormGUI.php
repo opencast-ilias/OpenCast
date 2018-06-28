@@ -232,6 +232,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
 			$date->setDisabled($date_and_location_disabled);
+			$date->setRequired(true);
 			$this->addItem($date);
 		}
 
@@ -244,7 +245,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
 			$date->setDisabled($date_and_location_disabled);
-			$this->addItem($date);
+            $date->setRequired(true);
+            $this->addItem($date);
 		}
 
 		if ($this->schedule) {
