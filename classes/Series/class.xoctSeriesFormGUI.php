@@ -201,7 +201,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
             $permission_template = new ilRadioGroupInputGUI($this->txt(self::F_PERMISSION_TEMPLATE), self::F_PERMISSION_TEMPLATE);
             $permission_template->setRequired(true);
             /** @var xoctPermissionTemplate $ptpl */
-            foreach (xoctPermissionTemplate::where(array('default' => 0))->orderBy('sort')->get() as $ptpl) {
+            foreach (xoctPermissionTemplate::where(array('is_default' => 0))->orderBy('sort')->get() as $ptpl) {
                 $radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
                 if ($ptpl->getInfo()) {
                     $radio_opt->setInfo($ptpl->getInfo());
@@ -383,7 +383,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
                 $xoctPermissionTemplate = xoctPermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
                 $xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
             }
-        } elseif ($default_template = xoctPermissionTemplate::where(array('default' => 1))->first()) {
+        } elseif ($default_template = xoctPermissionTemplate::where(array('is_default' => 1))->first()) {
             /** @var xoctPermissionTemplate $default_template */
 		    $default_template->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
         }
