@@ -54,7 +54,7 @@ class xoctPermissionTemplate extends ActiveRecord {
      * @db_fieldtype        integer
      * @db_length           1
      */
-    protected $default;
+    protected $is_default;
 	/**
 	 * @var String
 	 *
@@ -479,7 +479,7 @@ class xoctPermissionTemplate extends ActiveRecord {
      */
     public function isDefault()
     {
-        return $this->default;
+        return $this->is_default;
     }
 
     /**
@@ -487,7 +487,7 @@ class xoctPermissionTemplate extends ActiveRecord {
      */
     public function setDefault($default)
     {
-        $this->default = $default;
+        $this->is_default = $default;
     }
 
 }
