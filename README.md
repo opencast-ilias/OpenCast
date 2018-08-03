@@ -7,7 +7,7 @@ mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/
 cd  Customizing/global/plugins/Services/Repository/RepositoryObject/ 
 git clone https://github.com/studer-raimann/OpenCast.git  
 ```
-As ILIAS administrator go to "Administration->Plugins" and install/activate the plugin.
+As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
 ### ILIAS Plugin SLA
 
