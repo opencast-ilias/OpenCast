@@ -302,6 +302,23 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
 		$te->setRequired(true);
 		$te->setUseRte(true);
+        $te->setRteTagSet("extended");
+        $te->disableButtons(array(
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ));
 		$te->setRows(5);
 		$this->addItem($te);
 
