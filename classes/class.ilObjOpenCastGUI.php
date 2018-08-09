@@ -127,11 +127,17 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$this->tpl->getStandardTemplate();
 
 			switch ($next_class) {
-				case 'xoctseriesgui':
-				case 'xocteventgui':
-				case 'xoctivtgroupgui':
-				case 'xoctivtgroupparticipantgui':
-				case 'xoctinvitationgui':
+                case 'xoctivtgroupparticipantgui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new xoctIVTGroupParticipantGUI($xoctOpenCast);
+                    $this->ctrl->forwardCommand($xoctSeriesGUI);
+                    $this->tpl->show();
+                    break;
+                case 'xoctseriesgui':
+                case 'xocteventgui':
+                case 'xoctivtgroupgui':
+                case 'xoctinvitationgui':
 					$xoctOpenCast = $this->initHeader();
 					$this->setTabs();
 					$xoctSeriesGUI = new $next_class($xoctOpenCast);
