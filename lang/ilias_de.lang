@@ -150,13 +150,14 @@ event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start
 event_state_failed#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
-event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar
-event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar
-event_state_ready_for_cutting#:#Nicht publiziert (Schnitt erforderlich), für Studierende noch nicht sichtbar
-event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar
-event_state_offline#:#Offline, für Studierende nicht sichtbar
+event_state_instantiated#:#Verarbeitung ausstehend, für Studierende noch nicht sichtbar.
+event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtbar.
+event_state_ready_for_cutting#:#Nicht publiziert (Schnitt erforderlich), für Studierende noch nicht sichtbar.
+event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar.
+event_state_offline#:#Offline, für Studierende nicht sichtbar.
 event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar.
 event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar.
+event_state_recording#:#Wird momentan Aufgezeichnet, für Studierende nicht sichtbar.
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern

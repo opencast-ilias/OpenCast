@@ -157,6 +157,7 @@ event_state_running#:#Converting, not yet visible to students
 event_state_offline#:#Offline, not visible to students
 event_state_scheduled#:#Scheduled Event, not visible to students.
 event_state_scheduled_offline#:#Scheduled Event (Offline), not visible to students.
+event_state_recording#:#Is currently being recorded, not visible to students.
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
