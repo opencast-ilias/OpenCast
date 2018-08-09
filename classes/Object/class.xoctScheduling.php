@@ -31,7 +31,7 @@ class xoctScheduling extends xoctObject {
 	/**
 	 * @var
 	 */
-	protected $inputs;
+	protected $inputs = array('default');
 	/**
 	 * @var String
 	 */
