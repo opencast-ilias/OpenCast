@@ -17,6 +17,7 @@ class xoctEvent extends xoctObject {
 	const STATE_INSTANTIATED = 'INSTANTIATED';
 	const STATE_ENCODING = 'RUNNING';
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
+	const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
 	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.svg';
@@ -33,6 +34,7 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_INSTANTIATED       => 'info',
 		xoctEvent::STATE_ENCODING           => 'info',
 		xoctEvent::STATE_NOT_PUBLISHED      => 'info',
+        xoctEvent::STATE_READY_FOR_CUTTING  => 'info',
 		xoctEvent::STATE_SCHEDULED          => 'scheduled',
 		xoctEvent::STATE_SCHEDULED_OFFLINE  => 'scheduled',
 		xoctEvent::STATE_FAILED             => 'danger',
@@ -769,7 +771,11 @@ class xoctEvent extends xoctObject {
 					if (($conf_internal_player && !in_array($publication_api->getChannel(),$this->publication_status))
 						|| (!$conf_internal_player && !in_array($publication_player->getChannel(),$this->publication_status)))
 					{
-						$this->setProcessingState(self::STATE_NOT_PUBLISHED);
+					    if ($this->hasPreviews()) {
+					        $this->setProcessingState(self::STATE_READY_FOR_CUTTING);
+                        } else {
+                            $this->setProcessingState(self::STATE_NOT_PUBLISHED);
+                        }
 					}
 				}
 				break;

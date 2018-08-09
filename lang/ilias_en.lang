@@ -152,6 +152,7 @@ event_start#:#Start
 event_state_failed#:#Publication failed. Please contact the support.
 event_state_instantiated#:#Converting not yet started, not yet visible to students
 event_state_not_published#:#Not published, not yet visible to students
+event_state_ready_for_cutting#:#Not published (ready for cutting), not yet visible to students
 event_state_running#:#Converting, not yet visible to students
 event_state_offline#:#Offline, not visible to students
 event_state_scheduled#:#Scheduled Event, not visible to students.

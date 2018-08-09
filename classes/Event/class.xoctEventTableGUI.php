@@ -318,6 +318,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		if (!in_array($xoctEvent->getProcessingState(), array(
 			xoctEvent::STATE_SUCCEEDED,
 			xoctEvent::STATE_NOT_PUBLISHED,
+			xoctEvent::STATE_READY_FOR_CUTTING,
 			xoctEvent::STATE_OFFLINE,
 			xoctEvent::STATE_FAILED,
 			xoctEvent::STATE_SCHEDULED,
