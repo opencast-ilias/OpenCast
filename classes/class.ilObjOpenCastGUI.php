@@ -134,17 +134,23 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $this->ctrl->forwardCommand($xoctSeriesGUI);
                     $this->tpl->show();
                     break;
+                case 'xoctinvitationgui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast);
+                    $this->ctrl->forwardCommand($xoctSeriesGUI);
+                    $this->tpl->show();
+                    break;
                 case 'xoctseriesgui':
                 case 'xocteventgui':
                 case 'xoctivtgroupgui':
-                case 'xoctinvitationgui':
-					$xoctOpenCast = $this->initHeader();
-					$this->setTabs();
-					$xoctSeriesGUI = new $next_class($xoctOpenCast);
-					$this->ctrl->forwardCommand($xoctSeriesGUI);
-					$this->tpl->show();
-					break;
-				case 'ilpermissiongui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new $next_class($xoctOpenCast);
+                    $this->ctrl->forwardCommand($xoctSeriesGUI);
+                    $this->tpl->show();
+                    break;
+                case 'ilpermissiongui':
 					$this->initHeader(false);
 					parent::executeCommand();
 					break;
