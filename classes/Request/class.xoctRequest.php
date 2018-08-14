@@ -150,7 +150,10 @@ class xoctRequest {
 	}
 
 
-	protected function __construct() {
+    /**
+     * xoctRequest constructor.
+     */
+    protected function __construct() {
 	}
 
 
@@ -160,6 +163,8 @@ class xoctRequest {
 	const BRANCH_BASE = 3;
 	const BRANCH_SECURITY = 4;
 	const BRANCH_GROUPS = 5;
+	const BRANCH_WORKFLOWS = 6;
+
 	/**
 	 * @var array
 	 */
@@ -235,7 +240,12 @@ class xoctRequest {
 	// SERIES
 	//
 
-	public function series($series_id = '') {
+    /**
+     * @param string $series_id
+     * @return $this
+     * @throws xoctException
+     */
+    public function series($series_id = '') {
 		$this->checkRoot();
 		$this->checkBranch(array( self::BRANCH_SERIES ));
 		$this->branch = self::BRANCH_SERIES;
@@ -247,7 +257,12 @@ class xoctRequest {
 		return $this;
 	}
 
-	public function groups($group_id = '') {
+    /**
+     * @param string $group_id
+     * @return $this
+     * @throws xoctException
+     */
+    public function groups($group_id = '') {
 		$this->checkRoot();
 		$this->checkBranch(array( self::BRANCH_GROUPS ));
 		$this->branch = self::BRANCH_GROUPS;
@@ -259,8 +274,25 @@ class xoctRequest {
 		return $this;
 	}
 
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function workflows() {
+        $this->checkRoot();
+        $this->checkBranch(array( self::BRANCH_WORKFLOWS ));
+        $this->branch = self::BRANCH_WORKFLOWS;
+        $this->addPart('workflows');
 
-	public function members() {
+        return $this;
+	}
+
+
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function members() {
 		$this->checkBranch(array( self::BRANCH_GROUPS ));
 		$this->addPart('members');
 
@@ -319,7 +351,11 @@ class xoctRequest {
 	// BASE
 	//
 
-	public function base() {
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function base() {
 		$this->checkBranch(array( self::BRANCH_BASE ));
 		$this->checkRoot();
 		$this->branch = self::BRANCH_BASE;
@@ -396,7 +432,11 @@ class xoctRequest {
 		return $this;
 	}
 
-	public function scheduling() {
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function scheduling() {
 		$this->checkBranch(array( self::BRANCH_EVENTS ));
 		$this->addPart('scheduling');
 
@@ -506,7 +546,10 @@ class xoctRequest {
 	}
 
 
-	protected function checkRoot() {
+    /**
+     * @throws xoctException
+     */
+    protected function checkRoot() {
 		if (count($this->parts) > 0 OR $this->branch != self::BRANCH_OTHER) {
 			throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
 		}

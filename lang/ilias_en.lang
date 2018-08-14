@@ -41,7 +41,8 @@ config_update#:#Update
 config_upload_token#:#Activate Upload-Token
 config_user_mapping#:#User-Mapping
 config_use_modals#:#Open Player in Modal
-config_workflow#:#Workflow-ID
+config_workflow#:#Processing Workflow ID
+config_workflow_unpublish#:#Unpublish Workflow ID
 config_advanced#:#Advanced
 config_security#:#Security
 config_security_info#:#Improves the security by using OpenCasts "Stream Security". Only activate, if OpenCast is configured to use it.
@@ -63,6 +64,7 @@ config_curl_debug_level_info#:#Level of detail for log entries.
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
+config_workflow_unpublish_info#:#ID of the workflow which will be executed in OpenCast before deleting an event.
 config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in OpenCast.
 config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast. 
 config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant the user permission on a series in OpenCast. Example: ROLE_USER_&#123IDENTIFIER}
@@ -110,7 +112,9 @@ event_creator#:#Creator
 event_cut#:#Cut Event
 event_date#:#Date
 event_delete#:#Delete Event
+event_unpublish#:#Delete Publications
 event_delete_confirm#:#This will delete the Event in ILIAS and in OpenCast. Do you want to proceed?
+event_unpublish_confirm#:#You have to delete all publications of this event in order to delete this event. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration
@@ -125,6 +129,8 @@ event_invite_others#:#Grant access rights
 event_location#:#Recording Station
 event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
+event_msg_unpublish_started#:#The publications are now being deleted.
+event_msg_currently_unpublishing#:#The process to delete the publications is already running.
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_msg_scheduled#:#Event(s) scheduled

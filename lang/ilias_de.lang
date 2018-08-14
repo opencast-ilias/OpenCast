@@ -41,7 +41,8 @@ config_update#:#Aktualisieren
 config_upload_token#:#Aktiviere Upload-Token
 config_user_mapping#:#User-Mapping
 config_use_modals#:#Player in Modal öffnen
-config_workflow#:#Workflow-ID
+config_workflow#:#Processing-Workflow-ID
+config_workflow_unpublish#:#Unpublish-Workflow-ID
 config_advanced#:#Erweitert
 config_security#:#Security
 config_security_info#:#Erhöht die Sicherheit mithilfe von OpenCasts "Stream Security". Nur aktivieren, wenn OpenCast dafür konfiguriert ist.
@@ -63,7 +64,8 @@ config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in OpenCast angewendet wird.
-config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in OpenCast verwendet werden soll. 
+config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird.
+config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in OpenCast verwendet werden soll.
 config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden vom Plugin in der hier angegebenen OpenCast-Gruppe eingeschrieben, um dadurch Zugriff auf OpenCast zu erhalten.
 config_role_user_prefix_info#:#Benutzereigene Rolle in OpenCast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in OpenCast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
 config_role_ivt_external_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}
@@ -110,7 +112,9 @@ event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
 event_delete#:#Aufzeichung löschen
+event_unpublish#:#Publikationen löschen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
+event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich löschen?
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
@@ -125,6 +129,8 @@ event_invite_others#:#Zugriffsrechte erteilen
 event_location#:#Aufnahmestation
 event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
+event_msg_unpublish_started#:#Die Publikationen werden nun gelöscht.
+event_msg_currently_unpublishing#:#Der Prozess zum Löschen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_msg_scheduled#:#Aufzeichungstermin(e) erstellt.

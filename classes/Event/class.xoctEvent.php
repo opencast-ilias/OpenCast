@@ -519,6 +519,19 @@ class xoctEvent extends xoctObject {
 		return true;
 	}
 
+    /**
+     * @return bool
+     * @throws xoctException
+     */
+    public function unpublish() {
+        $workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH);
+        xoctRequest::root()->workflows()->post(array(
+            'workflow_definition_identifier' => $workflow,
+            'event_identifier' => $this->getIdentifier()
+        ));
+        self::removeFromCache($this->getIdentifier());
+        return true;
+	}
 
 	/**
 	 * @return string

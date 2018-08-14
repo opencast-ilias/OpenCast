@@ -827,18 +827,24 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$ilConfirmationGUI = new ilConfirmationGUI();
 		$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-		$header_text = $this->xoctOpenCast->getDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
+        if (count($xoctEvent->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+            $header_text = $this->txt('unpublish_confirm');
+            $action_text = 'unpublish';
+        } else {
+            $header_text = $this->xoctOpenCast->getDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
+            $action_text = 'delete';
+        }
 		$ilConfirmationGUI->setHeaderText($header_text);
 		$ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
-		$ilConfirmationGUI->setConfirm($this->txt('delete'), self::CMD_DELETE);
+		$ilConfirmationGUI->setConfirm($this->txt($action_text), self::CMD_DELETE);
 		$ilConfirmationGUI->addItem(self::IDENTIFIER, $xoctEvent->getIdentifier(), $xoctEvent->getTitle());
 		$this->tpl->setContent($ilConfirmationGUI->getHTML());
 	}
 
 
-	/**
-	 *
-	 */
+    /**
+     * @throws xoctException
+     */
 	protected function delete() {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
@@ -848,8 +854,21 @@ class xoctEventGUI extends xoctGUI {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
-		$xoctEvent->delete();
-		ilUtil::sendSuccess($this->txt('msg_deleted'), true);
+        if (count($xoctEvent->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+            try {
+                $xoctEvent->unpublish();
+                ilUtil::sendSuccess($this->txt('msg_unpublish_started'), true);
+            } catch (xoctException $e) {
+                if ($e->getCode() == 409) {
+                    ilUtil::sendInfo($this->txt('msg_currently_unpublishing'), true);
+                } else {
+                    throw $e;
+                }
+            }
+        } else {
+            $xoctEvent->delete();
+            ilUtil::sendSuccess($this->txt('msg_deleted'), true);
+        }
 		$this->cancel();
 	}
 

@@ -11,9 +11,10 @@ class xoctConf extends ActiveRecord {
 	const CONFIG_VERSION = 1;
 	const F_CONFIG_VERSION = 'config_version';
 	const F_USE_MODALS = 'use_modals';
-	const F_CURL_USERNAME = 'curl_username';
-	const F_CURL_PASSWORD = 'curl_password';
-	const F_WORKFLOW = 'workflow';
+    const F_CURL_USERNAME = 'curl_username';
+    const F_CURL_PASSWORD = 'curl_password';
+    const F_WORKFLOW = 'workflow';
+    const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
 	const F_EULA = 'eula';
 	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
 	const F_API_VERSION = 'api_version';
