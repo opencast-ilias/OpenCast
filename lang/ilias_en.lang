@@ -64,7 +64,7 @@ config_curl_debug_level_info#:#Level of detail for log entries.
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
-config_workflow_unpublish_info#:#ID of the workflow which will be executed in OpenCast before deleting an event.
+config_workflow_unpublish_info#:#ID of the workflow which will be executed in OpenCast before deleting an event. Requires API version 1.1.0.
 config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in OpenCast.
 config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast. 
 config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant the user permission on a series in OpenCast. Example: ROLE_USER_&#123IDENTIFIER}
