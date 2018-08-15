@@ -114,7 +114,7 @@ event_date#:#Date
 event_delete#:#Delete Event
 event_unpublish#:#Delete Publications
 event_delete_confirm#:#This will delete the Event in ILIAS and in OpenCast. Do you want to proceed?
-event_unpublish_confirm#:#You have to delete all publications of this event in order to delete this event. Do you want to proceed?
+event_unpublish_confirm#:#You have to remove all publications from this event in order to delete this event. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
 event_duration#:#Duration
@@ -129,8 +129,8 @@ event_invite_others#:#Grant access rights
 event_location#:#Recording Station
 event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
-event_msg_unpublish_started#:#The publications are now being deleted.
-event_msg_currently_unpublishing#:#The process to delete the publications is already running.
+event_msg_unpublish_started#:#The publications are now being removed.
+event_msg_currently_unpublishing#:#The process to remove the publications is already running.
 event_msg_no_access#:#No Access
 event_msg_success#:#Saved changes
 event_msg_scheduled#:#Event(s) scheduled

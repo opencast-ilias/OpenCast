@@ -112,9 +112,9 @@ event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
 event_delete#:#Aufzeichung löschen
-event_unpublish#:#Publikationen löschen
+event_unpublish#:#Publikationen entfernen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
-event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich löschen?
+event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich entfernen?
 event_description#:#Untertitel
 event_download#:#Download
 event_duration#:#Dauer
@@ -129,8 +129,8 @@ event_invite_others#:#Zugriffsrechte erteilen
 event_location#:#Aufnahmestation
 event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
-event_msg_unpublish_started#:#Die Publikationen werden nun gelöscht.
-event_msg_currently_unpublishing#:#Der Prozess zum Löschen der Publikationen läuft bereits.
+event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
+event_msg_currently_unpublishing#:#Der Prozess zum Entfernen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
 event_msg_scheduled#:#Aufzeichungstermin(e) erstellt.
