@@ -137,7 +137,11 @@ class xoctSeriesAPI {
 		} catch (xoctException $e) {
 			//TODO log?
 		}
-		$cast->getSeries()->addProducers($producers);
+
+        $series = $cast->getSeries();
+        $series->addProducers($producers, true);
+        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
+        $series->update();
 
 		//member upload
 		if (isset($additional_data['member_upload'])) {
