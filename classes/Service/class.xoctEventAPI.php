@@ -118,6 +118,12 @@ class xoctEventAPI {
 		return true;
 	}
 
-
+    /**
+     * @param array $filter
+     * @return array
+     */
+    public function filter(array $filter){
+        return \xoctEvent::getFiltered($filter);
+    }
 
 }
