@@ -140,7 +140,7 @@ class xoctSeriesAPI {
 
         $series = $cast->getSeries();
         $series->addProducers($producers, true);
-        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
+        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($object->getRefId())->getTitle(), true);
         $series->update();
 
 		//member upload
