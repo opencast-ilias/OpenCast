@@ -123,6 +123,7 @@ class xoctSeriesAPI {
 		$cast->create();
 
 		$object->putInTree($parent_ref_id);
+        $object->setPermissions($parent_ref_id);
 
 		// add producers
 		$producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
