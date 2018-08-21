@@ -351,13 +351,14 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
 		global $DIC;
+        $ref_id = $ref_id ? $ref_id : $_GET['ref_id'];
 		$rbacreview = $DIC['rbacreview'];
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
-		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
+		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
-		$active_operations = $rbacreview->getActiveOperationsOfRole($ref_id ? $ref_id : $_GET['ref_id'], $parent_obj->$fetch_role_method());
+		$active_operations = $rbacreview->getActiveOperationsOfRole($ref_id, $parent_obj->$fetch_role_method());
 		foreach ($active_operations as $op_id) {
 			$operation = $rbacreview->getOperation($op_id);
 			if ($operation['operation'] ==  $prefix.$action) {
