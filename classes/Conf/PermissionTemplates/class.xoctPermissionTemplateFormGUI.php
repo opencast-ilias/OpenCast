@@ -8,7 +8,7 @@
  */
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
-    const F_DEFAULT = 'default';
+    const F_DEFAULT = 'is_default';
 	const F_TITLE_DE = 'title_de';
 	const F_TITLE_EN = 'title_en';
 	const F_INFO_DE = 'info_de';

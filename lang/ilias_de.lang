@@ -326,6 +326,7 @@ msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kurse
 msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
 msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
 table_column_default#:#Default
+table_column_is_default#:#Default
 table_column_title#:#Titel
 table_column_info#:#Info
 table_column_role#:#Rolle
@@ -335,8 +336,8 @@ table_column_additional_acl_actions#:#Zus. ACL-Actions
 table_column_additional_actions_download#:#Zus. Actions Download
 table_column_additional_actions_annotate#:#Zus. Actions Annotate
 button_new_permission_template#:#Neue Vorlage hinzufügen
-perm_tpl_form_default#:#Default-Vorlage
-perm_tpl_form_default_info#:#Diese Vorlage wird angewendet, wenn die Serie nicht auf dem externen Videoportal publiziert werden soll. Es kann daher jeweils nur eine Vorlage als Default-Vorlage definiert werden.
+perm_tpl_form_is_default#:#Default-Vorlage
+perm_tpl_form_is_default_info#:#Diese Vorlage wird angewendet, wenn die Serie nicht auf dem externen Videoportal publiziert werden soll. Es kann daher jeweils nur eine Vorlage als Default-Vorlage definiert werden.
 perm_tpl_form_title_de#:#Titel DE
 perm_tpl_form_title_en#:#Titel EN
 perm_tpl_form_title_de_info#:#Wird für die Anzeige in ILIAS verwendet (Deutsch).

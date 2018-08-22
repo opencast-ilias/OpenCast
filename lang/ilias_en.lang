@@ -328,6 +328,7 @@ msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses 
 msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
 msg_confirm_delete_perm_template#:#Do you really want to delete the following template?
 table_column_default#:#Default
+table_column_is_default#:#Default
 table_column_title#:#Title
 table_column_info#:#Info
 table_column_role#:#Role
@@ -337,8 +338,8 @@ table_column_additional_acl_actions#:#Additional ACL Actions
 table_column_additional_actions_download#:#Additional Actions Download
 table_column_additional_actions_annotate#:#Additional Actions Annotate
 button_new_permission_template#:#Add New Template
-perm_tpl_form_default#:#Default Template
-perm_tpl_form_default_info#:#This template will be used if the series should not be published to the external video portal. Therefore, only one template can be defined as the default template.
+perm_tpl_form_is_default#:#Default Template
+perm_tpl_form_is_default_info#:#This template will be used if the series should not be published to the external video portal. Therefore, only one template can be defined as the default template.
 perm_tpl_form_title_de#:#Title DE
 perm_tpl_form_title_en#:#Title EN
 perm_tpl_form_title_de_info#:#Will be used for presentation inside ILIAS (German).
