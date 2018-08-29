@@ -455,13 +455,13 @@ class xoctEventGUI extends xoctGUI {
 		// Multi stream
 		$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
 			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-				&& in_array(xoctPublicationUsage::USAGE_DUAL_IMAGE_SOURCE, $media->getTags()));
+				&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
 		}));
 		if (count($medias) === 0) {
 			// Single stream
 			$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
 				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-					&& in_array(xoctPublicationUsage::USAGE_DOWNLOAD, $media->getTags()));
+					&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
 			}));
 		}
 
@@ -469,8 +469,8 @@ class xoctEventGUI extends xoctGUI {
 		 * @var xoctAttachment[] $previews
 		 */
 		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
-			return ($attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTER_PLAYER_PREVIEW
-				|| $attachment->getFlavor() === xoctMetadata::FLAVOR_PRESENTATION_PLAYER_PREVIEW);
+			return (strpos($attachment->getFlavor(), 'presenter') === 0
+				|| strpos($attachment->getFlavor(), 'presentation') === 0);
 		});
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
 			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
