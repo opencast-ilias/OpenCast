@@ -70,9 +70,9 @@ class xoctOpenCast extends ActiveRecord {
         if (!$xoctSeries) {
             if ($this->getSeriesIdentifier()) {
                 $xoctSeries = xoctSeries::find($this->getSeriesIdentifier());
-                if (!($xoctSeries instanceof xoctSeries)) {
-                    $xoctSeries = new xoctSeries();
-                }
+            }
+            if (!($xoctSeries instanceof xoctSeries)) {
+                $xoctSeries = new xoctSeries();
             }
         }
 
