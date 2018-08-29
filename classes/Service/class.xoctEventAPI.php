@@ -54,7 +54,7 @@ class xoctEventAPI {
 		$std_acls = new xoctAclStandardSets();
 		$event->setAcl($std_acls->getAcls());
 
-		$event->schedule();
+		$event->schedule('', true);
 		return $event;
 	}
 

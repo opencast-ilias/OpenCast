@@ -343,34 +343,37 @@ class xoctEvent extends xoctObject {
 	/**
 	 *
 	 */
-	public function schedule($rrule = '') {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
-		$data = array();
+    public function schedule($rrule = '', $omit_set_owner = false) {
+        if (!$omit_set_owner) {
+            global $DIC;
+            $ilUser = $DIC['ilUser'];
+            $this->setOwner(xoctUser::getInstance($ilUser));
+        }
 
-		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
-		$this->setOwner(xoctUser::getInstance($ilUser));
-		$this->updateMetadataFromFields(true);
-		$this->updateSchedulingFromFields();
+        $data = array();
 
-		if ($rrule) {
-			$this->getScheduling()->setRRule($rrule);
-		}
+        $this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+        $this->updateMetadataFromFields(true);
+        $this->updateSchedulingFromFields();
 
-		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$data['processing'] = json_encode($this->getProcessing());
-		$data['acl'] = json_encode($this->getAcl());
-		$data['scheduling'] = json_encode($this->getScheduling()->__toStdClass());
+        if ($rrule) {
+            $this->getScheduling()->setRRule($rrule);
+        }
 
-		//		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
-		$return = json_decode(xoctRequest::root()->events()->post($data));
-		//		}
+        $data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+        $data['processing'] = json_encode($this->getProcessing());
+        $data['acl'] = json_encode($this->getAcl());
+        $data['scheduling'] = json_encode($this->getScheduling()->__toStdClass());
 
-		$this->setIdentifier(is_array($return) ? $return[0]->identifier : $return->identifier);
-	}
+        //		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
+        $return = json_decode(xoctRequest::root()->events()->post($data));
+        //		}
+
+        $this->setIdentifier(is_array($return) ? $return[0]->identifier : $return->identifier);
+    }
 
 
-	/**
+    /**
 	 *
 	 */
 	public function update() {
