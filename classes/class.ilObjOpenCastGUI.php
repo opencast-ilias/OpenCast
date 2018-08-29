@@ -330,7 +330,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$series = $cast->getSeries();
         $series->addProducers($producers, true);
         $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
-        $series->addContributor($this->user->getFirstname() . ' ' . $this->user->getLastname(), true);
+        $series->addContributor($ilUser->getFirstname() . ' ' . $ilUser->getLastname(), true);
         $series->update();
 
 		if ($cast->getDuplicatesOnSystem()) {
