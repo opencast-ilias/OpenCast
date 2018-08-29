@@ -961,7 +961,6 @@ class xoctEventGUI extends xoctGUI {
 	protected function clearCache() {
 		xoctCacheFactory::getInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
-		xoctEvent::getFiltered(array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() ));
 		$this->ctrl->redirect($this, self::CMD_SHOW_CONTENT);
 	}
 

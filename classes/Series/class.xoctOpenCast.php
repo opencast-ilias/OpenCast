@@ -63,17 +63,20 @@ class xoctOpenCast extends ActiveRecord {
      * @throws xoctException
      */
 	public function getSeries() {
-		/**
-		 * @var $xoctSeries xoctSeries
-		 */
-		if ($this->getSeriesIdentifier()) {
-			$xoctSeries = xoctSeries::find($this->getSeriesIdentifier());
-			if ($xoctSeries instanceof xoctSeries) {
-				return $xoctSeries;
-			}
-		}
+        /**
+         * @var $xoctSeries xoctSeries
+         */
+        static $xoctSeries;
+        if (!$xoctSeries) {
+            if ($this->getSeriesIdentifier()) {
+                $xoctSeries = xoctSeries::find($this->getSeriesIdentifier());
+                if (!($xoctSeries instanceof xoctSeries)) {
+                    $xoctSeries = new xoctSeries();
+                }
+            }
+        }
 
-		return new xoctSeries();
+        return $xoctSeries;
 	}
 
 
