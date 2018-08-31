@@ -485,7 +485,7 @@ class xoctEventGUI extends xoctGUI {
 				$url = xoctSecureLink::sign($url);
 			}
 
-			$role = (strpos($url, xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
+			$role = (strpos($media->getFlavor(), xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
 
 			if ($duration == 0) {
 				$duration = $media->getDuration();
