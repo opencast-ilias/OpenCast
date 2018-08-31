@@ -774,20 +774,20 @@ class xoctEvent extends xoctObject {
 			return 0;
 		}
 		if ($this->processing_state_init) {
-			//			return true;
+			return true;
 		}
+		if ($this->status == 'EVENTS.EVENTS.STATUS.PROCESSED') {
+		    $this->processing_state = 'SUCCEEDED';
+        }
 		switch ($this->processing_state) {
 			case self::STATE_SUCCEEDED:
 				if (!$this->getXoctEventAdditions()->getIsOnline()) {
 					$this->setProcessingState(self::STATE_OFFLINE);
 				} else {
-					$conf_internal_player = xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER);
-					$publication_api = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_API);
 					$publication_player = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER);
 
 					// "not published" depends: if the internal player is used, the "api" publication must be present, else the "player" publication
-					if (($conf_internal_player && !in_array($publication_api->getChannel(),$this->publication_status))
-						|| (!$conf_internal_player && !in_array($publication_player->getChannel(),$this->publication_status)))
+					if (!in_array($publication_player->getChannel(),$this->publication_status))
 					{
 					    if ($this->hasPreviews()) {
 					        $this->setProcessingState(self::STATE_READY_FOR_CUTTING);
