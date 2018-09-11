@@ -108,7 +108,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->setTarget('_top');
 		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
 		$this->initButtons();
-		if ($this->is_new) {
+		if ($this->is_new && $xoctUser->getUserRoleName()) {
 			$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
 			{
 				$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
