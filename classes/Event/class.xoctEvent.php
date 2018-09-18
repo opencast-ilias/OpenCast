@@ -119,6 +119,10 @@ class xoctEvent extends xoctObject {
 			$request->parameter('withpublications', true);
 		}
 
+		if (xoct::isApiVersionGreaterThan('v1.1.0')){
+            $request->parameter('withscheduling', true);
+        }
+
 		$data = json_decode($request->get());
 		$return = array();
 
@@ -183,7 +187,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	public function afterObjectLoad() {
-		if (!$this->getPublications()) {
+		if (!$this->getPublications() && !$this->isScheduled()) {
 			$this->loadPublications();
 		}
 
@@ -193,7 +197,7 @@ class xoctEvent extends xoctObject {
 
 		$this->initProcessingState();
 
-		if ($this->isScheduled()) {
+		if ($this->isScheduled() && !$this->scheduling) {
 			$this->loadScheduling();
 		}
 
