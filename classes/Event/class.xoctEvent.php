@@ -115,7 +115,6 @@ class xoctEvent extends xoctObject {
 		}
 
 		if (!self::$LOAD_PUB_SEPARATE) {
-			$request->parameter('sign', true);
 			$request->parameter('withpublications', true);
 		}
 
