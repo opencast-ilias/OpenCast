@@ -147,8 +147,11 @@ class xoctEventGUI extends xoctGUI {
 	 * asynchronous loading of tableGUI
 	 */
 	protected function index() {
+        ilChangeEvent::_recordReadEvent(
+            $this->xoctOpenCast->getILIASObject()->getType(), $this->xoctOpenCast->getILIASObject()->getRefId(),
+            $this->xoctOpenCast->getObjId(), $this->user->getId());
 
-		$intro_text = '';
+        $intro_text = '';
 		if ($this->xoctOpenCast->getIntroductionText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
 			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
