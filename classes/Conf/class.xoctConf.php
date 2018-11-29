@@ -60,6 +60,10 @@ class xoctConf extends ActiveRecord {
 	const NO_METADATA = 0;
 	const ALL_METADATA = 1;
 	const METADATA_EXCEPT_DATE_PLACE = 2;
+
+	const USE_STREAMING = 'use_streaming';
+    const STREAMING_URL = 'streaming_url';
+
 	/**
 	 * @var array
 	 */
