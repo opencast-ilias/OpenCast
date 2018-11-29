@@ -482,7 +482,10 @@ class xoctEventGUI extends xoctGUI {
 		}, []);
 
 		$duration = 0;
-		$streams = array_map(function (xoctMedia $media) use (&$duration, &$previews) {
+
+		$id = filter_input(INPUT_GET, self::IDENTIFIER);
+
+		$streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
 			$url = $media->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 				$url = xoctSecureLink::sign($url);
@@ -504,23 +507,54 @@ class xoctEventGUI extends xoctGUI {
 				$preview_url = "";
 			}
 
-			return [
-				"type" => xoctMedia::MEDIA_TYPE_VIDEO,
-				"role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
-				"sources" => [
-					"mp4" => [
-						[
-							"src" => $url,
-							"mimetype" => $media->getMediatype(),
-							"res" => [
-								"w" => $media->getWidth(),
-								"h" => $media->getHeight()
-							]
-						]
-					]
-				],
-				"preview" => $preview_url
-			];
+
+
+            if( xoctConf::getConfig(xoctConf::USE_STREAMING)) {
+
+                $smilURLIdentifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
+
+                $streamingServerURL = xoctConf::getConfig(xoctConf::STREAMING_URL);
+
+                return [
+                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
+                    "role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "sources" => [
+                        "hls" => [
+                            [
+                                "src" => $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/playlist.m3u8",
+                                "mimetype" => "application/x-mpegURL"
+                            ],
+                        ],
+                        "dash" => [
+                            [
+                                "src" => $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd",
+                                "mimetype" => "application/dash+xml"
+                            ]
+                        ]
+                    ],
+                    "preview" => $preview_url
+                ];
+            }
+            else{
+                return [
+                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
+                    "role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "sources" => [
+                        "mp4" => [
+                            [
+                                "src" => $url,
+                                "mimetype" => $media->getMediatype(),
+                                "res" => [
+                                    "w" => $media->getWidth(),
+                                    "h" => $media->getHeight()
+                                ]
+                            ]
+                        ]
+
+                    ],
+                    "preview" => $preview_url
+                ];
+            }
 		}, $medias);
 
 		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
