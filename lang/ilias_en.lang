@@ -13,6 +13,9 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_streaming#:#Streaming
+config_streaming_url#:#Wowza URL
+config_use_streaming#:#Benutze Streaming URLs
 config_editor_link#:#Link to OpenCast Video Editor
 config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
@@ -61,6 +64,8 @@ config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
 config_curl_debug_level_info#:#Level of detail for log entries.
+config_streaming_url_info#:#Wowza URL for adaptive streaming. E.g.: https://wowza.myopencast.com:8090/opencast-engage
+config_use_streaming_info#:#If active all mp4 files will be replaced by streaming urls
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
