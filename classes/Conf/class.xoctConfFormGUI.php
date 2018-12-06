@@ -196,20 +196,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
-
-        $h = new ilFormSectionHeaderGUI();
-        $h->setTitle($this->parent_gui->txt('streaming'));
-        $this->addItem($h);
-
-        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::STREAMING_URL), xoctConf::STREAMING_URL);
-        $te->setInfo($this->parent_gui->txt(xoctConf::STREAMING_URL . '_info'));
-        $te->setRequired(false);
-        $this->addItem($te);
-
-        $te = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::USE_STREAMING), xoctConf::USE_STREAMING);
-        $te->setInfo($this->parent_gui->txt(xoctConf::USE_STREAMING . '_info'));
-        $te->setRequired(false);
-        $this->addItem($te);
 	}
 
 
@@ -243,9 +229,21 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
 		$this->addItem($cb);
+
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::USE_STREAMING), xoctConf::USE_STREAMING);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::USE_STREAMING . '_info'));
+		$cbs->setRequired(false);
+		$cb->addSubItem($cbs);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::STREAMING_URL), xoctConf::STREAMING_URL);
+		$te->setInfo($this->parent_gui->txt(xoctConf::STREAMING_URL . '_info'));
+		$te->setRequired(true);
+		$cbs->addSubItem($te);
+
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS . '_info'));
