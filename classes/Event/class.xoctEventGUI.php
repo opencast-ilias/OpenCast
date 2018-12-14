@@ -472,8 +472,7 @@ class xoctEventGUI extends xoctGUI {
 		 * @var xoctAttachment[] $previews
 		 */
 		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
-			return (strpos($attachment->getFlavor(), 'presenter') === 0
-				|| strpos($attachment->getFlavor(), 'presentation') === 0);
+			return (strpos($attachment->getFlavor(), '/player+preview') !== false);
 		});
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
 			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
