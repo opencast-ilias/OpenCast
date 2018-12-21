@@ -438,7 +438,13 @@ class xoctRequest {
      */
     public function scheduling() {
 		$this->checkBranch(array( self::BRANCH_EVENTS ));
-		$this->addPart('scheduling');
+
+        if (xoct::isApiVersionGreaterThan('v1.1.0')){
+            $this->addPart('scheduling');
+        }
+        else{
+            $this->addPart('scheduling.json');
+        }
 
 		return $this;
 	}
