@@ -37,16 +37,17 @@ var xoctInvitation = {
         this.filter_container = $('#xoct_participant_filter');
 		this.load();
 
+		var self = this;
 		$(document).on('click', '.xoct_remove', function () {
-			xoctInvitation.removeInvitation($(this).parent().data('invitation-id'));
+			self.removeInvitation($(this).parent().data('invitation-id'));
 		});
 
 		$(document).on('click', '.xoct_invite', function () {
-			xoctInvitation.addInvitation($(this).parent().data('invitation-id'));
+			self.addInvitation($(this).parent().data('invitation-id'));
 		});
 
         this.filter_container.keyup(function () {
-            xoctInvitation.filter($(this).val());
+            self.filter($(this).val());
             if (self.filtering && !$('#xoct_filter').length) {
                 self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
             } else if (!self.filtering) {
@@ -132,66 +133,7 @@ var xoctInvitation = {
      */
     filter: function (string) {
         this.filtering = (string != '');
-        console.log('filtering: ' + string);
         $('.xoct_participant_available:not(:contains("' + string + '"))').hide();
         $('.xoct_participant_available:contains("' + string + '")').show();
     }
-
-	//deleteGroup: function (id, fallback) {
-	//	var url = this.data_url;
-	//	var self = this;
-	//	if (confirm(this.lng['delete_group'])) {
-	//		this.before_load();
-	//		$.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
-	//			if (data) {
-	//				$('[data-invitation-id="' + id + '"]').remove();
-	//				self.load();
-	//			}
-	//			self.after_load();
-	//		});
-	//	}
-	//},
-	//
-	//selectGroup: function (id, force) {
-	//	force = typeof(force) == 'undefined' ? false : force;
-	//	if (this.selected_id == id && !force) {
-	//		this.deselectAll();
-	//		this.selected_id = 0;
-	//	} else {
-	//		this.selected_id = id;
-	//		this.deselectAll();
-	//		xoctInvitationParticipant.loadForGroupId(id);
-	//		$('[data-invitation-id="' + id + '"]').addClass('active');
-	//	}
-	//},
-	//
-	//deselectAll: function () {
-	//	$('.xoct_group').each(function () {
-	//		$(this).removeClass('active');
-	//	});
-	//	xoctInvitationParticipant.clear();
-	//},
-	///**
-	// * Create a New Group
-	// * @param title
-	// * @param before
-	// * @param after
-	// */
-	//addInvitation: function (title, fallback) {
-	//	if (!title) {
-	//		alert(this.lng['no_title']);
-	//		return;
-	//	}
-	//	var self = this;
-	//	var url = this.data_url;
-	//	this.deselectAll();
-	//	this.before_load();
-	//	$.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-	//		self.load(function () {
-	//			self.selectGroup(data.id, true);
-	//		});
-	//		self.after_load();
-	//		fallback(data);
-	//	});
-	//}
 };
