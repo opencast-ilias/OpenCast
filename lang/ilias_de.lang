@@ -200,6 +200,8 @@ group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
 group_none_available#:#Keine verfügbar
 group_none_available_all#:#Keine verfügbar
 group_select_group#:#Gruppe auswählen
+current_owner_header#:#Besitzer
+owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar

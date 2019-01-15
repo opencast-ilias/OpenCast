@@ -8,6 +8,15 @@
  */
 class xoctInvitationGUI extends xoctGUI {
 
+    /**
+     * @var xoctEvent
+     */
+    protected $xoctEvent;
+    /**
+     * @var xoctOpenCast
+     */
+    protected $xoctOpenCast;
+
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
@@ -16,13 +25,13 @@ class xoctInvitationGUI extends xoctGUI {
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
-			$this->xoctOpenCast = new xoctOpenCast ();
+			$this->xoctOpenCast = new xoctOpenCast();
 		}
 		$this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
 		$this->tabs->clearTargets();
 
 
-		$this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass('xoctEventGUI'));
+		$this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));
 		xoctWaiterGUI::loadLib();
 		$this->tpl->addCss($this->pl->getStyleSheetLocation('default/invitations.css'));
 		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/invitations.js'));
@@ -36,7 +45,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$xoctUser = xoctUser::getInstance($ilUser);
 		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 			ilUtil::sendFailure('Access denied', true);
-			$this->ctrl->redirectByClass('xoctEventGUI');
+			$this->ctrl->redirectByClass(xoctEventGUI::class);
 		}
 		$temp = $this->pl->getTemplate('default/tpl.invitations.html', false, false);
 		$temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
@@ -64,7 +73,6 @@ class xoctInvitationGUI extends xoctGUI {
 
 
 	protected function add() {
-		// TODO: Implement add() method.
 	}
 
 
@@ -138,7 +146,6 @@ class xoctInvitationGUI extends xoctGUI {
 		$obj = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
 			'user_id' => $_POST['id'],
-//			'owner_id' => $ilUser->getId()
 		))->first();
 		$new = false;
 		if (! $obj instanceof xoctInvitation) {
@@ -162,22 +169,17 @@ class xoctInvitationGUI extends xoctGUI {
 
 
 	protected function update() {
-		// TODO: Implement update() method.
 	}
 
 
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
 	}
 
 
 	protected function delete() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		$obj = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
 			'user_id' => $_POST['id'],
-//			'owner_id' => $ilUser->getId()
 		))->first();
 		if ($obj instanceof xoctInvitation) {
 			$obj->delete();

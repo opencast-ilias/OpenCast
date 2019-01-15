@@ -4,6 +4,8 @@
  * Class xoctChangeOwnerGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
+ *
+ * @ilCtrl_IsCalledBy xoctChangeOwnerGUI: ilObjOpenCastGUI
  */
 class xoctChangeOwnerGUI extends xoctGUI {
 
@@ -11,6 +13,10 @@ class xoctChangeOwnerGUI extends xoctGUI {
      * @var xoctEvent
      */
     protected $xoctEvent;
+    /**
+     * @var xoctOpenCast
+     */
+    protected $xoctOpenCast;
 
     /**
      * @param xoctOpenCast $xoctOpenCast
@@ -20,37 +26,41 @@ class xoctChangeOwnerGUI extends xoctGUI {
         if ($xoctOpenCast instanceof xoctOpenCast) {
             $this->xoctOpenCast = $xoctOpenCast;
         } else {
-            $this->xoctOpenCast = new xoctOpenCast ();
+            $this->xoctOpenCast = new xoctOpenCast();
         }
         $this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->tabs->clearTargets();
 
 
-        $this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass('xoctEventGUI'));
+        $this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
-        $this->tpl->addCss($this->pl->getStyleSheetLocation('default/invitations.css'));
-        $this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/invitations.js'));
+        $this->tpl->addCss($this->pl->getStyleSheetLocation('default/change_owner.css'));
+        $this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/change_owner.js'));
         $this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
-
+    /**
+     * @throws ilTemplateException
+     */
     protected function index() {
         global $DIC;
         $ilUser = $DIC['ilUser'];
         $xoctUser = xoctUser::getInstance($ilUser);
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
             ilUtil::sendFailure('Access denied', true);
-            $this->ctrl->redirectByClass('xoctEventGUI');
+            $this->ctrl->redirectByClass(xoctEventGUI::class);
         }
-        $temp = $this->pl->getTemplate('default/tpl.invitations.html', false, false);
+        $temp = $this->pl->getTemplate('default/tpl.change_owner.html', false, false);
         $temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
         $temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
         $temp->setVariable('L_FILTER', $this->pl->txt('groups_participants_filter'));
         $temp->setVariable('PH_FILTER', $this->pl->txt('groups_participants_filter_placeholder'));
+        $temp->setVariable('HEADER_OWNER', $this->pl->txt('current_owner_header'));
         $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', $this->pl->txt('groups_available_participants_header'));
         $temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
         $temp->setVariable('LANGUAGE', json_encode(array(
-            'none_available' => $this->pl->txt('invitations_none_available')
+            'none_available' => $this->pl->txt('invitations_none_available'),
+            'only_one_owner' => $this->pl->txt('owner_only_one_owner')
         )));
         $this->tpl->setContent($temp->get());
     }
@@ -66,19 +76,35 @@ class xoctChangeOwnerGUI extends xoctGUI {
     }
 
 
+    /**
+     *
+     */
     protected function add() {
-        // TODO: Implement add() method.
     }
 
 
+    /**
+     *
+     */
     public function getAll() {
         $owner = $this->xoctEvent->getOwner();
         $owner_data = $owner ? ['id' => $owner->getIliasUserId(), 'name' => $owner->getNamePresentation()] : [];
 
-
+        $available_user_ids = self::getCourseMembers();
+        $available_users = [];
+        foreach ($available_user_ids as $user_id) {
+            if ($owner && $user_id == $owner->getIliasUserId()) {
+                continue;
+            }
+            $user = new stdClass();
+            $xoctUser = xoctUser::getInstance($user_id);
+            $user->id = $user_id;
+            $user->name = $xoctUser->getNamePresentation();
+            $available_users[] = $user;
+        }
 
         $arr = array(
-            'invited' => $invited_users,
+            'owner' => $owner_data,
             'available' => $available_users,
         );
 
@@ -96,43 +122,57 @@ class xoctChangeOwnerGUI extends xoctGUI {
         return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
     }
 
+    /**
+     * async function
+     *
+     * @throws xoctException
+     */
     protected function setOwner() {
         $user_id = $_GET['user_id'];
         $this->xoctEvent->setOwner(xoctUser::getInstance($user_id));
-        $this->xoctEvent->update();
-//        $this->outJson($this->xoctEvent->__asStdClass());
+        $this->xoctEvent->updateAcls();
+    }
+
+    /**
+     * async function
+     */
+    protected function removeOwner() {
+        $this->xoctEvent->removeOwner();
+        $this->xoctEvent->updateAcls();
     }
 
 
+    /**
+     *
+     */
     protected function create() {
-
     }
 
 
+    /**
+     *
+     */
     protected function edit() {
     }
 
 
+    /**
+     *
+     */
     protected function update() {
-        // TODO: Implement update() method.
     }
 
 
+    /**
+     *
+     */
     protected function confirmDelete() {
-        // TODO: Implement confirmDelete() method.
     }
 
 
+    /**
+     *
+     */
     protected function delete() {
-        global $DIC;
-        $ilUser = $DIC['ilUser'];
-        $obj = xoctInvitation::where(array(
-            'event_identifier' => $this->xoctEvent->getIdentifier(),
-            'user_id' => $_POST['id'],
-//			'owner_id' => $ilUser->getId()
-        ))->first();
-        if ($obj instanceof xoctInvitation) {
-            $obj->delete();
-        }
     }
 }

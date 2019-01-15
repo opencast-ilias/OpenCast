@@ -1001,30 +1001,6 @@ class xoctEventGUI extends xoctGUI {
 		$this->ctrl->redirect($this, self::CMD_SHOW_CONTENT);
 	}
 
-
-	/**
-	 *
-	 */
-	protected function editOwner() {
-		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
-		$xoctEventOwnerFormGUI->fillForm();
-		$this->tpl->setContent($xoctEventOwnerFormGUI->getHTML());
-	}
-
-
-	/**
-	 *
-	 */
-	protected function updateOwner() {
-		$xoctEventOwnerFormGUI = new xoctEventOwnerFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
-		$xoctEventOwnerFormGUI->setValuesByPost();
-		if ($xoctEventOwnerFormGUI->saveObject()) {
-			ilUtil::sendSuccess($this->txt('msg_success'), true);
-			$this->ctrl->redirect($this, self::CMD_STANDARD);
-		}
-	}
-
-
 	/**
 	 * @return string
 	 */

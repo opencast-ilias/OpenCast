@@ -202,6 +202,8 @@ group_delete_participant#:#Do you really want to delete this Membership?
 group_none_available#:#None available
 group_none_available_all#:#None available
 group_select_group#:#Select Group
+current_owner_header#:#Owner
+owner_only_one_owner#:#Only one owner can be chosen per video.
 invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available

@@ -141,6 +141,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $this->ctrl->forwardCommand($xoctSeriesGUI);
                     $this->tpl->show();
                     break;
+                case 'xoctchangeownergui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast);
+                    $this->ctrl->forwardCommand($xoctSeriesGUI);
+                    $this->tpl->show();
+                    break;
                 case 'xoctseriesgui':
                 case 'xocteventgui':
                 case 'xoctivtgroupgui':

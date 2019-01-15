@@ -32,7 +32,7 @@ var xoctChangeOwner = {
 		this.data_url = data_url;
 		$(container_owner).html('<ul id="xoct_owner" class="list-group"></ul>');
 		$(container_available).html('<ul id="xoct_available" class="list-group"></ul>');
-		this.container_owner = $('#xoct_invitations');
+		this.container_owner = $('#xoct_owner_container');
 		this.container_available = $('#xoct_available');
         this.filter_container = $('#xoct_participant_filter');
 		this.load();
@@ -74,29 +74,33 @@ var xoctChangeOwner = {
 		var url = this.data_url;
 		$.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
 			self.clear();
-			for (var i in data.available) {
-				self.container_available.append('<li class="list-group-item xoct_participant_available" data-invitation-id="' + data.available[i].id + '">'
-					+ '<div style="margin-right:30px;">'
-					+ data.available[i].name
-					+ '</div>'
-					+ '<button class="btn btn-primary xoct_invite pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
-					+ '</li>');
-			}
 
-			for (var i in data.invited) {
-				self.container_owner.append('<li class="list-group-item" data-invitation-id="' + data.invited[i].id + '">'
+			owner = data.owner;
+			if (owner.name && owner.id) {
+				self.container_owner.append('<li class="list-group-item" data-invitation-id="' + owner.id + '">'
 					+ '<div style="margin-right:30px;">'
-					+ data.invited[i].name
+					+ owner.name
 					+ '</div>'
 					+ '<button class="btn btn-default xoct_remove pull-right"><span class="glyphicon glyphicon-minus"></span></button>'
 					+ '</li>');
+				self.container_available.html('<li class="list-group-item">' + self.lng.only_one_owner + '</li>');
+			} else {
+				for (var i in data.available) {
+					self.container_available.append('<li class="list-group-item xoct_participant_available" data-invitation-id="' + data.available[i].id + '">'
+						+ '<div style="margin-right:30px;">'
+						+ data.available[i].name
+						+ '</div>'
+						+ '<button class="btn btn-primary xoct_invite pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
+						+ '</li>');
+
+				}
 			}
 
 			if (!data.available || data.available.length == 0) {
 				self.container_available.html('<li class="list-group-item">' + self.lng.none_available + '</li>');
 			}
 
-			if (!data.invited || data.invited.length == 0) {
+			if (!data.owner || data.owner.length == 0) {
 				self.container_owner.html('<li class="list-group-item">' + self.lng.none_available + '</li>');
 			}
 
