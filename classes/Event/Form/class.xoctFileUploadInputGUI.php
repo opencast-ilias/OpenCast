@@ -17,7 +17,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	/**
 	 * @var string
 	 */
-	protected $chunk_size = '2M';
+	protected $chunk_size = '100M';
 	/**
 	 * @var bool
 	 */
@@ -54,7 +54,6 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	public function __construct(ilPropertyFormGUI $ilPropertyFormGUI, $cmd, $a_title, $a_postvar) {
 		global $DIC;
 		$tpl = $DIC['tpl'];
-		$pl = ilOpenCastPlugin::getInstance();
 		xoctWaiterGUI::loadLib();
 		$ilPropertyFormGUI->setId($ilPropertyFormGUI->getId() ? $ilPropertyFormGUI->getId() : md5(rand(1, 99)));
 		$this->setFormId($ilPropertyFormGUI->getId());
