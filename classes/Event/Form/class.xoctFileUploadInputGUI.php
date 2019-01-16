@@ -17,7 +17,7 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	/**
 	 * @var string
 	 */
-	protected $chunk_size = '100M';
+	protected $chunk_size = '20M';
 	/**
 	 * @var bool
 	 */
@@ -60,6 +60,9 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$this->setCmd($cmd);
 		$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/plupload-2.1.8/js/plupload.full.min.js');
 
+		if ($chunk_size = xoctConf::getConfig(xoctConf::F_UPLOAD_CHUNK_SIZE)) {
+		    $this->setChunkSize($chunk_size . 'M');
+        }
 		parent::__construct($a_title, $a_postvar);
 	}
 
