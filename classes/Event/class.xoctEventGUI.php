@@ -1024,23 +1024,15 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function reportDate() {
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
-            $message = $_POST['message'];
-
-            $mail = new ilMail(ANONYMOUS_USER_ID);
-            $type = array('system');
-
-            $mail->setSaveInSentbox(false);
-            $mail->appendInstallationSignature(true);
-            $mail->sendMail(
-                xoctConf::getConfig(xoctConf::F_REPORT_DATE_EMAIL),
-                '',
-                '',
-                'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»',
-                $this->getDateReportMessage($message),
-                array(),
-                $type
-            );
-		}
+            $message = $this->getDateReportMessage($_POST['message']);
+            $subject = 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»';
+            $report = new xoctReport();
+            $report->setType(xoctReport::TYPE_DATE)
+                ->setUserId($this->user->getId())
+                ->setSubject($subject)
+                ->setMessage($message)
+                ->create();
+        }
 		ilUtil::sendSuccess($this->pl->txt('msg_date_report_sent'), true);
 		$this->ctrl->redirect($this);
 	}
@@ -1051,24 +1043,16 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function reportQuality() {
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
-			$message = $_POST['message'];
-			$event_id = $_POST['event_id'];
-			$event = new xoctEvent($event_id);
+            $event = new xoctEvent($_POST['event_id']);
+            $message = $this->getQualityReportMessage($event, $_POST['message']);
+            $subject = 'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»';
 
-            $mail = new ilMail(ANONYMOUS_USER_ID);
-            $type = array('system');
-
-            $mail->setSaveInSentbox(false);
-            $mail->appendInstallationSignature(true);
-            $mail->sendMail(
-                xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL),
-                '',
-                '',
-                'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»',
-                $this->getQualityReportMessage($event, $message),
-                array(),
-                $type
-            );
+            $report = new xoctReport();
+            $report->setType(xoctReport::TYPE_QUALITY)
+                ->setUserId($this->user->getId())
+                ->setSubject($subject)
+                ->setMessage($message)
+                ->create();
 		}
 		ilUtil::sendSuccess($this->pl->txt('msg_quality_report_sent'), true);
 		$this->ctrl->redirect($this);
@@ -1082,6 +1066,7 @@ class xoctEventGUI extends xoctGUI {
     protected function getQualityReportMessage(xoctEvent $event, $message) {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
             true);
+        $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $crs_grp_role = ilObjOpenCast::_getCourseOrGroupRole();
 	    $mail_body =
@@ -1108,6 +1093,7 @@ class xoctEventGUI extends xoctGUI {
     protected function getDateReportMessage($message) {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
             true);
+        $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $mail_body =
             "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"

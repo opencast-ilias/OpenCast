@@ -4,8 +4,144 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3103df614604b38892ee1d70bcf51585",
-    "packages": [],
+    "content-hash": "5b1b0b0b940687f52e620c3f74268ba1",
+    "packages": [
+        {
+            "name": "srag/custominputguis",
+            "version": "v0.16.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/studer-raimann/CustomInputGUIs.git",
+                "reference": "3571f81c64615cf278927e3a444b8a20965a393a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/3571f81c64615cf278927e3a444b8a20965a393a",
+                "reference": "3571f81c64615cf278927e3a444b8a20965a393a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "srag/dic": ">=0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "srag\\CustomInputGUIs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "studer + raimann ag - Team Custom 1",
+                    "email": "support-custom1@studer-raimann.ch",
+                    "homepage": "https://studer-raimann.ch",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Custom Input-GUI's",
+            "homepage": "https://github.com/studer-raimann/CustomInputGUIs",
+            "keywords": [
+                "ILIAS",
+                "PropertyForm",
+                "gui",
+                "input",
+                "table"
+            ],
+            "time": "2019-01-15T12:44:07+00:00"
+        },
+        {
+            "name": "srag/dic",
+            "version": "v0.14.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/studer-raimann/DIC.git",
+                "reference": "eff364972d8012b553984d54fbdb098a78c5fe4a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/eff364972d8012b553984d54fbdb098a78c5fe4a",
+                "reference": "eff364972d8012b553984d54fbdb098a78c5fe4a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "srag\\DIC\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "studer + raimann ag - Team Custom 1",
+                    "email": "support-custom1@studer-raimann.ch",
+                    "homepage": "https://studer-raimann.ch",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Use all ILIAS globals in your class",
+            "homepage": "https://github.com/studer-raimann/DIC",
+            "keywords": [
+                "ILIAS",
+                "dic",
+                "globals",
+                "trait"
+            ],
+            "time": "2019-01-08T07:42:33+00:00"
+        },
+        {
+            "name": "srag/librariesnamespacechanger",
+            "version": "v0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/studer-raimann/LibrariesNamespaceChanger.git",
+                "reference": "71d6c40b125bd639b5a49c5d8705881ad891d48a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/studer-raimann/LibrariesNamespaceChanger/zipball/71d6c40b125bd639b5a49c5d8705881ad891d48a",
+                "reference": "71d6c40b125bd639b5a49c5d8705881ad891d48a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "srag\\LibrariesNamespaceChanger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "studer + raimann ag - Team Custom 1",
+                    "email": "support-custom1@studer-raimann.ch",
+                    "homepage": "https://studer-raimann.ch",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Change namespace of libraries to plugin namespace",
+            "homepage": "https://github.com/studer-raimann/LibrariesNamespaceChanger",
+            "keywords": [
+                "ILIAS",
+                "libraries"
+            ],
+            "time": "2019-01-07T10:48:36+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "beta",

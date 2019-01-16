@@ -98,3 +98,8 @@ xoctConf::set(xoctConf::F_VIDEO_PORTAL_TITLE, 'Video Portal');
 require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
 xoctPermissionTemplate::updateDB();
 ?>
+<#12>
+<?php
+require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/Reports/class.xoctReport.php';
+xoctReport::updateDB();
+?>

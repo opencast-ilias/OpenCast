@@ -9,6 +9,10 @@ class xoctReport extends ActiveRecord {
 
     const DB_TABLE = 'xoct_report';
 
+    // Types
+    const TYPE_DATE = 1;
+    const TYPE_QUALITY = 2;
+
     /**
      * @return string
      */
@@ -16,6 +20,47 @@ class xoctReport extends ActiveRecord {
         return self::DB_TABLE;
     }
 
+    /**
+     * @param bool $omit_send_mail
+     * @throws ilException
+     */
+    public function create($omit_send_mail = false) {
+        $this->setCreatedAt(date('Y-m-d h:i:s',time()));
+        parent::create();
+
+        if (!$omit_send_mail) {
+            $mail = new ilMail(ANONYMOUS_USER_ID);
+            $type = array('system');
+
+            $mail->setSaveInSentbox(false);
+            $mail->appendInstallationSignature(true);
+            $mail->sendMail(
+                $this->getRecipientForType($this->getType()),
+                '',
+                '',
+                $this->getSubject(),
+                $this->getMessage(),
+                array(),
+                $type
+            );
+        }
+    }
+
+    /**
+     * @param $type
+     * @return mixed
+     * @throws ilException
+     */
+    protected function getRecipientForType($type) {
+        switch ($type) {
+            case self::TYPE_DATE:
+                return xoctConf::getConfig(xoctConf::F_REPORT_DATE_EMAIL);
+            case self::TYPE_QUALITY:
+                return xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_EMAIL);
+            default:
+                throw new ilException('Missing Report Type for xoctReport');
+        }
+    }
 
     /**
      * @var int
@@ -83,7 +128,7 @@ class xoctReport extends ActiveRecord {
      * @var string
      *
      * @con_has_field    true
-     * @con_fieldtype    longtext
+     * @con_fieldtype    clob
      * @con_is_notnull   true
      */
     protected $message = "";

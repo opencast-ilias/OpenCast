@@ -304,6 +304,7 @@ tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
 tab_migration#:#Migration
 tab_video_portal#:#Videoportal
+tab_reports#:#Verfasste Meldungen
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien
@@ -332,6 +333,8 @@ msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (sie
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
 msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
 msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
+msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen löschen möchten?
+msg_reports_deleted#:#Meldungen wurden gelöscht.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
@@ -367,3 +370,5 @@ perm_tpl_form_additional_actions_annotate#:#Zus. Actions bei aktivem Annotate
 perm_tpl_form_additional_actions_annotate_info#:#Zusätzliche ACL-Actions, welche bei aktivem Annotieren obiger Rolle zugeschrieben werden (kommasepariert).
 msg_date_report_sent#:#Die Meldung wurde abgeschickt. Die Anpassungen werden Ihnen per Mail bestätigt, sobald sie vorgenommen wurden.
 msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benachrichtigt und meldet sich bei Ihnen.
+date_from#:#Datum Von
+date_to#:#Datum Bis

@@ -17,7 +17,9 @@
   "minimum-stability": "beta",
   "prefer-stable": true,
   "require": {
-    "php": "^5.5.9 || ^7.0"
+    "php": "^5.5.9 || ^7.0",
+    "srag/custominputguis": ">=0.1.0",
+    "srag/librariesnamespacechanger": ">=0.1.0"
   },
   "autoload": {
     "classmap": [
@@ -37,6 +39,8 @@
       "../../../../../../../Services/InfoScreen",
       "../../../../../../../Services/Link",
       "../../../../../../../Services/Logging",
+      "../../../../../../../Services/Mail",
+      "../../../../../../../Services/Accordion",
       "../../../../../../../Modules/Course",
       "../../../../../../../Modules/Group"
     ]
@@ -45,5 +49,8 @@
     "optimize-autoloader": true,
     "sort-packages": true,
     "classmap-authoritative": true
+  },
+  "scripts": {
+    "pre-autoload-dump": "srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger::rewriteLibrariesNamespaces"
   }
 }
