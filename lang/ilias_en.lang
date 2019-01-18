@@ -339,6 +339,7 @@ msg_permission_templates_info#:#The created templates can be chosen from when cr
 msg_confirm_delete_perm_template#:#Do you really want to delete the following template?
 msg_confirm_delete_reports#:#Do you really want to delete the following reports?
 msg_reports_deleted#:#Reports deleted.
+msg_reports_table#:#All user reports to quality problems or date modifications will be listed here. The functionality for these reports can be configured in the tab "Settings" (subtabs "Events" and "Series").
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Title

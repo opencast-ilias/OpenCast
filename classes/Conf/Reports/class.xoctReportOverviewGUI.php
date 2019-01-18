@@ -13,6 +13,7 @@ class xoctReportOverviewGUI extends xoctGUI {
      *
      */
     protected function index() {
+        ilUtil::sendInfo($this->pl->txt('msg_reports_table'));
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $this->tpl->setContent($xoctReportOverviewTableGUI->getHTML());
     }
