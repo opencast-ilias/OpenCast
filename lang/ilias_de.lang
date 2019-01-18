@@ -337,7 +337,7 @@ msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen u
 msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
 msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen löschen möchten?
 msg_reports_deleted#:#Meldungen wurden gelöscht.
-msg_reports_table#:#Hier werden alle Meldungen der Benutzer zu Qualitätsproblemen oder Terminanpassungen gelistet. Das verschicken dieser Meldungen kann im Tab "Einstellungen" (Subtabs "Aufzeichnungen" und "Serien") konfiguriert werden.
+msg_reports_table#:#Hier werden alle Meldungen der Benutzer zu Qualitätsproblemen oder Terminanpassungen gelistet. Das Verschicken dieser Meldungen kann im Tab "Einstellungen" (Subtabs "Aufzeichnungen" und "Serien") konfiguriert werden.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
