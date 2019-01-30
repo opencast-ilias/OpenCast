@@ -231,6 +231,7 @@ publication_usage_title#:#Title
 publication_usage_type_annotate#:#Annotate
 publication_usage_type_api#:#API
 publication_usage_type_cutting#:#Cutting-Tool
+publication_usage_type_segments#:#Segments Tag
 publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update

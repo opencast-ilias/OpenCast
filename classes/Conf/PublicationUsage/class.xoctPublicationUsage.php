@@ -16,6 +16,7 @@ class xoctPublicationUsage extends ActiveRecord {
 	const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
 	const USAGE_DOWNLOAD = 'download';
 	const USAGE_CUTTING = 'cutting';
+	const USAGE_SEGMENTS = 'segments';
 	const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
 	const USAGE_ENGAGE_STREAMING = "engage-streaming";
 	const MD_TYPE_ATTACHMENT = 1;
@@ -33,6 +34,7 @@ class xoctPublicationUsage extends ActiveRecord {
 		self::USAGE_THUMBNAIL_FALLBACK_2,
 		self::USAGE_DOWNLOAD,
 		self::USAGE_CUTTING,
+		self::USAGE_SEGMENTS,
 	);
 
 
