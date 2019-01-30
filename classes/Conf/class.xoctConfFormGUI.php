@@ -196,20 +196,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
-
-        $h = new ilFormSectionHeaderGUI();
-        $h->setTitle($this->parent_gui->txt('streaming'));
-        $this->addItem($h);
-
-        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_STREAMING_URL), xoctConf::F_STREAMING_URL);
-        $te->setInfo($this->parent_gui->txt(xoctConf::F_STREAMING_URL . '_info'));
-        $te->setRequired(false);
-        $this->addItem($te);
-
-        $te = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_STREAMING), xoctConf::F_USE_STREAMING);
-        $te->setInfo($this->parent_gui->txt(xoctConf::F_USE_STREAMING . '_info'));
-        $te->setRequired(false);
-        $this->addItem($te);
 	}
 
 
@@ -243,9 +229,21 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
 		$this->addItem($cb);
+
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::USE_STREAMING), xoctConf::USE_STREAMING);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::USE_STREAMING . '_info'));
+		$cbs->setRequired(false);
+		$cb->addSubItem($cbs);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::STREAMING_URL), xoctConf::STREAMING_URL);
+		$te->setInfo($this->parent_gui->txt(xoctConf::STREAMING_URL . '_info'));
+		$te->setRequired(true);
+		$cbs->addSubItem($te);
+
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS . '_info'));
@@ -267,23 +265,23 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$te->setRows(8);
 		$te->setUseRte(1);
-        $te->setRteTagSet("extended");
-        $te->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-        ));
+		$te->setRteTagSet("extended");
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
 		$cb->addSubItem($te);
 
 		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS), xoctConf::F_REPORT_QUALITY_ACCESS);
@@ -320,46 +318,46 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-        $te->setRteTagSet("extended");
-        $te->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-        ));
+		$te->setRteTagSet("extended");
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
 		$te->setRows(5);
 		$this->addItem($te);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
 		$te->setRequired(true);
 		$te->setUseRte(true);
-        $te->setRteTagSet("extended");
-        $te->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-        ));
+		$te->setRteTagSet("extended");
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
 		$te->setRows(5);
 		$this->addItem($te);
 
@@ -383,22 +381,22 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRows(8);
 		$te->setUseRte(true);
 		$te->setRteTagSet("extended");
-        $te->disableButtons(array(
-            'charmap',
-            'undo',
-            'redo',
-            'justifyleft',
-            'justifycenter',
-            'justifyright',
-            'justifyfull',
-            'anchor',
-            'fullscreen',
-            'cut',
-            'copy',
-            'paste',
-            'pastetext',
-            'formatselect',
-        ));
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
 		$cb->addSubItem($te);
 	}
 
