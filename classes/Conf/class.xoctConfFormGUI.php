@@ -305,6 +305,17 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$ri->addOption($ro);
 		$this->addItem($ri);
 
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGHLOWRES), xoctConf::F_USE_HIGHLOWRES);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGHLOWRES . '_info'));
+		$cb->setRequired(false);
+		$this->addItem($cb);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_SEGMENT_TAG), xoctConf::F_SEGMENT_TAG);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_SEGMENT_TAG . '_info'));
+		$te->setRequired(true);
+		$this->addItem($te);
+
 	}
 
 

@@ -566,10 +566,12 @@ class xoctEventGUI extends xoctGUI {
             }
 		}, $medias);
 
-		$segmentTag = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
+		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
 
-		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentTag)  {
-			return (in_array($segmentTag, $attachment->getTags()) && strpos($attachment->getFlavor(), "segment+preview") !== FALSE);
+		$segmentTag = xoctConf::getConfig(xoctConf::F_SEGMENT_TAG);
+
+		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentTag, &$segmentFlavor)  {
+			return (in_array($segmentTag, $attachment->getTags()) && strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE);
 		});
 
 		$segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
@@ -584,7 +586,8 @@ class xoctEventGUI extends xoctGUI {
 		ksort($segments);
 		$frameList = array_values(array_map(function (array $segment) {
 
-			if( false) {
+			TODO: Variable! F_USER_HIGHLOWRES
+			if( xoctConf::getConfig(xoctConf::F_USE_HIGHLOWRES)) {
 				/**
 				 * @var xoctAttachment[] $segment
 				 */
