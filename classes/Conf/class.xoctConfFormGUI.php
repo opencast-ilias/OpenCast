@@ -201,13 +201,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
         $h->setTitle($this->parent_gui->txt('streaming'));
         $this->addItem($h);
 
-        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::STREAMING_URL), xoctConf::STREAMING_URL);
-        $te->setInfo($this->parent_gui->txt(xoctConf::STREAMING_URL . '_info'));
+        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_STREAMING_URL), xoctConf::F_STREAMING_URL);
+        $te->setInfo($this->parent_gui->txt(xoctConf::F_STREAMING_URL . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
 
-        $te = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::USE_STREAMING), xoctConf::USE_STREAMING);
-        $te->setInfo($this->parent_gui->txt(xoctConf::USE_STREAMING . '_info'));
+        $te = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_STREAMING), xoctConf::F_USE_STREAMING);
+        $te->setInfo($this->parent_gui->txt(xoctConf::F_USE_STREAMING . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
 	}

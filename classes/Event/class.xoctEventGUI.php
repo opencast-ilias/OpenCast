@@ -508,11 +508,11 @@ class xoctEventGUI extends xoctGUI {
 
 
 
-            if( xoctConf::getConfig(xoctConf::USE_STREAMING)) {
+            if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
 
                 $smilURLIdentifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
 
-                $streamingServerURL = xoctConf::getConfig(xoctConf::STREAMING_URL);
+                $streamingServerURL = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
 
                 $hlsURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/playlist.m3u8");
 
