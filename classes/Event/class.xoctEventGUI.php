@@ -514,9 +514,15 @@ class xoctEventGUI extends xoctGUI {
 
                 $streamingServerURL = xoctConf::getConfig(xoctConf::STREAMING_URL);
 
-                $hlsURL = xoctSecureLink::sign( $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/playlist.m3u8");
+                $hlsURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/playlist.m3u8");
 
-                $dashURL = xoctSecureLink::sign( $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd");
+                $dashURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd");
+
+                if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    $hlsURL = xoctSecureLink::sign($hlsURL);
+
+                    $dashURL = xoctSecureLink::sign($dashURL);
+                }
 
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
