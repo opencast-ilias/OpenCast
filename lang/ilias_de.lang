@@ -101,6 +101,8 @@ config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab Opencast API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
+config_use_highlowres_segment_preview#:Benutze unterschiedliche Segment Bilder (Low/High Resolution)
+config_segment_tag#:Tag mit denen Segmente getagged sind
 config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}

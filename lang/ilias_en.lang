@@ -101,6 +101,8 @@ config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes, with effective changes to event date and location
 config_scheduled_metadata_editable_1_info#:#Warning: possible only with Opencast API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
+config_use_highlowres_segment_preview#:Use different segment preview pictures for high and low resolution
+config_segment_tag#:Tag name for segment previews
 config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
