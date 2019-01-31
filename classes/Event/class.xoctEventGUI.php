@@ -586,8 +586,7 @@ class xoctEventGUI extends xoctGUI {
 		ksort($segments);
 		$frameList = array_values(array_map(function (array $segment) {
 
-			TODO: Variable! F_USER_HIGHLOWRES
-			if( xoctConf::getConfig(xoctConf::F_USE_HIGHLOWRES)) {
+			if( xoctConf::getConfig(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS)) {
 				/**
 				 * @var xoctAttachment[] $segment
 				 */
