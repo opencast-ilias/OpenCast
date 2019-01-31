@@ -13,9 +13,6 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
-config_streaming#:#Streaming
-config_streaming_url#:#Wowza URL
-config_use_streaming#:#Benutze Streaming URLs
 config_editor_link#:#Link zum OpenCast-Video-Editor
 config_editor_link_info#:#Als Platzhalter kann &#123event_id} verwendet werden. Bsp: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#Nutzungsvereinbarung
@@ -42,8 +39,8 @@ config_role_producer#:#Producer
 config_role_user_prefix#:#Präfix für Benutzer-Rolle (User-Mapping wird ergänzt)
 config_update#:#Aktualisieren
 config_upload_token#:#Aktiviere Upload-Token
-config_user_mapping#:#User-Mapping
 config_use_modals#:#Player in Modal öffnen
+config_user_mapping#:#User-Mapping
 config_workflow#:#Processing-Workflow-ID
 config_workflow_unpublish#:#Unpublish-Workflow-ID
 config_advanced#:#Erweitert
@@ -62,7 +59,7 @@ config_std_roles_info#:#Die hier angegebenen Rollen erhalten Schreib- und Lesere
 config_api_base_info#:#z.B.: https://myopencast.com/api
 config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Audio-Dateien hochgeladen werden.
 config_curl_username_info#:#Benutzeraccount in OpenCast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
-config_curl_password_info#:#Passwort zum oben angegebenen Account. 
+config_curl_password_info#:#Passwort zum oben angegebenen Account.
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
 config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
 config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
@@ -80,6 +77,9 @@ config_no_metadata#:#Ohne Metadaten
 config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an OpenCast weiterzuleiten.
+config_use_streaming#:#Benutze Streaming URLs
+config_streaming#:#Streaming
+config_streaming_url#:#Wowza URL
 config_general#:#Allgemeines
 config_report_quality#:#"Qualitätsprobleme melden" aktivieren
 config_report_quality_info#:#Aktiviert die Möglichkeit, Qualitätsprobleme von Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
@@ -101,8 +101,10 @@ config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
 config_scheduled_metadata_editable_1_info#:#Achtung: Erst ab Opencast API-Version 1.1.0 möglich
 config_scheduled_metadata_editable_2#:#Alle, außer Datum und Aufnahmestation
-config_use_highlowres_segment_preview#:Benutze unterschiedliche Segment Bilder (Low/High Resolution)
-config_segment_tag#:Tag mit denen Segmente getagged sind
+config_segment_tag#:#Segment-preview-Tag
+config_segment_tag_info#:#Benutze den Tag für das Filtern der Segment-Previews
+config_use_highlowres_segment_preview#:#High- und Low-Resolution Previews nutzen.
+config_use_highlowres_segment_preview_info#:#(Kein Opencast-Default-Verhalten, muss konfiguriert sein)
 config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
@@ -237,6 +239,8 @@ publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
+publication_usage_type_download#:#Download
+publication_usage_type_segments#:#Segment-Vorschau Flavour
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
