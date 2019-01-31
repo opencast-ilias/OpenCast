@@ -13,9 +13,6 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
-config_streaming#:#Streaming
-config_streaming_url#:#Wowza URL
-config_use_streaming#:#Use Streaming URLs
 config_editor_link#:#Link to OpenCast Video Editor
 config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
@@ -42,8 +39,8 @@ config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
 config_update#:#Update
 config_upload_token#:#Activate Upload-Token
-config_user_mapping#:#User-Mapping
 config_use_modals#:#Open Player in Modal
+config_user_mapping#:#User-Mapping
 config_workflow#:#Processing Workflow ID
 config_workflow_unpublish#:#Unpublish Workflow ID
 config_advanced#:#Advanced
@@ -64,6 +61,7 @@ config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
 config_curl_debug_level_info#:#Level of detail for log entries.
+config_use_streaming#:#Use Streaming URLs
 config_streaming_url_info#:#Wowza URL for adaptive streaming. E.g.: https://wowza.myopencast.com:8090/opencast-engage
 config_use_streaming_info#:#If active all mp4 files will be replaced by streaming urls
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
@@ -71,7 +69,7 @@ config_use_modals_info#:#When active: the video player will not be opened in a s
 config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
 config_workflow_unpublish_info#:#ID of the workflow which will be executed in OpenCast before deleting an event. Requires API version 1.1.0.
 config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in OpenCast.
-config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast. 
+config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast.
 config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant the user permission on a series in OpenCast. Example: ROLE_USER_&#123IDENTIFIER}
 config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in OpenCast. Example: ROLE_OWNER_&#123IDENTIFIER}
 config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
@@ -80,6 +78,8 @@ config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
 config_internal_player#:#Internal Video-Player
 config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to OpenCast.
+config_streaming#:#Streaming
+config_streaming_url#:#Wowza URL
 config_general#:#General
 config_report_quality#:#Enable "Report Quality Problems"
 config_report_quality_info#:#Enables the possibility to report quality problems of videos inside Opencast objects.
@@ -101,6 +101,10 @@ config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes, with effective changes to event date and location
 config_scheduled_metadata_editable_1_info#:#Warning: possible only with Opencast API v1.1.0 or higher
 config_scheduled_metadata_editable_2#:#All, except date and recording station.
+config_segment_tag#:#Segment-preview-Tag
+config_segment_tag_info#:#Use Tag for filtering the segment-previews
+config_use_highlowres#:#High- and low-resolution previews.
+config_use_highlowres_info#:#(No Opencast-default-Behaviour)
 config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
@@ -236,6 +240,8 @@ publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
+publication_usage_type_download#:#Download
+publication_usage_type_segments#:#Segments Preview Flavour
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
