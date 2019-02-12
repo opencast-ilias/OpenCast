@@ -61,6 +61,9 @@ class ilObjOpenCast extends ilObjectPlugin {
 	}
 
 
+	/**
+	 * @throws xoctException
+	 */
 	public function doRead() {
 		xoctConf::setApiSettings();
 		/**
@@ -75,7 +78,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 			if (ilContext::hasHTML()) {
 				ilUtil::sendInfo($e->getMessage(), true);
 			} else {
-				$this->log->write($e->getMessage());
+				// if the exception is thrown during a cron job e.g., we want the exception to be thrown
+				throw $e;
 			}
 			return;
 		}
