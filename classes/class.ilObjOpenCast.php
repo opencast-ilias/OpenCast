@@ -72,7 +72,11 @@ class ilObjOpenCast extends ilObjectPlugin {
 		try {
 			$series = $xoctOpenCast->getSeries();
 		} catch (xoctException $e) {
-			ilUtil::sendInfo($e->getMessage(), true);
+			if (ilContext::hasHTML()) {
+				ilUtil::sendInfo($e->getMessage(), true);
+			} else {
+				$this->log->write($e->getMessage());
+			}
 			return;
 		}
 
