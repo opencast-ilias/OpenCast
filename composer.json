@@ -12,7 +12,7 @@
     }
   ],
   "support": {
-    "email": "info@studer-raimann.ch"
+    "issues": "https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST"
   },
   "minimum-stability": "beta",
   "prefer-stable": true,
