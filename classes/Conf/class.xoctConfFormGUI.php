@@ -310,12 +310,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS . '_info'));
 		$cb->setRequired(false);
 		$this->addItem($cb);
-
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_SEGMENT_TAG), xoctConf::F_SEGMENT_TAG);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_SEGMENT_TAG . '_info'));
-		$te->setRequired(true);
-		$this->addItem($te);
-
 	}
 
 
