@@ -568,10 +568,8 @@ class xoctEventGUI extends xoctGUI {
 
 		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
 
-		$segmentTag = xoctConf::getConfig(xoctConf::F_SEGMENT_TAG);
-
-		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentTag, &$segmentFlavor)  {
-			return (in_array($segmentTag, $attachment->getTags()) && strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE);
+		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
+			return strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE;
 		});
 
 		$segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
