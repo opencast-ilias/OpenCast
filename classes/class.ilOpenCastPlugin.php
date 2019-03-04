@@ -43,6 +43,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 		$this->db->dropTable(xoctPublicationUsage::TABLE_NAME, false);
 		$this->db->dropTable(xoctSystemAccount::TABLE_NAME, false);
 		$this->db->dropTable(xoctConf::TABLE_NAME, false);
+		$this->db->dropTable(xoctReport::DB_TABLE, false);
 
 		return true;
 	}
