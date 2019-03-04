@@ -642,11 +642,13 @@ class xoctEventGUI extends xoctGUI {
 			}
 		}, $segments));
 
-		$tpl = $this->pl->getTemplate("paella_player.html");
+		$tpl = $this->pl->getTemplate("paella_player.html", false, false);
 
 		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
 
-		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
+		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/node_modules/paellaplayer/build/player");
+
+		$tpl->setVariable("PAELLA_CONFIG_FILE", $this->pl->getDirectory() . "/js/paella_player/config.json");
 
 		$data = [
 			"streams" => $streams,
