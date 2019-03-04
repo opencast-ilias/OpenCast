@@ -49,13 +49,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	}
 
 
-	//	public function txt($a_var) {
-	//		require_once('./Customizing/global/plugins/Libraries/PluginTranslator/class.sragPluginTranslator.php');
-	//		return sragPluginTranslator::getInstance($this)->active()->write()->txt($a_var);
-	//	}
-
-	const AR_CUST = './Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php';
-	const AR_SERV = './Services/ActiveRecord/class.ActiveRecord.php';
 	/**
 	 * @var ilOpenCastPlugin
 	 */
