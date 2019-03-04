@@ -2,6 +2,11 @@
   "name": "studer-raimann.ch/opencast",
   "description": "ILIAS 5.x Opencast plugin",
   "type": "project",
+  "keywords": [
+    "ILIAS",
+    "Plugin",
+    "OpenCast"
+  ],
   "license": "GPL-3.0+",
   "authors": [
     {
