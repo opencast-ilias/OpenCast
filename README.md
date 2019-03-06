@@ -1,11 +1,3 @@
-#!Development Fork der Rheinische Fachhochschule Köln!
-
-##Hinweise:
-Alle hier gemachten Änderungen wurden für eine Standard Opencast + Wowza Installation gemacht.
-
-
-Die Wowza URL Sicherheit ist derzeit noch nicht im Opencast Projekt integriert, die Anpassungen finden sich hier: https://github.com/rfharokh/Opencast
-
 # ILIAS-Plugin OpenCast
 
 ### Installation
