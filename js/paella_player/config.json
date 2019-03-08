@@ -81,7 +81,7 @@
       "edu.harvard.dce.paella.flexSkipPlugin": {"enabled":true, "direction": "Rewind", "seconds": 10},
       "edu.harvard.dce.paella.flexSkipForwardPlugin": {"enabled":true, "direction": "Forward", "seconds": 30},
       "es.upv.paella.captionsPlugin": {"enabled":true, "searchOnCaptions":true},
-      "es.upv.paella.extendedTabAdapterPlugin": {"enabled":true},
+      "es.upv.paella.extendedTabAdapterPlugin": {"enabled":false},
       "es.upv.paella.footprintsPlugin": {"enabled":false},
       "es.upv.paella.frameControlPlugin":  {"enabled": true, "showFullPreview": "auto", "showCaptions":true},
       "es.upv.paella.fullScreenButtonPlugin": {"enabled":true, "reloadOnFullscreen":{ "enabled":true, "keepUserSelection":true }},
@@ -94,7 +94,7 @@
       "es.upv.paella.themeChooserPlugin":  {"enabled":false},
       "es.upv.paella.viewModePlugin": { "enabled": true },
       "es.upv.paella.volumeRangePlugin":{"enabled":true, "showMasterVolume": true, "showSlaveVolume": false },
-      "es.upv.paella.pipModePlugin": { "enabled":true },
+      "es.upv.paella.pipModePlugin": { "enabled":false },
       "es.upv.paella.ratePlugin": { "enabled":false },
       "es.upv.paella.videoZoomPlugin": { "enabled":true },
       "es.upv.paella.audioSelector": { "enabled":true },
@@ -116,7 +116,7 @@
         ]
       },
       "es.upv.paella.legalPlugin": {
-		"enabled": true,
+		"enabled": false,
 		    "label": "Legal info",
 		    "position": "right",
         "legalUrl": "https://en.wikipedia.org/wiki/General_Data_Protection_Regulation"
