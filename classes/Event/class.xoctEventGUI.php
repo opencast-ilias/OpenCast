@@ -25,8 +25,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
     const CMD_DELIVER_VIDEO = 'deliverVideo';
 	const CMD_STREAM_VIDEO = 'streamVideo';
-	const ROLE_MASTER = "master";
-	const ROLE_SLAVE = "slave";
+	const ROLE_MASTER = "presenter";
+	const ROLE_SLAVE = "presentation";
 
 	/**
 	 * @var \xoctOpenCast
@@ -526,7 +526,7 @@ class xoctEventGUI extends xoctGUI {
 
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
                     "sources" => [
                         "hls" => [
                             [
