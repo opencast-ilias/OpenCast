@@ -73,7 +73,7 @@ var xoctGroup = {
             self.clear();
             for (var i in data) {
                 self.container.append('<a class="list-group-item xoct_group" data-group-id="' + data[i].id + '">'
-                    + data[i].title
+                    + data[i].name
                     + '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
                     + '<Button class="btn pull-right">' + data[i].user_count + '</button>'
                     + '</li>');

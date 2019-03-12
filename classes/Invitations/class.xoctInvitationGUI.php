@@ -120,6 +120,9 @@ class xoctInvitationGUI extends xoctGUI {
 			$invited_users[] = $user;
 		}
 
+		usort($invited_users, ['xoctGUI', 'compareStdClassByName']);
+		usort($available_users, ['xoctGUI', 'compareStdClassByName']);
+
 		$arr = array(
 			'invited' => $invited_users,
 			'available' => $available_users,
@@ -127,7 +130,7 @@ class xoctInvitationGUI extends xoctGUI {
 
 		$this->outJson($arr);
 	}
-
+	
 
 	/**
 	 * @return array

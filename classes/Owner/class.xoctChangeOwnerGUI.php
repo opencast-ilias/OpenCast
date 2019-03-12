@@ -103,12 +103,14 @@ class xoctChangeOwnerGUI extends xoctGUI {
             $available_users[] = $user;
         }
 
-        $arr = array(
+	    usort($available_users, ['xoctGUI', 'compareStdClassByName']);
+
+	    $arr = array(
             'owner' => $owner_data,
             'available' => $available_users,
         );
 
-        $this->outJson($arr);
+	    $this->outJson($arr);
     }
 
 
