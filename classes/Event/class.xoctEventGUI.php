@@ -1042,8 +1042,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function reportQuality() {
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM)) {
-            $event = new xoctEvent($_POST['event_id']);
+		$event = new xoctEvent($_POST['event_id']);
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $event)) {
             $message = $this->getQualityReportMessage($event, $_POST['message']);
             $subject = 'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»';
 
