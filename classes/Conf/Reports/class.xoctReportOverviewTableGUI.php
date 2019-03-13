@@ -36,7 +36,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
     protected function initColumns() {
         $this->addColumn('', '', '', true);
 	    $this->addColumn(self::dic()->language()->txt('message'));
-	    $this->addColumn(self::dic()->language()->txt('sender'), 'sender');
+	    $this->addColumn(self::plugin()->translate('sender'), 'sender');
 	    $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
     }
 
@@ -63,7 +63,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
         $filtered = [];
         foreach ($data as $key => $value) {
-	        $value['sender'] = ilObjUser::_lookupEmail($value['user_id']);
+	        $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail($value['user_id']);
 	        if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
 		        unset($data[$key]);
 	        } else {
