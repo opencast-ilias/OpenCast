@@ -54,8 +54,8 @@
           "*** You can add more hls.js settings here": "",
           "https://github.com/video-dev/hls.js/blob/master/docs/API.md": "",
           "maxBufferLength": 30,
-          "maxMaxBufferLength": 600,
-          "maxBufferSize": 60000000,
+          "maxMaxBufferLength": 60,
+          "maxBufferSize": 6000000,
           "maxBufferHole": 0.5,
           "lowBufferWatchdogPeriod": 0.5,
           "highBufferWatchdogPeriod": 3
