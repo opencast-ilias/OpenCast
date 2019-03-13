@@ -35,9 +35,9 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
     protected function initColumns() {
         $this->addColumn('', '', '', true);
-        $this->addColumn(self::dic()->language()->txt('sender'), 'sender');
-        $this->addColumn(self::dic()->language()->txt('message'));
-        $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
+	    $this->addColumn(self::dic()->language()->txt('message'));
+	    $this->addColumn(self::dic()->language()->txt('sender'), 'sender');
+	    $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
     }
 
     protected function initData() {
