@@ -377,3 +377,4 @@ msg_date_report_sent#:#The report has been sent. You will receive a confirmation
 msg_quality_report_sent#:#The report has been sent. The support has been informed and will contact you.
 date_from#:#Date From
 date_to#:#Date To
+sender#:#Sender

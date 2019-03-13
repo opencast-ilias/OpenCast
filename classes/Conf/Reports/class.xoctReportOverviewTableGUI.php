@@ -35,33 +35,50 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
     protected function initColumns() {
         $this->addColumn('', '', '', true);
+        $this->addColumn(self::dic()->language()->txt('sender'), 'sender');
         $this->addColumn(self::dic()->language()->txt('message'));
         $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
     }
 
     protected function initData() {
         $filter_values = $this->getFilterValues();
+        $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
         if ($ilDate = $filter_values['date_from']) {
-            $date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
+            $filter_date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
         }
         if ($ilDate = $filter_values['date_to']) {
-            $date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
+            $filter_date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
         }
 
-        if ($date_from && $date_to) {
-            $this->setData(xoctReport::where(['created_at' => $date_from], ['created_at' => '>='])->where(['created_at' => $date_to], ['created_at' => '<='])->getArray());
-        } elseif ($date_from) {
-            $this->setData(xoctReport::where(['created_at' => $date_from], ['created_at' => '>='])->getArray());
-        } elseif ($date_to) {
-            $this->setData(xoctReport::where(['created_at' => $date_to], ['created_at' => '<='])->getArray());
+        if ($filter_date_from && $filter_date_to) {
+            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+        } elseif ($filter_date_from) {
+            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
+        } elseif ($filter_date_to) {
+            $data = xoctReport::where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
         } else {
-            $this->setData(xoctReport::getArray());
+            $data = xoctReport::getArray();
         }
+
+        $filtered = [];
+        foreach ($data as $key => $value) {
+	        $value['sender'] = ilObjUser::_lookupEmail($value['user_id']);
+	        if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
+		        unset($data[$key]);
+	        } else {
+	        	$filtered[] = $value;
+	        }
+        }
+
+        $this->setData($filtered);
     }
 
     protected function initFilterFields() {
         $this->filter_fields = [
+        	"sender" => [
+        	    PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
+	        ],
             "date_from" => [
                 PropertyFormGUI::PROPERTY_CLASS => ilDateTimeInputGUI::class
             ],
@@ -82,6 +99,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
         $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
+        $this->tpl->setVariable('SENDER', $row['sender']);
         $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
         $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
     }
