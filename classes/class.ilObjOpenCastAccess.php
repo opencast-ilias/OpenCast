@@ -48,12 +48,15 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ACTION_REPORT_QUALITY_PROBLEM = 'report_quality_problem';
 	const ACTION_REPORT_DATE_CHANGE = 'report_date_change';
 
+	const PERMISSION_EDIT_VIDEOS = 'edit_videos';
+	const PERMISSION_UPLOAD = 'upload';
+
 	/**
 	 * @var array
 	 */
 	protected static $custom_rights = array(
-		'upload',
-		'edit_videos',
+		self::PERMISSION_UPLOAD,
+		self::PERMISSION_EDIT_VIDEOS,
 	);
 	/**
 	 * @var array
@@ -180,57 +183,57 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		switch ($cmd) {
 			case self::ACTION_EDIT_OWNER:
 				return
-					self::hasPermission('edit_videos', $ref_id)
+					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
 					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
 					&& $xoctOpenCast->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
-					(self::hasPermission('edit_videos', $ref_id) && $xoctOpenCast->getPermissionPerClip())
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id) && $xoctOpenCast->getPermissionPerClip())
 					|| ($xoctEvent->isOwner($xoctUser)
 						&& $xoctOpenCast->getPermissionAllowSetOwn()
 						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
 						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED);
 			case self::ACTION_CUT:
 				return
-					self::hasPermission('edit_videos', $ref_id)
+					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
 					&& $xoctEvent->hasPreviews()
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
 			case self::ACTION_DELETE_EVENT:
 				return
-					(self::hasPermission('edit_videos') || (self::hasPermission('upload') && $xoctEvent->isOwner($xoctUser)))
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
 			case self::ACTION_EDIT_EVENT:
 				return
-					self::hasPermission('edit_videos')
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED
 					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
 			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
-					self::hasPermission('edit_videos')
+					self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
 					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
 			case self::ACTION_ADD_EVENT:
 				return
-					self::hasPermission('upload')
-					|| self::hasPermission('edit_videos');
+					self::hasPermission(self::PERMISSION_UPLOAD)
+					|| self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_MANAGE_IVT_GROUPS:
 				return
-					self::hasPermission('edit_videos');
+					self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_EDIT_SETTINGS:
 				return
 					self::hasWriteAccess(); // = permission: 'edit settings'
 			case self::ACTION_EXPORT_CSV:
 				return
-					self::hasPermission('edit_videos');
+					self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_REPORT_QUALITY_PROBLEM:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
-					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission('edit_videos') || $xoctEvent->isOwner($xoctUser));
+					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || $xoctEvent->isOwner($xoctUser));
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
-					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission('edit_videos');
+					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 		}
 	}
 
@@ -267,13 +270,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function hasReadAccessOnEvent(xoctEvent $xoctEvent, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
 		// edit_videos and write access see all videos
-		if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
+		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
 			return true;
 		}
 
 		// owner can see failed videos
 		if ($xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED) {
-			if ($xoctEvent->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission('upload'))) {
+			if ($xoctEvent->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
 				return true;
 			}
 			return false;
@@ -384,7 +387,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			//check each role (admin,tutor,member) for perm edit_videos, add to producers
 			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
 			foreach ($roles as $role) {
-				if (self::isActionAllowedForRole('edit_videos', $role, $ref_id)) {
+				if (self::isActionAllowedForRole(self::PERMISSION_EDIT_VIDEOS, $role, $ref_id)) {
 					$getter_method = "getDefault{$role}Role";
 					$role_id = $crs_or_grp_obj->$getter_method();
 					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
@@ -405,7 +408,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function activateMemberUpload($ref_id) {
 		global $DIC;
-		$ilDB = $DIC['ilDB'];
 		$rbacreview = $DIC['rbacreview'];
 		$rbacadmin = $DIC['rbacadmin'];
 		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
@@ -421,10 +423,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return int
 	 */
 	public static function getParentId($get_ref_id = false, $ref_id = false) {
-//		static $id;
-//		if ($id) {
-//			return $id;
-//		}
 		global $DIC;
 		$tree = $DIC['tree'];
 		/**

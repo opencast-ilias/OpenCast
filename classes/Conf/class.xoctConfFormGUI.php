@@ -229,9 +229,21 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
 		$this->addItem($cb);
+
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::USE_STREAMING), xoctConf::USE_STREAMING);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::USE_STREAMING . '_info'));
+		$cbs->setRequired(false);
+		$cb->addSubItem($cbs);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::STREAMING_URL), xoctConf::STREAMING_URL);
+		$te->setInfo($this->parent_gui->txt(xoctConf::STREAMING_URL . '_info'));
+		$te->setRequired(true);
+		$cbs->addSubItem($te);
+
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS . '_info'));
@@ -495,6 +507,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_NO_METADATA), xoctConf::F_NO_METADATA);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_NO_METADATA . '_info'));
 		$this->addItem($cb);
+
+		$te = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE), xoctConf::F_UPLOAD_CHUNK_SIZE);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
+		$this->addItem($te);
 	}
 }
 

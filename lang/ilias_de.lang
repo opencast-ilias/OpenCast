@@ -13,6 +13,9 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
+config_streaming#:#Streaming
+config_streaming_url#:#Wowza URL
+config_use_streaming#:#Benutze Streaming URLs
 config_editor_link#:#Link zum OpenCast-Video-Editor
 config_editor_link_info#:#Als Platzhalter kann &#123event_id} verwendet werden. Bsp: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#Nutzungsvereinbarung
@@ -61,6 +64,8 @@ config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Aud
 config_curl_username_info#:#Benutzeraccount in OpenCast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
 config_curl_password_info#:#Passwort zum oben angegebenen Account. 
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
+config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
+config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in OpenCast angewendet wird.
@@ -100,6 +105,8 @@ config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
 config_permission_templates#:#Berechtigungsvorlagen
+config_upload_chunk_size#:#Upload-Chunk-Größe (MB)
+config_upload_chunk_size_info#:#Der Video-Upload erfolgt stückweise, wobei ein Stück die hier angegebene Größe hat. Das Erhöhen dieser Größe kann die Upload-Geschwindigkeit verbessern, wobei allerdings auf das Upload-Limit geachtet werden sollte. Standard: 20MB
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -195,6 +202,8 @@ group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
 group_none_available#:#Keine verfügbar
 group_none_available_all#:#Keine verfügbar
 group_select_group#:#Gruppe auswählen
+current_owner_header#:#Besitzer
+owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
@@ -297,6 +306,7 @@ tab_system_accounts#:#System-Accounts
 tab_back#:#Zurück
 tab_migration#:#Migration
 tab_video_portal#:#Videoportal
+tab_reports#:#Verfasste Meldungen
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien
@@ -325,6 +335,9 @@ msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (sie
 msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
 msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
 msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
+msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen löschen möchten?
+msg_reports_deleted#:#Meldungen wurden gelöscht.
+msg_reports_table#:#Hier werden alle Meldungen der Benutzer zu Qualitätsproblemen oder Terminanpassungen gelistet. Das Verschicken dieser Meldungen kann im Tab "Einstellungen" (Subtabs "Aufzeichnungen" und "Serien") konfiguriert werden.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
@@ -360,3 +373,6 @@ perm_tpl_form_additional_actions_annotate#:#Zus. Actions bei aktivem Annotate
 perm_tpl_form_additional_actions_annotate_info#:#Zusätzliche ACL-Actions, welche bei aktivem Annotieren obiger Rolle zugeschrieben werden (kommasepariert).
 msg_date_report_sent#:#Die Meldung wurde abgeschickt. Die Anpassungen werden Ihnen per Mail bestätigt, sobald sie vorgenommen wurden.
 msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benachrichtigt und meldet sich bei Ihnen.
+date_from#:#Datum Von
+date_to#:#Datum Bis
+sender#:#Verfasser

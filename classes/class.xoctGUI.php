@@ -88,6 +88,17 @@ abstract class xoctGUI {
 	protected function cancel() {
 		$this->ctrl->redirect($this, self::CMD_STANDARD);
 	}
+
+
+	/**
+	 * @param $a
+	 * @param $b
+	 *
+	 * @return int
+	 */
+	protected function compareStdClassByName($a, $b) {
+		return strcasecmp($a->name, $b->name);
+	}
 }
 
 ?>

@@ -13,6 +13,9 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
+config_streaming#:#Streaming
+config_streaming_url#:#Wowza URL
+config_use_streaming#:#Benutze Streaming URLs
 config_editor_link#:#Link to OpenCast Video Editor
 config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
@@ -61,6 +64,8 @@ config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
 config_curl_debug_level_info#:#Level of detail for log entries.
+config_streaming_url_info#:#Wowza URL for adaptive streaming. E.g.: https://wowza.myopencast.com:8090/opencast-engage
+config_use_streaming_info#:#If active all mp4 files will be replaced by streaming urls
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
@@ -100,6 +105,8 @@ config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
 config_permission_templates#:#Permission Templates
+config_upload_chunk_size#:#Upload Chunk Size (MB)
+config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -197,6 +204,8 @@ group_delete_participant#:#Do you really want to delete this Membership?
 group_none_available#:#None available
 group_none_available_all#:#None available
 group_select_group#:#Select Group
+current_owner_header#:#Owner
+owner_only_one_owner#:#Only one owner can be chosen per video.
 invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
@@ -299,6 +308,7 @@ tab_system_accounts#:#System-Accounts
 tab_back#:#Back
 tab_migration#:#Migration
 tab_video_portal#:#Video Portal
+tab_reports#:#Reports
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events
@@ -327,6 +337,9 @@ msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads wi
 msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
 msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
 msg_confirm_delete_perm_template#:#Do you really want to delete the following template?
+msg_confirm_delete_reports#:#Do you really want to delete the following reports?
+msg_reports_deleted#:#Reports deleted.
+msg_reports_table#:#All user reports to quality problems or date modifications will be listed here. The functionality for these reports can be configured in the tab "Settings" (subtabs "Events" and "Series").
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Title
@@ -362,3 +375,6 @@ perm_tpl_form_additional_actions_annotate#:#Additional Actions with active Annot
 perm_tpl_form_additional_actions_annotate_info#:#Additional ACL Actions which will be set for the above role when annotate is active.
 msg_date_report_sent#:#The report has been sent. You will receive a confirmation email when the modifications will be done.
 msg_quality_report_sent#:#The report has been sent. The support has been informed and will contact you.
+date_from#:#Date From
+date_to#:#Date To
+sender#:#Creator

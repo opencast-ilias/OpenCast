@@ -14,6 +14,7 @@ class xoctMainGUI extends xoctGUI {
 	const TAB_PUBLICATION_USAGE = 'publication_usage';
 	const TAB_VIDEO_PORTAL = 'video_portal';
 	const TAB_EXPORT = 'export';
+	const TAB_REPORTS = 'reports';
 
 	const SUBTAB_API = 'api';
 	const SUBTAB_SERIES = 'series';
@@ -34,23 +35,29 @@ class xoctMainGUI extends xoctGUI {
 			. self::TAB_PUBLICATION_USAGE), $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI()));
 		$this->tabs->addTab(self::TAB_VIDEO_PORTAL, $this->pl->txt('tab_' . self::TAB_VIDEO_PORTAL), $this->ctrl->getLinkTarget(new xoctPermissionTemplateGUI()));
 		$this->tabs->addTab(self::TAB_EXPORT, $this->pl->txt('tab_' . self::TAB_EXPORT), $this->ctrl->getLinkTarget(new xoctConfExportGUI()));
+		$this->tabs->addTab(self::TAB_REPORTS, $this->pl->txt('tab_' . self::TAB_REPORTS), $this->ctrl->getLinkTarget(new xoctReportOverviewGUI()));
 
 
 		switch ($nextClass) {
-			case 'xoctpublicationusagegui':
+			case strtolower(xoctPublicationUsageGUI::class):
 				$this->tabs->activateTab(self::TAB_PUBLICATION_USAGE);
 				$xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
 				$this->ctrl->forwardCommand($xoctPublicationUsageGUI);
 				break;
-			case 'xoctpermissiontemplategui':
+			case strtolower(xoctPermissionTemplateGUI::class):
 				$this->tabs->activateTab(self::TAB_VIDEO_PORTAL);
 				$xoctPermissionTemplateGUI = new xoctPermissionTemplateGUI();
 				$this->ctrl->forwardCommand($xoctPermissionTemplateGUI);
 				break;
-			case 'xoctconfexportgui':
+			case strtolower(xoctConfExportGUI::class):
 				$this->tabs->activateTab(self::TAB_EXPORT);
 				$xoctConfExportGUI = new xoctConfExportGUI();
 				$this->ctrl->forwardCommand($xoctConfExportGUI);
+				break;
+			case strtolower(xoctReportOverviewGUI::class):
+				$this->tabs->activateTab(self::TAB_REPORTS);
+				$xoctReportOverviewGUI = new xoctReportOverviewGUI();
+				$this->ctrl->forwardCommand($xoctReportOverviewGUI);
 				break;
 			default:
 				$this->tabs->activateTab(self::TAB_SETTINGS);

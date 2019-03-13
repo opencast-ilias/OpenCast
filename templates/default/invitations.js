@@ -7,6 +7,8 @@ var xoctInvitation = {
 	selected_id: 0,
 	data_url: '',
 	container: null,
+    filter_container: null,
+    filtering: false,
 	lng: [
 		delete_group = "Delete Group?",
 		no_title = "Please insert title",
@@ -32,15 +34,33 @@ var xoctInvitation = {
 		$(container_available).html('<ul id="xoct_available" class="list-group"></ul>');
 		this.container_invited = $('#xoct_invitations');
 		this.container_available = $('#xoct_available');
+        this.filter_container = $('#xoct_participant_filter');
 		this.load();
 
+		var self = this;
 		$(document).on('click', '.xoct_remove', function () {
-			xoctInvitation.removeInvitation($(this).parent().data('invitation-id'));
+			self.removeInvitation($(this).parent().data('invitation-id'));
 		});
 
 		$(document).on('click', '.xoct_invite', function () {
-			xoctInvitation.addInvitation($(this).parent().data('invitation-id'));
+			self.addInvitation($(this).parent().data('invitation-id'));
 		});
+
+        this.filter_container.keyup(function () {
+            self.filter($(this).val());
+            if (self.filtering && !$('#xoct_filter').length) {
+                self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
+            } else if (!self.filtering) {
+                $('#xoct_filter').remove();
+            }
+        });
+
+
+        $(document).on('click', '#xoct_filter', function () {
+            self.filter_container.val('');
+            self.filter('');
+            $(this).remove();
+        });
 
 	},
 	clear: function () {
@@ -55,7 +75,7 @@ var xoctInvitation = {
 		$.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
 			self.clear();
 			for (var i in data.available) {
-				self.container_available.append('<a class="list-group-item" data-invitation-id="' + data.available[i].id + '">'
+				self.container_available.append('<li class="list-group-item xoct_participant_available" data-invitation-id="' + data.available[i].id + '">'
 					+ '<div style="margin-right:30px;">'
 					+ data.available[i].name
 					+ '</div>'
@@ -64,11 +84,11 @@ var xoctInvitation = {
 			}
 
 			for (var i in data.invited) {
-				self.container_invited.append('<a class="list-group-item" data-invitation-id="' + data.invited[i].id + '">'
+				self.container_invited.append('<li class="list-group-item" data-invitation-id="' + data.invited[i].id + '">'
 					+ '<div style="margin-right:30px;">'
 					+ data.invited[i].name
 					+ '</div>'
-					+ '<button class="btn btn-danger xoct_remove pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
+					+ '<button class="btn btn-default xoct_remove pull-right"><span class="glyphicon glyphicon-minus"></span></button>'
 					+ '</li>');
 			}
 
@@ -107,61 +127,13 @@ var xoctInvitation = {
 		});
 	},
 
-	//deleteGroup: function (id, fallback) {
-	//	var url = this.data_url;
-	//	var self = this;
-	//	if (confirm(this.lng['delete_group'])) {
-	//		this.before_load();
-	//		$.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
-	//			if (data) {
-	//				$('[data-invitation-id="' + id + '"]').remove();
-	//				self.load();
-	//			}
-	//			self.after_load();
-	//		});
-	//	}
-	//},
-	//
-	//selectGroup: function (id, force) {
-	//	force = typeof(force) == 'undefined' ? false : force;
-	//	if (this.selected_id == id && !force) {
-	//		this.deselectAll();
-	//		this.selected_id = 0;
-	//	} else {
-	//		this.selected_id = id;
-	//		this.deselectAll();
-	//		xoctInvitationParticipant.loadForGroupId(id);
-	//		$('[data-invitation-id="' + id + '"]').addClass('active');
-	//	}
-	//},
-	//
-	//deselectAll: function () {
-	//	$('.xoct_group').each(function () {
-	//		$(this).removeClass('active');
-	//	});
-	//	xoctInvitationParticipant.clear();
-	//},
-	///**
-	// * Create a New Group
-	// * @param title
-	// * @param before
-	// * @param after
-	// */
-	//addInvitation: function (title, fallback) {
-	//	if (!title) {
-	//		alert(this.lng['no_title']);
-	//		return;
-	//	}
-	//	var self = this;
-	//	var url = this.data_url;
-	//	this.deselectAll();
-	//	this.before_load();
-	//	$.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-	//		self.load(function () {
-	//			self.selectGroup(data.id, true);
-	//		});
-	//		self.after_load();
-	//		fallback(data);
-	//	});
-	//}
+    /**
+     *
+     * @param string
+     */
+    filter: function (string) {
+        this.filtering = (string != '');
+        $('.xoct_participant_available:not(:contains("' + string + '"))').hide();
+        $('.xoct_participant_available:contains("' + string + '")').show();
+    }
 };
