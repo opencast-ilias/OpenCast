@@ -547,7 +547,7 @@ class xoctEventGUI extends xoctGUI {
             else{
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
                     "sources" => [
                         "mp4" => [
                             [
