@@ -25,8 +25,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
     const CMD_DELIVER_VIDEO = 'deliverVideo';
 	const CMD_STREAM_VIDEO = 'streamVideo';
-	const ROLE_MASTER = "master";
-	const ROLE_SLAVE = "slave";
+	const ROLE_MASTER = "presenter";
+	const ROLE_SLAVE = "presentation";
 
 	/**
 	 * @var \xoctOpenCast
@@ -472,8 +472,7 @@ class xoctEventGUI extends xoctGUI {
 		 * @var xoctAttachment[] $previews
 		 */
 		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
-			return (strpos($attachment->getFlavor(), 'presenter') === 0
-				|| strpos($attachment->getFlavor(), 'presentation') === 0);
+			return (strpos($attachment->getFlavor(), '/player+preview') !== false);
 		});
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
 			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
@@ -509,25 +508,35 @@ class xoctEventGUI extends xoctGUI {
 
 
 
-            if( xoctConf::getConfig(xoctConf::USE_STREAMING)) {
+            if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
 
                 $smilURLIdentifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
 
-                $streamingServerURL = xoctConf::getConfig(xoctConf::STREAMING_URL);
+                $streamingServerURL = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
+
+                $hlsURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/playlist.m3u8";
+
+                $dashURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd";
+
+                if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    $hlsURL = xoctSecureLink::sign($hlsURL);
+
+                    $dashURL = xoctSecureLink::sign($dashURL);
+                }
 
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "role" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
                     "sources" => [
                         "hls" => [
                             [
-                                "src" => $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/playlist.m3u8",
+                                "src" => $hlsURL,
                                 "mimetype" => "application/x-mpegURL"
                             ],
                         ],
                         "dash" => [
                             [
-                                "src" => $streamingServerURL ."/smil:engage-player_". $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd",
+                                "src" => $dashURL,
                                 "mimetype" => "application/dash+xml"
                             ]
                         ]
@@ -557,9 +566,12 @@ class xoctEventGUI extends xoctGUI {
             }
 		}, $medias);
 
-		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
-			return (in_array("segments", $attachment->getTags()));
+		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
+
+		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
+			return strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE;
 		});
+
 		$segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
 			if (!isset($segments[$segment->getRef()])) {
 				$segments[$segment->getRef()] = [];
@@ -568,43 +580,74 @@ class xoctEventGUI extends xoctGUI {
 
 			return $segments;
 		}, []);
+
 		ksort($segments);
 		$frameList = array_values(array_map(function (array $segment) {
-			/**
-			 * @var xoctAttachment[] $segment
-			 */
-			$high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
-			$low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
-			if ($high === NULL || $low === NULL) {
-				$high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
-				$low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+
+			if( xoctConf::getConfig(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS)) {
+				/**
+				 * @var xoctAttachment[] $segment
+				 */
+				$high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+				$low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
+				if ($high === NULL || $low === NULL) {
+					$high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+					$low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+				}
+
+				$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
+				$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+				$time = $time->getTimestamp();
+
+				$high_url = $high->getUrl();
+				$low_url = $low->getUrl();
+				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+					$high_url = xoctSecureLink::sign($high_url);
+					$low_url = xoctSecureLink::sign($low_url);
+				}
+
+				return [
+					"id" => "frame_" . $time,
+					"mimetype" => $high->getMediatype(),
+					"time" => $time,
+					"url" => $high_url,
+					"thumb" => $low_url
+				];
 			}
+			else {
+				$preview = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
 
-			$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
-			$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-			$time = $time->getTimestamp();
+				if ($preview === NULL) {
+					$preview = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
+				}
 
-			$high_url = $high->getUrl();
-			$low_url = $low->getUrl();
-			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-				$high_url = xoctSecureLink::sign($high_url);
-				$low_url = xoctSecureLink::sign($low_url);
+				$time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
+				$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+				$time = $time->getTimestamp();
+
+				$url = $preview->getUrl();
+				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+					$url = xoctSecureLink::sign($url);
+
+				}
+
+				return [
+					"id" => "frame_" . $time,
+					"mimetype" => $preview->getMediatype(),
+					"time" => $time,
+					"url" => $url,
+					"thumb" => $url
+				];
 			}
-
-			return [
-				"id" => "frame_" . $time,
-				"mimetype" => $high->getMediatype(),
-				"time" => $time,
-				"url" => $high_url,
-				"thumb" => $low_url
-			];
 		}, $segments));
 
-		$tpl = $this->pl->getTemplate("paella_player.html");
+		$tpl = $this->pl->getTemplate("paella_player.html", false, false);
 
 		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
 
-		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/js/paella_player");
+		$tpl->setVariable("PAELLA_PLAYER_FOLDER", $this->pl->getDirectory() . "/node_modules/paellaplayer/build/player");
+
+		$tpl->setVariable("PAELLA_CONFIG_FILE", $this->pl->getDirectory() . "/js/paella_player/config.json");
 
 		$data = [
 			"streams" => $streams,

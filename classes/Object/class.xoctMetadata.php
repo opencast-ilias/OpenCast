@@ -29,6 +29,8 @@ class xoctMetadata extends xoctObject {
 	const FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES = "presentation/segment+preview+lowres";
 	const FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES = "presenter/segment+preview+highres";
 	const FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES = "presenter/segment+preview+lowres";
+	const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
+	const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
 	/**
 	 * @var string
 	 */
