@@ -40,7 +40,6 @@
       "../../../../../../../Services/Tracking",
       "../../../../../../../Services/Calendar",
       "../../../../../../../Services/WebAccessChecker",
-      "../../../../../../../Services/AccessControl",
       "../../../../../../../Services/InfoScreen",
       "../../../../../../../Services/Link",
       "../../../../../../../Services/Logging",
