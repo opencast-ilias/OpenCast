@@ -9,6 +9,12 @@ git clone https://github.com/studer-raimann/OpenCast.git
 ```
 As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
+### Workaround for internal Paella Player
+If you're using the plugin-internal Paella Player, you will have to implement a small workaround for a bug in the current version of Paella Player. Start in you ILIAS root directory:
+```bash
+ln -s Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/resources/ .
+```
+
 ### Adjustment suggestions
 * Adjustment suggestions by pull requests
 * Adjustment suggestions which are not yet worked out in detail by Jira tasks under https://jira.studer-raimann.ch/projects/PLOPENCAST
