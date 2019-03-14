@@ -453,16 +453,16 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$publication = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
+		$publication_player = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
 		// Multi stream
-		$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
+		$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
 			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
 				&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
 		}));
 		if (count($medias) === 0) {
 			// Single stream
-			$medias = array_values(array_filter($publication->getMedia(), function (xoctMedia $media) {
+			$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
 				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
 					&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
 			}));
@@ -471,7 +471,7 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var xoctAttachment[] $previews
 		 */
-		$previews = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) {
+		$previews = array_filter($publication_player->getAttachments(), function (xoctAttachment $attachment) {
 			return (strpos($attachment->getFlavor(), '/player+preview') !== false);
 		});
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
@@ -567,8 +567,9 @@ class xoctEventGUI extends xoctGUI {
 		}, $medias);
 
 		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
+		$publication_segments = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS));
 
-		$segments = array_filter($publication->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
+		$segments = array_filter($publication_segments->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
 			return strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE;
 		});
 
