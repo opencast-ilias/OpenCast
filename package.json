@@ -14,7 +14,10 @@
     "url": "https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST"
   },
   "dependencies": {
-    "paellaplayer": "^6.0.3"
+    "paellaplayer": "https://github.com/polimediaupv/paella/tarball/develop"
   },
-  "private": true
+  "private": true,
+  "scripts": {
+    "install": "cd node_modules/paellaplayer && npm install && npm run build && rm -rfd $(ls -a -I '.' -I '..' -I 'build' -I 'package.json' -I 'README.md')"
+  }
 }
