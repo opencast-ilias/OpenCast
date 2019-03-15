@@ -555,7 +555,7 @@ class xoctEvent extends xoctObject {
 		);
 		$i = 0;
 		while (!$this->thumbnail_url && $i < count($possible_publications)) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
 				$this->thumbnail_url = xoctSecureLink::sign($url);
 			} else {
@@ -576,7 +576,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
 				$this->annotation_url = xoctSecureLink::sign($url);
 			} else {
@@ -594,7 +594,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getPlayerLink() {
 		if (!isset($this->player_url)) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 				$this->player_url = xoctSecureLink::sign($url);
 			} else {
@@ -611,7 +611,7 @@ class xoctEvent extends xoctObject {
 	 */
 	public function getDownloadLink() {
 		if (!isset($this->download_url)) {
-			$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS)) {
 				$this->download_url = xoctSecureLink::sign($url);
 			} else {
@@ -630,7 +630,7 @@ class xoctEvent extends xoctObject {
 		if (!isset($this->cutting_url)) {
 			$url = str_replace('{event_id}', $this->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
 			if (!$url) {
-				$url = $this->getPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+				$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
 			}
 			if (!$url) {
 				$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
@@ -648,50 +648,63 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @param $xoctPublicationUsage
 	 *
-	 * @return xoctPublication
+	 * @return array
 	 */
 	public function getPublicationMetadataForUsage($xoctPublicationUsage) {
 		if (!$xoctPublicationUsage instanceof xoctPublicationUsage) {
-			return new xoctPublication();
+			return [new xoctPublication()];
 		}
 		/**
 		 * @var $xoctPublicationUsage  xoctPublicationUsage
 		 * @var $attachment            xoctAttachment
 		 * @var $media                 xoctMedia
 		 */
-		$medias = array();
-		$attachments = array();
+		$medias = [];
+		$attachments = [];
 		foreach ($this->getPublications() as $publication) {
 			if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
 				$medias = array_merge($medias, $publication->getMedia());
 				$attachments = array_merge($attachments, $publication->getAttachments());
 			}
 		}
+		$return = [];
 		switch ($xoctPublicationUsage->getMdType()) {
 			case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
 				foreach ($attachments as $attachment) {
 					if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-						return $attachment;
+						$return[] = $attachment;
 					}
 				}
 				break;
 			case xoctPublicationUsage::MD_TYPE_MEDIA:
 				foreach ($medias as $media) {
 					if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-						return $media;
+						$return[] = $media;
 					}
 				}
 				break;
 			case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
 				foreach ($this->getPublications() as $publication) {
 					if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
-						return $publication;
+						$return[] = $publication;
 					}
 				}
 				break;
+			default:
+				return [new xoctPublication()];
 		}
+		return $return;
+	}
 
-		return new xoctPublication();
+
+	/**
+	 * @param $xoctPublicationUsage
+	 *
+	 * @return mixed|xoctPublication
+	 */
+	public function getFirstPublicationMetadataForUsage($xoctPublicationUsage) {
+		$metadata = $this->getPublicationMetadataForUsage($xoctPublicationUsage);
+		return count($metadata) ? array_shift($metadata) : new xoctPublication();
 	}
 
 

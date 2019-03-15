@@ -104,7 +104,7 @@ config_scheduled_metadata_editable_2#:#All, except date and recording station.
 config_segment_tag#:#Segment-preview-Tag
 config_segment_tag_info#:#Use Tag for filtering the segment-previews
 config_use_highlowres_segment_preview#:#High- and low-resolution previews.
-config_use_highlowres_segment_preview_info#:#(No Opencast-default-Behaviour)
+config_use_highlowres_segment_preview_info#:#Deactivated by default, must be configured in Opencast
 config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
@@ -239,7 +239,7 @@ publication_usage_title#:#Title
 publication_usage_type_annotate#:#Annotate
 publication_usage_type_api#:#API
 publication_usage_type_cutting#:#Cutting-Tool
-publication_usage_type_segments#:#Segments Preview Flavor
+publication_usage_type_segments#:#Segments Preview
 publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Thumbnail
 publication_usage_update#:#Update

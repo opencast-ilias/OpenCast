@@ -453,7 +453,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$publication_player = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
+		$publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
 		// Multi stream
 		$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
@@ -567,9 +567,13 @@ class xoctEventGUI extends xoctGUI {
 		}, $medias);
 
 		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
-		$publication_segments = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS));
+		$publication_usage_segments = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS);
+		$attachments =
+			$publication_usage_segments->getMdType() == xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF ?
+				$xoctEvent->getFirstPublicationMetadataForUsage($publication_usage_segments)->getAttachments() :
+				$xoctEvent->getPublicationMetadataForUsage($publication_usage_segments);
 
-		$segments = array_filter($publication_segments->getAttachments(), function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
+		$segments = array_filter($attachments, function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
 			return strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE;
 		});
 
@@ -672,7 +676,7 @@ class xoctEventGUI extends xoctGUI {
         $event_id = $_GET['event_id'];
         $mid = $_GET['mid'];
         $xoctEvent = xoctEvent::find($event_id);
-        $media = $xoctEvent->getPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER))->getMedia();
+        $media = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER))->getMedia();
         foreach ($media as $medium) {
             if ($medium->getId() == $mid) {
                 $url = $medium->getUrl();
