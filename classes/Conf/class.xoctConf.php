@@ -64,6 +64,7 @@ class xoctConf extends ActiveRecord {
 	const F_USE_STREAMING = 'use_streaming';
     const F_STREAMING_URL = 'streaming_url';
     const F_USE_HIGHLOWRESSEGMENTPREVIEWS = 'use_highlowres_segment_preview';
+	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
 
 	/**
 	 * @var array
