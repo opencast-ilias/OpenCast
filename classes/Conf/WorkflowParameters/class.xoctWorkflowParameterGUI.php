@@ -14,6 +14,11 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	const CMD_UPDATE_PARAMETER = 'updateParameter';
 	const CMD_LOAD_WORKFLOW_PARAMS = 'loadWorkflowParameters';
 	const CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED = 'loadWorkflowParametersConfirmed';
+	const CMD_OVERWRITE_SERIES_PARAMETERS = 'overwriteSeriesParameters';
+	/**
+	 * @var bool
+	 */
+	protected $overwrite_series_parameters = false;
 
 	/**
 	 *
@@ -50,20 +55,21 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	protected function initToolbar($cmd) {
 		switch ($cmd) {
 			case self::CMD_STANDARD:
-				$load_params = ilLinkButton::getInstance();
-				$load_params->setCaption($this->pl->txt('config_btn_edit_parameters_manually'), false);
-				$load_params->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SHOW_TABLE));
-				$this->toolbar->addButtonInstance($load_params);
+				$button = ilLinkButton::getInstance();
+				$button->setCaption($this->pl->txt('config_btn_edit_parameters'), false);
+				$button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SHOW_TABLE));
+				$this->toolbar->addButtonInstance($button);
 				break;
 			case self::CMD_SHOW_TABLE:
-				$load_params = ilLinkButton::getInstance();
-				$load_params->setCaption($this->pl->txt('config_btn_load_parameters'), false);
-				$load_params->setUrl($this->ctrl->getLinkTarget($this, self::CMD_LOAD_WORKFLOW_PARAMS));
-				$this->toolbar->addButtonInstance($load_params);
-				$load_params = ilLinkButton::getInstance();
-				$load_params->setCaption($this->pl->txt('config_btn_add_parameter'), false);
-				$load_params->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
-				$this->toolbar->addButtonInstance($load_params);
+				$button = ilLinkButton::getInstance();
+				$button->setCaption($this->pl->txt('config_btn_load_parameters'), false);
+				$button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_LOAD_WORKFLOW_PARAMS));
+				$this->toolbar->addButtonInstance($button);
+				$button = ilLinkButton::getInstance();
+				$button->setCaption($this->pl->txt('config_btn_add_parameter'), false);
+				$button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
+				$button->setPrimary(true);
+				$this->toolbar->addButtonInstance($button);
 				break;
 			default:
 				break;
@@ -77,10 +83,15 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	protected function loadWorkflowParameters() {
 		try {
 			$params = xoctWorkflowParameterRepository::getInstance()->loadParametersFromAPI();
+			if (!count($params)) {
+				ilUtil::sendFailure($this->pl->txt('msg_no_params_found'), true);
+				$this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
+			}
 			$ilConfirmationGUI = new ilConfirmationGUI();
 			$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-			$ilConfirmationGUI->setCancel($this->lng->txt('cancel'), self::CMD_STANDARD);
+			$ilConfirmationGUI->setCancel($this->lng->txt('cancel'), self::CMD_SHOW_TABLE);
 			$ilConfirmationGUI->setConfirm($this->lng->txt('confirm'), self::CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED);
+			$ilConfirmationGUI->setHeaderText($this->pl->txt('msg_load_workflow_params'));
 			/** @var xoctWorkflowParameter $param */
 			foreach ($params as $param) {
 				$ilConfirmationGUI->addItem('workflow_params[' . $param->getId() . '][title]', $param->getTitle(), $param->getTitle());
@@ -88,8 +99,8 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 			}
 			$this->tpl->setContent($ilConfirmationGUI->getHTML());
 		} catch (xoctException $e) {
-			ilUtil::sendFailure($e->getMessage());
-			$this->index();
+			ilUtil::sendFailure($e->getMessage(), true);
+			$this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
 		}
 	}
 
@@ -119,15 +130,15 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		}
 
 		// create/delete the series settings
-		if ($to_delete_ids) {
+		if (count($to_delete_ids)) {
 			xoctSeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($to_delete_ids);
 		}
-		if ($to_create_ids) {
+		if (count($to_create_ids)) {
 			xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($to_create);
 		}
 
-		ilUtil::sendSuccess($this->lng->txt('config_msg_success'));
-		$this->index();
+		ilUtil::sendSuccess($this->lng->txt('config_msg_success'), true);
+		$this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
 	}
 
 
@@ -173,9 +184,19 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		$xoctWorkflowParameterFormGUI->setValuesByPost();
 		if ($xoctWorkflowParameterFormGUI->storeForm()) {
 			ilUtil::sendSuccess($this->pl->txt('config_msg_success'), true);
-			$this->ctrl->redirect($this, self::CMD_STANDARD);
+			if ($this->overwrite_series_parameters) {
+				$ilConfirmationGUI = new ilConfirmationGUI();
+				$ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
+				$ilConfirmationGUI->setCancel($this->lng->txt('cancel'), self::CMD_STANDARD);
+				$ilConfirmationGUI->setConfirm($this->lng->txt('confirm'), self::CMD_OVERWRITE_SERIES_PARAMETERS);
+				$ilConfirmationGUI->setHeaderText($this->pl->txt('msg_confirm_overwrite_series_params'));
+				$this->tpl->setContent($ilConfirmationGUI->getHTML());
+			} else {
+				$this->ctrl->redirect($this, self::CMD_STANDARD);
+			}
+		} else {
+			$this->tpl->setContent($xoctWorkflowParameterFormGUI->getHTML());
 		}
-		$this->tpl->setContent($xoctWorkflowParameterFormGUI->getHTML());
 	}
 
 
@@ -192,13 +213,23 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		$this->tpl->setContent($xoctWorkflowParameterFormGUI->getHTML());
 	}
 
+
+	/**
+	 *
+	 */
+	protected function overwriteSeriesParameters() {
+		xoctWorkflowParameterRepository::getInstance()->overwriteSeriesParameter();
+		ilUtil::sendSuccess($this->pl->txt('msg_success'), true);
+		$this->ctrl->redirect($this, self::CMD_STANDARD);
+	}
+
 	/**
 	 *
 	 */
 	protected function confirmDelete() {
 		xoctWorkflowParameterRepository::getInstance()->deleteById($_POST['param_id']);
-		ilUtil::sendSuccess($this->pl->txt('msg_success'));
-		$this->showTable();
+		ilUtil::sendSuccess($this->pl->txt('config_msg_success'), true);
+		$this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
 	}
 
 
@@ -211,7 +242,15 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		$ilConfirmationGUI->setConfirm($this->lng->txt('confirm'), self::CMD_CONFIRM);
 		$ilConfirmationGUI->setCancel($this->lng->txt('cancel'), self::CMD_SHOW_TABLE);
 		$ilConfirmationGUI->addItem('param_id', $_GET['param_id'], xoctWorkflowParameter::find($_GET['param_id'])->getTitle());
-		$ilConfirmationGUI->setHeaderText($this->pl->txt('msg_confirm_delete'));
+		$ilConfirmationGUI->setHeaderText($this->pl->txt('msg_confirm_delete_param'));
 		$this->tpl->setContent($ilConfirmationGUI->getHTML());
+	}
+
+
+	/**
+	 *
+	 */
+	public function setOverwriteSeriesParameter() {
+		$this->overwrite_series_parameters = true;
 	}
 }

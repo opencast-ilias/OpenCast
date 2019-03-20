@@ -17,9 +17,9 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	const F_OVERWRITE_SERIES_PARAMS = 'overwrite_series_params';
 
 	/**
-	 * @var bool
+	 * @var xoctWorkflowParameterGUI
 	 */
-	protected $overwrite_series_params = false;
+	protected $parent;
 
 	/**
 	 * @param string $key
@@ -103,19 +103,17 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 				xoctConf::set(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
 				break;
 			case self::F_OVERWRITE_SERIES_PARAMS:
-				$this->overwrite_series_params = true;
+				if ($value == true) {
+					$this->parent->setOverwriteSeriesParameter();
+				}
 				break;
 			default:
 				/** @var xoctWorkflowParameter $xoctWorkflowParameter */
 				$xoctWorkflowParameter = xoctWorkflowParameter::find($key);
 				$xoctWorkflowParameter->setDefaultValue($value);
 				$xoctWorkflowParameter->store();
+				break;
 		}
 	}
 
-
-	public function storeForm() {
-		return parent::storeForm();
-		// TODO: show confirmation
-	}
 }

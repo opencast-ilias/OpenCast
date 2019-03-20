@@ -43,9 +43,12 @@ class xoctSeriesWorkflowParameterRepository {
 
 
 	/**
-	 * @param $params xoctWorkflowParameter[]
+	 * @param $params xoctWorkflowParameter[]|xoctWorkflowParameter
 	 */
 	public function createParamsForAllObjects($params) {
+		if (!is_array($params)) {
+			$params = [$params];
+		}
 		$all_obj_ids = xoctOpenCast::getArray(null, 'obj_id');
 		foreach ($all_obj_ids as $obj_id) {
 			foreach ($params as $param) {
@@ -67,6 +70,59 @@ class xoctSeriesWorkflowParameterRepository {
 		$xoctSeriesWorkflowParameter = xoctSeriesWorkflowParameter::find($id);
 		$xoctSeriesWorkflowParameter->setValue($value);
 		$xoctSeriesWorkflowParameter->update();
+	}
+
+
+	/**
+	 * @param $obj_id
+	 *
+	 * @return ilFormPropertyGUI[]
+	 */
+	public function getFormItemsForObjId($obj_id) {
+		$items = [];
+		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+			/** @var xoctSeriesWorkflowParameter $input */
+			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
+				'obj_id' => $obj_id,
+				'value' => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
+			])->get() as $input) {
+				$cb = new ilCheckboxInputGUI($input->xoct_workflow_param_title ?: $input->getParamId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
+					. $input->getParamId() . ']');
+				$items[] = $cb;
+			}
+		} else {
+			/** @var xoctWorkflowParameter $input */
+			foreach (xoctWorkflowParameter::where([
+				'default_value' => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+			])->get() as $input) {
+				$cb = new ilCheckboxInputGUI($input->getTitle() ?: $input->getId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
+					. $input->getId() . ']');
+				$items[] = $cb;
+			}
+		}
+		return $items;
+	}
+
+
+	/**
+	 * @param $obj_id
+	 *
+	 * @return array
+	 */
+	public function getAutomaticallySetParametersForObjId($obj_id) {
+		$parameters = [];
+		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+			/** @var xoctSeriesWorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id, 'value' => xoctSeriesWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
+				$parameters[$xoctSeriesWorkflowParameter->getParamId()] = 1;
+			}
+		} else {
+			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (xoctWorkflowParameter::where(['value' => xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
+				$parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
+			}
+		}
+		return $parameters;
 	}
 
 }

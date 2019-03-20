@@ -95,10 +95,10 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 
 		self::dic()->ctrl()->setParameterByClass(xoctWorkflowParameterGUI::class, 'param_id', $row["id"]);
 
-		$actions->addItem(self::plugin()->translate("edit"), "", self::dic()->ctrl()
+		$actions->addItem(self::dic()->language()->txt("edit"), "", self::dic()->ctrl()
 			->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_EDIT));
 
-		$actions->addItem(self::plugin()->translate("delete"), "", self::dic()->ctrl()
+		$actions->addItem(self::dic()->language()->txt("delete"), "", self::dic()->ctrl()
 			->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_DELETE));
 
 		$this->tpl->setVariable("ACTIONS", self::output()->getHTML($actions));

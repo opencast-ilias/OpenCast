@@ -1496,25 +1496,13 @@ class xoctEvent extends xoctObject {
 	 * @return stdClass
 	 */
 	protected function getProcessing() {
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
+
 		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
 			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
 		}
-
-		foreach (xoctSeriesWorkflowParameter::where(['value' => xoctSeriesWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
-			$processing->configuration->{$xoctSeriesWorkflowParameter->getParamId()} = 'true';
-		}
-
-//		$processing->configuration->flagForCutting = 'false';
-//		$processing->configuration->flagForReview = 'false';
-//		$processing->configuration->publishToEngage = 'false';
-//		$processing->configuration->publishToHarvesting = 'false';
-//		$processing->configuration->straightToPublishing = 'true';
-//		$processing->configuration->publishToApi = 'true';
-//		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
 	}

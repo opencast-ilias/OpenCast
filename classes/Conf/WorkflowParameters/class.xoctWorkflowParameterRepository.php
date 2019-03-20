@@ -1,11 +1,14 @@
 <?php
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctWorkflowParameterRepository
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
 class xoctWorkflowParameterRepository {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var self
@@ -103,7 +106,13 @@ class xoctWorkflowParameterRepository {
 	}
 
 
-
+	/**
+	 * @param $id
+	 * @param $title
+	 * @param $type
+	 *
+	 * @return xoctWorkflowParameter
+	 */
 	public function createOrUpdate($id, $title, $type) {
 		if (!xoctWorkflowParameter::where(array('id' => $id))->hasSets()) {
 			$is_new = true;
@@ -119,5 +128,19 @@ class xoctWorkflowParameterRepository {
 		}
 
 		return $xoctWorkflowParameter;
+	}
+
+
+	/**
+	 *
+	 */
+	public function overwriteSeriesParameter() {
+		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
+		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+			$sql = 'UPDATE ' . xoctSeriesWorkflowParameter::TABLE_NAME .
+				' SET value = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValue(), 'integer') .
+				' WHERE param_id = ' . self::dic()->database()->quote($xoctWorkflowParameter->getId(), 'text');
+			self::dic()->database()->query($sql);
+		}
 	}
 }

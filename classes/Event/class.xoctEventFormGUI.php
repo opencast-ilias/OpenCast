@@ -289,13 +289,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		if ($this->is_new) {
-			/** @var xoctSeriesWorkflowParameter $input */
-			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
-				'obj_id' => $this->xoctOpenCast->getObjId(),
-				'value' => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
-			])->get() as $input) {
-				$cb = new ilCheckboxInputGUI($input->xoct_workflow_param_title ?: $input->getParamId(), self::F_WORKFLOW_PARAMETER . '[' . $input->getParamId() . ']');
-				$this->addItem($cb);
+			foreach (xoctSeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId($this->xoctOpenCast->getObjId()) as $item) {
+				$this->addItem($item);
 			}
 		}
 	}
@@ -355,7 +350,12 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
-		$this->object->setWorkflowParameters($this->getInput(self::F_WORKFLOW_PARAMETER));
+
+		$workflow_parameters = array_merge(
+			$this->getInput(self::F_WORKFLOW_PARAMETER),
+			xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($this->xoctOpenCast->getObjId())
+		);
+		$this->object->setWorkflowParameters($workflow_parameters);
 
         $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 

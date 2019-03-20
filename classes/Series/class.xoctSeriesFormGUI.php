@@ -420,7 +420,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addCommandButton(xoctSeriesGUI::CMD_CREATE, $this->txt(xoctSeriesGUI::CMD_CREATE));
 		} else {
 			$this->setTitle($this->txt('edit'));
-			$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE, $this->txt(xoctSeriesGUI::CMD_UPDATE));
+			$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE, $this->txt(xoctGUI::CMD_UPDATE));
 		}
 
 		$this->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->txt(xoctSeriesGUI::CMD_CANCEL));

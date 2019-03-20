@@ -112,6 +112,8 @@ config_permission_templates#:#Permission Templates
 config_upload_chunk_size#:#Upload Chunk Size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
 config_btn_load_parameters#:#Load Parameters via API
+config_btn_edit_parameters#:#Add/Edit Parameters
+config_btn_add_parameter#:#Add New Parameter
 config_workflow_parameter_value_0#:#Ignore
 config_workflow_parameter_value_1#:#Set Automatically
 config_workflow_parameter_value_2#:#Show in Form
@@ -354,6 +356,11 @@ msg_confirm_delete_perm_template#:#Do you really want to delete the following te
 msg_confirm_delete_reports#:#Do you really want to delete the following reports?
 msg_reports_deleted#:#Reports deleted.
 msg_reports_table#:#All user reports to quality problems or date modifications will be listed here. The functionality for these reports can be configured in the tab "Settings" (subtabs "Events" and "Series").
+msg_confirm_delete_param#:#Do you really want to delete the following parameter?
+msg_load_workflow_params#:#The following parameters were returned by the workflow API. Would you like to add these (already existing parameters will be updated)?
+msg_no_params_found#:#No parameters were found. The defined workflow may have no configuration panel, from which the parameters can be read. Please create the parameters manually.
+msg_success#:#Changes saved successfully.
+msg_confirm_overwrite_series_params#:#Warning: This will overwrite all locally adjusted configurations of workflow parameters in ILIAS OpenCast objects. Continue?
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Title
