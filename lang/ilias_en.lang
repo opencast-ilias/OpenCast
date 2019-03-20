@@ -111,6 +111,13 @@ config_video_portal_link_info#:#Will be displayed in the settings and info tab o
 config_permission_templates#:#Permission Templates
 config_upload_chunk_size#:#Upload Chunk Size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
+config_btn_load_parameters#:#Load Parameters
+config_workflow_parameter_value_0#:#Ignore
+config_workflow_parameter_value_1#:#Set Automatically
+config_workflow_parameter_value_2#:#Show in Form
+config_allow_workflow_params_in_series#:#Enable configuration in series
+config_overwrite_series_params#:#Overwrite series configurations
+config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected above.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -323,6 +330,7 @@ subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security
 subtab_advanced#:#Advanced
 subtab_permission_templates#:#Permission Templates
+subtab_workflow_params#:#Workflow Parameters
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -384,3 +392,4 @@ msg_quality_report_sent#:#The report has been sent. The support has been informe
 date_from#:#Date From
 date_to#:#Date To
 sender#:#Creator
+workflow_parameters#:#Workflow Parameters

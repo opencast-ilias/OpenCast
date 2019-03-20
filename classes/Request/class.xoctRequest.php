@@ -164,6 +164,7 @@ class xoctRequest {
 	const BRANCH_SECURITY = 4;
 	const BRANCH_GROUPS = 5;
 	const BRANCH_WORKFLOWS = 6;
+	const BRANCH_WORKFLOW_DEFINITIONS = 7;
 
 	/**
 	 * @var array
@@ -274,15 +275,40 @@ class xoctRequest {
 		return $this;
 	}
 
-    /**
-     * @return $this
-     * @throws xoctException
-     */
-    public function workflows() {
+
+	/**
+	 * @param string $workflow_id
+	 *
+	 * @return $this
+	 * @throws xoctException
+	 */
+    public function workflows($workflow_id = '') {
         $this->checkRoot();
         $this->checkBranch(array( self::BRANCH_WORKFLOWS ));
         $this->branch = self::BRANCH_WORKFLOWS;
         $this->addPart('workflows');
+        if ($workflow_id) {
+        	$this->addPart($workflow_id);
+        }
+
+        return $this;
+	}
+
+
+	/**
+	 * @param string $definition_id
+	 *
+	 * @return $this
+	 * @throws xoctException
+	 */
+    public function workflowDefinition($definition_id = '') {
+        $this->checkRoot();
+        $this->checkBranch(array( self::BRANCH_WORKFLOW_DEFINITIONS ));
+        $this->branch = self::BRANCH_WORKFLOW_DEFINITIONS;
+        $this->addPart('workflow-definitions');
+		if ($definition_id) {
+			$this->addPart($definition_id);
+		}
 
         return $this;
 	}

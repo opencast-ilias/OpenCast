@@ -875,6 +875,9 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctSeriesAPI' => __DIR__ . '/../..' . '/classes/Service/class.xoctSeriesAPI.php',
         'xoctSeriesFormGUI' => __DIR__ . '/../..' . '/classes/Series/class.xoctSeriesFormGUI.php',
         'xoctSeriesGUI' => __DIR__ . '/../..' . '/classes/Series/class.xoctSeriesGUI.php',
+        'xoctSeriesWorkflowParameter' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameter.php',
+        'xoctSeriesWorkflowParameterFormGUI' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterFormGUI.php',
+        'xoctSeriesWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterRepository.php',
         'xoctSystemAccount' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccount.php',
         'xoctSystemAccountFormGUI' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccountFormGUI.php',
         'xoctSystemAccountGUI' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccountGUI.php',
@@ -883,6 +886,10 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctUser' => __DIR__ . '/../..' . '/classes/IVTGroup/class.xoctUser.php',
         'xoctVideoPortalSettingsFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctVideoPortalSettingsFormGUI.php',
         'xoctWaiterGUI' => __DIR__ . '/../..' . '/classes/class.xoctWaiterGUI.php',
+        'xoctWorkflowParameter' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameter.php',
+        'xoctWorkflowParameterFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterFormGUI.php',
+        'xoctWorkflowParameterGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterGUI.php',
+        'xoctWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterRepository.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

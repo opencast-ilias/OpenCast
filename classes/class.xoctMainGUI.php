@@ -22,6 +22,7 @@ class xoctMainGUI extends xoctGUI {
 	const SUBTAB_GROUPS_ROLES = 'groups_roles';
 	const SUBTAB_SECURITY = 'security';
 	const SUBTAB_ADVANCED = 'advanced';
+	const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
 
 
 	/**
@@ -59,6 +60,12 @@ class xoctMainGUI extends xoctGUI {
 				$xoctReportOverviewGUI = new xoctReportOverviewGUI();
 				$this->ctrl->forwardCommand($xoctReportOverviewGUI);
 				break;
+			case strtolower(xoctWorkflowParameterGUI::class):
+				$this->setSubTabs();
+				$this->tabs->activateTab(self::TAB_SETTINGS);
+				$xoctWorkflowParameterGUI = new xoctWorkflowParameterGUI();
+				$this->ctrl->forwardCommand($xoctWorkflowParameterGUI);
+				break;
 			default:
 				$this->tabs->activateTab(self::TAB_SETTINGS);
 				$this->setSubTabs();
@@ -81,6 +88,7 @@ class xoctMainGUI extends xoctGUI {
 		$this->tabs->addSubTab(self::SUBTAB_SECURITY, $this->pl->txt('subtab_' . self::SUBTAB_SECURITY), $this->ctrl->getLinkTarget(new xoctConfGUI()));
 		$this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
 		$this->tabs->addSubTab(self::SUBTAB_ADVANCED, $this->pl->txt('subtab_' . self::SUBTAB_ADVANCED), $this->ctrl->getLinkTarget(new xoctConfGUI()));
+		$this->tabs->addSubTab(self::SUBTAB_WORKFLOW_PARAMETERS, $this->pl->txt('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS), $this->ctrl->getLinkTarget(new xoctWorkflowParameterGUI()));
 		$this->ctrl->clearParametersByClass(xoctConfGUI::class);
 	}
 
@@ -100,7 +108,7 @@ class xoctMainGUI extends xoctGUI {
 	}
 
 
-	protected function edit() {
+	protected function editGeneral() {
 		// TODO: Implement edit() method.
 	}
 

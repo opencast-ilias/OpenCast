@@ -106,7 +106,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 	}
 
 
-	protected function edit()
+	protected function editGeneral()
 	{
 		// TODO: Implement edit() method.
 	}

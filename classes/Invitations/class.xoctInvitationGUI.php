@@ -167,7 +167,7 @@ class xoctInvitationGUI extends xoctGUI {
 	}
 
 
-	protected function edit() {
+	protected function editGeneral() {
 	}
 
 

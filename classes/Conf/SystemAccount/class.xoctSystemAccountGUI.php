@@ -38,7 +38,7 @@ class xoctSystemAccountGUI extends xoctGUI {
 	}
 
 
-	protected function edit() {
+	protected function editGeneral() {
 		$xoctSystemAccountFormGUI = new xoctSystemAccountFormGUI($this, xoctSystemAccount::find($_GET[self::IDENTIFIER]));
 		$xoctSystemAccountFormGUI->fillForm();
 		$this->tpl->setContent($xoctSystemAccountFormGUI->getHTML());

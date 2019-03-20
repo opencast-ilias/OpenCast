@@ -111,6 +111,13 @@ config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer S
 config_permission_templates#:#Berechtigungsvorlagen
 config_upload_chunk_size#:#Upload-Chunk-Größe (MB)
 config_upload_chunk_size_info#:#Der Video-Upload erfolgt stückweise, wobei ein Stück die hier angegebene Größe hat. Das Erhöhen dieser Größe kann die Upload-Geschwindigkeit verbessern, wobei allerdings auf das Upload-Limit geachtet werden sollte. Standard: 20MB
+config_btn_load_parameters#:#Parameter Laden
+config_workflow_parameter_value_0#:#Nicht Berücksichtigen
+config_workflow_parameter_value_1#:#Automatisch Setzen
+config_workflow_parameter_value_2#:#Im Formular anbieten
+config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
+config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
+config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den oben ausgewählten Konfigurationen überschrieben.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -321,6 +328,7 @@ subtab_groups_roles#:#Gruppen & Rollen
 subtab_security#:#Security
 subtab_advanced#:#Erweitert
 subtab_permission_templates#:#Berechtigungsvorlagen
+subtab_workflow_params#:#Workflow Parameter
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -382,3 +390,4 @@ msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benac
 date_from#:#Datum Von
 date_to#:#Datum Bis
 sender#:#Verfasser
+workflow_parameters#:#Workflow Parameter

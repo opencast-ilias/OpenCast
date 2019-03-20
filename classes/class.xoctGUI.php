@@ -73,7 +73,7 @@ abstract class xoctGUI {
 	abstract protected function create();
 
 
-	abstract protected function edit();
+	abstract protected function editGeneral();
 
 
 	abstract protected function update();

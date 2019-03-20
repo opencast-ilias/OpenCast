@@ -53,7 +53,7 @@ class xoctReportOverviewGUI extends xoctGUI {
     /**
      *
      */
-    protected function edit() {
+    protected function editGeneral() {
     }
 
     /**

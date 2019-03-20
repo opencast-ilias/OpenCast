@@ -8,6 +8,7 @@
  */
 class xoctConfGUI extends xoctGUI {
 
+
 	/**
 	 * @param $key
 	 *
@@ -18,6 +19,9 @@ class xoctConfGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function index() {
 		$this->ctrl->saveParameter($this, 'subtab_active');
 		$subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : xoctMainGUI::SUBTAB_API;
@@ -28,6 +32,9 @@ class xoctConfGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function update() {
 		$this->ctrl->saveParameter($this, 'subtab_active');
 		$subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : xoctMainGUI::SUBTAB_API;
@@ -41,27 +48,37 @@ class xoctConfGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
 	}
 
 
+	/**
+	 *
+	 */
 	protected function delete() {
-		// TODO: Implement delete() method.
 	}
 
 
+	/**
+	 *
+	 */
 	protected function add() {
-		// TODO: Implement add() method.
 	}
 
 
+	/**
+	 *
+	 */
 	protected function create() {
-		// TODO: Implement create() method.
 	}
 
 
-	protected function edit() {
-		// TODO: Implement edit() method.
+	/**
+	 *
+	 */
+	protected function editGeneral() {
 	}
 }

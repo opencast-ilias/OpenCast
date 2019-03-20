@@ -321,7 +321,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 *
 	 */
-	protected function edit() {
+	protected function editGeneral() {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
 		/**

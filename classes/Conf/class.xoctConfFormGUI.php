@@ -518,6 +518,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
 		$this->addItem($te);
 	}
+
 }
 
 ?>
