@@ -851,8 +851,8 @@ return array(
     'xoctSeriesFormGUI' => $baseDir . '/classes/Series/class.xoctSeriesFormGUI.php',
     'xoctSeriesGUI' => $baseDir . '/classes/Series/class.xoctSeriesGUI.php',
     'xoctSeriesWorkflowParameter' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameter.php',
-    'xoctSeriesWorkflowParameterFormGUI' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterFormGUI.php',
     'xoctSeriesWorkflowParameterRepository' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterRepository.php',
+    'xoctSeriesWorkflowParametersFormGUI' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParametersFormGUI.php',
     'xoctSystemAccount' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccount.php',
     'xoctSystemAccountFormGUI' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccountFormGUI.php',
     'xoctSystemAccountGUI' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccountGUI.php',
@@ -865,4 +865,6 @@ return array(
     'xoctWorkflowParameterFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterFormGUI.php',
     'xoctWorkflowParameterGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterGUI.php',
     'xoctWorkflowParameterRepository' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterRepository.php',
+    'xoctWorkflowParameterTableGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
+    'xoctWorkflowParametersFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
 );

@@ -131,7 +131,7 @@ class xoctConfExportGUI extends xoctGUI {
 	}
 
 
-	protected function editGeneral() {
+	protected function edit() {
 		// TODO: Implement edit() method.
 	}
 

@@ -876,8 +876,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctSeriesFormGUI' => __DIR__ . '/../..' . '/classes/Series/class.xoctSeriesFormGUI.php',
         'xoctSeriesGUI' => __DIR__ . '/../..' . '/classes/Series/class.xoctSeriesGUI.php',
         'xoctSeriesWorkflowParameter' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameter.php',
-        'xoctSeriesWorkflowParameterFormGUI' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterFormGUI.php',
         'xoctSeriesWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterRepository.php',
+        'xoctSeriesWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParametersFormGUI.php',
         'xoctSystemAccount' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccount.php',
         'xoctSystemAccountFormGUI' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccountFormGUI.php',
         'xoctSystemAccountGUI' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccountGUI.php',
@@ -890,6 +890,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctWorkflowParameterFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterFormGUI.php',
         'xoctWorkflowParameterGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterGUI.php',
         'xoctWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterRepository.php',
+        'xoctWorkflowParameterTableGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
+        'xoctWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

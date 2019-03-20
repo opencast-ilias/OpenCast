@@ -79,6 +79,6 @@ class xoctConfGUI extends xoctGUI {
 	/**
 	 *
 	 */
-	protected function editGeneral() {
+	protected function edit() {
 	}
 }

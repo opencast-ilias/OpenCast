@@ -111,7 +111,7 @@ config_video_portal_link_info#:#Will be displayed in the settings and info tab o
 config_permission_templates#:#Permission Templates
 config_upload_chunk_size#:#Upload Chunk Size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
-config_btn_load_parameters#:#Load Parameters
+config_btn_load_parameters#:#Load Parameters via API
 config_workflow_parameter_value_0#:#Ignore
 config_workflow_parameter_value_1#:#Set Automatically
 config_workflow_parameter_value_2#:#Show in Form

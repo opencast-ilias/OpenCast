@@ -154,7 +154,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
     /**
      *
      */
-    protected function editGeneral() {
+    protected function edit() {
     }
 
 

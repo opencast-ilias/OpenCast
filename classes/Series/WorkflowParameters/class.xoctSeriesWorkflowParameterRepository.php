@@ -32,8 +32,11 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $param_ids
 	 */
 	public function deleteParamsForAllObjectsById($param_ids) {
-		/** @var xoctWorkflowParameter $series_parameter */
-		foreach (xoctWorkflowParameter::where([ 'param_id' => $param_ids ], [ 'param_id' => 'IN' ])->get() as $series_parameter) {
+		if (!is_array($param_ids)) {
+			$param_ids = [$param_ids];
+		}
+		/** @var xoctSeriesWorkflowParameter $series_parameter */
+		foreach (xoctSeriesWorkflowParameter::where([ 'param_id' => $param_ids ], [ 'param_id' => 'IN' ])->get() as $series_parameter) {
 			$series_parameter->delete();
 		}
 	}
@@ -46,7 +49,7 @@ class xoctSeriesWorkflowParameterRepository {
 		$all_obj_ids = xoctOpenCast::getArray(null, 'obj_id');
 		foreach ($all_obj_ids as $obj_id) {
 			foreach ($params as $param) {
-				$series_param = new xoctWorkflowParameter();
+				$series_param = new xoctSeriesWorkflowParameter();
 				$series_param->setObjId($obj_id);
 				$series_param->setParamId($param->getId());
 				$series_param->setValue($param->getDefaultValue());
@@ -54,4 +57,16 @@ class xoctSeriesWorkflowParameterRepository {
 			}
 		}
 	}
+
+
+	/**
+	 * @param $id
+	 * @param $value
+	 */
+	public function updateById($id, $value) {
+		$xoctSeriesWorkflowParameter = xoctSeriesWorkflowParameter::find($id);
+		$xoctSeriesWorkflowParameter->setValue($value);
+		$xoctSeriesWorkflowParameter->update();
+	}
+
 }

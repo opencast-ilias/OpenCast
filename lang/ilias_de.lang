@@ -111,7 +111,7 @@ config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer S
 config_permission_templates#:#Berechtigungsvorlagen
 config_upload_chunk_size#:#Upload-Chunk-Größe (MB)
 config_upload_chunk_size_info#:#Der Video-Upload erfolgt stückweise, wobei ein Stück die hier angegebene Größe hat. Das Erhöhen dieser Größe kann die Upload-Geschwindigkeit verbessern, wobei allerdings auf das Upload-Limit geachtet werden sollte. Standard: 20MB
-config_btn_load_parameters#:#Parameter Laden
+config_btn_load_parameters#:#Parameter via API Laden
 config_workflow_parameter_value_0#:#Nicht Berücksichtigen
 config_workflow_parameter_value_1#:#Automatisch Setzen
 config_workflow_parameter_value_2#:#Im Formular anbieten

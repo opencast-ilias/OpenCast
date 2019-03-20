@@ -1,5 +1,4 @@
 <?php
-
 use \srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 
 /**
@@ -12,14 +11,27 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const PROPERTY_TITLE = 'setTitle';
-	const PROPERTY_INFO = 'setInfo';
 
-	const F_OVERWRITE_SERIES_PARAMS = 'overwrite_series_params';
+	const F_ID = 'id';
+	const F_TITLE = 'title';
+	const F_TYPE = 'type';
 
 	/**
-	 * @var bool
+	 * @var xoctWorkflowParameter
 	 */
-	protected $overwrite_series_params = false;
+	protected $xoctWorkflowParameter;
+
+
+	/**
+	 * xoctWorkflowParameterFormGUI constructor.
+	 *
+	 * @param $parent
+	 */
+	public function __construct($parent, $param_id = '') {
+		$this->xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($param_id);
+		parent::__construct($parent);
+	}
+
 
 	/**
 	 * @param string $key
@@ -27,7 +39,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @return mixed|void
 	 */
 	protected function getValue($key) {
-
+		// TODO: Implement getValue() method.
 	}
 
 
@@ -35,46 +47,38 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initCommands() {
-		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE, $this->lng->txt('save'));
+		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, self::dic()->language()->txt('save'));
+		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_CANCEL, self::dic()->language()->txt('cancel'));
 	}
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 *
 	 */
 	protected function initFields() {
-		$this->fields[] = [
-			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
-			self::PROPERTY_TITLE => self::plugin()->translate('workflow_parameters'),
-		];
-		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
-			$this->fields[$xoctWorkflowParameter->getId()] = [
+		$this->fields = [
+			self::F_ID => [
+				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_ID),
+				self::PROPERTY_CLASS => ilTextInputGUI::class,
+				self::PROPERTY_REQUIRED => true,
+				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getId()
+			],
+			self::F_TITLE => [
+				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_TITLE),
+				self::PROPERTY_CLASS => ilTextInputGUI::class,
+				self::PROPERTY_REQUIRED => true,
+				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getTitle()
+			],
+			self::F_TYPE => [
+				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_TYPE),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
-				self::PROPERTY_TITLE => $xoctWorkflowParameter->getTitle() ?: $xoctWorkflowParameter->getId(),
+				self::PROPERTY_REQUIRED => true,
+				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getType(),
 				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-					xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-					xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config')
-				],
-				self::PROPERTY_VALUE => $xoctWorkflowParameter->getDefaultValue(),
-			];
-		}
-		$this->fields[] = [
-			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
-			self::PROPERTY_TITLE => self::plugin()->translate('settings', 'tab'),
-		];
-		$this->fields[xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-			self::PROPERTY_TITLE => self::plugin()->translate(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
-			self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-			self::PROPERTY_VALUE => (bool) xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
-			self::PROPERTY_SUBITEMS => [
-				self::F_OVERWRITE_SERIES_PARAMS => [
-					self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-					self::PROPERTY_INFO => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS . '_info', 'config'),
-					self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
+					xoctWorkflowParameter::TYPE_CHECKBOX => 'Checkbox'
 				]
-			]
+			],
+
 		];
 	}
 
@@ -83,7 +87,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initId() {
-		// TODO: Implement initId() method.
 	}
 
 
@@ -91,7 +94,25 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initTitle() {
-		// TODO: Implement initTitle() method.
+		$this->setTitle(self::dic()->language()->txt('edit'));
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function storeForm() {
+		if (!$this->storeFormCheck()) {
+			return false;
+		}
+
+		xoctWorkflowParameterRepository::getInstance()->createOrUpdate(
+			$this->getInput(self::F_ID),
+			$this->getInput(self::F_TITLE),
+			$this->getInput(self::F_TYPE)
+		);
+
+		return true;
 	}
 
 
@@ -100,24 +121,5 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @param mixed  $value
 	 */
 	protected function storeValue($key, $value) {
-		switch ($key) {
-			case xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
-				xoctConf::set(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
-				break;
-			case self::F_OVERWRITE_SERIES_PARAMS:
-				$this->overwrite_series_params = true;
-				break;
-			default:
-				/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-				$xoctWorkflowParameter = xoctWorkflowParameter::find($key);
-				$xoctWorkflowParameter->setDefaultValue($value);
-				$xoctWorkflowParameter->store();
-		}
-	}
-
-
-	public function storeForm() {
-		return parent::storeForm();
-		// TODO: show confirmation
 	}
 }

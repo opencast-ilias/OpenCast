@@ -66,7 +66,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
-	protected function editGeneral() {
+	protected function edit() {
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, xoctPublicationUsage::find($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->fillForm();
 		$this->tpl->setContent($xoctPublicationUsageFormGUI->getHTML());

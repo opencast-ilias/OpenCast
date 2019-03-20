@@ -58,7 +58,7 @@ class xoctWorkflowParameterRepository {
 	 * @return array
 	 */
 	protected function parseConfigurationPanelHTML($configuration_panel_html) {
-				$dom = new DOMDocument();
+		$dom = new DOMDocument();
 		$dom->strictErrorChecking = false;
 		$configuration_panel_html = trim(str_replace("\n", "", $configuration_panel_html));
 		$dom->loadHTML($configuration_panel_html);
@@ -80,10 +80,44 @@ class xoctWorkflowParameterRepository {
 				}
 			}
 			if (!$xoctWorkflowParameter->getType()) {
-				$xoctWorkflowParameter->setType($input->getAttribute('type'));
+//				$xoctWorkflowParameter->setType($input->getAttribute('type'));  // for now, only checkbox is supported
+				$xoctWorkflowParameter->setType(xoctWorkflowParameter::TYPE_CHECKBOX);
 			}
 			$workflow_parameters[] = $xoctWorkflowParameter;
 		}
 		return $workflow_parameters;
+	}
+
+
+	/**
+	 * @param $ids int|int[] single or multiple
+	 */
+	public function deleteById($ids) {
+		if (!is_array($ids)) {
+			$ids = [$ids];
+		}
+		foreach ($ids as $id) {
+			xoctWorkflowParameter::find($id)->delete();
+		}
+		xoctSeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($ids);
+	}
+
+
+
+	public function createOrUpdate($id, $title, $type) {
+		if (!xoctWorkflowParameter::where(array('id' => $id))->hasSets()) {
+			$is_new = true;
+		}
+		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
+		$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
+		$xoctWorkflowParameter->setTitle($title);
+		$xoctWorkflowParameter->setType($type);
+		$xoctWorkflowParameter->store();
+
+		if ($is_new) {
+			xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($xoctWorkflowParameter);
+		}
+
+		return $xoctWorkflowParameter;
 	}
 }

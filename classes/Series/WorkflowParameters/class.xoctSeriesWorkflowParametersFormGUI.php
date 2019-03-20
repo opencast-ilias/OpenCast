@@ -1,11 +1,11 @@
 <?php
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 /**
- * Class xoctSeriesWorkflowParameterFormGUI
+ * Class xoctSeriesWorkflowParametersFormGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctSeriesWorkflowParameterFormGUI extends PropertyFormGUI {
+class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
@@ -16,17 +16,29 @@ class xoctSeriesWorkflowParameterFormGUI extends PropertyFormGUI {
 	 */
 	protected $parent;
 
+
+	/**
+	 * @param string $key
+	 *
+	 * @return mixed|void
+	 */
 	protected function getValue($key) {
 		// TODO: Implement getValue() method.
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initCommands() {
 		$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
 
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
 	protected function initFields() {
 		$this->fields[] = [
 			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
@@ -53,19 +65,27 @@ class xoctSeriesWorkflowParameterFormGUI extends PropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initId() {
 		// TODO: Implement initId() method.
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initTitle() {
 		// TODO: Implement initTitle() method.
 	}
 
 
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 */
 	protected function storeValue($key, $value) {
-		$xoctSeriesWorkflowParameter = xoctSeriesWorkflowParameter::find($key);
-		$xoctSeriesWorkflowParameter->setValue($value);
-		$xoctSeriesWorkflowParameter->update();
+		xoctSeriesWorkflowParameterRepository::getInstance()->updateById($key, $value);
 	}
 }

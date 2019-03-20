@@ -75,7 +75,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	/**
 	 *
 	 */
-	protected function editGeneral() {
+	protected function edit() {
 		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,xoctPermissionTemplate::find($_GET[self::IDENTIFIER]));
 		$xoctPermissionTemplateFormGUI->fillForm();
 		$this->tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());

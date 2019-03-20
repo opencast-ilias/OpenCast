@@ -320,7 +320,7 @@ class xoctEvent extends xoctObject {
      * @param bool $auto_publish
      * @throws xoctException
      */
-	public function create($auto_publish = false) {
+	public function create() {
 		global $DIC;
 		$ilUser = $DIC['ilUser'];
 		$data = array();
@@ -330,7 +330,7 @@ class xoctEvent extends xoctObject {
 		$this->updateMetadataFromFields(false);
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$data['processing'] = json_encode($this->getProcessing($auto_publish));
+		$data['processing'] = json_encode($this->getProcessing());
 		$data['acl'] = json_encode($this->getAcl());
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
@@ -924,6 +924,10 @@ class xoctEvent extends xoctObject {
 	 * @var string
 	 */
 	protected $source = '';
+	/**
+	 * @var array
+	 */
+	protected $workflow_parameters = [];
 
 
 	/**
@@ -1381,6 +1385,22 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @return array
+	 */
+	public function getWorkflowParameters() {
+		return $this->workflow_parameters;
+	}
+
+
+	/**
+	 * @param array $workflow_parameters
+	 */
+	public function setWorkflowParameters($workflow_parameters) {
+		$this->workflow_parameters = $workflow_parameters;
+	}
+
+
+	/**
 	 *
 	 */
 	protected function updateMetadataFromFields($scheduled) {
@@ -1473,21 +1493,28 @@ class xoctEvent extends xoctObject {
 	//	}
 
 	/**
-	 * @param bool|false $auto_publish
 	 * @return stdClass
 	 */
-	protected function getProcessing($auto_publish = false) {
+	protected function getProcessing() {
 		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
-		$processing->configuration->flagForCutting = 'false';
-		$processing->configuration->flagForReview = 'false';
-		$processing->configuration->publishToEngage = 'false';
-		$processing->configuration->publishToHarvesting = 'false';
-		$processing->configuration->straightToPublishing = 'true';
-		$processing->configuration->publishToApi = 'true';
-		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
+		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
+			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
+		}
+
+		foreach (xoctSeriesWorkflowParameter::where(['value' => xoctSeriesWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
+			$processing->configuration->{$xoctSeriesWorkflowParameter->getParamId()} = 'true';
+		}
+
+//		$processing->configuration->flagForCutting = 'false';
+//		$processing->configuration->flagForReview = 'false';
+//		$processing->configuration->publishToEngage = 'false';
+//		$processing->configuration->publishToHarvesting = 'false';
+//		$processing->configuration->straightToPublishing = 'true';
+//		$processing->configuration->publishToApi = 'true';
+//		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
 
 		return $processing;
 	}

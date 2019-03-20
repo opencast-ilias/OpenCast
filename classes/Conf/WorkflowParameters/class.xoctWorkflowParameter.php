@@ -13,6 +13,8 @@ class xoctWorkflowParameter extends ActiveRecord {
 	const VALUE_SET_AUTOMATICALLY = 1;
 	const VALUE_SHOW_IN_FORM = 2;
 
+	const TYPE_CHECKBOX = 'checkbox';
+
 	/**
 	 * @return string
 	 */
@@ -69,7 +71,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	/**
 	 * @param string $id
 	 */
-	public function setId(string $id) {
+	public function setId($id) {
 		$this->id = $id;
 	}
 

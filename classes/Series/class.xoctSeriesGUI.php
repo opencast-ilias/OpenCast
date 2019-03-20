@@ -124,12 +124,12 @@ class xoctSeriesGUI extends xoctGUI {
 		}
 		$this->tabs->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
-		$xoctSeriesFormGUI = new xoctSeriesWorkflowParameterFormGUI($this);
+		$xoctSeriesFormGUI = new xoctSeriesWorkflowParametersFormGUI($this);
 		$this->tpl->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 	protected function updateWorkflowParameters() {
-		$xoctWorkflowParameterFormGUI = new xoctSeriesWorkflowParameterFormGUI($this);
+		$xoctWorkflowParameterFormGUI = new xoctSeriesWorkflowParametersFormGUI($this);
 		$xoctWorkflowParameterFormGUI->setValuesByPost();
 		if ($xoctWorkflowParameterFormGUI->storeForm()) {
 			ilUtil::sendSuccess($this->pl->txt('msg_success'), true);
