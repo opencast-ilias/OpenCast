@@ -234,9 +234,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 */
 
 	public static function format_date_time($unix_timestamp) {
-		global $DIC;
-		$lng = $DIC['lng'];
-
 		$now = time();
 		$today = $now - $now % (60 * 60 * 24);
 		$yesterday = $today - 60 * 60 * 24;
@@ -246,10 +243,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			$date = date('d. M Y', $unix_timestamp);
 		} elseif ($unix_timestamp < $today) {
 			// given date yesterday
-			$date = $lng->txt('yesterday');
+			$date = self::dic()->language()->txt('yesterday');
 		} else {
 			// given date is today
-			$date = $lng->txt('today');
+			$date = self::dic()->language()->txt('today');
 		}
 
 		return $date . ', ' . date('H:i', $unix_timestamp);

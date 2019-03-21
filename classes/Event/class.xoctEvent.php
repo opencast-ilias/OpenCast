@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctEvent
  *
@@ -6,10 +7,14 @@
  */
 class xoctEvent extends xoctObject {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	public static $LOAD_MD_SEPARATE = true;
 	public static $LOAD_ACL_SEPARATE = false;
 	public static $LOAD_PUB_SEPARATE = true;
 	public static $NO_METADATA = false;
+
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_SCHEDULED = 'SCHEDULED';
@@ -25,6 +30,7 @@ class xoctEvent extends xoctObject {
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';
+
 	/**
 	 * @var array
 	 *
@@ -321,12 +327,10 @@ class xoctEvent extends xoctObject {
      * @throws xoctException
      */
 	public function create() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
-		$this->setOwner(xoctUser::getInstance($ilUser));
+		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
@@ -348,9 +352,7 @@ class xoctEvent extends xoctObject {
 	 */
     public function schedule($rrule = '', $omit_set_owner = false) {
         if (!$omit_set_owner) {
-            global $DIC;
-            $ilUser = $DIC['ilUser'];
-            $this->setOwner(xoctUser::getInstance($ilUser));
+            $this->setOwner(xoctUser::getInstance(self::dic()->user()));
         }
 
         $data = array();
@@ -1455,8 +1457,6 @@ class xoctEvent extends xoctObject {
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
-		global $DIC;
-		$ilIliasIniFile = $DIC['ilIliasIniFile'];
 		if ($input instanceof DateTime) {
 			$input = $input->format(DATE_ATOM);
 		}
@@ -1464,7 +1464,7 @@ class xoctEvent extends xoctObject {
 			$input = 'now';
 		}
 		try {
-			$timezone = new DateTimeZone($ilIliasIniFile->readVariable('server', 'timezone'));
+			$timezone = new DateTimeZone(self::dic()->iliasIni()->readVariable('server', 'timezone'));
 		} catch (Exception $e) {
 			$timezone = null;
 		}

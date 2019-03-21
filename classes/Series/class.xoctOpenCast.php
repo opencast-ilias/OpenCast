@@ -1,5 +1,5 @@
 <?php
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctOpenCast
  *
@@ -7,6 +7,9 @@
  * @version 1.0.0
  */
 class xoctOpenCast extends ActiveRecord {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const TABLE_NAME = 'xoct_data';
 
@@ -137,12 +140,9 @@ class xoctOpenCast extends ActiveRecord {
 		foreach ($duplicates_ar->get() as $oc) {
 			/** @var xoctOpenCast $oc */
 			if ($oc->getObjId() != $this->getObjId()) {
-				global $DIC;
-				$ilDB = $DIC['ilDB'];
-
-				$query = "SELECT deleted, ref_id FROM object_reference" . " WHERE obj_id = " . $ilDB->quote($oc->getObjId(), "integer");
-				$set = $ilDB->query($query);
-				$rec = $ilDB->fetchAssoc($set);
+				$query = "SELECT deleted, ref_id FROM object_reference" . " WHERE obj_id = " . self::dic()->database()->quote($oc->getObjId(), "integer");
+				$set = self::dic()->database()->query($query);
+				$rec = self::dic()->database()->fetchAssoc($set);
 
 				if (!$rec['deleted'] && $rec['ref_id']) {
 					$duplicates_ids[] = $rec['ref_id'];

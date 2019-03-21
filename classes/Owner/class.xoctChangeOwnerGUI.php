@@ -42,9 +42,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
      * @throws ilTemplateException
      */
     protected function index() {
-        global $DIC;
-        $ilUser = $DIC['ilUser'];
-        $xoctUser = xoctUser::getInstance($ilUser);
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
             ilUtil::sendFailure('Access denied', true);
             self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);

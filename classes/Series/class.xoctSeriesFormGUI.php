@@ -88,9 +88,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	protected function initForm() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
-		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		$this->setTarget('_top');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
@@ -339,8 +337,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
      * @throws xoctException
      */
 	public function saveObject($obj_id = null) {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		$ivt_mode_before_update = $this->cast->getPermissionPerClip();
 
 		if (!$this->fillObject()) {
@@ -378,7 +374,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 		// add current user to producers
-		$xoct_user = xoctUser::getInstance($ilUser);
+		$xoct_user = xoctUser::getInstance(self::dic()->user());
 		$this->series->addProducer($xoct_user, true);
 
 		// create / update

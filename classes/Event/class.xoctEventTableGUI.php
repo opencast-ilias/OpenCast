@@ -101,9 +101,7 @@ class xoctEventTableGUI extends ilTable2GUI {
      */
 	public function fillRow($a_set)
 	{
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
-		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		/**
 		 * @var $xE        xoctEvent
 		 * @var $xoctUser  xoctUser
@@ -315,12 +313,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 		))) {
 			return;
 		}
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var $xoctUser xoctUser
 		 */
-		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
 
 		$ac = new ilAdvancedSelectionListGUI();
 		$ac->setListTitle(self::plugin()->translate('common_actions'));
@@ -474,10 +470,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	{
 		return function ($array)
 		{
-			global $DIC;
-			$ilUser = $DIC['ilUser'];
-
-			$xoctUser = xoctUser::getInstance($ilUser);
+			$xoctUser = xoctUser::getInstance(self::dic()->user());
 			$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
 
 			return ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast);
@@ -583,18 +576,16 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param $xoctOpenCast
 	 */
 	public static function setOwnerFieldVisibility($visible, $xoctOpenCast) {
-		global $DIC;
-		$ilDB = $DIC['ilDB'];
 		$table_id = self::getGeneratedPrefix($xoctOpenCast);
-		$query = $ilDB->query("SELECT * FROM table_properties WHERE table_id = " . $ilDB->quote($table_id, "text") . " AND property = 'selfields'");
-		while ($rec = $ilDB->fetchAssoc($query)) {
+		$query = self::dic()->database()->query("SELECT * FROM table_properties WHERE table_id = " . self::dic()->database()->quote($table_id, "text") . " AND property = 'selfields'");
+		while ($rec = self::dic()->database()->fetchAssoc($query)) {
 			$selfields = unserialize($rec['value']);
 			if ($selfields['event_owner'] == $visible) {
 				continue;
 			}
 			$selfields['event_owner'] = (bool)$visible;
 			$usr_id = $rec['user_id'];
-			$ilDB->update('table_properties', array(
+			self::dic()->database()->update('table_properties', array(
 					'value' => array( 'text', serialize($selfields) )
 				), array(
 					'table_id' => array( 'text', $table_id ),

@@ -39,9 +39,7 @@ class xoctInvitationGUI extends xoctGUI {
 
 
 	protected function index() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
-		$xoctUser = xoctUser::getInstance($ilUser);
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 			ilUtil::sendFailure('Access denied', true);
 			self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
@@ -76,8 +74,6 @@ class xoctInvitationGUI extends xoctGUI {
 
 
 	public function getAll() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		/**
 		 * @var $xoctUser xoctUser
 		 */
@@ -98,7 +94,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$available_users = array();
 		$owner = $this->xoctEvent->getOwner();
 		foreach ($available_user_ids as $user_id) {
-			if ($user_id == $ilUser->getId()) {
+			if ($user_id == self::dic()->user()->getId()) {
 				continue;
 			}
 			if ($owner && $user_id == $owner->getIliasUserId()) {
@@ -143,8 +139,6 @@ class xoctInvitationGUI extends xoctGUI {
 
 
 	protected function create() {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
 		$obj = xoctInvitation::where(array(
 			'event_identifier' => $this->xoctEvent->getIdentifier(),
 			'user_id' => $_POST['id'],
@@ -156,7 +150,7 @@ class xoctInvitationGUI extends xoctGUI {
 		}
 		$obj->setEventIdentifier($this->xoctEvent->getIdentifier());
 		$obj->setUserId($_POST['id']);
-		$obj->setOwnerId($ilUser->getId());
+		$obj->setOwnerId(self::dic()->user()->getId());
 		if ($new) {
 			$obj->create();
 		} else {

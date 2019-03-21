@@ -11,23 +11,18 @@ class xoctConfExportGUI extends xoctGUI {
 
 
 	protected function index() {
-		global $DIC;
-		$ilToolbar = $DIC['ilToolbar'];
-		/**
-		 * @var $ilToolbar ilToolbarGUI
-		 */
 		$b = ilLinkButton::getInstance();
 		$b->setCaption('rep_robj_xoct_admin_export');
 		$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, 'export'));
-		$ilToolbar->addButtonInstance($b);
-		$ilToolbar->addSpacer();
-		$ilToolbar->addSeparator();
-		$ilToolbar->addSpacer();
+		self::dic()->toolbar()->addButtonInstance($b);
+		self::dic()->toolbar()->addSpacer();
+		self::dic()->toolbar()->addSeparator();
+		self::dic()->toolbar()->addSpacer();
 
-		$ilToolbar->setFormAction(self::dic()->ctrl()->getLinkTarget($this, 'import'), true);
+		self::dic()->toolbar()->setFormAction(self::dic()->ctrl()->getLinkTarget($this, 'import'), true);
 		$import = new ilFileInputGUI('xoct_import', 'xoct_import');
-		$ilToolbar->addInputItem($import);
-		$ilToolbar->addFormButton(self::plugin()->translate('admin_import'), 'import');
+		self::dic()->toolbar()->addInputItem($import);
+		self::dic()->toolbar()->addFormButton(self::plugin()->translate('admin_import'), 'import');
 	}
 
 

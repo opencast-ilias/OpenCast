@@ -13,9 +13,6 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 	
 	public function executeCommand() {
-		global $DIC;
-		$ilTabs = $DIC['ilTabs'];
-		$lng = $DIC['lng'];
 		/**
 		 * @var self::dic()->ctrl() ilCtrl
 		 */
@@ -25,15 +22,15 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $_GET["plugin_id"]);
 		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "pname", $_GET["pname"]);
 
-		self::dic()->mainTemplate()->setTitle($lng->txt("cmps_plugin") . ": " . $_GET["pname"]);
+		self::dic()->mainTemplate()->setTitle(self::dic()->language()->txt("cmps_plugin") . ": " . $_GET["pname"]);
 		self::dic()->mainTemplate()->setDescription("");
 
-		$ilTabs->clearTargets();
+		self::dic()->tabs()->clearTargets();
 
 		if ($_GET["plugin_id"]) {
-			$ilTabs->setBackTarget($lng->txt("cmps_plugin"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "showPlugin"));
+			self::dic()->tabs()->setBackTarget(self::dic()->language()->txt("cmps_plugin"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "showPlugin"));
 		} else {
-			$ilTabs->setBackTarget($lng->txt("cmps_plugins"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "listPlugins"));
+			self::dic()->tabs()->setBackTarget(self::dic()->language()->txt("cmps_plugins"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "listPlugins"));
 		}
 
 		$nextClass = self::dic()->ctrl()->getNextClass();

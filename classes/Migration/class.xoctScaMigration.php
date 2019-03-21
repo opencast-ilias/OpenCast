@@ -49,18 +49,6 @@ class xoctScaMigration {
 	 */
 	protected $log;
 	/**
-	 * @var ilDB|ilDBInnoDB|ilDBMySQL|ilDBOracle|ilDBPostgreSQL
-	 */
-	protected $db;
-	/**
-	 * @var ilRbacAdmin
-	 */
-	protected $rbac_admin;
-	/**
-	 * @var ilRbacReview
-	 */
-	protected $rbac_review;
-	/**
 	 * @var int
 	 */
 	protected $migrated_count = 0;
@@ -77,15 +65,8 @@ class xoctScaMigration {
 	 * xoctScaMigration constructor.
 	 */
 	public function __construct($migration_data, $command_line_execution = false) {
-		global $DIC;
-		$ilDB = $DIC['ilDB'];
-		$rbacadmin = $DIC['rbacadmin'];
-		$rbacreview = $DIC['rbacreview'];
 		$this->migration_data = $migration_data;
 		$this->log = xoctMigrationLog::getInstance();
-		$this->db = $ilDB;
-		$this->rbac_admin = $rbacadmin;
-		$this->rbac_review = $rbacreview;
 		$this->command_line = $command_line_execution;
 	}
 
@@ -107,16 +88,16 @@ class xoctScaMigration {
 	}
 
 	protected function initRoles() {
-		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'write'");
-		while ($rec = $this->db->fetchAssoc($query)) {
+		$query = self::dic()->database()->query("SELECT ops_id FROM rbac_operations WHERE operation = 'write'");
+		while ($rec = self::dic()->database()->fetchAssoc($query)) {
 			$this->ops_id_write = $rec['ops_id'];
 		}
-		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_edit_videos'");
-		while ($rec = $this->db->fetchAssoc($query)) {
+		$query = self::dic()->database()->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_edit_videos'");
+		while ($rec = self::dic()->database()->fetchAssoc($query)) {
 			$this->ops_id_edit_videos = $rec['ops_id'];
 		}
-		$query = $this->db->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_upload'");
-		while ($rec = $this->db->fetchAssoc($query)) {
+		$query = self::dic()->database()->query("SELECT ops_id FROM rbac_operations WHERE operation = 'rep_robj_xoct_perm_upload'");
+		while ($rec = self::dic()->database()->fetchAssoc($query)) {
 			$this->ops_id_upload = $rec['ops_id'];
 		}
 		if (!$this->ops_id_write || !$this->ops_id_edit_videos || !$this->ops_id_upload) {
@@ -146,10 +127,8 @@ class xoctScaMigration {
 	}
 
 	protected function migrateObjectData() {
-		global $DIC;
-		$tree = $DIC['tree'];
 		$this->log->write('migrate Object Data..', null, $this->command_line);
-		$sql = $this->db->query('
+		$sql = self::dic()->database()->query('
 			SELECT rep_robj_xsca_data.*, object_reference.ref_id, object_data.* 
 			FROM rep_robj_xsca_data 
 			INNER JOIN object_reference on rep_robj_xsca_data.id = object_reference.obj_id 
@@ -157,7 +136,7 @@ class xoctScaMigration {
 		if ($this->command_line) {
 			echo "Processed: $this->migrated_count, Skipped: $this->skipped_count \r";
 		}
-		while ($rec = $this->db->fetchAssoc($sql)) {
+		while ($rec = self::dic()->database()->fetchAssoc($sql)) {
 //			if ($rec['ref_id'] != 1320646) {
 //				continue;
 //			}
@@ -170,7 +149,7 @@ class xoctScaMigration {
 				continue;
 			}
 
-			$parent_id = $tree->getParentId($rec['ref_id']);
+			$parent_id = self::dic()->tree()->getParentId($rec['ref_id']);
 			if (!$parent_id) {
 				$this->log->write("WARNING: no parent id found for ref_id {$rec['ref_id']}");
 				$this->log->write("skip and proceed with next object");
@@ -236,7 +215,7 @@ class xoctScaMigration {
 			$roles = ($parent_obj instanceof ilObjCourse) ? $parent_obj->getDefaultCourseRoles() : $parent_obj->getDefaultGroupRoles();
 
 			foreach ($roles as $role_id) {
-				$role_ops = $this->rbac_review->getRoleOperationsOnObject($role_id, $rec['ref_id']);
+				$role_ops = self::dic()->rbacreview()->getRoleOperationsOnObject($role_id, $rec['ref_id']);
 
 				// if the role has write permissions, the new permissions 'edit_videos' and 'upload' are also granted
 				if (in_array($this->ops_id_write, $role_ops)) {
@@ -244,8 +223,8 @@ class xoctScaMigration {
 					$role_ops[] = $this->ops_id_upload;
 				}
 
-				$this->rbac_admin->revokePermission($ilObjOpenCast->getRefId(), $role_id);
-				$this->rbac_admin->grantPermission($role_id, $role_ops, $ilObjOpenCast->getRefId());
+				self::dic()->rbacadmin()->revokePermission($ilObjOpenCast->getRefId(), $role_id);
+				self::dic()->rbacadmin()->grantPermission($role_id, $role_ops, $ilObjOpenCast->getRefId());
 			}
 
 
@@ -275,10 +254,10 @@ class xoctScaMigration {
 
 	protected function migrateInvitations() {
 		$this->log->write('migrate invitations..', null, $this->command_line);
-		$sql = $this->db->query('SELECT * FROM rep_robj_xsca_cmember');
+		$sql = self::dic()->database()->query('SELECT * FROM rep_robj_xsca_cmember');
 		$skipped = 0;
 		$migrated = 0;
-		while ($rec = $this->db->fetchAssoc($sql)) {
+		while ($rec = self::dic()->database()->fetchAssoc($sql)) {
 			if ($this->command_line) {
 				echo "Processed: $migrated, Skipped: $skipped \r";
 			}
@@ -305,9 +284,9 @@ class xoctScaMigration {
 
 	protected function migratePermissions() {
 		$this->log->write('migrate permission templates..', null, $this->command_line);
-		$sql = $this->db->query('SELECT * FROM rbac_templates WHERE type = ' . $this->db->quote('xsca', 'text'));
-		while ($rec = $this->db->fetchAssoc($sql)) {
-			$this->db->insert('rbac_templates', array(
+		$sql = self::dic()->database()->query('SELECT * FROM rbac_templates WHERE type = ' . self::dic()->database()->quote('xsca', 'text'));
+		while ($rec = self::dic()->database()->fetchAssoc($sql)) {
+			self::dic()->database()->insert('rbac_templates', array(
 				'rol_id' => array('integer', $rec['rol_id']),
 				'type' => array('text', ilOpenCastPlugin::PLUGIN_ID),
 				'ops_id' => array('integer', $rec['ops_id']),
