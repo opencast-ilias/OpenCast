@@ -135,7 +135,6 @@ class xoctSeriesAPI {
 			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMembers($producers);
 		} catch (xoctException $e) {
-			//TODO log?
 		}
 
         $series->addProducers($producers, true);

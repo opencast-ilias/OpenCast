@@ -39,7 +39,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @return mixed|void
 	 */
 	protected function getValue($key) {
-		// TODO: Implement getValue() method.
 	}
 
 

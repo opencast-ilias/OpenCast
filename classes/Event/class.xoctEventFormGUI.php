@@ -45,14 +45,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
-	/**
 	 * @var bool
 	 */
 	protected $external = true;
@@ -75,7 +67,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object = $object;
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->parent_gui = $parent_gui;
-		$this->pl = ilOpenCastPlugin::getInstance();
 		self::dic()->ctrl()->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
 		$this->is_new = ($this->object->getIdentifier() == '');
 		$this->schedule = $schedule;

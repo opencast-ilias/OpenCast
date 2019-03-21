@@ -1,5 +1,5 @@
 <?php
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctEventTableGUI
  *
@@ -9,11 +9,10 @@
  */
 class xoctEventTableGUI extends ilTable2GUI {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	const TBL_ID = 'tbl_xoct';
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 	/**
 	 * @var array
 	 */
@@ -22,10 +21,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @var \xoctOpenCast
 	 */
 	protected $xoctOpenCast;
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
 	/**
 	 * @var \xoctEventGUI
 	 */
@@ -44,23 +39,16 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @param               $load_data bool
 	 */
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true) {
-		/**
-		 * @var $ilCtrl ilCtrl
-		 */
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->xoctOpenCast = $xoctOpenCast;
 		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);
 		$this->setFormName($a_val);
 		$this->setId($a_val);
-		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
+		self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
-		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
 		$this->initColumns();
 		$this->initFilters();
 		$this->setDefaultOrderField('created_unix');
@@ -129,8 +117,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		}
 		if ($xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
 			if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
-				$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
-				$playerLink = $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_STREAM_VIDEO);
+				self::dic()->ctrl()->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
+				$playerLink = self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_STREAM_VIDEO);
 			} else {
 				$playerLink = $xE->getPlayerLink();
 			}
@@ -164,8 +152,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 			// ANNOTATIONS LINK
 			if ($this->xoctOpenCast->getUseAnnotations()) {
 				if ($xE->getAnnotationLink()) {
-                    $this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
-                    $annotations_link = $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_ANNOTATE);
+                    self::dic()->ctrl()->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
+                    $annotations_link = self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_ANNOTATE);
 					$this->tpl->setCurrentBlock('link');
 					$this->tpl->setVariable('LINK_URL', $annotations_link);
 					$this->tpl->setVariable('LINK_TEXT', $this->parent_obj->txt('annotate'));
@@ -305,7 +293,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 				continue;
 			}
 			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
-				$this->addColumn($this->pl->txt($text), $col['sort_field'], $col['width']);
+				$this->addColumn(self::plugin()->translate($text), $col['sort_field'], $col['width']);
 			}
 		}
 	}
@@ -335,36 +323,36 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$xoctUser = xoctUser::getInstance($ilUser);
 
 		$ac = new ilAdvancedSelectionListGUI();
-		$ac->setListTitle($this->pl->txt('common_actions'));
+		$ac->setListTitle(self::plugin()->translate('common_actions'));
 		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
 		$ac->setUseImages(false);
 
-		$this->ctrl->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		$this->ctrl->setParameterByClass(xoctInvitationGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		$this->ctrl->setParameterByClass(xoctChangeOwnerGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
+		self::dic()->ctrl()->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
+		self::dic()->ctrl()->setParameterByClass(xoctInvitationGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
+		self::dic()->ctrl()->setParameterByClass(xoctChangeOwnerGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
 
 		if (ilObjOpenCast::DEV) {
-			$ac->addItem($this->pl->txt('event_view'), 'event_view', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
+			$ac->addItem(self::plugin()->translate('event_view'), 'event_view', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
 		}
 
 		// Edit Owner
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
-			$ac->addItem($this->pl->txt('event_edit_owner'), 'event_edit_owner', $this->ctrl->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD));
+			$ac->addItem(self::plugin()->translate('event_edit_owner'), 'event_edit_owner', self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD));
 		}
 
 		// Share event
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
-			$ac->addItem($this->pl->txt('event_invite_others'), 'invite_others', $this->ctrl->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD));
+			$ac->addItem(self::plugin()->translate('event_invite_others'), 'invite_others', self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD));
 		}
 
 		// Cut Event
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $xoctEvent, $xoctUser)) {
-			$ac->addItem($this->pl->txt('event_cut'), 'event_cut', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT), '', '', '_blank');
+			$ac->addItem(self::plugin()->translate('event_cut'), 'event_cut', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT), '', '', '_blank');
 		}
 
 		// Delete Event
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {
-			$ac->addItem($this->pl->txt('event_delete'), 'event_delete', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
+			$ac->addItem(self::plugin()->translate('event_delete'), 'event_delete', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
 		}
 
 		// Edit Event
@@ -375,21 +363,21 @@ class xoctEventTableGUI extends ilTable2GUI {
 			} else {
 				$lang_var = 'event_edit';
 			}
-			$ac->addItem($this->pl->txt($lang_var), 'event_edit', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
+			$ac->addItem(self::plugin()->translate($lang_var), 'event_edit', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
 		}
 
 		// Online/offline
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $xoctEvent, $xoctUser)) {
 			if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
-				$ac->addItem($this->pl->txt('event_set_offline'), 'event_set_offline', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
+				$ac->addItem(self::plugin()->translate('event_set_offline'), 'event_set_offline', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
 			} else {
-				$ac->addItem($this->pl->txt('event_set_online'), 'event_set_online', $this->ctrl->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
+				$ac->addItem(self::plugin()->translate('event_set_online'), 'event_set_online', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
 			}
 		}
 
 		// Report Quality
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $xoctEvent)) {
-			$ac->addItem($this->pl->txt('event_report_quality_problem'), 'event_report_quality', '#', '', '', '', '', false, "($('input#xoct_report_quality_event_id').val('"
+			$ac->addItem(self::plugin()->translate('event_report_quality_problem'), 'event_report_quality', '#', '', '', '', '', false, "($('input#xoct_report_quality_event_id').val('"
 				. $xoctEvent->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus()");
 		}
 
@@ -429,8 +417,6 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	protected function parseData() {
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/class.ilObjOpenCastAccess.php');
-
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		$a_data = xoctEvent::getFiltered($filter, NULL, NULL, $this->getOffset(), $this->getLimit());
 
@@ -544,7 +530,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 				case 'object';
 					continue 2;
 			}
-			$a_csv->addColumn($this->pl->txt('event_' . $k));
+			$a_csv->addColumn(self::plugin()->translate('event_' . $k));
 		}
 		$a_csv->addRow();
 	}
@@ -582,7 +568,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		foreach ($this->getAllColums() as $text => $col) {
 			if ($col['selectable']) {
 				$selectable_columns[$text] = array(
-					'txt' => $this->pl->txt($text),
+					'txt' => self::plugin()->translate($text),
 					'default' => isset($col['default']) ? $col['default'] : true,
 				);
 			}

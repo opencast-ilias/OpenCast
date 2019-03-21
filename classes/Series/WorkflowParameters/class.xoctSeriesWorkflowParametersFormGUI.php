@@ -23,7 +23,6 @@ class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 	 * @return mixed|void
 	 */
 	protected function getValue($key) {
-		// TODO: Implement getValue() method.
 	}
 
 
@@ -31,7 +30,7 @@ class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initCommands() {
-		$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
+		$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, self::dic()->language()->txt('save'));
 
 	}
 
@@ -69,7 +68,6 @@ class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initId() {
-		// TODO: Implement initId() method.
 	}
 
 
@@ -77,7 +75,6 @@ class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initTitle() {
-		// TODO: Implement initTitle() method.
 	}
 
 

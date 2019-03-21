@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 
 /**
  * Class xoctConfFormGUI
@@ -7,6 +8,9 @@
  * @version 1.0.0
  */
 class xoctConfFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var  xoctConf
@@ -17,14 +21,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
-	/**
 	 * @var string
 	 */
 	protected $subtab_active;
@@ -34,13 +30,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 * @param $parent_gui
 	 */
 	public function __construct(xoctConfGUI $parent_gui, $subtab_active) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
+		parent::__construct();
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->lng = $lng;
 		$this->subtab_active = $subtab_active;
 		$this->initForm();
 	}
@@ -51,7 +42,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		switch ($this->subtab_active) {

@@ -1,6 +1,5 @@
 <?php
-/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctReportingFormGUI
  *
@@ -8,21 +7,12 @@
  */
 class xoctReportingModalGUI extends ilModalGUI {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	const REPORTING_TYPE_DATE = 1;
 	const REPORTING_TYPE_QUALITY = 2;
 
-	/**
-	 * @var ilCtrl
-	 */
-	protected $ctrl;
-    /**
-     * @var ilTemplate
-     */
-	protected $tpl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 	/**
 	 * @var xoctEventGUI
 	 */
@@ -31,15 +21,10 @@ class xoctReportingModalGUI extends ilModalGUI {
 	 * xoctReportingFormGUI constructor.
 	 */
 	public function __construct($parent_gui, $type) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$this->ctrl = $ilCtrl;
-        $this->tpl = $DIC['tpl'];
-        $this->pl = ilOpenCastPlugin::getInstance();
         $this->parent_gui = $parent_gui;
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        $this->tpl->addCss($this->pl->getDirectory() . '/templates/default/reporting_modal.css');
+        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
 		$send_button->setCaption('send');
@@ -55,13 +40,13 @@ class xoctReportingModalGUI extends ilModalGUI {
 		switch ($type) {
 			case self::REPORTING_TYPE_DATE:
 				$this->setId('xoct_report_date_modal');
-				$this->setHeading($this->pl->txt('event_report_date_modification'));
+				$this->setHeading(self::plugin()->translate('event_report_date_modification'));
 				$this->setBody(nl2br(xoctConf::getConfig(xoctConf::F_REPORT_DATE_TEXT)));
 				$send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
 				break;
 			case self::REPORTING_TYPE_QUALITY:
 				$this->setId('xoct_report_quality_modal');
-				$this->setHeading($this->pl->txt('event_report_quality_problem'));
+				$this->setHeading(self::plugin()->translate('event_report_quality_problem'));
 				$this->setBody(nl2br(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_TEXT)));
 				$send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
 				break;
@@ -76,8 +61,8 @@ class xoctReportingModalGUI extends ilModalGUI {
 
 	function getHTML() {
 		// only the following two lines differ from the parent method
-		$tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->pl->getDirectory());
-		$tpl->setVariable('FORM_ACTION', $this->ctrl->getFormAction($this->parent_gui));
+		$tpl = new ilTemplate("tpl.reporting_modal.html", true, true, self::plugin()->getPluginObject()->getDirectory());
+		$tpl->setVariable('FORM_ACTION', self::dic()->ctrl()->getFormAction($this->parent_gui));
 
 		if (count($this->getButtons()) > 0)
 		{

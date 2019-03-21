@@ -35,7 +35,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initCommands() {
-		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, $this->lng->txt('save'));
+		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
 	}
 
 
@@ -45,7 +45,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	protected function initFields() {
 		$this->fields[] = [
 			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
-			self::PROPERTY_TITLE => self::plugin()->translate('workflow_parameters'),
+			self::PROPERTY_TITLE => self::plugin()->translate('default_values'),
 		];
 		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
 		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {

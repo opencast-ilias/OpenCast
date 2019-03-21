@@ -86,9 +86,9 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	 * @throws ilTemplateException
 	 */
 	protected function fillRow($row) {
-		$this->tpl->setVariable("ID", $row["id"]);
-		$this->tpl->setVariable("TITLE", $row["title"]);
-		$this->tpl->setVariable("TYPE", $row["type"]);
+		self::dic()->mainTemplate()->setVariable("ID", $row["id"]);
+		self::dic()->mainTemplate()->setVariable("TITLE", $row["title"]);
+		self::dic()->mainTemplate()->setVariable("TYPE", $row["type"]);
 
 		$actions = new ilAdvancedSelectionListGUI();
 		$actions->setListTitle(self::dic()->language()->txt("actions"));
@@ -101,7 +101,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 		$actions->addItem(self::dic()->language()->txt("delete"), "", self::dic()->ctrl()
 			->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_DELETE));
 
-		$this->tpl->setVariable("ACTIONS", self::output()->getHTML($actions));
+		self::dic()->mainTemplate()->setVariable("ACTIONS", self::output()->getHTML($actions));
 
 		self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", NULL);
 	}

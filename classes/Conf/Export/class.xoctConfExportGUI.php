@@ -9,6 +9,7 @@
  */
 class xoctConfExportGUI extends xoctGUI {
 
+
 	protected function index() {
 		global $DIC;
 		$ilToolbar = $DIC['ilToolbar'];
@@ -17,16 +18,16 @@ class xoctConfExportGUI extends xoctGUI {
 		 */
 		$b = ilLinkButton::getInstance();
 		$b->setCaption('rep_robj_xoct_admin_export');
-		$b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
+		$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, 'export'));
 		$ilToolbar->addButtonInstance($b);
 		$ilToolbar->addSpacer();
 		$ilToolbar->addSeparator();
 		$ilToolbar->addSpacer();
 
-		$ilToolbar->setFormAction($this->ctrl->getLinkTarget($this, 'import'), true);
+		$ilToolbar->setFormAction(self::dic()->ctrl()->getLinkTarget($this, 'import'), true);
 		$import = new ilFileInputGUI('xoct_import', 'xoct_import');
 		$ilToolbar->addInputItem($import);
-		$ilToolbar->addFormButton($this->pl->txt('admin_import'), 'import');
+		$ilToolbar->addFormButton(self::plugin()->translate('admin_import'), 'import');
 	}
 
 
@@ -81,8 +82,8 @@ class xoctConfExportGUI extends xoctGUI {
 		$config = $domxml->appendChild(new DOMElement('opencast_settings'));
 
 		$xml_info = $config->appendChild(new DOMElement('info'));
-		$xml_info->appendChild(new DOMElement('plugin_version', $this->pl->getVersion()));
-		$xml_info->appendChild(new DOMElement('plugin_db_version', $this->pl->getDBVersion()));
+		$xml_info->appendChild(new DOMElement('plugin_version', self::plugin()->getPluginObject()->getVersion()));
+		$xml_info->appendChild(new DOMElement('plugin_db_version', self::plugin()->getPluginObject()->getDBVersion()));
 		$xml_info->appendChild(new DOMElement('config_version', xoctConf::getConfig(xoctConf::CONFIG_VERSION)));
 
 		// xoctConf
@@ -122,32 +123,26 @@ class xoctConfExportGUI extends xoctGUI {
 
 
 	protected function add() {
-		// TODO: Implement add() method.
 	}
 
 
 	protected function create() {
-		// TODO: Implement create() method.
 	}
 
 
 	protected function edit() {
-		// TODO: Implement edit() method.
 	}
 
 
 	protected function update() {
-		// TODO: Implement update() method.
 	}
 
 
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
 	}
 
 
 	protected function delete() {
-		// TODO: Implement delete() method.
 	}
 }
 

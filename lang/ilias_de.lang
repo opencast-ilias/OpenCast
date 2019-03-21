@@ -398,3 +398,4 @@ date_from#:#Datum Von
 date_to#:#Datum Bis
 sender#:#Verfasser
 workflow_parameters#:#Workflow Parameter
+default_values#:#Standardwerte

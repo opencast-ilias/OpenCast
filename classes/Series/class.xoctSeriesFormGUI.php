@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctSeriesFormGUI
  *
@@ -6,6 +7,9 @@
  * @version 1.0.0
  */
 class xoctSeriesFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const F_COURSE_NAME = 'course_name';
 	const F_TITLE = 'title';
@@ -42,14 +46,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
-	/**
 	 * @var bool
 	 */
 	protected $external = true;
@@ -61,10 +57,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @var bool
 	 */
 	protected $is_new;
-	/**
-	 * @var ilLanguage
-	 */
-	protected $lng;
 
 
 	/**
@@ -75,24 +67,18 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @param bool $external
 	 */
 	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
-		$tpl = $DIC['tpl'];
+		parent::__construct();
 		$this->cast = $cast;
 		$this->series = $cast->getSeries();
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->ctrl->saveParameter($parent_gui, xoctSeriesGUI::SERIES_ID);
-		$this->ctrl->saveParameter($parent_gui, 'new_type');
-		$this->lng = $lng;
+		self::dic()->ctrl()->saveParameter($parent_gui, xoctSeriesGUI::SERIES_ID);
+		self::dic()->ctrl()->saveParameter($parent_gui, 'new_type');
 		$this->is_new = ($this->series->getIdentifier() == '');
 		$this->view = $view;
 		$this->infopage = $infopage;
 		$this->external = $external;
 		xoctWaiterGUI::loadLib();
-		$tpl->addJavaScript($this->pl->getStyleSheetLocation('default/existing_channel.js'));
+		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/existing_channel.js'));
 		if ($view) {
 			$this->initView();
 		} else {
@@ -106,7 +92,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$ilUser = $DIC['ilUser'];
 		$xoctUser = xoctUser::getInstance($ilUser);
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 		if ($this->is_new && $xoctUser->getUserRoleName()) {
 			$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
@@ -115,7 +101,6 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 				{
 					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
 					$existing_series = array();
-					// TODO: user doesn't have access to /api/series (403 error)
 					foreach (xoctSeries::getAllForUser($xoctUser->getUserRoleName()) as $serie) {
 						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
 					}
@@ -334,7 +319,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function txt($key) {
-		return $this->pl->txt('series_' . $key);
+		return self::plugin()->getPluginObject()->txt('series_' . $key);
 	}
 
 
@@ -344,7 +329,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function infoTxt($key) {
-		return $this->pl->txt('series_' . $key . '_info');
+		return self::plugin()->getPluginObject()->txt('series_' . $key . '_info');
 	}
 
 
@@ -401,7 +386,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->cast->setSeriesIdentifier($this->series->getIdentifier());
 			$this->series->update();
 			if ($this->is_new) {
-				$this->cast->create(); //TODO check if unnecessary, since the cast will be created later in afterSave
+				$this->cast->create();
 			} else {
 				$this->cast->update();
 			}
@@ -433,8 +418,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	public function getAsPropertyFormGui() {
 		$ilPropertyFormGUI = $this;
 		$ilPropertyFormGUI->clearCommandButtons();
-		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_SAVE, $this->lng->txt(xoctSeriesGUI::CMD_SAVE));
-		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_CANCEL, $this->lng->txt(xoctSeriesGUI::CMD_CANCEL));
+		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_SAVE, self::dic()->language()->txt(xoctSeriesGUI::CMD_SAVE));
+		$ilPropertyFormGUI->addCommandButton(xoctSeriesGUI::CMD_CANCEL, self::dic()->language()->txt(xoctSeriesGUI::CMD_CANCEL));
 
 		return $ilPropertyFormGUI;
 	}
@@ -592,7 +577,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$field = $this->getItemByPostVar(self::F_ACCEPT_EULA);
 			$field->setAlert($this->txt('alert_eula'));
 
-			ilUtil::sendFailure($this->lng->txt("form_input_not_valid"));
+			ilUtil::sendFailure(self::dic()->language()->txt("form_input_not_valid"));
 
 			return false;
 		}

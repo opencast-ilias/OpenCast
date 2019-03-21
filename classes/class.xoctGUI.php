@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
+
 /**
  * Class xoctGUI
  *
@@ -7,6 +8,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @version 1.0.0
  */
 abstract class xoctGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const CMD_STANDARD = 'index';
 	const CMD_ADD = 'add';
@@ -20,36 +24,12 @@ abstract class xoctGUI {
 	const CMD_VIEW = 'view';
 
 
-	public function __construct() {
-		global $DIC;
-		$tpl = $DIC['tpl'];
-		$ilCtrl = $DIC['ilCtrl'];
-		$ilTabs = $DIC['ilTabs'];
-		$ilToolbar = $DIC['ilToolbar'];
-		$ilUser = $DIC['ilUser'];
-		$lng = $DIC['lng'];
-		/**
-		 * @var $ilCtrl    ilCtrl
-		 * @var $ilTabs    ilTabsGUI
-		 * @var $tpl       ilTemplate
-		 * @var $ilToolbar ilToolbarGUI
-		 */
-		$this->tpl = $tpl;
-		$this->tabs = $ilTabs;
-		$this->ctrl = $ilCtrl;
-		$this->toolbar = $ilToolbar;
-		$this->user = $ilUser;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->lng = $lng;
-	}
-
-
 	public function executeCommand() {
-		$nextClass = $this->ctrl->getNextClass();
+		$nextClass = self::dic()->ctrl()->getNextClass();
 
 		switch ($nextClass) {
 			default:
-				$cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
+				$cmd = self::dic()->ctrl()->getCmd(self::CMD_STANDARD);
 				$this->performCommand($cmd);
 				break;
 		}
@@ -86,7 +66,7 @@ abstract class xoctGUI {
 
 
 	protected function cancel() {
-		$this->ctrl->redirect($this, self::CMD_STANDARD);
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
 

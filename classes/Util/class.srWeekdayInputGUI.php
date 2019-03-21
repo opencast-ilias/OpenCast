@@ -1,6 +1,5 @@
 <?php
-/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class srWeekdayInputGUI
  *
@@ -8,26 +7,17 @@
  */
 class srWeekdayInputGUI extends ilFormPropertyGUI {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	const TYPE = 'weekday';
 	/**
 	 * @var array
 	 */
 	protected $value = array();
-	/**
-	 * @var ilLanguage
-	 */
-	protected $lng;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 
 
 	public function __construct($a_title, $a_postvar) {
-		global $DIC;
-		$lng = $DIC['lng'];
-		$this->lng = $lng;
-		$this->pl = ilOpenCastPlugin::getInstance();
 		parent::__construct($a_title, $a_postvar);
 		$this->setType(self::TYPE);
 	}
@@ -85,7 +75,7 @@ class srWeekdayInputGUI extends ilFormPropertyGUI {
 
 
 	protected function render() {
-		$tpl = $this->pl->getTemplate("default/tpl.weekday_input.html");
+		$tpl = self::plugin()->getPluginObject()->getTemplate("default/tpl.weekday_input.html");
 
 		$days = array( 1 => 'MO', 2 => 'TU', 3 => 'WE', 4 => 'TH', 5 => 'FR', 6 => 'SA', 7 => 'SU' );
 
@@ -95,7 +85,7 @@ class srWeekdayInputGUI extends ilFormPropertyGUI {
 			if (in_array($days[$i], $this->getValue())) {
 				$tpl->setVariable('BYDAY_WEEKLY_CHECKED', 'checked="checked"');
 			}
-			$tpl->setVariable('TXT_ON', $this->lng->txt('cal_on'));
+			$tpl->setVariable('TXT_ON', self::dic()->language()->txt('cal_on'));
 			$tpl->setVariable('BYDAY_WEEKLY_VAL', $days[$i]);
 			$tpl->setVariable('TXT_DAY_SHORT', ilCalendarUtil::_numericDayToString($i, false));
 			$tpl->setVariable('POSTVAR', $this->getPostVar());

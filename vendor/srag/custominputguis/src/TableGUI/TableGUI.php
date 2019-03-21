@@ -214,19 +214,19 @@ abstract class TableGUI extends ilTable2GUI {
 	 */
 	protected function fillRow(/*array*/
 		$row)/*: void*/ {
-		$this->tpl->setCurrentBlock("column");
+		self::dic()->mainTemplate()->setCurrentBlock("column");
 
 		foreach ($this->getSelectableColumns() as $column) {
 			if ($this->isColumnSelected($column["id"])) {
 				$column = $this->getColumnValue($column["id"], $row);
 
 				if (!empty($column)) {
-					$this->tpl->setVariable("COLUMN", $column);
+					self::dic()->mainTemplate()->setVariable("COLUMN", $column);
 				} else {
-					$this->tpl->setVariable("COLUMN", " ");
+					self::dic()->mainTemplate()->setVariable("COLUMN", " ");
 				}
 
-				$this->tpl->parseCurrentBlock();
+				self::dic()->mainTemplate()->parseCurrentBlock();
 			}
 		}
 	}

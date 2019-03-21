@@ -1,10 +1,14 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctPermissionTemplateFormGUI
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
 class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
      * @var  xoctConf
@@ -15,14 +19,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      */
     protected $parent_gui;
     /**
-     * @var  ilCtrl
-     */
-    protected $ctrl;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $pl;
-    /**
      * @var string
      */
     protected $subtab_active;
@@ -32,13 +28,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      * @param $parent_gui
      */
     public function __construct(xoctPermissionTemplateGUI $parent_gui) {
-        global $DIC;
-        $ilCtrl = $DIC['ilCtrl'];
-        $lng = $DIC['lng'];
+    	parent::__construct();
         $this->parent_gui = $parent_gui;
-        $this->ctrl = $ilCtrl;
-        $this->pl = ilOpenCastPlugin::getInstance();
-        $this->lng = $lng;
         $this->initForm();
     }
 
@@ -48,7 +39,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      */
     protected function initForm() {
         $this->setTarget('_top');
-        $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+        $this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
         $this->initButtons();
 
         $h = new ilFormSectionHeaderGUI();

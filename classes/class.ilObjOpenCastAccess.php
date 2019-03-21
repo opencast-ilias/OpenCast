@@ -1,26 +1,5 @@
 <?php
-/*
-	+-----------------------------------------------------------------------------+
-	| ILIAS open source                                                           |
-	+-----------------------------------------------------------------------------+
-	| Copyright (c) 1998-2001 ILIAS open source, University of Cologne            |
-	|                                                                             |
-	| This program is free software; you can redistribute it and/or               |
-	| modify it under the terms of the GNU General Public License                 |
-	| as published by the Free Software Foundation; either version 2              |
-	| of the License, or (at your option) any later version.                      |
-	|                                                                             |
-	| This program is distributed in the hope that it will be useful,             |
-	| but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-	| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               |
-	| GNU General Public License for more details.                                |
-	|                                                                             |
-	| You should have received a copy of the GNU General Public License           |
-	| along with this program; if not, write to the Free Software                 |
-	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
-	+-----------------------------------------------------------------------------+
-*/
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Access/Condition checking for OpenCast object
  *
@@ -29,6 +8,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @version       1.0.00
  */
 class ilObjOpenCastAccess extends ilObjectPluginAccess {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const ROLE_MEMBER = 1;
 	const ROLE_ADMIN = 2;
@@ -117,10 +99,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	protected static function redirectNonAccess() {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
 		ilUtil::sendFailure(ilOpenCastPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED), true);
-		$ilCtrl->redirectByClass('ilRepositoryGUI');
+		self::dic()->ctrl()->redirectByClass('ilRepositoryGUI');
 	}
 
 
@@ -146,11 +126,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 */
 	public static function hasWriteAccess($ref_id = NULL) {
+		global $DIC;
+		$ilAccess = $DIC['ilAccess'];
+
 		if ($ref_id === NULL) {
 			$ref_id = $_GET['ref_id'];
 		}
-		global $DIC;
-		$ilAccess = $DIC['ilAccess'];
 
 		/**
 		 * @var $ilAccess ilAccesshandler
