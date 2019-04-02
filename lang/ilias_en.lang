@@ -119,7 +119,7 @@ config_workflow_parameter_value_1#:#Set Automatically
 config_workflow_parameter_value_2#:#Show in Form
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
-config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected above.
+config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -324,6 +324,7 @@ tab_back#:#Back
 tab_migration#:#Migration
 tab_video_portal#:#Video Portal
 tab_reports#:#Reports
+tab_workflow_params#:#Workflow Parameters
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events
@@ -332,7 +333,8 @@ subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security
 subtab_advanced#:#Advanced
 subtab_permission_templates#:#Permission Templates
-subtab_workflow_params#:#Workflow Parameters
+subtab_parameters#:#Parameters
+subtab_settings#:#Settings
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -401,3 +403,5 @@ date_to#:#Date To
 sender#:#Creator
 workflow_parameters#:#Workflow Parameters
 default_values#:#Default Values
+default_value_member#:#
+default_value_admin#:#

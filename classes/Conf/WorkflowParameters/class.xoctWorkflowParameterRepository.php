@@ -107,13 +107,16 @@ class xoctWorkflowParameterRepository {
 
 
 	/**
-	 * @param $id
-	 * @param $title
-	 * @param $type
+	 * @param     $id
+	 * @param     $title
+	 * @param     $type
+	 *
+	 * @param int $default_value_member
+	 * @param int $default_value_admin
 	 *
 	 * @return xoctWorkflowParameter
 	 */
-	public function createOrUpdate($id, $title, $type) {
+	public function createOrUpdate($id, $title, $type, $default_value_member = 0, $default_value_admin = 0) {
 		if (!xoctWorkflowParameter::where(array('id' => $id))->hasSets()) {
 			$is_new = true;
 		}
@@ -121,6 +124,8 @@ class xoctWorkflowParameterRepository {
 		$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
 		$xoctWorkflowParameter->setTitle($title);
 		$xoctWorkflowParameter->setType($type);
+		$xoctWorkflowParameter->setDefaultValueMember($default_value_member);
+		$xoctWorkflowParameter->setDefaultValueAdmin($default_value_admin);
 		$xoctWorkflowParameter->store();
 
 		if ($is_new) {
@@ -138,7 +143,8 @@ class xoctWorkflowParameterRepository {
 		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
 		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
 			$sql = 'UPDATE ' . xoctSeriesWorkflowParameter::TABLE_NAME .
-				' SET value = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValue(), 'integer') .
+				' SET value_member = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueMember(), 'integer') . ', ' .
+				' value_admin = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueAdmin(), 'integer') .
 				' WHERE param_id = ' . self::dic()->database()->quote($xoctWorkflowParameter->getId(), 'text');
 			self::dic()->database()->query($sql);
 		}

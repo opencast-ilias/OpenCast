@@ -26,18 +26,19 @@ class xoctMainGUI extends xoctGUI {
 
 
 	/**
-	 * @return bool
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws ilCtrlException
 	 */
 	public function executeCommand() {
 		$nextClass = self::dic()->ctrl()->getNextClass();
 
 		self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+		self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget(new xoctWorkflowParameterGUI()));
 		self::dic()->tabs()->addTab(self::TAB_PUBLICATION_USAGE, self::plugin()->translate('tab_'
 			. self::TAB_PUBLICATION_USAGE), self::dic()->ctrl()->getLinkTarget(new xoctPublicationUsageGUI()));
 		self::dic()->tabs()->addTab(self::TAB_VIDEO_PORTAL, self::plugin()->translate('tab_' . self::TAB_VIDEO_PORTAL), self::dic()->ctrl()->getLinkTarget(new xoctPermissionTemplateGUI()));
 		self::dic()->tabs()->addTab(self::TAB_EXPORT, self::plugin()->translate('tab_' . self::TAB_EXPORT), self::dic()->ctrl()->getLinkTarget(new xoctConfExportGUI()));
 		self::dic()->tabs()->addTab(self::TAB_REPORTS, self::plugin()->translate('tab_' . self::TAB_REPORTS), self::dic()->ctrl()->getLinkTarget(new xoctReportOverviewGUI()));
-		self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('subtab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget(new xoctWorkflowParameterGUI()));
 
 		switch ($nextClass) {
 			case strtolower(xoctPublicationUsageGUI::class):
@@ -61,8 +62,7 @@ class xoctMainGUI extends xoctGUI {
 				self::dic()->ctrl()->forwardCommand($xoctReportOverviewGUI);
 				break;
 			case strtolower(xoctWorkflowParameterGUI::class):
-				$this->setSubTabs();
-				self::dic()->tabs()->activateTab(self::TAB_SETTINGS);
+				self::dic()->tabs()->activateTab(self::TAB_WORKFLOW_PARAMETERS);
 				$xoctWorkflowParameterGUI = new xoctWorkflowParameterGUI();
 				self::dic()->ctrl()->forwardCommand($xoctWorkflowParameterGUI);
 				break;

@@ -43,27 +43,6 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
 	protected function initFields() {
-		$this->fields[] = [
-			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
-			self::PROPERTY_TITLE => self::plugin()->translate('default_values'),
-		];
-		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
-			$this->fields[$xoctWorkflowParameter->getId()] = [
-				self::PROPERTY_CLASS => ilSelectInputGUI::class,
-				self::PROPERTY_TITLE => $xoctWorkflowParameter->getTitle() ?: $xoctWorkflowParameter->getId(),
-				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-					xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-					xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config')
-				],
-				self::PROPERTY_VALUE => $xoctWorkflowParameter->getDefaultValue(),
-			];
-		}
-		$this->fields[] = [
-			self::PROPERTY_CLASS => ilFormSectionHeaderGUI::class,
-			self::PROPERTY_TITLE => self::plugin()->translate('settings', 'tab'),
-		];
 		$this->fields[xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
 			self::PROPERTY_TITLE => self::plugin()->translate(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
 			self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
@@ -90,6 +69,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 */
 	protected function initTitle() {
+		$this->setTitle(self::plugin()->translate('settings', 'tab'));
 	}
 
 
@@ -108,10 +88,6 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 				}
 				break;
 			default:
-				/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-				$xoctWorkflowParameter = xoctWorkflowParameter::find($key);
-				$xoctWorkflowParameter->setDefaultValue($value);
-				$xoctWorkflowParameter->store();
 				break;
 		}
 	}

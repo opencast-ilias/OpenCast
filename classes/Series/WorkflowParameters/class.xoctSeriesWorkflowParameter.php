@@ -59,7 +59,16 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 	 * @db_length           8
 	 * @db_is_notnull       true
 	 */
-	protected $value;
+	protected $value_member;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           8
+	 * @db_is_notnull       true
+	 */
+	protected $value_admin;
 
 
 	/**
@@ -113,17 +122,31 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getValue() {
-		return $this->value;
+	public function getValueMember() {
+		return $this->value_member;
 	}
 
 
 	/**
-	 * @param int $value
+	 * @param int $value_member
 	 */
-	public function setValue($value) {
-		$this->value = $value;
+	public function setValueMember($value_member) {
+		$this->value_member = $value_member;
 	}
 
 
+	/**
+	 * @return int
+	 */
+	public function getValueAdmin() {
+		return $this->value_admin;
+	}
+
+
+	/**
+	 * @param int $value_admin
+	 */
+	public function setValueAdmin($value_admin) {
+		$this->value_admin = $value_admin;
+	}
 }

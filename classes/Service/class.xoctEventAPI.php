@@ -51,6 +51,8 @@ class xoctEventAPI {
 		$event->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
 		$event->setPresenter(isset($additional_data['presenters']) ? $additional_data['presenters'] : '');
 
+		// TODO: processing
+
 		$std_acls = new xoctAclStandardSets();
 		$event->setAcl($std_acls->getAcls());
 

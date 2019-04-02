@@ -1499,7 +1499,7 @@ class xoctEvent extends xoctObject {
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
-
+		// TODO: was passiert bei erstellung via API?
 		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
 			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
 		}

@@ -9,9 +9,14 @@
  */
 class xoctWorkflowParameterGUI extends xoctGUI {
 
+	const SUBTAB_PARAMETERS = 'parameters';
+	const SUBTAB_SETTINGS = 'settings';
+
 	const CMD_SHOW_TABLE = 'showTable';
+	const CMD_SHOW_FORM = 'showForm';
 	const CMD_UPDATE_FORM = 'updateForm';
 	const CMD_UPDATE_PARAMETER = 'updateParameter';
+	const CMD_UPDATE_TABLE = 'updateTable';
 	const CMD_LOAD_WORKFLOW_PARAMS = 'loadWorkflowParameters';
 	const CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED = 'loadWorkflowParametersConfirmed';
 	const CMD_OVERWRITE_SERIES_PARAMETERS = 'overwriteSeriesParameters';
@@ -24,9 +29,13 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function index() {
-		self::dic()->tabs()->setSubTabActive(xoctMainGUI::TAB_WORKFLOW_PARAMETERS);
-		$xoctWorkflowParameterFormGUI = new xoctWorkflowParametersFormGUI($this);
-		self::dic()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
+		$this->showTable();
+	}
+
+
+	protected function setSubTabs() {
+		self::dic()->tabs()->addSubTab(self::SUBTAB_PARAMETERS, self::plugin()->translate(self::SUBTAB_PARAMETERS, 'subtab'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD));
+		self::dic()->tabs()->addSubTab(self::SUBTAB_SETTINGS, self::plugin()->translate(self::SUBTAB_SETTINGS, 'subtab'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_SHOW_FORM));
 	}
 
 
@@ -34,11 +43,16 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function showTable() {
-		self::dic()->tabs()->clearSubTabs();
-		self::dic()->tabs()->clearTargets();
-		self::dic()->tabs()->setBackTarget(self::dic()->language()->txt('back'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD));
+		self::dic()->tabs()->setSubTabActive(self::SUBTAB_PARAMETERS);
 		$xoctWorkflowParameterTableGUI = new xoctWorkflowParameterTableGUI($this, self::CMD_SHOW_TABLE);
 		self::dic()->mainTemplate()->setContent($xoctWorkflowParameterTableGUI->getHTML());
+	}
+
+
+	protected function showForm() {
+		self::dic()->tabs()->setSubTabActive(self::SUBTAB_SETTINGS);
+		$xoctWorkflowParameterFormGUI = new xoctWorkflowParametersFormGUI($this);
+		self::dic()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
 	}
 
 	/**
@@ -46,6 +60,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 */
 	protected function performCommand($cmd) {
 		$this->initToolbar($cmd);
+		$this->setSubTabs();
 		$this->{$cmd}();
 	}
 
@@ -55,11 +70,6 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	protected function initToolbar($cmd) {
 		switch ($cmd) {
 			case self::CMD_STANDARD:
-				$button = ilLinkButton::getInstance();
-				$button->setCaption(self::plugin()->translate('config_btn_edit_parameters'), false);
-				$button->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_SHOW_TABLE));
-				self::dic()->toolbar()->addButtonInstance($button);
-				break;
 			case self::CMD_SHOW_TABLE:
 				$button = ilLinkButton::getInstance();
 				$button->setCaption(self::plugin()->translate('config_btn_load_parameters'), false);
@@ -192,7 +202,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 				$ilConfirmationGUI->setHeaderText(self::plugin()->translate('msg_confirm_overwrite_series_params'));
 				self::dic()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
 			} else {
-				self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+				self::dic()->ctrl()->redirect($this, self::CMD_SHOW_FORM);
 			}
 		} else {
 			self::dic()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
@@ -214,13 +224,18 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	}
 
 
+	protected function updateTable() {
+		echo 'test';
+	}
+
+
 	/**
 	 *
 	 */
 	protected function overwriteSeriesParameters() {
 		xoctWorkflowParameterRepository::getInstance()->overwriteSeriesParameter();
 		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
-		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_FORM);
 	}
 
 	/**

@@ -12,6 +12,15 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 	const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
 
+
+	/**
+	 *
+	 */
+	protected function initCommands() {
+		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_TABLE, self::dic()->language()->txt('save'));
+	}
+
+
 	/**
 	 * @inheritdoc
 	 */
@@ -19,6 +28,8 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 		$this->addColumn(self::dic()->language()->txt("id"));
 		$this->addColumn(self::dic()->language()->txt("title"));
 		$this->addColumn(self::dic()->language()->txt("type"));
+		$this->addColumn(self::dic()->language()->txt("default_value_member"));
+		$this->addColumn(self::dic()->language()->txt("default_value_admin"));
 		$this->addColumn('', '', '', true);
 	}
 
@@ -86,9 +97,26 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	 * @throws ilTemplateException
 	 */
 	protected function fillRow($row) {
-		self::dic()->mainTemplate()->setVariable("ID", $row["id"]);
-		self::dic()->mainTemplate()->setVariable("TITLE", $row["title"]);
-		self::dic()->mainTemplate()->setVariable("TYPE", $row["type"]);
+		$this->tpl->setVariable("ID", $row["id"]);
+		$this->tpl->setVariable("TITLE", $row["title"]);
+		$this->tpl->setVariable("TYPE", $row["type"]);
+
+		$ilSelectInputGUI = new ilSelectInputGUI('', 'default_value_member[' . $row['id'] . ']');
+		$ilSelectInputGUI->setOptions([
+			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
+			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
+			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
+		]);
+		$this->tpl->setVariable("DEFAULT_VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
+
+
+		$ilSelectInputGUI = new ilSelectInputGUI('', 'default_value_admin[' . $row['id'] . ']');
+		$ilSelectInputGUI->setOptions([
+			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
+			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
+			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
+		]);
+		$this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
 		$actions = new ilAdvancedSelectionListGUI();
 		$actions->setListTitle(self::dic()->language()->txt("actions"));
@@ -101,7 +129,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 		$actions->addItem(self::dic()->language()->txt("delete"), "", self::dic()->ctrl()
 			->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_DELETE));
 
-		self::dic()->mainTemplate()->setVariable("ACTIONS", self::output()->getHTML($actions));
+		$this->tpl->setVariable("ACTIONS", self::output()->getHTML($actions));
 
 		self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", NULL);
 	}

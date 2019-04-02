@@ -119,7 +119,7 @@ config_workflow_parameter_value_1#:#Automatisch Setzen
 config_workflow_parameter_value_2#:#Im Formular anbieten
 config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
 config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
-config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den oben ausgewählten Konfigurationen überschrieben.
+config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -322,6 +322,7 @@ tab_back#:#Zurück
 tab_migration#:#Migration
 tab_video_portal#:#Videoportal
 tab_reports#:#Verfasste Meldungen
+tab_workflow_params#:#Workflow Parameter
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien
@@ -330,7 +331,8 @@ subtab_groups_roles#:#Gruppen & Rollen
 subtab_security#:#Security
 subtab_advanced#:#Erweitert
 subtab_permission_templates#:#Berechtigungsvorlagen
-subtab_workflow_params#:#Workflow Parameter
+subtab_parameters#:#Parameter
+subtab_settings#:#Einstellungen
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token

@@ -57,7 +57,15 @@ class xoctWorkflowParameter extends ActiveRecord {
 	 * @db_fieldtype        integer
 	 * @db_length           8
 	 */
-	protected $default_value = self::VALUE_IGNORE;
+	protected $default_value_member = self::VALUE_IGNORE;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           8
+	 */
+	protected $default_value_admin = self::VALUE_IGNORE;
 
 
 	/**
@@ -111,15 +119,31 @@ class xoctWorkflowParameter extends ActiveRecord {
 	/**
 	 * @return integer
 	 */
-	public function getDefaultValue() {
-		return $this->default_value;
+	public function getDefaultValueMember() {
+		return $this->default_value_member;
 	}
 
 
 	/**
-	 * @param integer $default_value
+	 * @param integer $default_value_member
 	 */
-	public function setDefaultValue($default_value) {
-		$this->default_value = $default_value;
+	public function setDefaultValueMember($default_value_member) {
+		$this->default_value_member = $default_value_member;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getDefaultValueAdmin() {
+		return $this->default_value_admin;
+	}
+
+
+	/**
+	 * @param int $default_value_admin
+	 */
+	public function setDefaultValueAdmin($default_value_admin) {
+		$this->default_value_admin = $default_value_admin;
 	}
 }

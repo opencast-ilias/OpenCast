@@ -55,7 +55,8 @@ class xoctSeriesWorkflowParameterRepository {
 				$series_param = new xoctSeriesWorkflowParameter();
 				$series_param->setObjId($obj_id);
 				$series_param->setParamId($param->getId());
-				$series_param->setValue($param->getDefaultValue());
+				$series_param->setValueMember($param->getDefaultValueMember());
+				$series_param->setValueAdmin($param->getDefaultValueAdmin());
 				$series_param->create();
 			}
 		}
@@ -64,11 +65,13 @@ class xoctSeriesWorkflowParameterRepository {
 
 	/**
 	 * @param $id
-	 * @param $value
+	 * @param $value_member
+	 * @param $value_admin
 	 */
-	public function updateById($id, $value) {
+	public function updateById($id, $value_member, $value_admin) {
 		$xoctSeriesWorkflowParameter = xoctSeriesWorkflowParameter::find($id);
-		$xoctSeriesWorkflowParameter->setValue($value);
+		$xoctSeriesWorkflowParameter->setValueMember($value_member);
+		$xoctSeriesWorkflowParameter->setValueAdmin($value_admin);
 		$xoctSeriesWorkflowParameter->update();
 	}
 
@@ -80,11 +83,12 @@ class xoctSeriesWorkflowParameterRepository {
 	 */
 	public function getFormItemsForObjId($obj_id) {
 		$items = [];
+		$is_admin = ilObjOpenCastAccess::hasPermission('edit_videos');
 		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
 			/** @var xoctSeriesWorkflowParameter $input */
 			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
 				'obj_id' => $obj_id,
-				'value' => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
+				($is_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
 			])->get() as $input) {
 				$cb = new ilCheckboxInputGUI($input->xoct_workflow_param_title ?: $input->getParamId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
 					. $input->getParamId() . ']');
@@ -93,7 +97,7 @@ class xoctSeriesWorkflowParameterRepository {
 		} else {
 			/** @var xoctWorkflowParameter $input */
 			foreach (xoctWorkflowParameter::where([
-				'default_value' => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+				($is_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
 			])->get() as $input) {
 				$cb = new ilCheckboxInputGUI($input->getTitle() ?: $input->getId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
 					. $input->getId() . ']');

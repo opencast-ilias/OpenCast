@@ -88,5 +88,5 @@ xoctReport::updateDB();
 <#13>
 <?php
 xoctWorkflowParameter::updateDB();
-xoctWorkflowParameter::updateDB();
+xoctSeriesWorkflowParameter::updateDB();
 ?>
