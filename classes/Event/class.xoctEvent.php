@@ -507,8 +507,10 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	public function removeAllOwnerAcls() {
+		$standard_roles = xoctConf::getConfig(xoctConf::F_STD_ROLES);
 		foreach ($this->getAcl() as $i => $acl) {
-			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
+			if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
+				&& !in_array($acl->getRole(), $standard_roles)) {
 				unset($this->acl[$i]);
 			}
 		}
