@@ -118,6 +118,7 @@ event_cancel#:#Cancel
 event_clear_cache#:#Reload Events
 event_clips#:#Events
 event_create#:#Upload Event
+event_createScheduled#:#Create Event
 event_created#:#Created
 event_creator#:#Creator
 event_cut#:#Cut Event
