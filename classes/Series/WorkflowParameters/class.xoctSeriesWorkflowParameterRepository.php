@@ -29,6 +29,17 @@ class xoctSeriesWorkflowParameterRepository {
 
 
 	/**
+	 * @param $obj_id
+	 * @param $param_id
+	 *
+	 * @return xoctSeriesWorkflowParameter
+	 */
+	public static function getByObjAndParamId($obj_id, $param_id) {
+		return xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id, 'param_id' => $param_id])->first();
+	}
+
+
+	/**
 	 * @param $param_ids
 	 */
 	public function deleteParamsForAllObjectsById($param_ids) {
@@ -52,12 +63,12 @@ class xoctSeriesWorkflowParameterRepository {
 		$all_obj_ids = xoctOpenCast::getArray(null, 'obj_id');
 		foreach ($all_obj_ids as $obj_id) {
 			foreach ($params as $param) {
-				$series_param = new xoctSeriesWorkflowParameter();
-				$series_param->setObjId($obj_id);
-				$series_param->setParamId($param->getId());
-				$series_param->setValueMember($param->getDefaultValueMember());
-				$series_param->setValueAdmin($param->getDefaultValueAdmin());
-				$series_param->create();
+				(new xoctSeriesWorkflowParameter())
+					->setObjId($obj_id)
+					->setParamId($param->getId())
+					->setValueMember($param->getDefaultValueMember())
+					->setValueAdmin($param->getDefaultValueAdmin())
+					->create();
 			}
 		}
 	}
@@ -69,26 +80,27 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $value_admin
 	 */
 	public function updateById($id, $value_member, $value_admin) {
-		$xoctSeriesWorkflowParameter = xoctSeriesWorkflowParameter::find($id);
-		$xoctSeriesWorkflowParameter->setValueMember($value_member);
-		$xoctSeriesWorkflowParameter->setValueAdmin($value_admin);
-		$xoctSeriesWorkflowParameter->update();
+		xoctSeriesWorkflowParameter::find($id)
+			->setValueMember($value_member)
+			->setValueAdmin($value_admin)
+			->update();
 	}
 
 
 	/**
-	 * @param $obj_id
+	 * @param      $obj_id
+	 *
+	 * @param bool $as_admin
 	 *
 	 * @return ilFormPropertyGUI[]
 	 */
-	public function getFormItemsForObjId($obj_id) {
+	public function getFormItemsForObjId($obj_id, $as_admin) {
 		$items = [];
-		$is_admin = ilObjOpenCastAccess::hasPermission('edit_videos');
 		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
 			/** @var xoctSeriesWorkflowParameter $input */
 			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
 				'obj_id' => $obj_id,
-				($is_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
+				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
 			])->get() as $input) {
 				$cb = new ilCheckboxInputGUI($input->xoct_workflow_param_title ?: $input->getParamId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
 					. $input->getParamId() . ']');
@@ -97,7 +109,7 @@ class xoctSeriesWorkflowParameterRepository {
 		} else {
 			/** @var xoctWorkflowParameter $input */
 			foreach (xoctWorkflowParameter::where([
-				($is_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+				($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
 			])->get() as $input) {
 				$cb = new ilCheckboxInputGUI($input->getTitle() ?: $input->getId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
 					. $input->getId() . ']');
@@ -109,24 +121,54 @@ class xoctSeriesWorkflowParameterRepository {
 
 
 	/**
-	 * @param $obj_id
+	 * @param      $obj_id
+	 *
+	 * @param bool $as_admin
 	 *
 	 * @return array
 	 */
-	public function getAutomaticallySetParametersForObjId($obj_id) {
+	public function getAutomaticallySetParametersForObjId($obj_id, $as_admin = true) {
 		$parameters = [];
 		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
 			/** @var xoctSeriesWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id, 'value' => xoctSeriesWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
+			foreach (xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id, ($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getParamId()] = 1;
 			}
 		} else {
 			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctWorkflowParameter::where(['value' => xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
+			foreach (xoctWorkflowParameter::where([($as_admin ? 'value_admin' : 'value_member') => xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY])->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
 			}
 		}
 		return $parameters;
 	}
 
+
+	/**
+	 * @param $obj_id
+	 */
+	public function syncAvailableParameters($obj_id) {
+		/** @var xoctWorkflowParameter[] $workflow_parameters */
+		$workflow_parameters = xoctWorkflowParameter::get();
+		$series_parameters = xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id])->getArray('param_id');
+
+		// create missing
+		foreach ($workflow_parameters as $workflow_parameter) {
+			if (!isset($series_parameters[$workflow_parameter->getId()])) {
+				(new xoctSeriesWorkflowParameter())
+					->setObjId($obj_id)
+					->setParamId($workflow_parameter->getId())
+					->setValueAdmin($workflow_parameter->getDefaultValueAdmin())
+					->setValueMember($workflow_parameter->getDefaultValueMember())
+					->create();
+			} else {
+				unset($series_parameters[$workflow_parameter->getId()]);
+			}
+		}
+
+		// delete not existing
+		foreach ($series_parameters as $id => $series_parameter) {
+			xoctSeriesWorkflowParameter::find($id)->delete();
+		}
+	}
 }

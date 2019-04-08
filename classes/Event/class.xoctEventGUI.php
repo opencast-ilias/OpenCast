@@ -29,7 +29,7 @@ class xoctEventGUI extends xoctGUI {
 	const ROLE_SLAVE = "presentation";
 
 	/**
-	 * @var \xoctOpenCast
+	 * @var xoctOpenCast
 	 */
 	protected $xoctOpenCast;
 
@@ -1135,12 +1135,22 @@ class xoctEventGUI extends xoctGUI {
         return $mail_body;
     }
 
+
 	/**
 	 * @param $key
 	 *
 	 * @return string
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
 	public function txt($key) {
 		return self::plugin()->translate('event_' . $key);
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getObjId() {
+		return $this->xoctOpenCast->getObjId();
 	}
 }

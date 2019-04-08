@@ -1,5 +1,7 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+
 /**
  * Class xoctEvent
  *
@@ -228,6 +230,20 @@ class xoctEvent extends xoctObject {
 		}
 
 		$this->setSource($this->getMetadata()->getField('source')->getValue());
+	}
+
+
+	/**
+	 * sets workflow parameters while adding the parameters with status "set automatically" automatically
+	 *
+	 * @param      $parameters array Workflow parameters to be set. Note that the parameters with value "set automatically" will be set automatically,
+	 *                         so it suffices to pass the additional ones
+	 * @param      $obj_id
+	 * @param bool $as_admin
+	 */
+	public function setWorkflowParametersForObjId($parameters, $obj_id, $as_admin = true) {
+		$automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
+		$this->setWorkflowParameters(array_merge($automatically_set, $parameters));
 	}
 
 
@@ -831,6 +847,22 @@ class xoctEvent extends xoctObject {
 		$this->processing_state_init = true;
 	}
 
+
+	/**
+	 * @param bool $as_admin
+	 */
+	public function addDefaultWorkflowParameters($as_admin = true) {
+		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
+		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+			if ($as_admin) {
+				$this->workflow_parameters[$xoctWorkflowParameter->getId()] = (int)($xoctWorkflowParameter->getDefaultValueAdmin()
+					== xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY);
+			} else {
+				$this->workflow_parameters[$xoctWorkflowParameter->getId()] = (int)($xoctWorkflowParameter->getDefaultValueMember()
+					== xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY);
+			}
+		}
+	}
 
 	/**
 	 * @var string

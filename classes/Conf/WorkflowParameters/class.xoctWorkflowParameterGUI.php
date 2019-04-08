@@ -33,6 +33,9 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
 	protected function setSubTabs() {
 		self::dic()->tabs()->addSubTab(self::SUBTAB_PARAMETERS, self::plugin()->translate(self::SUBTAB_PARAMETERS, 'subtab'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD));
 		self::dic()->tabs()->addSubTab(self::SUBTAB_SETTINGS, self::plugin()->translate(self::SUBTAB_SETTINGS, 'subtab'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_SHOW_FORM));
@@ -49,6 +52,9 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function showForm() {
 		self::dic()->tabs()->setSubTabActive(self::SUBTAB_SETTINGS);
 		$xoctWorkflowParameterFormGUI = new xoctWorkflowParametersFormGUI($this);
@@ -224,8 +230,19 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
 	protected function updateTable() {
-		echo 'test';
+		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $id => $value) {
+			$default_value_admin = $value['default_value_admin'];
+			$default_value_member = $value['default_value_member'];
+			if (in_array($default_value_member, xoctWorkflowParameter::$possible_values) && in_array($default_value_admin, xoctWorkflowParameter::$possible_values)) {
+				xoctWorkflowParameter::find($id)->setDefaultValueAdmin($default_value_admin)->setDefaultValueMember($default_value_member)->update();
+			}
+		}
+		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
+		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
 	}
 
 

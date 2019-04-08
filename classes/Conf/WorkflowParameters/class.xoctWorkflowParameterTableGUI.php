@@ -13,6 +13,12 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
 
 
+	public function __construct($parent, $parent_cmd) {
+		parent::__construct($parent, $parent_cmd);
+		$this->setEnableNumInfo(false);
+	}
+
+
 	/**
 	 *
 	 */
@@ -101,21 +107,23 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 		$this->tpl->setVariable("TITLE", $row["title"]);
 		$this->tpl->setVariable("TYPE", $row["type"]);
 
-		$ilSelectInputGUI = new ilSelectInputGUI('', 'default_value_member[' . $row['id'] . ']');
+		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_member]');
 		$ilSelectInputGUI->setOptions([
 			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
 			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
 			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
 		]);
+		$ilSelectInputGUI->setValue($row['default_value_member']);
 		$this->tpl->setVariable("DEFAULT_VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
-		$ilSelectInputGUI = new ilSelectInputGUI('', 'default_value_admin[' . $row['id'] . ']');
+		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_admin]');
 		$ilSelectInputGUI->setOptions([
 			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
 			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
 			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
 		]);
+		$ilSelectInputGUI->setValue($row['default_value_admin']);
 		$this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
 		$actions = new ilAdvancedSelectionListGUI();

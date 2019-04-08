@@ -81,9 +81,13 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param int $id
+	 *
+	 * @return static
 	 */
 	public function setId($id) {
 		$this->id = $id;
+
+		return $this;
 	}
 
 
@@ -97,9 +101,13 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param int $obj_id
+	 *
+	 * @return static
 	 */
 	public function setObjId($obj_id) {
 		$this->obj_id = $obj_id;
+
+		return $this;
 	}
 
 
@@ -113,9 +121,13 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param string $param_id
+	 *
+	 * @return static
 	 */
 	public function setParamId($param_id) {
 		$this->param_id = $param_id;
+
+		return $this;
 	}
 
 
@@ -129,9 +141,13 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param int $value_member
+	 *
+	 * @return static
 	 */
 	public function setValueMember($value_member) {
 		$this->value_member = $value_member;
+
+		return $this;
 	}
 
 
@@ -145,8 +161,12 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param int $value_admin
+	 *
+	 * @return static
 	 */
 	public function setValueAdmin($value_admin) {
 		$this->value_admin = $value_admin;
+
+		return $this;
 	}
 }

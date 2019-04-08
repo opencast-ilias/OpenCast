@@ -72,6 +72,9 @@ class xoctSeriesGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws Exception
+	 */
 	protected function edit() {
 		$this->editGeneral();
 	}
@@ -117,26 +120,35 @@ class xoctSeriesGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
 	protected function editWorkflowParameters() {
+		xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
 		}
 		self::dic()->tabs()->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
-		$xoctSeriesFormGUI = new xoctSeriesWorkflowParametersFormGUI($this);
+		$xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS);
 		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
-	protected function updateWorkflowParameters() {
-		$xoctWorkflowParameterFormGUI = new xoctSeriesWorkflowParametersFormGUI($this);
-		$xoctWorkflowParameterFormGUI->setValuesByPost();
-		if ($xoctWorkflowParameterFormGUI->storeForm()) {
-			ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
-			self::dic()->ctrl()->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
-		}
-		self::dic()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
-	}
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	protected function updateWorkflowParameters() {
+		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $param_id => $value) {
+			$value_admin = $value['value_admin'];
+			$value_member = $value['value_member'];
+			if (in_array($value_member, xoctWorkflowParameter::$possible_values) && in_array($value_admin, xoctWorkflowParameter::$possible_values)) {
+				xoctSeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setValueAdmin($value_admin)->setValueMember($value_member)->update();
+			}
+		}
+		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
+		self::dic()->ctrl()->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
+	}
 
 	/**
 	 *

@@ -15,6 +15,12 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 	const TYPE_CHECKBOX = 'checkbox';
 
+	public static $possible_values = [
+		self::VALUE_IGNORE,
+		self::VALUE_SET_AUTOMATICALLY,
+		self::VALUE_SHOW_IN_FORM
+	];
+
 	/**
 	 * @return string
 	 */
@@ -77,10 +83,13 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 
 	/**
-	 * @param string $id
+	 * @param $id
+	 *
+	 * @return $this
 	 */
 	public function setId($id) {
 		$this->id = $id;
+		return $this;
 	}
 
 
@@ -93,10 +102,13 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 
 	/**
-	 * @param string $title
+	 * @param $title
+	 *
+	 * @return $this
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
+		return $this;
 	}
 
 
@@ -109,10 +121,13 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 
 	/**
-	 * @param string $type
+	 * @param $type
+	 *
+	 * @return $this
 	 */
 	public function setType($type) {
 		$this->type = $type;
+		return $this;
 	}
 
 
@@ -126,9 +141,12 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param integer $default_value_member
+	 *
+	 * @return xoctWorkflowParameter
 	 */
 	public function setDefaultValueMember($default_value_member) {
 		$this->default_value_member = $default_value_member;
+		return $this;
 	}
 
 
@@ -142,8 +160,11 @@ class xoctWorkflowParameter extends ActiveRecord {
 
 	/**
 	 * @param int $default_value_admin
+	 *
+	 * @return xoctWorkflowParameter
 	 */
 	public function setDefaultValueAdmin($default_value_admin) {
 		$this->default_value_admin = $default_value_admin;
+		return $this;
 	}
 }

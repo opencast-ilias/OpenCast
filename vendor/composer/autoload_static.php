@@ -877,6 +877,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctSeriesGUI' => __DIR__ . '/../..' . '/classes/Series/class.xoctSeriesGUI.php',
         'xoctSeriesWorkflowParameter' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameter.php',
         'xoctSeriesWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterRepository.php',
+        'xoctSeriesWorkflowParameterTableGUI' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterTableGUI.php',
         'xoctSeriesWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParametersFormGUI.php',
         'xoctSystemAccount' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccount.php',
         'xoctSystemAccountFormGUI' => __DIR__ . '/../..' . '/classes/Conf/SystemAccount/class.xoctSystemAccountFormGUI.php',

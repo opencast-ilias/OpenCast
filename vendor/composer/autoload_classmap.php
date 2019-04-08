@@ -852,6 +852,7 @@ return array(
     'xoctSeriesGUI' => $baseDir . '/classes/Series/class.xoctSeriesGUI.php',
     'xoctSeriesWorkflowParameter' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameter.php',
     'xoctSeriesWorkflowParameterRepository' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterRepository.php',
+    'xoctSeriesWorkflowParameterTableGUI' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParameterTableGUI.php',
     'xoctSeriesWorkflowParametersFormGUI' => $baseDir . '/classes/Series/WorkflowParameters/class.xoctSeriesWorkflowParametersFormGUI.php',
     'xoctSystemAccount' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccount.php',
     'xoctSystemAccountFormGUI' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccountFormGUI.php',

@@ -280,7 +280,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		if ($this->is_new) {
-			foreach (xoctSeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId($this->xoctOpenCast->getObjId()) as $item) {
+			foreach (xoctSeriesWorkflowParameterRepository::getInstance()
+				         ->getFormItemsForObjId($this->xoctOpenCast->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos')) as $item) {
 				$this->addItem($item);
 			}
 		}
@@ -341,12 +342,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
-
-		$workflow_parameters = array_merge(
-			$this->getInput(self::F_WORKFLOW_PARAMETER),
-			xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($this->xoctOpenCast->getObjId())
-		);
-		$this->object->setWorkflowParameters($workflow_parameters);
+		$this->object->setWorkflowParametersForObjId((array) $this->getInput(self::F_WORKFLOW_PARAMETER), $this->parent_gui->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos'));
 
         $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 
@@ -468,7 +464,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
                 }
             } else {
                 // auto publish always true for member upload
-//                $this->object->create(($this->getInput(self::F_AUTO_PUBLISH) || !ilObjOpenCastAccess::hasPermission('edit_videos')) ? true : false);
                 $this->object->create();
 			}
 		}
