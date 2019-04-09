@@ -84,22 +84,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
-				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-					xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-					xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
-				]
+				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions()
 			],
 			self::F_DEFAULT_VALUE_ADMIN => [
 				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_DEFAULT_VALUE_ADMIN),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),
-				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-					xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-					xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
-					]
+				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions()
 			],
 
 		];

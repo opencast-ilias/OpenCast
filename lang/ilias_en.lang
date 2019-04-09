@@ -114,9 +114,10 @@ config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas
 config_btn_load_parameters#:#Load Parameters via API
 config_btn_edit_parameters#:#Add/Edit Parameters
 config_btn_add_parameter#:#Add New Parameter
-config_workflow_parameter_value_0#:#Ignore
-config_workflow_parameter_value_1#:#Set Automatically
-config_workflow_parameter_value_2#:#Show in Form
+config_workflow_parameter_value_0#:#None (Use Default)
+config_workflow_parameter_value_1#:#Always Active
+config_workflow_parameter_value_2#:#Always Inactive
+config_workflow_parameter_value_3#:#Show in Form
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
 config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
@@ -335,6 +336,7 @@ subtab_advanced#:#Advanced
 subtab_permission_templates#:#Permission Templates
 subtab_parameters#:#Parameters
 subtab_settings#:#Settings
+subtab_workflow_params#:#Workflow Parameters
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -403,5 +405,7 @@ date_to#:#Date To
 sender#:#Creator
 workflow_parameters#:#Workflow Parameters
 default_values#:#Default Values
-default_value_member#:#
-default_value_admin#:#
+default_value_member#:#Usage for Members
+default_value_admin#:#Usage for Admins
+value_member#:#Usage for Members
+value_admin#:#Usage for Admins

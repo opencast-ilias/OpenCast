@@ -1,10 +1,14 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctFileUploadInputGUI
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var array

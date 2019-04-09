@@ -53,11 +53,7 @@ class xoctSeriesWorkflowParametersFormGUI extends PropertyFormGUI {
 			$this->fields[$xoctWorkflowParameter->xoct_series_param_id] = [
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_TITLE => $xoctWorkflowParameter->getTitle() ?: $xoctWorkflowParameter->getId(),
-				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-					xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-					xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config')
-				],
+				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions(),
 				self::PROPERTY_VALUE => $xoctWorkflowParameter->xoct_series_param_value,
 			];
 		}

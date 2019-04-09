@@ -10,7 +10,8 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 	const TABLE_NAME = 'xoct_series_param';
 
 	const VALUE_IGNORE = xoctWorkflowParameter::VALUE_IGNORE;
-	const VALUE_SET_AUTOMATICALLY = xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY;
+	const VALUE_ALWAYS_ACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE;
+	const VALUE_ALWAYS_INACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE;
 	const VALUE_SHOW_IN_FORM = xoctWorkflowParameter::VALUE_SHOW_IN_FORM;
 
 	/**

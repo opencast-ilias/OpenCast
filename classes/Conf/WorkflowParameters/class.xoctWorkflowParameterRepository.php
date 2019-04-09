@@ -149,4 +149,17 @@ class xoctWorkflowParameterRepository {
 			self::dic()->database()->query($sql);
 		}
 	}
+
+
+	/**
+	 * @return array
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	public static function getSelectionOptions() {
+		$options = [];
+		foreach (xoctWorkflowParameter::$possible_values as $value) {
+			$options[$value] = self::plugin()->translate('workflow_parameter_value_' . $value, 'config');
+		}
+		return $options;
+	}
 }

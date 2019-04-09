@@ -10,14 +10,16 @@ class xoctWorkflowParameter extends ActiveRecord {
 	const TABLE_NAME = 'xoct_workflow_param';
 
 	const VALUE_IGNORE = 0;
-	const VALUE_SET_AUTOMATICALLY = 1;
-	const VALUE_SHOW_IN_FORM = 2;
+	const VALUE_ALWAYS_ACTIVE = 1;
+	const VALUE_ALWAYS_INACTIVE = 2;
+	const VALUE_SHOW_IN_FORM = 3;
 
 	const TYPE_CHECKBOX = 'checkbox';
 
 	public static $possible_values = [
 		self::VALUE_IGNORE,
-		self::VALUE_SET_AUTOMATICALLY,
+		self::VALUE_ALWAYS_ACTIVE,
+		self::VALUE_ALWAYS_INACTIVE,
 		self::VALUE_SHOW_IN_FORM
 	];
 
@@ -167,4 +169,6 @@ class xoctWorkflowParameter extends ActiveRecord {
 		$this->default_value_admin = $default_value_admin;
 		return $this;
 	}
+
+
 }

@@ -854,12 +854,17 @@ class xoctEvent extends xoctObject {
 	public function addDefaultWorkflowParameters($as_admin = true) {
 		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
 		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
-			if ($as_admin) {
-				$this->workflow_parameters[$xoctWorkflowParameter->getId()] = (int)($xoctWorkflowParameter->getDefaultValueAdmin()
-					== xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY);
-			} else {
-				$this->workflow_parameters[$xoctWorkflowParameter->getId()] = (int)($xoctWorkflowParameter->getDefaultValueMember()
-					== xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY);
+			$default_value = $as_admin ? $xoctWorkflowParameter->getDefaultValueAdmin() : $xoctWorkflowParameter->getDefaultValueMember();
+
+			switch ($default_value) {
+				case xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE:
+					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 1;
+					break;
+				case xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE:
+					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 0;
+					break;
+				default:
+					break;
 			}
 		}
 	}

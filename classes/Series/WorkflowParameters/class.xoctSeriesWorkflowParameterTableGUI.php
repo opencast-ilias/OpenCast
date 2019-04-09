@@ -68,8 +68,8 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI {
 		$this->addColumn(self::dic()->language()->txt("id"));
 		$this->addColumn(self::dic()->language()->txt("title"));
 		$this->addColumn(self::dic()->language()->txt("type"));
-		$this->addColumn(self::dic()->language()->txt("value_member"));
-		$this->addColumn(self::dic()->language()->txt("value_admin"));
+		$this->addColumn(self::plugin()->translate("value_member"));
+		$this->addColumn(self::plugin()->translate("value_admin"));
 		$this->addColumn('', '', '', true);
 	}
 
@@ -85,21 +85,13 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI {
 		$this->tpl->setVariable("TYPE", $row["type"]);
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_member]');
-		$ilSelectInputGUI->setOptions([
-			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
-		]);
+		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['value_member']);
 		$this->tpl->setVariable("VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_admin]');
-		$ilSelectInputGUI->setOptions([
-			xoctWorkflowParameter::VALUE_IGNORE => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_IGNORE, 'config'),
-			xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SET_AUTOMATICALLY, 'config'),
-			xoctWorkflowParameter::VALUE_SHOW_IN_FORM => self::plugin()->translate('workflow_parameter_value_' . xoctWorkflowParameter::VALUE_SHOW_IN_FORM, 'config'),
-		]);
+		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['value_admin']);
 		$this->tpl->setVariable("VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
