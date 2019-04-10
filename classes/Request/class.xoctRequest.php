@@ -56,7 +56,7 @@ class xoctRequest {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
-		var_dump($post_data);exit;
+		
 		if ($as_user) {
 			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
 		}
