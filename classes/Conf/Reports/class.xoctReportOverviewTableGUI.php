@@ -95,12 +95,12 @@ class xoctReportOverviewTableGUI extends TableGUI {
     }
 
     protected function fillRow($row) {
-        self::dic()->mainTemplate()->setVariable('ID', $row['id']);
+	    $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
-        self::dic()->mainTemplate()->setVariable('SENDER', $row['sender']);
-        self::dic()->mainTemplate()->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-        self::dic()->mainTemplate()->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
+        $this->tpl->setVariable('SENDER', $row['sender']);
+	    $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
+	    $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
     }
 
 }
