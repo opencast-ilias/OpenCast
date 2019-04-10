@@ -242,6 +242,11 @@ class xoctEvent extends xoctObject {
 	 * @param bool $as_admin
 	 */
 	public function setWorkflowParametersForObjId($parameters, $obj_id, $as_admin = true) {
+		$parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
+		$not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
+		foreach ($not_set_in_form as $id) {
+			$parameters[$id] = 0;
+		}
 		$automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
 		$this->setWorkflowParameters(array_merge($automatically_set, $parameters));
 	}

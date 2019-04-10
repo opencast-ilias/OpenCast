@@ -365,6 +365,7 @@ msg_load_workflow_params#:#The following parameters were returned by the workflo
 msg_no_params_found#:#No parameters were found. The defined workflow may have no configuration panel, from which the parameters can be read. Please create the parameters manually.
 msg_success#:#Changes saved successfully.
 msg_confirm_overwrite_series_params#:#Warning: This will overwrite all locally adjusted configurations of workflow parameters in ILIAS OpenCast objects. Continue?
+msg_workflow_params_parsing_failed#:#Parsing of parameters via API failed:
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Title

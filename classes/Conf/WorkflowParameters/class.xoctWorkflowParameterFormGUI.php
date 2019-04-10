@@ -80,14 +80,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 				]
 			],
 			self::F_DEFAULT_VALUE_MEMBER => [
-				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_DEFAULT_VALUE_MEMBER),
+				self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_MEMBER),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
 				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions()
 			],
 			self::F_DEFAULT_VALUE_ADMIN => [
-				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_DEFAULT_VALUE_ADMIN),
+				self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_ADMIN),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),

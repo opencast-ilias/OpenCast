@@ -463,7 +463,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
-                // auto publish always true for member upload
                 $this->object->create();
 			}
 		}

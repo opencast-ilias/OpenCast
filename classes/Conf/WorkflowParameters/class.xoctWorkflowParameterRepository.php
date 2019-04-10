@@ -51,7 +51,12 @@ class xoctWorkflowParameterRepository {
 			throw new xoctException(xoctException::INTERNAL_ERROR, 'No configuration panel found for workflow with id = ' . $workflow_id);
 		}
 
-		return $this->parseConfigurationPanelHTML($response['configuration_panel']);
+		try {
+			return $this->parseConfigurationPanelHTML($response['configuration_panel']);
+		} catch (Exception $e) {
+			ilUtil::sendFailure(self::plugin()->translate('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
+			self::dic()->ctrl()->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
+		}
 	}
 
 
@@ -64,7 +69,7 @@ class xoctWorkflowParameterRepository {
 		$dom = new DOMDocument();
 		$dom->strictErrorChecking = false;
 		$configuration_panel_html = trim(str_replace("\n", "", $configuration_panel_html));
-		$dom->loadHTML($configuration_panel_html);
+		$dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
 		$inputs = $dom->getElementsByTagName('input');
 		$labels = $dom->getElementsByTagName('label');
 		$workflow_parameters = [];

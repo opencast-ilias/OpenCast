@@ -90,3 +90,61 @@ xoctReport::updateDB();
 xoctWorkflowParameter::updateDB();
 xoctSeriesWorkflowParameter::updateDB();
 ?>
+<#14>
+<?php
+// define standard workflow parameters
+if (xoctWorkflowParameter::count() === 0) {
+	$params = [];
+	$params[] = (new xoctWorkflowParameter())
+		->setId('flagForCutting')
+		->setTitle('Flag for Cutting')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('flagForReview')
+		->setTitle('Flag for Review')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToEngage')
+		->setTitle('Publish to Engage')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToHarvesting')
+		->setTitle('Publish to Harvesting')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('straightToPublishing')
+		->setTitle('Straight to Publishing')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToApi')
+		->setTitle('Publish to API')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('autopublish')
+		->setTitle('Automatisch Publizieren')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_SHOW_IN_FORM)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	xoctSeriesWorkflowParameter::truncateDB();
+	xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
+}
+?>

@@ -1,10 +1,14 @@
 <?php
-require_once './Services/Form/classes/class.ilSubEnabledFormPropertyGUI.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class ilInteractiveVideoTimePicker
  */
 class ilInteractiveVideoTimePicker extends ilSubEnabledFormPropertyGUI
 {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	/**
 	 * @var string
 	 */

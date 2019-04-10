@@ -88,6 +88,33 @@ class xoctSeriesWorkflowParameterRepository {
 
 
 	/**
+	 * @param $obj_id
+	 * @param $as_admin
+	 *
+	 * @return array Format $id => $title
+	 */
+	public function getParametersInFormForObjId($obj_id, $as_admin) {
+		$parameter = [];
+		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+			/** @var xoctSeriesWorkflowParameter $input */
+			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
+				'obj_id' => $obj_id,
+				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
+			])->get() as $input) {
+				$parameter[$input->getParamId()] = $input->xoct_workflow_param_title ?: $input->getParamId();
+			}
+		} else {
+			/** @var xoctWorkflowParameter $input */
+			foreach (xoctWorkflowParameter::where([
+				($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+			])->get() as $input) {
+				$parameter[$input->getId()] = $input->getTitle() ?: $input->getId();
+			}
+		}
+		return $parameter;
+	}
+
+	/**
 	 * @param      $obj_id
 	 *
 	 * @param bool $as_admin
@@ -96,25 +123,10 @@ class xoctSeriesWorkflowParameterRepository {
 	 */
 	public function getFormItemsForObjId($obj_id, $as_admin) {
 		$items = [];
-		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
-			/** @var xoctSeriesWorkflowParameter $input */
-			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
-				'obj_id' => $obj_id,
-				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
-			])->get() as $input) {
-				$cb = new ilCheckboxInputGUI($input->xoct_workflow_param_title ?: $input->getParamId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
-					. $input->getParamId() . ']');
-				$items[] = $cb;
-			}
-		} else {
-			/** @var xoctWorkflowParameter $input */
-			foreach (xoctWorkflowParameter::where([
-				($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
-			])->get() as $input) {
-				$cb = new ilCheckboxInputGUI($input->getTitle() ?: $input->getId(), xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
-					. $input->getId() . ']');
-				$items[] = $cb;
-			}
+		foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $title) {
+			$cb = new ilCheckboxInputGUI($title, xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
+				. $id . ']');
+			$items[] = $cb;
 		}
 		return $items;
 	}
@@ -146,12 +158,12 @@ class xoctSeriesWorkflowParameterRepository {
 			}
 		} else {
 			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'value_admin' : 'value_member') => xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE ])
+			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE ])
 				         ->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
 			}
 			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'value_admin' : 'value_member') => xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE ])
+			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE ])
 				         ->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
 			}

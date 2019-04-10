@@ -30,6 +30,16 @@ class xoctWorkflowParameter extends ActiveRecord {
 		return self::TABLE_NAME;
 	}
 
+
+	/**
+	 * @return $this
+	 */
+	public function create() {
+		parent::create();
+		return $this;
+	}
+
+
 	/**
 	 * @var string
 	 *

@@ -363,6 +363,7 @@ msg_load_workflow_params#:#Folgende Parameter wurden über die Workflow-API gefu
 msg_no_params_found#:#Es konnten keine Parameter über die API gefunden werden. Möglicherweise existiert für den ausgewählten Workflow kein Configuration Panel, aus welchem die Parameter gelesen werden können. Bitte erstellen Sie die Parameter manuell.
 msg_success#:#Änderungen erfolgreich gespeichert.
 msg_confirm_overwrite_series_params#:#Achtung: Damit werden alle lokal angepassten Konfigurationen zu Workflow-Parameter in den Einstellungen von ILIAS-Opencast-Objekten überschrieben. Fortfahren?
+msg_workflow_params_parsing_failed#:#Das Lesen der Parameter aus der API ist fehlgeschlagen:
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
