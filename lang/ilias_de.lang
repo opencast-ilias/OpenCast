@@ -118,6 +118,7 @@ event_cancel#:#Abbrechen
 event_clear_cache#:#Aufzeichnungen neu laden
 event_clips#:#Aufzeichnungen
 event_create#:#Aufzeichnung hochladen
+event_createScheduled#:#Aufzeichnungstermin(e) erstellen
 event_created#:#Erstellt
 event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden

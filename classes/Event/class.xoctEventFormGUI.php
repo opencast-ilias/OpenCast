@@ -512,7 +512,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 				break;
 			case $this->is_new AND $this->schedule:
 				$this->setTitle($this->txt('schedule_new'));
-				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE));
+				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE_SCHEDULED));
 				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
 				break;
 			case  !$this->is_new AND !$this->view:
