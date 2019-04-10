@@ -359,7 +359,7 @@ msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen lösch
 msg_reports_deleted#:#Meldungen wurden gelöscht.
 msg_reports_table#:#Hier werden alle Meldungen der Benutzer zu Qualitätsproblemen oder Terminanpassungen gelistet. Das Verschicken dieser Meldungen kann im Tab "Einstellungen" (Subtabs "Aufzeichnungen" und "Serien") konfiguriert werden.
 msg_confirm_delete_param#:#Sind Sie sicher, dass Sie folgenden Parameter löschen möchten?
-msg_load_workflow_params#:#Folgende Parameter wurden über die Workflow-API gefunden. Möchten Sie diese hinzufügen (bereits vorhandene Parameter werden aktualisiert)?
+msg_load_workflow_params#:#Folgende Parameter wurden über die Workflow-API gefunden. Möchten Sie diese laden (neue Parameter werden erstellt, alte gelöscht und bereits vorhandene Parameter werden aktualisiert)?
 msg_no_params_found#:#Es konnten keine Parameter über die API gefunden werden. Möglicherweise existiert für den ausgewählten Workflow kein Configuration Panel, aus welchem die Parameter gelesen werden können. Bitte erstellen Sie die Parameter manuell.
 msg_success#:#Änderungen erfolgreich gespeichert.
 msg_confirm_overwrite_series_params#:#Achtung: Damit werden alle lokal angepassten Konfigurationen zu Workflow-Parameter in den Einstellungen von ILIAS-Opencast-Objekten überschrieben. Fortfahren?

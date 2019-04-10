@@ -153,7 +153,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 			xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($to_create);
 		}
 
-		ilUtil::sendSuccess(self::dic()->language()->txt('config_msg_success'), true);
+		ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
 		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
 	}
 

@@ -44,6 +44,29 @@ class xoctConfExportGUI extends xoctGUI {
 		}
 
 		/**
+		 * @var $xoctWorkflowParameter xoctWorkflowParameter
+		 */
+		$xoct_workflow_parameter = $domxml->getElementsByTagName('xoct_workflow_parameter');
+
+		foreach ($xoct_workflow_parameter as $node) {
+			$id = $node->getElementsByTagName('id')->item(0)->nodeValue;
+			if (!$id) {
+				continue;
+			}
+			$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
+			$xoctWorkflowParameter->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setType($node->getElementsByTagName('type')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
+
+			if (!xoctWorkflowParameter::where(array( 'usage_id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
+				$xoctWorkflowParameter->create();
+			} else {
+				$xoctWorkflowParameter->update();
+			}
+		}
+
+		/**
 		 * @var $xoctPublicationUsage xoctPublicationUsage
 		 */
 		$xoct_publication_usage = $domxml->getElementsByTagName('xoct_publication_usage');
@@ -93,6 +116,20 @@ class xoctConfExportGUI extends xoctGUI {
 			$value = xoctConf::getConfig($xoctConf->getName());
 			$value = is_array($value) ? json_encode($value) : $value;
 			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
+		}
+
+		// xoctWorkflowParameters
+		$xml_xoctWorkflowParameters = $config->appendChild(new DOMElement('xoct_workflow_parameters'));
+		/**
+		 * @var $xoctWorkflowParameter xoctWorkflowParameter
+		 */
+		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+			$xml_xoctPU = $xml_xoctWorkflowParameters->appendChild(new DOMElement('xoct_workflow_parameter'));
+			$xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getId()));
+			$xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getTitle()));
+			$xml_xoctPU->appendChild(new DOMElement('type'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getType()));
+			$xml_xoctPU->appendChild(new DOMElement('default_value_member'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueMember()));
+			$xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin()));
 		}
 
 		// xoctPublicationUsages
