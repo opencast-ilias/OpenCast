@@ -46,6 +46,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function showTable() {
+		ilUtil::sendInfo(self::plugin()->translate('msg_workflow_parameters_info'));
 		self::dic()->tabs()->setSubTabActive(self::SUBTAB_PARAMETERS);
 		$xoctWorkflowParameterTableGUI = new xoctWorkflowParameterTableGUI($this, self::CMD_SHOW_TABLE);
 		self::dic()->mainTemplate()->setContent($xoctWorkflowParameterTableGUI->getHTML());

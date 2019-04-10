@@ -364,6 +364,7 @@ msg_no_params_found#:#Es konnten keine Parameter über die API gefunden werden. 
 msg_success#:#Änderungen erfolgreich gespeichert.
 msg_confirm_overwrite_series_params#:#Achtung: Damit werden alle lokal angepassten Konfigurationen zu Workflow-Parameter in den Einstellungen von ILIAS-Opencast-Objekten überschrieben. Fortfahren?
 msg_workflow_params_parsing_failed#:#Das Lesen der Parameter aus der API ist fehlgeschlagen:
+msg_workflow_parameters_info#:#Workflow-Parameter sind Informationen, welche beim Hochladen oder Planen eines Events in der Variable 'processing' an Opencast mitgeschickt werden. Beachten Sie, dass die Parameter auf den Konfigurierten Workflow (Einstellungen -> Aufzeichnungen -> Processing-Workflow-ID) abgestimmt sein müssen. Über die Schaltfläche "Parameter via API Laden" können Sie versuchen, diese Parameter automatisch zu laden - dies funktioniert allerdings nur, wenn in der Workflow-Definition in Opencast ein entsprechendes Configuration-Panel konfiguriert ist.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
