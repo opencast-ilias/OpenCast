@@ -23,7 +23,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_REPORT_QUALITY = 'reportQuality';
 	const CMD_SCHEDULE = 'schedule';
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
-    const CMD_DELIVER_VIDEO = 'deliverVideo';
+    	const CMD_DELIVER_VIDEO = 'deliverVideo';
 	const CMD_STREAM_VIDEO = 'streamVideo';
 	const ROLE_MASTER = "presenter";
 	const ROLE_SLAVE = "presentation";
@@ -565,6 +565,21 @@ class xoctEventGUI extends xoctGUI {
                 ];
             }
 		}, $medias);
+
+		if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
+
+			$filteredStreams = array();
+			foreach ( $streams as $stream)
+			{
+				$filteredStreams[$stream['content']] = $stream;
+			}
+
+			$streams = array();
+			foreach ($filteredStreams as $stream)
+			{
+				$streams[] = $stream;
+			}
+		}
 
 		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
 		$publication_usage_segments = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS);
