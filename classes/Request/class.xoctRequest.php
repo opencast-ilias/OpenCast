@@ -421,6 +421,15 @@ class xoctRequest {
 		return $this->post($data);
 	}
 
+	public function signWithValidUntil($url, $validUntil) {
+		$this->checkBranch(array( self::BRANCH_SECURITY ));
+		$this->addPart('sign');
+		$data = array( 'url' => $url ,
+					   'valid-until' => $validUntil);
+
+		return $this->post($data);
+	}
+
 
 	/**
 	 * @return $this

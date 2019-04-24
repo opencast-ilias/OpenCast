@@ -467,6 +467,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS), xoctConf::F_SIGN_ANNOTATION_LINKS);
 		$this->addItem($cb);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT), xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT);
+		$this->addItem($cb);
+
+		$cb = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT), xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT);
+		$this->addItem($cb);
 	}
 
 

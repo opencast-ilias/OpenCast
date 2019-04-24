@@ -518,11 +518,28 @@ class xoctEventGUI extends xoctGUI {
 
                 $dashURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
-                if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-                    $hlsURL = xoctSecureLink::sign($hlsURL);
+				if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 
-                    $dashURL = xoctSecureLink::sign($dashURL);
-                }
+					if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+						$durationInSeconds = $duration / 1000;
+
+						$additionalTimePercent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+
+						$validUntil = gmdate("Y-m-d\TH:i:s\Z", time() +
+							$durationInSeconds +
+							$durationInSeconds *
+							$additionalTimePercent);
+
+						$hlsURL = xoctSecureLink::signWithEndTime($hlsURL, $validUntil);
+
+						$dashURL = xoctSecureLink::signWithEndTime($dashURL, $validUntil);
+					}
+					else{
+						$hlsURL = xoctSecureLink::sign($hlsURL);
+
+						$dashURL = xoctSecureLink::sign($dashURL);
+					}
+				}
 
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
