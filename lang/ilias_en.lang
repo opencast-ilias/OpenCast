@@ -49,7 +49,8 @@ config_security_info#:#Improves the security by using OpenCasts "Stream Security
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_player_links#:#Sign Player Link
 config_sign_player_links_overwrite_default#:#Use event duration for the validity of the signature
-config_sign_player_links_additional_time_percent#:# How much additional time should be added to the validity of the signature in percent, depending on the event duration?
+config_sign_player_links_additional_time_percent#:#Additional Time
+config_sign_player_links_additional_time_percent_info#:#How much additional time should be added to the validity of the signature in percent, depending on the event duration?
 config_sign_download_links#:#Sign Download Link
 config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_request_comb_lv#:#Request Combination Level

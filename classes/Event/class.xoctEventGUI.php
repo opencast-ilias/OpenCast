@@ -496,36 +496,29 @@ class xoctEventGUI extends xoctGUI {
 
             if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
 
-                $smilURLIdentifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
+                $smil_url_identifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
 
-                $streamingServerURL = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
+                $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
 
-                $hlsURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/playlist.m3u8";
+                $hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
 
-                $dashURL = $streamingServerURL . "/smil:engage-player_" . $id . $smilURLIdentifier . ".smil/manifest_mpm4sav_mvlist.mpd";
+                $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
-				if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+	            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 
-					if( xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-						$durationInSeconds = $duration / 1000;
+	            	$valid_until = null;
 
-						$additionalTimePercent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+		            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+			            $duration_in_seconds = $duration / 1000;
 
-						$validUntil = gmdate("Y-m-d\TH:i:s\Z", time() +
-							$durationInSeconds +
-							$durationInSeconds *
-							$additionalTimePercent);
+			            $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
 
-						$hlsURL = xoctSecureLink::signWithEndTime($hlsURL, $validUntil);
+			            $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+		            }
 
-						$dashURL = xoctSecureLink::signWithEndTime($dashURL, $validUntil);
-					}
-					else{
-						$hlsURL = xoctSecureLink::sign($hlsURL);
-
-						$dashURL = xoctSecureLink::sign($dashURL);
-					}
-				}
+		            $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
+		            $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
+	            }
 
                 return [
                     "type" => xoctMedia::MEDIA_TYPE_VIDEO,
@@ -533,13 +526,13 @@ class xoctEventGUI extends xoctGUI {
                     "sources" => [
                         "hls" => [
                             [
-                                "src" => $hlsURL,
+                                "src" => $hls_url,
                                 "mimetype" => "application/x-mpegURL"
                             ],
                         ],
                         "dash" => [
                             [
-                                "src" => $dashURL,
+                                "src" => $dash_url,
                                 "mimetype" => "application/dash+xml"
                             ]
                         ]

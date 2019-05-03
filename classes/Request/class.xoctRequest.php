@@ -435,24 +435,21 @@ class xoctRequest {
 
 
 	/**
-	 * @param $url
+	 * @param      $url
+	 *
+	 * @param null $valid_until
 	 *
 	 * @return string
 	 * @throws xoctException
 	 */
-	public function sign($url) {
+	public function sign($url, $valid_until = null) {
 		$this->checkBranch(array( self::BRANCH_SECURITY ));
 		$this->addPart('sign');
 		$data = array( 'url' => $url );
 
-		return $this->post($data);
-	}
-
-	public function signWithValidUntil($url, $validUntil) {
-		$this->checkBranch(array( self::BRANCH_SECURITY ));
-		$this->addPart('sign');
-		$data = array( 'url' => $url ,
-					   'valid-until' => $validUntil);
+		if ($valid_until) {
+			$data['valid-until'] = $valid_until;
+		}
 
 		return $this->post($data);
 	}
@@ -460,6 +457,7 @@ class xoctRequest {
 
 	/**
 	 * @return $this
+	 * @throws xoctException
 	 */
 	public function agents() {
 		$this->checkBranch(array( self::BRANCH_BASE ));

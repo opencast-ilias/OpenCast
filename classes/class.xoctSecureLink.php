@@ -15,15 +15,14 @@ class xoctSecureLink {
 
 
 	/**
-	 * @param $url
+	 * @param      $url
+	 *
+	 * @param null $valid_until
 	 *
 	 * @return mixed
+	 * @throws xoctException
 	 */
-	public static function sign($url) {
-		// this should not be necessary anymore, since you can activate/deactivate the url signing in the config
-		//		if (!xoctEvent::$LOAD_PUB_SEPARATE) {
-		//			return $url;
-		//		}
+	public static function sign($url, $valid_until = null) {
 		if (!$url) {
 			return '';
 		}
@@ -31,7 +30,7 @@ class xoctSecureLink {
 			return self::$cache[$url];
 		}
 
-		$data = json_decode(xoctRequest::root()->security()->sign($url));
+		$data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until));
 
 		if ($data->error) {
 			return '';
@@ -41,27 +40,6 @@ class xoctSecureLink {
 		return $data->url;
 	}
 
-	public static function signWithEndTime($url, $validuntil) {
-		// this should not be necessary anymore, since you can activate/deactivate the url signing in the config
-		//		if (!xoctEvent::$LOAD_PUB_SEPARATE) {
-		//			return $url;
-		//		}
-		if (!$url) {
-			return '';
-		}
-		if (isset(self::$cache[$url])) {
-			return self::$cache[$url];
-		}
-
-		$data = json_decode(xoctRequest::root()->security()->signWithValidUntil($url, $validuntil));
-
-		if ($data->error) {
-			return '';
-		}
-		self::$cache[$url] = $data->url;
-
-		return $data->url;
-	}
 }
 
 ?>
