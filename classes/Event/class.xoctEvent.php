@@ -354,6 +354,8 @@ class xoctEvent extends xoctObject {
 		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
+		$this->setCurrentUserAsPublisher();
+
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing());
 		$data['acl'] = json_encode($this->getAcl());
@@ -381,6 +383,8 @@ class xoctEvent extends xoctObject {
         $this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
         $this->updateMetadataFromFields(true);
         $this->updateSchedulingFromFields();
+
+        $this->setCurrentUserAsPublisher();
 
         if ($rrule) {
             $this->getScheduling()->setRRule($rrule);
@@ -1591,5 +1595,14 @@ class xoctEvent extends xoctObject {
 	 */
 	public function isScheduled() {
 		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING));
+	}
+
+
+	/**
+	 * @throws xoctException
+	 */
+	protected function setCurrentUserAsPublisher() {
+		$publisher = $this->getMetadata()->getField('publisher');
+		$publisher->setValue(xoctUser::getInstance(self::dic()->user())->getIdentifier());
 	}
 }
