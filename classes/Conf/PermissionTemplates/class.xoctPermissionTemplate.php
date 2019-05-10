@@ -287,7 +287,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	public function getTitle() {
 	    global $DIC;
-        return $DIC['ilUser']->getLanguage() == 'de' ? $this->title_de : $this->title_en;
+        return $DIC->user()->getLanguage() == 'de' ? $this->title_de : $this->title_en;
 	}
 
 
@@ -328,7 +328,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	public function getInfo() {
         global $DIC;
-		return $DIC['ilUser']->getLanguage() == 'de' ? $this->info_de : $this->info_en;
+		return $DIC->user()->getLanguage() == 'de' ? $this->info_de : $this->info_en;
 	}
 
     /**

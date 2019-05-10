@@ -56,6 +56,7 @@ class xoctRequest {
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($this->getUrl());
 		$xoctCurl->setPostFields($post_data);
+		
 		if ($as_user) {
 			$xoctCurl->addHeader(self::X_RUN_AS_USER . ': ' . $as_user);
 		}
@@ -164,6 +165,7 @@ class xoctRequest {
 	const BRANCH_SECURITY = 4;
 	const BRANCH_GROUPS = 5;
 	const BRANCH_WORKFLOWS = 6;
+	const BRANCH_WORKFLOW_DEFINITIONS = 7;
 
 	/**
 	 * @var array
@@ -274,15 +276,40 @@ class xoctRequest {
 		return $this;
 	}
 
-    /**
-     * @return $this
-     * @throws xoctException
-     */
-    public function workflows() {
+
+	/**
+	 * @param string $workflow_id
+	 *
+	 * @return $this
+	 * @throws xoctException
+	 */
+    public function workflows($workflow_id = '') {
         $this->checkRoot();
         $this->checkBranch(array( self::BRANCH_WORKFLOWS ));
         $this->branch = self::BRANCH_WORKFLOWS;
         $this->addPart('workflows');
+        if ($workflow_id) {
+        	$this->addPart($workflow_id);
+        }
+
+        return $this;
+	}
+
+
+	/**
+	 * @param string $definition_id
+	 *
+	 * @return $this
+	 * @throws xoctException
+	 */
+    public function workflowDefinition($definition_id = '') {
+        $this->checkRoot();
+        $this->checkBranch(array( self::BRANCH_WORKFLOW_DEFINITIONS ));
+        $this->branch = self::BRANCH_WORKFLOW_DEFINITIONS;
+        $this->addPart('workflow-definitions');
+		if ($definition_id) {
+			$this->addPart($definition_id);
+		}
 
         return $this;
 	}
@@ -408,15 +435,21 @@ class xoctRequest {
 
 
 	/**
-	 * @param $url
+	 * @param      $url
+	 *
+	 * @param null $valid_until
 	 *
 	 * @return string
 	 * @throws xoctException
 	 */
-	public function sign($url) {
+	public function sign($url, $valid_until = null) {
 		$this->checkBranch(array( self::BRANCH_SECURITY ));
 		$this->addPart('sign');
 		$data = array( 'url' => $url );
+
+		if ($valid_until) {
+			$data['valid-until'] = $valid_until;
+		}
 
 		return $this->post($data);
 	}
@@ -424,6 +457,7 @@ class xoctRequest {
 
 	/**
 	 * @return $this
+	 * @throws xoctException
 	 */
 	public function agents() {
 		$this->checkBranch(array( self::BRANCH_BASE ));

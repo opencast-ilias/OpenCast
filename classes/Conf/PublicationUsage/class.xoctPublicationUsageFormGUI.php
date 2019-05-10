@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctPublicationUsageFormGUI
  *
@@ -6,6 +7,9 @@
  * @version 1.0.0
  */
 class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const F_USAGE_ID = 'usage_id';
 	const F_TITLE = 'title';
@@ -23,14 +27,6 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	 * @var xoctPublicationUsageGUI
 	 */
 	protected $parent_gui;
-	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 
 
 	/**
@@ -38,16 +34,10 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	 * @param xoctPublicationUsage $xoctPublicationUsage
 	 */
 	public function __construct($parent_gui, xoctPublicationUsage $xoctPublicationUsage) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
-		$tpl = $DIC['tpl'];
+		parent::__construct();
 		$this->object = $xoctPublicationUsage;
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->ctrl->saveParameter($parent_gui, xoctPublicationUsageGUI::IDENTIFIER);
-		$this->lng = $lng;
+		self::dic()->ctrl()->saveParameter($parent_gui, xoctPublicationUsageGUI::IDENTIFIER);
 		$this->is_new = ($this->object->getUsageId() == '');
 		$this->initForm();
 	}
@@ -55,7 +45,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(self::F_USAGE_ID), self::F_USAGE_ID);

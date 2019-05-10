@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctSystemAccountFormGUI
  *
@@ -6,6 +7,9 @@
  * @version 1.0.0
  */
 class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const F_DOMAIN = 'domain';
 	const F_EXT_ID = 'ext_id';
@@ -18,14 +22,6 @@ class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
 	 * @var xoctSystemAccountGUI
 	 */
 	protected $parent_gui;
-	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 
 
 	/**
@@ -33,16 +29,10 @@ class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
 	 * @param xoctSystemAccount $xoctSystemAccount
 	 */
 	public function __construct($parent_gui, xoctSystemAccount $xoctSystemAccount) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
-		$tpl = $DIC['tpl'];
+		parent::__construct();
 		$this->object = $xoctSystemAccount;
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->ctrl->saveParameter($parent_gui, xoctSystemAccountGUI::IDENTIFIER);
-		$this->lng = $lng;
+		self::dic()->ctrl()->saveParameter($parent_gui, xoctSystemAccountGUI::IDENTIFIER);
 		$this->is_new = ($this->object->getDomain() == '');
 
 		//xoctWaiterGUI::init();
@@ -52,7 +42,7 @@ class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
 
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(self::F_DOMAIN), self::F_DOMAIN);
@@ -99,7 +89,7 @@ class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function txt($key) {
-		return $this->pl->txt('system_account_' . $key);
+		return self::plugin()->translate('system_account_' . $key);
 	}
 
 
@@ -109,7 +99,7 @@ class xoctSystemAccountFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function infoTxt($key) {
-		return $this->pl->txt('system_account_' . $key . '_info');
+		return self::plugin()->translate('system_account_' . $key . '_info');
 	}
 
 

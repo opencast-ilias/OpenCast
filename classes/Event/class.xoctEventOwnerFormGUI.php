@@ -1,10 +1,14 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctEventFormGUI
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const F_OWNER = 'owner';
 	/**
@@ -15,10 +19,6 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 	 * @var xoctEventGUI
 	 */
 	protected $parent_gui;
-	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
 	/**
 	 * @var ilOpenCastPlugin
 	 */
@@ -33,17 +33,11 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
-		$tpl = $DIC['tpl'];
+		parent::__construct();
 		$this->object = $object;
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->ctrl->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
-		$this->lng = $lng;
+		self::dic()->ctrl()->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
 		$this->is_new = ($this->object->getIdentifier() == '');
 		$this->initForm();
 	}
@@ -51,12 +45,12 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		$sel = new ilSelectInputGUI($this->txt(self::F_OWNER), self::F_OWNER);
 		$users = array();
-		$users[NULL] = $this->pl->txt('event_owner_select');
+		$users[NULL] = self::plugin()->translate('event_owner_select');
 		foreach (array_merge(ilObjOpenCastAccess::getMembers(), ilObjOpenCastAccess::getAdmins(), ilObjOpenCastAccess::getTutors()) as $member) {
 			$xoctUser = xoctUser::getInstance(new ilObjuser($member));
 			if ($xoctUser->getIdentifier()) {
@@ -123,7 +117,7 @@ class xoctEventOwnerFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function infoTxt($key) {
-		return $this->pl->txt('event_' . $key . '_info');
+		return self::plugin()->translate('event_' . $key . '_info');
 	}
 
 

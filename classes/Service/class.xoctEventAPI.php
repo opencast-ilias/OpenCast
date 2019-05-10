@@ -50,6 +50,7 @@ class xoctEventAPI {
 		$event->setLocation($location);
 		$event->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
 		$event->setPresenter(isset($additional_data['presenters']) ? $additional_data['presenters'] : '');
+		$event->addDefaultWorkflowParameters();
 
 		$std_acls = new xoctAclStandardSets();
 		$event->setAcl($std_acls->getAcls());

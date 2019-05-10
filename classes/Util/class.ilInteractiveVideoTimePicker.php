@@ -1,10 +1,14 @@
 <?php
-require_once './Services/Form/classes/class.ilSubEnabledFormPropertyGUI.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class ilInteractiveVideoTimePicker
  */
 class ilInteractiveVideoTimePicker extends ilSubEnabledFormPropertyGUI
 {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	/**
 	 * @var string
 	 */
@@ -84,15 +88,9 @@ class ilInteractiveVideoTimePicker extends ilSubEnabledFormPropertyGUI
 
 	protected function appendJavascriptAndHTML()
 	{
-		/**
-		 * @var ilTemplate $tpl
-		 */
-		global $DIC;
-		$tpl = $DIC['tpl'];
-
-		$tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/libs/bootstrap-timepicker/css/bootstrap-timepicker.css');
-		$tpl->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/bootstrap_timepicker.css');
-		$tpl->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js');
+		self::dic()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/libs/bootstrap-timepicker/css/bootstrap-timepicker.css');
+		self::dic()->mainTemplate()->addCss('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/bootstrap_timepicker.css');
+		self::dic()->mainTemplate()->addJavaScript('Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/libs/bootstrap-timepicker/js/bootstrap-timepicker.min.js');
 	}
 
 	/**

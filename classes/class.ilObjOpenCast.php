@@ -1,26 +1,5 @@
 <?php
-/*
-	+-----------------------------------------------------------------------------+
-	| ILIAS open source                                                           |
-	+-----------------------------------------------------------------------------+
-	| Copyright (c) 1998-2009 ILIAS open source, University of Cologne            |
-	|                                                                             |
-	| This program is free software; you can redistribute it and/or               |
-	| modify it under the terms of the GNU General Public License                 |
-	| as published by the Free Software Foundation; either version 2              |
-	| of the License, or (at your option) any later version.                      |
-	|                                                                             |
-	| This program is distributed in the hope that it will be useful,             |
-	| but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-	| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               |
-	| GNU General Public License for more details.                                |
-	|                                                                             |
-	| You should have received a copy of the GNU General Public License           |
-	| along with this program; if not, write to the Free Software                 |
-	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
-	+-----------------------------------------------------------------------------+
-*/
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class ilObjOpenCast
  *
@@ -29,6 +8,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @version 1.0.00
  */
 class ilObjOpenCast extends ilObjectPlugin {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var bool
@@ -41,14 +23,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @param int $a_ref_id
 	 */
 	public function __construct($a_ref_id = 0) {
-		/**
-		 * @var $ilDB ilDB
-		 */
-		global $DIC;
-		$ilDB = $DIC['ilDB'];
-
 		parent::__construct($a_ref_id);
-		$this->db = $ilDB;
 	}
 
 
@@ -141,8 +116,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|ilObjCourse|ilObjGroup
 	 */
 	public static function _getParentCourseOrGroup($ref_id) {
-		global $DIC;
-		$tree = $DIC['tree'];
 		static $crs_or_grp_object;
 		if (!is_array($crs_or_grp_object)) {
 			$crs_or_grp_object = array();
@@ -160,7 +133,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 				$crs_or_grp_object[$ref_id] = false;
 				return $crs_or_grp_object[$ref_id];
 			}
-			$ref_id = $tree->getParentId($ref_id);
+			$ref_id = self::dic()->tree()->getParentId($ref_id);
 		}
 
 		$crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
@@ -171,21 +144,15 @@ class ilObjOpenCast extends ilObjectPlugin {
      * @return string
      */
     public static function _getCourseOrGroupRole() {
-		global $DIC;
-		/** @var ilObjUser $user */
-		$user = $DIC['ilUser'];
-		/** @var ilRbacReview $rbacreview */
-		$rbacreview = $DIC['rbacreview'];
-
 		$crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
 
-		if ($rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultAdminRole())) {
+		if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';
         }
-        if ($rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultMemberRole())) {
+        if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursmitglied' : 'Gruppenmitglied';
         }
-        if (($crs_or_group instanceof ilObjCourse) && $rbacreview->isAssigned($user->getId(), $crs_or_group->getDefaultTutorRole())) {
+        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
 			return 'Kurstutor';
         }
 

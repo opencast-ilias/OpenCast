@@ -1,10 +1,14 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctUser
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class xoctUser {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const MAP_EMAIL = 1;
 	const MAP_EXT_ID = 2;
@@ -84,15 +88,9 @@ class xoctUser {
 
 		preg_match("/" . $regex . "/uism", $role, $matches);
 
-		/**
-		 * @var $ilDB ilDB
-		 */
-		global $DIC;
-		$ilDB = $DIC['ilDB'];
-
-		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $ilDB->quote($matches[1], 'text');
-		$set = $ilDB->query($sql);
-		$data = $ilDB->fetchObject($set);
+		$sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . self::dic()->database()->quote($matches[1], 'text');
+		$set = self::dic()->database()->query($sql);
+		$data = self::dic()->database()->fetchObject($set);
 
 		return $data->usr_id;
 	}

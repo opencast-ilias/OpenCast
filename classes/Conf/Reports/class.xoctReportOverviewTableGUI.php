@@ -26,7 +26,6 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
 
     protected function getColumnValue($column, $row, $raw_export = false) {
-        // TODO: Implement getColumnValue() method.
     }
 
     protected function getSelectableColumns2() {
@@ -96,12 +95,12 @@ class xoctReportOverviewTableGUI extends TableGUI {
     }
 
     protected function fillRow($row) {
-        $this->tpl->setVariable('ID', $row['id']);
+	    $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
         $this->tpl->setVariable('SENDER', $row['sender']);
-        $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-        $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
+	    $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
+	    $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 
 /**
  * Class xoctConfFormGUI
@@ -7,6 +8,9 @@
  * @version 1.0.0
  */
 class xoctConfFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var  xoctConf
@@ -17,14 +21,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
-	/**
 	 * @var string
 	 */
 	protected $subtab_active;
@@ -34,13 +30,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 * @param $parent_gui
 	 */
 	public function __construct(xoctConfGUI $parent_gui, $subtab_active) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
+		parent::__construct();
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->lng = $lng;
 		$this->subtab_active = $subtab_active;
 		$this->initForm();
 	}
@@ -51,7 +42,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		switch ($this->subtab_active) {
@@ -83,7 +74,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 */
 	protected function initButtons() {
 		$this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
-		$this->addCommandButton(xoctConfGUI::CMD_CANCEL, $this->parent_gui->txt(xoctConfGUI::CMD_CANCEL));
 	}
 
 
@@ -459,6 +449,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
 		$this->addItem($cb);
 
+		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT), xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT);
+		$cb->addSubItem($cb_sub);
+
+		$cb_sub_2 = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT), xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT);
+		$cb_sub_2->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT . '_info'));
+		$cb_sub->addSubItem($cb_sub_2);
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS), xoctConf::F_SIGN_DOWNLOAD_LINKS);
 		$this->addItem($cb);
 
@@ -518,6 +515,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
 		$this->addItem($te);
 	}
+
 }
 
 ?>

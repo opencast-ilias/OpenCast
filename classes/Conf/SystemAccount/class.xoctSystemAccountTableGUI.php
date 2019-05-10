@@ -1,4 +1,5 @@
 <?php
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctEventTableGUI
  *
@@ -8,11 +9,10 @@
  */
 class xoctSystemAccountTableGUI extends ilTable2GUI {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	const TBL_ID = 'tbl_xoct_sys_a';
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
 	/**
 	 * @var array
 	 */
@@ -24,27 +24,15 @@ class xoctSystemAccountTableGUI extends ilTable2GUI {
 	 * @param string               $a_parent_cmd
 	 */
 	public function  __construct(xoctSystemAccountGUI $a_parent_obj, $a_parent_cmd) {
-		/**
-		 * @var $ilCtrl ilCtrl
-		 */
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
 		$this->setId(self::TBL_ID);
 		$this->setPrefix(self::TBL_ID);
 		$this->setFormName(self::TBL_ID);
-		$this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
+		self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.system_accounts.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
-		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
 		$this->initColums();
-		//		$this->initFilters();
-		//		$this->setDefaultOrderField('title');
-		//		$this->setEnableNumInfo(true);
-		//		$this->setExternalSorting(true);
-		//		$this->setExternalSegmentation(true);
 		$this->parseData();
 	}
 
@@ -70,7 +58,7 @@ class xoctSystemAccountTableGUI extends ilTable2GUI {
 		$this->addColumn($this->parent_obj->txt('ext_id'));
 		//		$this->addColumn($this->txt('status'));
 
-		$this->addColumn($this->pl->txt('common_actions'), '', '150px');
+		$this->addColumn(self::plugin()->translate('common_actions'), '', '150px');
 	}
 
 
@@ -82,13 +70,13 @@ class xoctSystemAccountTableGUI extends ilTable2GUI {
 	 */
 	protected function addActionMenu(xoctSystemAccount $xoctSystemAccount) {
 		$current_selection_list = new ilAdvancedSelectionListGUI();
-		$current_selection_list->setListTitle($this->pl->txt('common_actions'));
+		$current_selection_list->setListTitle(self::plugin()->translate('common_actions'));
 		$current_selection_list->setId('sys_a_actions_' . $xoctSystemAccount->getDomain());
 		$current_selection_list->setUseImages(false);
 
-		$this->ctrl->setParameter($this->parent_obj, xoctSystemAccountGUI::IDENTIFIER, $xoctSystemAccount->getDomain());
-		$current_selection_list->addItem($this->parent_obj->txt(xoctSystemAccountGUI::CMD_EDIT), xoctSystemAccountGUI::CMD_EDIT, $this->ctrl->getLinkTarget($this->parent_obj, xoctSystemAccountGUI::CMD_EDIT));
-		$current_selection_list->addItem($this->parent_obj->txt(xoctSystemAccountGUI::CMD_DELETE), xoctSystemAccountGUI::CMD_DELETE, $this->ctrl->getLinkTarget($this->parent_obj, xoctSystemAccountGUI::CMD_CONFIRM));
+		self::dic()->ctrl()->setParameter($this->parent_obj, xoctSystemAccountGUI::IDENTIFIER, $xoctSystemAccount->getDomain());
+		$current_selection_list->addItem($this->parent_obj->txt(xoctSystemAccountGUI::CMD_EDIT), xoctSystemAccountGUI::CMD_EDIT, self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctSystemAccountGUI::CMD_EDIT));
+		$current_selection_list->addItem($this->parent_obj->txt(xoctSystemAccountGUI::CMD_DELETE), xoctSystemAccountGUI::CMD_DELETE, self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctSystemAccountGUI::CMD_CONFIRM));
 
 		$this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
 	}

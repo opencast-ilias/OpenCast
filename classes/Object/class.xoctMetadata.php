@@ -103,22 +103,18 @@ class xoctMetadata extends xoctObject {
 
 
 	public function read() {
-		// TODO: Implement read() method.
 	}
 
 
 	public function update() {
-		// TODO: Implement update() method.
 	}
 
 
 	public function create() {
-		// TODO: Implement create() method.
 	}
 
 
 	public function delete() {
-		// TODO: Implement delete() method.
 	}
 
 

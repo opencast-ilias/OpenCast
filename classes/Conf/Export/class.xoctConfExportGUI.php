@@ -9,24 +9,20 @@
  */
 class xoctConfExportGUI extends xoctGUI {
 
+
 	protected function index() {
-		global $DIC;
-		$ilToolbar = $DIC['ilToolbar'];
-		/**
-		 * @var $ilToolbar ilToolbarGUI
-		 */
 		$b = ilLinkButton::getInstance();
 		$b->setCaption('rep_robj_xoct_admin_export');
-		$b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
-		$ilToolbar->addButtonInstance($b);
-		$ilToolbar->addSpacer();
-		$ilToolbar->addSeparator();
-		$ilToolbar->addSpacer();
+		$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, 'export'));
+		self::dic()->toolbar()->addButtonInstance($b);
+		self::dic()->toolbar()->addSpacer();
+		self::dic()->toolbar()->addSeparator();
+		self::dic()->toolbar()->addSpacer();
 
-		$ilToolbar->setFormAction($this->ctrl->getLinkTarget($this, 'import'), true);
+		self::dic()->toolbar()->setFormAction(self::dic()->ctrl()->getLinkTarget($this, 'import'), true);
 		$import = new ilFileInputGUI('xoct_import', 'xoct_import');
-		$ilToolbar->addInputItem($import);
-		$ilToolbar->addFormButton($this->pl->txt('admin_import'), 'import');
+		self::dic()->toolbar()->addInputItem($import);
+		self::dic()->toolbar()->addFormButton(self::plugin()->translate('admin_import'), 'import');
 	}
 
 
@@ -44,6 +40,29 @@ class xoctConfExportGUI extends xoctGUI {
 			if ($name) {
 				$value = (is_array(json_decode($value))) ? json_decode($value) : $value;
 				xoctConf::set($name, $value);
+			}
+		}
+
+		/**
+		 * @var $xoctWorkflowParameter xoctWorkflowParameter
+		 */
+		$xoct_workflow_parameter = $domxml->getElementsByTagName('xoct_workflow_parameter');
+
+		foreach ($xoct_workflow_parameter as $node) {
+			$id = $node->getElementsByTagName('id')->item(0)->nodeValue;
+			if (!$id) {
+				continue;
+			}
+			$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
+			$xoctWorkflowParameter->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setType($node->getElementsByTagName('type')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
+			$xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
+
+			if (!xoctWorkflowParameter::where(array( 'usage_id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
+				$xoctWorkflowParameter->create();
+			} else {
+				$xoctWorkflowParameter->update();
 			}
 		}
 
@@ -81,8 +100,8 @@ class xoctConfExportGUI extends xoctGUI {
 		$config = $domxml->appendChild(new DOMElement('opencast_settings'));
 
 		$xml_info = $config->appendChild(new DOMElement('info'));
-		$xml_info->appendChild(new DOMElement('plugin_version', $this->pl->getVersion()));
-		$xml_info->appendChild(new DOMElement('plugin_db_version', $this->pl->getDBVersion()));
+		$xml_info->appendChild(new DOMElement('plugin_version', self::plugin()->getPluginObject()->getVersion()));
+		$xml_info->appendChild(new DOMElement('plugin_db_version', self::plugin()->getPluginObject()->getDBVersion()));
 		$xml_info->appendChild(new DOMElement('config_version', xoctConf::getConfig(xoctConf::CONFIG_VERSION)));
 
 		// xoctConf
@@ -97,6 +116,20 @@ class xoctConfExportGUI extends xoctGUI {
 			$value = xoctConf::getConfig($xoctConf->getName());
 			$value = is_array($value) ? json_encode($value) : $value;
 			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
+		}
+
+		// xoctWorkflowParameters
+		$xml_xoctWorkflowParameters = $config->appendChild(new DOMElement('xoct_workflow_parameters'));
+		/**
+		 * @var $xoctWorkflowParameter xoctWorkflowParameter
+		 */
+		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+			$xml_xoctPU = $xml_xoctWorkflowParameters->appendChild(new DOMElement('xoct_workflow_parameter'));
+			$xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getId()));
+			$xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getTitle()));
+			$xml_xoctPU->appendChild(new DOMElement('type'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getType()));
+			$xml_xoctPU->appendChild(new DOMElement('default_value_member'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueMember()));
+			$xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin()));
 		}
 
 		// xoctPublicationUsages
@@ -122,32 +155,26 @@ class xoctConfExportGUI extends xoctGUI {
 
 
 	protected function add() {
-		// TODO: Implement add() method.
 	}
 
 
 	protected function create() {
-		// TODO: Implement create() method.
 	}
 
 
 	protected function edit() {
-		// TODO: Implement edit() method.
 	}
 
 
 	protected function update() {
-		// TODO: Implement update() method.
 	}
 
 
 	protected function confirmDelete() {
-		// TODO: Implement confirmDelete() method.
 	}
 
 
 	protected function delete() {
-		// TODO: Implement delete() method.
 	}
 }
 

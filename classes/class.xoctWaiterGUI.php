@@ -1,5 +1,5 @@
 <?php
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctWaiterGUI
  *
@@ -7,6 +7,9 @@
  * @version 1.0.0
  */
 class xoctWaiterGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var bool
@@ -22,11 +25,9 @@ class xoctWaiterGUI {
 	 *
 	 */
 	public static function loadLib() {
-		global $DIC;
-		$tpl = $DIC['tpl'];
 		if (!self::$init) {
-			$tpl->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
-			$tpl->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
+			self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
+			self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
 			self::$init = true;
 		}
 	}
@@ -38,10 +39,8 @@ class xoctWaiterGUI {
 	public static function initJS($type = 'waiter') {
 		self::loadLib();
 		if (!self::$init_js) {
-			global $DIC;
-			$tpl = $DIC['tpl'];
 			$code = 'xoctWaiter.init(\'' . $type . '\');';
-			$tpl->addOnLoadCode($code);
+			self::dic()->mainTemplate()->addOnLoadCode($code);
 			self::$init_js = true;
 		}
 	}
@@ -51,10 +50,8 @@ class xoctWaiterGUI {
 	 * @param $dom_selector_string
 	 */
 	public static function addListener($dom_selector_string) {
-		global $DIC;
-		$tpl = $DIC['tpl'];
 		$code = 'xoctWaiter.addListener("' . $dom_selector_string . '");';
-		$tpl->addOnLoadCode($code);
+		self::dic()->mainTemplate()->addOnLoadCode($code);
 	}
 
 
@@ -62,19 +59,15 @@ class xoctWaiterGUI {
 	 * @param $dom_selector_string
 	 */
 	public static function addLinkOverlay($dom_selector_string) {
-		global $DIC;
-		$tpl = $DIC['tpl'];
 		$code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
-		$tpl->addOnLoadCode($code);
+		self::dic()->mainTemplate()->addOnLoadCode($code);
 	}
 
 
 	public static function show() {
-		global $DIC;
-		$tpl = $DIC['tpl'];
 		self::initJS();
 		$code = 'xoctWaiter.show();';
-		$tpl->addOnLoadCode($code);
+		self::dic()->mainTemplate()->addOnLoadCode($code);
 	}
 }
 
