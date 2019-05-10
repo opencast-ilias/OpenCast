@@ -35,14 +35,15 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI {
 		$this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, self::dic()->language()->txt('save'));
 	}
 
+
 	/**
 	 * @param string $column
 	 * @param array  $row
-	 * @param bool   $raw_export
+	 * @param        $format
 	 *
 	 * @return string
 	 */
-	protected function getColumnValue($column, $row, $raw_export = false) {
+	protected function getColumnValue($column, $row, $format = self::DEFAULT_FORMAT) {
 		switch ($column) {
 			default:
 				$column = $row[$column];

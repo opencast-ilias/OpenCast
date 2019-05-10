@@ -25,13 +25,11 @@ final class ILIAS53DIC extends AbstractDIC {
 	 * ILIAS53DIC constructor
 	 *
 	 * @param Container $dic
-	 *
-	 * @internal
 	 */
-	public function __construct(Container $dic) {
+	public function __construct(Container &$dic) {
 		parent::__construct();
 
-		$this->dic = $dic;
+		$this->dic = &$dic;
 	}
 
 
@@ -144,6 +142,14 @@ final class ILIAS53DIC extends AbstractDIC {
 	 */
 	public function filesystem()/*: Filesystems*/ {
 		return $this->dic->filesystem();
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function globalScreen()/*: GlobalScreenService*/ {
+		throw new DICException("GlobalScreenService not exists in ILIAS 5.3 or below!");
 	}
 
 
@@ -310,6 +316,14 @@ final class ILIAS53DIC extends AbstractDIC {
 	/**
 	 * @inheritdoc
 	 */
+	public function question()/*: AsqFactory*/ {
+		throw new DICException("AsqFactory not exists in ILIAS 5.4 or below!");
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
 	public function rbacadmin()/*: ilRbacAdmin*/ {
 		return $this->dic->rbac()->admin();
 	}
@@ -406,7 +420,7 @@ final class ILIAS53DIC extends AbstractDIC {
 	/**
 	 * @return Container
 	 */
-	public function dic()/*: Container*/ {
+	public function &dic()/*: Container*/ {
 		return $this->dic;
 	}
 }

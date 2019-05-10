@@ -9,7 +9,7 @@ use srag\CustomInputGUIs\OpenCast\ProgressMeter\Component\Mini as MiniComponent;
 /**
  * Class Mini
  *
- * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Implementation/Component/Card/Mini.php
+ * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Implementation/Component/Chart/ProgressMeter/Mini.php
  *
  * @package srag\CustomInputGUIs\OpenCast\ProgressMeter\Implementation
  *
