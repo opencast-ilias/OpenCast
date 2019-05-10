@@ -1,26 +1,5 @@
 <?php
-/*
-	+-----------------------------------------------------------------------------+
-	| ILIAS open source                                                           |
-	+-----------------------------------------------------------------------------+
-	| Copyright (c) 1998-2001 ILIAS open source, University of Cologne            |
-	|                                                                             |
-	| This program is free software; you can redistribute it and/or               |
-	| modify it under the terms of the GNU General Public License                 |
-	| as published by the Free Software Foundation; either version 2              |
-	| of the License, or (at your option) any later version.                      |
-	|                                                                             |
-	| This program is distributed in the hope that it will be useful,             |
-	| but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-	| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               |
-	| GNU General Public License for more details.                                |
-	|                                                                             |
-	| You should have received a copy of the GNU General Public License           |
-	| along with this program; if not, write to the Free Software                 |
-	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
-	+-----------------------------------------------------------------------------+
-*/
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Access/Condition checking for OpenCast object
  *
@@ -29,6 +8,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @version       1.0.00
  */
 class ilObjOpenCastAccess extends ilObjectPluginAccess {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	const ROLE_MEMBER = 1;
 	const ROLE_ADMIN = 2;
@@ -86,14 +68,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 */
 	public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id = NULL, $a_user_id = '') {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
-		$ilAccess = $DIC['ilAccess'];
-		/**
-		 * @var $ilAccess ilAccessHandler
-		 */
 		if ($a_user_id == '') {
-			$a_user_id = $ilUser->getId();
+			$a_user_id = self::dic()->user()->getId();
 		}
 		if ($a_obj_id === NULL) {
 			$a_obj_id = ilObject2::_lookupObjId($a_ref_id);
@@ -101,12 +77,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 		switch ($a_permission) {
 			case 'read':
-				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !$ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return false;
 				}
 				break;
 			case 'visible':
-				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !$ilAccess->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return false;
 				}
 				break;
@@ -117,10 +93,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	protected static function redirectNonAccess() {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
 		ilUtil::sendFailure(ilOpenCastPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED), true);
-		$ilCtrl->redirectByClass('ilRepositoryGUI');
+		self::dic()->ctrl()->redirectByClass('ilRepositoryGUI');
 	}
 
 
@@ -149,14 +123,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		if ($ref_id === NULL) {
 			$ref_id = $_GET['ref_id'];
 		}
-		global $DIC;
-		$ilAccess = $DIC['ilAccess'];
 
-		/**
-		 * @var $ilAccess ilAccesshandler
-		 */
-
-		return $ilAccess->checkAccess('write', '', $ref_id);
+		return self::dic()->access()->checkAccess('write', '', $ref_id);
 	}
 
 
@@ -171,9 +139,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) {
 		if ($xoctUser === NULL) {
-			global $DIC;
-			$ilUser = $DIC['ilUser'];
-			$xoctUser = xoctUser::getInstance($ilUser);
+			$xoctUser = xoctUser::getInstance(self::dic()->user());
 		}
 
 		if ($ref_id === NULL) {
@@ -249,17 +215,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		if ($ref_id === NULL) {
 			$ref_id = $_GET['ref_id'];
 		}
-		global $DIC;
-		$ilAccess = $DIC['ilAccess'];
 
 		$prefix = in_array($right, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
-		/**
-		 * @var $ilAccess ilAccesshandler
-		 */
 		if ($usr_id == 0) {
-			return $ilAccess->checkAccess($prefix.$right, '', $ref_id);
+			return self::dic()->access()->checkAccess($prefix.$right, '', $ref_id);
 		}
-		return $ilAccess->checkAccessOfUser($usr_id, $prefix.$right, '', $ref_id);
+		return self::dic()->access()->checkAccessOfUser($usr_id, $prefix.$right, '', $ref_id);
 	}
 
 	/**
@@ -330,14 +291,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		global $DIC;
-		$rbacreview = $DIC['rbacreview'];
 		$crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
 		$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
 		foreach ($roles as $role) {
 			$getter_method = "getDefault{$role}Role";
 			$role_id = $crs_or_grp_obj->$getter_method();
-			$participants = $rbacreview->assignedUsers($role_id);
+			$participants = self::dic()->rbacreview()->assignedUsers($role_id);
 			$setter_method = "set{$role}s";
 			self::$setter_method($participants);
 		}
@@ -353,17 +312,15 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 */
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
-		global $DIC;
         $ref_id = $ref_id ? $ref_id : $_GET['ref_id'];
-		$rbacreview = $DIC['rbacreview'];
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
 		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
-		$active_operations = $rbacreview->getActiveOperationsOfRole($ref_id, $parent_obj->$fetch_role_method());
+		$active_operations = self::dic()->rbacreview()->getActiveOperationsOfRole($ref_id, $parent_obj->$fetch_role_method());
 		foreach ($active_operations as $op_id) {
-			$operation = $rbacreview->getOperation($op_id);
+			$operation = self::dic()->rbacreview()->getOperation($op_id);
 			if ($operation['operation'] ==  $prefix.$action) {
 				return true;
 			}
@@ -380,8 +337,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return xoctUser[]
 	 */
 	public static function getProducersForRefID($ref_id) {
-		global $DIC;
-		$rbacreview = $DIC['rbacreview'];
 		$producers = [];
 		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
 			//check each role (admin,tutor,member) for perm edit_videos, add to producers
@@ -390,7 +345,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				if (self::isActionAllowedForRole(self::PERMISSION_EDIT_VIDEOS, $role, $ref_id)) {
 					$getter_method = "getDefault{$role}Role";
 					$role_id = $crs_or_grp_obj->$getter_method();
-					foreach ($rbacreview->assignedUsers($role_id) as $participant_id) {
+					foreach (self::dic()->rbacreview()->assignedUsers($role_id) as $participant_id) {
 						$producers[] = xoctUser::getInstance($participant_id);
 					}
 				}
@@ -407,15 +362,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @param $parent_ref_id
 	 */
 	public static function activateMemberUpload($ref_id) {
-		global $DIC;
-		$rbacreview = $DIC['rbacreview'];
-		$rbacadmin = $DIC['rbacadmin'];
 		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
-		$ops_id_upload = $rbacreview::_getOperationIdByName('rep_robj_xoct_perm_upload');
-		$ops_ids = $rbacreview->getActiveOperationsOfRole($ref_id, $member_role_id);
+		$ops_id_upload = self::dic()->rbacreview()->_getOperationIdByName('rep_robj_xoct_perm_upload');
+		$ops_ids = self::dic()->rbacreview()->getActiveOperationsOfRole($ref_id, $member_role_id);
 		$ops_ids[] = $ops_id_upload;
-		$rbacadmin->grantPermission($member_role_id, $ops_ids, $ref_id);
+		self::dic()->rbacadmin()->grantPermission($member_role_id, $ops_ids, $ref_id);
 	}
 
 
@@ -423,12 +375,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return int
 	 */
 	public static function getParentId($get_ref_id = false, $ref_id = false) {
-		global $DIC;
-		$tree = $DIC['tree'];
-		/**
-		 * @var $tree ilTree
-		 */
-		foreach ($tree->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
+		foreach (self::dic()->tree()->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
 			if ($node['type'] == 'crs' || $node['type'] == 'grp') {
 				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}

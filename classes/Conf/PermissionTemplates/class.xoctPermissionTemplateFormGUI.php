@@ -1,12 +1,14 @@
 <?php
-/* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
+use srag\DIC\OpenCast\DICTrait;
 /**
  * Class xoctPermissionTemplateFormGUI
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     const F_DEFAULT = 'is_default';
 	const F_TITLE_DE = 'title_de';
@@ -29,18 +31,6 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var  ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilOpenCastPlugin
-	 */
-	protected $pl;
-	/**
-	 * @var ilLanguage
-	 */
-	protected $lng;
-	/**
 	 * @var bool
 	 */
 	protected $is_new;
@@ -50,15 +40,10 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 * @param xoctPermissionTemplate $xoctPermissionTemplate
 	 */
 	public function __construct($parent_gui, xoctPermissionTemplate $xoctPermissionTemplate) {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$lng = $DIC['lng'];
+		parent::__construct();
 		$this->object = $xoctPermissionTemplate;
 		$this->parent_gui = $parent_gui;
-		$this->ctrl = $ilCtrl;
-		$this->pl = ilOpenCastPlugin::getInstance();
-		$this->ctrl->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
-		$this->lng = $lng;
+		self::dic()->ctrl()->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
 		$this->is_new = ($this->object->getId() == '');
 		$this->initForm();
 	}
@@ -68,7 +53,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	protected function initForm() {
-		$this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
+		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
 
 		$input = new ilCheckboxInputGUI($this->txt(self::F_DEFAULT), self::F_DEFAULT);
@@ -125,16 +110,16 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	protected function initButtons() {
-	    $this->ctrl->setParameter($this->parent_gui, 'subtab_active', xoctPermissionTemplateGUI::SUBTAB_PERMISSION_TEMPLATES);
+	    self::dic()->ctrl()->setParameter($this->parent_gui, 'subtab_active', xoctPermissionTemplateGUI::SUBTAB_PERMISSION_TEMPLATES);
 		if ($this->is_new) {
-			$this->setTitle($this->lng->txt('create'));
-			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CREATE, $this->lng->txt(xoctPermissionTemplateGUI::CMD_CREATE));
+			$this->setTitle(self::dic()->language()->txt('create'));
+			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CREATE, self::dic()->language()->txt(xoctPermissionTemplateGUI::CMD_CREATE));
 		} else {
-			$this->setTitle($this->lng->txt('edit'));
-			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE, $this->lng->txt(xoctPermissionTemplateGUI::CMD_UPDATE));
+			$this->setTitle(self::dic()->language()->txt('edit'));
+			$this->addCommandButton(xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE, self::dic()->language()->txt(xoctPermissionTemplateGUI::CMD_UPDATE));
 		}
 
-		$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CANCEL, $this->lng->txt(xoctPermissionTemplateGUI::CMD_CANCEL));
+		$this->addCommandButton(xoctPermissionTemplateGUI::CMD_CANCEL, self::dic()->language()->txt(xoctPermissionTemplateGUI::CMD_CANCEL));
 	}
 
 	public function fillForm() {
@@ -194,6 +179,6 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	 * @return string
 	 */
 	protected function txt($lang_var) {
-		return $this->pl->txt('perm_tpl_form_' . $lang_var);
+		return self::plugin()->getPluginObject()->txt('perm_tpl_form_' . $lang_var);
 	}
 }

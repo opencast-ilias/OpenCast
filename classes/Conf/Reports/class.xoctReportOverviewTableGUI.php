@@ -25,22 +25,40 @@ class xoctReportOverviewTableGUI extends TableGUI {
     }
 
 
-    protected function getColumnValue($column, $row, $raw_export = false) {
-        // TODO: Implement getColumnValue() method.
+	/**
+	 * @param string $column
+	 * @param array  $row
+	 * @param bool   $format
+	 *
+	 * @return string|void
+	 */
+	protected function getColumnValue($column, $row, $format = self::DEFAULT_FORMAT) {
     }
 
-    protected function getSelectableColumns2() {
+
+	/**
+	 * @return array
+	 */
+	protected function getSelectableColumns2() {
         return [];
     }
 
-    protected function initColumns() {
+
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	protected function initColumns() {
         $this->addColumn('', '', '', true);
 	    $this->addColumn(self::dic()->language()->txt('message'));
 	    $this->addColumn(self::plugin()->translate('sender'), 'sender');
 	    $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
     }
 
-    protected function initData() {
+
+	/**
+	 * @throws Exception
+	 */
+	protected function initData() {
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
@@ -74,7 +92,11 @@ class xoctReportOverviewTableGUI extends TableGUI {
         $this->setData($filtered);
     }
 
-    protected function initFilterFields() {
+
+	/**
+	 *
+	 */
+	protected function initFilterFields() {
         $this->filter_fields = [
         	"sender" => [
         	    PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
@@ -88,20 +110,32 @@ class xoctReportOverviewTableGUI extends TableGUI {
         ];
     }
 
-    protected function initId() {
+
+	/**
+	 *
+	 */
+	protected function initId() {
         $this->setId('xoct_reports');
     }
 
-    protected function initTitle() {
+
+	/**
+	 *
+	 */
+	protected function initTitle() {
     }
 
-    protected function fillRow($row) {
-        $this->tpl->setVariable('ID', $row['id']);
+
+	/**
+	 * @param array $row
+	 */
+	protected function fillRow($row) {
+	    $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
         $this->tpl->setVariable('SENDER', $row['sender']);
-        $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-        $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
+	    $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
+	    $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
     }
 
 }

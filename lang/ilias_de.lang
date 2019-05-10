@@ -48,6 +48,9 @@ config_security#:#Security
 config_security_info#:#Erhöht die Sicherheit mithilfe von OpenCasts "Stream Security". Nur aktivieren, wenn OpenCast dafür konfiguriert ist.
 config_sign_annotation_links#:#Annotationslink signieren
 config_sign_player_links#:#Playerlink signieren
+config_sign_player_links_overwrite_default#:#Benutze Aufzeichnungsdauer als Dauer für die Gültigkeit der Signatur
+config_sign_player_links_additional_time_percent#:#Zusätzliche Zeit
+config_sign_player_links_additional_time_percent_info#:#Wieviel zusätzliche Zeit soll der Gültigkeit der Signatur in Prozent, abhängig von der Dauer, hinzugefügt werden?
 config_sign_download_links#:#Downloadlink signieren
 config_sign_thumbnail_links#:#Thumbnaillink signieren
 config_request_comb_lv#:#Request Kombinations Level
@@ -111,6 +114,16 @@ config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer S
 config_permission_templates#:#Berechtigungsvorlagen
 config_upload_chunk_size#:#Upload-Chunk-Größe (MB)
 config_upload_chunk_size_info#:#Der Video-Upload erfolgt stückweise, wobei ein Stück die hier angegebene Größe hat. Das Erhöhen dieser Größe kann die Upload-Geschwindigkeit verbessern, wobei allerdings auf das Upload-Limit geachtet werden sollte. Standard: 20MB
+config_btn_load_parameters#:#Parameter via API Laden
+config_btn_edit_parameters#:#Parameter Hinzufügen/Bearbeiten
+config_btn_add_parameter#:#Neuen Parameter Hinzufügen
+config_workflow_parameter_value_0#:#Keine (Standard verwenden)
+config_workflow_parameter_value_1#:#Immer aktiv
+config_workflow_parameter_value_2#:#Immer inaktiv
+config_workflow_parameter_value_3#:#Im Formular anbieten
+config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
+config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
+config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -118,6 +131,7 @@ event_cancel#:#Abbrechen
 event_clear_cache#:#Aufzeichnungen neu laden
 event_clips#:#Aufzeichnungen
 event_create#:#Aufzeichnung hochladen
+event_createScheduled#:#Aufzeichnungstermin(e) erstellen
 event_created#:#Erstellt
 event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
@@ -313,6 +327,7 @@ tab_back#:#Zurück
 tab_migration#:#Migration
 tab_video_portal#:#Videoportal
 tab_reports#:#Verfasste Meldungen
+tab_workflow_params#:#Workflow Parameter
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien
@@ -321,6 +336,9 @@ subtab_groups_roles#:#Gruppen & Rollen
 subtab_security#:#Security
 subtab_advanced#:#Erweitert
 subtab_permission_templates#:#Berechtigungsvorlagen
+subtab_parameters#:#Parameter
+subtab_settings#:#Einstellungen
+subtab_workflow_params#:#Workflow-Parameter
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -344,6 +362,13 @@ msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage l�
 msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen löschen möchten?
 msg_reports_deleted#:#Meldungen wurden gelöscht.
 msg_reports_table#:#Hier werden alle Meldungen der Benutzer zu Qualitätsproblemen oder Terminanpassungen gelistet. Das Verschicken dieser Meldungen kann im Tab "Einstellungen" (Subtabs "Aufzeichnungen" und "Serien") konfiguriert werden.
+msg_confirm_delete_param#:#Sind Sie sicher, dass Sie folgenden Parameter löschen möchten?
+msg_load_workflow_params#:#Folgende Parameter wurden über die Workflow-API gefunden. Möchten Sie diese laden (neue Parameter werden erstellt, alte gelöscht und bereits vorhandene Parameter werden aktualisiert)?
+msg_no_params_found#:#Es konnten keine Parameter über die API gefunden werden. Möglicherweise existiert für den ausgewählten Workflow kein Configuration Panel, aus welchem die Parameter gelesen werden können. Bitte erstellen Sie die Parameter manuell.
+msg_success#:#Änderungen erfolgreich gespeichert.
+msg_confirm_overwrite_series_params#:#Achtung: Damit werden alle lokal angepassten Konfigurationen zu Workflow-Parameter in den Einstellungen von ILIAS-Opencast-Objekten überschrieben. Fortfahren?
+msg_workflow_params_parsing_failed#:#Das Lesen der Parameter aus der API ist fehlgeschlagen:
+msg_workflow_parameters_info#:#Workflow-Parameter sind Informationen, welche beim Hochladen oder Planen eines Events in der Variable 'processing' an Opencast mitgeschickt werden. Beachten Sie, dass die Parameter auf den Konfigurierten Workflow (Einstellungen -> Aufzeichnungen -> Processing-Workflow-ID) abgestimmt sein müssen. Über die Schaltfläche "Parameter via API Laden" können Sie versuchen, diese Parameter automatisch zu laden - dies funktioniert allerdings nur, wenn in der Workflow-Definition in Opencast ein entsprechendes Configuration-Panel konfiguriert ist.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
@@ -382,3 +407,9 @@ msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benac
 date_from#:#Datum Von
 date_to#:#Datum Bis
 sender#:#Verfasser
+workflow_parameters#:#Workflow Parameter
+default_values#:#Standardwerte
+default_value_member#:#Verwendung Mitglieder
+default_value_admin#:#Verwendung Admins
+value_member#:#Verwendung Mitglieder
+value_admin#:#Verwendung Admins

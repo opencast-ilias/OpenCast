@@ -7,7 +7,7 @@ use ilTextAreaInputGUI;
 use srag\DIC\OpenCast\DICTrait;
 
 /**
- * Class TextInputGUI
+ * Class TextAreaInputGUI
  *
  * @package srag\CustomInputGUIs\OpenCast\TextAreaInputGUI
  *

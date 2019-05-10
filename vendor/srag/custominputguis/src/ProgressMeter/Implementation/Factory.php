@@ -9,7 +9,7 @@ use srag\CustomInputGUIs\OpenCast\ProgressMeter\Component\Factory as FactoryComp
 /**
  * Class Factory
  *
- * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Implementation/Component/Card/Factory.php
+ * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Implementation/Component/Chart/ProgressMeter/Factory.php
  *
  * @package srag\CustomInputGUIs\OpenCast\ProgressMeter\Implementation
  *

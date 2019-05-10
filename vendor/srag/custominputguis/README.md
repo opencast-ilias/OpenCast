@@ -23,6 +23,7 @@ So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/pac
 * [DateDurationInputGUI](./src/DateDurationInputGUI/doc/DateDurationInputGUI.md)
 * [GlyphGUI](./src/GlyphGUI/doc/GlyphGUI.md)
 * [HiddenInputGUI](./src/HiddenInputGUI/doc/HiddenInputGUI.md)
+* [LearningProgressPieUI](./src/LearningProgressPieUI/doc/LearningProgressPieUI.md)
 * [MultiLineInputGUI](./src/MultiLineInputGUI/doc/MultiLineInputGUI.md)
 * [MultiSelectSearchInputGUI](./src/MultiSelectSearchInputGUI/doc/MultiSelectSearchInputGUI.md)
 * [MultiSelectSearchInput2GUI](./src/MultiSelectSearchInputGUI/doc/MultiSelectSearchInput2GUI.md)
@@ -35,40 +36,15 @@ So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/pac
 * [Template](./src/Template/doc/Template.md)
 * [TextAreaInputGUI](./src/TextAreaInputGUI/doc/TextAreaInputGUI.md)
 * [TextInputGUI](./src/TextInputGUI/doc/TextInputGUI.md)
+* [ViewControlModeUI](./src/ViewControlModeUI/doc/ViewControlModeUI.md)
 * [Waiter](./src/Waiter/doc/Waiter.md)
 
-### Dependencies
-* ILIAS 5.2 or ILIAS 5.3
+### Requirements
+* ILIAS 5.3 or ILIAS 5.4
 * PHP >=5.6
-* [composer](https://getcomposer.org)
-* [npm](https://nodejs.org)
-* [canvas-toBlob](https://www.npmjs.com/package/canvas-toBlob)
-* [es6-promise](https://www.npmjs.com/package/es6-promise)
-* [html2canvas](https://www.npmjs.com/package/html2canvas)
-* [select2](https://www.npmjs.com/package/select2)
-* [srag/dic](https://packagist.org/packages/srag/dic)
-* [babel-minify -g](https://www.npmjs.com/package/babel-minify)
-* [clean-css-cli](https://www.npmjs.com/package/clean-css-cli)
-* [less -g](https://www.npmjs.com/package/less)
-
-Please use it for further development!
 
 ### Adjustment suggestions
-* Adjustment suggestions by pull requests on https://git.studer-raimann.ch/ILIAS/Plugins/CustomInputGUIs/tree/develop
+* Adjustment suggestions by pull requests
 * Adjustment suggestions which are not yet worked out in detail by Jira tasks under https://jira.studer-raimann.ch/projects/LINP
 * Bug reports under https://jira.studer-raimann.ch/projects/LINP
-* For external users please send an email to support-custom1@studer-raimann.ch
-
-### Development
-If you want development in this library you should install this library like follow:
-
-Start at your ILIAS root directory
-```bash
-mkdir -p Customizing/global/libraries
-cd Customizing/global/libraries
-git clone -b develop git@git.studer-raimann.ch:ILIAS/Plugins/CustomInputGUIs.git CustomInputGUIs
-```
-
-### Contact
-support-custom1@studer-raimann.ch
-https://studer-raimann.ch
+* For external users you can report it at https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_LINP

@@ -5,7 +5,9 @@ namespace srag\CustomInputGUIs\OpenCast\TableGUI;
 use ilCSVWriter;
 use ilExcel;
 use ilFormPropertyGUI;
+use ilHtmlToPdfTransformerFactory;
 use ilTable2GUI;
+use ilTemplate;
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\Exception\TableGUIException;
@@ -32,6 +34,14 @@ abstract class TableGUI extends ilTable2GUI {
 	 */
 	const LANG_MODULE = "";
 	/**
+	 * @var int
+	 */
+	const DEFAULT_FORMAT = 0;
+	/**
+	 * @var int
+	 */
+	const EXPORT_PDF = 3;
+	/**
 	 * @var array
 	 */
 	protected $filter_fields = [];
@@ -53,13 +63,7 @@ abstract class TableGUI extends ilTable2GUI {
 
 		parent::__construct($parent, $parent_cmd);
 
-		if (!(strpos($parent_cmd, "applyFilter") === 0
-			|| strpos($parent_cmd, "resetFilter") === 0)) {
-			$this->initTable();
-		} else {
-			// Speed up, not init data, only filter
-			$this->initFilter();
-		}
+		$this->initTable();
 	}
 
 
@@ -74,9 +78,9 @@ abstract class TableGUI extends ilTable2GUI {
 
 
 	/**
-	 *
+	 * @return array
 	 */
-	public final function getSelectableColumns() {
+	public final function getSelectableColumns()/*: array*/ {
 		return array_map(function (array &$column)/*: array*/ {
 			if (!isset($column["txt"])) {
 				$column["txt"] = $this->txt($column["id"]);
@@ -100,8 +104,6 @@ abstract class TableGUI extends ilTable2GUI {
 
 
 	/**
-	 *
-	 *
 	 * @throws TableGUIException $filters needs to be an array!
 	 * @throws TableGUIException $field needs to be an array!
 	 */
@@ -158,21 +160,27 @@ abstract class TableGUI extends ilTable2GUI {
 	 *
 	 */
 	private final function initTable()/*: void*/ {
-		$this->initAction();
+		if (!(strpos($this->parent_cmd, "applyFilter") === 0
+			|| strpos($this->parent_cmd, "resetFilter") === 0)) {
+			$this->initAction();
 
-		$this->initTitle();
+			$this->initTitle();
 
-		$this->initFilter();
+			$this->initFilter();
 
-		$this->initData();
+			$this->initData();
 
-		$this->initColumns();
+			$this->initColumns();
 
-		$this->initExport();
+			$this->initExport();
 
-		$this->initRowTemplate();
+			$this->initRowTemplate();
 
-		$this->initCommands();
+			$this->initCommands();
+		} else {
+			// Speed up, not init data on applyFilter or resetFilter, only filter
+			$this->initFilter();
+		}
 	}
 
 
@@ -182,10 +190,10 @@ abstract class TableGUI extends ilTable2GUI {
 	 *
 	 * @return string
 	 */
-	public final function txt(/*string*/
+	public function txt(/*string*/
 		$key,/*?string*/
-		$default = NULL)/*: string*/ {
-		if ($default !== NULL) {
+		$default = null)/*: string*/ {
+		if ($default !== null) {
 			return self::plugin()->translate($key, static::LANG_MODULE, [], true, "", $default);
 		} else {
 			return self::plugin()->translate($key, static::LANG_MODULE);
@@ -241,12 +249,49 @@ abstract class TableGUI extends ilTable2GUI {
 
 
 	/**
+	 * @param array $formats
+	 */
+	public function setExportFormats(array $formats)/*: void*/ {
+		parent::setExportFormats($formats);
+
+		$valid = [ self::EXPORT_PDF => "pdf" ];
+
+		foreach ($formats as $format) {
+			if (isset($valid[$format])) {
+				$this->export_formats[$format] = self::plugin()->getPluginObject()->getPrefix() . "_tablegui_export_" . $valid[$format];
+			}
+		}
+	}
+
+
+	/**
+	 * @param int  $format
+	 * @param bool $send
+	 */
+	public function exportData(/*int*/
+		$format, /*bool*/
+		$send = false)/*: void*/ {
+		switch ($format) {
+			case self::EXPORT_PDF:
+				$this->exportPDF($format);
+				break;
+
+			default:
+				parent::exportData($format, $send);
+				break;
+		}
+	}
+
+
+	/**
 	 * @param ilCSVWriter $csv
 	 */
 	protected function fillHeaderCSV(/*ilCSVWriter*/
 		$csv)/*: void*/ {
 		foreach ($this->getSelectableColumns() as $column) {
-			$csv->addColumn($column["txt"]);
+			if ($this->isColumnSelected($column["id"])) {
+				$csv->addColumn($column["txt"]);
+			}
 		}
 
 		$csv->addRow();
@@ -262,7 +307,7 @@ abstract class TableGUI extends ilTable2GUI {
 		$row)/*: void*/ {
 		foreach ($this->getSelectableColumns() as $column) {
 			if ($this->isColumnSelected($column["id"])) {
-				$csv->addColumn($this->getColumnValue($column["id"], $row, true));
+				$csv->addColumn($this->getColumnValue($column["id"], $row, self::EXPORT_CSV));
 			}
 		}
 
@@ -279,11 +324,15 @@ abstract class TableGUI extends ilTable2GUI {
 		$col = 0;
 
 		foreach ($this->getSelectableColumns() as $column) {
-			$excel->setCell($row, $col, $column["txt"]);
-			$col ++;
+			if ($this->isColumnSelected($column["id"])) {
+				$excel->setCell($row, $col, $column["txt"]);
+				$col ++;
+			}
 		}
 
-		$excel->setBold("A" . $row . ":" . $excel->getColumnCoord($col - 1) . $row);
+		if ($col > 0) {
+			$excel->setBold("A" . $row . ":" . $excel->getColumnCoord($col - 1) . $row);
+		}
 	}
 
 
@@ -298,7 +347,7 @@ abstract class TableGUI extends ilTable2GUI {
 		$col = 0;
 		foreach ($this->getSelectableColumns() as $column) {
 			if ($this->isColumnSelected($column["id"])) {
-				$excel->setCell($row, $col, $this->getColumnValue($column["id"], $result));
+				$excel->setCell($row, $col, $this->getColumnValue($column["id"], $result, self::EXPORT_EXCEL));
 				$col ++;
 			}
 		}
@@ -306,16 +355,94 @@ abstract class TableGUI extends ilTable2GUI {
 
 
 	/**
+	 * @param bool $send
+	 */
+	protected function exportPDF(/*bool*/
+		$send = false)/*: void*/ {
+
+		$css = file_get_contents(__DIR__ . "/css/table_pdf_export.css");
+
+		$tpl = new ilTemplate(__DIR__ . "/templates/table_pdf_export.html", true, true);
+
+		$tpl->setVariable("CSS", $css);
+
+		$tpl->setCurrentBlock("header");
+		foreach ($this->fillHeaderPDF() as $column) {
+			$tpl->setVariable("HEADER", $column);
+
+			$tpl->parseCurrentBlock();
+		}
+
+		$tpl->setCurrentBlock("body");
+		foreach ($this->row_data as $row) {
+			$tpl_row = new ilTemplate(__DIR__ . "/templates/table_pdf_export_row.html", true, true);
+
+			$tpl_row->setCurrentBlock("row");
+
+			foreach ($this->fillRowPDF($row) as $column) {
+				$tpl_row->setVariable("COLUMN", $column);
+
+				$tpl_row->parseCurrentBlock();
+			}
+
+			$tpl->setVariable("ROW", self::output()->getHTML($tpl_row));
+
+			$tpl->parseCurrentBlock();
+		}
+
+		$html = self::output()->getHTML($tpl);
+
+		$a = new ilHtmlToPdfTransformerFactory();
+		$a->deliverPDFFromHTMLString($html, "export.pdf", $send ? ilHtmlToPdfTransformerFactory::PDF_OUTPUT_DOWNLOAD : ilHtmlToPdfTransformerFactory::PDF_OUTPUT_FILE, static::PLUGIN_CLASS_NAME, "");
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function fillHeaderPDF()/*: array*/ {
+		$columns = [];
+
+		foreach ($this->getSelectableColumns() as $column) {
+			if ($this->isColumnSelected($column["id"])) {
+				$columns[] = $column["txt"];
+			}
+		}
+
+		return $columns;
+	}
+
+
+	/**
+	 * @param array $row
+	 *
+	 * @return array
+	 */
+	protected function fillRowPDF(/*array*/
+		$row)/*: array*/ {
+		$strings = [];
+
+		foreach ($this->getSelectableColumns() as $column) {
+			if ($this->isColumnSelected($column["id"])) {
+				$strings[] = $this->getColumnValue($column["id"], $row, self::EXPORT_PDF);
+			}
+		}
+
+		return $strings;
+	}
+
+
+	/**
 	 * @param string $column
 	 * @param array  $row
-	 * @param bool   $raw_export
+	 * @param int    $format
 	 *
 	 * @return string
 	 */
 	protected abstract function getColumnValue(/*string*/
 		$column, /*array*/
-		$row, /*bool*/
-		$raw_export = false)/*: string*/
+		$row, /*int*/
+		$format = self::DEFAULT_FORMAT)/*: string*/
 	;
 
 
@@ -340,7 +467,7 @@ abstract class TableGUI extends ilTable2GUI {
 	protected function initColumns()/*: void*/ {
 		foreach ($this->getSelectableColumns() as $column) {
 			if ($this->isColumnSelected($column["id"])) {
-				$this->addColumn($column["txt"], ($column["sort"] ? $column["id"] : NULL));
+				$this->addColumn($column["txt"], ($column["sort"] ? $column["id"] : null));
 			}
 		}
 	}

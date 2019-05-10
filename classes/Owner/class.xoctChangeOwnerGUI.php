@@ -22,47 +22,44 @@ class xoctChangeOwnerGUI extends xoctGUI {
      * @param xoctOpenCast $xoctOpenCast
      */
     public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
-        parent::__construct();
         if ($xoctOpenCast instanceof xoctOpenCast) {
             $this->xoctOpenCast = $xoctOpenCast;
         } else {
             $this->xoctOpenCast = new xoctOpenCast();
         }
         $this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
-        $this->tabs->clearTargets();
+        self::dic()->tabs()->clearTargets();
 
 
-        $this->tabs->setBackTarget($this->pl->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));
+        self::dic()->tabs()->setBackTarget(self::plugin()->getPluginObject()->txt('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
-        $this->tpl->addCss($this->pl->getStyleSheetLocation('default/change_owner.css'));
-        $this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/change_owner.js'));
-        $this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
+        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.css'));
+        self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.js'));
+        self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
     /**
      * @throws ilTemplateException
      */
     protected function index() {
-        global $DIC;
-        $ilUser = $DIC['ilUser'];
-        $xoctUser = xoctUser::getInstance($ilUser);
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
             ilUtil::sendFailure('Access denied', true);
-            $this->ctrl->redirectByClass(xoctEventGUI::class);
+            self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
         }
-        $temp = $this->pl->getTemplate('default/tpl.change_owner.html', false, false);
+        $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.change_owner.html', false, false);
         $temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
         $temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
-        $temp->setVariable('L_FILTER', $this->pl->txt('groups_participants_filter'));
-        $temp->setVariable('PH_FILTER', $this->pl->txt('groups_participants_filter_placeholder'));
-        $temp->setVariable('HEADER_OWNER', $this->pl->txt('current_owner_header'));
-        $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', $this->pl->txt('groups_available_participants_header'));
-        $temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
+        $temp->setVariable('L_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter'));
+        $temp->setVariable('PH_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter_placeholder'));
+        $temp->setVariable('HEADER_OWNER', self::plugin()->getPluginObject()->txt('current_owner_header'));
+        $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->getPluginObject()->txt('groups_available_participants_header'));
+        $temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
         $temp->setVariable('LANGUAGE', json_encode(array(
-            'none_available' => $this->pl->txt('invitations_none_available'),
-            'only_one_owner' => $this->pl->txt('owner_only_one_owner')
+            'none_available' => self::plugin()->getPluginObject()->txt('invitations_none_available'),
+            'only_one_owner' => self::plugin()->getPluginObject()->txt('owner_only_one_owner')
         )));
-        $this->tpl->setContent($temp->get());
+        self::dic()->mainTemplate()->setContent($temp->get());
     }
 
 

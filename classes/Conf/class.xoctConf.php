@@ -39,6 +39,8 @@ class xoctConf extends ActiveRecord {
 	const F_NO_METADATA = 'no_metadata';
 	const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
 	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
+	const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
+	const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
 	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
@@ -65,6 +67,7 @@ class xoctConf extends ActiveRecord {
     const F_STREAMING_URL = 'streaming_url';
     const F_USE_HIGHLOWRESSEGMENTPREVIEWS = 'use_highlowres_segment_preview';
 	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
+	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
 
 	/**
 	 * @var array

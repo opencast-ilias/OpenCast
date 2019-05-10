@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * ilOpenCastConfigGUI
  *
@@ -9,39 +9,37 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	
 	public function executeCommand() {
-		global $DIC;
-		$ilCtrl = $DIC['ilCtrl'];
-		$ilTabs = $DIC['ilTabs'];
-		$lng = $DIC['lng'];
-		$tpl = $DIC['tpl'];
 		/**
-		 * @var $ilCtrl ilCtrl
+		 * @var self::dic()->ctrl() ilCtrl
 		 */
-		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $_GET["ctype"]);
-		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "cname", $_GET["cname"]);
-		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "slot_id", $_GET["slot_id"]);
-		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $_GET["plugin_id"]);
-		$ilCtrl->setParameterByClass("ilobjcomponentsettingsgui", "pname", $_GET["pname"]);
+		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $_GET["ctype"]);
+		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "cname", $_GET["cname"]);
+		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "slot_id", $_GET["slot_id"]);
+		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $_GET["plugin_id"]);
+		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "pname", $_GET["pname"]);
 
-		$tpl->setTitle($lng->txt("cmps_plugin") . ": " . $_GET["pname"]);
-		$tpl->setDescription("");
+		self::dic()->mainTemplate()->setTitle(self::dic()->language()->txt("cmps_plugin") . ": " . $_GET["pname"]);
+		self::dic()->mainTemplate()->setDescription("");
 
-		$ilTabs->clearTargets();
+		self::dic()->tabs()->clearTargets();
 
 		if ($_GET["plugin_id"]) {
-			$ilTabs->setBackTarget($lng->txt("cmps_plugin"), $ilCtrl->getLinkTargetByClass("ilobjcomponentsettingsgui", "showPlugin"));
+			self::dic()->tabs()->setBackTarget(self::dic()->language()->txt("cmps_plugin"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "showPlugin"));
 		} else {
-			$ilTabs->setBackTarget($lng->txt("cmps_plugins"), $ilCtrl->getLinkTargetByClass("ilobjcomponentsettingsgui", "listPlugins"));
+			self::dic()->tabs()->setBackTarget(self::dic()->language()->txt("cmps_plugins"), self::dic()->ctrl()->getLinkTargetByClass("ilobjcomponentsettingsgui", "listPlugins"));
 		}
 
-		$nextClass = $ilCtrl->getNextClass();
+		$nextClass = self::dic()->ctrl()->getNextClass();
 
 		if ($nextClass) {
 			$a_gui_object = new xoctMainGUI();
-			$ilCtrl->forwardCommand($a_gui_object);
+			self::dic()->ctrl()->forwardCommand($a_gui_object);
 		} else {
-			$ilCtrl->redirectByClass(array( 'xoctMainGUI', 'xoctConfGUI' ));
+			self::dic()->ctrl()->redirectByClass(array( 'xoctMainGUI', 'xoctConfGUI' ));
 		}
 	}
 

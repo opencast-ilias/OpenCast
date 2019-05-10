@@ -7,6 +7,7 @@ use ilFormSectionHeaderGUI;
 use ilPropertyFormGUI;
 use ilRadioGroupInputGUI;
 use ilRadioOption;
+use srag\CustomInputGUIs\OpenCast\MultiLineInputGUI\MultiLineInputGUI;
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Exception\PropertyFormGUIException;
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
 use srag\DIC\OpenCast\DICTrait;
@@ -120,23 +121,31 @@ abstract class PropertyFormGUI extends ilPropertyFormGUI {
 
 			if ($item instanceof ilFormPropertyGUI) {
 				if (!isset($field[self::PROPERTY_VALUE])) {
-					$value = $this->getValue($key);
+					if (!($parent_item instanceof MultiLineInputGUI)) {
+						$value = $this->getValue($key);
 
-					Items::setValueToItem($item, $value);
+						Items::setValueToItem($item, $value);
+					}
 				}
 			}
 
 			if (is_array($field[self::PROPERTY_SUBITEMS])) {
-				$this->getFields($field[self::PROPERTY_SUBITEMS], $item);
+				if (!($item instanceof MultiLineInputGUI)) {
+					$this->getFields($field[self::PROPERTY_SUBITEMS], $item);
+				}
 			}
 
-			if ($parent_item instanceof ilRadioGroupInputGUI) {
-				$parent_item->addOption($item);
+			if ($parent_item instanceof MultiLineInputGUI) {
+				$parent_item->addInput($item);
 			} else {
-				if ($parent_item instanceof ilPropertyFormGUI) {
-					$parent_item->addItem($item);
+				if ($parent_item instanceof ilRadioGroupInputGUI) {
+					$parent_item->addOption($item);
 				} else {
-					$parent_item->addSubItem($item);
+					if ($parent_item instanceof ilPropertyFormGUI) {
+						$parent_item->addItem($item);
+					} else {
+						$parent_item->addSubItem($item);
+					}
 				}
 			}
 		}
@@ -196,7 +205,9 @@ abstract class PropertyFormGUI extends ilPropertyFormGUI {
 				}
 
 				if (is_array($field[self::PROPERTY_SUBITEMS])) {
-					$this->storeFormItems($field[self::PROPERTY_SUBITEMS]);
+					if (!($item instanceof MultiLineInputGUI)) {
+						$this->storeFormItems($field[self::PROPERTY_SUBITEMS]);
+					}
 				}
 			}
 		}
@@ -209,10 +220,10 @@ abstract class PropertyFormGUI extends ilPropertyFormGUI {
 	 *
 	 * @return string
 	 */
-	public final function txt(/*string*/
+	public function txt(/*string*/
 		$key,/*?string*/
-		$default = NULL)/*: string*/ {
-		if ($default !== NULL) {
+		$default = null)/*: string*/ {
+		if ($default !== null) {
 			return self::plugin()->translate($key, static::LANG_MODULE, [], true, "", $default);
 		} else {
 			return self::plugin()->translate($key, static::LANG_MODULE);

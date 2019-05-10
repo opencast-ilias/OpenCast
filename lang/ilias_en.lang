@@ -48,6 +48,9 @@ config_security#:#Security
 config_security_info#:#Improves the security by using OpenCasts "Stream Security". Only activate, if OpenCast is configured to use it.
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_player_links#:#Sign Player Link
+config_sign_player_links_overwrite_default#:#Use event duration for the validity of the signature
+config_sign_player_links_additional_time_percent#:#Additional Time
+config_sign_player_links_additional_time_percent_info#:#How much additional time should be added to the validity of the signature in percent, depending on the event duration?
 config_sign_download_links#:#Sign Download Link
 config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_request_comb_lv#:#Request Combination Level
@@ -111,6 +114,16 @@ config_video_portal_link_info#:#Will be displayed in the settings and info tab o
 config_permission_templates#:#Permission Templates
 config_upload_chunk_size#:#Upload Chunk Size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
+config_btn_load_parameters#:#Load Parameters via API
+config_btn_edit_parameters#:#Add/Edit Parameters
+config_btn_add_parameter#:#Add New Parameter
+config_workflow_parameter_value_0#:#None (Use Default)
+config_workflow_parameter_value_1#:#Always Active
+config_workflow_parameter_value_2#:#Always Inactive
+config_workflow_parameter_value_3#:#Show in Form
+config_allow_workflow_params_in_series#:#Enable configuration in series
+config_overwrite_series_params#:#Overwrite series configurations
+config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -118,6 +131,7 @@ event_cancel#:#Cancel
 event_clear_cache#:#Reload Events
 event_clips#:#Events
 event_create#:#Upload Event
+event_createScheduled#:#Create Event
 event_created#:#Created
 event_creator#:#Creator
 event_cut#:#Cut Event
@@ -315,6 +329,7 @@ tab_back#:#Back
 tab_migration#:#Migration
 tab_video_portal#:#Video Portal
 tab_reports#:#Reports
+tab_workflow_params#:#Workflow Parameters
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events
@@ -323,6 +338,9 @@ subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security
 subtab_advanced#:#Advanced
 subtab_permission_templates#:#Permission Templates
+subtab_parameters#:#Parameters
+subtab_settings#:#Settings
+subtab_workflow_params#:#Workflow Parameters
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
@@ -346,6 +364,13 @@ msg_confirm_delete_perm_template#:#Do you really want to delete the following te
 msg_confirm_delete_reports#:#Do you really want to delete the following reports?
 msg_reports_deleted#:#Reports deleted.
 msg_reports_table#:#All user reports to quality problems or date modifications will be listed here. The functionality for these reports can be configured in the tab "Settings" (subtabs "Events" and "Series").
+msg_confirm_delete_param#:#Do you really want to delete the following parameter?
+msg_load_workflow_params#:#The following parameters were returned by the workflow API. Would you like to load these (new parameters will be created, old ones will be deleted and already existing parameters will be updated)?
+msg_no_params_found#:#No parameters were found. The defined workflow may have no configuration panel, from which the parameters can be read. Please create the parameters manually.
+msg_success#:#Changes saved successfully.
+msg_confirm_overwrite_series_params#:#Warning: This will overwrite all locally adjusted configurations of workflow parameters in ILIAS OpenCast objects. Continue?
+msg_workflow_params_parsing_failed#:#Parsing of parameters via API failed:
+msg_workflow_parameters_info#:#Workflow Parameter are information which are passed to Opencast through the variable 'processing' when creating or scheduling an event. Note that the parameters must match the given workflow definition (Settings -> Events -> Processing Workflow ID). Clicking the button "Load Parameters via API" will try to load the parameters automatically - however this will only work if the workflow definition in Opencast has configured a configuration panel.
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Title
@@ -384,3 +409,9 @@ msg_quality_report_sent#:#The report has been sent. The support has been informe
 date_from#:#Date From
 date_to#:#Date To
 sender#:#Creator
+workflow_parameters#:#Workflow Parameters
+default_values#:#Default Values
+default_value_member#:#Usage for Members
+default_value_admin#:#Usage for Admins
+value_member#:#Usage for Members
+value_admin#:#Usage for Admins

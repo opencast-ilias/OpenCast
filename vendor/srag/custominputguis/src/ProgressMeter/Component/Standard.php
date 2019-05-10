@@ -7,7 +7,7 @@ namespace srag\CustomInputGUIs\OpenCast\ProgressMeter\Component;
 /**
  * Interface Standard
  *
- * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Component/Card/Standard.php
+ * https://github.com/ILIAS-eLearning/ILIAS/tree/trunk/src/UI/Component/Chart/ProgressMeter/Standard.php
  *
  * @package srag\CustomInputGUIs\OpenCast\ProgressMeter\Component
  *

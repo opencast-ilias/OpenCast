@@ -1,11 +1,5 @@
 <#1>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PublicationUsage/class.xoctPublicationUsage.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/SystemAccount/class.xoctSystemAccount.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroup.php');
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-
 xoctPublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
@@ -14,14 +8,11 @@ xoctOpenCast::updateDB();
 ?>
 <#2>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/IVTGroup/class.xoctIVTGroupParticipant.php');
 xoctIVTGroupParticipant::updateDB();
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Invitations/class.xoctInvitation.php');
 xoctInvitation::updateDB();
 ?>
 <#3>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventAdditions.php');
 xoctEventAdditions::updateDB();
 ?>
 <#4>
@@ -47,12 +38,10 @@ if($offering_admin)
 ?>
 <#5>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 xoctOpenCast::updateDB();
 ?>
 <#6>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 if (!xoctConf::getConfig(xoctConf::F_STD_ROLES)) {
 	$std_roles = array();
 	$std_roles[] = xoctConf::getConfig('role_ext_application');
@@ -65,19 +54,16 @@ if (!xoctConf::getConfig(xoctConf::F_STD_ROLES)) {
 ?>
 <#7>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 xoctConf::set(xoctConf::F_SIGN_PLAYER_LINKS, 1);
 xoctConf::set(xoctConf::F_SIGN_DOWNLOAD_LINKS, 1);
 xoctConf::set(xoctConf::F_SIGN_THUMBNAIL_LINKS, 1);
 ?>
 <#8>
 <?php
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
 xoctPermissionTemplate::updateDB();
 ?>
 <#9>
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 xoctConf::set(xoctConf::F_REPORT_QUALITY_TEXT,
 	'Haben Sie Qualitätsprobleme mit dem Bild oder Ton Ihrer Aufzeichnungen oder Videos? Sie können den Support über das untenstehende Formular kontaktieren.<br><br>Nennen Sie die betroffenen Videos und die Art der Qualitätsprobleme. Der Support nimmt so bald wie möglich Kontakt mit Ihnen auf.'
 );
@@ -88,18 +74,77 @@ xoctConf::set(xoctConf::F_REPORT_DATE_TEXT,
 ?>
 <#10>
 <?php
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
 xoctPermissionTemplate::updateDB();
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
 xoctConf::set(xoctConf::F_VIDEO_PORTAL_TITLE, 'Video Portal');
 ?>
 <#11>
 <?php
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/PermissionTemplates/class.xoctPermissionTemplate.php';
 xoctPermissionTemplate::updateDB();
 ?>
 <#12>
 <?php
-require_once 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/Reports/class.xoctReport.php';
 xoctReport::updateDB();
+?>
+<#13>
+<?php
+xoctWorkflowParameter::updateDB();
+xoctSeriesWorkflowParameter::updateDB();
+?>
+<#14>
+<?php
+// define standard workflow parameters
+if (xoctWorkflowParameter::count() === 0) {
+	$params = [];
+	$params[] = (new xoctWorkflowParameter())
+		->setId('flagForCutting')
+		->setTitle('Flag for Cutting')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('flagForReview')
+		->setTitle('Flag for Review')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToEngage')
+		->setTitle('Publish to Engage')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToHarvesting')
+		->setTitle('Publish to Harvesting')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('straightToPublishing')
+		->setTitle('Straight to Publishing')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('publishToApi')
+		->setTitle('Publish to API')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	$params[] = (new xoctWorkflowParameter())
+		->setId('autopublish')
+		->setTitle('Automatisch Publizieren')
+		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_SHOW_IN_FORM)
+		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
+		->create();
+	xoctSeriesWorkflowParameter::truncateDB();
+	xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
+}
 ?>

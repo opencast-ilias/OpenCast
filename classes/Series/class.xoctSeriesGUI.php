@@ -9,6 +9,17 @@
 class xoctSeriesGUI extends xoctGUI {
 
 	const SERIES_ID = 'series_id';
+
+	const CMD_EDIT_GENERAL = 'editGeneral';
+	const CMD_EDIT = self::CMD_EDIT_GENERAL;
+	const CMD_EDIT_WORKFLOW_PARAMS = 'editWorkflowParameters';
+	const CMD_UPDATE_GENERAL = 'updateGeneral';
+	const CMD_UPDATE = self::CMD_UPDATE_GENERAL;
+	const CMD_UPDATE_WORKFLOW_PARAMS = 'updateWorkflowParameters';
+
+	const SUBTAB_GENERAL = 'general';
+	const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
+
 	/**
 	 * @var xoctOpenCast
 	 */
@@ -18,7 +29,6 @@ class xoctSeriesGUI extends xoctGUI {
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
 	public function __construct(xoctOpenCast $xoctOpenCast = null) {
-		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
@@ -27,67 +37,165 @@ class xoctSeriesGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function executeCommand() {
 		if (!ilObjOpenCastAccess::hasWriteAccess()) {
-			$this->ctrl->redirectByClass('xoctEventGUI');
+			self::dic()->ctrl()->redirectByClass('xoctEventGUI');
 		}
+		self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
+		$this->setSubTabs();
 		parent::executeCommand();
 	}
 
 
-	protected function index() {
-		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
-	}
-
-
-	protected function add() {
-	}
-
-
-	protected function create() {
-	}
-
-
-	protected function edit() {
-		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
-			ilUtil::sendInfo($this->pl->txt('series_has_duplicates'));
+	/**
+	 *
+	 */
+	protected function setSubTabs() {
+		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+			self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
+			self::dic()->ctrl()->setParameter($this, 'cmd', self::CMD_EDIT_GENERAL);
+			self::dic()->tabs()->addSubTab(self::SUBTAB_GENERAL, self::plugin()->translate('subtab_' . self::SUBTAB_GENERAL), self::dic()->ctrl()->getLinkTarget($this));
+			self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_WORKFLOW_PARAMETERS);
+			self::dic()->ctrl()->setParameter($this, 'cmd', self::CMD_EDIT_WORKFLOW_PARAMS);
+			self::dic()->tabs()->addSubTab(self::SUBTAB_WORKFLOW_PARAMETERS, self::plugin()->translate('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget($this));
 		}
-		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_SETTINGS);
+	}
+
+	/**
+	 *
+	 */
+	protected function index() {
+		self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	protected function edit() {
+		$this->editGeneral();
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	protected function editGeneral() {
+		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
+		}
+		self::dic()->tabs()->activateSubTab(self::SUBTAB_GENERAL);
+
 		$xoctSeriesFormGUI = new xoctSeriesFormGUI($this, $this->xoctOpenCast);
 		$xoctSeriesFormGUI->fillForm();
-		$this->tpl->setContent($xoctSeriesFormGUI->getHTML());
+		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 
+	/**
+	 * @throws xoctException
+	 */
 	protected function update() {
-		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_SETTINGS);
+		$this->updateGeneral();
+	}
+
+
+	/**
+	 * @throws xoctException
+	 */
+	protected function updateGeneral() {
 		$xoctSeriesFormGUI = new xoctSeriesFormGUI($this, $this->xoctOpenCast);
 		if ($xoctSeriesFormGUI->saveObject()) {
 			$obj = new ilObjOpenCast($_GET['ref_id']);
 			$obj->setTitle($this->xoctOpenCast->getSeries()->getTitle());
 			$obj->setDescription($this->xoctOpenCast->getSeries()->getDescription());
 			$obj->update();
-			ilUtil::sendSuccess($this->pl->txt('series_saved'), true);
-			$this->ctrl->redirect($this, self::CMD_EDIT);
+			ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
+			self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
 		}
 		$xoctSeriesFormGUI->setValuesByPost();
-		$this->tpl->setContent($xoctSeriesFormGUI->getHTML());
+		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	protected function editWorkflowParameters() {
+		xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
+		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
+		}
+		self::dic()->tabs()->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
+
+		$xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS);
+		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
+	}
+
+
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	protected function updateWorkflowParameters() {
+		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $param_id => $value) {
+			$value_admin = $value['value_admin'];
+			$value_member = $value['value_member'];
+			if (in_array($value_member, xoctWorkflowParameter::$possible_values) && in_array($value_admin, xoctWorkflowParameter::$possible_values)) {
+				xoctSeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setValueAdmin($value_admin)->setValueMember($value_member)->update();
+			}
+		}
+		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
+		self::dic()->ctrl()->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
+	}
+
+	/**
+	 *
+	 */
+	protected function cancel() {
+		self::dic()->ctrl()->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getObjId() {
+		return $this->xoctOpenCast->getObjId();
+	}
+
+	/**
+	 *
+	 */
+	protected function add() {
+	}
+
+
+	/**
+	 *
+	 */
+	protected function create() {
+	}
+
+
+	/**
+	 *
+	 */
 	protected function confirmDelete() {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function delete() {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function view() {
-	}
-
-
-	protected function cancel() {
-		$this->ctrl->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
 	}
 }

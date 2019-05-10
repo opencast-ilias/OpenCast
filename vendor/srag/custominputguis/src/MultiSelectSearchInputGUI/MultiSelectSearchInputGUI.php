@@ -3,7 +3,9 @@
 namespace srag\CustomInputGUIs\OpenCast\MultiSelectSearchInputGUI;
 
 use ilMultiSelectInputGUI;
+use ilTableFilterItem;
 use ilTemplate;
+use ilToolbarItem;
 use ilUtil;
 use srag\DIC\OpenCast\DICTrait;
 
@@ -16,7 +18,7 @@ use srag\DIC\OpenCast\DICTrait;
  * @author  Oskar Truffer <ot@studer-raimann.ch>
  * @author  Martin Studer <ms@studer-raimann.ch>
  */
-class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI {
+class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI implements ilTableFilterItem, ilToolbarItem {
 
 	use DICTrait;
 	/**
@@ -304,5 +306,21 @@ class MultiSelectSearchInputGUI extends ilMultiSelectInputGUI {
 			$a_postvar = $a_postvar . "[]";
 		}
 		parent::setPostVar($a_postvar);
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getTableFilterHTML()/*: string*/ {
+		return $this->render();
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getToolbarHTML()/*: string*/ {
+		return $this->render();
 	}
 }

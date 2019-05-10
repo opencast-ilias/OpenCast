@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\DICTrait;
+
 /**
  * Class xoctEvent
  *
@@ -6,10 +9,14 @@
  */
 class xoctEvent extends xoctObject {
 
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
 	public static $LOAD_MD_SEPARATE = true;
 	public static $LOAD_ACL_SEPARATE = false;
 	public static $LOAD_PUB_SEPARATE = true;
 	public static $NO_METADATA = false;
+
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_SCHEDULED = 'SCHEDULED';
@@ -25,6 +32,7 @@ class xoctEvent extends xoctObject {
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';
+
 	/**
 	 * @var array
 	 *
@@ -226,6 +234,25 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * sets workflow parameters while adding the parameters with status "set automatically" automatically
+	 *
+	 * @param      $parameters array Workflow parameters to be set. Note that the parameters with value "set automatically" will be set automatically,
+	 *                         so it suffices to pass the additional ones
+	 * @param      $obj_id
+	 * @param bool $as_admin
+	 */
+	public function setWorkflowParametersForObjId($parameters, $obj_id, $as_admin = true) {
+		$parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
+		$not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
+		foreach ($not_set_in_form as $id) {
+			$parameters[$id] = 0;
+		}
+		$automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
+		$this->setWorkflowParameters(array_merge($automatically_set, $parameters));
+	}
+
+
+	/**
 	 * @param $key
 	 *
 	 * @return string
@@ -320,17 +347,17 @@ class xoctEvent extends xoctObject {
      * @param bool $auto_publish
      * @throws xoctException
      */
-	public function create($auto_publish = false) {
-		global $DIC;
-		$ilUser = $DIC['ilUser'];
+	public function create() {
 		$data = array();
 
 		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
-		$this->setOwner(xoctUser::getInstance($ilUser));
+		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
+		$this->setCurrentUserAsPublisher();
+
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		$data['processing'] = json_encode($this->getProcessing($auto_publish));
+		$data['processing'] = json_encode($this->getProcessing());
 		$data['acl'] = json_encode($this->getAcl());
 
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
@@ -348,9 +375,7 @@ class xoctEvent extends xoctObject {
 	 */
     public function schedule($rrule = '', $omit_set_owner = false) {
         if (!$omit_set_owner) {
-            global $DIC;
-            $ilUser = $DIC['ilUser'];
-            $this->setOwner(xoctUser::getInstance($ilUser));
+            $this->setOwner(xoctUser::getInstance(self::dic()->user()));
         }
 
         $data = array();
@@ -358,6 +383,8 @@ class xoctEvent extends xoctObject {
         $this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
         $this->updateMetadataFromFields(true);
         $this->updateSchedulingFromFields();
+
+        $this->setCurrentUserAsPublisher();
 
         if ($rrule) {
             $this->getScheduling()->setRRule($rrule);
@@ -831,6 +858,27 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @param bool $as_admin
+	 */
+	public function addDefaultWorkflowParameters($as_admin = true) {
+		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
+		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+			$default_value = $as_admin ? $xoctWorkflowParameter->getDefaultValueAdmin() : $xoctWorkflowParameter->getDefaultValueMember();
+
+			switch ($default_value) {
+				case xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE:
+					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 1;
+					break;
+				case xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE:
+					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 0;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	/**
 	 * @var string
 	 */
 	protected $identifier = '';
@@ -926,6 +974,10 @@ class xoctEvent extends xoctObject {
 	 * @var string
 	 */
 	protected $source = '';
+	/**
+	 * @var array
+	 */
+	protected $workflow_parameters = [];
 
 
 	/**
@@ -1383,6 +1435,22 @@ class xoctEvent extends xoctObject {
 
 
 	/**
+	 * @return array
+	 */
+	public function getWorkflowParameters() {
+		return $this->workflow_parameters;
+	}
+
+
+	/**
+	 * @param array $workflow_parameters
+	 */
+	public function setWorkflowParameters($workflow_parameters) {
+		$this->workflow_parameters = $workflow_parameters;
+	}
+
+
+	/**
 	 *
 	 */
 	protected function updateMetadataFromFields($scheduled) {
@@ -1437,8 +1505,6 @@ class xoctEvent extends xoctObject {
 	 * @return \DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
-		global $DIC;
-		$ilIliasIniFile = $DIC['ilIliasIniFile'];
 		if ($input instanceof DateTime) {
 			$input = $input->format(DATE_ATOM);
 		}
@@ -1446,7 +1512,7 @@ class xoctEvent extends xoctObject {
 			$input = 'now';
 		}
 		try {
-			$timezone = new DateTimeZone($ilIliasIniFile->readVariable('server', 'timezone'));
+			$timezone = new DateTimeZone(self::dic()->iliasIni()->readVariable('server', 'timezone'));
 		} catch (Exception $e) {
 			$timezone = null;
 		}
@@ -1475,21 +1541,16 @@ class xoctEvent extends xoctObject {
 	//	}
 
 	/**
-	 * @param bool|false $auto_publish
 	 * @return stdClass
 	 */
-	protected function getProcessing($auto_publish = false) {
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Conf/class.xoctConf.php');
+	protected function getProcessing() {
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
-		$processing->configuration->flagForCutting = 'false';
-		$processing->configuration->flagForReview = 'false';
-		$processing->configuration->publishToEngage = 'false';
-		$processing->configuration->publishToHarvesting = 'false';
-		$processing->configuration->straightToPublishing = 'true';
-		$processing->configuration->publishToApi = 'true';
-		$processing->configuration->autopublish = $auto_publish ? 'true' : 'false';
+		// TODO: was passiert bei erstellung via API?
+		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
+			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
+		}
 
 		return $processing;
 	}
@@ -1534,5 +1595,14 @@ class xoctEvent extends xoctObject {
 	 */
 	public function isScheduled() {
 		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING));
+	}
+
+
+	/**
+	 * @throws xoctException
+	 */
+	protected function setCurrentUserAsPublisher() {
+		$publisher = $this->getMetadata()->getField('publisher');
+		$publisher->setValue(xoctUser::getInstance(self::dic()->user())->getIdentifier());
 	}
 }

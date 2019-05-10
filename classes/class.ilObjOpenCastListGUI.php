@@ -1,26 +1,5 @@
 <?php
-/*
-	+-----------------------------------------------------------------------------+
-	| ILIAS open source                                                           |
-	+-----------------------------------------------------------------------------+
-	| Copyright (c) 1998-2009 ILIAS open source, University of Cologne            |
-	|                                                                             |
-	| This program is free software; you can redistribute it and/or               |
-	| modify it under the terms of the GNU General Public License                 |
-	| as published by the Free Software Foundation; either version 2              |
-	| of the License, or (at your option) any later version.                      |
-	|                                                                             |
-	| This program is distributed in the hope that it will be useful,             |
-	| but WITHOUT ANY WARRANTY; without even the implied warranty of              |
-	| MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               |
-	| GNU General Public License for more details.                                |
-	|                                                                             |
-	| You should have received a copy of the GNU General Public License           |
-	| along with this program; if not, write to the Free Software                 |
-	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
-	+-----------------------------------------------------------------------------+
-*/
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\DIC\OpenCast\DICTrait;
 /**
  * ListGUI implementation for OpenCast object plugin. This one
  * handles the presentation in container items (categories, courses, ...)
@@ -36,6 +15,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @version       1.0.00
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
+
+	use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var ilOpenCastPlugin
@@ -103,9 +85,9 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		{
 			if($this->checkCommandAccess('delete','',$this->ref_id,$this->type))
 			{
-				$this->ctrl->setParameterByClass("ilObjOpenCastGUI",'item_ref_id',$this->getCommandId());
-				$cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
-				$this->insertCommand($cmd_link, $this->lng->txt("delete"));
+				self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI",'item_ref_id',$this->getCommandId());
+				$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
+				$this->insertCommand($cmd_link, self::dic()->language()->txt("delete"));
 				$this->adm_commands_included = true;
 				return true;
 			}
@@ -114,11 +96,11 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		if($this->checkCommandAccess('delete','',$this->ref_id,$this->type))
 		{
-			$this->ctrl->setParameterByClass("ilObjOpenCastGUI", "ref_id",
+			self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "ref_id",
 				$this->container_obj->object->getRefId());
-			$this->ctrl->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
-			$cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
-			$this->insertCommand($cmd_link, $this->lng->txt("delete"), "",
+			self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
+			$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
+			$this->insertCommand($cmd_link, self::dic()->language()->txt("delete"), "",
 				"");
 			$this->adm_commands_included = true;
 		}
@@ -252,9 +234,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 */
 
 	public static function format_date_time($unix_timestamp) {
-		global $DIC;
-		$lng = $DIC['lng'];
-
 		$now = time();
 		$today = $now - $now % (60 * 60 * 24);
 		$yesterday = $today - 60 * 60 * 24;
@@ -264,10 +243,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			$date = date('d. M Y', $unix_timestamp);
 		} elseif ($unix_timestamp < $today) {
 			// given date yesterday
-			$date = $lng->txt('yesterday');
+			$date = self::dic()->language()->txt('yesterday');
 		} else {
 			// given date is today
-			$date = $lng->txt('today');
+			$date = self::dic()->language()->txt('today');
 		}
 
 		return $date . ', ' . date('H:i', $unix_timestamp);

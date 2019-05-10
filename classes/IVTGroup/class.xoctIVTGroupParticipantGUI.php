@@ -13,7 +13,6 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 	 */
 	public function __construct(xoctOpenCast $xoctOpenCast = null)
 	{
-		parent::__construct();
 		if ($xoctOpenCast instanceof xoctOpenCast)
 		{
 			$this->xoctOpenCast = $xoctOpenCast;
@@ -21,9 +20,9 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		{
 			$this->xoctOpenCast = new xoctOpenCast ();
 		}
-		$this->tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
+		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		xoctWaiterGUI::loadLib();
-		$this->tpl->addJavaScript($this->pl->getStyleSheetLocation('default/group_participants.js'));
+		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
 	}
 
 
@@ -88,7 +87,6 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 
 	protected function add()
 	{
-		// TODO: Implement add() method.
 	}
 
 
@@ -108,19 +106,16 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 
 	protected function edit()
 	{
-		// TODO: Implement edit() method.
 	}
 
 
 	protected function update()
 	{
-		// TODO: Implement update() method.
 	}
 
 
 	protected function confirmDelete()
 	{
-		// TODO: Implement confirmDelete() method.
 	}
 
 
