@@ -2,6 +2,7 @@
 
 namespace srag\DIC\OpenCast\Util;
 
+use ilDBConstants;
 use ilGlobalCache;
 use ilObjLanguage;
 use srag\DIC\OpenCast\DICTrait;
@@ -23,7 +24,7 @@ final class LibraryLanguageInstaller implements Pluginable {
 	/**
 	 * @return self
 	 */
-	public static function getInstance()/*: self*/ {
+	public static function getInstance() {
 		return new self();
 	}
 
@@ -49,7 +50,7 @@ final class LibraryLanguageInstaller implements Pluginable {
 	/**
 	 * @inheritdoc
 	 */
-	public function getPlugin()/*: PluginInterface*/ {
+	public function getPlugin() {
 		return $this->plugin;
 	}
 
@@ -57,7 +58,7 @@ final class LibraryLanguageInstaller implements Pluginable {
 	/**
 	 * @inheritdoc
 	 */
-	public function withPlugin(PluginInterface $plugin)/*: self*/ {
+	public function withPlugin(PluginInterface $plugin) {
 		$this->plugin = $plugin;
 
 		return $this;
@@ -69,8 +70,7 @@ final class LibraryLanguageInstaller implements Pluginable {
 	 *
 	 * @return self
 	 */
-	public function withLibraryLanguageDirectory(/*string*/
-		$library_language_directory)/*: self*/ {
+	public function withLibraryLanguageDirectory($library_language_directory) {
 		$this->library_language_directory = $library_language_directory;
 
 		return $this;
@@ -105,8 +105,8 @@ final class LibraryLanguageInstaller implements Pluginable {
 
 			// Read already plugin language keys for not delete them
 			$lang_array = unserialize(self::dic()->database()->queryF("SELECT lang_array FROM lng_modules WHERE lang_key = %s AND module = %s", [
-				"text",
-				"text"
+				ilDBConstants::T_TEXT,
+				ilDBConstants::T_TEXT
 			], [ $lang["key"], $prefix ])->fetchAssoc()["lang_array"]);
 			if (!is_array($lang_array)) {
 				$lang_array = [];
@@ -145,7 +145,7 @@ final class LibraryLanguageInstaller implements Pluginable {
 	 *
 	 * @return array
 	 */
-	protected function getAvailableLangFiles()/*: array*/ {
+	protected function getAvailableLangFiles() {
 		$langs = [];
 
 		if (!@is_dir($this->library_language_directory)) {

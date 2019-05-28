@@ -1,5 +1,9 @@
 # Change Log
 
+## [x.x.x]
+- Support for ILIAS 5.4
+- Dropped support for ILIAS 5.2
+
 ## [2.2.0]
 - Feature: Configuration of Workflow-Parameters
 - Bugfixing

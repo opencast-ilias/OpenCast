@@ -14,6 +14,7 @@ use ilCtrl;
 use ilCtrlStructureReader;
 use ilDBInterface;
 use ilErrorHandling;
+use ilGlobalTemplateInterface;
 use ilHelpGUI;
 use ILIAS;
 use ILIAS\DI\BackgroundTaskServices;
@@ -45,20 +46,19 @@ use ilRbacSystem;
 use ilSetting;
 use ilStyleDefinition;
 use ilTabsGUI;
-use ilTemplate;
 use ilToolbarGUI;
 use ilTree;
 use Session;
 use srag\DIC\OpenCast\DIC\AbstractDIC;
 
 /**
- * Class ILIAS54DIC
+ * Class ILIAS60DIC
  *
  * @package srag\DIC\OpenCast\DIC\Implementation
  *
  * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
-final class ILIAS54DIC extends AbstractDIC {
+final class ILIAS60DIC extends AbstractDIC {
 
 	/**
 	 * @var Container
@@ -67,7 +67,7 @@ final class ILIAS54DIC extends AbstractDIC {
 
 
 	/**
-	 * ILIAS54DIC constructor
+	 * ILIAS60DIC constructor
 	 *
 	 * @param Container $dic
 	 */
