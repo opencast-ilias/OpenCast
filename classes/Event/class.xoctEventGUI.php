@@ -10,6 +10,7 @@
 class xoctEventGUI extends xoctGUI {
 
 	const IDENTIFIER = 'eid';
+	const CMD_STANDARD = 'index';
 	const CMD_SHOW_CONTENT = 'showContent';
 	const CMD_CLEAR_CACHE = 'clearCache';
 	const CMD_EDIT_OWNER = 'editOwner';
@@ -23,8 +24,11 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_REPORT_QUALITY = 'reportQuality';
 	const CMD_SCHEDULE = 'schedule';
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
-    	const CMD_DELIVER_VIDEO = 'deliverVideo';
+	const CMD_DELIVER_VIDEO = 'deliverVideo';
 	const CMD_STREAM_VIDEO = 'streamVideo';
+	const CMD_SWITCH_TO_LIST = 'switchToList';
+	const CMD_SWITCH_TO_TILES = 'switchToTiles';
+
 	const ROLE_MASTER = "presenter";
 	const ROLE_SLAVE = "presentation";
 
@@ -38,12 +42,8 @@ class xoctEventGUI extends xoctGUI {
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
 	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
-		if ($xoctOpenCast instanceof xoctOpenCast) {
-			$this->xoctOpenCast = $xoctOpenCast;
-		} else {
-			$this->xoctOpenCast = new xoctOpenCast();
-		}
-		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_EVENTS);
+		$this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
+		self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
 		self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
 		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');
 	}
@@ -141,13 +141,40 @@ class xoctEventGUI extends xoctGUI {
 
 	/**
 	 * asynchronous loading of tableGUI
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws ilTemplateException
+	 * @throws xoctException
 	 */
 	protected function index() {
-        ilChangeEvent::_recordReadEvent(
-            $this->xoctOpenCast->getILIASObject()->getType(), $this->xoctOpenCast->getILIASObject()->getRefId(),
-            $this->xoctOpenCast->getObjId(), self::dic()->user()->getId());
+		ilChangeEvent::_recordReadEvent(
+			$this->xoctOpenCast->getILIASObject()->getType(),
+			$this->xoctOpenCast->getILIASObject()->getRefId(),
+			$this->xoctOpenCast->getObjId(),
+			self::dic()->user()->getId()
+		);
 
-        $intro_text = '';
+		switch (xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
+			case xoctUserViewType::VIEW_TYPE_LIST:
+				$this->indexList();
+				break;
+			case xoctUserViewType::VIEW_TYPE_TILES:
+				$this->indexTiles();
+				break;
+			default:
+				throw new xoctException(xoctException::INTERNAL_ERROR, 'Invalid view type ' .
+					xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
+					' for user with id ' . self::dic()->user()->getId());
+		}
+	}
+
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws ilTemplateException
+	 */
+	protected function indexList() {
+		$this->initViewSwitcherHTML('list');
+
+		$intro_text = '';
 		if ($this->xoctOpenCast->getIntroductionText()) {
 			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
 			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
@@ -156,17 +183,111 @@ class xoctEventGUI extends xoctGUI {
 
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-            if ($xoctEventTableGUI->hasScheduledEvents()) {
-                self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
-            }
+			if ($xoctEventTableGUI->hasScheduledEvents()) {
+				self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
+			}
 			self::dic()->mainTemplate()->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 			return;
 		}
 
 		self::dic()->mainTemplate()->setContent($intro_text . '<div id="xoct_table_placeholder"></div>' . $this->getModalsHTML());
 		self::dic()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
-		$this->loadAjaxCode();
+		$this->loadAjaxCode();	// the tableGUI is loaded asynchronously
 	}
+
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws xoctException
+	 */
+	protected function indexTiles() {
+		$this->initViewSwitcherHTML('tiles');
+
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
+		$xoctEvents = xoctEvent::getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], null, null, 0, 99999, true);
+		foreach ($xoctEvents as $key => $xoctEvent) {
+			if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+				unset($xoctEvents[$key]);
+			}
+		}
+
+		$tpl = self::plugin()->template('default/tpl.tile_container.html');
+
+		$f = self::dic()->ui()->factory();
+		$renderer = self::dic()->ui()->renderer();
+		$icon = $f->icon()->standard("crs", 'Course')->withIsOutlined(true);
+
+		foreach ($xoctEvents as $xoctEvent) {
+			$items = [];
+			foreach ($xoctEvent->getActions($this->xoctOpenCast) as $key => $action) {
+				$button = $f->button()->standard(self::plugin()->translate($action['lang_var'] ?: $key), $action['link']);
+				if (isset($action['onclick'])) {
+//					$button->withOnClick($action['onclick']);
+				}
+				$items[] = $button;
+			}
+			$dropdown = $f->dropdown()->standard($items);
+
+			$image = $f->image()->responsive(
+				$xoctEvent->getThumbnailUrl(),
+				"Thumbnail Example");
+
+			$player_button = ilLinkButton::getInstance();
+			$player_button->setCaption(self::plugin()->translate('player', 'event'), false);
+			$player_button->setUrl($xoctEvent->getPlayerLink());
+
+			$card = $f->card()->repositoryObject(
+				$xoctEvent->getTitle() . '<br>' . $player_button->getToolbarHTML(),
+				$image
+			)->withActions(
+				$dropdown
+			)->withObjectIcon(
+				$icon
+			);
+
+			$tpl->setCurrentBlock('tile');
+			$tpl->setVariable('TILE', $renderer->render($card));
+			$tpl->parseCurrentBlock();
+		}
+		self::dic()->mainTemplate()->setContent($tpl->get());
+	}
+
+	/**
+	 * @param $active
+	 * @return string
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
+	protected function initViewSwitcherHTML($active) {
+		if (xoct::isIlias54() && $this->xoctOpenCast->isViewChangeable()) {
+			$f = self::dic()->ui()->factory();
+			$renderer = self::dic()->ui()->renderer();
+
+			$actions = [
+				self::plugin()->translate('list') => self::dic()->ctrl()->getLinkTarget($this, self::CMD_SWITCH_TO_LIST),
+				self::plugin()->translate('tiles') => self::dic()->ctrl()->getLinkTarget($this, self::CMD_SWITCH_TO_TILES),
+			];
+
+			$aria_label = self::plugin()->translate('info_view_switcher');
+			$view_control = $f->viewControl()->mode($actions, $aria_label)->withActive(self::plugin()->translate($active));
+			self::dic()->toolbar()->addText($renderer->render($view_control));
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected function switchToTiles() {
+		xoctUserViewType::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserViewType::VIEW_TYPE_TILES);
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+	}
+
+	/**
+	 *
+	 */
+	protected function switchToList() {
+		xoctUserViewType::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserViewType::VIEW_TYPE_LIST);
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+	}
+
 
 
 	/**
@@ -889,7 +1010,7 @@ class xoctEventGUI extends xoctGUI {
 		 * @var $xoctInvitation xoctInvitation
 		 * @var $xoctGroup      xoctIVTGroup
 		 */
-		$errors = 'Folgende Clips konnten nicht upgedatet werde: ';
+		$errors = 'Folgende Clips konnten nicht upgedatet werden: ';
 		foreach ($a_data as $i => $d) {
 			$xoctEvent = xoctEvent::find($d['identifier']);
 			try {
@@ -932,9 +1053,10 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
-    /**
-     * @throws xoctException
-     */
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws xoctException
+	 */
 	protected function delete() {
 		$xoctEvent = xoctEvent::find($_POST[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -968,9 +1090,6 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
 		echo '<pre>' . print_r($xoctEvent, 1) . '</pre>';
 		exit;
-		//		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast, true);
-		//		$xoctEventFormGUI->fillForm();
-		//		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -1008,21 +1127,15 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var $event xoctEvent
 		 */
-		// $event = xoctEvent::find($_POST['import_identifier']);
 		$event = xoctEvent::find($_POST['import_identifier']);
 		$html = 'Series before set: ' . $event->getSeriesIdentifier() . '<br>';
 		$event->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
 		$html .= 'Series after set: ' . $event->getSeriesIdentifier() . '<br>';
-		//		$event->updateSeries();
 		$event->updateSeries();
 		$html .= 'Series after update: ' . $event->getSeriesIdentifier() . '<br>';
-		//		echo '<pre>' . print_r($event, 1) . '</pre>';
 		$event = new xoctEvent($_POST['import_identifier']);
 		$html .= 'Series after new read: ' . $event->getSeriesIdentifier() . '<br>';
-
-		//		$html .= 'POST: ' . $_POST['import_identifier'];
 		self::dic()->mainTemplate()->setContent($html);
-		//		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
 
@@ -1178,4 +1291,5 @@ class xoctEventGUI extends xoctGUI {
 	public function getObjId() {
 		return $this->xoctOpenCast->getObjId();
 	}
+
 }

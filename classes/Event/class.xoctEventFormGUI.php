@@ -84,6 +84,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function setValuesByPost() {
 		/**
 		 * @var $item ilTextInputGUI
@@ -96,6 +99,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 * @throws ilDateTimeException
+	 */
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
@@ -282,6 +288,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function fillForm() {
 		$startDateTime = $this->object->getStart();
 		$endDateTime = $this->object->getEnd();
@@ -453,6 +462,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return $this->object->getIdentifier();
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	protected function buildRRule() {
 		if ($this->getInput(self::F_MULTIPLE)) {
 			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
@@ -467,6 +479,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return false;
 	}
 
+	/**
+	 *
+	 */
 	protected function initButtons() {
 		switch (true) {
 			case  $this->is_new AND !$this->view AND !$this->schedule:
@@ -495,6 +510,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 * @throws ilDateTimeException
+	 */
 	protected function initView() {
 		$this->initForm();
 

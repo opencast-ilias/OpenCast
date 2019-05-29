@@ -34,3 +34,16 @@
 .hidden {
 	display:none;
 }
+
+.ilToolbar ul.ilToolbarItems li.ilToolbarGroup .navbar-text {
+	margin-top: 7.5px;
+	margin-bottom: 7.5px;
+	margin-left: 7.5px;
+	float: unset;
+}
+
+#xoct_tile_container {
+	display:grid;
+	grid-column-gap: 15px;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}

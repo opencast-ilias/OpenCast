@@ -114,12 +114,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$this->tpl->setVariable('PREVIEW', $xE->getThumbnailUrl());
 		}
 		if ($xE->getProcessingState() == xoctEvent::STATE_SUCCEEDED) {
-			if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
-				self::dic()->ctrl()->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xE->getIdentifier());
-				$playerLink = self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_STREAM_VIDEO);
-			} else {
-				$playerLink = $xE->getPlayerLink();
-			}
+			$playerLink = $xE->getPlayerLink();
 
 			if ($playerLink) {
 				$this->tpl->setCurrentBlock('link');
@@ -272,6 +267,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 	}
 
 
+	/**
+	 * @return bool
+	 */
 	protected function getOwnerColDefault() {
 		static $owner_visible;
 		if ($owner_visible !== NULL) {
@@ -283,6 +281,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 	}
 
 
+	/**
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 */
 	protected function initColumns() {
 		$selected_colums = $this->getSelectedColumns();
 
@@ -299,82 +300,30 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 	/**
 	 * @param xoctEvent $xoctEvent
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
-		if (!in_array($xoctEvent->getProcessingState(), array(
-			xoctEvent::STATE_SUCCEEDED,
-			xoctEvent::STATE_NOT_PUBLISHED,
-			xoctEvent::STATE_READY_FOR_CUTTING,
-			xoctEvent::STATE_OFFLINE,
-			xoctEvent::STATE_FAILED,
-			xoctEvent::STATE_SCHEDULED,
-			xoctEvent::STATE_SCHEDULED_OFFLINE,
-			//			xoctEvent::STATE_ENCODING,
-		))) {
+		$actions = $xoctEvent->getActions($this->xoctOpenCast);
+		if (empty($actions)) {
 			return;
 		}
-		/**
-		 * @var $xoctUser xoctUser
-		 */
-		$xoctUser = xoctUser::getInstance(self::dic()->user());
 
 		$ac = new ilAdvancedSelectionListGUI();
 		$ac->setListTitle(self::plugin()->translate('common_actions'));
 		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
 		$ac->setUseImages(false);
 
-		self::dic()->ctrl()->setParameter($this->parent_obj, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		self::dic()->ctrl()->setParameterByClass(xoctInvitationGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-		self::dic()->ctrl()->setParameterByClass(xoctChangeOwnerGUI::class, xoctEventGUI::IDENTIFIER, $xoctEvent->getIdentifier());
-
-		if (ilObjOpenCast::DEV) {
-			$ac->addItem(self::plugin()->translate('event_view'), 'event_view', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_VIEW));
-		}
-
-		// Edit Owner
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
-			$ac->addItem(self::plugin()->translate('event_edit_owner'), 'event_edit_owner', self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD));
-		}
-
-		// Share event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $xoctEvent, $xoctUser, $this->xoctOpenCast)) {
-			$ac->addItem(self::plugin()->translate('event_invite_others'), 'invite_others', self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD));
-		}
-
-		// Cut Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $xoctEvent, $xoctUser)) {
-			$ac->addItem(self::plugin()->translate('event_cut'), 'event_cut', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CUT), '', '', '_blank');
-		}
-
-		// Delete Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $xoctEvent, $xoctUser)) {
-			$ac->addItem(self::plugin()->translate('event_delete'), 'event_delete', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_CONFIRM));
-		}
-
-		// Edit Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
-			if ($xoctEvent->isScheduled() && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) {
-				// show different langvar when date is editable
-				$lang_var = 'event_edit_date';
-			} else {
-				$lang_var = 'event_edit';
-			}
-			$ac->addItem(self::plugin()->translate($lang_var), 'event_edit', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_EDIT));
-		}
-
-		// Online/offline
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $xoctEvent, $xoctUser)) {
-			if ($xoctEvent->getXoctEventAdditions()->getIsOnline()) {
-				$ac->addItem(self::plugin()->translate('event_set_offline'), 'event_set_offline', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_OFFLINE));
-			} else {
-				$ac->addItem(self::plugin()->translate('event_set_online'), 'event_set_online', self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctEventGUI::CMD_SET_ONLINE));
-			}
-		}
-
-		// Report Quality
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $xoctEvent)) {
-			$ac->addItem(self::plugin()->translate('event_report_quality_problem'), 'event_report_quality', '#', '', '', '', '', false, "($('input#xoct_report_quality_event_id').val('"
-				. $xoctEvent->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus()");
+		foreach ($actions as $key => $action) {
+			$ac->addItem(
+				self::plugin()->translate($action['lang_var'] ?: $key),
+				$key, $action['link'],
+				'',
+				'',
+				$action['frame'],
+				'',
+				$action['prevent_background_click'],
+				$action['onclick']
+			);
 		}
 
 		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
@@ -412,6 +361,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 	}
 
 
+	/**
+	 * @throws xoctException
+	 */
 	protected function parseData() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
 		$a_data = xoctEvent::getFiltered($filter, NULL, NULL, $this->getOffset(), $this->getLimit());
@@ -502,6 +454,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 	}
 
 
+	/**
+	 * @param int $format
+	 * @param bool $send
+	 */
 	public function exportData($format, $send = false) {
 		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
 			echo "Access Denied";

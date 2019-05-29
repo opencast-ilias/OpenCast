@@ -903,6 +903,7 @@ return array(
     'xoctSystemAccountTableGUI' => $baseDir . '/classes/Conf/SystemAccount/class.xoctSystemAccountTableGUI.php',
     'xoctUploadFile' => $baseDir . '/classes/Request/class.xoctUploadFile.php',
     'xoctUser' => $baseDir . '/classes/IVTGroup/class.xoctUser.php',
+    'xoctUserViewType' => $baseDir . '/classes/Series/ViewTypes/class.xoctUserViewType.php',
     'xoctVideoPortalSettingsFormGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctVideoPortalSettingsFormGUI.php',
     'xoctWaiterGUI' => $baseDir . '/classes/class.xoctWaiterGUI.php',
     'xoctWorkflowParameter' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameter.php',

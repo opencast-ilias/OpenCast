@@ -264,6 +264,7 @@ series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Serie-Typ
 series_create#:#Serie anlegen
+series_default_view#:#Standard-Ansicht
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
 series_description#:#Beschreibung
@@ -302,6 +303,10 @@ series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload durch Mitglieder
 series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
 series_video_portal_link#:#Link zur Serie in %s
+series_view_changeable#:#Ansicht änderbar
+series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht selbst zu wechseln.
+series_view_type_0#:#Liste
+series_view_type_1#:#Kacheln
 series_links#:#Links
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
@@ -413,3 +418,5 @@ default_value_member#:#Verwendung Mitglieder
 default_value_admin#:#Verwendung Admins
 value_member#:#Verwendung Mitglieder
 value_admin#:#Verwendung Admins
+list#:#Liste
+tiles#:#Kacheln
