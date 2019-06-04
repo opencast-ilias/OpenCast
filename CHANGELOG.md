@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.2.1]
+- Bugfix: Config import not working
+
 ## [2.2.0]
 - Feature: Configuration of Workflow-Parameters
 - Bugfixing
