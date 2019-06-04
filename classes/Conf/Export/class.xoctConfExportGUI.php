@@ -59,7 +59,7 @@ class xoctConfExportGUI extends xoctGUI {
 			$xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
 			$xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
 
-			if (!xoctWorkflowParameter::where(array( 'usage_id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
+			if (!xoctWorkflowParameter::where(array( 'id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
 				$xoctWorkflowParameter->create();
 			} else {
 				$xoctWorkflowParameter->update();
