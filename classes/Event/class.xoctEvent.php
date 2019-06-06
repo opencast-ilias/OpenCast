@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpenCast\Exception\DICException;
 
 /**
  * Class xoctEvent
@@ -354,7 +355,7 @@ class xoctEvent extends xoctObject {
 		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
-		$this->setCurrentUserAsPublisher();
+//		$this->setCurrentUserAsPublisher();
 
 		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
 		$data['processing'] = json_encode($this->getProcessing());
@@ -384,7 +385,7 @@ class xoctEvent extends xoctObject {
         $this->updateMetadataFromFields(true);
         $this->updateSchedulingFromFields();
 
-        $this->setCurrentUserAsPublisher();
+//        $this->setCurrentUserAsPublisher();
 
         if ($rrule) {
             $this->getScheduling()->setRRule($rrule);
@@ -773,7 +774,8 @@ class xoctEvent extends xoctObject {
 		// Share event
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this, $xoctUser, $xoctOpenCast)) {
 			$actions['invite_others'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD)
+				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD),
+				'lang_var' => 'event_invite_others'
 			];
 		}
 
@@ -1609,7 +1611,7 @@ class xoctEvent extends xoctObject {
 
 	/**
 	 * @param null $input
-	 * @return \DateTime
+	 * @return DateTime
 	 */
 	public function getDefaultDateTimeObject($input = null) {
 		if ($input instanceof DateTime) {

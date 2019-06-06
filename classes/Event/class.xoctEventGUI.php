@@ -1,5 +1,7 @@
 <?php
 
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctEventGUI
  *
@@ -124,24 +126,17 @@ class xoctEventGUI extends xoctGUI {
 	 * same cmd as standard command (index()), except it's synchronous
 	 */
 	protected function showContent() {
-		$intro_text = '';
-		if ($this->xoctOpenCast->getIntroductionText()) {
-			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
-			$intro_text = $intro->get();
-		}
-
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, true);
         if ($xoctEventTableGUI->hasScheduledEvents()) {
             self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
         }
-		self::dic()->mainTemplate()->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
+		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 	}
 
 
 	/**
 	 * asynchronous loading of tableGUI
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 * @throws ilTemplateException
 	 * @throws xoctException
 	 */
@@ -155,106 +150,71 @@ class xoctEventGUI extends xoctGUI {
 
 		switch (xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
 			case xoctUserViewType::VIEW_TYPE_LIST:
-				$this->indexList();
+				$html = $this->indexList();
 				break;
 			case xoctUserViewType::VIEW_TYPE_TILES:
-				$this->indexTiles();
+				$html = $this->indexTiles();
 				break;
 			default:
 				throw new xoctException(xoctException::INTERNAL_ERROR, 'Invalid view type ' .
 					xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
 					' for user with id ' . self::dic()->user()->getId());
 		}
+
+		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $html . $this->getModalsHTML());
 	}
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
-	 * @throws ilTemplateException
+	 * @return string
+	 * @throws DICException
 	 */
 	protected function indexList() {
 		$this->initViewSwitcherHTML('list');
 
-		$intro_text = '';
-		if ($this->xoctOpenCast->getIntroductionText()) {
-			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
-			$intro_text = $intro->get();
-		}
-
 		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
+			// you're here when exporting or changing selected columns
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 			if ($xoctEventTableGUI->hasScheduledEvents()) {
 				self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
 			}
-			self::dic()->mainTemplate()->setContent($intro_text . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
-			return;
+			return $xoctEventTableGUI->getHTML();
 		}
 
-		self::dic()->mainTemplate()->setContent($intro_text . '<div id="xoct_table_placeholder"></div>' . $this->getModalsHTML());
 		self::dic()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
-		$this->loadAjaxCode();	// the tableGUI is loaded asynchronously
+		$this->loadAjaxCodeForList();	// the tableGUI is loaded asynchronously
+		return '<div id="xoct_table_placeholder"></div>';
 	}
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
+	 * @throws ilTemplateException
 	 * @throws xoctException
 	 */
 	protected function indexTiles() {
+		return $this->showContentTiles();
 		$this->initViewSwitcherHTML('tiles');
 
-		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEvents = xoctEvent::getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], null, null, 0, 99999, true);
-		foreach ($xoctEvents as $key => $xoctEvent) {
-			if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast)) {
-				unset($xoctEvents[$key]);
-			}
-		}
+		$this->loadAjaxCodeForTiles();	// the tilesGUI is loaded asynchronously
+		return '<div id="xoct_tiles_placeholder"></div>';
+	}
+	/**
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 * @throws xoctException
+	 */
+	protected function showContentTiles() {
+		$this->initViewSwitcherHTML('tiles');
 
-		$tpl = self::plugin()->template('default/tpl.tile_container.html');
+		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
 
-		$f = self::dic()->ui()->factory();
-		$renderer = self::dic()->ui()->renderer();
-		$icon = $f->icon()->standard("crs", 'Course')->withIsOutlined(true);
-
-		foreach ($xoctEvents as $xoctEvent) {
-			$items = [];
-			foreach ($xoctEvent->getActions($this->xoctOpenCast) as $key => $action) {
-				$button = $f->button()->standard(self::plugin()->translate($action['lang_var'] ?: $key), $action['link']);
-				if (isset($action['onclick'])) {
-//					$button->withOnClick($action['onclick']);
-				}
-				$items[] = $button;
-			}
-			$dropdown = $f->dropdown()->standard($items);
-
-			$image = $f->image()->responsive(
-				$xoctEvent->getThumbnailUrl(),
-				"Thumbnail Example");
-
-			$player_button = ilLinkButton::getInstance();
-			$player_button->setCaption(self::plugin()->translate('player', 'event'), false);
-			$player_button->setUrl($xoctEvent->getPlayerLink());
-
-			$card = $f->card()->repositoryObject(
-				$xoctEvent->getTitle() . '<br>' . $player_button->getToolbarHTML(),
-				$image
-			)->withActions(
-				$dropdown
-			)->withObjectIcon(
-				$icon
-			);
-
-			$tpl->setCurrentBlock('tile');
-			$tpl->setVariable('TILE', $renderer->render($card));
-			$tpl->parseCurrentBlock();
-		}
-		self::dic()->mainTemplate()->setContent($tpl->get());
+		return $xoctEventTileGUI->getHTML();
+		self::dic()->mainTemplate()->setContent($xoctEventTileGUI->getHTML());
 	}
 
 	/**
 	 * @param $active
 	 * @return string
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	protected function initViewSwitcherHTML($active) {
 		if (xoct::isIlias54() && $this->xoctOpenCast->isViewChangeable()) {
@@ -293,7 +253,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 *
 	 */
-	protected function loadAjaxCode() {
+	protected function loadAjaxCodeForList() {
 		foreach ($_GET as $para => $value) {
 			self::dic()->ctrl()->setParameter($this, $para, $value);
 		}
@@ -321,14 +281,46 @@ class xoctEventGUI extends xoctGUI {
 		self::dic()->mainTemplate()->addOnLoadCode($ajax);
 	}
 
-
 	/**
 	 *
+	 */
+	protected function loadAjaxCodeForTiles() {
+		foreach ($_GET as $para => $value) {
+			self::dic()->ctrl()->setParameter($this, $para, $value);
+		}
+		$ajax_link = self::dic()->ctrl()->getLinkTarget($this, 'asyncGetTilesGUI', "", true);
+		$ajax = "$.ajax({
+				    url: '{$ajax_link}',
+				    dataType: 'html',
+				    success: function(data){
+				        xoctWaiter.hide();
+				        $('div#xoct_tiles_placeholder').replaceWith($(data));
+				    }
+				});";
+		self::dic()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
+		self::dic()->mainTemplate()->addOnLoadCode($ajax);}
+
+	/**
+	 * ajax call
 	 */
 	public function asyncGetTableGUI() {
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
         $html = $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
+            $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
+        }
+        echo $html;
+        exit();
+	}
+
+
+	/**
+	 * ajax call
+	 */
+	public function asyncGetTilesGUI() {
+		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
+        $html = $xoctEventTileGUI->getHTML();
+        if ($xoctEventTileGUI->hasScheduledEvents()) {
             $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
         }
         echo $html;
@@ -1054,7 +1046,7 @@ class xoctEventGUI extends xoctGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 * @throws xoctException
 	 */
 	protected function delete() {
@@ -1178,7 +1170,6 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
 			$modal_quality_html = $modal_quality->getHTML();
 		}
-
 		return $modal_date_html . $modal_quality_html;
 	}
 
@@ -1278,7 +1269,7 @@ class xoctEventGUI extends xoctGUI {
 	 * @param $key
 	 *
 	 * @return string
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	public function txt($key) {
 		return self::plugin()->translate('event_' . $key);
@@ -1290,6 +1281,20 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	public function getObjId() {
 		return $this->xoctOpenCast->getObjId();
+	}
+
+	/**
+	 * @return string
+	 * @throws ilTemplateException
+	 */
+	protected function getIntroTextHTML() {
+		$intro_text = '';
+		if ($this->xoctOpenCast->getIntroductionText()) {
+			$intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
+			$intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
+			$intro_text = $intro->get();
+		}
+		return $intro_text;
 	}
 
 }
