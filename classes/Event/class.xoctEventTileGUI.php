@@ -127,7 +127,7 @@ class xoctEventTileGUI {
 				$this->has_scheduled_events = true;
 			}
 		}
-		$this->events = $xoctEvents;
+		$this->events = array_values($xoctEvents);
 	}
 
 	/**
