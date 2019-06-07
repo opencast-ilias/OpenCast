@@ -48,13 +48,13 @@
 	float: unset;
 }
 
+/** TILE STUFF */
 #xoct_tile_container {
 	display:grid;
 	grid-column-gap: 15px;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(300px, 0.4fr));
 }
 
-/** TILE STUFF */
 .xoct_event_title {
 	margin-bottom: 12px;
 }
@@ -76,4 +76,10 @@ div.il-card.thumbnail div.caption {
 
 .il-card img {
 	min-height: 64%;
+}
+
+@media (max-width: 647px) {
+	#xoct_tile_container {
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
 }
