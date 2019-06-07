@@ -827,7 +827,7 @@ class xoctEvent extends xoctObject {
 				'lang_var' => 'event_report_quality_problem',
 				'link' => '#',
 				'prevent_background_click' => false,
-				'onclick' => "($('input#xoct_report_quality_event_id').val('" . $this->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus()"
+				'onclick' => "($('input#xoct_report_quality_event_id').val('" . $this->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus();"
 			];
 		}
 
