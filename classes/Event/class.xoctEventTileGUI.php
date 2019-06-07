@@ -1,6 +1,7 @@
 <?php
 
 use ILIAS\UI\Factory;
+use ILIAS\UI\Implementation\Component\Signal;
 use ILIAS\UI\Implementation\Component\SignalGenerator;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
@@ -76,7 +77,7 @@ class xoctEventTileGUI {
 		$container_tpl = self::plugin()->template('default/tpl.tile_container.html');
 		$container_tpl->setVariable('PAGINATION_TOP', $this->getPaginationHTML());
 		$container_tpl->setVariable('PAGINATION_BOTTOM', $this->getPaginationHTML());
-		$icon = $this->factory->icon()->standard("crs", 'Course')->withIsOutlined(true);
+		$icon = $this->factory->icon()->custom(self::plugin()->directory() . '/templates/images/icon_video.svg', 'Video');
 
 		$from = $this->page * $this->limit;
 		$to = ($this->page + 1) * $this->limit;
@@ -169,7 +170,7 @@ class xoctEventTileGUI {
 			->withTargetURL(self::dic()->ctrl()->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_STANDARD, '', true), self::GET_PAGE)
 			->withPageSize($this->limit);
 
-		return $this->renderer->render($pagination);
+		return $this->renderer->renderAsync($pagination);
 	}
 
 }

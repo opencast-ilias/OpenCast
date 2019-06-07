@@ -191,7 +191,6 @@ class xoctEventGUI extends xoctGUI {
 	 * @throws xoctException
 	 */
 	protected function indexTiles() {
-		return $this->showContentTiles();
 		$this->initViewSwitcherHTML('tiles');
 
 		$this->loadAjaxCodeForTiles();	// the tilesGUI is loaded asynchronously
