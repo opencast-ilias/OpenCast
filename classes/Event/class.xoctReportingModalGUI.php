@@ -54,11 +54,20 @@ class xoctReportingModalGUI extends ilModalGUI {
 	}
 
 
+	/**
+	 * @return ilModalGUI|void
+	 * @throws ilException
+	 */
 	static function getInstance() {
 		throw new ilException('Do not use this method, please use the constructor instead.');
 	}
 
 
+	/**
+	 * @return string
+	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws ilTemplateException
+	 */
 	function getHTML() {
 		// only the following two lines differ from the parent method
 		$tpl = new ilTemplate("tpl.reporting_modal.html", true, true, self::plugin()->getPluginObject()->getDirectory());

@@ -38,6 +38,7 @@ So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/pac
 * [TextInputGUI](./src/TextInputGUI/doc/TextInputGUI.md)
 * [ViewControlModeUI](./src/ViewControlModeUI/doc/ViewControlModeUI.md)
 * [Waiter](./src/Waiter/doc/Waiter.md)
+* [WeekdayInputGUI](./src/WeekdayInputGUI/doc/WeekdayInputGUI.md)
 
 ### Requirements
 * ILIAS 5.3 or ILIAS 5.4

@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.21.0]
+- WeekdayInputGUI
+
+## [0.20.8]
+- NumberInputGUI in toolbar
+
+## [0.20.7]
+- PHPDoc
+
+## [0.20.6]
+- `strToCamelCase`
+
+## [0.20.5]
+- `strToCamelCase` in table
+
+## [0.20.4]
+- Nothing to fix ...
+
+## [0.20.3]
+- Nothing to fix ...
+
 ## [0.20.2]
 - Use export format in `getColumnValue`
 
