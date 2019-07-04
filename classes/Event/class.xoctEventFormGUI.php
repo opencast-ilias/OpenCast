@@ -187,6 +187,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$te->setRequired($this->schedule);
 		$this->addItem($te);
 
 
