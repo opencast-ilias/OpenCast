@@ -4,6 +4,7 @@
 - Support for ILIAS 5.4
 - Dropped support for ILIAS 5.2
 - Feature: Tile View
+- Feature: Set field 'presenter/s' required for scheduled events
 
 ## [2.2.1]
 - Bugfix: Config import not working
