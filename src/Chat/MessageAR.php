@@ -24,13 +24,12 @@ class MessageAR extends ActiveRecord {
 	}
 
 	/**
-	 * @var int
+	 * @var string
 	 *
 	 * @con_has_field    true
-	 * @con_fieldtype    integer
-	 * @con_length       8
+	 * @con_fieldtype    text
+	 * @con_length       56
 	 * @con_is_primary   true
-	 * @con_sequence     true
 	 */
 	protected $id;
 
@@ -63,6 +62,15 @@ class MessageAR extends ActiveRecord {
 	 * @db_length           128
 	 */
 	protected $message;
+
+	/**
+	 * @var string
+	 *
+	 * @db_has_field        true
+	 * @db_is_notnull       true
+	 * @db_fieldtype        timestamp
+	 */
+	protected $sent_at;
 
 
 	/**
@@ -127,4 +135,22 @@ class MessageAR extends ActiveRecord {
 	public function setMessage($message) {
 		$this->message = $message;
 	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getSentAt() {
+		return $this->sent_at;
+	}
+
+
+	/**
+	 * @param string $sent_at
+	 */
+	public function setSentAt($sent_at) {
+		$this->sent_at = $sent_at;
+	}
+
+	
 }

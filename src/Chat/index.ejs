@@ -20,17 +20,23 @@
 		var socket = io({query: {token: "<%= token %>"}});
 		$('form').submit(function(e){
 			e.preventDefault(); // prevents page reloading
-			socket.emit('chat_msg', $('#m').val());
-			$('#m').val('');
+			if ($('#m').val() !== '') {
+				socket.emit('chat_msg', $('#m').val());
+				$('#m').val('');
+			}
 			return false;
 		});
 		socket.on('chat_msg', function(msg){
-			$('#messages').append($('<li>').text(msg.public_name + ": " + msg.msg));
+			$('#messages').append($('<li>').text('[' + msg.sent_at + '] ' + msg.public_name + ": " + msg.msg));
 		});
 	});
 </script>
 <body>
-<ul id="messages"></ul>
+<ul id="messages">
+	<% messages.forEach(function(message){ %>
+	<li>[<%= message.sent_at %>] <%= message.public_name %>: <%= message.message %></li>
+	<% }) %>
+</ul>
 <form action="">
 	<input id="m" autocomplete="off" /><button>Send</button>
 </form>

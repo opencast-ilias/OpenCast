@@ -16,9 +16,11 @@
   "dependencies": {
     "ejs": "^2.6.2",
     "express": "^4.17.1",
+    "moment": "^2.24.0",
     "mysql": "^2.17.1",
     "paellaplayer": "https://github.com/polimediaupv/paella/tarball/develop",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.2.0",
+    "uuid": "^3.3.2"
   },
   "private": true,
   "scripts": {
