@@ -153,3 +153,9 @@ if (xoctWorkflowParameter::count() === 0) {
 xoctOpenCast::updateDB();
 xoctUserViewType::updateDB();
 ?>
+<#16>
+<?php
+\srag\Plugins\Opencast\Chat\ChatroomAR::updateDB();
+\srag\Plugins\Opencast\Chat\MessageAR::updateDB();
+\srag\Plugins\Opencast\Chat\TokenAR::updateDB();
+?>

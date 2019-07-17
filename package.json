@@ -14,7 +14,11 @@
     "url": "https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST"
   },
   "dependencies": {
-    "paellaplayer": "https://github.com/polimediaupv/paella/tarball/develop"
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "mysql": "^2.17.1",
+    "paellaplayer": "https://github.com/polimediaupv/paella/tarball/develop",
+    "socket.io": "^2.2.0"
   },
   "private": true,
   "scripts": {

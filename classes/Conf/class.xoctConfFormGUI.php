@@ -236,8 +236,23 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$cbs->addSubItem($te);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS), xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS), xoctConf::F_ENABLE_LIVE_STREAMS);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS . '_info'));
+		$cbs->setRequired(false);
+		$cb->addSubItem($cbs);
+
+		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE), xoctConf::F_PRESENTATION_NODE);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE . '_info'));
+		$te->setRequired(true);
+		$cbs->addSubItem($te);
+
+		$cbs2 = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT), xoctConf::F_ENABLE_CHAT);
+		$cbs2->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT . '_info'));
+		$cbs2->setRequired(false);
+		$cbs->addSubItem($cbs2);
+
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS), xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS . '_info'));
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
