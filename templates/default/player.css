@@ -1,0 +1,19 @@
+html {
+	height: 100%;
+}
+
+#srchat_iframe {
+	display: inline-block;
+	position: relative;
+	float: right;
+	width: 15%;
+	height: 100%;
+}
+
+div#playerContainer {
+	display: inline-block !important;
+	position: relative;
+	float: left;
+	width: 85% !important;
+	height: 100%;
+}

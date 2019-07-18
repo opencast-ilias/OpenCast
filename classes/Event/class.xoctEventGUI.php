@@ -565,6 +565,8 @@ class xoctEventGUI extends xoctGUI {
 
 		$tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
 
+		$tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
+
 		$data = [
 			"streams" => $streams,
 			"frameList" => $frameList,

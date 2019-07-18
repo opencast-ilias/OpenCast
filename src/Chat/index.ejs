@@ -1,8 +1,9 @@
 <!doctype html>
 <html>
 <head>
-	<title>Socket.IO chat</title>
+	<title>studer + raimann chat</title>
 	<style>
+		#srchat_iframe {background-color: white;}
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 		body { font: 13px Helvetica, Arial; }
 		form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
@@ -32,13 +33,15 @@
 	});
 </script>
 <body>
-<ul id="messages">
-	<% messages.forEach(function(message){ %>
-	<li>[<%= message.sent_at %>] <%= message.public_name %>: <%= message.message %></li>
-	<% }) %>
-</ul>
-<form action="">
-	<input id="m" autocomplete="off" /><button>Send</button>
-</form>
+<div id="chat_body">
+	<ul id="messages">
+		<% messages.forEach(function(message){ %>
+		<li>[<%= message.sent_at %>] <%= message.public_name %>: <%= message.message %></li>
+		<% }) %>
+	</ul>
+	<form action="">
+		<input id="m" autocomplete="off" /><button>Send</button>
+	</form>
+</div>
 </body>
 </html>
