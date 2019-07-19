@@ -3,6 +3,8 @@
 <head>
 	<title>studer + raimann chat</title>
 	<link href="/srchat/css" rel="stylesheet">
+	<link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+	<link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="stylesheet">
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -11,11 +13,11 @@
 		$("html,body").scrollTop($(document).height());
 
 		var socket = io({query: {token: "<%= token %>"}});
-		$('form').submit(function(e){
+		$('form#srchat_form').submit(function(e){
 			e.preventDefault(); // prevents page reloading
-			if ($('#m').val() !== '') {
-				socket.emit('chat_msg', $('#m').val());
-				$('#m').val('');
+			if ($('#srchat_input').val() !== '') {
+				socket.emit('chat_msg', $('#srchat_input').val());
+				$('#srchat_input').val('');
 			}
 			return false;
 		});
@@ -24,12 +26,13 @@
 			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height());
 
 			$('#messages').append($('<li>')
-					.append($('<img>')
-							.attr("class", "srchat_profile_picture")
-							.attr("height", "30px")
-							.attr("src", "http://local.ilias54.com/data/<%= client_id %>/usr_images/usr_" + msg.usr_id + "_xsmall.jpg")
-							.attr("onerror", "if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';")
-					).append($('<div>').attr("class", "srchat_message_div")
+					.append($('<div>').attr('class', 'srchat_profile_picture_div')
+							.append($('<img>')
+								.attr("class", "srchat_profile_picture")
+								.attr("height", "30px")
+								.attr("src", "http://local.ilias54.com/data/<%= client_id %>/usr_images/usr_" + msg.usr_id + "_xsmall.jpg")
+								.attr("onerror", "if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';")
+					)).append($('<div>').attr("class", "srchat_message_div")
 							.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
 							.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
 					)
@@ -39,14 +42,24 @@
 				$("html,body").animate({scrollTop: $(document).height()}, "slow");
 			}
 		});
+
+		socket.on('disconnect', function() {
+			$('#m').prop('disabled', true);
+		});
+
+		socket.on('connection', function() {
+			$('#m').prop('disabled', false);
+		});
 	});
 </script>
-<body>
+<body id="srchat_body">
 <div id="chat_body">
 	<ul id="messages">
 		<% messages.forEach(function(message){ %>
 		<li>
-			<img class="srchat_profile_picture" height="30px" src="http://local.ilias54.com/data/<%= client_id %>/usr_images/usr_<%= message.usr_id %>_xsmall.jpg" onerror="if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';">
+			<div class="srchat_profile_picture_div">
+				<img class="srchat_profile_picture" height="30px" src="http://local.ilias54.com/data/<%= client_id %>/usr_images/usr_<%= message.usr_id %>_xsmall.jpg" onerror="if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';">
+			</div>
 			<div class="srchat_message_div">
 				<p class="srchat_message_name"><%= message.public_name %></p>
 				<p class="srchat_message_content"><%= message.message %></p>
@@ -54,8 +67,15 @@
 		</li>
 		<% }) %>
 	</ul>
-	<form action="">
-		<input maxlength="120" id="m" autocomplete="off" /><button>Send</button>
+	<form id="srchat_form" action="">
+		<div class="input-group">
+			<input class="form-control input-sm" id="srchat_input" maxlength="120" autocomplete="off" />
+			<span class="input-group-btn">
+				<button class="btn btn-warning btn-sm" id="btn-chat">
+					Send
+				</button>
+			</span>
+		</div>
 	</form>
 </div>
 </body>

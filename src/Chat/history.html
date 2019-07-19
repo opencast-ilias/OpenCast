@@ -1,18 +1,24 @@
-<style>
-    #srchat_iframe {background-color: white;}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font: 13px Helvetica, Arial; }
-form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-#messages { list-style-type: none; margin: 0; padding: 0; }
-#messages li { padding: 5px 10px; }
-#messages li:nth-child(odd) { background: #eee; }
-</style>
+<!doctype html>
+<html>
+<head>
+    <title>studer + raimann chat</title>
+    <link href="Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/src/Chat/chat.css" rel="stylesheet">
+</head>
+<body id="srchat_body">
 <div id="chat_body">
     <ul id="messages">
         <!-- BEGIN message -->
-        <li>[{SENT_AT}] {PUBLIC_NAME}: {MESSAGE}</li>
+        <li>
+            <div class="srchat_profile_picture_div">
+                <img class="srchat_profile_picture" height="30px" src="/data/{CLIENT_ID}/usr_images/usr_{USER_ID}_xsmall.jpg" onerror="if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';">
+            </div>
+            <div class="srchat_message_div">
+                <p class="srchat_message_name">{PUBLIC_NAME}</p>
+                <p class="srchat_message_content">{MESSAGE}</p>
+            </div>
+        </li>
         <!-- END message -->
     </ul>
 </div>
+</body>
+</html>

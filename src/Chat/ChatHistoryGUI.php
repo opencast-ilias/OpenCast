@@ -45,13 +45,14 @@ class ChatHistoryGUI {
 	public function render($async = false) {
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/history.html', false, false);
 		$users = [];
-		foreach (MessageAR::where(['chat_room_id' => $this->chat_room_id])->get() as $message) {
+		foreach (MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message) {
 			$template->setCurrentBlock('message');
 			/** @var $message MessageAR */
-			$template->setVariable('SENT_AT', $message->getSentAt());
+			$template->setVariable('USER_ID', $message->getUsrId());
 			$template->setVariable('MESSAGE', $message->getMessage());
 			$user = $users[$message->getUsrId()] ?: ($users[$message->getUsrId()] = new ilObjUser($message->getUsrId()));
 			$template->setVariable('PUBLIC_NAME', $user->getPublicName());
+			$template->setVariable('CLIENT_ID', CLIENT_ID);
 			$template->parseCurrentBlock();
 		}
 		return $template->get();

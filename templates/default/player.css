@@ -6,7 +6,7 @@ html {
 	display: inline-block;
 	position: relative;
 	float: right;
-	width: 15%;
+	width: 20%;
 	height: 100%;
 }
 
@@ -14,6 +14,6 @@ div#playerContainer {
 	display: inline-block !important;
 	position: relative;
 	float: left;
-	width: 85% !important;
+	width: 80% !important;
 	height: 100%;
 }

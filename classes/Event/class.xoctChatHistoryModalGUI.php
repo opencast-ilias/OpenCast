@@ -22,7 +22,7 @@ class xoctChatHistoryModalGUI extends ilModalGUI {
 	public function __construct($parent_gui) {
 		$this->parent_gui = $parent_gui;
 
-		self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+		self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/src/Chat/chat.css');
 
 		$this->setId('xoct_chat_history_modal');
 		$this->setHeading(self::plugin()->translate('event_chat_history'));

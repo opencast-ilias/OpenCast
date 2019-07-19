@@ -35,6 +35,7 @@ app.get('/srchat/:token', function(req, res){
 			};
 			// response.style_sheet_location = __dirname + '/chat.css';
 			response.client_id = client_id;
+			response.base_url = req.protocol + '://' + req.hostname;
 			return res.send(ejs.render(index_file, response));
 		} else {
 			console.log(response);
