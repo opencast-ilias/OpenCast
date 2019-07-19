@@ -2,18 +2,7 @@
 <html>
 <head>
 	<title>studer + raimann chat</title>
-	<style>
-		* { margin: 0; padding: 0; box-sizing: border-box; }
-		body { font: 13px Helvetica, Arial; color: white; background-color: black; height: 100%;}
-		form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-		form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-		form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-		#messages { list-style-type: none; margin: 0; padding: 0 0 40px 0; }
-		#messages li { padding: 5px 10px; clear: both; height: 55px; margin: 10px;}
-		.srchat_profile_picture {border-radius: 25px; position:relative; float:left; margin: 5px;}
-		.srchat_message_div {position:relative; float:left; margin: 10px; width: 70%}
-		.srchat_message_name {font-weight: bold; margin-bottom: 5px;}
-	</style>
+	<link href="/srchat/css" rel="stylesheet">
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -47,7 +36,7 @@
 			);
 
 			if (scroll_down) {
-				$("html,body").scrollTop($(document).height());
+				$("html,body").animate({scrollTop: $(document).height()}, "slow");
 			}
 		});
 	});

@@ -15,7 +15,16 @@ var QueryUtils = new QueryUtils();
 
 var tokens = [];
 
+/**
+ * send stylesheet
+ */
+app.get('/srchat/css', function(req, res) {
+	res.sendFile(__dirname + '/chat.css');
+});
 
+/**
+ * check token and get old messages
+ */
 app.get('/srchat/:token', function(req, res){
 	QueryUtils.checkTokenAndFetchMessages(req.params.token, function(response, success) {
 		if (success) {
@@ -34,6 +43,9 @@ app.get('/srchat/:token', function(req, res){
 	});
 });
 
+/**
+ * open socket / authenticate
+ */
 io.use(function(socket, next) {
 	if (typeof socket.handshake.query === 'undefined' || typeof socket.handshake.query.token !== 'string') {
 		console.log('missing token in handshake');
@@ -59,6 +71,9 @@ io.use(function(socket, next) {
 	return  next();
 });
 
+/**
+ * build socket
+ */
 io.on('connection', function(socket){
 	console.log('user connected');
 	socket.join('sr_chat_' + socket.chat_room_id);
@@ -79,6 +94,9 @@ io.on('connection', function(socket){
 	});
 });
 
+/**
+ * listen
+ */
 http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
