@@ -4,8 +4,10 @@ namespace srag\Plugins\Opencast\Chat;
 
 use ilOpenCastPlugin;
 use ilTemplate;
+use ilTemplateException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use ilObjUser;
 
 /**
  * Class ChatGUI
@@ -40,7 +42,6 @@ class ChatGUI {
 	 */
 	public function __construct(TokenAR $token) {
 		$this->token = $token;
-		$this->template = new ilTemplate(self::plugin()->directory() . '/src/Chat/iframe.html', false, false);
 //		$this->template = new ilTemplate(self::plugin()->directory() . '/src/Chat/index.html', false, false);
 	}
 
@@ -49,13 +50,16 @@ class ChatGUI {
 	 * @param bool $async
 	 *
 	 * @return string
-	 * @throws \ilTemplateException
+	 * @throws DICException
+	 * @throws ilTemplateException
 	 */
 	public function render($async = false) {
 		$url = ILIAS_HTTP_PATH . ':' . self::PORT . '/srchat/' . $this->token->getToken()->toString();
-		$this->template->setVariable('URL', $url);
-//		$this->template->setVariable('TOKEN', $this->token->getToken()->toString());
-		$this->template->addInlineCss(self::plugin()->directory() . '/src/Chat/chat.css');
-		return $this->template->get();
+		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/iframe.html', false, false);
+		$template->setVariable('URL', $url);
+//		$template->setVariable('TOKEN', $token->getToken()->toString());
+		$template->addcss(self::plugin()->directory() . '/src/Chat/chat.css');
+		return $template->get();
 	}
+
 }

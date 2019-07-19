@@ -2,6 +2,7 @@
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Chat\ChatroomAR;
 
 /**
  * Class xoctEvent
@@ -731,7 +732,7 @@ class xoctEvent extends xoctObject {
 	}
 
 	/**
-	 * @param $xoctOpenCast
+	 * @param $xoctOpenCast xoctOpenCast
 	 * @return array
 	 */
 	public function getActions($xoctOpenCast) {
@@ -828,6 +829,15 @@ class xoctEvent extends xoctObject {
 				'link' => '#',
 				'prevent_background_click' => false,
 				'onclick' => "($('input#xoct_report_quality_event_id').val('" . $this->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus();"
+			];
+		}
+
+		if (ChatroomAR::chatroomExists($this->getIdentifier(), $xoctOpenCast->getObjId())) {
+			self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->getIdentifier());
+			$actions['event_show_chat_history'] = [
+				'link' => '#',
+				'prevent_background_click' => false,
+				'onclick' => "($('#xoct_chat_history_iframe').attr('src', '" . self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SHOW_CHAT_HISTORY) . "') && $('#xoct_chat_history_modal').modal('show'))"
 			];
 		}
 

@@ -34,6 +34,26 @@ class ChatroomAR extends ActiveRecord {
 	}
 
 	/**
+	 * @param $event_id
+	 * @param $obj_id
+	 *
+	 * @return ChatroomAR
+	 */
+	public static function findBy($event_id, $obj_id) {
+		$chatroom = self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
+		return $chatroom;
+	}
+
+	/**
+	 * @param $event_id string
+	 * @param $obj_id int
+	 * @return bool
+	 */
+	public static function chatroomExists($event_id, $obj_id) {
+		return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->hasSets();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getConnectorContainerName() {

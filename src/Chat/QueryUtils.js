@@ -57,8 +57,10 @@ QueryUtils.prototype.checkTokenAndFetchMessages = function(token, callback) {
 	var utils = this;
 	con.query('SELECT * FROM sr_chat_token WHERE token = "' + token + '"', function(err, rows, fields) {
 		if (!err) {
-			if (rows.length === 0 || rows[0].valid_until_unix < ts) {
-				callback({error: 'invalid token'}, false);
+			if (rows.length === 0) {
+				callback({error: 'invalid token (not found in db): ' + token}, false);
+			} else if (rows[0].valid_until_unix < ts) {
+				callback({error: 'invalid token (expired): ' + token}, false);
 			} else {
 				utils.getOldMessages(rows[0].chat_room_id, function(response, success) {
 					if (success) {
@@ -78,10 +80,12 @@ QueryUtils.prototype.checkTokenAndFetchMessages = function(token, callback) {
 		} else {
 			callback({error: 'error while performing query. ' + err.message}, false);
 		}
+
+		con.query('DELETE FROM sr_chat_token WHERE token = "' + token + '"');
+		con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ' + ts);
 	});
 
-	con.query('DELETE FROM sr_chat_token WHERE token = "' + token + '"');
-	con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ' + ts);
+
 }
 
 QueryUtils.prototype.insertMessage = function(chat_room_id, usr_id, msg, sent_at) {

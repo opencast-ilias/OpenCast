@@ -2,6 +2,7 @@
 
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\ChatGUI;
+use srag\Plugins\Opencast\Chat\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Token;
 use srag\Plugins\Opencast\Chat\TokenAR;
@@ -34,6 +35,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_STREAM_VIDEO = 'streamVideo';
 	const CMD_SWITCH_TO_LIST = 'switchToList';
 	const CMD_SWITCH_TO_TILES = 'switchToTiles';
+	const CMD_SHOW_CHAT_HISTORY = 'showChatHistory';
 
 	const ROLE_MASTER = "presenter";
 	const ROLE_SLAVE = "presentation";
@@ -582,6 +584,11 @@ class xoctEventGUI extends xoctGUI {
 			$TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
 			$ChatGUI = new ChatGUI($TokenAR);
 			$tpl->setVariable('CHAT', $ChatGUI->render());
+
+			// dev
+			//header('Location: http://local.ilias54.com:3000/srchat/' . $TokenAR->getToken()->toString());
+			//exit;
+			// dev
 		}
 
 		echo $tpl->get();
@@ -957,7 +964,7 @@ class xoctEventGUI extends xoctGUI {
 	 * @return string
 	 */
 	protected function getModalsHTML() {
-		$modal_date_html = $modal_quality_html = '';
+		$modal_date_html = $modal_quality_html = $modal_chat_history_html = '';
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$modal_date = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_DATE);
 			$modal_date_html = $modal_date->getHTML();
@@ -966,7 +973,12 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
 			$modal_quality_html = $modal_quality->getHTML();
 		}
-		return $modal_date_html . $modal_quality_html;
+		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+			$modal_chat_history = new xoctChatHistoryModalGUI($this);
+			$modal_chat_history_html = $modal_chat_history->getHTML();
+		}
+
+		return $modal_date_html . $modal_quality_html . $modal_chat_history_html;
 	}
 
 
@@ -1313,4 +1325,16 @@ class xoctEventGUI extends xoctGUI {
 		return array( $duration, $previews, $id, $streams, $segmentFlavor, $segments, $frameList );
 	}
 
+	/**
+	 *
+	 */
+	protected function showChatHistory() {
+		$event_id = filter_input(INPUT_GET, 'event_id');
+		$chatroom = ChatroomAR::findBy($event_id, $this->getObjId());
+		if ($chatroom) {
+			$ChatHistoryGUI = new ChatHistoryGUI($chatroom->getId());
+			echo $ChatHistoryGUI->render();
+			exit;
+		}
+	}
 }

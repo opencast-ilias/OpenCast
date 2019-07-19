@@ -1,3 +1,8 @@
+var client_id = process.argv[2];
+if (!(typeof client_id === "string")) {
+	console.log('Please pass a client ID as an argument');
+	process.exit();
+}
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
@@ -20,8 +25,10 @@ app.get('/srchat/:token', function(req, res){
 				chat_room_id: response.chat_room_id
 			};
 			// response.style_sheet_location = __dirname + '/chat.css';
+			response.client_id = client_id;
 			return res.send(ejs.render(index_file, response));
 		} else {
+			console.log(response);
 			res.sendFile(__dirname + '/error.html');
 		}
 	});
@@ -66,7 +73,7 @@ io.on('connection', function(socket){
 		var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 		var sent_at = date+' '+time;
 
-		io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {public_name: socket.public_name, msg: msg, sent_at: time});
+		io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {public_name: socket.public_name, msg: msg, sent_at: time, usr_id: socket.usr_id});
 
 		QueryUtils.insertMessage(socket.chat_room_id, socket.usr_id, msg, sent_at);
 	});
