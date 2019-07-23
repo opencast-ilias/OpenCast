@@ -1,6 +1,6 @@
 var client_id = process.argv[2];
 if (!(typeof client_id === "string")) {
-	console.log('Please pass a client ID as an argument');
+	console.log('Please pass an ILIAS client ID as an argument');
 	process.exit();
 }
 var app = require('express')();
@@ -10,7 +10,7 @@ var ejs = require('ejs');
 var fs = require('fs');
 var index_file = fs.readFileSync(__dirname + '/index.ejs', 'utf8');
 QueryUtils = require(__dirname + '/QueryUtils');
-var QueryUtils = new QueryUtils();
+var QueryUtils = new QueryUtils(client_id);
 
 
 var tokens = [];

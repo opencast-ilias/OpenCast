@@ -1,12 +1,15 @@
-function QueryUtils() {
+function QueryUtils(client_id) {
+	var fs = require('fs'),
+		ini = require('ini');
+	var client_ini = ini.parse(fs.readFileSync(__dirname + '/../../../../../../../../../data/' + client_id + '/client.ini.php', 'utf-8'));
 	this.uuidv4 = require('uuid/v4');
 	this.moment = require('moment');
 	this.mysql = require('mysql');
 	this.con = this.mysql.createPool({
-		host: "localhost",
-		user: "ilias",
-		database: "ilias",
-		password: "ilias"
+		host: client_ini.db.host,
+		user: client_ini.db.user,
+		database: client_ini.db.name,
+		password: client_ini.db.pass
 	});
 
 }
