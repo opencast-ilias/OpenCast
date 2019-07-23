@@ -70,29 +70,19 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($player_link = $this->xoctEvent->getPlayerLink())) {
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
-			}
-			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('player', self::LANG_MODULE));
+		$is_live = $this->xoctEvent->isLiveEvent();
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED || $is_live) && ($player_link = $this->xoctEvent->getPlayerLink())) {
 			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
 				$modal = ilModalGUI::getInstance();
 				$modal->setId('modal_' . $this->xoctEvent->getIdentifier());
 				$modal->setHeading($this->xoctEvent->getTitle());
 				$modal->setBody('<iframe class="xoct_iframe" src="' . $player_link . '"></iframe>');
-				$link_tpl->setVariable('MODAL', $modal->getHTML());
-				$link_tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"');
-				$link_tpl->setVariable('LINK_URL', '#');
+				$link_html = $this->getLinkHTML(self::plugin()->translate($is_live ? 'player_live' : 'player', self::LANG_MODULE), '#', $modal->getHTML(), 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"');
 			} else {
-				$link_tpl->setVariable('LINK_URL', $player_link);
+				$link_html = $this->getLinkHTML(self::plugin()->translate($is_live ? 'player_live' : 'player', self::LANG_MODULE), $player_link);
 			}
 
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			$this->insertHTML($tpl, $block_title, $variable, $link_html);
 		}
 	}
 
@@ -108,20 +98,7 @@ class xoctEventRenderer {
 			if ($this->xoctOpenCast instanceof  xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return;
 			}
-
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
-			}
-
-			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
-			$link_tpl->setVariable('LINK_URL', $download_link);
-
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			$this->insertHTML($tpl, $block_title, $variable, $this->getLinkHTML(self::plugin()->translate('download', self::LANG_MODULE), $download_link));
 		}
 
 	}
@@ -139,22 +116,50 @@ class xoctEventRenderer {
 				return;
 			}
 
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
-			}
-
 			$annotations_link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
-			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('annotate', self::LANG_MODULE));
-			$link_tpl->setVariable('LINK_URL', $annotations_link);
-
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			$this->insertHTML($tpl, $block_title, $variable, $this->getLinkHTML(self::plugin()->translate('annotate', self::LANG_MODULE), $annotations_link));
 		}
 
+	}
+
+	/**
+	 * @param $tpl
+	 * @param $block_title
+	 * @param $variable
+	 * @param $html
+	 */
+	protected function insertHTML(&$tpl, $block_title, $variable, $html) {
+		if ($block_title) {
+			$tpl->setCurrentBlock($block_title);
+		}
+
+		$tpl->setVariable($variable, $html);
+
+		if ($block_title) {
+			$tpl->parseCurrentBlock();
+		}
+	}
+
+	/**
+	 * @param $link_text
+	 * @param $link_url
+	 * @param string $modal_html
+	 * @param string $modal_link
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 */
+	protected function getLinkHTML($link_text, $link_url, $modal_html = '', $modal_link = '') {
+		$link_tpl = self::plugin()->template('default/tpl.player_link.html');
+		$link_tpl->setVariable('LINK_TEXT', $link_text);
+		$link_tpl->setVariable('LINK_URL', $link_url);
+		if ($modal_html) {
+			$link_tpl->setVariable('MODAL', $modal_html);
+		}
+		if ($modal_link) {
+			$link_tpl->setVariable('MODAL_LINK', $modal_link);
+		}
+		return $link_tpl->get();
 	}
 
 	/**
@@ -175,12 +180,17 @@ class xoctEventRenderer {
 		$title_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
 
 		if ($this->xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
-			$owner = $this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
+			$suffix = '';
+			if ($this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
 				&& in_array($this->xoctEvent->getProcessingState(), array(
 					xoctEvent::STATE_FAILED,
 					xoctEvent::STATE_ENCODING
-				)) ? '_owner' : '';
-			$title_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $owner, self::LANG_MODULE));
+				))) {
+				$suffix = '_owner';
+			} else if ($this->xoctEvent->isLiveEvent()) {
+				$suffix = '_live';
+			}
+			$title_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $suffix, self::LANG_MODULE));
 		}
 
 		$tpl->setVariable($variable, $title_tpl->get());

@@ -18,6 +18,13 @@ class xoctPublicationMetadata extends xoctObject {
 	public function __construct($id = '') {
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getRole() {
+		return strpos($this->getFlavor(), self::ROLE_PRESENTATION) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
+	}
+
 
 	/**
 	 * @var string

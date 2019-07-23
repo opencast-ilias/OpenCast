@@ -172,6 +172,7 @@ event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_owner_username#:#Owner
 event_player#:#Play
+event_player_live#:#Join
 event_presenter#:#Presenter
 event_presenters#:#Presenters
 event_preview#:#Preview
@@ -189,6 +190,9 @@ event_state_offline#:#Offline, not visible to students
 event_state_scheduled#:#Scheduled Event, not visible to students.
 event_state_scheduled_offline#:#Scheduled Event (Offline), not visible to students.
 event_state_recording#:#Is currently being recorded, not visible to students.
+event_state_scheduled_live#:#Live Stream (not started yet).
+event_state_scheduled_offline_live#:#Scheduled live Stream (Offline), not visible to students.
+event_state_recording_live#:#Currently running Live Stream.
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
@@ -260,6 +264,7 @@ publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_live_event#:#Live-Event
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel

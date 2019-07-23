@@ -557,7 +557,6 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		list($duration, $previews, $id, $streams, $segmentFlavor, $segments, $frameList) = $this->getStreamingData($xoctEvent);
 
 		$tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", false, false);
 
@@ -569,14 +568,7 @@ class xoctEventGUI extends xoctGUI {
 
 		$tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
 
-		$data = [
-			"streams" => $streams,
-			"frameList" => $frameList,
-			"metadata" => [
-				"title" => $xoctEvent->getTitle(),
-				"duration" => $duration
-			]
-		];
+		$data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
 		$tpl->setVariable("DATA", json_encode($data));
 
 		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
@@ -1119,13 +1111,6 @@ class xoctEventGUI extends xoctGUI {
 			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
 				&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
 		}));
-		if (count($medias) === 0) {
-			// Single stream
-			$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
-				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-					&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
-			}));
-		}
 
 		/**
 		 * @var xoctAttachment[] $previews
@@ -1133,57 +1118,41 @@ class xoctEventGUI extends xoctGUI {
 		$previews = array_filter($publication_player->getAttachments(), function (xoctAttachment $attachment) {
 			return (strpos($attachment->getFlavor(), '/player+preview') !== false);
 		});
+
 		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
 			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
-
 			return $previews;
 		}, []);
 
 		$duration = 0;
 
-		$id = filter_input(INPUT_GET, self::IDENTIFIER);
+		$id = $xoctEvent->getIdentifier();
 
 		$streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
-			$url = $media->getUrl();
-			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-				$url = xoctSecureLink::sign($url);
-			}
+			$url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($media->getUrl()) : $media->getUrl();
 
-			$role = (strpos($media->getFlavor(), xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
+			$duration = $duration ?: $media->getDuration();
 
-			if ($duration == 0) {
-				$duration = $media->getDuration();
-			}
-
-			$preview_url = $previews[$role];
+			$preview_url = $previews[$media->getRole()];
 			if ($preview_url !== null) {
-				$preview_url = $preview_url->getUrl();
-				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-					$preview_url = xoctSecureLink::sign($preview_url);
-				}
+				$preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::sign($preview_url->getUrl()) : $preview_url->getUrl();
 			} else {
 				$preview_url = "";
 			}
 
 			if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
 
-				$smil_url_identifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
-
+				$smil_url_identifier = ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
 				$streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
-
 				$hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
-
 				$dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
 				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-
+					// TODO: move this responsibility
 					$valid_until = null;
-
 					if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
 						$duration_in_seconds = $duration / 1000;
-
 						$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-
 						$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
 					}
 
@@ -1193,7 +1162,7 @@ class xoctEventGUI extends xoctGUI {
 
 				return [
 					"type" => xoctMedia::MEDIA_TYPE_VIDEO,
-					"content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+					"content" => ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
 					"sources" => [
 						"hls" => [
 							[
@@ -1213,7 +1182,7 @@ class xoctEventGUI extends xoctGUI {
 			} else {
 				return [
 					"type" => xoctMedia::MEDIA_TYPE_VIDEO,
-					"content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+					"content" => ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
 					"sources" => [
 						"mp4" => [
 							[
@@ -1322,7 +1291,14 @@ class xoctEventGUI extends xoctGUI {
 			}
 		}, $segments));
 
-		return array( $duration, $previews, $id, $streams, $segmentFlavor, $segments, $frameList );
+		return [
+			"streams" => $streams,
+			"frameList" => $frameList,
+			"metadata" => [
+				"title" => $xoctEvent->getTitle(),
+				"duration" => $duration
+			]
+		];
 	}
 
 	/**
@@ -1336,5 +1312,20 @@ class xoctEventGUI extends xoctGUI {
 			echo $ChatHistoryGUI->render();
 			exit;
 		}
+	}
+
+	/**
+	 * @param xoctEvent $xoctEvent
+	 * @return array
+	 */
+	protected function getLiveStreamingData(xoctEvent $xoctEvent) {
+
+
+		return [
+			"streams" => $streams,
+			"metadata" => [
+				"title" => $xoctEvent->getTitle(),
+			]
+		];
 	}
 }

@@ -624,7 +624,8 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getPlayerLink() {
-		if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+		if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) || $this->isLiveEvent()) {
+			self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
 			self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->getIdentifier());
 			return self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_STREAM_VIDEO);
 		}
@@ -1068,7 +1069,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var xoctPublication[]
 	 */
-	protected $publications;
+	protected $publications = [];
 	/**
 	 * @var xoctMetadata
 	 */
@@ -1716,6 +1717,13 @@ class xoctEvent extends xoctObject {
 		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING));
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isLiveEvent() {
+		$publication = $this->getPublicationMetadataForUsage(new xoctPublicationUsage(xoctPublicationUsage::USAGE_LIVE_EVENT));
+		return $this->isScheduled() && !empty($publication);
+	}
 
 	/**
 	 * @throws xoctException
