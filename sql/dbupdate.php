@@ -158,4 +158,5 @@ xoctUserViewType::updateDB();
 \srag\Plugins\Opencast\Chat\ChatroomAR::updateDB();
 \srag\Plugins\Opencast\Chat\MessageAR::updateDB();
 \srag\Plugins\Opencast\Chat\TokenAR::updateDB();
+\srag\Plugins\Opencast\Chat\EventAR::updateDB();
 ?>
