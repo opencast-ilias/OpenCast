@@ -196,7 +196,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	public function afterObjectLoad() {
-		if (!$this->getPublications() && !$this->isScheduled()) {
+		if (!$this->getPublications()) {
 			$this->loadPublications();
 		}
 

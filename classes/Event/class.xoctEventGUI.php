@@ -1327,7 +1327,24 @@ class xoctEventGUI extends xoctGUI {
 	 * @return array
 	 */
 	protected function getLiveStreamingData(xoctEvent $xoctEvent) {
+		$episode_json = xoctRequest::root()->episodeJson($xoctEvent->getIdentifier())->get([], '', xoctConf::getConfig(xoctConf::F_PRESENTATION_NODE));
+		$episode_data = json_decode($episode_json, true);
+		$media_package = $episode_data['search-results']['result']['mediapackage'];
 
+		$streams = [];
+		foreach ($media_package['media']['track'] as $track) {
+			$streams[] = [
+				"content" => (strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE),
+				"sources" => [
+					"hls" => [
+						[
+							"src" => $track['url'],
+							"mimetype" => $track['mimetype']
+						]
+					]
+				]
+			];
+		}
 
 		return [
 			"streams" => $streams,

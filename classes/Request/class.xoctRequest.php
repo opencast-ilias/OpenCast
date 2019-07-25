@@ -19,13 +19,14 @@ class xoctRequest {
 
 
 	/**
-	 * @param string $as_user
 	 * @param array $roles
 	 *
+	 * @param string $as_user
+	 * @param string $base_url
 	 * @return string
 	 */
-	public function get(array $roles = array(), $as_user = '') {
-		$url = $this->getUrl();
+	public function get(array $roles = array(), $as_user = '', $base_url = '') {
+		$url = $this->getUrl($base_url);
 
 		$xoctCurl = new xoctCurl();
 		$xoctCurl->setUrl($url);
@@ -166,6 +167,7 @@ class xoctRequest {
 	const BRANCH_GROUPS = 5;
 	const BRANCH_WORKFLOWS = 6;
 	const BRANCH_WORKFLOW_DEFINITIONS = 7;
+	const BRANCH_SEARCH = 8;
 
 	/**
 	 * @var array
@@ -186,10 +188,11 @@ class xoctRequest {
 
 
 	/**
+	 * @param string $base
 	 * @return string
 	 */
-	protected function getUrl() {
-		$path = rtrim($this->getBase(), '/') . '/';
+	protected function getUrl($base = '') {
+		$path = rtrim($base ?: $this->getBase(), '/') . '/';
 		$path .= implode('/', $this->parts);
 		if ($this->getParameters()) {
 			$path .= '?';
@@ -204,6 +207,25 @@ class xoctRequest {
 	//
 	// EVENTS
 	//
+
+	/**
+	 * This method is just temporary and will hopefully be obsolete soon
+	 *
+	 * @param $identifier
+	 * @return self
+	 * @throws xoctException
+	 */
+	public function episodeJson($identifier) {
+		$this->checkRoot();
+		$this->branch = self::BRANCH_SEARCH;
+		$this->addPart('search');
+		$this->addPart('episode.json');
+		$this->setParameters([
+			'id' => $identifier
+		]);
+
+		return $this;
+	}
 
 	/**
 	 * @param string $identifier
