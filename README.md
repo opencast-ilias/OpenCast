@@ -21,6 +21,20 @@ ln -s Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/n
 * Bug reports under https://jira.studer-raimann.ch/projects/PLOPENCAST
 * For external users you can report it at https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST
 
+### Installation Live Chat
+The live chat runs on a node js server and was tested with node version 10.x. To install nodejs v10.x on Ubuntu, execute:
+```bash
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y nodejs 
+```
+For other OS, see https://nodejs.org/en/download/package-manager/
+
+To run the chat server, execute the following:
+```bash
+node [PATH_TO_OPENCAST_PLUGIN]/src/Chat/index.js [CLIENT_ID]
+```
+Note that the chat server needs an ILIAS client id, which is used to establish a connection to the correct database. Multiple clients are not supported yet.
+
 ### ILIAS Plugin SLA
 Wir lieben und leben die Philosophie von Open Source Software! Die meisten unserer Entwicklungen, welche wir im Kundenauftrag oder in Eigenleistung entwickeln, stellen wir öffentlich allen Interessierten kostenlos unter https://github.com/studer-raimann zur Verfügung.
 

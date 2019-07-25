@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.0]
+- Feature: Live Streams
+- Feature: Chat for Live Streams
+
 ## [2.3.0]
 - Support for ILIAS 5.4
 - Dropped support for ILIAS 5.2
