@@ -5,7 +5,8 @@ if (!(typeof client_id === "string") || !(typeof ilias_installation_dir === "str
 	process.exit();
 }
 ilias_installation_dir.replace(/\/+$/,''); // remove trailing '/'
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var ejs = require('ejs');
@@ -17,12 +18,7 @@ var QueryUtils = new QueryUtils(client_id, ilias_installation_dir);
 
 var tokens = [];
 
-/**
- * send stylesheet
- */
-app.get('/srchat/css', function(req, res) {
-	res.sendFile(__dirname + '/chat.css');
-});
+app.use(express.static(__dirname + '/public'));
 
 /**
  * get profile picture of user
@@ -40,8 +36,6 @@ app.get('/srchat/get_profile_picture/:usr_id', function(req, res) {
 		// fallback picture
 		res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
 	}
-	/*
- */
 });
 
 /**

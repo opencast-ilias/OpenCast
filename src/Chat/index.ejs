@@ -2,7 +2,9 @@
 <html>
 <head>
 	<title>studer + raimann chat</title>
-	<link href="/srchat/css" rel="stylesheet">
+	<link href="/css/chat.css" rel="stylesheet">
+    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="stylesheet">
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -28,7 +30,7 @@
 							.append($('<img>')
 								.attr("class", "srchat_profile_picture")
 								.attr("height", "30px")
-								.attr("src", "<%= base_url %>:3000/srchat/get_profile_picture/" + msg.usr_id + "_xsmall.jpg")
+								.attr("src", "/srchat/get_profile_picture/" + msg.usr_id)
 					)).append($('<div>').attr("class", "srchat_message_div")
 							.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
 							.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
@@ -55,7 +57,7 @@
 		<% messages.forEach(function(message){ %>
 		<li>
 			<div class="srchat_profile_picture_div">
-				<img class="srchat_profile_picture" height="30px" src="<%= base_url %>:3000/srchat/get_profile_picture/<%= message.usr_id %>">
+				<img class="srchat_profile_picture" height="30px" src="/srchat/get_profile_picture/<%= message.usr_id %>">
 			</div>
 			<div class="srchat_message_div">
 				<p class="srchat_message_name"><%= message.public_name %></p>
@@ -74,6 +76,11 @@
 			</span>
 		</div>
 	</form>
+</div>
+<div id="srchat_retry_overlay" hidden>
+    <a>
+        <img src="/images/refresh_icon.png">
+    </a>
 </div>
 </body>
 </html>
