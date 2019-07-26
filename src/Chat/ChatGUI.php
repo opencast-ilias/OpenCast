@@ -54,7 +54,7 @@ class ChatGUI {
 	 * @throws ilTemplateException
 	 */
 	public function render($async = false) {
-		$url = ILIAS_HTTP_PATH . ':' . self::PORT . '/srchat/' . $this->token->getToken()->toString();
+		$url = ILIAS_HTTP_PATH . ':' . self::PORT . '/srchat/open_chat/' . $this->token->getToken()->toString();
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/iframe.html', false, false);
 		$template->setVariable('URL', $url);
 //		$template->setVariable('TOKEN', $token->getToken()->toString());

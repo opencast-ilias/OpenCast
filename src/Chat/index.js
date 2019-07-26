@@ -1,8 +1,10 @@
 var client_id = process.argv[2];
-if (!(typeof client_id === "string")) {
-	console.log('Please pass an ILIAS client ID as an argument');
+var ilias_installation_dir = process.argv[3];
+if (!(typeof client_id === "string") || !(typeof ilias_installation_dir === "string")) {
+	console.log('Usage: node [path_to]/index.js [ilias_client_id] [ilias_installation_dir]');
 	process.exit();
 }
+ilias_installation_dir.replace(/\/+$/,''); // remove trailing '/'
 var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
@@ -10,7 +12,7 @@ var ejs = require('ejs');
 var fs = require('fs');
 var index_file = fs.readFileSync(__dirname + '/index.ejs', 'utf8');
 QueryUtils = require(__dirname + '/QueryUtils');
-var QueryUtils = new QueryUtils(client_id);
+var QueryUtils = new QueryUtils(client_id, ilias_installation_dir);
 
 
 var tokens = [];
@@ -23,9 +25,29 @@ app.get('/srchat/css', function(req, res) {
 });
 
 /**
+ * get profile picture of user
+ */
+app.get('/srchat/get_profile_picture/:usr_id', function(req, res) {
+	var path = ilias_installation_dir + "/data/" + client_id + "/usr_images/usr_" + req.params.usr_id + "_xsmall.jpg";
+	try {
+		if (fs.existsSync(path)) {
+			res.sendFile(path);
+		} else {
+			// fallback picture
+			res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
+		}
+	} catch(err) {
+		// fallback picture
+		res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
+	}
+	/*
+ */
+});
+
+/**
  * check token and get old messages
  */
-app.get('/srchat/:token', function(req, res){
+app.get('/srchat/open_chat/:token', function(req, res){
 	QueryUtils.checkTokenAndFetchMessages(req.params.token, function(response, success) {
 		if (success) {
 			tokens[req.params.token] = {

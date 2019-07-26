@@ -1,7 +1,7 @@
-function QueryUtils(client_id) {
+function QueryUtils(client_id, ilias_installation_dir) {
 	var fs = require('fs'),
 		ini = require('ini');
-	var client_ini = ini.parse(fs.readFileSync(__dirname + '/../../../../../../../../../data/' + client_id + '/client.ini.php', 'utf-8'));
+	var client_ini = ini.parse(fs.readFileSync(ilias_installation_dir + '/data/' + client_id + '/client.ini.php', 'utf-8'));
 	this.uuidv4 = require('uuid/v4');
 	this.moment = require('moment');
 	this.mysql = require('mysql');
