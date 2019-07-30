@@ -42,7 +42,6 @@ class ChatGUI {
 	 */
 	public function __construct(TokenAR $token) {
 		$this->token = $token;
-//		$this->template = new ilTemplate(self::plugin()->directory() . '/src/Chat/index.html', false, false);
 	}
 
 

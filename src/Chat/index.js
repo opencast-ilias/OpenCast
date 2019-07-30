@@ -105,7 +105,12 @@ io.on('connection', function(socket){
 		var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 		var sent_at = date+' '+time;
 
-		io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {public_name: socket.public_name, msg: msg, sent_at: time, usr_id: socket.usr_id});
+		io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {
+			public_name: socket.public_name,
+			msg: msg,
+			sent_at: time,
+			usr_id: socket.usr_id
+		});
 
 		QueryUtils.insertMessage(socket.chat_room_id, socket.usr_id, msg, sent_at);
 	});

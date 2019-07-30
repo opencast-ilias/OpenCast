@@ -8,6 +8,7 @@
 	<script>
 		$(function () {
 			console.log("{TOKEN}");
+
 			/* globals io */
 			var socket = io("local.ilias54.com:3000", {query: {token: "{TOKEN}"	}});
 			console.log("ok");

@@ -4,7 +4,7 @@
 	<title>studer + raimann chat</title>
 	<link href="/css/chat.css" rel="stylesheet">
     <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
-    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="stylesheet">
+    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -43,11 +43,11 @@
 		});
 
 		socket.on('disconnect', function() {
-			$('#m').prop('disabled', true);
+			$('#srchat_retry_overlay').show();
 		});
 
 		socket.on('connection', function() {
-			$('#m').prop('disabled', false);
+            $('#srchat_retry_overlay').hide();
 		});
 	});
 </script>
@@ -78,7 +78,8 @@
 	</form>
 </div>
 <div id="srchat_retry_overlay" hidden>
-    <a>
+    <span class="srchat_pseudo_element"></span>
+    <a href="https://google.com">
         <img src="/images/refresh_icon.png">
     </a>
 </div>

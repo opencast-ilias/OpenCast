@@ -85,6 +85,28 @@
     background-color: #555;
 }
 
+div#srchat_retry_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+}
+
+div#srchat_retry_overlay img {
+    height: 60px;
+    width: 60px;
+    vertical-align: middle;
+}
+
+span.srchat_pseudo_element {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
