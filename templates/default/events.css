@@ -1,3 +1,7 @@
+.il-card img.img-standard {
+	min-height: 50%;
+}
+
 .xoct_preview_image {
 	width:  200px;
 	height: 107.5px;
