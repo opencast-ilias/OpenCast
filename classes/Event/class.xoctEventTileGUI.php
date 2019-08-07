@@ -87,15 +87,17 @@ class xoctEventTileGUI {
 
 			$dropdown = $this->factory->dropdown()->standard($this->getActionButtons($xoctEvent));
 
-			$image = $this->factory->image()->responsive(
+			$image = $this->factory->image()->standard(
 				$xoctEvent->getThumbnailUrl(),
 				"Thumbnail");
 
 			$tile_tpl = self::plugin()->template('default/tpl.event_tile.html');
-			$event_renderer->insertTitleAndState($tile_tpl);
+			$event_renderer->insertTitle($tile_tpl);
+			$event_renderer->insertState($tile_tpl);
 			$event_renderer->insertPlayerLink($tile_tpl);
 			$event_renderer->insertDownloadLink($tile_tpl);
 			$event_renderer->insertAnnotationLink($tile_tpl);
+			$event_renderer->insertStart($tile_tpl);
 
 			$card = $this->factory->card()->repositoryObject(
 				$tile_tpl->get(),

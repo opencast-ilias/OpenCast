@@ -165,25 +165,44 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 * @throws xoctException
 	 */
-	public function insertTitleAndState(&$tpl, $block_title = 'title', $variable = 'TITLE') {
+	public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE') {
 		if ($block_title) {
 			$tpl->setCurrentBlock($block_title);
 		}
 
-		$title_tpl = self::plugin()->template('default/tpl.event_title.html');
-		$title_tpl->setVariable('TITLE', $this->xoctEvent->getTitle());
-		$title_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
+		$tpl->setVariable($variable, $this->xoctEvent->getTitle());
+
+		if ($block_title) {
+			$tpl->parseCurrentBlock();
+		}
+	}
+
+	/**
+	 * @param $tpl
+	 * @param string $block_title
+	 * @param string $variable
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 * @throws xoctException
+	 */
+	public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE') {
+		if ($block_title) {
+			$tpl->setCurrentBlock($block_title);
+		}
+
+		$state_tpl = self::plugin()->template('default/tpl.event_state.html');
+		$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
 
 		if ($this->xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
 			$owner = $this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
-				&& in_array($this->xoctEvent->getProcessingState(), array(
-					xoctEvent::STATE_FAILED,
-					xoctEvent::STATE_ENCODING
-				)) ? '_owner' : '';
-			$title_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $owner, self::LANG_MODULE));
+			&& in_array($this->xoctEvent->getProcessingState(), array(
+				xoctEvent::STATE_FAILED,
+				xoctEvent::STATE_ENCODING
+			)) ? '_owner' : '';
+			$state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $owner, self::LANG_MODULE));
 		}
 
-		$tpl->setVariable($variable, $title_tpl->get());
+		$tpl->setVariable($variable, $state_tpl->get());
 
 		if ($block_title) {
 			$tpl->parseCurrentBlock();

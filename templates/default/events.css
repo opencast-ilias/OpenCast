@@ -68,6 +68,7 @@
 	margin-top: 10px;
 	display: inline-block;
 	padding: 5px;
+	white-space: initial;
 }
 
 div.il-card.thumbnail div.caption {
