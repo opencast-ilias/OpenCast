@@ -1,19 +1,39 @@
-var client_id = process.argv[2];
-var ilias_installation_dir = process.argv[3];
-if (!(typeof client_id === "string") || !(typeof ilias_installation_dir === "string")) {
-	console.log('Usage: node [path_to]/index.js [ilias_client_id] [ilias_installation_dir]');
-	process.exit();
-}
-ilias_installation_dir.replace(/\/+$/,''); // remove trailing '/'
-var express = require('express');
-var app = express();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
-var ejs = require('ejs');
-var fs = require('fs');
-var index_file = fs.readFileSync(__dirname + '/index.ejs', 'utf8');
-QueryUtils = require(__dirname + '/QueryUtils');
-var QueryUtils = new QueryUtils(client_id, ilias_installation_dir);
+const yargs = require('yargs');
+const argv = yargs
+	.option('client-id', {
+		description: 'ILIAS Client ID',
+		alias: 'c',
+		type: 'text'
+	})
+	.option('ilias-dir', {
+		description: 'root dir of this ILIAS installation',
+		alias: 'd',
+		type: 'text'
+	})
+	.option('port', {
+		description: 'default: 3000',
+		alias: 'p',
+		type: 'number'
+	})
+	.option('ip', {
+		description: 'default: *'
+	})
+	.demandOption(['client-id', 'ilias-dir'])
+	.help()
+	.alias('help', 'h')
+	.argv;
+console.log(argv);
+
+const client_id = argv.clientId;
+const ilias_installation_dir = argv.iliasDir.replace(/\/+$/,'');
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+const ejs = require('ejs');
+const fs = require('fs');
+const index_file = fs.readFileSync(__dirname + '/index.ejs', 'utf8');
+const QueryUtils = require(__dirname + '/QueryUtils')(client_id, ilias_installation_dir);
 
 
 var tokens = [];
