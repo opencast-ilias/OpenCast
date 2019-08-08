@@ -30,6 +30,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_STREAM_VIDEO = 'streamVideo';
 	const CMD_SWITCH_TO_LIST = 'switchToList';
 	const CMD_SWITCH_TO_TILES = 'switchToTiles';
+	const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
 
 	const ROLE_MASTER = "presenter";
 	const ROLE_SLAVE = "presentation";
@@ -148,16 +149,16 @@ class xoctEventGUI extends xoctGUI {
 			self::dic()->user()->getId()
 		);
 
-		switch (xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
-			case xoctUserViewType::VIEW_TYPE_LIST:
+		switch (xoctUserSettings::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
+			case xoctUserSettings::VIEW_TYPE_LIST:
 				$html = $this->indexList();
 				break;
-			case xoctUserViewType::VIEW_TYPE_TILES:
+			case xoctUserSettings::VIEW_TYPE_TILES:
 				$html = $this->indexTiles();
 				break;
 			default:
 				throw new xoctException(xoctException::INTERNAL_ERROR, 'Invalid view type ' .
-					xoctUserViewType::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
+					xoctUserSettings::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
 					' for user with id ' . self::dic()->user()->getId());
 		}
 
@@ -235,7 +236,7 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function switchToTiles() {
-		xoctUserViewType::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserViewType::VIEW_TYPE_TILES);
+		xoctUserSettings::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserSettings::VIEW_TYPE_TILES);
 		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
@@ -243,11 +244,20 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function switchToList() {
-		xoctUserViewType::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserViewType::VIEW_TYPE_LIST);
+		xoctUserSettings::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserSettings::VIEW_TYPE_LIST);
 		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
-
+	/**
+	 *	called by 'tiles per page' selector
+	 */
+	protected function changeTileLimit() {
+		$tile_limit = filter_input(INPUT_POST, 'tiles_per_page');
+		if (in_array($tile_limit, [4, 8, 12, 16])) {
+			xoctUserSettings::changeTileLimit(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), $tile_limit);
+		}
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+	}
 
 	/**
 	 *

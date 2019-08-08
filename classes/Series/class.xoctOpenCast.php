@@ -250,7 +250,7 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    8
 	 */
-	protected $default_view = xoctUserViewType::VIEW_TYPE_LIST;
+	protected $default_view = xoctUserSettings::VIEW_TYPE_LIST;
 	/**
 	 * @var bool
 	 *

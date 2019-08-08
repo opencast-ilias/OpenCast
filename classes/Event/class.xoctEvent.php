@@ -29,7 +29,7 @@ class xoctEvent extends xoctObject {
 	const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
 	const STATE_FAILED = 'FAILED';
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
-	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.svg';
+	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';

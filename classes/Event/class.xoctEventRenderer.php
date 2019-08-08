@@ -47,15 +47,16 @@ class xoctEventRenderer {
 
 	/**
 	 * @param $tpl ilTemplate
-	 * @param string $block_title
-	 * @param string $variable
+	 * @param $variable string
+	 * @param $value string
+	 * @param string $block_title string
 	 */
-	public function insertThumbnail(&$tpl, $block_title = 'thumbnail', $variable = 'THUMBNAIL') {
+	public function insert(&$tpl, $variable, $value, $block_title = '') {
 		if ($block_title) {
 			$tpl->setCurrentBlock($block_title);
 		}
 
-		$tpl->setVariable($variable, $this->renderer->render($this->factory->image()->responsive($this->xoctEvent->getThumbnailUrl(), 'Thumbnail')));
+		$tpl->setVariable($variable, $value);
 
 		if ($block_title) {
 			$tpl->parseCurrentBlock();
@@ -66,16 +67,43 @@ class xoctEventRenderer {
 	 * @param $tpl ilTemplate
 	 * @param string $block_title
 	 * @param string $variable
+	 */
+	public function insertThumbnail(&$tpl, $block_title = 'thumbnail', $variable = 'THUMBNAIL') {
+		$this->insert($tpl, $variable, $this->getThumbnailHTML(), $block_title);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getThumbnailHTML() {
+		return $this->renderer->render($this->factory->image()->responsive($this->xoctEvent->getThumbnailUrl(), 'Thumbnail'));
+	}
+
+	/**
+	 * @param $tpl ilTemplate
+	 * @param string $block_title
+	 * @param string $variable
+	 * @param string $button_type
 	 * @throws DICException
 	 * @throws ilTemplateException
 	 */
-	public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK') {
+	public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
+		if ($player_link_html = $this->getPlayerLinkHTML($button_type)) {
+			$this->insert($tpl, $variable, $player_link_html, $block_title);
+		}
+	}
+
+	/**
+	 * @param string $button_type
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 */
+	public function getPlayerLinkHTML($button_type = 'btn-info') {
 		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($player_link = $this->xoctEvent->getPlayerLink())) {
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
-			}
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('player', self::LANG_MODULE));
+			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
 				$modal = ilModalGUI::getInstance();
 				$modal->setId('modal_' . $this->xoctEvent->getIdentifier());
@@ -88,11 +116,9 @@ class xoctEventRenderer {
 				$link_tpl->setVariable('LINK_URL', $player_link);
 			}
 
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			return $link_tpl->get();
+		} else {
+			return '';
 		}
 	}
 
@@ -100,61 +126,74 @@ class xoctEventRenderer {
 	 * @param $tpl ilTemplate
 	 * @param string $block_title
 	 * @param string $variable
+	 * @param string $button_type
 	 * @throws DICException
 	 * @throws ilTemplateException
 	 */
-	public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK') {
+	public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
+		if ($download_link_html = $this->getDownloadLinkHTML($button_type)) {
+			$this->insert($tpl, $variable, $download_link_html, $block_title);
+		}
+	}
+
+	/**
+	 * @param string $button_type
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 */
+	public function getDownloadLinkHTML($button_type = 'btn_info') {
 		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($download_link = $this->xoctEvent->getDownloadLink())) {
-			if ($this->xoctOpenCast instanceof  xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
-				return;
+			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
+				return '';
 			}
-
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
-			}
-
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
+			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
 			$link_tpl->setVariable('LINK_URL', $download_link);
 
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			return $link_tpl->get();
+		} else {
+			return '';
 		}
-
 	}
 
 	/**
 	 * @param $tpl ilTemplate
 	 * @param string $block_title
 	 * @param string $variable
+	 * @param string $button_type
 	 * @throws DICException
 	 * @throws ilTemplateException
 	 */
-	public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK') {
+	public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
+		if ($annotation_link_html = $this->getAnnotationLinkHTML($button_type)) {
+			$this->insert($tpl, $variable, $annotation_link_html, $block_title);
+		}
+	}
+
+	/**
+	 * @param string $button_type
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 */
+	public function getAnnotationLinkHTML($button_type = 'btn_info') {
 		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($this->xoctEvent->getAnnotationLink())) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && !$this->xoctOpenCast->getUseAnnotations()) {
-				return;
-			}
-
-			if ($block_title) {
-				$tpl->setCurrentBlock($block_title);
+				return '';
 			}
 
 			$annotations_link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
+			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('annotate', self::LANG_MODULE));
 			$link_tpl->setVariable('LINK_URL', $annotations_link);
 
-			$tpl->setVariable($variable, $link_tpl->get());
-
-			if ($block_title) {
-				$tpl->parseCurrentBlock();
-			}
+			return $link_tpl->get();
+		} else {
+			return '';
 		}
-
 	}
 
 	/**
@@ -166,15 +205,14 @@ class xoctEventRenderer {
 	 * @throws xoctException
 	 */
 	public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
-		}
+		$this->insert($tpl, $variable, $this->getTitleHTML(), $block_title);
+	}
 
-		$tpl->setVariable($variable, $this->xoctEvent->getTitle());
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
-		}
+	/**
+	 * @return string
+	 */
+	public function getTitleHTML() {
+		return $this->xoctEvent->getTitle();
 	}
 
 	/**
@@ -186,26 +224,33 @@ class xoctEventRenderer {
 	 * @throws xoctException
 	 */
 	public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
+		if ($state_html = $this->getStateHTML()) {
+			$this->insert($tpl, $variable, $state_html, $block_title);
 		}
+	}
 
-		$state_tpl = self::plugin()->template('default/tpl.event_state.html');
-		$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
-
+	/**
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 * @throws xoctException
+	 */
+	public function getStateHTML() {
 		if ($this->xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
+			$state_tpl = self::plugin()->template('default/tpl.event_state.html');
+			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
+
+
 			$owner = $this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
 			&& in_array($this->xoctEvent->getProcessingState(), array(
 				xoctEvent::STATE_FAILED,
 				xoctEvent::STATE_ENCODING
 			)) ? '_owner' : '';
 			$state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $owner, self::LANG_MODULE));
-		}
 
-		$tpl->setVariable($variable, $state_tpl->get());
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
+			return $state_tpl->get();
+		} else {
+			return '';
 		}
 	}
 
@@ -215,15 +260,14 @@ class xoctEventRenderer {
 	 * @param string $variable
 	 */
 	public function insertPresenter(&$tpl, $block_title = 'presenter', $variable = 'PRESENTER') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
-		}
+		$this->insert($tpl, $variable, $this->getPresenterHTML(), $block_title);
+	}
 
-		$tpl->setVariable($variable, $this->xoctEvent->getPresenter());
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
-		}
+	/**
+	 * @return String
+	 */
+	public function getPresenterHTML() {
+		return $this->xoctEvent->getPresenter();
 	}
 
 	/**
@@ -232,15 +276,14 @@ class xoctEventRenderer {
 	 * @param string $variable
 	 */
 	public function insertLocation(&$tpl, $block_title = 'location', $variable = 'LOCATION') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
-		}
+		$this->insert($tpl, $variable, $this->getLocationHTML(), $block_title);
+	}
 
-		$tpl->setVariable($variable, $this->xoctEvent->getLocation());
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
-		}
+	/**
+	 * @return string
+	 */
+	public function getLocationHTML() {
+		return $this->xoctEvent->getLocation();
 	}
 
 	/**
@@ -249,16 +292,16 @@ class xoctEventRenderer {
 	 * @param string $variable
 	 * @param string $format
 	 */
-	public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i:s') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
-		}
+	public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i') {
+		$this->insert($tpl, $variable, $this->getStartHTML($format), $block_title);
+	}
 
-		$tpl->setVariable($variable, $this->xoctEvent->getStart()->format($format));
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
-		}
+	/**
+	 * @param string $format
+	 * @return string
+	 */
+	public function getStartHTML($format = 'd.m.Y - H:i') {
+		return $this->xoctEvent->getStart()->format($format);
 	}
 
 	/**
@@ -269,10 +312,15 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER') {
-		if ($block_title) {
-			$tpl->setCurrentBlock($block_title);
-		}
+		$this->insert($tpl, $variable, $this->getOwnerHTML(), $block_title);
+	}
 
+	/**
+	 * @return string
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 */
+	public function getOwnerHTML() {
 		$owner_tpl = self::plugin()->template('default/tpl.event_owner.html');
 		$owner_tpl->setVariable('OWNER', $this->xoctEvent->getOwnerUsername());
 
@@ -285,11 +333,7 @@ class xoctEventRenderer {
 			$owner_tpl->parseCurrentBlock();
 		}
 
-		$tpl->setVariable($variable, $owner_tpl->get());
-
-		if ($block_title) {
-			$tpl->parseCurrentBlock();
-		}
+		return $owner_tpl->get();
 	}
 
 
