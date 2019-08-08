@@ -95,9 +95,12 @@ class xoctEventTileGUI {
 			$tile_tpl = self::plugin()->template('default/tpl.event_tile.html');
 			$event_renderer->insertTitle($tile_tpl);
 			$event_renderer->insertState($tile_tpl);
-			$event_renderer->insertPlayerLink($tile_tpl, 'link', 'LINK', 'btn-default');
-			$event_renderer->insertDownloadLink($tile_tpl, 'link', 'LINK', 'btn-default');
-			$event_renderer->insertAnnotationLink($tile_tpl, 'link', 'LINK', 'btn-default');
+
+			$buttons_tpl = self::plugin()->template('default/tpl.event_buttons.html');
+			$event_renderer->insertPlayerLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+			$event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+			$event_renderer->insertAnnotationLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+			$tile_tpl->setVariable('EVENT_BUTTONS', $buttons_tpl->get());
 
 			$card = $this->factory->card()->repositoryObject(
 				$tile_tpl->get(),

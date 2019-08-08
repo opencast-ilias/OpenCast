@@ -59,7 +59,6 @@
 .xoct_event_title {
 	margin-bottom: 12px;
 	margin-top: 20px;
-	text-align: center;
 }
 
 .xoct_event_title span {
@@ -71,12 +70,11 @@
 }
 
 .xoct_event_buttons {
-	text-align: center;
 	width: 100%;
-	padding: 0 10px;
+	margin-bottom: 36px;
 }
 
-.xoct_event_buttons span.label {
+.xoct_event_state span.label {
 	width: 100%;
 	white-space: pre-wrap;
 }
@@ -84,6 +82,10 @@
 .xoct_event_state {
 	padding: 5px;
 	border-radius: 5px;
+}
+
+.xoct_event_state .label {
+	padding: 0;
 }
 
 .small_text {
@@ -125,7 +127,7 @@ div.il-card.thumbnail div.caption {
 
 
 .il-card img {
-	min-height: 50%;
+	/*min-height: 50%;*/
 }
 
 .il-card a {
@@ -139,5 +141,16 @@ div.il-card.thumbnail div.caption {
 @media (max-width: 647px) {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
+}
+
+@media (min-width: 1146px) and (max-width: 1319px) {
+	.xoct_event_state.label-scheduled {
+		margin-bottom: 2.2em;
+	}
+}
+@media (min-width: 959px) and (max-width: 1004px) {
+	.xoct_event_state.label-scheduled {
+		margin-bottom: 2.2em;
 	}
 }

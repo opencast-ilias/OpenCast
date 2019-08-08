@@ -9,12 +9,15 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="Ebene_1"
    data-name="Ebene 1"
-   viewBox="0 0 757.64703 480"
+   viewBox="0 0 792 480"
    version="1.1"
    sodipodi:docname="thumbnail_scheduled.svg"
-   width="757.64703"
+   width="792"
    height="480"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:export-filename="/home/theodor/vagrant/ilias_5-4/ilias/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata31">
     <rdf:RDF>
@@ -40,14 +43,14 @@
      inkscape:window-height="1025"
      id="namedview29"
      showgrid="false"
-     inkscape:zoom="1.0832274"
-     inkscape:cx="297.9848"
-     inkscape:cy="221.14889"
+     inkscape:zoom="0.87837736"
+     inkscape:cx="335.88642"
+     inkscape:cy="66.78759"
      inkscape:window-x="67"
      inkscape:window-y="147"
      inkscape:window-maximized="1"
      inkscape:current-layer="Ebene_1"
-     showguides="false" />
+     showguides="true" />
   <defs
      id="defs4">
     <style
@@ -57,95 +60,95 @@
      id="title6">Thumbnail geplante Aufzeichnung_end</title>
   <rect
      class="cls-1"
-     width="757.64703"
+     width="792"
      height="480"
      id="rect8"
      x="0"
      y="0"
-     style="fill:#e9eaed;stroke-width:0.92110211" />
+     style="fill:#e9eaed;stroke-width:0.94175279" />
   <path
      class="cls-2"
-     d="m 380.6487,57.2 c -97.41988,0 -176.40001,78.97852 -176.40001,176.4 0,97.42148 78.98013,176.4 176.40001,176.4 97.41978,0 176.39999,-78.97852 176.39999,-176.4 0,-97.42148 -78.98021,-176.4 -176.39999,-176.4 z m 0,309.78508 A 133.38616,133.38508 0 1 1 514.03498,233.6 133.38616,133.38508 0 0 1 380.6487,366.98508 Z"
+     d="m 397.90794,57.2 c -101.83706,0 -184.39828,78.97852 -184.39828,176.4 0,97.42148 82.56122,176.4 184.39828,176.4 101.83695,0 184.39826,-78.97852 184.39826,-176.4 0,-97.42148 -82.56131,-176.4 -184.39826,-176.4 z m 0,309.78508 A 139.43411,133.38508 0 1 1 537.34217,233.6 139.43411,133.38508 0 0 1 397.90794,366.98508 Z"
      id="path10"
      inkscape:connector-curvature="0"
-     style="fill:#d9c863;stroke-width:0.86896545" />
+     style="fill:#d9c863;stroke-width:0.88844723" />
   <rect
      class="cls-2"
-     x="368.48315"
+     x="385.1908"
      y="115.85379"
-     width="24.331017"
+     width="25.434225"
      height="129.47699"
-     rx="11.122761"
+     rx="11.627085"
      ry="11.122703"
      id="rect12"
-     style="fill:#d9c863;stroke-width:0.86896545" />
+     style="fill:#d9c863;stroke-width:0.88844723" />
   <rect
      class="cls-2"
-     x="415.07529"
-     y="-142.15871"
-     width="24.331039"
-     height="90.789597"
-     rx="9.5673094"
-     ry="9.5673075"
-     transform="rotate(48.689984)"
+     x="423.37952"
+     y="-145.83057"
+     width="24.817822"
+     height="93.134628"
+     rx="9.7587185"
+     ry="9.8144245"
+     transform="matrix(0.67652945,0.73641557,-0.7654364,0.64351155,0,0)"
      id="rect14"
-     style="fill:#d9c863;stroke-width:0.8689658" />
+     style="fill:#d9c863;stroke-width:0.88887709" />
   <rect
      class="cls-3"
-     x="414.9733"
+     x="433.78888"
      y="289.64932"
-     width="140.77223"
+     width="147.15508"
      height="119.91539"
-     rx="10.427593"
+     rx="10.900397"
      ry="10.427685"
      id="rect16"
-     style="fill:#c4aa0a;stroke-width:0.86896545" />
+     style="fill:#c4aa0a;stroke-width:0.88844723" />
   <rect
      class="cls-1"
-     x="424.09708"
+     x="443.32632"
      y="320.05472"
-     width="122.52416"
+     width="128.07961"
      height="79.945251"
      id="rect18"
-     style="fill:#e9eaed;stroke-width:0.86896545" />
+     style="fill:#e9eaed;stroke-width:0.88844723" />
   <rect
      class="cls-3"
-     x="441.24146"
+     x="461.24808"
      y="271.35934"
-     width="19.986216"
+     width="20.892424"
      height="35.628128"
-     rx="8.689661"
+     rx="9.0836649"
      ry="8.6895027"
      id="rect20"
-     style="fill:#c4aa0a;stroke-width:0.86896545" />
+     style="fill:#c4aa0a;stroke-width:0.88844723" />
   <rect
      class="cls-1"
-     x="446.78592"
+     x="467.04391"
      y="277.51767"
-     width="8.8982096"
+     width="9.3016691"
      height="23.297075"
-     rx="4.4491053"
+     rx="4.650835"
      ry="4.4490232"
      id="rect22"
-     style="fill:#e9eaed;stroke-width:0.86896545" />
+     style="fill:#e9eaed;stroke-width:0.88844723" />
   <rect
      class="cls-3"
-     x="509.89069"
+     x="533.00995"
      y="272.22946"
-     width="19.986216"
+     width="20.892424"
      height="35.628128"
-     rx="8.689661"
+     rx="9.0836649"
      ry="8.6895027"
      id="rect24"
-     style="fill:#c4aa0a;stroke-width:0.86896545" />
+     style="fill:#c4aa0a;stroke-width:0.88844723" />
   <rect
      class="cls-1"
-     x="515.43433"
+     x="538.80499"
      y="278.38779"
-     width="8.8982096"
+     width="9.3016691"
      height="23.297075"
-     rx="4.4491053"
+     rx="4.650835"
      ry="4.4490232"
      id="rect26"
-     style="fill:#e9eaed;stroke-width:0.86896545" />
+     style="fill:#e9eaed;stroke-width:0.88844723" />
 </svg>
