@@ -74,6 +74,6 @@ class xoctUserSettings {
 	public static function getTileLimitForUser($user_id, $ref_id) {
 		/** @var xoctUserSetting $xoctUserSetting */
 		$xoctUserSetting = xoctUserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_TILE_LIMIT])->first();
-		return (int) $xoctUserSetting->getValue() ?: self::DEFAULT_TILE_LIMIT;
+		return (int) ($xoctUserSetting ? $xoctUserSetting->getValue() : self::DEFAULT_TILE_LIMIT);
 	}
 }
