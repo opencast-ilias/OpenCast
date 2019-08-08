@@ -118,7 +118,8 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$renderer->insertAnnotationLink($this->tpl);
 
 		if ($this->isColumsSelected('title')) {
-			$renderer->insertTitleAndState($this->tpl);
+			$renderer->insertTitle($this->tpl);
+			$renderer->insertState($this->tpl);
 		}
 
 		if ($this->isColumsSelected('presenter')) {

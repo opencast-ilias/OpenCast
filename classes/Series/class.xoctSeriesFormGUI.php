@@ -180,8 +180,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		if (xoct::ILIAS_54) {
 			$default_view = new ilSelectInputGUI($this->txt(self::F_DEFAULT_VIEW), self::F_DEFAULT_VIEW);
 			$options = [
-				xoctUserViewType::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserViewType::VIEW_TYPE_LIST),
-				xoctUserViewType::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserViewType::VIEW_TYPE_TILES),
+				xoctUserSettings::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_LIST),
+				xoctUserSettings::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_TILES),
 			];
 			$default_view->setOptions($options);
 			$this->addItem($default_view);

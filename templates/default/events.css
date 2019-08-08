@@ -58,10 +58,12 @@
 	display:grid;
 	grid-column-gap: 15px;
 	grid-template-columns: repeat(auto-fit, minmax(300px, 0.4fr));
+	grid-auto-rows: 1fr;
 }
 
 .xoct_event_title {
 	margin-bottom: 12px;
+	margin-top: 20px;
 }
 
 .xoct_event_title span {
@@ -69,6 +71,30 @@
 	margin-top: 10px;
 	display: inline-block;
 	padding: 5px;
+	white-space: initial;
+}
+
+.xoct_event_buttons {
+	width: 100%;
+	margin-bottom: 36px;
+}
+
+.xoct_event_state span.label {
+	width: 100%;
+	white-space: pre-wrap;
+}
+
+.xoct_event_state {
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.xoct_event_state .label {
+	padding: 0;
+}
+
+.small_text {
+	font-size: small;
 }
 
 div.il-card.thumbnail div.caption {
@@ -77,14 +103,59 @@ div.il-card.thumbnail div.caption {
 
 .il-viewcontrol-pagination {
 	margin-bottom: 8px;
+	width: 49%;
+	display: inline-block;
 }
 
+#xoct_limit_selector {
+	width: 50%;
+	display: inline-block;
+	white-space: nowrap;
+	text-align: right;
+}
+
+#xoct_limit_selector .form-group {
+	margin-bottom: 0;
+	text-align: right;
+	float: right;
+	width: fit-content;
+}
+
+#xoct_label_limit_selector {
+	display: inline-block;
+}
+
+#tiles_per_page {
+	display: inline-block;
+}
+
+
+
 .il-card img {
-	min-height: 64%;
+	/*min-height: 50%;*/
+}
+
+.il-card a {
+	width: 32%;
+}
+
+.il-card ul li a {
+	overflow: visible;
 }
 
 @media (max-width: 647px) {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
+}
+
+@media (min-width: 1146px) and (max-width: 1319px) {
+	.xoct_event_state.label-scheduled {
+		margin-bottom: 2.2em;
+	}
+}
+@media (min-width: 959px) and (max-width: 1004px) {
+	.xoct_event_state.label-scheduled {
+		margin-bottom: 2.2em;
 	}
 }
