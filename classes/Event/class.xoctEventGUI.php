@@ -1335,6 +1335,7 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 * @param xoctEvent $xoctEvent
 	 * @return array
+	 * @throws xoctException
 	 */
 	protected function getLiveStreamingData(xoctEvent $xoctEvent) {
 		$episode_json = xoctRequest::root()->episodeJson($xoctEvent->getIdentifier())->get([], '', xoctConf::getConfig(xoctConf::F_PRESENTATION_NODE));

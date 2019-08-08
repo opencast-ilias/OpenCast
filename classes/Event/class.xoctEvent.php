@@ -1721,7 +1721,11 @@ class xoctEvent extends xoctObject {
 	 * @return bool
 	 */
 	public function isLiveEvent() {
-		$publication = $this->getPublicationMetadataForUsage(new xoctPublicationUsage(xoctPublicationUsage::USAGE_LIVE_EVENT));
+		$usage = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_LIVE_EVENT);
+		if (!$usage) {
+			return false;
+		}
+		$publication = $this->getPublicationMetadataForUsage($usage);
 		return $this->isScheduled() && !empty($publication);
 	}
 
