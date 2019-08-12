@@ -86,7 +86,7 @@ div.il-card .xoct_event_state span.label {
 div.il-card .xoct_event_state {
 	padding: 5px;
 	border-radius: 5px;
-	min-height: 2.8em;
+	height: 2.6em;
 }
 
 div.il-card .xoct_event_state .label {
@@ -127,12 +127,6 @@ div.il-card.thumbnail div.caption {
 
 #tiles_per_page {
 	display: inline-block;
-}
-
-
-
-.il-card img {
-	/*min-height: 50%;*/
 }
 
 .il-card a {
