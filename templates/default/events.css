@@ -74,17 +74,22 @@
 	margin-bottom: 36px;
 }
 
-.xoct_event_state span.label {
+div.il-card .xoct_event_state span.label {
 	width: 100%;
 	white-space: pre-wrap;
 }
 
 .xoct_event_state {
-	padding: 5px;
 	border-radius: 5px;
 }
 
-.xoct_event_state .label {
+div.il-card .xoct_event_state {
+	padding: 5px;
+	border-radius: 5px;
+	min-height: 2.8em;
+}
+
+div.il-card .xoct_event_state .label {
 	padding: 0;
 }
 
@@ -141,16 +146,5 @@ div.il-card.thumbnail div.caption {
 @media (max-width: 647px) {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	}
-}
-
-@media (min-width: 1146px) and (max-width: 1319px) {
-	.xoct_event_state.label-scheduled {
-		margin-bottom: 2.2em;
-	}
-}
-@media (min-width: 959px) and (max-width: 1004px) {
-	.xoct_event_state.label-scheduled {
-		margin-bottom: 2.2em;
 	}
 }
