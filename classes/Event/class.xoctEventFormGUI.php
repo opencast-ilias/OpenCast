@@ -1,7 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
-
+use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 /**
  * Class xoctEventFormGUI
  *
@@ -84,6 +84,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function setValuesByPost() {
 		/**
 		 * @var $item ilTextInputGUI
@@ -96,6 +99,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 * @throws ilDateTimeException
+	 */
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
@@ -181,6 +187,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
+		$te->setRequired($this->schedule);
 		$this->addItem($te);
 
 
@@ -203,9 +210,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 		if (!$this->schedule) {
 			$date = new ilDateTimeInputGUI($this->txt(self::F_START), self::F_START);
-			if (!xoct::isIlias52()) {
-				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
-			}
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
@@ -216,9 +220,6 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 		if ($this->object->isScheduled() && !$this->schedule) {
 			$date = new ilDateTimeInputGUI($this->txt(self::F_END), self::F_END);
-			if (!xoct::isIlias52()) {
-				$date->setMode(ilDateTimeInputGUI::MODE_INPUT);
-			}
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
@@ -262,7 +263,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$subinput->setRequired(true);
 			$opt->addSubItem($subinput);
 
-			$subinput = new srWeekdayInputGUI($this->txt(self::F_MULTIPLE_WEEKDAYS), self::F_MULTIPLE_WEEKDAYS);
+			$subinput = new WeekdayInputGUI($this->txt(self::F_MULTIPLE_WEEKDAYS), self::F_MULTIPLE_WEEKDAYS);
 			$subinput->setRequired(true);
 			$opt->addSubItem($subinput);
 
@@ -288,22 +289,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function fillForm() {
 		$startDateTime = $this->object->getStart();
 		$endDateTime = $this->object->getEnd();
-		if (xoct::isIlias52()) {
-			$start = $startDateTime->format('Y-m-d H:i:s');
-			$end = $endDateTime ? $endDateTime->format('Y-m-d H:i:s') : '';
-		} else {
-			$start = array(
-				'date' => $startDateTime->format('Y-m-d'),
-				'time' => $startDateTime->format('H:i:s'),
-			);
-			$end = $endDateTime ? array(
-				'date' => $endDateTime->format('Y-m-d'),
-				'time' => $endDateTime->format('H:i:s'),
-			) : array();
-		}
+		$start = $startDateTime->format('Y-m-d H:i:s');
+		$end = $endDateTime ? $endDateTime->format('Y-m-d H:i:s') : '';
 
 		$array = array(
 			self::F_TITLE            => $this->object->getTitle(),
@@ -470,6 +463,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return $this->object->getIdentifier();
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	protected function buildRRule() {
 		if ($this->getInput(self::F_MULTIPLE)) {
 			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
@@ -484,6 +480,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return false;
 	}
 
+	/**
+	 *
+	 */
 	protected function initButtons() {
 		switch (true) {
 			case  $this->is_new AND !$this->view AND !$this->schedule:
@@ -512,6 +511,9 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 * @throws ilDateTimeException
+	 */
 	protected function initView() {
 		$this->initForm();
 

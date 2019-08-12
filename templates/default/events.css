@@ -1,8 +1,14 @@
 .xoct_preview_image {
 	width:  200px;
-	height: auto;
+	height: 107.5px;
 	clear:  both;
+	background-color: black;
+}
 
+.xoct_preview_image img {
+	margin: auto;
+	width: 100%;
+	height: 100%;
 }
 
 .tblrow1.xoct-state-running td {
@@ -33,4 +39,106 @@
 
 .hidden {
 	display:none;
+}
+
+.ilToolbar ul.ilToolbarItems li.ilToolbarGroup .navbar-text {
+	margin-top: 7.5px;
+	margin-bottom: 7.5px;
+	margin-left: 7.5px;
+	float: unset;
+}
+
+/** TILE STUFF */
+#xoct_tile_container {
+	display:grid;
+	grid-column-gap: 15px;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 0.4fr));
+	grid-auto-rows: 1fr;
+}
+
+.xoct_event_title {
+	margin-bottom: 12px;
+	margin-top: 20px;
+}
+
+.xoct_event_title span {
+	font-size: 63%;
+	margin-top: 10px;
+	display: inline-block;
+	padding: 5px;
+	white-space: initial;
+}
+
+.xoct_event_buttons {
+	width: 100%;
+	margin-bottom: 36px;
+}
+
+div.il-card .xoct_event_state span.label {
+	width: 100%;
+	white-space: pre-wrap;
+}
+
+.xoct_event_state {
+	border-radius: 5px;
+}
+
+div.il-card .xoct_event_state {
+	padding: 5px;
+	border-radius: 5px;
+	height: 2.6em;
+}
+
+div.il-card .xoct_event_state .label {
+	padding: 0;
+}
+
+.small_text {
+	font-size: small;
+}
+
+div.il-card.thumbnail div.caption {
+	padding: 0 9px 0 9px;
+}
+
+.il-viewcontrol-pagination {
+	margin-bottom: 8px;
+	width: 49%;
+	display: inline-block;
+}
+
+#xoct_limit_selector {
+	width: 50%;
+	display: inline-block;
+	white-space: nowrap;
+	text-align: right;
+}
+
+#xoct_limit_selector .form-group {
+	margin-bottom: 0;
+	text-align: right;
+	float: right;
+	width: fit-content;
+}
+
+#xoct_label_limit_selector {
+	display: inline-block;
+}
+
+#tiles_per_page {
+	display: inline-block;
+}
+
+.il-card a {
+	width: 32%;
+}
+
+.il-card ul li a {
+	overflow: visible;
+}
+
+@media (max-width: 647px) {
+	#xoct_tile_container {
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	}
 }

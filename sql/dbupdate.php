@@ -148,3 +148,8 @@ if (xoctWorkflowParameter::count() === 0) {
 	xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
 }
 ?>
+<#15>
+<?php
+xoctOpenCast::updateDB();
+xoctUserSetting::updateDB();
+?>

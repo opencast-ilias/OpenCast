@@ -266,6 +266,7 @@ series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Series-Type
 series_create#:#Create Series
+series_default_view#:#Default View
 series_department#:#Department
 series_department_info#:#How is the name of your department?
 series_description#:#Description
@@ -304,6 +305,10 @@ series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload by members
 series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
 series_video_portal_link#:#Link to Series in %s
+series_view_changeable#:#View changeable
+series_view_changeable_info#:#The user has the possibility to change the view.
+series_view_type_0#:#List
+series_view_type_1#:#Tiles
 series_links#:#Links
 system_account_add_new#:#Add System-Account
 system_account_cancel#:#Cancel
@@ -415,3 +420,6 @@ default_value_member#:#Usage for Members
 default_value_admin#:#Usage for Admins
 value_member#:#Usage for Members
 value_admin#:#Usage for Admins
+list#:#List
+tiles#:#Tiles
+tiles_per_page#:#Tiles per page:

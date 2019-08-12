@@ -13,14 +13,22 @@ class xoct {
 	const ILIAS_51 = 51;
 	const ILIAS_52 = 52;
 	const ILIAS_53 = 53;
-	const MIN_ILIAS_VERSION = self::ILIAS_50;
+	const ILIAS_54 = 54;
+	const ILIAS_60 = 60;
+	const MIN_ILIAS_VERSION = self::ILIAS_53;
 
 	/**
 	 * @return int
 	 */
 	public static function getILIASVersion() {
 		if (strpos(ILIAS_VERSION_NUMERIC, 'alpha') || strpos(ILIAS_VERSION_NUMERIC, 'beta')
-			|| ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.2.999')) {
+			|| ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.4.999')) {
+			return self::ILIAS_60;
+		}
+		if (ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.3.999')) {
+			return self::ILIAS_54;
+		}
+		if (ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.2.999')) {
 			return self::ILIAS_53;
 		}
 		if (ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.1.999')) {
@@ -55,6 +63,20 @@ class xoct {
 	 */
 	public static function isIlias52() {
 		return self::getILIASVersion() >= self::ILIAS_52;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isIlias53() {
+		return self::getILIASVersion() >= self::ILIAS_53;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isIlias54() {
+		return self::getILIASVersion() >= self::ILIAS_54;
 	}
 
 	public static function isApiVersionGreaterThan($api_version) {

@@ -16,15 +16,6 @@ class xoctOpenCast extends ActiveRecord {
 
 	/**
 	 * @return string
-	 * @deprecated
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
-	}
-
-
-	/**
-	 * @return string
 	 */
 	public function getConnectorContainerName() {
 		return self::TABLE_NAME;
@@ -252,6 +243,22 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $obj_online = false;
+	/**
+	 * @var integer
+	 *
+	 * @con_has_field true
+	 * @con_fieldtype integer
+	 * @con_length    8
+	 */
+	protected $default_view = xoctUserSettings::VIEW_TYPE_LIST;
+	/**
+	 * @var bool
+	 *
+	 * @con_has_field true
+	 * @con_fieldtype integer
+	 * @con_length    1
+	 */
+	protected $view_changeable = true;
 
 
 	/**
@@ -395,6 +402,34 @@ class xoctOpenCast extends ActiveRecord {
 	 */
 	public function setPermissionAllowSetOwn($permission_allow_set_own) {
 		$this->permission_allow_set_own = $permission_allow_set_own;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDefaultView() {
+		return $this->default_view;
+	}
+
+	/**
+	 * @param int $default_view
+	 */
+	public function setDefaultView($default_view) {
+		$this->default_view = $default_view;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isViewChangeable() {
+		return $this->view_changeable;
+	}
+
+	/**
+	 * @param bool $view_changeable
+	 */
+	public function setViewChangeable($view_changeable) {
+		$this->view_changeable = $view_changeable;
 	}
 
     /**

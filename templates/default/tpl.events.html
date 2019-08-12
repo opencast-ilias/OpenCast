@@ -1,46 +1,49 @@
 <tr class="{CSS_ROW} {ADDITIONAL_CSS}">
 	<td class="std small">
-		<img class="xoct_preview_image" src="{PREVIEW}">
-		{MODAL}
+		<div class="xoct_preview_image">
+			{THUMBNAIL}
+		</div>
 	</td>
 	<td class="std small">
 		<div class="btn-group-vertical" role="group" >
 			<!-- BEGIN link -->
-			<a href="{LINK_URL}" target="_blank" class="btn btn-info" {MODAL_LINK}>{LINK_TEXT}</a>
+			{LINK}
 			<!-- END link -->
 		</div>
 	</td>
-	<!-- BEGIN event_title -->
 	<td class="std small">
-		{TITLE}<br>
-		<span class="label label-{STATE_CSS}">{STATE}</span>
+		<!-- BEGIN title -->
+		{TITLE}
+		<!-- END title -->
+		<!-- BEGIN state -->
+		<br>{STATE}
+		<!-- END state -->
 	</td>
-	<!-- END event_title -->
-	<!-- BEGIN event_description -->
+	<!-- BEGIN description -->
 	<td class="std small">
 		{DESCRIPTION}
 	</td>
-	<!-- END event_description -->
-	<!-- BEGIN event_presenter -->
+	<!-- END description -->
+	<!-- BEGIN presenter -->
 	<td class="std small">
 		{PRESENTER}
 	</td>
-	<!-- END event_presenter -->
-	<!-- BEGIN event_location -->
+	<!-- END presenter -->
+	<!-- BEGIN location -->
 	<td class="std small">
 		{LOCATION}
 	</td>
-	<!-- END event_location -->
-	<!-- BEGIN event_start -->
+	<!-- END location -->
+	<!-- BEGIN start -->
 	<td class="std small">
 		{START}
 	</td>
-	<!-- END event_start -->
-	<!-- BEGIN event_owner -->
+	<!-- END start -->
+	<!-- BEGIN owner -->
 	<td class="std small">
-		{OWNER}<!-- BEGIN invitations --> <span class="badge">+ {INVITATIONS}</span> <!-- END invitations -->
+		{OWNER}
 	</td>
-	<!-- END event_owner -->
+	<!-- END owner -->
 	<td class=" small text-right">
 		{ACTIONS}
 	</td>

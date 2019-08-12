@@ -1,0 +1,15 @@
+{PAGINATION_TOP} {LIMIT_SELECTOR}
+<div id="xoct_tile_container">
+    <!-- BEGIN tile -->
+    {TILE}
+    <!-- END tile -->
+</div>
+{PAGINATION_BOTTOM}
+<script type="text/javascript">
+    $(document).on('signal_tst', function($v, $k, $j) {
+        console.log('signal tst');
+        console.log($v);
+        console.log($k);
+        console.log($j);
+    })
+</script>
