@@ -1343,19 +1343,35 @@ class xoctEventGUI extends xoctGUI {
 		$media_package = $episode_data['search-results']['result']['mediapackage'];
 
 		$streams = [];
-		foreach ($media_package['media']['track'] as $track) {
-			$streams[] = [
-				"content" => (strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE),
-				"sources" => [
-					"hls" => [
-						[
-							"src" => $track['url'],
-							"mimetype" => $track['mimetype']
-						]
-					]
-				]
-			];
-		}
+		if( isset($media_package['media']['track'][0]))
+        {
+            foreach ($media_package['media']['track'] as $track) {
+                $streams[] = [
+                    "content" => (strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "sources" => [
+                        "hls" => [
+                            [
+                                "src" => $track['url'],
+                                "mimetype" => $track['mimetype']
+                            ]
+                        ]
+                    ]
+                ];
+            }
+        } else {
+            $track = $media_package['media']['track'];
+            $streams[] = [
+                "content" => self::ROLE_MASTER,
+                "sources" => [
+                    "hls" => [
+                        [
+                            "src" => $track['url'],
+                            "mimetype" => $track['mimetype']
+                        ]
+                    ]
+                ]
+            ];
+        }
 
 		return [
 			"streams" => $streams,
