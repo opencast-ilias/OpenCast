@@ -1,11 +1,10 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Chat\ChatGUI;
-use srag\Plugins\Opencast\Chat\ChatHistoryGUI;
-use srag\Plugins\Opencast\Chat\ChatroomAR;
-use srag\Plugins\Opencast\Chat\Token;
-use srag\Plugins\Opencast\Chat\TokenAR;
+use srag\Plugins\Opencast\Chat\GUI\ChatGUI;
+use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
+use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Chat\Model\TokenAR;
 
 /**
  * Class xoctEventGUI

@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Chat;
+namespace srag\Plugins\Opencast\Chat\GUI;
 
 use ilObjUser;
 use ilOpenCastPlugin;

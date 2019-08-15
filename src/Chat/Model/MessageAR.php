@@ -1,22 +1,19 @@
 <?php
 
-namespace srag\Plugins\Opencast\Chat;
-
+namespace srag\Plugins\Opencast\Chat\Model;
 
 use ActiveRecord;
 
 /**
- * Class EventAR
+ * Class MessageAR
+ *
  * @package srag\Plugins\Opencast\Chat
  *
- * @author Theodor Truffer <tt@studer-raimann.ch>
+ * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class EventAR extends ActiveRecord {
+class MessageAR extends ActiveRecord {
 
-	const TABLE_NAME = 'sr_chat_event';
-
-	const EVENT_ID_USER_JOINED = 1;
-	const EVENT_ID_USER_LEFT = 2;
+	const TABLE_NAME = 'sr_chat_message';
 
 
 	/**
@@ -50,20 +47,21 @@ class EventAR extends ActiveRecord {
 	 * @var int
 	 *
 	 * @db_has_field        true
-	 * @db_fieldtype        integer
-	 * @db_length           8
-	 */
-	protected $subject_id;
-
-	/**
-	 * @var int
-	 *
-	 * @db_has_field        true
 	 * @db_is_notnull       true
 	 * @db_fieldtype        integer
 	 * @db_length           8
 	 */
-	protected $event_type_id;
+	protected $usr_id;
+
+	/**
+	 * @var string
+	 *
+	 * @db_has_field        true
+	 * @db_is_notnull       true
+	 * @db_fieldtype        text
+	 * @db_length           128
+	 */
+	protected $message;
 
 	/**
 	 * @var string
@@ -110,30 +108,32 @@ class EventAR extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getSubjectId() {
-		return $this->subject_id;
+	public function getUsrId() {
+		return $this->usr_id;
 	}
 
 
 	/**
-	 * @param int $subject_id
+	 * @param int $usr_id
 	 */
-	public function setSubjectId($subject_id) {
-		$this->subject_id = $subject_id;
+	public function setUsrId($usr_id) {
+		$this->usr_id = $usr_id;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getEventTypeId(): int {
-		return $this->event_type_id;
-	}
 
 	/**
-	 * @param int $event_type_id
+	 * @return string
 	 */
-	public function setEventTypeId(int $event_type_id) {
-		$this->event_type_id = $event_type_id;
+	public function getMessage() {
+		return $this->message;
+	}
+
+
+	/**
+	 * @param string $message
+	 */
+	public function setMessage($message) {
+		$this->message = $message;
 	}
 
 
@@ -151,4 +151,6 @@ class EventAR extends ActiveRecord {
 	public function setSentAt($sent_at) {
 		$this->sent_at = $sent_at;
 	}
+
+	
 }

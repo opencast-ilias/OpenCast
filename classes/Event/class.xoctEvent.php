@@ -1,8 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Chat\ChatroomAR;
+use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 
 /**
  * Class xoctEvent

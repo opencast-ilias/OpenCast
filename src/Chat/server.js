@@ -1,43 +1,62 @@
+/**
+ * Opencast Chatserver main
+ * @author Theodor Truffer <tt@studer-raimann.ch>
+ */
+
+/**
+ * Initialisation
+ */
 const yargs = require('yargs');
 const argv = yargs
 	.option('client-id', {
 		description: 'ILIAS Client ID',
 		alias: 'c',
-		type: 'text'
+		type: 'string'
 	})
 	.option('ilias-dir', {
 		description: 'root dir of this ILIAS installation',
 		alias: 'd',
-		type: 'text'
+		type: 'string',
+		default: '/var/www/ilias'
 	})
 	.option('port', {
-		description: 'default: 3000',
+		description: 'port which the chat server listens to',
 		alias: 'p',
-		type: 'number'
+		type: 'number',
+		default: 3000
 	})
 	.option('ip', {
-		description: 'default: *'
+		description: 'IP address which the chat server listens to',
+		type: 'string',
+		default: '0.0.0.0'
 	})
-	.demandOption(['client-id', 'ilias-dir'])
+	.option('use-http', {
+		description: 'set if your ILIAS installation uses http (e.g. for local development or reverse proxies)',
+		type: 'boolean',
+		default: 0,
+	})
+	.demandOption(['client-id'])
 	.help()
 	.alias('help', 'h')
 	.argv;
-console.log(argv);
 
 const client_id = argv.clientId;
-const ilias_installation_dir = argv.iliasDir.replace(/\/+$/,'');
+const ilias_installation_dir = argv.iliasDir ? argv.iliasDir.replace(/\/+$/,'') : '/var/www/ilias';
+const port = argv.port;
+const ip = argv.ip;
+const protocol = argv.useHttp ? 'http' : 'https';
+
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const ejs = require('ejs');
 const fs = require('fs');
-const index_file = fs.readFileSync(__dirname + '/index.ejs', 'utf8');
-const QueryUtils = require(__dirname + '/QueryUtils')(client_id, ilias_installation_dir);
-
+const index_file = fs.readFileSync(__dirname + '/templates/index.ejs', 'utf8');
+const QueryUtils = require('./modules/QueryUtils.js');
+QueryUtils.init(client_id, ilias_installation_dir);
 
 var tokens = [];
-
 app.use(express.static(__dirname + '/public'));
 
 /**
@@ -71,11 +90,11 @@ app.get('/srchat/open_chat/:token', function(req, res){
 			};
 			// response.style_sheet_location = __dirname + '/chat.css';
 			response.client_id = client_id;
-			response.base_url = req.protocol + '://' + req.hostname;
+			response.base_url = protocol + '://' + req.hostname;
 			return res.send(ejs.render(index_file, response));
 		} else {
 			console.log(response);
-			res.sendFile(__dirname + '/error.html');
+			res.sendFile(__dirname + '/templates/error.html');
 		}
 	});
 });
@@ -139,6 +158,6 @@ io.on('connection', function(socket){
 /**
  * listen
  */
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+http.listen(port, ip, 511, function(){
+	console.log('listening on ' + ip + ':' + port );
 });
