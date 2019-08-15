@@ -28,6 +28,10 @@ class xoctEvent extends xoctObject {
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
 	const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
 	const STATE_FAILED = 'FAILED';
+	const STATE_LIVE_SCHEDULED = 'LIVE_SCHEDULED';
+	const STATE_LIVE_RUNNING = 'LIVE_RUNNING';
+	const STATE_LIVE_OFFLINE = 'LIVE_OFFLINE';
+
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
 	const PRESENTER_SEP = ';';
@@ -50,6 +54,9 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_SCHEDULED_OFFLINE  => 'scheduled',
 		xoctEvent::STATE_FAILED             => 'danger',
 		xoctEvent::STATE_OFFLINE            => 'info',
+		xoctEvent::STATE_LIVE_SCHEDULED     => 'info',
+		xoctEvent::STATE_LIVE_RUNNING       => 'info',
+		xoctEvent::STATE_LIVE_OFFLINE       => 'info',
 	);
 	/**
 	 * @var string
@@ -963,11 +970,11 @@ class xoctEvent extends xoctObject {
 				break;
 			case '': // empty state means it's a scheduled event
                 if ($this->status == 'EVENTS.EVENTS.STATUS.RECORDING') {
-                    $this->setProcessingState(self::STATE_RECORDING);
+                    $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_RUNNING : self::STATE_RECORDING);
                 } elseif (!$this->getXoctEventAdditions()->getIsOnline()) {
-					$this->setProcessingState(self::STATE_SCHEDULED_OFFLINE);
+					$this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_OFFLINE : self::STATE_SCHEDULED_OFFLINE);
 				} else {
-					$this->setProcessingState(self::STATE_SCHEDULED);
+					$this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_SCHEDULED : self::STATE_SCHEDULED);
 				}
 				break;
 		}
@@ -1725,7 +1732,7 @@ class xoctEvent extends xoctObject {
 			return false;
 		}
 		$publication = $this->getPublicationMetadataForUsage($usage);
-		return $this->isScheduled() && !empty($publication);
+		return !empty($publication);
 	}
 
 	/**

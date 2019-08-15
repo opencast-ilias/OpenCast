@@ -100,7 +100,7 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED || $this->xoctEvent->isLiveEvent()) && ($player_link = $this->xoctEvent->getPlayerLink())) {
+		if (in_array($this->xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_RUNNING]) && ($player_link = $this->xoctEvent->getPlayerLink())) {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
@@ -247,9 +247,8 @@ class xoctEventRenderer {
 					xoctEvent::STATE_ENCODING
 				))) {
 				$suffix = '_owner';
-			} else if ($this->xoctEvent->isLiveEvent()) {
-				$suffix = '_live';
 			}
+
 			$state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $suffix, self::LANG_MODULE));
 
 			return $state_tpl->get();
