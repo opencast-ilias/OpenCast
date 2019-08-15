@@ -7,7 +7,8 @@ use ilTemplate;
 use ilTemplateException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
-use ilObjUser;
+use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Chat\Model\TokenAR;
 
 /**
  * Class ChatGUI
@@ -33,13 +34,12 @@ class ChatGUI {
 	private $template;
 
 
-	/**
-	 * ChatGUI constructor.
-	 *
-	 * @param TokenAR $token
-	 *
-	 * @throws DICException
-	 */
+    /**
+     * ChatGUI constructor.
+     *
+     * @param TokenAR $token
+     *
+     */
 	public function __construct(TokenAR $token) {
 		$this->token = $token;
 	}
@@ -54,7 +54,7 @@ class ChatGUI {
 	 */
 	public function render($async = false) {
 		$url = ILIAS_HTTP_PATH . ':' . self::PORT . '/srchat/open_chat/' . $this->token->getToken()->toString();
-		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/iframe.html', false, false);
+		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', false, false);
 		$template->setVariable('URL', $url);
 //		$template->setVariable('TOKEN', $token->getToken()->toString());
 		$template->addcss(self::plugin()->directory() . '/src/Chat/chat.css');
