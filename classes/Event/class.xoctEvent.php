@@ -839,15 +839,6 @@ class xoctEvent extends xoctObject {
 			];
 		}
 
-		if (ChatroomAR::chatroomExists($this->getIdentifier(), $xoctOpenCast->getObjId())) {
-			self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->getIdentifier());
-			$actions['event_show_chat_history'] = [
-				'link' => '#',
-				'prevent_background_click' => false,
-				'onclick' => "($('#xoct_chat_history_iframe').attr('src', '" . self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SHOW_CHAT_HISTORY) . "') && $('#xoct_chat_history_modal').modal('show'))"
-			];
-		}
-
 		return $actions;
 	}
 

@@ -965,7 +965,7 @@ class xoctEventGUI extends xoctGUI {
 	 * @return string
 	 */
 	protected function getModalsHTML() {
-		$modal_date_html = $modal_quality_html = $modal_chat_history_html = '';
+		$modal_date_html = $modal_quality_html = '';
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$modal_date = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_DATE);
 			$modal_date_html = $modal_date->getHTML();
@@ -974,12 +974,8 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
 			$modal_quality_html = $modal_quality->getHTML();
 		}
-		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
-			$modal_chat_history = new xoctChatHistoryModalGUI($this);
-			$modal_chat_history_html = $modal_chat_history->getHTML();
-		}
 
-		return $modal_date_html . $modal_quality_html . $modal_chat_history_html;
+		return $modal_date_html . $modal_quality_html;
 	}
 
 
