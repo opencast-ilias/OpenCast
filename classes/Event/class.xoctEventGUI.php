@@ -580,17 +580,15 @@ class xoctEventGUI extends xoctGUI {
 		$data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
 		$tpl->setVariable("DATA", json_encode($data));
 
-		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
-			$ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
-			$TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
-			$ChatGUI = new ChatGUI($TokenAR);
-			$tpl->setVariable('CHAT', $ChatGUI->render());
-
-			// dev
-			//header('Location: http://local.ilias54.com:3000/srchat/' . $TokenAR->getToken()->toString());
-			//exit;
-			// dev
-		}
+		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) {
+            $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
+            $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
+            $ChatGUI = new ChatGUI($TokenAR);
+            $tpl->setVariable('CHAT', $ChatGUI->render(true));
+		} elseif ($ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId())) {
+		    $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
+		    $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
+        }
 
 		echo $tpl->get();
 

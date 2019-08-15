@@ -2,13 +2,17 @@ html {
 	height: 100%;
 }
 
-#srchat_iframe_container {
+#srchat_iframe_container, #srchat_container {
 	display: inline-block;
 	position: relative;
 	float: right;
 	width: 20%;
 	height: 100%;
 	overflow:hidden;
+}
+
+#srchat_container {
+	overflow: auto;
 }
 
 #srchat_iframe {

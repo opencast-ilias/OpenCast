@@ -48,7 +48,7 @@ const protocol = argv.useHttp ? 'http' : 'https';
 
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
+const http = require(protocol).createServer(app);
 const io = require('socket.io')(http);
 const ejs = require('ejs');
 const fs = require('fs');

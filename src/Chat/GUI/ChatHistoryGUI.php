@@ -2,12 +2,14 @@
 
 namespace srag\Plugins\Opencast\Chat\GUI;
 
+use arException;
 use ilObjUser;
 use ilOpenCastPlugin;
 use ilTemplate;
 use ilTemplateException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Chat\Model\MessageAR;
 
 /**
  * Class ChatHistoryGUI
@@ -16,10 +18,9 @@ use srag\DIC\OpenCast\Exception\DICException;
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
 class ChatHistoryGUI {
-	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	const PORT = 3000;
+    use DICTrait;
+	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
 	 * @var integer
@@ -36,14 +37,17 @@ class ChatHistoryGUI {
 		$this->chat_room_id = $chat_room_id;
 	}
 
-	/**
-	 * @param bool $async
-	 * @return string
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param bool $async
+     *
+     * @return string
+     * @throws DICException
+     * @throws arException
+     * @throws ilTemplateException
+     */
 	public function render($async = false) {
-		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/history.html', false, false);
+		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/history.html', false, false);
 		$users = [];
 		foreach (MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message) {
 			$template->setCurrentBlock('message');
@@ -55,6 +59,17 @@ class ChatHistoryGUI {
 			$template->setVariable('CLIENT_ID', CLIENT_ID);
 			$template->parseCurrentBlock();
 		}
+
+		$chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
+		if (!$async) {
+            self::dic()->mainTemplate()->addCss($chat_css_path);
+        } else {
+		    $template->setCurrentBlock('css');
+		    $template->setVariable('CSS_PATH', $chat_css_path);
+		    $template->parseCurrentBlock();
+        }
+
 		return $template->get();
 	}
+
 }
