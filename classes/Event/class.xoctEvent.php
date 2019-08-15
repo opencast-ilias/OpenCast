@@ -54,7 +54,7 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_SCHEDULED_OFFLINE  => 'scheduled',
 		xoctEvent::STATE_FAILED             => 'danger',
 		xoctEvent::STATE_OFFLINE            => 'info',
-		xoctEvent::STATE_LIVE_SCHEDULED     => 'info',
+		xoctEvent::STATE_LIVE_SCHEDULED     => 'scheduled',
 		xoctEvent::STATE_LIVE_RUNNING       => 'info',
 		xoctEvent::STATE_LIVE_OFFLINE       => 'info',
 	);
@@ -751,7 +751,9 @@ class xoctEvent extends xoctObject {
 			self::STATE_FAILED,
 			self::STATE_SCHEDULED,
 			self::STATE_SCHEDULED_OFFLINE,
-			//			self::STATE_ENCODING,
+			self::STATE_LIVE_RUNNING,
+			self::STATE_LIVE_SCHEDULED,
+			self::STATE_LIVE_OFFLINE,
 		))) {
 			return [];
 		}

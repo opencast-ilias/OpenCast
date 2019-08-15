@@ -49,6 +49,7 @@ class xoctConf extends ActiveRecord {
 	const F_VIDEO_PORTAL_LINK = 'video_portal_link';
 	const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
 	const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
+	const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
 	const F_PRESENTATION_NODE = 'presentation_node';
 	const F_ENABLE_CHAT = 'enable_chat';
 

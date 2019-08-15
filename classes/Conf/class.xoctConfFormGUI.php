@@ -241,6 +241,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
+		$ni = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE), xoctConf::F_START_X_MINUTES_BEFORE_LIVE);
+		$ni->setInfo($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE . '_info'));
+		$cbs->addSubItem($ni);
+
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE), xoctConf::F_PRESENTATION_NODE);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE . '_info'));
 		$te->setRequired(true);

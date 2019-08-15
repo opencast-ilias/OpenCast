@@ -100,7 +100,17 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if (in_array($this->xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_RUNNING]) && ($player_link = $this->xoctEvent->getPlayerLink())) {
+		if (in_array($this->xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_RUNNING, xoctEvent::STATE_LIVE_SCHEDULED]) && ($player_link = $this->xoctEvent->getPlayerLink())) {
+
+		    // TODO: xoctEvent->scheduling is a stdClass when loaded from api
+		    if ($this->xoctEvent->isLiveEvent()
+                &&
+                (((($this->xoctEvent->getScheduling()->getStart()->getTimestamp() - ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE) * 60)) > time()))
+                || ($this->xoctEvent->getScheduling()->getEnd()->getTimestamp() < time()))
+            ) {
+		        // live event not joinable yet
+                return '';
+            }
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
