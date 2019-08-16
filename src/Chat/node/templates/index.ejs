@@ -32,7 +32,10 @@
 								.attr("height", "30px")
 								.attr("src", "/srchat/get_profile_picture/" + msg.usr_id)
 					)).append($('<div>').attr("class", "srchat_message_div")
-							.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
+							.append($('<div>').attr("class", "srchat_message_top")
+									.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
+									.append($('<p>').attr("class", "srchat_message_sent").text(msg.sent_at))
+							)
 							.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
 					)
 			);
@@ -60,7 +63,10 @@
 				<img class="srchat_profile_picture" height="30px" src="/srchat/get_profile_picture/<%= message.usr_id %>">
 			</div>
 			<div class="srchat_message_div">
-				<p class="srchat_message_name"><%= message.public_name %></p>
+				<div class="srchat_message_top">
+					<p class="srchat_message_name"><%= message.public_name %></p>
+					<p class="srchat_message_sent"><%= message.sent_at %></p>
+				</div>
 				<p class="srchat_message_content"><%= message.message %></p>
 			</div>
 		</li>

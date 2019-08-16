@@ -4,10 +4,13 @@
             <!-- BEGIN message -->
             <li>
                 <div class="srchat_profile_picture_div">
-                    <img class="srchat_profile_picture" height="30px" src="/data/{CLIENT_ID}/usr_images/usr_{USER_ID}_xsmall.jpg" onerror="if (this.src != 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg') this.src = 'http://local.ilias54.com/templates/default/images/no_photo_xsmall.jpg';">
+                    <img class="srchat_profile_picture" height="30px" src="{PROFILE_PICTURE_PATH}">
                 </div>
                 <div class="srchat_message_div">
-                    <p class="srchat_message_name">{PUBLIC_NAME}</p>
+                    <div class="srchat_message_top">
+                        <p class="srchat_message_name">{PUBLIC_NAME}</p>
+                        <p class="srchat_message_sent">{SENT_AT}</p>
+                    </div>
                     <p class="srchat_message_content">{MESSAGE}</p>
                 </div>
             </li>
