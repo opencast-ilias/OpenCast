@@ -212,7 +212,7 @@ class xoctEvent extends xoctObject {
 
 		$this->initProcessingState();
 
-		if ($this->isScheduled() && !$this->scheduling) {
+		if (($this->isScheduled() || $this->isLiveEvent()) && (!$this->scheduling || $this->scheduling instanceof stdClass)) {
 			$this->loadScheduling();
 		}
 
@@ -914,7 +914,11 @@ class xoctEvent extends xoctObject {
 	 */
 	public function loadScheduling() {
 		if ($this->getIdentifier()) {
-			$this->scheduling = new xoctScheduling($this->getIdentifier());
+		    if ($this->scheduling instanceof stdClass) {
+		        $this->scheduling = new xoctScheduling($this->getIdentifier(), $this->scheduling);
+            } else {
+                $this->scheduling = new xoctScheduling($this->getIdentifier());
+            }
 			$this->setStart($this->scheduling->getStart());
 			$this->setEnd($this->scheduling->getEnd());
 			$this->setLocation($this->scheduling->getAgentId());
@@ -1713,7 +1717,11 @@ class xoctEvent extends xoctObject {
 	 * @return bool
 	 */
 	public function isScheduled() {
-		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING));
+		return in_array($this->getProcessingState(), [
+		    self::STATE_SCHEDULED,
+            self::STATE_SCHEDULED_OFFLINE,
+            self::STATE_RECORDING
+        ]);
 	}
 
 	/**

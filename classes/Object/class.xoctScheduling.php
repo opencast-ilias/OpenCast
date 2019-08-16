@@ -45,10 +45,10 @@ class xoctScheduling extends xoctObject {
 	/**
 	 * @param string $event_id
 	 */
-	public function __construct($event_id = '') {
+	public function __construct($event_id = '', $stdClass = null) {
 		if ($event_id) {
 			$this->setEventId($event_id);
-			$this->read();
+			$this->read($stdClass);
 		}
 	}
 
@@ -56,8 +56,10 @@ class xoctScheduling extends xoctObject {
 	/**
 	 *
 	 */
-	protected function read() {
-		$data = json_decode(xoctRequest::root()->events($this->getEventId())->scheduling()->get());
+	protected function read($data = null) {
+	    if ($data === null) {
+            $data = json_decode(xoctRequest::root()->events($this->getEventId())->scheduling()->get());
+        }
 		$this->loadFromStdClass($data);
 	}
 
