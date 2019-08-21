@@ -17,9 +17,8 @@ class TokenAR extends ActiveRecord {
 
 	/**
 	 * validity in seconds
-	 * note that the token is deleted almost immediately after creation
 	 */
-	const TOKEN_VALIDITY = 60;
+	const TOKEN_VALIDITY = 60 * 60;
 
 
 	/**

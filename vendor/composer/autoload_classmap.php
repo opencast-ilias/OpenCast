@@ -825,6 +825,7 @@ return array(
     'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatGUI' => $baseDir . '/src/Chat/GUI/ChatGUI.php',
     'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatHistoryGUI' => $baseDir . '/src/Chat/GUI/ChatHistoryGUI.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\ChatroomAR' => $baseDir . '/src/Chat/Model/ChatroomAR.php',
+    'srag\\Plugins\\Opencast\\Chat\\Model\\ConfigAR' => $baseDir . '/src/Chat/Model/ConfigAR.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\EventAR' => $baseDir . '/src/Chat/Model/EventAR.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\MessageAR' => $baseDir . '/src/Chat/Model/MessageAR.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => $baseDir . '/src/Chat/Model/Token.php',

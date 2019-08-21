@@ -42,10 +42,10 @@ html {
     padding: 10px;
 }
 
-#srchat_iframe_container #messages {
+#messages {
     list-style-type: none;
     margin: 0;
-    padding: 15px 0 40px 0;
+    padding: 0px 0 40px 0;
 }
 
 #srchat_container #messages {
@@ -122,7 +122,14 @@ html {
 }
 
 div#srchat_retry_overlay {
+    position: absolute;
+}
+
+div#srchat_retry_overlay_iframe  {
     position: fixed;
+}
+
+div#srchat_retry_overlay, div#srchat_retry_overlay_iframe {
     top: 0;
     left: 0;
     text-align: center;
@@ -132,10 +139,20 @@ div#srchat_retry_overlay {
     z-index: 2;
 }
 
-div#srchat_retry_overlay img {
+div#srchat_retry_overlay img, div#srchat_retry_overlay_iframe img {
     height: 60px;
     width: 60px;
     vertical-align: middle;
+    animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-359deg);
+    }
 }
 
 span.srchat_pseudo_element {

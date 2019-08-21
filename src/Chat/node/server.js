@@ -55,8 +55,8 @@ const fs = require('fs');
 const index_file = fs.readFileSync(__dirname + '/templates/index.ejs', 'utf8');
 const QueryUtils = require('./modules/QueryUtils.js');
 QueryUtils.init(client_id, ilias_installation_dir);
+QueryUtils.writeChatServerConfig(ip, port, protocol);
 
-var tokens = [];
 app.use(express.static(__dirname + '/public'));
 
 /**
@@ -80,49 +80,44 @@ app.get('/srchat/get_profile_picture/:usr_id', function(req, res) {
 /**
  * check token and get old messages
  */
-app.get('/srchat/open_chat/:token', function(req, res){
-	QueryUtils.checkTokenAndFetchMessages(req.params.token, function(response, success) {
-		if (success) {
-			tokens[req.params.token] = {
-				public_name: response.public_name,
-				usr_id: response.usr_id,
-				chat_room_id: response.chat_room_id
-			};
-			// response.style_sheet_location = __dirname + '/chat.css';
-			response.client_id = client_id;
-			response.base_url = protocol + '://' + req.hostname;
-			return res.send(ejs.render(index_file, response));
-		} else {
-			console.log(response);
-			res.sendFile(__dirname + '/templates/error.html');
-		}
-	});
+app.get('/srchat/open_chat/:token', async function(req, res){
+	try {
+		var token = await QueryUtils.checkAndFetchToken(req.params.token);
+		var response = {
+			token: req.params.token,
+			client_id: client_id,
+			base_url: protocol + '://' + req.hostname,
+			public_name: token.public_name,
+			usr_id: token.usr_id,
+			chat_room_id: token.chat_room_id,
+			messages: await QueryUtils.getOldMessages(token.chat_room_id)
+		};
+		return res.send(ejs.render(index_file, response));
+	} catch (e) {
+		console.log('check failed for token ' + req.params.token + ' with error message: '  + e.message);
+		res.sendFile(__dirname + '/templates/error.html');
+	}
 });
 
 /**
  * open socket / authenticate
  */
-io.use(function(socket, next) {
+io.use(async function(socket, next) {
 	if (typeof socket.handshake.query === 'undefined' || typeof socket.handshake.query.token !== 'string') {
 		console.log('missing token in handshake');
 		return next(new Error('missing token in handshake'));
 	}
 
-	var token = socket.handshake.query.token;
-	if (!(token in tokens)) {
-		console.log('token not found in database: ' + token);
-		return next(new Error('token not found in database'));
+	try {
+		var token = await QueryUtils.checkAndFetchToken(socket.handshake.query.token);
+	} catch (e) {
+		console.log(e.message);
+		return next(new Error(e.message));
 	}
 
-	user_info = tokens[token];
-	if (typeof user_info.usr_id !== "number" || typeof user_info.chat_room_id !== "number" || typeof user_info.public_name !== "string" ) {
-		console.log('token information invalid or incomplete');
-		return next(new Error('token information invalid or incomplete'));
-	}
-
-	socket.usr_id = user_info.usr_id;
-	socket.chat_room_id = user_info.chat_room_id;
-	socket.public_name = user_info.public_name;
+	socket.usr_id = token.usr_id;
+	socket.chat_room_id = token.chat_room_id;
+	socket.public_name = token.public_name;
 
 	return  next();
 });
@@ -141,7 +136,7 @@ io.on('connection', function(socket){
 	socket.on('chat_msg', function(msg){
 		var today = new Date();
 		var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-		var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+		var time = today.getHours() + ":" + today.getMinutes();
 		var sent_at = date+' '+time;
 
 		io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {

@@ -850,6 +850,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatGUI' => __DIR__ . '/../..' . '/src/Chat/GUI/ChatGUI.php',
         'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatHistoryGUI' => __DIR__ . '/../..' . '/src/Chat/GUI/ChatHistoryGUI.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\ChatroomAR' => __DIR__ . '/../..' . '/src/Chat/Model/ChatroomAR.php',
+        'srag\\Plugins\\Opencast\\Chat\\Model\\ConfigAR' => __DIR__ . '/../..' . '/src/Chat/Model/ConfigAR.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\EventAR' => __DIR__ . '/../..' . '/src/Chat/Model/EventAR.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\MessageAR' => __DIR__ . '/../..' . '/src/Chat/Model/MessageAR.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => __DIR__ . '/../..' . '/src/Chat/Model/Token.php',

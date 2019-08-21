@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-</head>
-<body>
-ERROR
-</body>
-</html>
+<div id="srchat_container">
+	<div id="chat_body">
+		<ul id="messages">
+		</ul>
+		<form id="srchat_form" action="">
+			<div class="input-group">
+				<input class="form-control input-sm" id="srchat_input" maxlength="120" autocomplete="off" />
+				<span class="input-group-btn">
+				<button class="btn btn-warning btn-sm" id="btn-chat">
+					Send
+				</button>
+			</span>
+			</div>
+		</form>
+	</div>
+<!--	<div id="srchat_retry_overlay" hidden>-->
+<!--		<span class="srchat_pseudo_element"></span>-->
+<!--		<a onclick="location.reload();">-->
+<!--			<img src="/images/refresh_icon.png">-->
+<!--		</a>-->
+<!--	</div>-->
+</div>
+<!-- BEGIN css -->
+<link href="{CSS_PATH}" rel="stylesheet">
+<!-- END css -->
+<link href="/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+<link href="/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">

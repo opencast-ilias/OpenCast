@@ -8,6 +8,7 @@ use ilTemplateException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
 
 /**
@@ -21,8 +22,6 @@ class ChatGUI {
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
-	const PORT = 3000;
 
 	/**
 	 * @var ChatroomAR
@@ -53,11 +52,19 @@ class ChatGUI {
 	 * @throws ilTemplateException
 	 */
 	public function render($async = false) {
-		$url = ILIAS_HTTP_PATH . ':' . self::PORT . '/srchat/open_chat/' . $this->token->getToken()->toString();
-		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', false, false);
+		$url = ILIAS_HTTP_PATH . ':' . ConfigAR::getConfig(ConfigAR::C_PORT) . '/srchat/open_chat/' . $this->token->getToken()->toString();
+		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
 		$template->setVariable('URL', $url);
-//		$template->setVariable('TOKEN', $token->getToken()->toString());
-		$template->addcss(self::plugin()->directory() . '/src/Chat/chat.css');
+        $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');
+        $template->setVariable('ERROR_PAGE', self::plugin()->directory() . '/src/Chat/node/templates/error.html');
+        $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
+        if (!$async) {
+            self::dic()->mainTemplate()->addCss($chat_css_path);
+        } else {
+            $template->setCurrentBlock('css');
+            $template->setVariable('CSS_PATH', $chat_css_path);
+            $template->parseCurrentBlock();
+        }
 		return $template->get();
 	}
 

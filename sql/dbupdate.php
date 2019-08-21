@@ -155,7 +155,8 @@ xoctUserSetting::updateDB();
 ?>
 <#16>
 <?php
-\srag\Plugins\Opencast\Chat\ChatroomAR::updateDB();
-\srag\Plugins\Opencast\Chat\MessageAR::updateDB();
-\srag\Plugins\Opencast\Chat\TokenAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\ChatroomAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\MessageAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\TokenAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\ConfigAR::updateDB();
 ?>

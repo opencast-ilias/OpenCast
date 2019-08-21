@@ -8,10 +8,12 @@ var QueryUtils = {
 	moment: require('moment'),
 	mysql: require('mysql'),
 	con: '',
+	tokens: [],
 
 	init: function (client_id, ilias_installation_dir) {
 		var fs = require('fs'),
-			ini = require('ini');
+			ini = require('ini'),
+			util = require('util');
 		var client_ini = ini.parse(fs.readFileSync(ilias_installation_dir + '/data/' + client_id + '/client.ini.php', 'utf-8'));
 		this.con = this.mysql.createPool({
 			host: client_ini.db.host,
@@ -19,13 +21,19 @@ var QueryUtils = {
 			database: client_ini.db.name,
 			password: client_ini.db.pass
 		});
-
+		this.con.query = util.promisify(this.con.query);
 	},
 
-	getOldMessages: function (chat_room_id, callback) {
+	writeChatServerConfig: async function (ip, port, protocol) {
+		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("ip", "' + ip + '") ON DUPLICATE KEY UPDATE value = "' + ip + '"');
+		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("port", "' + port + '") ON DUPLICATE KEY UPDATE value = "' + port + '"');
+		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("protocol", "' + protocol + '") ON DUPLICATE KEY UPDATE value = "' + protocol + '"');
+	},
+
+	getOldMessages: async function (chat_room_id) {
 		var con = this.con;
 		var moment = this.moment;
-		con.query('SELECT' +
+		var rows = await con.query('SELECT' +
 			' m.*, u.login, u.firstname, u.lastname, p.value' +
 			' FROM' +
 			' sr_chat_message m' +
@@ -34,72 +42,59 @@ var QueryUtils = {
 			' LEFT JOIN' +
 			' usr_pref p ON p.usr_id = u.usr_id AND p.keyword = "public_profile" AND (p.value = "y" OR p.value = "g")' +
 			' WHERE m.chat_room_id = ' + chat_room_id +
-			' ORDER BY sent_at ASC', function (err, rows, fields) {
-			if (!err) {
-				rows = rows.map(function (row) {
-					if (row.login == null) {
-						var public_name = '[deleted]';
-					} else if (row.value == null) {
-						var public_name = row.login;
-					} else {
-						var public_name = row.firstname + ' ' + row.lastname + ' (' + row.login + ')';
-					}
+			' ORDER BY sent_at ASC');
 
-					return Object.assign(
-						{},
-						row,
-						{
-							sent_at: moment(row.sent_at).format('HH:mm:ss'),
-							public_name: public_name
-						});
+		rows = rows.map(function (row) {
+			if (row.login == null) {
+				var public_name = '[deleted]';
+			} else if (row.value == null) {
+				var public_name = row.login;
+			} else {
+				var public_name = row.firstname + ' ' + row.lastname + ' (' + row.login + ')';
+			}
+
+			return Object.assign(
+				{},
+				row,
+				{
+					sent_at: moment(row.sent_at).format('HH:mm'),
+					public_name: public_name
 				});
-				callback({
-					messages: rows
-				}, true);
-			} else {
-				callback({error: 'error while performing query. ' + err.message}, false);
-			}
 		});
+		return rows;
 	},
 
-	checkTokenAndFetchMessages: function (token, callback) {
+	loadTokens: async function () {
+		let utils = this;
+		var rows = await this.con.query('SELECT * FROM sr_chat_token');
+		utils.tokens = [];
+		rows.forEach(function(element) {
+			utils.tokens[element.token] = element;
+		});
+		await utils.cleanupTokens();
+
+	},
+
+	cleanupTokens: async function () {
 		var ts = Math.round(new Date().getTime() / 1000);
-		var con = this.con;
-		var utils = this;
-		con.query('SELECT * FROM sr_chat_token WHERE token = "' + token + '"', function (err, rows, fields) {
-			if (!err) {
-				if (rows.length === 0) {
-					callback({error: 'invalid token (not found in db): ' + token}, false);
-				} else if (rows[0].valid_until_unix < ts) {
-					callback({error: 'invalid token (expired): ' + token}, false);
-				} else {
-					utils.getOldMessages(rows[0].chat_room_id, function (response, success) {
-						if (success) {
-							callback({
-								token: token,
-								public_name: rows[0].public_name,
-								usr_id: rows[0].usr_id,
-								chat_room_id: rows[0].chat_room_id,
-								messages: response.messages
-							}, true);
-						} else {
-							callback(response, false);
-						}
-
-					});
-				}
-			} else {
-				callback({error: 'error while performing query. ' + err.message}, false);
-			}
-
-			con.query('DELETE FROM sr_chat_token WHERE token = "' + token + '"');
-			con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ' + ts);
-		});
-
+		await this.con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ' + ts);
 	},
 
-	insertMessage: function (chat_room_id, usr_id, msg, sent_at) {
-		this.con.query('INSERT INTO sr_chat_message (id, chat_room_id, usr_id, message, sent_at) ' +
+	checkAndFetchToken: async function (token) {
+		var ts = Math.round(new Date().getTime() / 1000);
+		if (!(token in this.tokens)) {
+			await this.loadTokens();
+		}
+		var loaded_token = this.tokens[token];
+		if ((typeof loaded_token !== 'undefined') && (loaded_token.valid_until_unix > ts)) {
+			return loaded_token;
+		} else {
+			throw new Error('Token invalid' + ((typeof loaded_token !== 'undefined') ? ' (expired)' : ''));
+		}
+	},
+
+	insertMessage: async function (chat_room_id, usr_id, msg, sent_at) {
+		await this.con.query('INSERT INTO sr_chat_message (id, chat_room_id, usr_id, message, sent_at) ' +
 			'VALUES ("' + this.uuidv4() + '",' + chat_room_id + ',' + usr_id + ',"' + msg + '", "' + sent_at + '")');
 	}
 }

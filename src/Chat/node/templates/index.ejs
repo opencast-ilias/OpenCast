@@ -46,11 +46,13 @@
 		});
 
 		socket.on('disconnect', function() {
-			$('#srchat_retry_overlay').show();
+			console.log('srchat disconnected');
+			$('#srchat_retry_overlay_iframe').show();
 		});
 
-		socket.on('connection', function() {
-            $('#srchat_retry_overlay').hide();
+		socket.on('connect', function() {
+			console.log('srchat connected');
+            $('#srchat_retry_overlay_iframe').hide();
 		});
 	});
 </script>
@@ -83,11 +85,9 @@
 		</div>
 	</form>
 </div>
-<div id="srchat_retry_overlay" hidden>
+<div id="srchat_retry_overlay_iframe" hidden>
     <span class="srchat_pseudo_element"></span>
-    <a onclick="window.parent.location = document.referrer;">
-        <img src="/images/refresh_icon.png">
-    </a>
+	<img src="/images/refresh_icon.png">
 </div>
 </body>
 </html>
