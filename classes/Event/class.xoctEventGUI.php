@@ -585,7 +585,7 @@ class xoctEventGUI extends xoctGUI {
         }
 
         $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
-        $dev = true;    // TODO: REMOVE!
+        $dev = false;    // TODO: REMOVE!
         if (!filter_input(INPUT_GET, 'force_no_chat')) {
             if ((xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) || $dev) {
                 $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
