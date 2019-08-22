@@ -133,11 +133,11 @@ io.use(async function(socket, next) {
  * build socket
  */
 io.on('connection', function(socket){
-	console.log('user connected');
+	// console.log('user connected');
 	socket.join('sr_chat_' + socket.chat_room_id);
 
 	socket.on('disconnect', function(){
-		console.log('user disconnected');
+		// console.log('user disconnected');
 	});
 
 	socket.on('chat_msg', function(msg){

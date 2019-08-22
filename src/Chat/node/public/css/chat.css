@@ -107,7 +107,7 @@ html {
 .srchat_message_sent {
     display: inline-block;
     float: right;
-    font-size: small;
+    font-size: 90%;
 }
 
 ::-webkit-scrollbar-track
@@ -179,9 +179,38 @@ span.srchat_pseudo_element {
     #srchat_iframe_container {
         float: left;
         width: 100%;
+        overflow: visible;
+        z-index: 100;
     }
 
     div#playerContainer {
         width: 100% !important;
     }
+
+    #srchat_form {
+        position: absolute;
+        height: fit-content;
+        top: 0;
+    }
+
+    ul {
+        transform: rotate(180deg);
+    }
+    ul > li {
+        transform: rotate(-180deg);
+    }
+
+
+    #srchat_body, #srchat_input, #btn-chat {
+        font-size: 20px;
+    }
+
+    #srchat_input {
+        height: 42px;
+    }
+
+    #messages {
+        padding-top: 40px;
+    }
+
 }

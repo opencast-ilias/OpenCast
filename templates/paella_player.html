@@ -21,14 +21,29 @@
 <body>
 <div id="playerContainer"></div>
 <script>
-	function loadPlayer() {
-        paella.load('playerContainer', {
-            data: {DATA},
-            configUrl:"{PAELLA_CONFIG_FILE}"
-        });
-    }
+    paella.load('playerContainer', {
+        data: {DATA},
+        configUrl:"{PAELLA_CONFIG_FILE}"
+    });
+    paella.player._isLiveStream = {IS_LIVE_STREAM}; // TODO: move
 
-	{INLINE_JS}
+	function checkAndReload() {
+	    setTimeout(function() {
+            if ($('#paellaPlayer_loader').is(":visible")) {
+                // $('#playerContainer').empty();
+                // paella.player.loadVideo();
+                // checkAndReload();
+            }
+        }, 5000);
+	}
+
+	setTimeout(checkAndReload, 5000); // wait additional 5 secs the first time
+
+    window.addEventListener('message', function(e) {
+        // message passed can be accessed in "data" attribute of the event object
+        var scroll_height = e.data;
+        $('#srchat_iframe').attr('height', scroll_height + 'px');
+    } , false);
 </script>
 {CHAT}
 </body>

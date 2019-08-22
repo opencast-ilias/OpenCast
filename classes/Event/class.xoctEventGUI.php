@@ -575,6 +575,7 @@ class xoctEventGUI extends xoctGUI {
 
         $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
         $tpl->setVariable("DATA", json_encode($data));
+        $tpl->setVariable('IS_LIVE_STREAM', $xoctEvent->isLiveEvent() ? 'true' : 'false');
 
 		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_LIVE_SCHEDULED) {
             $tpl->setVariable('INLINE_JS', 'loadPlayer();');
@@ -584,17 +585,19 @@ class xoctEventGUI extends xoctGUI {
         }
 
         $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
-        $dev = false;
-		if ((xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) || $dev) {
-            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
-            $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
-            $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
-            $ChatGUI = new ChatGUI($TokenAR);
-            $tpl->setVariable('CHAT', $ChatGUI->render(true));
-		} elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
-            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
-            $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
-            $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
+        $dev = true;    // TODO: REMOVE!
+        if (!filter_input(INPUT_GET, 'force_no_chat')) {
+            if ((xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) || $dev) {
+                $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
+                $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
+                $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
+                $ChatGUI = new ChatGUI($TokenAR);
+                $tpl->setVariable('CHAT', $ChatGUI->render(true));
+            } elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
+                $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
+                $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
+                $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
+            }
         }
 
 		echo $tpl->get();
@@ -1356,7 +1359,7 @@ class xoctEventGUI extends xoctGUI {
                         "hls" => [
                             [
                                 "src" => $track['url'],
-                                "mimetype" => $track['mimetype']
+                                "mimetype" => $track['mimetype'],
                             ]
                         ]
                     ]
@@ -1370,7 +1373,7 @@ class xoctEventGUI extends xoctGUI {
                     "hls" => [
                         [
                             "src" => $track['url'],
-                            "mimetype" => $track['mimetype']
+                            "mimetype" => $track['mimetype'],
                         ]
                     ]
                 ]
@@ -1381,7 +1384,8 @@ class xoctEventGUI extends xoctGUI {
 			"streams" => $streams,
 			"metadata" => [
 				"title" => $xoctEvent->getTitle(),
-			]
+			],
+            'isLiveStream' => true
 		];
 	}
 }

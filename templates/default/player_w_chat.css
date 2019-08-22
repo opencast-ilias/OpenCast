@@ -12,6 +12,7 @@ div#playerContainer {
 
 #paellaPlayer_loader {
 	width: 80%;
+	/*position: absolute !important;*/
 }
 
 /* RESPONSIVE */
@@ -22,5 +23,19 @@ div#playerContainer {
 
 	#paellaPlayer_loader {
 		width: 100%;
+	}
+
+	#srchat_catcher img {
+		height: 30px;
+		background-color: white;
+	}
+
+	#srchat_catcher {
+		position: absolute;
+		height: 6%;
+		top: -6%;
+		width: fit-content;
+		text-align: center;
+		left: 50%;
 	}
 }

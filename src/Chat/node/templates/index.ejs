@@ -7,10 +7,13 @@
     <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">
 </head>
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="<%= base_url %>/libs/bower/bower_components/jquery/dist/jquery.slim.min.js"></script>
 <script>
 	$(function () {
-		$("html,body").scrollTop($(document).height());
+		var mobile = ($(window).width() > 768);
+		if (!mobile) {
+			$("html,body").scrollTop($(document).height());
+		}
 
 		var socket = io({query: {token: "<%= token %>"}});
 		$('form#srchat_form').submit(function(e){
@@ -23,7 +26,7 @@
 		});
 
 		socket.on('chat_msg', function(msg){
-			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height());
+			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height()) && !mobile;
 
 			$('#messages').append($('<li>')
 					.append($('<div>').attr('class', 'srchat_profile_picture_div')
@@ -54,6 +57,13 @@
 			console.log('srchat connected');
             $('#srchat_retry_overlay_iframe').hide();
 		});
+
+		// Send message to the top window (parent) at 500ms interval
+		setInterval(function() {
+			// first parameter is the message to be passed
+			// second paramter is the domain of the parent
+			window.top.postMessage(document.body.scrollHeight, "<%= base_url %>");
+		}, 500);
 	});
 </script>
 <body id="srchat_body">
