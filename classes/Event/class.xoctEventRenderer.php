@@ -100,17 +100,7 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if (in_array($this->xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_RUNNING, xoctEvent::STATE_LIVE_SCHEDULED]) && ($player_link = $this->xoctEvent->getPlayerLink())) {
-
-		    // TODO: xoctEvent->scheduling is a stdClass when loaded from api
-		    if ($this->xoctEvent->isLiveEvent()
-                &&
-                (((($this->xoctEvent->getScheduling()->getStart()->getTimestamp() - ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE) * 60)) > time()))
-                || ($this->xoctEvent->getScheduling()->getEnd()->getTimestamp() < time()))
-            ) {
-		        // live event not joinable yet
-                return '';
-            }
+		if ($this->isEventAccessible() && ($player_link = $this->xoctEvent->getPlayerLink())) {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
@@ -246,7 +236,7 @@ class xoctEventRenderer {
 	 * @throws xoctException
 	 */
 	public function getStateHTML() {
-		if ($this->xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
+		if (!$this->isEventAccessible()) {
 			$state_tpl = self::plugin()->template('default/tpl.event_state.html');
 			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
 
@@ -350,4 +340,29 @@ class xoctEventRenderer {
 	}
 
 
+    /**
+     * @return bool
+     */
+    protected function isEventAccessible() {
+	    $processing_state = $this->xoctEvent->getProcessingState();
+
+	    if ($processing_state == xoctEvent::STATE_SUCCEEDED) {
+	        return true;
+        }
+
+	    if ($this->xoctEvent->isLiveEvent()) {
+	        if ($processing_state == xoctEvent::STATE_LIVE_RUNNING) {
+	            return true;
+            }
+	        if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+	            $start = $this->xoctEvent->getScheduling()->getStart()->getTimestamp();
+                $accessible_before_start = ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
+                $accessible_from = $start - $accessible_before_start;
+                $accessible_to = $this->xoctEvent->getScheduling()->getEnd()->getTimestamp();
+	            return ($accessible_from < time()) && ($accessible_to > time());
+            }
+        }
+
+        return false;
+    }
 }

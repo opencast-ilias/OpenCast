@@ -21,10 +21,14 @@
 <body>
 <div id="playerContainer"></div>
 <script>
-	paella.load('playerContainer', {
-		data: {DATA},
-		configUrl:"{PAELLA_CONFIG_FILE}"
-	});
+	function loadPlayer() {
+        paella.load('playerContainer', {
+            data: {DATA},
+            configUrl:"{PAELLA_CONFIG_FILE}"
+        });
+    }
+
+	{INLINE_JS}
 </script>
 {CHAT}
 </body>

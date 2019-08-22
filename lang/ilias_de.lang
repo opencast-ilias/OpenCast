@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Im Formular anbieten
 config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
 config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
 config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.
+config_enable_live_streams#:#Live-Streams
+config_enable_live_streams_info#:#Abspielen von Live-Streams ermöglichen. Live-Streams werden automatisch im internen Video-Player abgespielt.
+config_start_x_minutes_before_live#:#Beitritt bevor Start
+config_start_x_minutes_before_live_info#:#Gibt an, wieviele Minuten vor Start des Events der Player geöffnet werden kann.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.: https://presentation.opencast.meine-uni.de/
+config_enable_chat#:#Chat aktivieren
+config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren

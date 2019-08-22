@@ -47,6 +47,7 @@ class ChatHistoryGUI {
      * @throws ilTemplateException
      */
 	public function render($async = false) {
+        // TODO: get rid of self::plugin() to be independent
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/history.html', true, true);
 		$users = [];
 		foreach (MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message) {

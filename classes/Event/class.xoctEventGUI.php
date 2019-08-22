@@ -4,6 +4,7 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatGUI;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
 
 /**
@@ -566,28 +567,34 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
+        $tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", true, true);
 
-		$tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", false, false);
+        $tpl->setVariable("TITLE", $xoctEvent->getTitle());
+        $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
+        $tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
 
-		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
+        $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
+        $tpl->setVariable("DATA", json_encode($data));
 
-		$tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
+		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_LIVE_SCHEDULED) {
+            $tpl->setVariable('INLINE_JS', 'loadPlayer();');
 
-		$tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
+        } else {
+		    $tpl->setVariable('INLINE_JS', 'loadPlayer();');
+        }
 
-		$tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
-
-		$data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
-		$tpl->setVariable("DATA", json_encode($data));
-
-		if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) {
+        $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
+        $dev = false;
+		if ((xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) || $dev) {
+            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
             $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
             $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
             $ChatGUI = new ChatGUI($TokenAR);
             $tpl->setVariable('CHAT', $ChatGUI->render(true));
-		} elseif ($ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId())) {
-		    $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
-		    $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
+		} elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
+            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
+            $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
+            $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
         }
 
 		echo $tpl->get();
@@ -1101,14 +1108,18 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
-	/**
-	 * @param xoctEvent $xoctEvent
-	 *
-	 * @return array
-	 */
+    /**
+     * @param xoctEvent $xoctEvent
+     *
+     * @return array
+     * @throws xoctException
+     */
 	protected function getStreamingData(xoctEvent $xoctEvent) {
 		$publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
 
+		if (empty($publication_player->getMedia())) {
+		    throw new xoctException(xoctException::NO_STREAMING_DATA);
+        }
 		// Multi stream
 		$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
 			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false

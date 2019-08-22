@@ -34,6 +34,8 @@ class xoctEvent extends xoctObject {
 
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
+	const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
+	const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';
@@ -576,14 +578,26 @@ class xoctEvent extends xoctObject {
         return true;
 	}
 
-	/**
-	 * @return string
-	 */
+
+    /**
+     * @return string
+     * @throws xoctException
+     */
 	public function getThumbnailUrl() {
 		if (in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING))) {
 			$this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
 			return $this->thumbnail_url;
 		}
+
+        if (in_array($this->getProcessingState(), array(self::STATE_LIVE_SCHEDULED, self::STATE_LIVE_OFFLINE))) {
+            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
+            return $this->thumbnail_url;
+        }
+
+        if ($this->getProcessingState() == self::STATE_LIVE_RUNNING) {
+            $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
+            return $this->thumbnail_url;
+        }
 
 		$possible_publications = array(
 			xoctPublicationUsage::USAGE_THUMBNAIL,
@@ -608,9 +622,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @return null|string
-	 */
+    /**
+     * @return null|string
+     * @throws xoctException
+     */
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();

@@ -48,6 +48,13 @@ html {
     padding: 0px 0 40px 0;
 }
 
+#srchat_container {
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
+}
+
 #srchat_container #messages {
     padding: 15px 0 0 0;
 }

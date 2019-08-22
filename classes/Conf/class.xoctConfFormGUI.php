@@ -220,7 +220,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
-
 		// INTERNAL VIDEO PLAYER
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
@@ -236,31 +235,32 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRequired(true);
 		$cbs->addSubItem($te);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS), xoctConf::F_ENABLE_LIVE_STREAMS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS), xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS . '_info'));
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
-		$ni = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE), xoctConf::F_START_X_MINUTES_BEFORE_LIVE);
-		$ni->setInfo($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE . '_info'));
-		$cbs->addSubItem($ni);
+		// LIVE STREAMS
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS), xoctConf::F_ENABLE_LIVE_STREAMS);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS . '_info'));
+		$cbs->setRequired(false);
+		$this->addItem($cbs);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE), xoctConf::F_PRESENTATION_NODE);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE . '_info'));
 		$te->setRequired(true);
 		$cbs->addSubItem($te);
 
+		$ni = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE), xoctConf::F_START_X_MINUTES_BEFORE_LIVE);
+		$ni->setInfo($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE . '_info'));
+		$cbs->addSubItem($ni);
+
 		$cbs2 = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT), xoctConf::F_ENABLE_CHAT);
 		$cbs2->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT . '_info'));
 		$cbs2->setRequired(false);
 		$cbs->addSubItem($cbs2);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS), xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS . '_info'));
-		$cbs->setRequired(false);
-		$cb->addSubItem($cbs);
-
-
+		// MODALS
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS . '_info'));
 		$this->addItem($cb);

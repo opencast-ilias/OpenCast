@@ -54,10 +54,10 @@ class ChatGUI {
 	public function render($async = false) {
 	    $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim(__DIR__, ILIAS_ABSOLUTE_PATH) . '/open_chat.php';
 		$url = $script_open_chat . '?port=' . ConfigAR::getConfig(ConfigAR::C_PORT) . '&token=' . $this->token->getToken()->toString();
+		// TODO: get rid of self::plugin() to be independent
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
 		$template->setVariable('URL', $url);
         $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');
-        $template->setVariable('ERROR_PAGE', self::plugin()->directory() . '/src/Chat/node/templates/error.html');
         $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             self::dic()->mainTemplate()->addCss($chat_css_path);

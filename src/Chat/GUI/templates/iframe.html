@@ -1,29 +1,8 @@
 <div id="srchat_iframe_container">
     <iframe id="srchat_iframe" style="background-color:white;" src="{URL}"></iframe>
-<!--    <div id="srchat_retry_overlay" hidden>-->
-<!--        <span class="srchat_pseudo_element"></span>-->
-<!--        <a onclick="$('#srchat_iframe').location.reload();">-->
-<!--            <img src="{REFRESH_ICON}">-->
-<!--        </a>-->
-<!--    </div>-->
 </div>
 <!-- BEGIN css -->
 <link href="{CSS_PATH}" rel="stylesheet">
 <!-- END css -->
 <link href="/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 <link href="/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">
-<script type="application/javascript">
-    function checkIframe() {
-        // console.log($('#srchat_iframe').contents());
-        console.log($('#srchat_iframe').contents().find('title').text());
-        if($('#srchat_iframe').contents().find('title').text === 0) {
-            let iframe_src = $('#srchat_iframe').attr('src');
-
-            $('#srchat_iframe').attr('src', '{ERROR_PAGE}');
-
-            $('#srchat_retry_overlay a').attr('onclick', '$("#srchat_iframe").attr("src", "' + iframe_src + '"); $("#srchat_retry_overlay").hide(); setTimeout(checkIframe, 500);');
-            $('#srchat_retry_overlay').show();
-        }
-    }
-    // checkIframe();
-</script>

@@ -11,11 +11,11 @@
    data-name="Ebene 1"
    viewBox="0 0 853 480"
    version="1.1"
-   sodipodi:docname="thumbnail_scheduled.svg"
+   sodipodi:docname="thumbnail_scheduled_live.svg"
    width="853"
    height="480"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   inkscape:export-filename="/home/theodor/vagrant/ilias_5-4/ilias/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png"
+   inkscape:export-filename="/home/theodor/vagrant/ilias_5-4/ilias/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png"
    inkscape:export-xdpi="95.818535"
    inkscape:export-ydpi="95.818535">
   <metadata
@@ -44,8 +44,8 @@
      id="namedview29"
      showgrid="false"
      inkscape:zoom="0.87837736"
-     inkscape:cx="136.08619"
-     inkscape:cy="66.78759"
+     inkscape:cx="280.85985"
+     inkscape:cy="203.40313"
      inkscape:window-x="67"
      inkscape:window-y="147"
      inkscape:window-maximized="1"
@@ -123,7 +123,7 @@
      style="fill:#c4aa0a;stroke-width:0.88844723" />
   <rect
      class="cls-1"
-     x="497.04391"
+     x="497.04395"
      y="277.51767"
      width="9.3016691"
      height="23.297075"
@@ -151,4 +151,17 @@
      ry="4.4490232"
      id="rect26"
      style="fill:#e9eaed;stroke-width:0.88844723" />
-</svg>
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot823"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:60px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#ff3132;fill-opacity:1;stroke:#ff0000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     transform="translate(-549.87756,364.30811)"><flowRegion
+       id="flowRegion825"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:60px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ff3132;fill-opacity:1;stroke:#ff0000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"><rect
+         id="rect827"
+         width="209.47716"
+         height="87.661644"
+         x="589.72375"
+         y="25.753319"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:60px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ff3132;fill-opacity:1;stroke:#ff0000;stroke-width:0.1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" /></flowRegion><flowPara
+       id="flowPara829">LIVE</flowPara></flowRoot></svg>

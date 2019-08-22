@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Show in Form
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
 config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
+config_enable_live_streams#:#Live Streams
+config_enable_live_streams_info#:#Allow viewing Live Streams. Live Streams will be automatically played in the internal video player.
+config_start_x_minutes_before_live#:#Enter before start
+config_start_x_minutes_before_live_info#:#Defines how many minutes before the start of the event the player is accessable.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Required to fetch the Live Streams. Example: https://presentation.opencast.my-university.de/
+config_enable_chat#:#Activate Chat
+config_enable_chat_info#:#Enables an on-screen chat beside the Live Event.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
