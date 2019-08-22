@@ -52,7 +52,8 @@ class ChatGUI {
 	 * @throws ilTemplateException
 	 */
 	public function render($async = false) {
-		$url = ILIAS_HTTP_PATH . ':' . ConfigAR::getConfig(ConfigAR::C_PORT) . '/srchat/open_chat/' . $this->token->getToken()->toString();
+	    $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim(__DIR__, ILIAS_ABSOLUTE_PATH) . '/open_chat.php';
+		$url = $script_open_chat . '?port=' . ConfigAR::getConfig(ConfigAR::C_PORT) . '&token=' . $this->token->getToken()->toString();
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
 		$template->setVariable('URL', $url);
         $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');

@@ -60,6 +60,13 @@ QueryUtils.writeChatServerConfig(ip, port, protocol);
 app.use(express.static(__dirname + '/public'));
 
 /**
+ * connection check
+ */
+app.get('/srchat/check_connection', function(req, res) {
+	res.status(200).end();
+});
+
+/**
  * get profile picture of user
  */
 app.get('/srchat/get_profile_picture/:usr_id', function(req, res) {
@@ -154,5 +161,5 @@ io.on('connection', function(socket){
  * listen
  */
 http.listen(port, ip, 511, function(){
-	console.log('listening on ' + ip + ':' + port );
+	console.log('listening on ' + protocol + '://' + ip + ':' + port );
 });

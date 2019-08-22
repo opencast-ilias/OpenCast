@@ -1,0 +1,57 @@
+<div id="srchat_container">
+	<div id="chat_body">
+		<ul id="messages">
+		</ul>
+		<form id="srchat_form" action="">
+			<div class="input-group">
+				<input class="form-control input-sm" id="srchat_input" maxlength="120" autocomplete="off" />
+				<span class="input-group-btn">
+				<button class="btn btn-warning btn-sm" id="btn-chat">
+					Send
+				</button>
+			</span>
+			</div>
+		</form>
+	</div>
+	<div id="srchat_retry_overlay">
+		<span class="srchat_pseudo_element"></span>
+		<a onclick="location.reload();">
+			<img src="{IMAGES_PATH}/refresh_icon.png">
+		</a>
+	</div>
+</div>
+<link href="/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+<link href="/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">
+<style>
+	div#srchat_retry_overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		text-align: center;
+		height: 100%;
+		width: 100%;
+		background-color: rgba(0,0,0,0.5);
+		z-index: 2;
+	}
+
+	div#srchat_retry_overlay img, div#srchat_retry_overlay_iframe img {
+		height: 60px;
+		width: 60px;
+		vertical-align: middle;
+	}
+
+	span.srchat_pseudo_element {
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+
+	#srchat_form {
+		background-color: lightgray;
+		padding: 3px;
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+
+</style>

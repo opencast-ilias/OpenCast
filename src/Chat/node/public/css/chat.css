@@ -146,6 +146,12 @@ div#srchat_retry_overlay img, div#srchat_retry_overlay_iframe img {
     animation: rotation 2s infinite linear;
 }
 
+span.srchat_pseudo_element {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
 @keyframes rotation {
     from {
         transform: rotate(0deg);
@@ -155,11 +161,6 @@ div#srchat_retry_overlay img, div#srchat_retry_overlay_iframe img {
     }
 }
 
-span.srchat_pseudo_element {
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
-}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
