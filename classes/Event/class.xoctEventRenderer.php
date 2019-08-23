@@ -237,21 +237,30 @@ class xoctEventRenderer {
 	 */
 	public function getStateHTML() {
 		if (!$this->isEventAccessible()) {
+		    $processing_state = $this->xoctEvent->getProcessingState();
 			$state_tpl = self::plugin()->template('default/tpl.event_state.html');
-			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
+			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$processing_state]);
 
 			$suffix = '';
 			if ($this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
-				&& in_array($this->xoctEvent->getProcessingState(), array(
+				&& in_array($processing_state, array(
 					xoctEvent::STATE_FAILED,
 					xoctEvent::STATE_ENCODING
 				))) {
 				$suffix = '_owner';
 			}
 
-			$state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $suffix, self::LANG_MODULE));
+			$placeholders = [];
+			if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+                $placeholders[] = date(
+                    'd.m.Y, H:i',
+                    $this->xoctEvent->getScheduling()->getStart()->getTimestamp() - (((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
+                );
+			}
 
-			return $state_tpl->get();
+            $state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($processing_state) . $suffix, self::LANG_MODULE, $placeholders));
+
+            return $state_tpl->get();
 		} else {
 			return '';
 		}
