@@ -46,6 +46,7 @@ const port = argv.port;
 const ip = argv.ip;
 const protocol = argv.useHttp ? 'http' : 'https';
 
+require('console-stamp')(console, 'yyyy-mm-dd HH:MM:ss.l');
 const express = require('express');
 const app = express();
 const http = require(protocol).createServer(app);
@@ -79,6 +80,7 @@ app.get('/srchat/get_profile_picture/:usr_id', function(req, res) {
 			res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
 		}
 	} catch(err) {
+		console.error(err);
 		// fallback picture
 		res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
 	}
@@ -101,7 +103,7 @@ app.get('/srchat/open_chat/:token', async function(req, res){
 		};
 		return res.send(ejs.render(index_file, response));
 	} catch (e) {
-		console.log('check failed for token ' + req.params.token + ' with error message: '  + e.message);
+		console.warn('check failed for token ' + req.params.token + ' with error message: '  + e.message);
 		res.sendFile(__dirname + '/templates/error.html');
 	}
 });
@@ -111,14 +113,14 @@ app.get('/srchat/open_chat/:token', async function(req, res){
  */
 io.use(async function(socket, next) {
 	if (typeof socket.handshake.query === 'undefined' || typeof socket.handshake.query.token !== 'string') {
-		console.log('missing token in handshake');
+		console.error('missing token in handshake');
 		return next(new Error('missing token in handshake'));
 	}
 
 	try {
 		var token = await QueryUtils.checkAndFetchToken(socket.handshake.query.token);
 	} catch (e) {
-		console.log(e.message);
+		console.error(e.message);
 		return next(new Error(e.message));
 	}
 
@@ -133,11 +135,10 @@ io.use(async function(socket, next) {
  * build socket
  */
 io.on('connection', function(socket){
-	// console.log('user connected');
 	socket.join('sr_chat_' + socket.chat_room_id);
 
 	socket.on('disconnect', function(){
-		// console.log('user disconnected');
+		// TODO: cleanup rooms
 	});
 
 	socket.on('chat_msg', function(msg){
