@@ -31,7 +31,7 @@ For other OS, see https://nodejs.org/en/download/package-manager/
 
 To run the chat server, execute the following:
 ```bash
-node [PATH_TO_OPENCAST_PLUGIN]/src/Chat/node/server.js -c [CLIENT_ID]
+node [PATH_TO_OPENCAST_PLUGIN]/src/Chat/node/server.js -c [CLIENT_ID] > /var/iliasdata/ilias/srchat.log 2>&1
 ```
 Note that the chat server needs an ILIAS client id, which is used to establish a connection to the correct database. Multiple clients are not supported yet.
 
