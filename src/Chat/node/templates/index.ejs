@@ -28,20 +28,21 @@
 		socket.on('chat_msg', function(msg){
 			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height()) && !mobile;
 
-			$('#messages').append($('<li>')
-					.append($('<div>').attr('class', 'srchat_profile_picture_div')
-							.append($('<img>')
+			var new_item = $('<li>')
+				.append($('<div>').attr('class', 'srchat_profile_picture_div')
+						.append($('<img>')
 								.attr("class", "srchat_profile_picture")
 								.attr("height", "30px")
 								.attr("src", "/srchat/get_profile_picture/" + msg.usr_id)
-					)).append($('<div>').attr("class", "srchat_message_div")
-							.append($('<div>').attr("class", "srchat_message_top")
-									.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
-									.append($('<p>').attr("class", "srchat_message_sent").text(msg.sent_at))
-							)
-							.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
-					)
-			);
+						)).append($('<div>').attr("class", "srchat_message_div")
+						.append($('<div>').attr("class", "srchat_message_top")
+								.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
+								.append($('<p>').attr("class", "srchat_message_sent").text(msg.sent_at))
+						)
+						.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
+				).hide();
+			$('#messages').append(new_item);
+			new_item.show('normal');
 
 			if (scroll_down) {
 				$("html,body").animate({scrollTop: $(document).height()}, "slow");
