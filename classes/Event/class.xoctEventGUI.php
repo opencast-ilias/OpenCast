@@ -573,9 +573,29 @@ class xoctEventGUI extends xoctGUI {
         $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
         $tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
 
-        $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
+        try {
+            $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
+        } catch (xoctException $e) {
+            ilUtil::sendFailure($e->getMessage(), true);
+            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        }
         $tpl->setVariable("DATA", json_encode($data));
         $tpl->setVariable('IS_LIVE_STREAM', $xoctEvent->isLiveEvent() ? 'true' : 'false');
+
+        $start = 0;
+        $end = 0;
+        if ($xoctEvent->isLiveEvent()) {
+            $start = $xoctEvent->getScheduling()->getStart()->getTimestamp();
+            $end = $xoctEvent->getScheduling()->getEnd()->getTimestamp();
+            $tpl->setVariable('LIVE_WAITING_TEXT', self::plugin()->translate('live_waiting_text', 'event', [date('H:i', $start)]));
+            $tpl->setVariable('LIVE_INTERRUPTED_TEXT', self::plugin()->translate('live_interrupted_text', 'event'));
+            $tpl->setVariable('LIVE_OVER_TEXT', self::plugin()->translate('live_over_text', 'event'));
+
+            $tpl->setVariable('CHECK_SCRIPT_HLS', self::plugin()->directory() . '/src/Util/check_hls_status.php'); // used for live streams
+        }
+
+        $tpl->setVariable('EVENT_START', $start);
+        $tpl->setVariable('EVENT_END', $end);
 
 		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_LIVE_SCHEDULED) {
             $tpl->setVariable('INLINE_JS', 'loadPlayer();');
@@ -1385,7 +1405,6 @@ class xoctEventGUI extends xoctGUI {
 			"metadata" => [
 				"title" => $xoctEvent->getTitle(),
 			],
-            'isLiveStream' => true
 		];
 	}
 }

@@ -20,24 +20,105 @@
 </head>
 <body>
 <div id="playerContainer"></div>
+<div id="overlay_live_waiting" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_waiting_text" class="overlay_live_text">{LIVE_WAITING_TEXT}</p>
+</div>
+<div id="overlay_live_interrupted" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_interrupted_text" class="overlay_live_text">{LIVE_INTERRUPTED_TEXT}</p>
+</div>
+<div id="overlay_live_over" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
+</div>
 <script>
-    paella.load('playerContainer', {
-        data: {DATA},
-        configUrl:"{PAELLA_CONFIG_FILE}"
-    });
-    paella.player._isLiveStream = {IS_LIVE_STREAM}; // TODO: move
+	var data = {DATA};
 
-	function checkAndReload() {
-	    setTimeout(function() {
-            if ($('#paellaPlayer_loader').is(":visible")) {
-                // $('#playerContainer').empty();
-                // paella.player.loadVideo();
-                // checkAndReload();
+    function loadPlayer() {
+        $('#overlay_live_waiting').hide();
+        paella.load('playerContainer', {
+            data: data,
+            configUrl:"{PAELLA_CONFIG_FILE}"
+        });
+    }
+
+    if ({IS_LIVE_STREAM} === true) {
+
+        var event_start = {EVENT_START};
+        var event_end = {EVENT_END};
+
+		function triggerOverlays() {
+            var ts = Math.round(new Date().getTime() / 1000);
+            if (ts < event_start) {
+                showOverlay('overlay_live_waiting');
+            } else if (ts > event_end) {
+                showOverlay('overlay_live_over');
+            } else {
+                showOverlay('overlay_live_interrupted');
             }
-        }, 5000);
-	}
+		}
 
-	setTimeout(checkAndReload, 5000); // wait additional 5 secs the first time
+		function showOverlay(id) {
+            hideOverlays();
+		    $('#' + id).show();
+		}
+
+		function hideOverlays() {
+            $('#overlay_live_waiting').hide();
+            $('#overlay_live_interrupted').hide();
+            $('#overlay_live_over').hide();
+		}
+
+		async function isStreamWorking(url) {
+		    return await $.get("{CHECK_SCRIPT_HLS}?url=" + url);
+		}
+
+	    async function checkStreams() {
+	        var working_stream_found = false;
+	        for (const stream of data.streams) {
+	            if (working_stream_found === false ) {
+	                working_stream_found = await isStreamWorking(stream.sources.hls[0].src);
+	            }
+	        }
+	        return working_stream_found;
+	    }
+
+	    async function checkAndLoadLive() {
+	        if (await checkStreams() === 'true') {
+                hideOverlays();
+                loadPlayer();
+	            paella.player._isLiveStream = 'true';
+                setTimeout(checkStreamOver, 5000);
+	        } else {
+	            console.log('no working stream found - try again in 5 seconds');
+				setTimeout(checkAndLoadLive, 5000);
+	        }
+	    }
+
+	    async function checkStreamOver() {
+            var ts = Math.round(new Date().getTime() / 1000);
+            if ((ts > event_end) && (await checkStreams() !== 'true')) {
+				triggerOverlays();
+				$('#playerContainer').empty();
+            } else {
+                setTimeout(checkStreamOver, 5000);
+            }
+	    }
+
+	    triggerOverlays();
+	    checkAndLoadLive();
+    } else {
+        loadPlayer();
+    }
+
+    function checkAndReload() {
+        if ($('#paellaPlayer_loader').is(":visible")) {
+            location.reload()
+        }
+    }
+
+    setTimeout(checkAndReload, 6000); // wait 6 secs to try and reload
 
     window.addEventListener('message', function(e) {
         // message passed can be accessed in "data" attribute of the event object
