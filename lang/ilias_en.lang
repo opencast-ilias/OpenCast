@@ -436,3 +436,6 @@ value_admin#:#Usage for Admins
 list#:#List
 tiles#:#Tiles
 tiles_per_page#:#Tiles per page:
+event_live_waiting_text#:#Live Event hasn't started yet. <br>Scheduled start time: %s
+event_live_interrupted_text#:#The Live Event has been paused or prematurely terminated.
+event_live_over_text#:#Live Event finished.

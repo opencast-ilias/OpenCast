@@ -85,40 +85,57 @@
 	    }
 
 	    async function checkAndLoadLive() {
-	        if (await checkStreams() === 'true') {
-                hideOverlays();
-                loadPlayer();
+		    var i = setInterval(async function() {
+                if (await checkStreams() === 'true') {
+                    hideOverlays();
+                    loadPlayer();
+                    paella.player._isLiveStream = 'true';
+                    clearInterval(i);
+                    checkStreamStatus();
+                } else {
+                    console.log('no working stream found - try again in 5 seconds');
+                }
+            }, 5000)
+
+	    }
+
+	    function checkStreamStatus() {
+            var i = setInterval(async function() {
+                var ts = Math.round(new Date().getTime() / 1000);
+	            if (await checkStreams() !== 'true') {
+					triggerOverlays();
+					if ((ts > event_end)) {
+                        $('#playerContainer').empty();
+                        clearInterval(i);
+                    }
+	            } else {
+	                hideOverlays();
+	            }
+            }, 5000)
+        }
+
+        checkStreams().then(function(data) {
+            if (data === 'true') {
+	            loadPlayer();
 	            paella.player._isLiveStream = 'true';
-                setTimeout(checkStreamOver, 5000);
+	            checkStreamStatus();
 	        } else {
-	            console.log('no working stream found - try again in 5 seconds');
-				setTimeout(checkAndLoadLive, 5000);
-	        }
-	    }
-
-	    async function checkStreamOver() {
-            var ts = Math.round(new Date().getTime() / 1000);
-            if ((ts > event_end) && (await checkStreams() !== 'true')) {
-				triggerOverlays();
-				$('#playerContainer').empty();
-            } else {
-                setTimeout(checkStreamOver, 5000);
+                triggerOverlays();
+                checkAndLoadLive();
             }
-	    }
+        });
 
-	    triggerOverlays();
-	    checkAndLoadLive();
     } else {
         loadPlayer();
     }
 
-    function checkAndReload() {
-        if ($('#paellaPlayer_loader').is(":visible")) {
-            location.reload()
-        }
-    }
-
-    setTimeout(checkAndReload, 6000); // wait 6 secs to try and reload
+    // function checkAndReload() {
+    //     if ($('#paellaPlayer_loader').is(":visible")) {
+    //         location.reload()
+    //     }
+    // }
+	//
+    // setTimeout(checkAndReload, 10000); // wait 6 secs to try and reload
 
     window.addEventListener('message', function(e) {
         // message passed can be accessed in "data" attribute of the event object

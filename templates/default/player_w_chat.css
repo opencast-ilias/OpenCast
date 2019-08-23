@@ -38,7 +38,7 @@ span.xoct_pseudo_element {
 	width: 80%;
 	background-color: rgba(0,0,0,0.5);
 	color: white;
-	z-index: 2;
+	z-index: 100;
 }
 
 .overlay_live_text {

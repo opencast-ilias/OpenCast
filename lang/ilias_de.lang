@@ -434,6 +434,6 @@ value_admin#:#Verwendung Admins
 list#:#Liste
 tiles#:#Kacheln
 tiles_per_page#:#Kacheln pro Seite:
-event_live_waiting_text#:#Das Live Event hat noch nicht begonnen. Bitte warten Sie.<br>Geplante Startzeit: %s
-event_live_interrupted_text#:#Das Live Event wurde unterbrochen. Bitte warten Sie.
+event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
+event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
 event_live_over_text#:#Das Live Event wurde beendet.
