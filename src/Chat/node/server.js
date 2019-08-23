@@ -70,9 +70,9 @@ const index_file = fs.readFileSync(__dirname + '/templates/index.ejs', 'utf8');
 const QueryUtils = require('./modules/QueryUtils.js');
 QueryUtils.init(client_id, ilias_installation_dir);
 QueryUtils.writeChatServerConfig(ip, port, protocol);
-
 const express = require('express');
 const app = express();
+
 if (argv.useHttps) {
 	async function createServerHTTPS() {
 		return require(protocol).createServer({
@@ -81,9 +81,7 @@ if (argv.useHttps) {
 			passphrase: argv.sslPassphrase
 		}, app);
 	}
-
 	createServerHTTPS().then(server => {initServer(server)});
-
 } else {
 	initServer(require(protocol).createServer(app));
 }

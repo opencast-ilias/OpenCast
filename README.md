@@ -22,6 +22,8 @@ ln -s Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/n
 * For external users you can report it at https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST
 
 ### Installation Live Chat
+
+#### Install Node JS
 The live chat runs on a node js server and was tested with node version 10.x. To install nodejs v10.x on Ubuntu, execute:
 ```bash
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
@@ -29,11 +31,24 @@ sudo apt-get install -y nodejs
 ```
 For other OS, see https://nodejs.org/en/download/package-manager/
 
-To run the chat server, execute the following:
+#### Run the chat server
+To run the chat server on http (see chapter "SSL"), execute the following:
 ```bash
-node [PATH_TO_OPENCAST_PLUGIN]/src/Chat/node/server.js -c [CLIENT_ID] > /var/iliasdata/ilias/srchat.log 2>&1
+node [PATH_TO_OPENCAST_PLUGIN]/src/Chat/node/server.js -c [CLIENT_ID] > [PATH_TO_LOG_FILE] 2>&1
 ```
-Note that the chat server needs an ILIAS client id, which is used to establish a connection to the correct database. Multiple clients are not supported yet.
+Note that the chat server needs at least an ILIAS client id, which is used to establish a connection to the correct database (multiple clients are not supported yet). Depending on the server configuration, some more parameters might be necessary. Add the parameter '-h' for a list of all possible parameters and their default values.
+
+
+#### SSL
+If your web server uses HTTPS, you will need to make the chat understand HTTPS as well. This can be achieved in two different ways:
+
+1. **(recommended)** Run the chat server with https, by passing the argument '--use-https'. You will also need to pass the paths to the ssl certificate and key, and the passphrase for the key (arguments '--ssl-cert-path', '--ssl-key-path' and '--ssl-passphrase'). Example:
+   * `node src/Chat/node/server.js -c default --use-https --ssl-key-path /etc/apache2/ssl/serverkey.pem --ssl-cert-path /etc/apache2/ssl/servercert.pem --ssl-passphrase password123`
+
+2. Configure a reverse proxy on your web server, which translates https requests to http and passes them to the chat server. If needed, the ip and port to which the chat server listens to can be passed as arguments via '--ip' and '--port'.
+
+ Note that when using a reverse proxy, the chat will open an unsecured websocket (ws://), whereas the first option will open a secured one (wss://).
+
 
 ### ILIAS Plugin SLA
 Wir lieben und leben die Philosophie von Open Source Software! Die meisten unserer Entwicklungen, welche wir im Kundenauftrag oder in Eigenleistung entwickeln, stellen wir öffentlich allen Interessierten kostenlos unter https://github.com/studer-raimann zur Verfügung.
