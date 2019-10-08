@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.3.1]
+- Bugfix: Tile View always showed annotation & download buttons
+
 ## [2.3.0]
 - Support for ILIAS 5.4
 - Dropped support for ILIAS 5.2

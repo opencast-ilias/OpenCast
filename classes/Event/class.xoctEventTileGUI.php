@@ -84,7 +84,7 @@ class xoctEventTileGUI {
 		$to = ($this->page + 1) * $this->limit;
 		for ($i = $from; $i < $to && isset($this->events[$i]); $i++) {
 			$xoctEvent = $this->events[$i];
-			$event_renderer = new xoctEventRenderer($xoctEvent);
+			$event_renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
 
 			$dropdown = $this->factory->dropdown()->standard($this->getActionButtons($xoctEvent));
 
