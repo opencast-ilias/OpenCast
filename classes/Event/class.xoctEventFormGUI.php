@@ -238,7 +238,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
-            $date->setDate(new ilDateTime(time(), IL_CAL_UNIX), IL_CAL_DATETIME);
+            $date->setDate(new ilDateTime(time(), IL_CAL_UNIX));
             $date->setRequired(true);
             $opt->addSubItem($date);
 
@@ -246,7 +246,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$date->setShowTime(true);
 			$date->setShowSeconds(false);
 			$date->setMinuteStepSize(1);
-			$date->setDate(new ilDateTime(time(), IL_CAL_UTC));
+			$date->setDate(new ilDateTime(time(), IL_CAL_UNIX));
             $date->setRequired(true);
 			$opt->addSubItem($date);
 
