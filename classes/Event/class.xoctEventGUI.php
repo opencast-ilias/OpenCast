@@ -604,10 +604,10 @@ class xoctEventGUI extends xoctGUI {
 		    $tpl->setVariable('INLINE_JS', 'loadPlayer();');
         }
 
+
         $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
-        $dev = false;    // TODO: REMOVE!
-        if (!filter_input(INPUT_GET, 'force_no_chat')) {
-            if ((xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $xoctEvent->isLiveEvent()) || $dev) {
+        if (!filter_input(INPUT_GET, 'force_no_chat') && xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $this->xoctOpenCast->isChatActive()) {
+            if ($xoctEvent->isLiveEvent()) {
                 $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
                 $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
                 $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());

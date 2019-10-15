@@ -160,3 +160,7 @@ xoctUserSetting::updateDB();
 \srag\Plugins\Opencast\Chat\Model\TokenAR::updateDB();
 \srag\Plugins\Opencast\Chat\Model\ConfigAR::updateDB();
 ?>
+<#17>
+<?php
+xoctOpenCast::updateDB();
+?>

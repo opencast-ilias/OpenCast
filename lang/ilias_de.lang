@@ -131,7 +131,7 @@ config_start_x_minutes_before_live_info#:#Gibt an, wieviele Minuten vor Start de
 config_presentation_node#:#URL Presentation Node
 config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.: https://presentation.opencast.meine-uni.de/
 config_enable_chat#:#Chat aktivieren
-config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event.
+config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -277,6 +277,8 @@ series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Serie-Typ
 series_create#:#Serie anlegen
+series_chat_active#:#Live-Chat
+series_chat_active_info#:#Aktiviert einen on-screen Chat bei Live-Events.
 series_default_view#:#Standard-Ansicht
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution

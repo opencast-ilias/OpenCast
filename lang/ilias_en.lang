@@ -131,7 +131,7 @@ config_start_x_minutes_before_live_info#:#Defines how many minutes before the st
 config_presentation_node#:#URL Presentation Node
 config_presentation_node_info#:#Required to fetch the Live Streams. Example: https://presentation.opencast.my-university.de/
 config_enable_chat#:#Activate Chat
-config_enable_chat_info#:#Enables an on-screen chat beside the Live Event.
+config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -279,6 +279,8 @@ series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Series-Type
 series_create#:#Create Series
+series_chat_active#:#Live Chat
+series_chat_active_info#:#Activates an on-screen chat for live events.
 series_default_view#:#Default View
 series_department#:#Department
 series_department_info#:#How is the name of your department?
