@@ -11,6 +11,7 @@
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/require.js"></script>
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/traceur-runtime.min.js"></script>
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/paella_player.js"></script>
+	<script type="text/javascript" src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella_player.js"></script>
 	<link rel="stylesheet" href="{STYLE_SHEET_LOCATION}" type="text/css" media="screen" charset="utf-8">
 	<!--
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/resources/bootstrap/js/bootstrap.min.js"></script>
@@ -33,115 +34,10 @@
 	<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
 </div>
 <script>
-	var data = {DATA};
-
-    function loadPlayer() {
-        $('#overlay_live_waiting').hide();
-        paella.load('playerContainer', {
-            data: data,
-            configUrl:"{PAELLA_CONFIG_FILE}"
-        });
-    }
-
-    if ({IS_LIVE_STREAM} === true) {
-
-        var event_start = {EVENT_START};
-        var event_end = {EVENT_END};
-
-		function triggerOverlays() {
-            var ts = Math.round(new Date().getTime() / 1000);
-            if (ts < event_start) {
-                showOverlay('overlay_live_waiting');
-            } else if (ts > event_end) {
-                showOverlay('overlay_live_over');
-            } else {
-                showOverlay('overlay_live_interrupted');
-            }
-		}
-
-		function showOverlay(id) {
-            hideOverlays();
-		    $('#' + id).show();
-		}
-
-		function hideOverlays() {
-            $('#overlay_live_waiting').hide();
-            $('#overlay_live_interrupted').hide();
-            $('#overlay_live_over').hide();
-		}
-
-		async function isStreamWorking(url) {
-		    return await $.get("{CHECK_SCRIPT_HLS}?url=" + url);
-		}
-
-	    async function checkStreams() {
-	        var working_stream_found = false;
-	        for (const stream of data.streams) {
-	            if (working_stream_found === false ) {
-	                working_stream_found = await isStreamWorking(stream.sources.hls[0].src);
-	            }
-	        }
-	        return working_stream_found;
-	    }
-
-	    async function checkAndLoadLive() {
-		    var i = setInterval(async function() {
-                if (await checkStreams() === 'true') {
-                    hideOverlays();
-                    loadPlayer();
-                    paella.player._isLiveStream = 'true';
-                    clearInterval(i);
-                    checkStreamStatus();
-                } else {
-                    console.log('no working stream found - try again in 5 seconds');
-                }
-            }, 5000)
-
-	    }
-
-	    function checkStreamStatus() {
-            var i = setInterval(async function() {
-                var ts = Math.round(new Date().getTime() / 1000);
-	            if (await checkStreams() !== 'true') {
-					triggerOverlays();
-					if ((ts > event_end)) {
-                        $('#playerContainer').empty();
-                        clearInterval(i);
-                    }
-	            } else {
-	                hideOverlays();
-	            }
-            }, 5000)
-        }
-
-        checkStreams().then(function(data) {
-            if (data === 'true') {
-	            loadPlayer();
-	            paella.player._isLiveStream = 'true';
-	            checkStreamStatus();
-	        } else {
-                triggerOverlays();
-                checkAndLoadLive();
-            }
-        });
-
-    } else {
-        loadPlayer();
-    }
-
-    // function checkAndReload() {
-    //     if ($('#paellaPlayer_loader').is(":visible")) {
-    //         location.reload()
-    //     }
-    // }
-	//
-    // setTimeout(checkAndReload, 10000); // wait 6 secs to try and reload
-
-    window.addEventListener('message', function(e) {
-        // message passed can be accessed in "data" attribute of the event object
-        var scroll_height = e.data;
-        $('#srchat_iframe').attr('height', scroll_height + 'px');
-    } , false);
+xoctPaellaPlayer.init(
+	{DATA},
+	{JS_CONFIG}
+)
 </script>
 {CHAT}
 </body>

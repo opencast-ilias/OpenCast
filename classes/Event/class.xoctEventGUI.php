@@ -571,7 +571,10 @@ class xoctEventGUI extends xoctGUI {
 
         $tpl->setVariable("TITLE", $xoctEvent->getTitle());
         $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
-        $tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
+
+        $js_config = new stdClass();
+        $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json";
+        $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
 
         try {
             $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
@@ -579,8 +582,10 @@ class xoctEventGUI extends xoctGUI {
             ilUtil::sendFailure($e->getMessage(), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         }
+
         $tpl->setVariable("DATA", json_encode($data));
-        $tpl->setVariable('IS_LIVE_STREAM', $xoctEvent->isLiveEvent() ? 'true' : 'false');
+
+        $js_config->is_live_stream = $xoctEvent->isLiveEvent();
 
         $start = 0;
         $end = 0;
@@ -591,22 +596,15 @@ class xoctEventGUI extends xoctGUI {
             $tpl->setVariable('LIVE_INTERRUPTED_TEXT', self::plugin()->translate('live_interrupted_text', 'event'));
             $tpl->setVariable('LIVE_OVER_TEXT', self::plugin()->translate('live_over_text', 'event'));
 
-            $tpl->setVariable('CHECK_SCRIPT_HLS', self::plugin()->directory() . '/src/Util/check_hls_status.php'); // used for live streams
+            $js_config->check_script_hls = self::plugin()->directory() . '/src/Util/check_hls_status.php'; // used for live stream
         }
 
-        $tpl->setVariable('EVENT_START', $start);
-        $tpl->setVariable('EVENT_END', $end);
+        $js_config->event_start = $start;
+        $js_config->event_end = $end;
+        $tpl->setVariable("JS_CONFIG", json_encode($js_config));
 
-		if ($xoctEvent->getProcessingState() == xoctEvent::STATE_LIVE_SCHEDULED) {
-            $tpl->setVariable('INLINE_JS', 'loadPlayer();');
-
-        } else {
-		    $tpl->setVariable('INLINE_JS', 'loadPlayer();');
-        }
-
-
-        $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
         if (!filter_input(INPUT_GET, 'force_no_chat') && xoctConf::getConfig(xoctConf::F_ENABLE_CHAT) && $this->xoctOpenCast->isChatActive()) {
+            $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
             if ($xoctEvent->isLiveEvent()) {
                 $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
                 $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
