@@ -50,5 +50,10 @@
 	"Live streaming mode: This is a live video, so, some capabilities of the player are disabled": "Live Streaming Modus: Da dies ein Live Video ist, sind einige Funktionen des Players deaktiviert",
 	"You are using Firefox version, and some required video playback capabilities are not available until Firefox min_version. Please, update your browser and try again.": "Sie benutzen Firefox version, einige benötigte Funktionen zum Abspielen des Videos sind vor min_version nicht verfügbar. Bitte aktualisieren Sie Ihren Browser und versuchen Sie es erneut.",
 	"This video is not compatible with any codec installed in your system": "Dieses Video ist mit keinem Codec kompatibel, der auf Ihrem System installiert ist",
-	"Could not load the video": "Das Video konnte nicht geladen werden"
+	"Could not load the video": "Das Video konnte nicht geladen werden",
+	"x5_message": "Auf dieser Seite kann der Dienst X5gon eingebunden werden, um Empfehlungen für freie Bildungsressourcen zu erstellen.",
+	"x5_more_info": "Mehr erfahren",
+	"x5_accept": "Erlauben",
+	"x5_deny": "Ablehnen",
+	"x5_policy": "Cookie-Richtlinie"
 }
