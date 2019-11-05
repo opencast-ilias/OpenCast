@@ -153,3 +153,7 @@ if (xoctWorkflowParameter::count() === 0) {
 xoctOpenCast::updateDB();
 xoctUserSetting::updateDB();
 ?>
+<#16>
+<?php
+xoctUserSetting::updateDB();
+?>
