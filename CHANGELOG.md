@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.3.2]
+- Bugfix: invalid/wrong annotation links
+
 ## [2.3.1]
 - Bugfix: Tile View always showed annotation & download buttons
 
