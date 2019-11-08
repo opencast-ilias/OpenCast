@@ -50,7 +50,7 @@ var QueryUtils = {
 			} else if (row.value == null) {
 				var public_name = row.login;
 			} else {
-				var public_name = row.firstname + ' ' + row.lastname + ' (' + row.login + ')';
+				var public_name = row.firstname + ' ' + row.lastname;
 			}
 
 			return Object.assign(

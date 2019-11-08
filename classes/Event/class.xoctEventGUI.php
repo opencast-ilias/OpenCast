@@ -608,7 +608,10 @@ class xoctEventGUI extends xoctGUI {
             if ($xoctEvent->isLiveEvent()) {
                 $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
                 $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->getObjId());
-                $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), self::dic()->user()->getPublicName());
+                $public_name = self::dic()->user()->hasPublicProfile() ? 
+                    self::dic()->user()->getFirstname() . " " . self::dic()->user()->getLastname()
+                    : self::dic()->user()->getLogin();
+                $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), self::dic()->user()->getId(), $public_name);
                 $ChatGUI = new ChatGUI($TokenAR);
                 $tpl->setVariable('CHAT', $ChatGUI->render(true));
             } elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
