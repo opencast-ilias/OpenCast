@@ -66,6 +66,7 @@ const fs = require('fs');
 const util = require('util');
 fs.readFile = util.promisify(fs.readFile);
 const ejs = require('ejs');
+const moment = require('moment');
 const index_file = fs.readFileSync(__dirname + '/templates/index.ejs', 'utf8');
 const QueryUtils = require('./modules/QueryUtils.js');
 QueryUtils.init(client_id, ilias_installation_dir);
@@ -173,15 +174,12 @@ function initServer(server) {
 		});
 
 		socket.on('chat_msg', function(msg){
-			var today = new Date();
-			var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-			var time = today.getHours() + ":" + today.getMinutes();
-			var sent_at = date+' '+time;
+			var sent_at = moment().format('HH:mm');
 
 			io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {
 				public_name: socket.public_name,
 				msg: msg,
-				sent_at: time,
+				sent_at: sent_at,
 				usr_id: socket.usr_id
 			});
 
