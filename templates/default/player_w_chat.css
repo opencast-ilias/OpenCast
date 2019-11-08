@@ -48,6 +48,10 @@ span.xoct_pseudo_element {
 
 /* RESPONSIVE */
 @media screen and (max-device-width: 768px) {
+	.overlay_live {
+		width: 100%;
+	}
+
 	div#playerContainer {
 		width: 100% !important;
 	}
