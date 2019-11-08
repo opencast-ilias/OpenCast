@@ -16,7 +16,6 @@ xoctPaellaPlayer = {
     init: function(data, config) {
         this.data = data;
         this.config = config;
-        console.log(config);
         if (this.config.is_live_stream === true) {
             this.checkStreams().then(function(stream_available) {
                 if (stream_available === 'true') {
@@ -67,9 +66,6 @@ xoctPaellaPlayer = {
             data: xoctPaellaPlayer.data,
             configUrl: xoctPaellaPlayer.config.paella_config_file,
         });
-        if (xoctPaellaPlayer.config.is_live_stream === true) {
-            paella.player._isLiveStream = 'true';
-        }
     },
 
     triggerOverlays: function() {
@@ -126,7 +122,6 @@ xoctPaellaPlayer = {
     checkStreamStatus: function() {
         let i = null;
         let f = async function() {
-            console.log('checkstatus');
             var ts = Math.round(new Date().getTime() / 1000);
             if (await xoctPaellaPlayer.checkStreams() !== 'true') {
                 if (ts < xoctPaellaPlayer.event_start) {

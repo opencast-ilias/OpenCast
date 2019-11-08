@@ -1378,6 +1378,7 @@ class xoctEventGUI extends xoctGUI {
                             [
                                 "src" => $track['url'],
                                 "mimetype" => $track['mimetype'],
+                                "isLiveStream" => true
                             ]
                         ]
                     ]
@@ -1392,6 +1393,7 @@ class xoctEventGUI extends xoctGUI {
                         [
                             "src" => $track['url'],
                             "mimetype" => $track['mimetype'],
+                            "isLiveStream" => true
                         ]
                     ]
                 ]
