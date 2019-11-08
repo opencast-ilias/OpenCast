@@ -100,18 +100,18 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($player_link = $this->xoctEvent->getPlayerLink())) {
+		if ($this->isEventAccessible() && ($player_link = $this->xoctEvent->getPlayerLink())) {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('player', self::LANG_MODULE));
+			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
 				$modal = ilModalGUI::getInstance();
 				$modal->setId('modal_' . $this->xoctEvent->getIdentifier());
 				$modal->setHeading($this->xoctEvent->getTitle());
 				$modal->setBody('<iframe class="xoct_iframe" src="' . $player_link . '"></iframe>');
+				$link_tpl->setVariable('LINK_URL', '#');
 				$link_tpl->setVariable('MODAL', $modal->getHTML());
 				$link_tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"');
-				$link_tpl->setVariable('LINK_URL', '#');
 			} else {
 				$link_tpl->setVariable('LINK_URL', $player_link);
 			}
@@ -237,19 +237,31 @@ class xoctEventRenderer {
 	 * @throws xoctException
 	 */
 	public function getStateHTML() {
-		if ($this->xoctEvent->getProcessingState() != xoctEvent::STATE_SUCCEEDED) {
+		if (!$this->isEventAccessible()) {
+		    $processing_state = $this->xoctEvent->getProcessingState();
 			$state_tpl = self::plugin()->template('default/tpl.event_state.html');
-			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$this->xoctEvent->getProcessingState()]);
+			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$processing_state]);
 
+			$suffix = '';
+			if ($this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
+				&& in_array($processing_state, array(
+					xoctEvent::STATE_FAILED,
+					xoctEvent::STATE_ENCODING
+				))) {
+				$suffix = '_owner';
+			}
 
-			$owner = $this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
-			&& in_array($this->xoctEvent->getProcessingState(), array(
-				xoctEvent::STATE_FAILED,
-				xoctEvent::STATE_ENCODING
-			)) ? '_owner' : '';
-			$state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($this->xoctEvent->getProcessingState()) . $owner, self::LANG_MODULE));
+			$placeholders = [];
+			if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+                $placeholders[] = date(
+                    'd.m.Y, H:i',
+                    $this->xoctEvent->getScheduling()->getStart()->getTimestamp() - (((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
+                );
+			}
 
-			return $state_tpl->get();
+            $state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($processing_state) . $suffix, self::LANG_MODULE, $placeholders));
+
+            return $state_tpl->get();
 		} else {
 			return '';
 		}
@@ -338,4 +350,29 @@ class xoctEventRenderer {
 	}
 
 
+    /**
+     * @return bool
+     */
+    protected function isEventAccessible() {
+	    $processing_state = $this->xoctEvent->getProcessingState();
+
+	    if ($processing_state == xoctEvent::STATE_SUCCEEDED) {
+	        return true;
+        }
+
+	    if ($this->xoctEvent->isLiveEvent()) {
+	        if ($processing_state == xoctEvent::STATE_LIVE_RUNNING) {
+	            return true;
+            }
+	        if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+	            $start = $this->xoctEvent->getScheduling()->getStart()->getTimestamp();
+                $accessible_before_start = ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
+                $accessible_from = $start - $accessible_before_start;
+                $accessible_to = $this->xoctEvent->getScheduling()->getEnd()->getTimestamp();
+	            return ($accessible_from < time()) && ($accessible_to > time());
+            }
+        }
+
+        return false;
+    }
 }

@@ -254,7 +254,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// if not owner or edit_videos, don't show proceeding videos
-		if (!($xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)) {
+		if (!(in_array($xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_RUNNING]))) {
 			return false;
 		}
 

@@ -30,6 +30,7 @@
   "autoload": {
     "classmap": [
       "./classes/",
+      "./src/",
       "../../../../../../../Services/Table",
       "../../../../../../../Services/Form",
       "../../../../../../../Services/Repository",

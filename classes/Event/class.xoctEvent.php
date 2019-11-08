@@ -1,7 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 
 /**
  * Class xoctEvent
@@ -28,8 +28,14 @@ class xoctEvent extends xoctObject {
 	const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
 	const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
 	const STATE_FAILED = 'FAILED';
+	const STATE_LIVE_SCHEDULED = 'LIVE_SCHEDULED';
+	const STATE_LIVE_RUNNING = 'LIVE_RUNNING';
+	const STATE_LIVE_OFFLINE = 'LIVE_OFFLINE';
+
 	const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
 	const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
+	const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
+	const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
 	const PRESENTER_SEP = ';';
 	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
 	const TZ_UTC = 'UTC';
@@ -50,6 +56,9 @@ class xoctEvent extends xoctObject {
 		xoctEvent::STATE_SCHEDULED_OFFLINE  => 'scheduled',
 		xoctEvent::STATE_FAILED             => 'danger',
 		xoctEvent::STATE_OFFLINE            => 'info',
+		xoctEvent::STATE_LIVE_SCHEDULED     => 'scheduled',
+		xoctEvent::STATE_LIVE_RUNNING       => 'info',
+		xoctEvent::STATE_LIVE_OFFLINE       => 'info',
 	);
 	/**
 	 * @var string
@@ -195,7 +204,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 */
 	public function afterObjectLoad() {
-		if (!$this->getPublications() && !$this->isScheduled()) {
+		if (!$this->getPublications()) {
 			$this->loadPublications();
 		}
 
@@ -205,7 +214,7 @@ class xoctEvent extends xoctObject {
 
 		$this->initProcessingState();
 
-		if ($this->isScheduled() && !$this->scheduling) {
+		if (($this->isScheduled() || $this->isLiveEvent()) && (!$this->scheduling || $this->scheduling instanceof stdClass)) {
 			$this->loadScheduling();
 		}
 
@@ -569,14 +578,26 @@ class xoctEvent extends xoctObject {
         return true;
 	}
 
-	/**
-	 * @return string
-	 */
+
+    /**
+     * @return string
+     * @throws xoctException
+     */
 	public function getThumbnailUrl() {
 		if (in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING))) {
 			$this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
 			return $this->thumbnail_url;
 		}
+
+        if (in_array($this->getProcessingState(), array(self::STATE_LIVE_SCHEDULED, self::STATE_LIVE_OFFLINE))) {
+            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
+            return $this->thumbnail_url;
+        }
+
+        if ($this->getProcessingState() == self::STATE_LIVE_RUNNING) {
+            $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
+            return $this->thumbnail_url;
+        }
 
 		$possible_publications = array(
 			xoctPublicationUsage::USAGE_THUMBNAIL,
@@ -601,9 +622,10 @@ class xoctEvent extends xoctObject {
 	}
 
 
-	/**
-	 * @return null|string
-	 */
+    /**
+     * @return null|string
+     * @throws xoctException
+     */
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
@@ -623,7 +645,8 @@ class xoctEvent extends xoctObject {
 	 * @return null|string
 	 */
 	public function getPlayerLink() {
-		if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+		if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) || $this->isLiveEvent()) {
+			self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
 			self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->getIdentifier());
 			return self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_STREAM_VIDEO);
 		}
@@ -731,7 +754,7 @@ class xoctEvent extends xoctObject {
 	}
 
 	/**
-	 * @param $xoctOpenCast
+	 * @param $xoctOpenCast xoctOpenCast
 	 * @return array
 	 */
 	public function getActions($xoctOpenCast) {
@@ -743,7 +766,9 @@ class xoctEvent extends xoctObject {
 			self::STATE_FAILED,
 			self::STATE_SCHEDULED,
 			self::STATE_SCHEDULED_OFFLINE,
-			//			self::STATE_ENCODING,
+			self::STATE_LIVE_RUNNING,
+			self::STATE_LIVE_SCHEDULED,
+			self::STATE_LIVE_OFFLINE,
 		))) {
 			return [];
 		}
@@ -904,7 +929,11 @@ class xoctEvent extends xoctObject {
 	 */
 	public function loadScheduling() {
 		if ($this->getIdentifier()) {
-			$this->scheduling = new xoctScheduling($this->getIdentifier());
+		    if ($this->scheduling instanceof stdClass) {
+		        $this->scheduling = new xoctScheduling($this->getIdentifier(), $this->scheduling);
+            } else {
+                $this->scheduling = new xoctScheduling($this->getIdentifier());
+            }
 			$this->setStart($this->scheduling->getStart());
 			$this->setEnd($this->scheduling->getEnd());
 			$this->setLocation($this->scheduling->getAgentId());
@@ -953,11 +982,11 @@ class xoctEvent extends xoctObject {
 				break;
 			case '': // empty state means it's a scheduled event
                 if ($this->status == 'EVENTS.EVENTS.STATUS.RECORDING') {
-                    $this->setProcessingState(self::STATE_RECORDING);
+                    $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_RUNNING : self::STATE_RECORDING);
                 } elseif (!$this->getXoctEventAdditions()->getIsOnline()) {
-					$this->setProcessingState(self::STATE_SCHEDULED_OFFLINE);
+					$this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_OFFLINE : self::STATE_SCHEDULED_OFFLINE);
 				} else {
-					$this->setProcessingState(self::STATE_SCHEDULED);
+					$this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_SCHEDULED : self::STATE_SCHEDULED);
 				}
 				break;
 		}
@@ -1058,7 +1087,7 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @var xoctPublication[]
 	 */
-	protected $publications;
+	protected $publications = [];
 	/**
 	 * @var xoctMetadata
 	 */
@@ -1703,9 +1732,24 @@ class xoctEvent extends xoctObject {
 	 * @return bool
 	 */
 	public function isScheduled() {
-		return in_array($this->getProcessingState(), array(self::STATE_SCHEDULED, self::STATE_SCHEDULED_OFFLINE, self::STATE_RECORDING));
+		return in_array($this->getProcessingState(), [
+		    self::STATE_SCHEDULED,
+            self::STATE_SCHEDULED_OFFLINE,
+            self::STATE_RECORDING
+        ]);
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isLiveEvent() {
+		$usage = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_LIVE_EVENT);
+		if (!$usage) {
+			return false;
+		}
+		$publication = $this->getPublicationMetadataForUsage($usage);
+		return !empty($publication);
+	}
 
 	/**
 	 * @throws xoctException

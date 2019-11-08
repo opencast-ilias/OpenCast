@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Show in Form
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
 config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
+config_enable_live_streams#:#Live Streams
+config_enable_live_streams_info#:#Allow viewing Live Streams. Live Streams will be automatically played in the internal video player.
+config_start_x_minutes_before_live#:#Enter before start
+config_start_x_minutes_before_live_info#:#Defines how many minutes before the start of the event the player is accessable.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Required to fetch the Live Streams. Example: https://presentation.opencast.my-university.de/
+config_enable_chat#:#Activate Chat
+config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -172,6 +180,7 @@ event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_owner_username#:#Owner
 event_player#:#Play
+event_player_live#:#Join
 event_presenter#:#Presenter
 event_presenters#:#Presenters
 event_preview#:#Preview
@@ -189,6 +198,9 @@ event_state_offline#:#Offline, not visible to students
 event_state_scheduled#:#Scheduled Event, not visible to students.
 event_state_scheduled_offline#:#Scheduled Event (Offline), not visible to students.
 event_state_recording#:#Is currently being recorded, not visible to students.
+event_state_live_scheduled#:#Live Stream (not started yet). Open from %s.
+event_state_live_offline#:#Scheduled live Stream (Offline), not visible to students.
+event_state_live_running#:#Currently running Live Stream.
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
@@ -260,12 +272,15 @@ publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_live_event#:#Live-Event
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Series-Type
 series_create#:#Create Series
+series_chat_active#:#Live Chat
+series_chat_active_info#:#Activates an on-screen chat for live events.
 series_default_view#:#Default View
 series_department#:#Department
 series_department_info#:#How is the name of your department?
@@ -423,3 +438,6 @@ value_admin#:#Usage for Admins
 list#:#List
 tiles#:#Tiles
 tiles_per_page#:#Tiles per page:
+event_live_waiting_text#:#Live Event hasn't started yet. <br>Scheduled start time: %s
+event_live_interrupted_text#:#The Live Event has been paused or prematurely terminated.
+event_live_over_text#:#Live Event finished.

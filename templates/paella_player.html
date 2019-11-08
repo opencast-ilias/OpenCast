@@ -11,6 +11,8 @@
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/require.js"></script>
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/traceur-runtime.min.js"></script>
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/javascript/paella_player.js"></script>
+	<script type="text/javascript" src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella_player.js"></script>
+	<link rel="stylesheet" href="{STYLE_SHEET_LOCATION}" type="text/css" media="screen" charset="utf-8">
 	<!--
 	<script type="text/javascript" src="{PAELLA_PLAYER_FOLDER}/resources/bootstrap/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="{PAELLA_PLAYER_FOLDER}/resources/bootstrap/css/bootstrap.slate.min.css" type="text/css" media="screen" charset="utf-8">
@@ -18,12 +20,25 @@
 	-->
 </head>
 <body>
-<div id="playerContainer" style="display:block;width:100%"></div>
+<div id="playerContainer"></div>
+<div id="overlay_live_waiting" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_waiting_text" class="overlay_live_text">{LIVE_WAITING_TEXT}</p>
+</div>
+<div id="overlay_live_interrupted" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_interrupted_text" class="overlay_live_text">{LIVE_INTERRUPTED_TEXT}</p>
+</div>
+<div id="overlay_live_over" class="overlay_live" hidden>
+	<span class="xoct_pseudo_element"></span>
+	<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
+</div>
 <script>
-	paella.load('playerContainer', {
-		data: {DATA},
-		configUrl:"{PAELLA_CONFIG_FILE}"
-	});
+xoctPaellaPlayer.init(
+	{DATA},
+	{JS_CONFIG}
+)
 </script>
+{CHAT}
 </body>
 </html>

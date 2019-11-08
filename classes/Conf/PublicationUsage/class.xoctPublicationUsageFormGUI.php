@@ -30,10 +30,10 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * @param                      $parent_gui
+	 * @param xoctPublicationUsageGUI $parent_gui
 	 * @param xoctPublicationUsage $xoctPublicationUsage
 	 */
-	public function __construct($parent_gui, xoctPublicationUsage $xoctPublicationUsage) {
+	public function __construct($parent_gui, $xoctPublicationUsage) {
 		parent::__construct();
 		$this->object = $xoctPublicationUsage;
 		$this->parent_gui = $parent_gui;
@@ -43,6 +43,9 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
@@ -78,6 +81,9 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	public function fillForm() {
 		$array = array(
 			self::F_USAGE_ID => $this->object->getUsageId(),
@@ -130,6 +136,9 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function initButtons() {
 		if ($this->is_new) {
 			$this->setTitle($this->parent_gui->txt('create'));

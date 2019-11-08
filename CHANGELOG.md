@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.0]
+- Feature: Live Streams
+- Feature: Chat for Live Streams
+
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
 - Paella Player v6.2.2

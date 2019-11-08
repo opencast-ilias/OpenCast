@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Im Formular anbieten
 config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
 config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
 config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.
+config_enable_live_streams#:#Live-Streams
+config_enable_live_streams_info#:#Abspielen von Live-Streams ermöglichen. Live-Streams werden automatisch im internen Video-Player abgespielt.
+config_start_x_minutes_before_live#:#Beitritt bevor Start
+config_start_x_minutes_before_live_info#:#Gibt an, wieviele Minuten vor Start des Events der Player geöffnet werden kann.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.: https://presentation.opencast.meine-uni.de/
+config_enable_chat#:#Chat aktivieren
+config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -172,6 +180,7 @@ event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_owner_username#:#Besitzer
 event_player#:#Abspielen
+event_player_live#:#Beitreten
 event_presenter#:#Referent/in
 event_presenters#:#Referent/in
 event_preview#:#Vorschau
@@ -189,6 +198,9 @@ event_state_offline#:#Offline, für Studierende nicht sichtbar.
 event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar.
 event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar.
 event_state_recording#:#Wird momentan Aufgezeichnet, für Studierende nicht sichtbar.
+event_state_live_scheduled#:#Live-Übertragung (noch nicht begonnen). Offen ab %s.
+event_state_live_offline#:#Geplante Live-Aufzeichnung (Offline), für Studierende nicht sichtbar.
+event_state_live_running#:#Laufende Live-Übertragung.
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
@@ -258,12 +270,15 @@ publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_live_event#:#Live-Event
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Serie-Typ
 series_create#:#Serie anlegen
+series_chat_active#:#Live-Chat
+series_chat_active_info#:#Aktiviert einen on-screen Chat bei Live-Events.
 series_default_view#:#Standard-Ansicht
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
@@ -421,3 +436,6 @@ value_admin#:#Verwendung Admins
 list#:#Liste
 tiles#:#Kacheln
 tiles_per_page#:#Kacheln pro Seite:
+event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
+event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
+event_live_over_text#:#Das Live Event wurde beendet.

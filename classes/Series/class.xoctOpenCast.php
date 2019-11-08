@@ -259,6 +259,14 @@ class xoctOpenCast extends ActiveRecord {
 	 * @con_length    1
 	 */
 	protected $view_changeable = true;
+    /**
+     * @var bool
+     *
+     * @con_has_field true
+     * @con_fieldtype integer
+     * @con_length    1
+     */
+	protected $chat_active = true;
 
 
 	/**
@@ -431,6 +439,24 @@ class xoctOpenCast extends ActiveRecord {
 	public function setViewChangeable($view_changeable) {
 		$this->view_changeable = $view_changeable;
 	}
+
+
+    /**
+     * @param bool $chat_active
+     */
+    public function setChatActive($chat_active)
+    {
+        $this->chat_active = $chat_active;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isChatActive()
+    {
+        return $this->chat_active;
+    }
 
     /**
      * @throws Exception
