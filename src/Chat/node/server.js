@@ -174,16 +174,18 @@ function initServer(server) {
 		});
 
 		socket.on('chat_msg', function(msg){
-			var sent_at = moment().format('HH:mm');
-
+			var sent_at_short = moment().format('HH:mm');
+			var sent_at_long = moment().format('YYYY-MM-DD HH:mm:ss');
+			
 			io.to('sr_chat_' + socket.chat_room_id).emit('chat_msg', {
 				public_name: socket.public_name,
 				msg: msg,
-				sent_at: sent_at,
+				sent_at: sent_at_short,
 				usr_id: socket.usr_id
 			});
 
-			QueryUtils.insertMessage(socket.chat_room_id, socket.usr_id, msg, sent_at);
+
+			QueryUtils.insertMessage(socket.chat_room_id, socket.usr_id, msg, sent_at_long);
 		});
 	});
 
