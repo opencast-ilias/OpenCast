@@ -1,4 +1,4 @@
-# ILIAS-Plugin OpenCast
+# ILIAS-Plugin Opencast
 
 ### Installation
 Start at your ILIAS root directory
