@@ -96,6 +96,10 @@ xoctPaellaPlayer = {
         return await $.get(xoctPaellaPlayer.config.check_script_hls + "?url=" + url);
     },
 
+    /**
+     * check for working streams
+     * @returns {Promise<boolean>}
+     */
     checkStreams: async function() {
         var working_stream_found = false;
         for (const stream of xoctPaellaPlayer.data.streams) {
@@ -106,6 +110,11 @@ xoctPaellaPlayer = {
         return working_stream_found;
     },
 
+    /**
+     * checks if the live stream is available yet
+     * (this check is executed before event start)
+     * @returns {Promise<void>}
+     */
     checkAndLoadLive: async function() {
         var i = setInterval(async function() {
             if (await xoctPaellaPlayer.checkStreams() === 'true') {
@@ -119,14 +128,20 @@ xoctPaellaPlayer = {
         }, 5000)
     },
 
+    /**
+     * starts a loop which checks the availability of the streams
+     * and shows the appropriate overlays, or hides them and reloads
+     * the player, respectively
+     */
     checkStreamStatus: function() {
         let i = null;
         let f = async function() {
+            console.log('check stream status');
             var ts = Math.round(new Date().getTime() / 1000);
             if (await xoctPaellaPlayer.checkStreams() !== 'true') {
-                if (ts < xoctPaellaPlayer.event_start) {
+                if (ts < xoctPaellaPlayer.config.event_start) {
                     xoctPaellaPlayer.status = 'waiting';
-                } else if (ts > xoctPaellaPlayer.event_end) {
+                } else if (ts >= xoctPaellaPlayer.config.event_end) {
                     xoctPaellaPlayer.status = 'over';
                 } else {
                     xoctPaellaPlayer.status = 'interrupted';
