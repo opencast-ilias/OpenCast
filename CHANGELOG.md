@@ -3,6 +3,7 @@
 ## [2.4.0]
 - Feature: Live Streams
 - Feature: Chat for Live Streams
+- Improvement: Uploaded videos will now be saved as 'presentation' instead of 'presenter' (to trigger segmentation)
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
