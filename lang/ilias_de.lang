@@ -303,7 +303,7 @@ series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
 series_permission_template#:#Berechtigungen
 series_publish_on_video_portal#:#Serie auf %s publizieren
-series_publish_on_video_portal_info#:#Diese Einstellung führt zu einer Publikation auf dem Videoportal Ihrer Universität. Lassen Sie die Einstellung deaktiviert, wenn die Aufzeichnungen nur in ILIAS zu sehen sein sollen.
+series_publish_on_video_portal_info#:#Diese Einstellung führt zu einer Publikation auf dem Videoportal Ihrer Hochschule. Lassen Sie die Einstellung deaktiviert, wenn die Aufzeichnungen nur in ILIAS zu sehen sein sollen.
 series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen

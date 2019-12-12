@@ -305,7 +305,7 @@ series_permission_per_clip#:#Set permissions for an Event
 series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
 series_permission_template#:#Permissions
 series_publish_on_video_portal#:#Publish Series on %s
-series_publish_on_video_portal_info#:#This setting leads to a publication on the video portal of your university. Leave this setting deactivated if the recordings are only to be viewed in ILIAS.
+series_publish_on_video_portal_info#:#This setting leads to a publication on the video portal of your institution. Leave this setting deactivated if the recordings are only to be viewed in ILIAS.
 series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
