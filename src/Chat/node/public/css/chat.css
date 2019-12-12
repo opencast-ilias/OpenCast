@@ -90,7 +90,7 @@ html {
 }
 
 .srchat_message_div p {
-    word-break: break-word;
+    word-wrap: break-word;
 }
 
 .srchat_message_content {

@@ -1,5 +1,8 @@
 <#1>
 <?php
+
+use srag\Plugins\Opencast\Chat\Model\MessageAR;
+
 xoctPublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
@@ -167,4 +170,9 @@ xoctUserSetting::updateDB();
 <#18>
 <?php
 xoctOpenCast::updateDB();
+?>
+<#19>
+<?php
+global $DIC;
+$DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)');
 ?>

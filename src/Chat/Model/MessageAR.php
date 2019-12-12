@@ -59,7 +59,7 @@ class MessageAR extends ActiveRecord {
 	 * @db_has_field        true
 	 * @db_is_notnull       true
 	 * @db_fieldtype        text
-	 * @db_length           128
+	 * @db_length           512
 	 */
 	protected $message;
 
