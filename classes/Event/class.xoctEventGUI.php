@@ -619,6 +619,8 @@ class xoctEventGUI extends xoctGUI {
                 $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
                 $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
             }
+        } else {
+            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
         }
 
 		echo $tpl->get();
