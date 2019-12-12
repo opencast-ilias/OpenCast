@@ -289,7 +289,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$newObj->setDescription($series->getDescription());
 		$newObj->update();
 
-		parent::afterSave($newObj);
+        xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($newObj->getId());
+
+        parent::afterSave($newObj);
 	}
 
 

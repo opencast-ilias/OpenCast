@@ -4,6 +4,7 @@
 - Feature: Live Streams
 - Feature: Chat for Live Streams
 - Improvement: Uploaded videos will now be saved as 'presentation' instead of 'presenter' (to trigger segmentation)
+- Bugfix: Workflow Parameters not available for new series
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
