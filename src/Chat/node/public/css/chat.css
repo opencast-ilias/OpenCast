@@ -21,7 +21,7 @@ html {
 }
 
 #srchat_body {
-    font: 13px Helvetica, Arial;
+    font: 17px Helvetica, Arial;
     color: black;
     background-color: white;
     height: 100%;
@@ -83,10 +83,10 @@ html {
     position: relative;
     float: left;
     margin: 10px;
-    width: 100%;
-    width: -webkit-fill-available;
-    width: -moz-available;
-    width: fill-available;
+    width: calc(100% - 75px);
+    /*width: -webkit-fill-available;*/
+    /*width: -moz-available;*/
+    /*width: fill-available;*/
 }
 
 .srchat_message_div p {
