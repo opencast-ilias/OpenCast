@@ -171,12 +171,11 @@ span.srchat_pseudo_element {
 
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-
-}
-
-/* RESPONSIVE */
 @media screen and (max-device-width: 768px) {
+    body {
+        /*background-color: black !important;*/
+    }
+
     #srchat_iframe_container {
         float: left;
         width: 100%;
@@ -185,7 +184,9 @@ span.srchat_pseudo_element {
     }
 
     div#playerContainer {
-        width: 100% !important;
+        width: 90% !important;
+        height: 90% !important;
+        margin-left: 5%;
     }
 
     #srchat_form {
@@ -214,4 +215,11 @@ span.srchat_pseudo_element {
         padding-bottom: 60px;
     }
 
+    /*#srchat_iframe {*/
+    /*    height: inherit;*/
+    /*}*/
+
+    /*#srchat_body {*/
+    /*    overflow: hidden;*/
+    /*}*/
 }

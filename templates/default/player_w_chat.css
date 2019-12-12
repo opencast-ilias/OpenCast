@@ -19,10 +19,6 @@ div#playerContainer {
 	/*position: absolute !important;*/
 }
 
-#srchat_catcher {
-	display: none;
-}
-
 span.xoct_pseudo_element {
 	display: inline-block;
 	height: 100%;
@@ -58,20 +54,5 @@ span.xoct_pseudo_element {
 
 	#paellaPlayer_loader {
 		width: 100%;
-	}
-
-	#srchat_catcher img {
-		height: 30px;
-		background-color: white;
-	}
-
-	#srchat_catcher {
-		display: block;
-		position: absolute;
-		height: 6%;
-		top: -6%;
-		width: fit-content;
-		text-align: center;
-		left: 50%;
 	}
 }
