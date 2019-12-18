@@ -290,7 +290,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function parseData() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL, $this->getOffset(), $this->getLimit());
+		$a_data = xoctEvent::getFiltered($filter, '', [], $this->getOffset(), $this->getLimit());
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());

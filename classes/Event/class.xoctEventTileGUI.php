@@ -133,7 +133,7 @@ class xoctEventTileGUI {
 	 */
 	protected function parseData() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEvents = xoctEvent::getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], null, null, $this->page, $this->limit, true);
+		$xoctEvents = xoctEvent::getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], '', [], $this->page, $this->limit, '',true);
 		foreach ($xoctEvents as $key => $xoctEvent) {
 			if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 				unset($xoctEvents[$key]);

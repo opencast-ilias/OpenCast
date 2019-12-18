@@ -144,7 +144,7 @@ event_created#:#Erstellt
 event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
-event_delete#:#Aufzeichung löschen
+event_delete#:#Aufzeichnung löschen
 event_unpublish#:#Publikationen entfernen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich entfernen?
@@ -166,7 +166,7 @@ event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
 event_msg_currently_unpublishing#:#Der Prozess zum Entfernen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
-event_msg_scheduled#:#Aufzeichungstermin(e) erstellt.
+event_msg_scheduled#:#Aufzeichnungstermin(e) erstellt.
 event_msg_scheduling_conflict#:#Termin(e) konnte(n) nicht erstellt werden, da es Überschneidungen mit existierenden Terminen gibt:
 event_msg_scheduled_in_past#:#Planungskonflikt: Aufzeichnungen können nicht in der Vergangenheit geplant werden.
 event_msg_end_before_start#:#Planungskonflikt: Der Endzeitpunkt der Aufzeichnung muss nach dem Anfangszeitpunkt liegen.

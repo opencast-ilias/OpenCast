@@ -105,13 +105,10 @@ class xoctEventRenderer {
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
-				$modal = ilModalGUI::getInstance();
-				$modal->setId('modal_' . $this->xoctEvent->getIdentifier());
-				$modal->setHeading($this->xoctEvent->getTitle());
-				$modal->setBody('<iframe class="xoct_iframe" src="' . $player_link . '"></iframe>');
+				$modal = $this->getPlayerModal();
 				$link_tpl->setVariable('LINK_URL', '#');
 				$link_tpl->setVariable('MODAL', $modal->getHTML());
-				$link_tpl->setVariable('MODAL_LINK', 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"');
+				$link_tpl->setVariable('MODAL_LINK', $this->getModalLink());
 			} else {
 				$link_tpl->setVariable('LINK_URL', $player_link);
 			}
@@ -121,6 +118,26 @@ class xoctEventRenderer {
 			return '';
 		}
 	}
+
+
+    /**
+     * @return ilModalGUI
+     */
+	public function getPlayerModal() {
+        $modal = ilModalGUI::getInstance();
+        $modal->setId('modal_' . $this->xoctEvent->getIdentifier());
+        $modal->setHeading($this->xoctEvent->getTitle());
+        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->getPlayerLink() . '"></iframe>');
+        return $modal;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getModalLink() {
+	    return 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"';
+    }
 
 	/**
 	 * @param $tpl ilTemplate

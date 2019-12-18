@@ -99,15 +99,18 @@ class xoctEvent extends xoctObject {
 
 
     /**
-     * @param array $filter
-     * @param null $for_user
-     * @param null $for_role
-     * @param int $from
-     * @param int $to
+     * @param array  $filter
+     * @param string $for_user
+     * @param array  $roles
+     * @param int    $offset
+     * @param int    $limit
+     * @param string $sort
+     * @param bool   $as_object
+     *
      * @return xoctEvent[] | array
      * @throws xoctException
      */
-	public static function getFiltered(array $filter, $for_user = null, $for_role = null, $from = 0, $to = 99999, $as_object = false) {
+	public static function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
 		/**
 		 * @var $xoctEvent xoctEvent
 		 */
@@ -115,12 +118,19 @@ class xoctEvent extends xoctObject {
 		if ($filter) {
 			$filter_string = '';
 			foreach ($filter as $k => $v) {
-				$filter_string .= $k . ':' . $v . '';
+				$filter_string .= $k . ':' . $v . ',';
 			}
+			$filter_string = rtrim($filter_string, ',');
 
 			$request->parameter('filter', $filter_string);
 		}
-		$request->parameter('limit', 1000);
+
+		$request->parameter('offset', $offset);
+		$request->parameter('limit', $limit);
+
+		if ($sort) {
+		    $request->parameter('sort', $sort);
+        }
 
 		if (self::$LOAD_MD_SEPARATE || self::$NO_METADATA) {
 			$request->parameter('withmetadata', false);
@@ -140,7 +150,7 @@ class xoctEvent extends xoctObject {
             $request->parameter('withscheduling', true);
         }
 
-		$data = json_decode($request->get());
+		$data = json_decode($request->get($roles, $for_user)) ?: [];
 		$return = array();
 
 		foreach ($data as $d) {
@@ -192,7 +202,6 @@ class xoctEvent extends xoctObject {
 	 */
 	public function read() {
 		if (!$this->isLoaded()) {
-			xoctLog::getInstance()->writeTrace();
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
 			$this->loadFromStdClass($data);
 		}
@@ -1104,6 +1113,10 @@ class xoctEvent extends xoctObject {
 	 * @var string
 	 */
 	protected $series_identifier = '';
+    /**
+     * @var string
+     */
+	protected $series;
 	/**
 	 * @var string
 	 */
@@ -1134,6 +1147,24 @@ class xoctEvent extends xoctObject {
 	public function getEnd() {
 		return $this->end;
 	}
+
+
+    /**
+     * @return string
+     */
+    public function getSeries() : string
+    {
+        return $this->series;
+    }
+
+
+    /**
+     * @param string $series
+     */
+    public function setSeries(string $series)
+    {
+        $this->series = $series;
+    }
 
 
     /**

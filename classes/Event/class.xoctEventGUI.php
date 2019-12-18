@@ -798,7 +798,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = xoctEvent::getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -831,7 +831,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = xoctEvent::getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
