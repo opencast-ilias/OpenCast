@@ -7,6 +7,7 @@
 - Bugfix: Workflow Parameters not available for new series
 - Improvement: Refactorings and changes for page component plugin
 - Fixed Typos
+- Bugfix: fetching scheduling of events without scheduling led to crash
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
