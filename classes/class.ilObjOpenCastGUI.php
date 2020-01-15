@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use srag\DIC\OpenCast\DICTrait;
 /**
  * User Interface class for example repository object.
@@ -92,11 +94,23 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     self::dic()->mainTemplate()->show();
                     break;
                 case 'xoctseriesgui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
+                    self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
+                    self::dic()->mainTemplate()->show();
+                    break;
                 case 'xocteventgui':
+                    $xoctOpenCast = $this->initHeader();
+                    $this->setTabs();
+                    $xoctSeriesGUI = new xoctEventGUI($xoctOpenCast);
+                    self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
+                    self::dic()->mainTemplate()->show();
+                    break;
                 case 'xoctivtgroupgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new $next_class($xoctOpenCast);
+                    $xoctSeriesGUI = new xoctIVTGroupGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     self::dic()->mainTemplate()->show();
                     break;
