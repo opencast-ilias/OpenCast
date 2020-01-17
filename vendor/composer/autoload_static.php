@@ -906,6 +906,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctPermissionTemplateFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateFormGUI.php',
         'xoctPermissionTemplateGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateGUI.php',
         'xoctPermissionTemplateTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateTableGUI.php',
+        'xoctPlayerGUI' => __DIR__ . '/../..' . '/classes/Player/class.xoctPlayerGUI.php',
         'xoctPlupload' => __DIR__ . '/../..' . '/classes/Event/Form/class.xoctFileUploadInputGUI.php',
         'xoctPluploadException' => __DIR__ . '/../..' . '/classes/Event/Form/class.xoctFileUploadInputGUI.php',
         'xoctProperties' => __DIR__ . '/../..' . '/classes/Series/Properties/class.xoctProperties.php',

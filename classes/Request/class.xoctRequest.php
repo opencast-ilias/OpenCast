@@ -201,7 +201,7 @@ class xoctRequest {
 			}
 		}
 
-		return $path;
+		return rtrim($path, '&');
 	}
 
 	//

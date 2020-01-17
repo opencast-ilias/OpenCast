@@ -881,6 +881,7 @@ return array(
     'xoctPermissionTemplateFormGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateFormGUI.php',
     'xoctPermissionTemplateGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateGUI.php',
     'xoctPermissionTemplateTableGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateTableGUI.php',
+    'xoctPlayerGUI' => $baseDir . '/classes/Player/class.xoctPlayerGUI.php',
     'xoctPlupload' => $baseDir . '/classes/Event/Form/class.xoctFileUploadInputGUI.php',
     'xoctPluploadException' => $baseDir . '/classes/Event/Form/class.xoctFileUploadInputGUI.php',
     'xoctProperties' => $baseDir . '/classes/Series/Properties/class.xoctProperties.php',
