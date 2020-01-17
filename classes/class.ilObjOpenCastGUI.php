@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * User Interface class for example repository object.
  *
@@ -162,9 +164,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * @return bool
-	 */
+    /**
+     * @return bool
+     * @throws DICException
+     */
 	protected function setTabs() {
 		/**
 		 * @var $xoctOpenCast xoctOpenCast
@@ -202,11 +205,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * @param string $a_new_type
-	 *
-	 * @return array
-	 */
+    /**
+     * @param string $a_new_type
+     *
+     * @return array
+     * @throws DICException
+     * @throws arException
+     * @throws xoctException
+     */
 	protected function initCreationForms($a_new_type) {
 		if (!ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
 			ilUtil::sendFailure(self::plugin()->translate('msg_creation_failed'), true);
@@ -218,12 +224,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
-	/**
-	 * @param string     $type
-	 * @param bool|false $from_post
-	 *
-	 * @return xoctSeriesFormGUI
-	 */
+    /**
+     * @param string     $type
+     * @param bool|false $from_post
+     *
+     * @return xoctSeriesFormGUI
+     * @throws DICException
+     * @throws arException
+     * @throws xoctException
+     */
 	public function initCreateForm($type, $from_post = false) {
 		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
 		if ($from_post) {
@@ -239,6 +248,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
 
+    /**
+     * @throws DICException
+     * @throws arException
+     * @throws xoctException
+     */
 	public function save() {
 		$creation_form = $this->initCreateForm($this->getType(), true);
 
@@ -248,7 +262,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 
 		if ($return = $creation_form->saveObject()) {
-			$this->saveObject($return[0], $return[1]);
+			$this->saveObject($return[0], $return[1], $creation_form->getInput(xoctSeriesFormGUI::F_CHANNEL_TYPE));
 		} else {
 			self::dic()->mainTemplate()->setContent($creation_form->getHTML());
 		}
@@ -257,7 +271,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
     /**
      * @param ilObject $newObj
-     * @throws Exception
+     *
+     * @throws DICException
+     * @throws xoctException
      */
 	public function afterSave(ilObject $newObj) {
 		/**
@@ -267,6 +283,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$args = func_get_args();
 		$additional_args = $args[1];
 		$cast = $additional_args[0];
+        $is_memberupload_enabled = $additional_args[1];
+        $channel_type = $additional_args[2];
 		$cast->setObjId($newObj->getId());
 		if (xoctOpenCast::where(array( 'obj_id' => $newObj->getId() ))->hasSets()) {
 			$cast->update();
@@ -285,8 +303,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 		$series = $cast->getSeries();
         $series->addProducers($producers, true);
-        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
-        $series->addContributor(self::dic()->user()->getFirstname() . ' ' . self::dic()->user()->getLastname(), true);
+        // PLOPENCAST-159
+        if ($channel_type == xoctSeriesFormGUI::EXISTING_NO) {
+            $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
+            $series->addContributor(self::dic()->user()->getFirstname() . ' ' . self::dic()->user()->getLastname(), true);
+        }
         $series->update();
 
 		if ($cast->getDuplicatesOnSystem()) {
@@ -294,7 +315,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 
 		// checkbox from creation gui to activate "upload" permission for members
-		$is_memberupload_enabled = $additional_args[1];
 		if ($is_memberupload_enabled) {
 			ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
 		}
@@ -311,7 +331,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
     /**
      * @param bool $render_locator
+     *
      * @return xoctOpenCast
+     * @throws DICException
+     * @throws xoctException
      */
 	protected function initHeader($render_locator = true) {
 		if ($render_locator) {
