@@ -8,6 +8,7 @@
 - Improvement: Refactorings and changes for page component plugin
 - Fixed Typos
 - Bugfix: fetching scheduling of events without scheduling led to crash
+- Bugfix: Wrong organizers when creating multiple series via internal API
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
