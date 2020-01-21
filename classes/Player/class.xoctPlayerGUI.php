@@ -55,7 +55,7 @@ class xoctPlayerGUI extends xoctGUI
             $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
         } catch (xoctException $e) {
             ilUtil::sendFailure($e->getMessage(), true);
-            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+            self::dic()->ctrl()->returnToParent($this);
         }
 
         $tpl->setVariable("DATA", json_encode($data));
