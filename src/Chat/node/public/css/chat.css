@@ -170,29 +170,25 @@ span.srchat_pseudo_element {
 }
 
 
+
 /* RESPONSIVE */
-@media screen and (max-device-width: 768px) {
+@media screen and (max-device-width: 768px) and (orientation: portrait){
     body {
-        /*background-color: black !important;*/
+        display: flex;
+        flex-flow: column;
+        height: 100%;
     }
 
-    #srchat_iframe_container {
-        float: left;
-        width: 100%;
+    body div#playerContainer {
+        height: calc(100vw * 0.5625) !important;
+    }
+
+    div#srchat_iframe_container {
+        flex-grow: 1;
+        float:    left;
+        width:    100%;
         overflow: visible;
-        z-index: 100;
-    }
-
-    div#playerContainer {
-        width: 90% !important;
-        height: 90% !important;
-        margin-left: 5%;
-    }
-
-    #srchat_form {
-        position: absolute;
-        height: fit-content;
-        top: 0;
+        z-index:  100;
     }
 
     ul {
@@ -200,6 +196,12 @@ span.srchat_pseudo_element {
     }
     ul > li {
         transform: rotate(-180deg);
+    }
+
+    #srchat_form {
+        position: fixed;
+        height: fit-content;
+        top: 0;
     }
 
 
@@ -214,12 +216,11 @@ span.srchat_pseudo_element {
     #messages {
         padding-bottom: 60px;
     }
+}
 
-    /*#srchat_iframe {*/
-    /*    height: inherit;*/
-    /*}*/
 
-    /*#srchat_body {*/
-    /*    overflow: hidden;*/
-    /*}*/
+@media screen and (max-device-width: 768px) and (orientation: landscape){
+    #srchat_iframe_container {
+        display: none;
+    }
 }
