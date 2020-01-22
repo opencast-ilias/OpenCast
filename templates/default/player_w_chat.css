@@ -42,7 +42,14 @@ span.xoct_pseudo_element {
 	font-size: 32px;
 }
 
+
 /* RESPONSIVE */
+@media screen and (max-device-width: 768px) and (orientation: portrait){
+	body div#playerContainer {
+		height: calc(100vw * 0.5625) !important;
+	}
+}
+
 @media screen and (max-device-width: 768px) {
 	.overlay_live {
 		width: 100%;
