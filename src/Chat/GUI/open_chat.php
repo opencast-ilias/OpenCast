@@ -6,7 +6,7 @@
 $port = filter_input(INPUT_GET, 'port');
 $token = filter_input(INPUT_GET, 'token');
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-$host = $_SERVER['HTTP_HOST'];
+$host = $_SERVER['SERVER_NAME'];
 
 $ch = curl_init($protocol . $host . '/srchat/check_connection');
 curl_setopt($ch, CURLOPT_NOBODY, true);

@@ -314,7 +314,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 				switch ($field) {
 					case 'created_unix':
 						if (!$value['start'] || !$value['end']) {
-							continue;
+							continue 2;
 						}
 						$dateObject = new ilDateTime($array['created_unix'], IL_CAL_UNIX);
 						$within = ilDateTime::_within($dateObject, $value['start'], $value['end']);
@@ -324,7 +324,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 						break;
 					default:
 						if ($value === NULL || $value === '' || $value === false) {
-							continue;
+							continue 2;
 						}
 						$strpos = (strpos(strtolower($array[$field]), strtolower($value)) !== false);
 						if (!$strpos) {
