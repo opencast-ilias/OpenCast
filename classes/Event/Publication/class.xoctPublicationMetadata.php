@@ -1,11 +1,13 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctPublicationMetadata
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublicationMetadata extends xoctObject {
+class xoctPublicationMetadata extends APIObject {
 
 	const MEDIA_TYPE_VIDEO = "video";
 	const ROLE_PRESENTATION = "presentation";

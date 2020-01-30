@@ -1,6 +1,7 @@
 # Change Log
 
 ## [2.4.0]
+- Dropped PHP 5.6 Support
 - Feature: Live Streams
 - Feature: Chat for Live Streams
 - Improvement: Uploaded videos will now be saved as 'presentation' instead of 'presenter' (to trigger segmentation)

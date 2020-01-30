@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\API\Group\Group;
 
 /**
  * User Interface class for example repository object.
@@ -297,7 +298,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$producers[] = xoctUser::getInstance(self::dic()->user());
 
 		try {
-			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMembers($producers);
 		} catch (xoctException $e) {
 		}

@@ -3,6 +3,7 @@
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Model\API\Group\Group;
 
 /**
  * Class xoctEventGUI
@@ -490,7 +491,7 @@ class xoctEventGUI extends xoctGUI {
 
 		// add user to ilias producers
 		try {
-			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$sleep = $ilias_producers->addMember($xoctUser);
 		} catch (xoctException $e) {
 			$sleep = false;
@@ -523,7 +524,7 @@ class xoctEventGUI extends xoctGUI {
 		if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
             // add user to ilias producers
             try {
-                $ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+                $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
                 $sleep = $ilias_producers->addMember($xoctUser);
             } catch (xoctException $e) {
                 $sleep = false;

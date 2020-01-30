@@ -2,6 +2,8 @@
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
+use srag\Plugins\Opencast\Model\API\Agent\Agent;
+
 /**
  * Class xoctEventFormGUI
  *
@@ -197,8 +199,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if (xoct::isApiVersionGreaterThan('v1.1.0') && ($this->schedule || $this->object->isScheduled())) {
 			$input = new ilSelectInputGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
 			$options = array();
-			/** @var xoctAgent $agent */
-			foreach (xoctAgent::getAllAgents() as $agent) {
+			/** @var Agent $agent */
+			foreach (Agent::getAllAgents() as $agent) {
 				$options[$agent->getAgentId()] = $agent->getAgentId();
 			}
 			$input->setOptions($options);
@@ -280,7 +282,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			$this->addItem($radio);
 		}
 
-		if ($this->is_new) {
+		if ($this->is_new || $this->object->isScheduled()) {
 			foreach (xoctSeriesWorkflowParameterRepository::getInstance()
 				         ->getFormItemsForObjId($this->xoctOpenCast->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos')) as $item) {
 				$this->addItem($item);
@@ -311,6 +313,20 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 			self::F_START          => $start,
 			self::F_END          => $end,
 		);
+
+		// workflow parameters
+		if (!$this->is_new && $this->object->isScheduled()) {
+		    $processing = $this->object->getProcessing();
+		    $parameters = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
+		        $this->xoctOpenCast->getObjId(),
+                ilObjOpenCastAccess::hasPermission('edit_videos')
+            );
+		    $workflow_parameters = $this->object->getWorkflowParameters();
+		    array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
+		       $a = $workflow_parameters[$b];
+            });
+		    $array = array_merge($array, $parameters);
+        }
 
 		$this->setValuesByArray($array);
 	}

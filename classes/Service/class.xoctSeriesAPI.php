@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\API\Group\Group;
+
 /**
  * Class xoctSeriesAPI
  *
@@ -121,7 +123,7 @@ class xoctSeriesAPI {
 		}
 
 		try {
-			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$ilias_producers->addMembers($producers);
 		} catch (xoctException $e) {
 		}

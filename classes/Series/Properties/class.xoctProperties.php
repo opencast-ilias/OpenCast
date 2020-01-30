@@ -1,11 +1,13 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctProperties
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctProperties extends xoctObject {
+class xoctProperties extends APIObject {
 
 	/**
 	 * @var int

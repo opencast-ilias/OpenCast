@@ -1,14 +1,15 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Model\API\APIObject;
+use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 
 /**
  * Class xoctEvent
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctEvent extends xoctObject {
+class xoctEvent extends APIObject {
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
@@ -87,7 +88,7 @@ class xoctEvent extends xoctObject {
 	 *
 	 * @return xoctEvent
 	 */
-	public static function find($identifier) {
+	public static function find(string $identifier) {
 		/**
 		 * @var $xoctEvent xoctEvent
 		 */
@@ -291,7 +292,8 @@ class xoctEvent extends xoctObject {
     /**
      * @param $fieldname
      * @param $value
-     * @return array|DateTime|mixed|string|xoctMetadata
+     *
+     * @return array|DateTime|mixed|string|Metadata
      * @throws xoctException
      */
 	protected function wakeup($fieldname, $value) {
@@ -301,7 +303,7 @@ class xoctEvent extends xoctObject {
 				return $this->getDefaultDateTimeObject($value);
 				break;
 			case 'metadata':
-				$metadata = new xoctMetadata();
+				$metadata = new Metadata();
 				$metadata->loadFromArray($value);
 
 				return $metadata;
@@ -318,7 +320,7 @@ class xoctEvent extends xoctObject {
 				$publications = array();
 				foreach ($value as $p_array) {
 					$md = new xoctPublication();
-					$md->loadFromArray($p_array);
+					$md->loadFromStdClass($p_array);
 					$publications[] = $md;
 				}
 
@@ -369,7 +371,7 @@ class xoctEvent extends xoctObject {
 	public function create() {
 		$data = array();
 
-		$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+		$this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
 		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
@@ -399,7 +401,7 @@ class xoctEvent extends xoctObject {
 
         $data = array();
 
-        $this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+        $this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
         $this->updateMetadataFromFields(true);
         $this->updateSchedulingFromFields();
 
@@ -439,6 +441,7 @@ class xoctEvent extends xoctObject {
 			if ($this->getScheduling()->hasChanged()) {
                 $data['scheduling'] = json_encode( $this->getScheduling()->__toStdClass());
             }
+            $data['processing'] = json_encode($this->getProcessing());
 		}
 
 		// All Data
@@ -919,8 +922,8 @@ class xoctEvent extends xoctObject {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
 			if (is_array($data)) {
 				foreach ($data as $d) {
-					if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_EPISODES) {
-						$xoctMetadata = new xoctMetadata();
+					if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
+						$xoctMetadata = new Metadata();
 						$xoctMetadata->loadFromStdClass($d);
 						$this->setMetadata($xoctMetadata);
 					}
@@ -928,7 +931,7 @@ class xoctEvent extends xoctObject {
 			}
 		}
 		if (!$this->metadata) {
-			$this->setMetadata(xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_EPISODES));
+			$this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
 		}
 	}
 
@@ -939,15 +942,15 @@ class xoctEvent extends xoctObject {
 	public function loadScheduling() {
 		if ($this->getIdentifier()) {
 		    if ($this->scheduling instanceof stdClass) {
-		        $this->scheduling = new xoctScheduling($this->getIdentifier(), $this->scheduling);
+		        $this->scheduling = new Scheduling($this->getIdentifier(), $this->scheduling);
             } else {
-                $this->scheduling = new xoctScheduling($this->getIdentifier());
+                $this->scheduling = new Scheduling($this->getIdentifier());
             }
 			$this->setStart($this->scheduling->getStart());
 			$this->setEnd($this->scheduling->getEnd());
 			$this->setLocation($this->scheduling->getAgentId());
 		} else {
-			$this->scheduling = new xoctScheduling();
+			$this->scheduling = new Scheduling();
 		}
 	}
 
@@ -1098,7 +1101,7 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $publications = [];
 	/**
-	 * @var xoctMetadata
+	 * @var Metadata
 	 */
 	protected $metadata = null;
 	/**
@@ -1106,7 +1109,7 @@ class xoctEvent extends xoctObject {
 	 */
 	protected $acl = array();
 	/**
-	 * @var xoctScheduling
+	 * @var Scheduling
 	 */
 	protected $scheduling = null;
 	/**
@@ -1477,7 +1480,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @return xoctMetadata
+	 * @return Metadata
 	 */
 	public function getMetadata() {
 		if (!$this->metadata) {
@@ -1488,9 +1491,9 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @param xoctMetadata $metadata
+	 * @param Metadata $metadata
 	 */
-	public function setMetadata(xoctMetadata $metadata) {
+	public function setMetadata(Metadata $metadata) {
 		$this->metadata = $metadata;
 	}
 
@@ -1530,7 +1533,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @return xoctScheduling
+	 * @return Scheduling
 	 */
 	public function getScheduling() {
 		if (!$this->scheduling) {
@@ -1541,7 +1544,7 @@ class xoctEvent extends xoctObject {
 
 
 	/**
-	 * @param xoctScheduling $scheduling
+	 * @param Scheduling $scheduling
 	 */
 	public function setScheduling($scheduling) {
 		$this->scheduling = $scheduling;
@@ -1712,11 +1715,10 @@ class xoctEvent extends xoctObject {
 	/**
 	 * @return stdClass
 	 */
-	protected function getProcessing() {
+	public function getProcessing() {
 		$processing = new stdClass();
 		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		$processing->configuration = new stdClass();
-		// TODO: was passiert bei erstellung via API?
 		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
 			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
 		}

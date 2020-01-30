@@ -1,10 +1,13 @@
 <?php
+
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctPublication
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublication extends xoctObject {
+class xoctPublication extends APIObject {
 
 	/**
 	 * @param string $id
@@ -25,7 +28,7 @@ class xoctPublication extends xoctObject {
 	 * @param \stdClass $class
 	 * @throws \xoctException
 	 */
-	public function loadFromStdClass($class) {
+	public function loadFromStdClass(stdClass $class) {
 		parent::loadFromStdClass($class);
 	}
 
@@ -34,7 +37,7 @@ class xoctPublication extends xoctObject {
 	 * @param $array
 	 * @throws \xoctException
 	 */
-	public function loadFromArray($array) {
+	public function loadFromArray(array $array) {
 		parent::loadFromArray($array);
 		$attachments = array();
 		foreach ($this->getAttachments() as $attachment) {

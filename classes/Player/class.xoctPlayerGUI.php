@@ -252,11 +252,11 @@ class xoctPlayerGUI extends xoctGUI
                     /**
                      * @var xoctAttachment[] $segment
                      */
-                    $high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
-                    $low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
+                    $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+                    $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
                     if ($high === null || $low === null) {
-                        $high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
-                        $low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+                        $high = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+                        $low = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
                     }
 
                     $time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
@@ -278,10 +278,10 @@ class xoctPlayerGUI extends xoctGUI
                         "thumb" => $low_url
                     ];
                 } else {
-                    $preview = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
+                    $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
 
                     if ($preview === null) {
-                        $preview = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
+                        $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
                     }
 
                     $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);

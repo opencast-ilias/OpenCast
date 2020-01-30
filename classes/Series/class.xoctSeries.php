@@ -1,16 +1,19 @@
 <?php
+
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctSeries
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctSeries extends xoctObject {
+class xoctSeries extends APIObject {
 
     /**
      * @param $identifier
      * @return xoctSeries
      */
-    public static function find($identifier)
+    public static function find(string $identifier)
     {
         $series = parent::find($identifier);
         $series->afterObjectLoad();
@@ -54,8 +57,8 @@ class xoctSeries extends xoctObject {
 		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->metadata()->get());
 			foreach ($data as $d) {
-				if ($d->flavor == xoctMetadata::FLAVOR_DUBLINCORE_SERIES) {
-					$xoctMetadata = new xoctMetadata();
+				if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_SERIES) {
+					$xoctMetadata = new Metadata();
 					$xoctMetadata->loadFromStdClass($d);
 					$this->setMetadata($xoctMetadata);
 				}
@@ -204,7 +207,7 @@ class xoctSeries extends xoctObject {
      * @throws xoctException
      */
     public function create() {
-		$metadata = xoctMetadata::getSet(xoctMetadata::FLAVOR_DUBLINCORE_SERIES);
+		$metadata = Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_SERIES);
 		$metadata->setLabel('Opencast Series DublinCore');
 		$this->setMetadata($metadata);
 		$this->updateMetadataFromFields();
@@ -403,7 +406,7 @@ class xoctSeries extends xoctObject {
 	 */
 	public $license = NULL;
 	/**
-	 * @var xoctMetadata
+	 * @var Metadata
 	 */
 	protected $metadata = array();
 	/**
@@ -617,7 +620,7 @@ class xoctSeries extends xoctObject {
 
 
 	/**
-	 * @return xoctMetadata
+	 * @return Metadata
 	 */
 	public function getMetadata() {
 		return $this->metadata;
@@ -625,7 +628,7 @@ class xoctSeries extends xoctObject {
 
 
 	/**
-	 * @param xoctMetadata $metadata
+	 * @param Metadata $metadata
 	 */
 	public function setMetadata($metadata) {
 		$this->metadata = $metadata;

@@ -1,10 +1,13 @@
 <?php
+
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctAcl
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctAcl extends xoctObject {
+class xoctAcl extends APIObject {
 
 	const ADMIN = 'ROLE_ADMIN';
 	const USER = 'ROLE_ADMIN';
