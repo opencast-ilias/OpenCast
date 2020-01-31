@@ -195,7 +195,7 @@ class xoctEvent extends APIObject {
 	 * @param      $obj_id
 	 * @param bool $as_admin
 	 */
-	public function setWorkflowParametersForObjId($parameters, $obj_id, $as_admin = true) {
+	public function setWorkflowParametersForObjId(array $parameters, int $obj_id, bool $as_admin = true) {
 		$parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
 		$not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
 		foreach ($not_set_in_form as $id) {
@@ -206,7 +206,22 @@ class xoctEvent extends APIObject {
 	}
 
 
-	/**
+    /**
+     * @param array $parameters
+     */
+    public function setGeneralWorkflowParameters(array $parameters)
+    {
+        $parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm();
+        $not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
+        foreach ($not_set_in_form as $id) {
+            $parameters[$id] = 0;
+        }
+        $automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralAutomaticallySetParameters();
+        $this->setWorkflowParameters(array_merge($automatically_set, $parameters));
+    }
+
+
+    /**
 	 * @param $key
 	 *
 	 * @return string

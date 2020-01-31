@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\UI\Input\EventFormGUI;
+
 /**
  * Class xoctSeriesWorkflowParameterRepository
  *
@@ -115,16 +117,31 @@ class xoctSeriesWorkflowParameterRepository {
 	}
 
 	/**
+	 * @return array Format $id => $title
+	 */
+	public function getGeneralParametersInForm() : array
+    {
+		$parameter = [];
+        /** @var xoctWorkflowParameter $input */
+        foreach (xoctWorkflowParameter::where([
+            'default_value_admin' => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+        ])->get() as $input) {
+            $parameter[$input->getId()] = $input->getTitle() ?: $input->getId();
+        }
+		return $parameter;
+	}
+
+	/**
 	 * @param      $obj_id
 	 *
 	 * @param bool $as_admin
 	 *
 	 * @return ilFormPropertyGUI[]
 	 */
-	public function getFormItemsForObjId($obj_id, $as_admin) {
+	public function getFormItemsForObjId($obj_id, $as_admin) : array {
 		$items = [];
 		foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $title) {
-			$cb = new ilCheckboxInputGUI($title, xoctEventFormGUI::F_WORKFLOW_PARAMETER . '['
+			$cb = new ilCheckboxInputGUI($title, EventFormGUI::F_WORKFLOW_PARAMETER . '['
 				. $id . ']');
 			$items[] = $cb;
 		}
@@ -172,6 +189,26 @@ class xoctSeriesWorkflowParameterRepository {
 	}
 
 
+    /**
+     * @return array
+     */
+    public function getGeneralAutomaticallySetParameters()
+    {
+        $parameters = [];
+        /** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
+        foreach (xoctWorkflowParameter::where(['default_value_admin' => xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE ])
+            ->get() as $xoctSeriesWorkflowParameter) {
+            $parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
+        }
+        /** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
+        foreach (xoctWorkflowParameter::where(['default_value_admin' => xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE ])
+            ->get() as $xoctSeriesWorkflowParameter) {
+            $parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
+        }
+        return $parameters;
+    }
+
+
 	/**
 	 * @param $obj_id
 	 */
@@ -199,4 +236,20 @@ class xoctSeriesWorkflowParameterRepository {
 			xoctSeriesWorkflowParameter::find($id)->delete();
 		}
 	}
+
+
+    /**
+     * @return array
+     */
+    public function getGeneralFormItems() : array
+    {
+        $items = [];
+        foreach ($this->getGeneralParametersInForm() as $id => $title) {
+            $cb = new ilCheckboxInputGUI($title, EventFormGUI::F_WORKFLOW_PARAMETER . '['
+                . $id . ']');
+            $items[] = $cb;
+        }
+        return $items;
+    }
+
 }

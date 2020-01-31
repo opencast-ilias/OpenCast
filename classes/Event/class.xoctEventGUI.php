@@ -5,6 +5,7 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
+use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 
 /**
  * Class xoctEventGUI
@@ -21,7 +22,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CLEAR_CACHE = 'clearCache';
 	const CMD_EDIT_OWNER = 'editOwner';
 	const CMD_UPDATE_OWNER = 'updateOwner';
-	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
+	const CMD_UPLOAD_CHUNKS = EventFormGUI::PARENT_CMD_UPLOAD_CHUNKS;
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
 	const CMD_CUT = 'cut';
@@ -363,7 +364,7 @@ class xoctEventGUI extends xoctGUI {
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
 		}
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -374,7 +375,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function create() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
@@ -404,7 +405,7 @@ class xoctEventGUI extends xoctGUI {
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
 		}
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -415,7 +416,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function createScheduled() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
@@ -444,7 +445,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -559,7 +560,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
@@ -584,7 +585,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {

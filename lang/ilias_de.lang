@@ -218,6 +218,8 @@ event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstel
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
 event_report_date_modification#:#Terminanpassungen melden
 event_report_quality_problem#:#Qualitätsprobleme melden
+event_series#:#Serie
+event_own_series#:#Eigene Serie (%s)
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe

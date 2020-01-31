@@ -1,50 +1,90 @@
 <?php
 
+namespace srag\Plugins\Opencast\UI\Input;
+
+use ilDateTime;
+use ilDateTimeException;
+use ilDateTimeInputGUI;
+use ilException;
+use ilInteractiveVideoTimePicker;
+use ilObjOpenCast;
+use ilObjOpenCastAccess;
+use ilOpenCastPlugin;
+use ilPropertyFormGUI;
+use ilRadioGroupInputGUI;
+use ilRadioOption;
+use ilSelectInputGUI;
+use ilTextAreaInputGUI;
+use ilTextInputGUI;
+use ilTimeZone;
+use ilTimeZoneException;
+use ilUtil;
+use ReflectionException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
+use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
-use srag\Plugins\Opencast\UI\Input\FileUploadInputGUI;
+use xoct;
+use xoctConf;
+use xoctEvent;
+use xoctEventGUI;
+use xoctException;
+use xoctOpenCast;
+use xoctSeries;
+use xoctSeriesWorkflowParameterRepository;
+use xoctUploadFile;
+use xoctUser;
 
 /**
  * Class xoctEventFormGUI
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctEventFormGUI extends ilPropertyFormGUI {
+class EventFormGUI extends ilPropertyFormGUI {
 
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	const F_TITLE = 'title';
-	const F_DESCRIPTION = 'description';
-	const F_FILE_PRESENTER = 'file_presenter';
-	const F_FILE_PRESENTATION = 'file_presenter';
-	const F_IDENTIFIER = 'identifier';
-	const F_CREATOR = 'creator';
-	const F_DURATION = 'duration';
-	const F_PROCESSING_STATE = 'processing_state';
-	const F_START_TIME = 'start_time';
-	const F_PRESENTERS = 'presenters';
-	const F_START = 'start';
-	const F_END = 'end';
-	const F_LOCATION = 'location';
-	const F_SOURCE = 'source';
-	const F_WORKFLOW_PARAMETER = 'workflow_parameter';
-	const F_ONLINE = 'online';
-	const F_MULTIPLE = 'multiple';
-	const F_MULTIPLE_START = 'multiple_start';
-	const F_MULTIPLE_START_TIME = 'multiple_start_time';
-	const F_MULTIPLE_END = 'multiple_end';
-	const F_MULTIPLE_END_TIME = 'multiple_end_time';
-	const F_MULTIPLE_WEEKDAYS = 'multiple_weekdays';
+	const IDENTIFIER = xoctEventGUI::IDENTIFIER;
 
-	/**
+    const PARENT_CMD_UPLOAD_CHUNKS = 'uploadChunks';
+    const PARENT_CMD_CREATE = 'create';
+    const PARENT_CMD_CANCEL = 'cancel';
+    const PARENT_CMD_UPDATE = 'update';
+
+    const PARENT_CMD_CREATE_SCHEDULED = 'createScheduled';
+    const F_TITLE = 'title';
+    const F_DESCRIPTION = 'description';
+    const F_FILE_PRESENTER = 'file_presenter';
+    const F_FILE_PRESENTATION = 'file_presenter';
+    const F_IDENTIFIER = 'identifier';
+    const F_CREATOR = 'creator';
+    const F_DURATION = 'duration';
+    const F_PROCESSING_STATE = 'processing_state';
+    const F_START_TIME = 'start_time';
+    const F_PRESENTERS = 'presenters';
+    const F_START = 'start';
+    const F_END = 'end';
+    const F_LOCATION = 'location';
+    const F_SOURCE = 'source';
+    const F_WORKFLOW_PARAMETER = 'workflow_parameter';
+    const F_ONLINE = 'online';
+    const F_MULTIPLE = 'multiple';
+    const F_MULTIPLE_START = 'multiple_start';
+    const F_MULTIPLE_START_TIME = 'multiple_start_time';
+    const F_MULTIPLE_END = 'multiple_end';
+    const F_MULTIPLE_END_TIME = 'multiple_end_time';
+    const F_MULTIPLE_WEEKDAYS = 'multiple_weekdays';
+
+    const F_SERIES = 'series';
+    const OPT_OWN_SERIES = 'own_series';
+    /**
 	 * @var  xoctEvent
 	 */
 	protected $object;
 	/**
-	 * @var xoctEventGUI
+	 * @var
 	 */
 	protected $parent_gui;
 	/**
@@ -55,35 +95,37 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	 * @var bool
 	 */
 	protected $schedule;
+    /**
+     * @var bool
+     */
+    protected $is_new;
+    /**
+     * @var xoctOpenCast
+     */
+    protected $xoctOpenCast;
 
 
-	/**
-	 * @param              $parent_gui
-	 * @param xoctEvent $object
-	 * @param xoctOpenCast $xoctOpenCast
-	 * @param bool|false $view
-	 * @param bool|false $infopage
-	 * @param bool|true $external
-	 */
-	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast, $schedule = false,$view = false, $infopage = false, $external = true) {
+    /**
+     * @param              $parent_gui
+     * @param xoctEvent    $object
+     * @param xoctOpenCast $xoctOpenCast
+     * @param bool         $schedule
+     *
+     * @throws DICException
+     * @throws ilDateTimeException
+     * @throws xoctException
+     */
+	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast = null, $schedule = false) {
 		parent::__construct();
 		$this->object = $object;
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->parent_gui = $parent_gui;
-		self::dic()->ctrl()->saveParameter($parent_gui, xoctEventGUI::IDENTIFIER);
+		self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
 		$this->is_new = ($this->object->getIdentifier() == '');
 		$this->schedule = $schedule;
-		$this->view = $view;
-		$this->infopage = $infopage;
-		$this->external = $external;
 		self::dic()->language()->loadLanguageModule('form');
 		$this->setId('xoct_event');
-
-		if ($view) {
-			$this->initView();
-		} else {
-			$this->initForm();
-		}
+        $this->initForm();
 	}
 
 
@@ -102,13 +144,21 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 * @throws ilDateTimeException
-	 */
+    /**
+     * @throws DICException
+     * @throws ilDateTimeException
+     * @throws xoctException
+     */
 	protected function initForm() {
 		$this->setTarget('_top');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
 		$this->initButtons();
+
+		if (is_null($this->xoctOpenCast)) {
+		    $series_input = new ilSelectInputGUI($this->txt(self::F_SERIES), self::F_SERIES);
+		    $series_input->setOptions($this->getSeriesOptions());
+		    $this->addItem($series_input);
+        }
 
 		$te = new ilTextInputGUI($this->txt(self::F_TITLE), self::F_TITLE);
 		$te->setRequired(!$this->is_new || $this->schedule);
@@ -117,8 +167,8 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if ($this->is_new && !$this->schedule) {
 			$allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
 
-			$te = new FileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
-			$te->setUrl(self::dic()->ctrl()->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_UPLOAD_CHUNKS));
+			$te = new FileUploadInputGUI($this, self::PARENT_CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
+			$te->setUrl(self::dic()->ctrl()->getLinkTarget($this->parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS));
 			$te->setSuffixes($allow_audio ? array(
 				'mov',
 				'mp4',
@@ -284,8 +334,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 
 		if ($this->is_new || $this->object->isScheduled()) {
-			foreach (xoctSeriesWorkflowParameterRepository::getInstance()
-				         ->getFormItemsForObjId($this->xoctOpenCast->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos')) as $item) {
+		    $form_items = is_null($this->xoctOpenCast) ?
+                xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralFormItems() :
+                xoctSeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId(
+                    $this->xoctOpenCast->getObjId(),
+                    ilObjOpenCastAccess::hasPermission('edit_videos')
+                );
+			foreach ($form_items as $item) {
 				$this->addItem($item);
 			}
 		}
@@ -317,13 +372,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
 		// workflow parameters
 		if (!$this->is_new && $this->object->isScheduled()) {
-		    $processing = $this->object->getProcessing();
-		    $parameters = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
-		        $this->xoctOpenCast->getObjId(),
-                ilObjOpenCastAccess::hasPermission('edit_videos')
-            );
-		    $workflow_parameters = $this->object->getWorkflowParameters();
-		    array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
+            $parameters = is_null($this->xoctOpenCast) ?
+                xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm() :
+                xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
+                    $this->xoctOpenCast->getObjId(),
+                    ilObjOpenCastAccess::hasPermission('edit_videos')
+                );
+            $workflow_parameters = $this->object->getWorkflowParameters();
+            array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
 		       $a = $workflow_parameters[$b];
             });
 		    $array = array_merge($array, $parameters);
@@ -335,6 +391,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
     /**
      * @return bool
+     * @throws DICException
      * @throws ilTimeZoneException
      */
 	public function fillObject() {
@@ -348,11 +405,18 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
 		$title = $this->getInput(self::F_TITLE);
 
-		$this->object->setTitle($title ? $title : $presenter->getTitle());
+        $this->object->setSeriesIdentifier(
+            is_null($this->xoctOpenCast) ?
+                $this->getInput(self::F_SERIES) :
+                $this->xoctOpenCast->getSeriesIdentifier()
+        );
+        $this->object->setTitle($title ? $title : $presenter->getTitle());
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
-		$this->object->setWorkflowParametersForObjId((array) $this->getInput(self::F_WORKFLOW_PARAMETER), $this->parent_gui->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos'));
+		is_null($this->xoctOpenCast) ?
+            $this->object->setGeneralWorkflowParameters((array) $this->getInput(self::F_WORKFLOW_PARAMETER)) :
+            $this->object->setWorkflowParametersForObjId((array) $this->getInput(self::F_WORKFLOW_PARAMETER), $this->xoctOpenCast->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos'));
 
         $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 
@@ -395,11 +459,13 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		return true;
 	}
 
+
     /**
      * @return bool
+     * @throws DICException
      */
     protected function checkDates() {
-        $date_and_location_disabled = xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;;
+        $date_and_location_disabled = xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
         if (($this->object->isScheduled() && !$date_and_location_disabled) || $this->schedule) {
             if ($this->getInput(self::F_MULTIPLE)) {
                 $start_date = $this->getInput(self::F_MULTIPLE_START);
@@ -429,21 +495,23 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
         return true;
 	}
 
-	/**
-	 * @param $key
-	 *
-	 * @return string
-	 */
+
+    /**
+     * @param $key
+     *
+     * @return string
+     */
 	protected function txt($key) {
 		return $this->parent_gui->txt($key);
 	}
 
 
-	/**
-	 * @param $key
-	 *
-	 * @return string
-	 */
+    /**
+     * @param $key
+     *
+     * @return string
+     * @throws DICException
+     */
 	protected function infoTxt($key) {
 		return self::plugin()->translate($key . '_info', 'event');
 	}
@@ -451,6 +519,10 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 
     /**
      * @return bool|string
+     * @throws DICException
+     * @throws ReflectionException
+     * @throws ilException
+     * @throws ilTimeZoneException
      * @throws xoctException
      */
 	public function saveObject() {
@@ -460,16 +532,15 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if ($this->object->getIdentifier()) {
 			try {
 				$this->object->update();
-			} catch (Exception $e) {
+			} catch (ilException $e) {
 				return $this->checkAndShowConflictMessage($e);
 			}
 			$this->object->getXoctEventAdditions()->update();
 		} else {
-			$this->object->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
             if ($this->schedule) {
                 try {
                     $this->object->schedule($this->buildRRule());
-                } catch (Exception $e) {
+                } catch (ilException $e) {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
@@ -504,96 +575,22 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		switch (true) {
 			case  $this->is_new AND !$this->view AND !$this->schedule:
 				$this->setTitle($this->txt('create'));
-				$this->addCommandButton(xoctEventGUI::CMD_CREATE, $this->txt(xoctEventGUI::CMD_CREATE));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				$this->addCommandButton(self::PARENT_CMD_CREATE, $this->txt(self::PARENT_CMD_CREATE));
+				$this->addCommandButton(self::PARENT_CMD_CANCEL, $this->txt(self::PARENT_CMD_CANCEL));
 				break;
 			case $this->is_new AND $this->schedule:
 				$this->setTitle($this->txt('schedule_new'));
-				$this->addCommandButton(xoctEventGUI::CMD_CREATE_SCHEDULED, $this->txt(xoctEventGUI::CMD_CREATE_SCHEDULED));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				$this->addCommandButton(self::PARENT_CMD_CREATE_SCHEDULED, $this->txt(self::PARENT_CMD_CREATE_SCHEDULED));
+				$this->addCommandButton(self::PARENT_CMD_CANCEL, $this->txt(self::PARENT_CMD_CANCEL));
 				break;
-			case  !$this->is_new AND !$this->view:
+			case  !$this->is_new:
 				if (ilObjOpenCast::DEV) {
 					$this->addCommandButton('saveAndStay', 'Save and Stay');
 				}
 				$this->setTitle($this->txt('edit'));
-				$this->addCommandButton(xoctEventGUI::CMD_UPDATE, $this->txt(xoctEventGUI::CMD_UPDATE));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
+				$this->addCommandButton(self::PARENT_CMD_UPDATE, $this->txt(self::PARENT_CMD_UPDATE));
+				$this->addCommandButton(self::PARENT_CMD_CANCEL, $this->txt(self::PARENT_CMD_CANCEL));
 				break;
-			case $this->view:
-				$this->setTitle($this->txt('view'));
-				$this->addCommandButton(xoctEventGUI::CMD_CANCEL, $this->txt(xoctEventGUI::CMD_CANCEL));
-				break;
-		}
-	}
-
-
-	/**
-	 * @throws ilDateTimeException
-	 */
-	protected function initView() {
-		$this->initForm();
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_IDENTIFIER), self::F_IDENTIFIER);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_CREATOR), self::F_CREATOR);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_START), self::F_START);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_DURATION), self::F_DURATION);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_PROCESSING_STATE), self::F_PROCESSING_STATE);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_START_TIME), self::F_START_TIME);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_LOCATION), self::F_LOCATION);
-		$this->addItem($te);
-
-		$te = new ilNonEditableValueGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
-		$this->addItem($te);
-
-		/**
-		 * @var $item ilNonEditableValueGUI
-		 */
-		foreach ($this->getItems() as $item) {
-			$te = new ilNonEditableValueGUI($this->txt($item->getPostVar()), $item->getPostVar());
-			$this->removeItemByPostVar($item->getPostVar());
-			$this->addItem($te);
-		}
-		$te = new ilCustomInputGUI('detail', 'detail');
-		$te->setHtml('<table><tr><td>' . $this->object->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-		$this->addItem($te);
-
-		foreach ($this->object->getPublications() as $pub) {
-			$h = new ilFormSectionHeaderGUI();
-			$h->setTitle($pub->getChannel());
-			$this->addItem($h);
-
-			$te = new ilCustomInputGUI('Publication ' . $pub->getChannel(), 'pub_' . $pub->getChannel());
-			$te->setHtml('<table><tr><td>' . $pub->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-			$this->addItem($te);
-
-			foreach ($pub->getMedia() as $med) {
-				$te = new ilCustomInputGUI($med->getId(), $med->getId());
-				$te->setHtml('<table><tr><td>' . $med->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-				$this->addItem($te);
-			}
-		}
-
-		$h = new ilFormSectionHeaderGUI();
-		$h->setTitle('ACL');
-		$this->addItem($h);
-
-		foreach ($this->object->getAcl() as $acl) {
-			$te = new ilCustomInputGUI($acl->getRole(), $acl->getRole());
-			$te->setHtml('<table><tr><td>' . $acl->__toCsv("</td><td>", "</td></tr><tr><td>") . '</td></tr></table>');
-			$this->addItem($te);
 		}
 	}
 
@@ -614,12 +611,14 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 * @param $e
-	 *
-	 * @return bool
-	 */
-	protected function checkAndShowConflictMessage($e) {
+    /**
+     * @param ilException $e
+     *
+     * @return bool
+     * @throws DICException
+     * @throws ilException
+     */
+	protected function checkAndShowConflictMessage(ilException $e) {
 		if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
 			$conflicts = json_decode(substr($e->getMessage(), 10), true);
 			$message = $this->txt('msg_scheduling_conflict') . '<br>';
@@ -633,6 +632,22 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		}
 		throw $e;
 	}
+
+
+    /**
+     * @return array
+     * @throws DICException
+     * @throws xoctException
+     */
+    protected function getSeriesOptions() : array
+    {
+        $series_options = [self::OPT_OWN_SERIES => sprintf($this->txt(self::OPT_OWN_SERIES), xoctUser::getInstance($this->user)->getIdentifier())];
+        foreach (xoctSeries::getAllForUser(xoctUser::getInstance(self::dic()->user())->getUserRoleName()) as $serie) {
+            $series_options[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
+        }
+
+        return $series_options;
+    }
 }
 
 
