@@ -3,6 +3,7 @@
 use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
+use srag\Plugins\Opencast\UI\Input\FileUploadInputGUI;
 
 /**
  * Class xoctEventFormGUI
@@ -116,7 +117,7 @@ class xoctEventFormGUI extends ilPropertyFormGUI {
 		if ($this->is_new && !$this->schedule) {
 			$allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
 
-			$te = new xoctFileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
+			$te = new FileUploadInputGUI($this, xoctEventGUI::CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
 			$te->setUrl(self::dic()->ctrl()->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_UPLOAD_CHUNKS));
 			$te->setSuffixes($allow_audio ? array(
 				'mov',

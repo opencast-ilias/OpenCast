@@ -16,11 +16,6 @@ class xoctEvent extends APIObject {
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	public static $load_md_separate = true;
-	public static $load_acl_separate = false;
-	public static $load_pub_separate = true;
-	public static $no_metadata = false;
-
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
 	const STATE_SCHEDULED = 'SCHEDULED';
@@ -172,7 +167,7 @@ class xoctEvent extends APIObject {
 		}
 
         $this->loadMetadata();
-		
+
         // if no_metadata option is set, the metadata below will already be initialized
         if (EventRepository::$no_metadata) {
             return;

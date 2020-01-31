@@ -29,7 +29,6 @@ class xoctUploadFile {
 	 * @return CURLFile
 	 */
 	public function getCURLFile() {
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/Form/class.xoctFileUploadInputGUI.php');
 		$xoctPlupload = new xoctPlupload();
 		$CURLFile = new CURLFile($xoctPlupload->getTargetDir() . '/' . $this->getTitle());
 

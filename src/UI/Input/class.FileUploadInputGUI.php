@@ -1,11 +1,26 @@
 <?php
+
+namespace srag\Plugins\Opencast\UI\Input;
+
+use ilException;
+use ilOpenCastPlugin;
+use ilPropertyFormGUI;
+use ilSubEnabledFormPropertyGUI;
+use ilTemplate;
+use ilTemplateException;
+use ilUtil;
 use srag\DIC\OpenCast\DICTrait;
+use stdClass;
+use xoctConf;
+use xoctException;
+use xoctWaiterGUI;
+
 /**
  * Class xoctFileUploadInputGUI
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
+class FileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
@@ -69,9 +84,10 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	}
 
 
-	/**
-	 * @return string
-	 */
+    /**
+     * @return string
+     * @throws ilTemplateException
+     */
 	public function render() {
 		$pl = ilOpenCastPlugin::getInstance();
 		$tpl = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/tpl.uploader.html', false, true);
@@ -85,6 +101,9 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	}
 
 
+    /**
+     *
+     */
 	protected function initJS() {
 		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.min.js');
 		$pl = ilOpenCastPlugin::getInstance();
@@ -145,9 +164,11 @@ class xoctFileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 	}
 
 
-	/**
-	 * @param ilTemplate $a_tpl
-	 */
+    /**
+     * @param ilTemplate $a_tpl
+     *
+     * @throws ilTemplateException
+     */
 	public function insert(ilTemplate &$a_tpl) {
 		$html = $this->render();
 
