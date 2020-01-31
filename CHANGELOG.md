@@ -9,6 +9,8 @@
 - Bugfix: Fixed Typos
 - Bugfix: fetching scheduling of events without scheduling led to crash
 - Bugfix: wrong organizers when creating multiple series via internal API
+- Bugfix: changed to list view and removed buttons when reloading event list
+- Bugfix (skin): dropdown menus in tile view had broken hover effects
 - Change: add organizer & contributer only when creating a new series 
 - Code: Started refactoring the model, made changes for PageComponent plugin
 
