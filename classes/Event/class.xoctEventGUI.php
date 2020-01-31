@@ -803,7 +803,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function clearCache() {
 		xoctCacheFactory::getInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
-		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_CONTENT);
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
 	/**
