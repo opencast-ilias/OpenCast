@@ -134,24 +134,24 @@ class xoctConf extends ActiveRecord {
 		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
 			default:
 			case xoctConf::SEP_EVERYTHING:
-				xoctEvent::$LOAD_ACL_SEPARATE = true;
-				xoctEvent::$LOAD_PUB_SEPARATE = true;
-				xoctEvent::$LOAD_MD_SEPARATE = true;
+				xoctEvent::$load_acl_separate = true;
+				xoctEvent::$load_pub_separate = true;
+				xoctEvent::$load_md_separate = true;
 				break;
 			case xoctConf::SEP_EV_ACL_MD:
-				xoctEvent::$LOAD_ACL_SEPARATE = false;
-				xoctEvent::$LOAD_PUB_SEPARATE = true;
-				xoctEvent::$LOAD_MD_SEPARATE = false;
+				xoctEvent::$load_acl_separate = false;
+				xoctEvent::$load_pub_separate = true;
+				xoctEvent::$load_md_separate = false;
 				break;
 			case xoctConf::SEP_EV_ACL_MD_PUB:
-				xoctEvent::$LOAD_ACL_SEPARATE = false;
-				xoctEvent::$LOAD_PUB_SEPARATE = false;
-				xoctEvent::$LOAD_MD_SEPARATE = false;
+				xoctEvent::$load_acl_separate = false;
+				xoctEvent::$load_pub_separate = false;
+				xoctEvent::$load_md_separate = false;
 				break;
 		}
 
 		// META DATA
-		xoctEvent::$NO_METADATA = self::getConfig(self::F_NO_METADATA);
+		xoctEvent::$no_metadata = self::getConfig(self::F_NO_METADATA);
 	}
 
 

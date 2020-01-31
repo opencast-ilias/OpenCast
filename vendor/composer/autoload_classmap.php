@@ -834,6 +834,7 @@ return array(
     'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => $baseDir . '/src/Chat/Model/TokenAR.php',
     'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => $baseDir . '/src/Model/API/APIObject.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Agent\\Agent' => $baseDir . '/src/Model/API/Agent/Agent.php',
+    'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => $baseDir . '/src/Model/API/Event/EventRepository.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Group\\Group' => $baseDir . '/src/Model/API/Group/Group.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Scheduling\\Scheduling' => $baseDir . '/src/Model/API/Scheduling/Scheduling.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\Workflow' => $baseDir . '/src/Model/API/Workflow/Workflow.php',

@@ -859,6 +859,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => __DIR__ . '/../..' . '/src/Chat/Model/TokenAR.php',
         'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => __DIR__ . '/../..' . '/src/Model/API/APIObject.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Agent\\Agent' => __DIR__ . '/../..' . '/src/Model/API/Agent/Agent.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => __DIR__ . '/../..' . '/src/Model/API/Event/EventRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Group\\Group' => __DIR__ . '/../..' . '/src/Model/API/Group/Group.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/API/Scheduling/Scheduling.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\Workflow' => __DIR__ . '/../..' . '/src/Model/API/Workflow/Workflow.php',

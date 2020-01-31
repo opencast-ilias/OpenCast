@@ -3,6 +3,7 @@
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 
 /**
@@ -638,7 +639,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter);
+		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -671,7 +672,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter);
+		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation

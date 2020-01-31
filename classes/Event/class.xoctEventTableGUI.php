@@ -1,6 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 
 /**
  * Class xoctEventTableGUI
@@ -31,6 +32,10 @@ class xoctEventTableGUI extends ilTable2GUI {
      * @var bool
      */
 	protected $has_scheduled_events = false;
+	/**
+	 * @var EventRepository
+	 */
+	protected $event_repository;
 
 	/**
 	 * xoctEventTableGUI constructor.
@@ -42,6 +47,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true) {
 		$this->xoctOpenCast = $xoctOpenCast;
+		$this->event_repository = new EventRepository(self::dic()->dic());
 		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);
 		$this->setFormName($a_val);
@@ -290,7 +296,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function parseData() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, '', [], $this->getOffset(), $this->getLimit());
+		$a_data = $this->event_repository->getFiltered($filter, '', [], $this->getOffset(), $this->getLimit());
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());

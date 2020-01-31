@@ -14,10 +14,10 @@ class xoctEvent extends APIObject {
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	public static $LOAD_MD_SEPARATE = true;
-	public static $LOAD_ACL_SEPARATE = false;
-	public static $LOAD_PUB_SEPARATE = true;
-	public static $NO_METADATA = false;
+	public static $load_md_separate = true;
+	public static $load_acl_separate = false;
+	public static $load_pub_separate = true;
+	public static $no_metadata = false;
 
 	const STATE_SUCCEEDED = 'SUCCEEDED';
 	const STATE_OFFLINE = 'OFFLINE';
@@ -99,73 +99,6 @@ class xoctEvent extends APIObject {
 	}
 
 
-    /**
-     * @param array  $filter
-     * @param string $for_user
-     * @param array  $roles
-     * @param int    $offset
-     * @param int    $limit
-     * @param string $sort
-     * @param bool   $as_object
-     *
-     * @return xoctEvent[] | array
-     * @throws xoctException
-     */
-	public static function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
-		/**
-		 * @var $xoctEvent xoctEvent
-		 */
-		$request = xoctRequest::root()->events();
-		if ($filter) {
-			$filter_string = '';
-			foreach ($filter as $k => $v) {
-				$filter_string .= $k . ':' . $v . ',';
-			}
-			$filter_string = rtrim($filter_string, ',');
-
-			$request->parameter('filter', $filter_string);
-		}
-
-		$request->parameter('offset', $offset);
-		$request->parameter('limit', $limit);
-
-		if ($sort) {
-		    $request->parameter('sort', $sort);
-        }
-
-		if (self::$LOAD_MD_SEPARATE || self::$NO_METADATA) {
-			$request->parameter('withmetadata', false);
-		} else {
-			$request->parameter('withmetadata', true);
-		}
-
-		if (!self::$LOAD_ACL_SEPARATE) {
-			$request->parameter('withacl', true);
-		}
-
-		if (!self::$LOAD_PUB_SEPARATE) {
-			$request->parameter('withpublications', true);
-		}
-
-		if (xoct::isApiVersionGreaterThan('v1.1.0')){
-            $request->parameter('withscheduling', true);
-        }
-
-		$data = json_decode($request->get($roles, $for_user)) ?: [];
-		$return = array();
-
-		foreach ($data as $d) {
-			$xoctEvent = xoctEvent::findOrLoadFromStdClass($d->identifier, $d);
-			if (!in_array($xoctEvent->getProcessingState(), array( self::STATE_SUCCEEDED, self::STATE_OFFLINE, ))) {
-				self::removeFromCache($xoctEvent->getIdentifier());
-			}
-			$return[] = $as_object ? $xoctEvent : $xoctEvent->getArrayForTable();
-		}
-
-		return $return;
-	}
-
-
 	/**
 	 * @return array
 	 */
@@ -235,7 +168,7 @@ class xoctEvent extends APIObject {
 		$this->loadMetadata();
 
 		// if no_metadata option is set, the metadata below will already be initialized
-		if (self::$NO_METADATA) {
+		if (self::$no_metadata) {
 			return;
 		}
 
@@ -365,7 +298,7 @@ class xoctEvent extends APIObject {
 
 
     /**
-     * @param bool $auto_publish
+     * @throws ReflectionException
      * @throws xoctException
      */
 	public function create() {
@@ -375,9 +308,7 @@ class xoctEvent extends APIObject {
 		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
 		$this->updateMetadataFromFields(false);
 
-//		$this->setCurrentUserAsPublisher();
-
-		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
+		$data['metadata'] = json_encode([$this->getMetadata()->__toStdClass()]);
 		$data['processing'] = json_encode($this->getProcessing());
 		$data['acl'] = json_encode($this->getAcl());
 
@@ -918,7 +849,7 @@ class xoctEvent extends APIObject {
 	 *
 	 */
 	public function loadMetadata() {
-		if ($this->getIdentifier() && !self::$NO_METADATA) {
+		if ($this->getIdentifier() && !self::$no_metadata) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
 			if (is_array($data)) {
 				foreach ($data as $d) {
