@@ -333,7 +333,8 @@ class EventFormGUI extends ilPropertyFormGUI {
 			$this->addItem($radio);
 		}
 
-		if ($this->is_new || $this->object->isScheduled()) {
+		// if ($this->is_new || $this->object->isScheduled()) {
+		if ($this->is_new) {
 		    $form_items = is_null($this->xoctOpenCast) ?
                 xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralFormItems() :
                 xoctSeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId(
@@ -370,20 +371,20 @@ class EventFormGUI extends ilPropertyFormGUI {
 			self::F_END          => $end,
 		);
 
-		// workflow parameters
-		if (!$this->is_new && $this->object->isScheduled()) {
-            $parameters = is_null($this->xoctOpenCast) ?
-                xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm() :
-                xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
-                    $this->xoctOpenCast->getObjId(),
-                    ilObjOpenCastAccess::hasPermission('edit_videos')
-                );
-            $workflow_parameters = $this->object->getWorkflowParameters();
-            array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
-		       $a = $workflow_parameters[$b];
-            });
-		    $array = array_merge($array, $parameters);
-        }
+		// // workflow parameters
+		// if (!$this->is_new && $this->object->isScheduled()) {
+        //     $parameters = is_null($this->xoctOpenCast) ?
+        //         xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm() :
+        //         xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
+        //             $this->xoctOpenCast->getObjId(),
+        //             ilObjOpenCastAccess::hasPermission('edit_videos')
+        //         );
+        //     $workflow_parameters = $this->object->getWorkflowParameters();
+        //     array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
+		//        $a = $workflow_parameters[$b];
+        //     });
+		//     $array = array_merge($array, $parameters);
+        // }
 
 		$this->setValuesByArray($array);
 	}
