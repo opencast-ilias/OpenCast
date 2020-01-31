@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+
 /**
  * Class xoctConf
  *
@@ -134,24 +136,24 @@ class xoctConf extends ActiveRecord {
 		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
 			default:
 			case xoctConf::SEP_EVERYTHING:
-				xoctEvent::$load_acl_separate = true;
-				xoctEvent::$load_pub_separate = true;
-				xoctEvent::$load_md_separate = true;
+				EventRepository::$load_acl_separate = true;
+                EventRepository::$load_pub_separate = true;
+                EventRepository::$load_md_separate = true;
 				break;
 			case xoctConf::SEP_EV_ACL_MD:
-				xoctEvent::$load_acl_separate = false;
-				xoctEvent::$load_pub_separate = true;
-				xoctEvent::$load_md_separate = false;
+                EventRepository::$load_acl_separate = false;
+				EventRepository::$load_pub_separate = true;
+				EventRepository::$load_md_separate = false;
 				break;
 			case xoctConf::SEP_EV_ACL_MD_PUB:
-				xoctEvent::$load_acl_separate = false;
-				xoctEvent::$load_pub_separate = false;
-				xoctEvent::$load_md_separate = false;
+				EventRepository::$load_acl_separate = false;
+				EventRepository::$load_pub_separate = false;
+				EventRepository::$load_md_separate = false;
 				break;
 		}
 
 		// META DATA
-		xoctEvent::$no_metadata = self::getConfig(self::F_NO_METADATA);
+		EventRepository::$no_metadata = self::getConfig(self::F_NO_METADATA);
 	}
 
 
