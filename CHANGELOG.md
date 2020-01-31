@@ -6,12 +6,11 @@
 - Feature: Chat for Live Streams
 - Improvement: Uploaded videos will now be saved as 'presentation' instead of 'presenter' (to trigger segmentation)
 - Bugfix: Workflow Parameters not available for new series
-- Improvement: Refactorings and changes for page component plugin
-- Fixed Typos
+- Bugfix: Fixed Typos
 - Bugfix: fetching scheduling of events without scheduling led to crash
-- Bugfix: Wrong organizers when creating multiple series via internal API
-- Improvement: add organizer & contributer only when creating a new series 
-- Started refactoring the model
+- Bugfix: wrong organizers when creating multiple series via internal API
+- Change: add organizer & contributer only when creating a new series 
+- Code: Started refactoring the model, made changes for PageComponent plugin
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links
