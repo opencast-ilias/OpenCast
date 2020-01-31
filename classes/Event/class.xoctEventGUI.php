@@ -18,7 +18,6 @@ class xoctEventGUI extends xoctGUI {
 
 	const IDENTIFIER = 'eid';
 	const CMD_STANDARD = 'index';
-	const CMD_SHOW_CONTENT = 'showContent';
 	const CMD_CLEAR_CACHE = 'clearCache';
 	const CMD_EDIT_OWNER = 'editOwner';
 	const CMD_UPDATE_OWNER = 'updateOwner';
@@ -82,7 +81,6 @@ class xoctEventGUI extends xoctGUI {
 
 		switch ($cmd) {
 			case self::CMD_STANDARD:
-			case self::CMD_SHOW_CONTENT:
 				$this->prepareContent();
 				break;
 			default:
@@ -147,18 +145,6 @@ class xoctEventGUI extends xoctGUI {
 
 
 	/**
-	 * same cmd as standard command (index()), except it's synchronous
-	 */
-	protected function showContent() {
-		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, true);
-        if ($xoctEventTableGUI->hasScheduledEvents()) {
-            self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
-        }
-		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
-	}
-
-
-	/**
 	 * asynchronous loading of tableGUI
 	 * @throws DICException
 	 * @throws ilTemplateException
@@ -219,19 +205,6 @@ class xoctEventGUI extends xoctGUI {
 
 		$this->loadAjaxCodeForTiles();	// the tilesGUI is loaded asynchronously
 		return '<div id="xoct_tiles_placeholder"></div>';
-	}
-	/**
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 * @throws xoctException
-	 */
-	protected function showContentTiles() {
-		$this->initViewSwitcherHTML('tiles');
-
-		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
-
-		return $xoctEventTileGUI->getHTML();
-		self::dic()->mainTemplate()->setContent($xoctEventTileGUI->getHTML());
 	}
 
 	/**
