@@ -11,6 +11,7 @@
 - Bugfix: fetching scheduling of events without scheduling led to crash
 - Bugfix: Wrong organizers when creating multiple series via internal API
 - Improvement: add organizer & contributer only when creating a new series 
+- Started refactoring the model
 
 ## [2.3.2]
 - Bugfix: invalid/wrong annotation links

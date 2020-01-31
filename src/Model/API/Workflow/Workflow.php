@@ -2,12 +2,15 @@
 
 namespace srag\Plugins\Opencast\Model\API\Workflow;
 
+use srag\Plugins\Opencast\Model\API\APIObject;
+use stdClass;
+
 /**
  * Class xoctWorkflow
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class Workflow
+class Workflow extends APIObject
 {
 
     /**
@@ -31,7 +34,7 @@ class Workflow
      */
     protected $operations;
     /**
-     * @var
+     * @var stdClass
      */
     protected $configuration;
 
@@ -133,4 +136,26 @@ class Workflow
     {
         $this->operations = $operations;
     }
+
+
+    /**
+     * @return stdClass
+     */
+    public function getConfiguration() : stdClass
+    {
+        return $this->configuration;
+    }
+
+
+    /**
+     * @param stdClass $configuration
+     */
+    public function setConfiguration(stdClass $configuration)
+    {
+        if ($this->configuration !== $configuration) {
+            $this->has_changed = true;
+        }
+        $this->configuration = $configuration;
+    }
+
 }

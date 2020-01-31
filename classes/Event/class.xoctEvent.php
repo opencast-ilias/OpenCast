@@ -3,6 +3,7 @@
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\API\Workflow\WorkflowCollection;
 
 /**
  * Class xoctEvent
@@ -160,6 +161,10 @@ class xoctEvent extends APIObject {
 		if (($this->isScheduled() || $this->isLiveEvent()) && (!$this->scheduling || $this->scheduling instanceof stdClass)) {
 			$this->loadScheduling();
 		}
+
+		if ($this->isScheduled() && !$this->workflows) {
+		    $this->loadWorkflows();
+        }
 
 		if (!$this->getXoctEventAdditions()) {
 			$this->initAdditions();
@@ -886,6 +891,17 @@ class xoctEvent extends APIObject {
 	}
 
 
+    /**
+     *
+     */
+    public function loadWorkflows() {
+	    if ($this->getIdentifier()) {
+	        $this->workflows = new WorkflowCollection($this->getIdentifier());
+        } else {
+	        $this->workflows = new WorkflowCollection();
+        }
+    }
+
 	/**
 	 * @var bool
 	 */
@@ -1043,6 +1059,10 @@ class xoctEvent extends APIObject {
 	 * @var Scheduling
 	 */
 	protected $scheduling = null;
+    /**
+     * @var WorkflowCollection
+     */
+	protected $workflows;
 	/**
 	 * @var string
 	 */
@@ -1481,6 +1501,23 @@ class xoctEvent extends APIObject {
 		$this->scheduling = $scheduling;
 	}
 
+
+    /**
+     * @return WorkflowCollection
+     */
+    public function getWorkflows() : WorkflowCollection
+    {
+        return $this->workflows;
+    }
+
+
+    /**
+     * @param WorkflowCollection $workflows
+     */
+    public function setWorkflows(WorkflowCollection $workflows)
+    {
+        $this->workflows = $workflows;
+    }
 
 
 	/**

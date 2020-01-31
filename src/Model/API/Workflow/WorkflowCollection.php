@@ -2,12 +2,17 @@
 
 namespace srag\Plugins\Opencast\Model\API\Workflow;
 
+use srag\Plugins\Opencast\Model\API\APIObject;
+use stdClass;
+use xoctException;
+use xoctRequest;
+
 /**
  * Class xoctWorkflowCollection
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class WorkflowCollection
+class WorkflowCollection extends APIObject
 {
 
     /**
@@ -28,6 +33,8 @@ class WorkflowCollection
      * xoctWorkflow constructor.
      *
      * @param string $event_id
+     *
+     * @throws xoctException
      */
     public function __construct(string $event_id = '')
     {
@@ -39,11 +46,18 @@ class WorkflowCollection
 
 
     /**
+     * @param stdClass $data
      *
+     * @throws xoctException
      */
-    public function read()
+    public function read(stdClass $data = null)
     {
-
+        if ($data === null) {
+            $data = json_decode(xoctRequest::root()->workflows()
+                ->parameter('filter', 'event_identifier:'.$this->getEventId())
+                ->get()) ?: new stdClass();
+        }
+        $this->loadFromStdClass($data);
     }
 
 

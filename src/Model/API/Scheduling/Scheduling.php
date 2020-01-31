@@ -147,7 +147,7 @@ class Scheduling extends APIObject
     /**
      * @param int $duration
      */
-    public function setDuration(int $duration)
+    public function setDuration($duration)
     {
         //	    if ($this->duration != $duration) {
         //	        $this->has_changed = true;
