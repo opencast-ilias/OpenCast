@@ -2,6 +2,7 @@
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\APIObject;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\Workflow\WorkflowCollection;
 
@@ -170,14 +171,14 @@ class xoctEvent extends APIObject {
 			$this->initAdditions();
 		}
 
-		$this->loadMetadata();
+        $this->loadMetadata();
+		
+        // if no_metadata option is set, the metadata below will already be initialized
+        if (EventRepository::$no_metadata) {
+            return;
+        }
 
-		// if no_metadata option is set, the metadata below will already be initialized
-		if (self::$no_metadata) {
-			return;
-		}
-
-		if (!$this->getSeriesIdentifier()) {
+        if (!$this->getSeriesIdentifier()) {
 			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
 		}
 
@@ -854,7 +855,7 @@ class xoctEvent extends APIObject {
 	 *
 	 */
 	public function loadMetadata() {
-		if ($this->getIdentifier() && !self::$no_metadata) {
+		if ($this->getIdentifier() && !EventRepository::$no_metadata) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
 			if (is_array($data)) {
 				foreach ($data as $d) {
