@@ -635,8 +635,11 @@ class xoctEvent extends APIObject {
 				$this->annotation_url = $url;
 			}
 		}
-
-		return $this->annotation_url;
+		// Get Media URL
+		$media_object= $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getMedia();	
+		$media_url = $media_object[0]->url;
+		error_log($this->annotation_url . '&mediaURL='. $media_url);
+		return $this->annotation_url . '&mediaURL='. $media_url;
 	}
 
 
@@ -657,7 +660,6 @@ class xoctEvent extends APIObject {
 				$this->player_url = $url;
 			}
 		}
-
 		return $this->player_url;
 	}
 
@@ -674,7 +676,6 @@ class xoctEvent extends APIObject {
 				$this->download_url = $url;
 			}
 		}
-
 		return $this->download_url;
 	}
 
