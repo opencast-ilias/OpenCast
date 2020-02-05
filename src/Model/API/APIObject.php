@@ -236,7 +236,7 @@ abstract class APIObject
      *
      * @return string
      */
-    public static function convertToUtf8(string $string) : string
+    public static function convertToUtf8($string)
     {
         if (is_object($string) || ilStr::isUtf8($string)) {
             return $string;
