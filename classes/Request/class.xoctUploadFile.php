@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\UI\Input\Plupload;
+
 /**
  * Class xoctUploadFile
  *
@@ -29,8 +32,8 @@ class xoctUploadFile {
 	 * @return CURLFile
 	 */
 	public function getCURLFile() {
-		$xoctPlupload = new xoctPlupload();
-		$CURLFile = new CURLFile($xoctPlupload->getTargetDir() . '/' . $this->getTitle());
+		$plupload = new Plupload();
+		$CURLFile = new CURLFile($plupload->getTargetDir() . '/' . $this->getTitle());
 
 		return $CURLFile;
 	}
