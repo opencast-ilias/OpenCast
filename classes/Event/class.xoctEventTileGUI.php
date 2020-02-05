@@ -145,6 +145,22 @@ class xoctEventTileGUI {
 				$this->has_scheduled_events = true;
 			}
 		}
+        $tab_prop = new ilTablePropertiesStorage();
+
+        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'order')
+            ?? 'event_start';
+        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'direction')
+            ?? 'asc';
+        usort($xoctEvents, function (xoctEvent $a, xoctEvent $b) use ($order, $direction) {
+            return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
+            $comparator = ($direction == 'asc') ? '<' : '>';
+           switch ($order) {
+               case 'event_start':
+                   return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
+               case 'event_title':
+
+           }
+        });
 		$this->events = array_values($xoctEvents);
 	}
 
