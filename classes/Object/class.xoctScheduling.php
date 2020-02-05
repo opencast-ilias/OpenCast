@@ -57,7 +57,7 @@ class xoctScheduling extends xoctObject {
 	 *
 	 */
 	protected function read() {
-		$data = json_decode(xoctRequest::root()->events($this->getEventId())->scheduling()->get()) ?: new stdClass();
+		$data = json_decode(xoctRequest::root()->events($this->getEventId())->scheduling()->get());
 		$this->loadFromStdClass($data);
 	}
 
