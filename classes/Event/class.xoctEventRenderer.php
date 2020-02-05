@@ -227,11 +227,31 @@ class xoctEventRenderer {
 	}
 
 	/**
+	 * @param $tpl ilTemplate
+	 * @param string $block_title
+	 * @param string $variable
+	 * @throws DICException
+	 * @throws ilTemplateException
+	 * @throws xoctException
+	 */
+	public function insertDescription(&$tpl, $block_title = 'description', $variable = 'DESCRIPTION') {
+		$this->insert($tpl, $variable, $this->getDescriptionHTML(), $block_title);
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getTitleHTML() {
 		return $this->xoctEvent->getTitle();
 	}
+
+
+    /**
+     * @return string
+     */
+	public function getDescriptionHTML() {
+	    return $this->xoctEvent->getDescription();
+    }
 
 	/**
 	 * @param $tpl
