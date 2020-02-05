@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
+use srag\Plugins\Opencast\UI\Input\Plupload;
 
 /**
  * Class xoctEventGUI
@@ -393,8 +394,8 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function uploadChunks() {
-		$xoctPlupload = new xoctPlupload();
-		$xoctPlupload->handleUpload();
+		$plupload = new Plupload();
+		$plupload->handleUpload();
 	}
 
 
