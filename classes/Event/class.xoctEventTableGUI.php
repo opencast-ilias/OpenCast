@@ -123,24 +123,28 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$renderer->insertDownloadLink($this->tpl);
 		$renderer->insertAnnotationLink($this->tpl);
 
-		if ($this->isColumsSelected('title')) {
+		if ($this->isColumsSelected('event_title')) {
 			$renderer->insertTitle($this->tpl);
 			$renderer->insertState($this->tpl);
 		}
 
-		if ($this->isColumsSelected('presenter')) {
+		if ($this->isColumsSelected('event_description')) {
+			$renderer->insertDescription($this->tpl);
+		}
+
+		if ($this->isColumsSelected('event_presenter')) {
 			$renderer->insertPresenter($this->tpl);
 		}
 
-		if ($this->isColumsSelected('location')) {
+		if ($this->isColumsSelected('event_location')) {
 			$renderer->insertLocation($this->tpl);
 		}
 
-		if ($this->isColumsSelected('start')) {
+		if ($this->isColumsSelected('event_start')) {
 			$renderer->insertStart($this->tpl);
 		}
 
-		if ($this->isColumsSelected('owner')) {
+		if ($this->isColumsSelected('event_owner')) {
 			$renderer->insertOwner($this->tpl);
 		}
 
@@ -296,7 +300,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	protected function parseData() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = $this->event_repository->getFiltered($filter, '', [], $this->getOffset(), $this->getLimit());
+		$a_data = $this->event_repository->getFiltered($filter, '', []);
 
 		$a_data = array_filter($a_data, $this->filterPermissions());
 		$a_data = array_filter($a_data, $this->filterArray());
