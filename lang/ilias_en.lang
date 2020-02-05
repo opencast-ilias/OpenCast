@@ -13,7 +13,7 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
-config_editor_link#:#Link to OpenCast Video Editor
+config_editor_link#:#Link to Opencast Video Editor
 config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#EULA
 config_events#:#Events
@@ -27,7 +27,7 @@ config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Saved
-config_roles#:#OpenCast Roles
+config_roles#:#Opencast Roles
 config_role_anonymous#:#Anonymous
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
@@ -45,7 +45,7 @@ config_workflow#:#Processing Workflow ID
 config_workflow_unpublish#:#Unpublish Workflow ID
 config_advanced#:#Advanced
 config_security#:#Security
-config_security_info#:#Improves the security by using OpenCasts "Stream Security". Only activate, if OpenCast is configured to use it.
+config_security_info#:#Improves the security by using Opencasts "Stream Security". Only activate, if Opencast is configured to use it.
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_player_links#:#Sign Player Link
 config_sign_player_links_overwrite_default#:#Use event duration for the validity of the signature
@@ -54,14 +54,14 @@ config_sign_player_links_additional_time_percent_info#:#How much additional time
 config_sign_download_links#:#Sign Download Link
 config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_request_comb_lv#:#Request Combination Level
-config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from OpenCast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
+config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
 config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
 config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
 config_api_base_info#:#e.g.: https://myopencast.com/api
 config_audio_allowed_info#:#Allows the upload of audio files.
-config_curl_username_info#:#User account in OpenCast which will be used to communicate over the API (needs enough permissions in OC).
+config_curl_username_info#:#User account in Opencast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
 config_curl_debug_level_info#:#Level of detail for log entries.
 config_use_streaming#:#Use Streaming URLs
@@ -69,18 +69,18 @@ config_streaming_url_info#:#Wowza URL for adaptive streaming. E.g.: https://wowz
 config_use_streaming_info#:#If active all mp4 files will be replaced by streaming urls
 config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
-config_workflow_info#:#ID of the workflow which will be executed in OpenCast after uploading an event.
-config_workflow_unpublish_info#:#ID of the workflow which will be executed in OpenCast before deleting an event. Requires API version 1.1.0.
-config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in OpenCast.
-config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this OpenCast group to obtain access to OpenCast.
-config_role_user_prefix_info#:#User specific role in OpenCast. Is used to grant the user permission on a series in OpenCast. Example: ROLE_USER_&#123IDENTIFIER}
-config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in OpenCast. Example: ROLE_OWNER_&#123IDENTIFIER}
+config_workflow_info#:#ID of the workflow which will be executed in Opencast after uploading an event.
+config_workflow_unpublish_info#:#ID of the workflow which will be executed in Opencast before deleting an event. Requires API version 1.1.0.
+config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in Opencast.
+config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
+config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
+config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}
 config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User mapping in uppercase
 config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
 config_internal_player#:#Internal Video-Player
-config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to OpenCast.
+config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to Opencast.
 config_streaming#:#Streaming
 config_streaming_url#:#Wowza URL
 config_general#:#General
@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Show in Form
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
 config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.
+config_enable_live_streams#:#Live Streams
+config_enable_live_streams_info#:#Allow viewing Live Streams. Live Streams will be automatically played in the internal video player.
+config_start_x_minutes_before_live#:#Enter before start
+config_start_x_minutes_before_live_info#:#Defines how many minutes before the start of the event the player is accessable.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Required to fetch the Live Streams. Example: https://presentation.opencast.my-university.de/
+config_enable_chat#:#Activate Chat
+config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish
@@ -138,7 +146,7 @@ event_cut#:#Cut Event
 event_date#:#Date
 event_delete#:#Delete Event
 event_unpublish#:#Delete Publications
-event_delete_confirm#:#This will delete the Event in ILIAS and in OpenCast. Do you want to proceed?
+event_delete_confirm#:#This will delete the Event in ILIAS and in Opencast. Do you want to proceed?
 event_unpublish_confirm#:#You have to remove all publications from this event in order to delete this event. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
@@ -172,6 +180,7 @@ event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_owner_username#:#Owner
 event_player#:#Play
+event_player_live#:#Join
 event_presenter#:#Presenter
 event_presenters#:#Presenters
 event_preview#:#Preview
@@ -189,12 +198,15 @@ event_state_offline#:#Offline, not visible to students
 event_state_scheduled#:#Scheduled Event, not visible to students.
 event_state_scheduled_offline#:#Scheduled Event (Offline), not visible to students.
 event_state_recording#:#Is currently being recorded, not visible to students.
+event_state_live_scheduled#:#Live Stream (not started yet). Open from %s.
+event_state_live_offline#:#Scheduled live Stream (Offline), not visible to students.
+event_state_live_running#:#Currently running Live Stream.
 event_title#:#Title
 event_update#:#Save
 event_updateOwner#:#Update owner
 event_view#:#View
 event_online#:#Event online
-event_online_info#:#An Event can be set offline on this ILIAS-Installation. The Event on OpenCast ist not affected
+event_online_info#:#An Event can be set offline on this ILIAS-Installation. The Event on Opencast ist not affected
 event_upload_select#:#Select file
 event_upload_clear#:#Reset
 event_supported_filetypes#:#Supported Filetypes
@@ -203,11 +215,13 @@ event_created_unix#:#Date
 event_event_created_unix#:#Date
 event_event_event_created_unix#:#Date
 event_set_online#:#Set online
-event_delete_confirm_w_duplicates#:#This will delete the Event in OpenCast and in every linked series in ILIAS. Do you want to proceed?
+event_delete_confirm_w_duplicates#:#This will delete the Event in Opencast and in every linked series in ILIAS. Do you want to proceed?
 event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
 event_report_quality_problem#:#Report Quality Problems
+event_series#:#Series
+event_own_series#:#Own Series (%s)
 groups_available_participants_header#:#Available Participants
 groups_header#:#Groups
 groups_new#:#New Group
@@ -227,8 +241,8 @@ owner_only_one_owner#:#Only one owner can be chosen per video.
 invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
-obj_xoct#:#OpenCast
-objs_xoct#:#OpenCast
+obj_xoct#:#Opencast
+objs_xoct#:#Opencast
 perm_upload#:#Upload
 perm_edit_videos#:#Edit Videos
 publication_usage_add#:#Add
@@ -260,12 +274,15 @@ publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_live_event#:#Live-Event
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Series-Type
 series_create#:#Create Series
+series_chat_active#:#Live Chat
+series_chat_active_info#:#Activates an on-screen chat for live events.
 series_default_view#:#Default View
 series_department#:#Department
 series_department_info#:#How is the name of your department?
@@ -290,7 +307,7 @@ series_permission_per_clip#:#Set permissions for an Event
 series_permission_per_clip_info#:#This setting enables an individual rights management based on Event ownership (iVT-Mode). Let this setting deactivated, when all students are allowed to see all the Events of this series.
 series_permission_template#:#Permissions
 series_publish_on_video_portal#:#Publish Series on %s
-series_publish_on_video_portal_info#:#This setting leads to a publication on the video portal of your university. Leave this setting deactivated if the recordings are only to be viewed in ILIAS.
+series_publish_on_video_portal_info#:#This setting leads to a publication on the video portal of your institution. Leave this setting deactivated if the recordings are only to be viewed in ILIAS.
 series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
@@ -352,10 +369,10 @@ upload_token_upload_token#:#Upload-Token
 xoct_new#:#Create openCast-Series
 xoct_rep_robj_xoct_perm_upload#:#User can upload videos
 xoct_rep_robj_xoct_perm_edit_videos#:#User can edit videos
-xoct_visible#:#OpenCast object is visible
-xoct_read#:#User has read access to OpenCast and can watch videos
-xoct_write#:#User can edit setting of OpenCast object
-xoct_delete#:#User can move or delete OpenCast object
+xoct_visible#:#Opencast object is visible
+xoct_read#:#User has read access to Opencast and can watch videos
+xoct_write#:#User can edit setting of Opencast object
+xoct_delete#:#User can move or delete Opencast object
 xoct_edit_permission#:#User can change permission settings
 form_msg_select#:#Please select fist a Videofile
 form_msg_not_supported#:#Filetype is not supported
@@ -363,7 +380,7 @@ info_linked_items#:#Links
 info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
-msg_creation_failed#:#Objects of type "OpenCast" can only be created in courses or groups.
+msg_creation_failed#:#Objects of type "Opencast" can only be created in courses or groups.
 msg_permission_templates_info#:#The created templates can be chosen from when creating or editing a series. If chosen, the configured role with the given permissions and actions will be set on the series. The roles of the residual templates will be removed.
 msg_confirm_delete_perm_template#:#Do you really want to delete the following template?
 msg_confirm_delete_reports#:#Do you really want to delete the following reports?
@@ -373,7 +390,7 @@ msg_confirm_delete_param#:#Do you really want to delete the following parameter?
 msg_load_workflow_params#:#The following parameters were returned by the workflow API. Would you like to load these (new parameters will be created, old ones will be deleted and already existing parameters will be updated)?
 msg_no_params_found#:#No parameters were found. The defined workflow may have no configuration panel, from which the parameters can be read. Please create the parameters manually.
 msg_success#:#Changes saved successfully.
-msg_confirm_overwrite_series_params#:#Warning: This will overwrite all locally adjusted configurations of workflow parameters in ILIAS OpenCast objects. Continue?
+msg_confirm_overwrite_series_params#:#Warning: This will overwrite all locally adjusted configurations of workflow parameters in ILIAS Opencast objects. Continue?
 msg_workflow_params_parsing_failed#:#Parsing of parameters via API failed:
 msg_workflow_parameters_info#:#Workflow Parameter are information which are passed to Opencast through the variable 'processing' when creating or scheduling an event. Note that the parameters must match the given workflow definition (Settings -> Events -> Processing Workflow ID). Clicking the button "Load Parameters via API" will try to load the parameters automatically - however this will only work if the workflow definition in Opencast has configured a configuration panel.
 table_column_default#:#Default
@@ -423,3 +440,6 @@ value_admin#:#Usage for Admins
 list#:#List
 tiles#:#Tiles
 tiles_per_page#:#Tiles per page:
+event_live_waiting_text#:#Live Event hasn't started yet. <br>Scheduled start time: %s
+event_live_interrupted_text#:#The Live Event has been paused or prematurely terminated.
+event_live_over_text#:#Live Event finished.

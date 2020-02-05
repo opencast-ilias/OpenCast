@@ -13,7 +13,7 @@ config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
 config_curl_username#:#API-Benutzername
-config_editor_link#:#Link zum OpenCast-Video-Editor
+config_editor_link#:#Link zum Opencast-Video-Editor
 config_editor_link_info#:#Als Platzhalter kann &#123event_id} verwendet werden. Bsp: https://myopencast.com/external-url/events/&#123event_id}/editor
 config_eula#:#Nutzungsvereinbarung
 config_events#:#Aufzeichnungen
@@ -27,7 +27,7 @@ config_log_level_2#:#MEDIUM
 config_log_level_3#:#HIGH
 config_log_level_4#:#ULTRA
 config_msg_success#:#Gespeichert
-config_roles#:#OpenCast-Rollen
+config_roles#:#Opencast-Rollen
 config_role_anonymous#:#Anonym
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
@@ -45,7 +45,7 @@ config_workflow#:#Processing-Workflow-ID
 config_workflow_unpublish#:#Unpublish-Workflow-ID
 config_advanced#:#Erweitert
 config_security#:#Security
-config_security_info#:#Erhöht die Sicherheit mithilfe von OpenCasts "Stream Security". Nur aktivieren, wenn OpenCast dafür konfiguriert ist.
+config_security_info#:#Erhöht die Sicherheit mithilfe von Opencasts "Stream Security". Nur aktivieren, wenn Opencast dafür konfiguriert ist.
 config_sign_annotation_links#:#Annotationslink signieren
 config_sign_player_links#:#Playerlink signieren
 config_sign_player_links_overwrite_default#:#Benutze Aufzeichnungsdauer als Dauer für die Gültigkeit der Signatur
@@ -54,32 +54,32 @@ config_sign_player_links_additional_time_percent_info#:#Wieviel zusätzliche Zei
 config_sign_download_links#:#Downloadlink signieren
 config_sign_thumbnail_links#:#Thumbnaillink signieren
 config_request_comb_lv#:#Request Kombinations Level
-config_request_comb_lv_info#:#Definiert die Zusammensetzung der Anfragen, mit welchen die Events von OpenCast geholt werden (viele kleine/wenige grosse Anfragen). Dies hat keinen Einfluss auf die Funktionalität, beeinflusst jedoch die Performanz.
+config_request_comb_lv_info#:#Definiert die Zusammensetzung der Anfragen, mit welchen die Events von Opencast geholt werden (viele kleine/wenige grosse Anfragen). Dies hat keinen Einfluss auf die Funktionalität, beeinflusst jedoch die Performanz.
 config_groups#:#Opencast-Gruppen
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standardrollen
 config_std_roles_info#:#Die hier angegebenen Rollen erhalten Schreib- und Leserechte beim Erstellen eines Events oder einer Serie.
 config_api_base_info#:#z.B.: https://myopencast.com/api
 config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Audio-Dateien hochgeladen werden.
-config_curl_username_info#:#Benutzeraccount in OpenCast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
+config_curl_username_info#:#Benutzeraccount in Opencast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
 config_curl_password_info#:#Passwort zum oben angegebenen Account.
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
 config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
 config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
-config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in OpenCast angewendet wird.
+config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in Opencast angewendet wird.
 config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0.
-config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in OpenCast verwendet werden soll.
-config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden vom Plugin in der hier angegebenen OpenCast-Gruppe eingeschrieben, um dadurch Zugriff auf OpenCast zu erhalten.
-config_role_user_prefix_info#:#Benutzereigene Rolle in OpenCast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in OpenCast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
-config_role_ivt_external_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}
-config_role_ivt_email_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in OpenCast existieren. Bsp: ROLE_OWNER_EMAIL_&#123IDENTIFIER}
+config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in Opencast verwendet werden soll.
+config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden vom Plugin in der hier angegebenen Opencast-Gruppe eingeschrieben, um dadurch Zugriff auf Opencast zu erhalten.
+config_role_user_prefix_info#:#Benutzereigene Rolle in Opencast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in Opencast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
+config_role_ivt_external_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}
+config_role_ivt_email_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
 config_no_metadata#:#Ohne Metadaten
 config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
-config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an OpenCast weiterzuleiten.
+config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an Opencast weiterzuleiten.
 config_use_streaming#:#Benutze Streaming URLs
 config_streaming#:#Streaming
 config_streaming_url#:#Wowza URL
@@ -124,6 +124,14 @@ config_workflow_parameter_value_3#:#Im Formular anbieten
 config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
 config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
 config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.
+config_enable_live_streams#:#Live-Streams
+config_enable_live_streams_info#:#Abspielen von Live-Streams ermöglichen. Live-Streams werden automatisch im internen Video-Player abgespielt.
+config_start_x_minutes_before_live#:#Beitritt bevor Start
+config_start_x_minutes_before_live_info#:#Gibt an, wieviele Minuten vor Start des Events der Player geöffnet werden kann.
+config_presentation_node#:#URL Presentation Node
+config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.: https://presentation.opencast.meine-uni.de/
+config_enable_chat#:#Chat aktivieren
+config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
@@ -136,7 +144,7 @@ event_created#:#Erstellt
 event_creator#:#Ersteller
 event_cut#:#Aufzeichnung schneiden
 event_date#:#Datum
-event_delete#:#Aufzeichung löschen
+event_delete#:#Aufzeichnung löschen
 event_unpublish#:#Publikationen entfernen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich entfernen?
@@ -158,7 +166,7 @@ event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
 event_msg_currently_unpublishing#:#Der Prozess zum Entfernen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
 event_msg_success#:#Änderungen gespeichert
-event_msg_scheduled#:#Aufzeichungstermin(e) erstellt.
+event_msg_scheduled#:#Aufzeichnungstermin(e) erstellt.
 event_msg_scheduling_conflict#:#Termin(e) konnte(n) nicht erstellt werden, da es Überschneidungen mit existierenden Terminen gibt:
 event_msg_scheduled_in_past#:#Planungskonflikt: Aufzeichnungen können nicht in der Vergangenheit geplant werden.
 event_msg_end_before_start#:#Planungskonflikt: Der Endzeitpunkt der Aufzeichnung muss nach dem Anfangszeitpunkt liegen.
@@ -172,6 +180,7 @@ event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_owner_username#:#Besitzer
 event_player#:#Abspielen
+event_player_live#:#Beitreten
 event_presenter#:#Referent/in
 event_presenters#:#Referent/in
 event_preview#:#Vorschau
@@ -189,23 +198,28 @@ event_state_offline#:#Offline, für Studierende nicht sichtbar.
 event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar.
 event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar.
 event_state_recording#:#Wird momentan Aufgezeichnet, für Studierende nicht sichtbar.
+event_state_live_scheduled#:#Live-Übertragung (noch nicht begonnen). Offen ab %s.
+event_state_live_offline#:#Geplante Live-Aufzeichnung (Offline), für Studierende nicht sichtbar.
+event_state_live_running#:#Laufende Live-Übertragung.
 event_title#:#Titel
 event_update#:#Speichern
 event_updateOwner#:#Besitzer speichern
 event_view#:#Anzeigen
 event_online#:#Aufzeichnung online
-event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf OpenCast abgebildet
+event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf Opencast abgebildet
 event_upload_select#:#Datei auswählen
 event_upload_clear#:#Zurücksetzen
 event_supported_filetypes#:#Unterstützte Dateitypen
 event_set_offline#:#Offline schalten
 event_created_unix#:#Datum
 event_set_online#:#Online schalten
-event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf OpenCast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
+event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf Opencast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
 event_report_date_modification#:#Terminanpassungen melden
 event_report_quality_problem#:#Qualitätsprobleme melden
+event_series#:#Serie
+event_own_series#:#Eigene Serie (%s)
 groups_available_participants_header#:#Verfügbare Teilnehmer
 groups_header#:#Gruppen
 groups_new#:#Neue Gruppe
@@ -225,8 +239,8 @@ owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
-obj_xoct#:#OpenCast
-objs_xoct#:#OpenCast
+obj_xoct#:#Opencast
+objs_xoct#:#Opencast
 perm_upload#:#Upload
 perm_edit_videos#:#Videos Editieren
 publication_usage_add#:#Hinzufügen
@@ -258,12 +272,15 @@ publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_live_event#:#Live-Event
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Serie-Typ
 series_create#:#Serie anlegen
+series_chat_active#:#Live-Chat
+series_chat_active_info#:#Aktiviert einen on-screen Chat bei Live-Events.
 series_default_view#:#Standard-Ansicht
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
@@ -288,7 +305,7 @@ series_permission_per_clip#:#Rechte pro Aufzeichnung setzen
 series_permission_per_clip_info#:#Diese Einstellung aktiviert eine individuelle Rechteverwaltung auf Aufzeichnungs-Ebene (iVT-Modus). Lassen Sie Einstellung deaktiviert, wenn alle Kursteilnehmer sämtliche Aufzeichnungen der gewählten Serie sehen dürfen.
 series_permission_template#:#Berechtigungen
 series_publish_on_video_portal#:#Serie auf %s publizieren
-series_publish_on_video_portal_info#:#Diese Einstellung führt zu einer Publikation auf dem Videoportal Ihrer Universität. Lassen Sie die Einstellung deaktiviert, wenn die Aufzeichnungen nur in ILIAS zu sehen sein sollen.
+series_publish_on_video_portal_info#:#Diese Einstellung führt zu einer Publikation auf dem Videoportal Ihrer Hochschule. Lassen Sie die Einstellung deaktiviert, wenn die Aufzeichnungen nur in ILIAS zu sehen sein sollen.
 series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
@@ -347,21 +364,21 @@ subtab_workflow_params#:#Workflow-Parameter
 upload_token_channel_id#:#Series-ID
 upload_token_daily_upload_token#:#Token
 upload_token_upload_token#:#Upload-Token
-xoct_new#:#OpenCast-Series erstellen
+xoct_new#:#Opencast-Series erstellen
 xoct_rep_robj_xoct_perm_upload#:#Benutzer kann Videos hochladen
 xoct_rep_robj_xoct_perm_edit_videos#:#Benutzer kann Videos editieren
-xoct_visible#:#OpenCast-Objekt ist sichtbar
-xoct_read#:#Lesezugriff auf OpenCast-Objekt
-xoct_write#:#Einstellungen eines OpenCast-Objekts bearbeiten
-xoct_delete#:#OpenCast-Objekt löschen oder verschieben
-xoct_edit_permission#:#Rechteeinstellungen des OpenCast-Objektes ändern
+xoct_visible#:#Opencast-Objekt ist sichtbar
+xoct_read#:#Lesezugriff auf Opencast-Objekt
+xoct_write#:#Einstellungen eines Opencast-Objekts bearbeiten
+xoct_delete#:#Opencast-Objekt löschen oder verschieben
+xoct_edit_permission#:#Rechteeinstellungen des Opencast-Objektes ändern
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 form_msg_not_supported#:#Dateityp wird nicht unterstützt
 info_linked_items#:#Verlinkungen
 info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
-msg_creation_failed#:#Objekte vom Typ "OpenCast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
+msg_creation_failed#:#Objekte vom Typ "Opencast" können nur innerhalb von Kursen oder Gruppen angelegt werden.
 msg_permission_templates_info#:#Die erstellten Vorlagen können beim Erstellen und Bearbeiten einer Serie ausgewählt werden, um die konfigurierte Rolle mit den entsprechenden Rechten und ACL-Actions auf der Serie zu setzen. Die Rollen der restlichen Vorlagen werden dabei entfernt.
 msg_confirm_delete_perm_template#:#Sind Sie sicher, dass Sie folgende Vorlage löschen möchten?
 msg_confirm_delete_reports#:#Sind Sie sicher, dass Sie folgende Meldungen löschen möchten?
@@ -421,3 +438,6 @@ value_admin#:#Verwendung Admins
 list#:#Liste
 tiles#:#Kacheln
 tiles_per_page#:#Kacheln pro Seite:
+event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
+event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
+event_live_over_text#:#Das Live Event wurde beendet.

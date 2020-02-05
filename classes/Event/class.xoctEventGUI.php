@@ -1,23 +1,28 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
+use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Group\Group;
+use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 
 /**
  * Class xoctEventGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
+ * @ilCtrl_Calls xoctEventGUI: xoctPlayerGUI
  * @ilCtrl_IsCalledBy xoctEventGUI: ilObjOpenCastGUI
  */
 class xoctEventGUI extends xoctGUI {
 
 	const IDENTIFIER = 'eid';
 	const CMD_STANDARD = 'index';
-	const CMD_SHOW_CONTENT = 'showContent';
 	const CMD_CLEAR_CACHE = 'clearCache';
 	const CMD_EDIT_OWNER = 'editOwner';
 	const CMD_UPDATE_OWNER = 'updateOwner';
-	const CMD_UPLOAD_CHUNKS = 'uploadChunks';
+	const CMD_UPLOAD_CHUNKS = EventFormGUI::PARENT_CMD_UPLOAD_CHUNKS;
 	const CMD_SET_ONLINE = 'setOnline';
 	const CMD_SET_OFFLINE = 'setOffline';
 	const CMD_CUT = 'cut';
@@ -26,14 +31,10 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_REPORT_QUALITY = 'reportQuality';
 	const CMD_SCHEDULE = 'schedule';
 	const CMD_CREATE_SCHEDULED = 'createScheduled';
-	const CMD_DELIVER_VIDEO = 'deliverVideo';
-	const CMD_STREAM_VIDEO = 'streamVideo';
 	const CMD_SWITCH_TO_LIST = 'switchToList';
 	const CMD_SWITCH_TO_TILES = 'switchToTiles';
+	const CMD_SHOW_CHAT_HISTORY = 'showChatHistory';
 	const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
-
-	const ROLE_MASTER = "presenter";
-	const ROLE_SLAVE = "presentation";
 
 	/**
 	 * @var xoctOpenCast
@@ -46,19 +47,41 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
 		$this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
-		self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
-		self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
-		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');
 	}
 
 
-	/**
+    public function executeCommand()
+    {
+        $nextClass = self::dic()->ctrl()->getNextClass();
+
+        switch ($nextClass) {
+            case strtolower(xoctPlayerGUI::class):
+                $xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
+                // check access
+                if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, xoctUser::getInstance(self::dic()->user()), $this->xoctOpenCast)) {
+                    ilUtil::sendFailure($this->txt("msg_no_access"), true);
+                    $this->cancel();
+                }
+                $xoctPlayerGUI = new xoctPlayerGUI($this->xoctOpenCast);
+                self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
+                break;
+            default:
+                $cmd = self::dic()->ctrl()->getCmd(self::CMD_STANDARD);
+                $this->performCommand($cmd);
+                break;
+        }    }
+
+
+    /**
 	 * @param $cmd
 	 */
 	protected function performCommand($cmd) {
+	    self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+        self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
+        self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
+
 		switch ($cmd) {
 			case self::CMD_STANDARD:
-			case self::CMD_SHOW_CONTENT:
 				$this->prepareContent();
 				break;
 			default:
@@ -71,7 +94,6 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function prepareContent() {
-		// init waiter
 		xoctWaiterGUI::initJS();
 		xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
 
@@ -120,18 +142,6 @@ class xoctEventGUI extends xoctGUI {
 
 			self::dic()->toolbar()->addButtonInstance($b);
 		}
-	}
-
-
-	/**
-	 * same cmd as standard command (index()), except it's synchronous
-	 */
-	protected function showContent() {
-		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, true);
-        if ($xoctEventTableGUI->hasScheduledEvents()) {
-            self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
-        }
-		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $xoctEventTableGUI->getHTML() . $this->getModalsHTML());
 	}
 
 
@@ -196,19 +206,6 @@ class xoctEventGUI extends xoctGUI {
 
 		$this->loadAjaxCodeForTiles();	// the tilesGUI is loaded asynchronously
 		return '<div id="xoct_tiles_placeholder"></div>';
-	}
-	/**
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 * @throws xoctException
-	 */
-	protected function showContentTiles() {
-		$this->initViewSwitcherHTML('tiles');
-
-		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
-
-		return $xoctEventTileGUI->getHTML();
-		self::dic()->mainTemplate()->setContent($xoctEventTileGUI->getHTML());
 	}
 
 	/**
@@ -367,7 +364,7 @@ class xoctEventGUI extends xoctGUI {
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
 		}
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -378,7 +375,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function create() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
@@ -408,7 +405,7 @@ class xoctEventGUI extends xoctGUI {
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
 		}
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -419,7 +416,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function createScheduled() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEventFormGUI = new xoctEventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
+		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
@@ -448,7 +445,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
@@ -469,7 +466,7 @@ class xoctEventGUI extends xoctGUI {
 
 		// add user to ilias producers
 		try {
-			$ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
 			$sleep = $ilias_producers->addMember($xoctUser);
 		} catch (xoctException $e) {
 			$sleep = false;
@@ -502,7 +499,7 @@ class xoctEventGUI extends xoctGUI {
 		if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
             // add user to ilias producers
             try {
-                $ilias_producers = xoctGroup::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+                $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
                 $sleep = $ilias_producers->addMember($xoctUser);
             } catch (xoctException $e) {
                 $sleep = false;
@@ -552,362 +549,6 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 *
 	 */
-	public function streamVideo() {
-		$xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
-
-		// check access
-		if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, xoctUser::getInstance(self::dic()->user()), $this->xoctOpenCast)) {
-			ilUtil::sendFailure($this->txt("msg_no_access"), true);
-			$this->cancel();
-		}
-
-		$publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
-
-		// Multi stream
-		$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
-			return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-				&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
-		}));
-		if (count($medias) === 0) {
-			// Single stream
-			$medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
-				return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-					&& in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
-			}));
-		}
-
-		/**
-		 * @var xoctAttachment[] $previews
-		 */
-		$previews = array_filter($publication_player->getAttachments(), function (xoctAttachment $attachment) {
-			return (strpos($attachment->getFlavor(), '/player+preview') !== false);
-		});
-		$previews = array_reduce($previews, function (array &$previews, xoctAttachment $preview) {
-			$previews[explode("/", $preview->getFlavor())[0]] = $preview;
-
-			return $previews;
-		}, []);
-
-		$duration = 0;
-
-		$id = filter_input(INPUT_GET, self::IDENTIFIER);
-
-		$streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
-			$url = $media->getUrl();
-			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-				$url = xoctSecureLink::sign($url);
-			}
-
-			$role = (strpos($media->getFlavor(), xoctMedia::ROLE_PRESENTATION) !== false ? xoctMedia::ROLE_PRESENTATION : xoctMedia::ROLE_PRESENTER);
-
-			if ($duration == 0) {
-				$duration = $media->getDuration();
-			}
-
-			$preview_url = $previews[$role];
-			if ($preview_url !== NULL) {
-				$preview_url = $preview_url->getUrl();
-				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-					$preview_url = xoctSecureLink::sign($preview_url);
-				}
-			} else {
-				$preview_url = "";
-			}
-
-
-
-            if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
-
-                $smil_url_identifier = ($role !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
-
-                $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
-
-                $hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
-
-                $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
-
-	            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-
-	            	$valid_until = null;
-
-		            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-			            $duration_in_seconds = $duration / 1000;
-
-			            $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-
-			            $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
-		            }
-
-		            $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
-		            $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
-	            }
-
-                return [
-                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
-                    "sources" => [
-                        "hls" => [
-                            [
-                                "src" => $hls_url,
-                                "mimetype" => "application/x-mpegURL"
-                            ],
-                        ],
-                        "dash" => [
-                            [
-                                "src" => $dash_url,
-                                "mimetype" => "application/dash+xml"
-                            ]
-                        ]
-                    ],
-                    "preview" => $preview_url
-                ];
-            }
-            else{
-                return [
-                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "content" => ($role !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
-                    "sources" => [
-                        "mp4" => [
-                            [
-                                "src" => $url,
-                                "mimetype" => $media->getMediatype(),
-                                "res" => [
-                                    "w" => $media->getWidth(),
-                                    "h" => $media->getHeight()
-                                ]
-                            ]
-                        ]
-
-                    ],
-                    "preview" => $preview_url
-                ];
-            }
-		}, $medias);
-
-		if( xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
-
-			$filteredStreams = array();
-			foreach ( $streams as $stream)
-			{
-				$filteredStreams[$stream['content']] = $stream;
-			}
-
-			$streams = array();
-			foreach ($filteredStreams as $stream)
-			{
-				$streams[] = $stream;
-			}
-		}
-
-		$segmentFlavor = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS)->getFlavor();
-		$publication_usage_segments = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS);
-		$attachments =
-			$publication_usage_segments->getMdType() == xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF ?
-				$xoctEvent->getFirstPublicationMetadataForUsage($publication_usage_segments)->getAttachments() :
-				$xoctEvent->getPublicationMetadataForUsage($publication_usage_segments);
-
-		$segments = array_filter($attachments, function (xoctAttachment $attachment) use ( &$segmentFlavor)  {
-			return strpos($attachment->getFlavor(), $segmentFlavor) !== FALSE;
-		});
-
-		$segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
-			if (!isset($segments[$segment->getRef()])) {
-				$segments[$segment->getRef()] = [];
-			}
-			$segments[$segment->getRef()][$segment->getFlavor()] = $segment;
-
-			return $segments;
-		}, []);
-
-		ksort($segments);
-		$frameList = array_values(array_map(function (array $segment) {
-
-			if( xoctConf::getConfig(xoctConf::F_USE_HIGHLOWRESSEGMENTPREVIEWS)) {
-				/**
-				 * @var xoctAttachment[] $segment
-				 */
-				$high = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
-				$low = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
-				if ($high === NULL || $low === NULL) {
-					$high = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
-					$low = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
-				}
-
-				$time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
-				$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-				$time = $time->getTimestamp();
-
-				$high_url = $high->getUrl();
-				$low_url = $low->getUrl();
-				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-					$high_url = xoctSecureLink::sign($high_url);
-					$low_url = xoctSecureLink::sign($low_url);
-				}
-
-				return [
-					"id" => "frame_" . $time,
-					"mimetype" => $high->getMediatype(),
-					"time" => $time,
-					"url" => $high_url,
-					"thumb" => $low_url
-				];
-			}
-			else {
-				$preview = $segment[xoctMetadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
-
-				if ($preview === NULL) {
-					$preview = $segment[xoctMetadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
-				}
-
-				$time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
-				$time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-				$time = $time->getTimestamp();
-
-				$url = $preview->getUrl();
-				if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-					$url = xoctSecureLink::sign($url);
-
-				}
-
-				return [
-					"id" => "frame_" . $time,
-					"mimetype" => $preview->getMediatype(),
-					"time" => $time,
-					"url" => $url,
-					"thumb" => $url
-				];
-			}
-		}, $segments));
-
-		$tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", false, false);
-
-		$tpl->setVariable("TITLE", $xoctEvent->getTitle());
-
-		$tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
-
-		$tpl->setVariable("PAELLA_CONFIG_FILE", self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json");
-
-		$data = [
-			"streams" => $streams,
-			"frameList" => $frameList,
-			"metadata" => [
-				"title" => $xoctEvent->getTitle(),
-				"duration" => $duration
-			]
-		];
-		$tpl->setVariable("DATA", json_encode($data));
-
-		echo $tpl->get();
-
-		exit();
-	}
-
-    /**
-     *
-     */
-    protected function deliverVideo() {
-        $event_id = $_GET['event_id'];
-        $mid = $_GET['mid'];
-        $xoctEvent = xoctEvent::find($event_id);
-        $media = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER))->getMedia();
-        foreach ($media as $medium) {
-            if ($medium->getId() == $mid) {
-                $url = $medium->getUrl();
-                break;
-            }
-        }
-        if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-            $url = xoctSecureLink::sign($url);
-        }
-//		$ctype= 'video/mp4';
-//		header('Content-Type: ' . $ctype);
-//		$handle = fopen($url, "rb");
-//		fpassthru($handle);
-//		$contents = fread($handle, filesize(()));
-//		fclose($handle);
-//		echo $contents;
-		header("Location: " . $url);
-		exit;
-
-        // this request fetches the filesize. Better cache filesize to reduce loading time
-        ini_set('max_execution_time', 0);
-        $useragent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.96 Safari/537.36";
-        $v = $url;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 222222);
-        curl_setopt($ch, CURLOPT_URL, $v);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $info = curl_exec($ch);
-        $size2 = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-        header("Content-Type: video/mp4");
-
-
-        $filesize = $size2;
-        $offset = 0;
-        $length = $filesize;
-        if (isset($_SERVER['HTTP_RANGE'])) {
-            $partialContent = "true";
-            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
-            $offset = intval($matches[1]);
-            $length = $size2 - $offset - 1;
-        } else {
-            $partialContent = "false";
-        }
-        if ($partialContent == "true") {
-            header('HTTP/1.1 206 Partial Content');
-            header('Accept-Ranges: bytes');
-            header('Content-Range: bytes '.$offset.
-                '-'.($offset + $length).
-                '/'.$filesize);
-        } else {
-            header('Accept-Ranges: bytes');
-        }
-        header("Content-length: ".$size2);
-
-
-        $ch = curl_init();
-        if (isset($_SERVER['HTTP_RANGE'])) {
-            // if the HTTP_RANGE header is set we're dealing with partial content
-            $partialContent = true;
-            // find the requested range
-            // this might be too simplistic, apparently the client can request
-            // multiple ranges, which can become pretty complex, so ignore it for now
-            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
-            $offset = intval($matches[1]);
-            $length = $filesize - $offset - 1;
-            $headers = array(
-                'Range: bytes='.$offset.
-                '-'.($offset + $length).
-                ''
-            );
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 222222);
-        curl_setopt($ch, CURLOPT_URL, $v);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-        curl_setopt($ch, CURLOPT_NOBODY, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-        curl_exec($ch);
-        exit;
-//		echo $out;
-    }
-
-
-	/**
-	 *
-	 */
 	protected function saveAndStay() {
 		/**
 		 * @var xoctEvent $xoctEvent
@@ -919,7 +560,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
@@ -944,7 +585,7 @@ class xoctEventGUI extends xoctGUI {
 			$this->cancel();
 		}
 
-		$xoctEventFormGUI = new xoctEventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
+		$xoctEventFormGUI = new EventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
 		$xoctEventFormGUI->setValuesByPost();
 
 		if ($xoctEventFormGUI->saveObject()) {
@@ -972,7 +613,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -1005,7 +646,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function resetPermissions() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = xoctEvent::getFiltered($filter, NULL, NULL);
+		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -1163,7 +804,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function clearCache() {
 		xoctCacheFactory::getInstance()->flush();
 		$this->xoctOpenCast->getSeriesIdentifier();
-		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_CONTENT);
+		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 
 	/**
@@ -1179,6 +820,7 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
 			$modal_quality_html = $modal_quality->getHTML();
 		}
+
 		return $modal_date_html . $modal_quality_html;
 	}
 
@@ -1306,4 +948,16 @@ class xoctEventGUI extends xoctGUI {
 		return $intro_text;
 	}
 
+	/**
+	 *
+	 */
+	protected function showChatHistory() {
+		$event_id = filter_input(INPUT_GET, 'event_id');
+		$chatroom = ChatroomAR::findBy($event_id, $this->getObjId());
+		if ($chatroom) {
+			$ChatHistoryGUI = new ChatHistoryGUI($chatroom->getId());
+			echo $ChatHistoryGUI->render();
+			exit;
+		}
+	}
 }

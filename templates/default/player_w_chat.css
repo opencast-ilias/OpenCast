@@ -1,0 +1,57 @@
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+}
+
+div#playerContainer {
+	display: inline-block !important;
+	position: relative;
+	float: left;
+	width: 80% !important;
+	height: 100%;
+}
+
+#paellaPlayer_loader {
+	width: 80%;
+	/*position: absolute !important;*/
+}
+
+span.xoct_pseudo_element {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.overlay_live {
+	position:absolute;
+	top: 0;
+	left: 0;
+	text-align: center;
+	height: 100%;
+	width: 80%;
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+	z-index: 100;
+}
+
+.overlay_live_text {
+	display: inline-block;
+	font-size: 32px;
+}
+
+@media screen and (max-device-width: 768px) {
+	.overlay_live {
+		width: 100%;
+	}
+
+	div#playerContainer {
+		width: 100% !important;
+	}
+
+	#paellaPlayer_loader {
+		width: 100%;
+	}
+}

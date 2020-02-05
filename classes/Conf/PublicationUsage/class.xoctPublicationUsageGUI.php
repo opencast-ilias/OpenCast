@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctPublicationUsageGUI
  *
@@ -12,6 +15,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	const CMD_SELECT_PUBLICATION_ID = 'selectPublicationId';
 
 
+	/**
+	 * @throws DICException
+	 */
 	protected function index() {
 		if(count(xoctPublicationUsage::getMissingUsageIds()) > 0) {
 			$b = ilLinkButton::getInstance();
@@ -24,6 +30,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function selectPublicationId() {
 		$form = new ilPropertyFormGUI();
 		$form->setFormAction(self::dic()->ctrl()->getFormAction($this));
@@ -42,6 +51,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function add() {
 		if (! $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]) {
 			self::dic()->ctrl()->redirect($this, self::CMD_SELECT_PUBLICATION_ID);
@@ -55,6 +67,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws DICException
+	 */
 	protected function create() {
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, new xoctPublicationUsage());
 		$xoctPublicationUsageFormGUI->setValuesByPost();
@@ -66,6 +81,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function edit() {
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, xoctPublicationUsage::find($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->fillForm();
@@ -73,6 +91,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 * @throws DICException
+	 */
 	protected function update() {
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, xoctPublicationUsage::find($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->setValuesByPost();
@@ -94,6 +115,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function confirmDelete() {
 		/**
 		 * @var $xoctPublicationUsage xoctPublicationUsage
@@ -109,6 +133,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function delete() {
 		/**
 		 * @var $xoctPublicationUsage xoctPublicationUsage

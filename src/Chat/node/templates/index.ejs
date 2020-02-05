@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+	<title>studer + raimann chat</title>
+	<link href="/css/chat.css" rel="stylesheet">
+    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="<%= base_url %>/libs/bower/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf" rel="icon">
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="<%= base_url %>/libs/bower/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+	$(function () {
+		var mobile = ($(window).width() > 768);
+		if (!mobile) {
+			$("html,body").scrollTop($(document).height());
+		}
+
+		var socket = io({query: {token: "<%= token %>"}});
+		$('form#srchat_form').submit(function(e){
+			e.preventDefault(); // prevents page reloading
+			if ($('#srchat_input').val() !== '') {
+				socket.emit('chat_msg', $('#srchat_input').val());
+				$('#srchat_input').val('');
+			}
+			return false;
+		});
+
+		socket.on('chat_msg', function(msg){
+			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height()) && !mobile;
+
+			var new_item = $('<li>')
+				.append($('<div>').attr('class', 'srchat_profile_picture_div')
+						.append($('<img>')
+								.attr("class", "srchat_profile_picture")
+								.attr("height", "30px")
+								.attr("src", "/srchat/get_profile_picture/" + msg.usr_id)
+						)).append($('<div>').attr("class", "srchat_message_div")
+						.append($('<div>').attr("class", "srchat_message_top")
+								.append($('<p>').attr("class", "srchat_message_name").text(msg.public_name))
+								.append($('<p>').attr("class", "srchat_message_sent").text(msg.sent_at))
+						)
+						.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
+				).hide();
+			$('#messages').append(new_item);
+			new_item.show('normal');
+
+			if (scroll_down) {
+				$("html,body").animate({scrollTop: $(document).height()}, "slow");
+			}
+		});
+
+		socket.on('disconnect', function() {
+			console.log('srchat disconnected');
+			$('#srchat_retry_overlay_iframe').show();
+		});
+
+		socket.on('connect', function() {
+			console.log('srchat connected');
+            $('#srchat_retry_overlay_iframe').hide();
+		});
+
+		// Send message to the top window (parent) at 500ms interval
+		setInterval(function() {
+			// first parameter is the message to be passed
+			// second paramter is the domain of the parent
+			window.top.postMessage(document.body.scrollHeight, "<%= base_url %>");
+		}, 500);
+	});
+</script>
+<body id="srchat_body">
+<div id="chat_body">
+	<ul id="messages">
+		<% messages.forEach(function(message){ %>
+		<li>
+			<div class="srchat_profile_picture_div">
+				<img class="srchat_profile_picture" height="30px" src="/srchat/get_profile_picture/<%= message.usr_id %>">
+			</div>
+			<div class="srchat_message_div">
+				<div class="srchat_message_top">
+					<p class="srchat_message_name"><%= message.public_name %></p>
+					<p class="srchat_message_sent"><%= message.sent_at %></p>
+				</div>
+				<p class="srchat_message_content"><%= message.message %></p>
+			</div>
+		</li>
+		<% }) %>
+	</ul>
+	<form id="srchat_form" action="">
+		<div class="input-group">
+			<input class="form-control input-sm" id="srchat_input" maxlength="500" autocomplete="off" />
+			<span class="input-group-btn">
+				<button class="btn btn-warning btn-sm" id="btn-chat">
+					Send
+				</button>
+			</span>
+		</div>
+	</form>
+</div>
+<div id="srchat_retry_overlay_iframe" hidden>
+    <span class="srchat_pseudo_element"></span>
+	<img src="/images/refresh_icon.png">
+</div>
+</body>
+</html>

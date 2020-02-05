@@ -1,5 +1,8 @@
 <#1>
 <?php
+
+use srag\Plugins\Opencast\Chat\Model\MessageAR;
+
 xoctPublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
@@ -152,4 +155,24 @@ if (xoctWorkflowParameter::count() === 0) {
 <?php
 xoctOpenCast::updateDB();
 xoctUserSetting::updateDB();
+?>
+<#16>
+<?php
+xoctUserSetting::updateDB();
+?>
+<#17>
+<?php
+\srag\Plugins\Opencast\Chat\Model\ChatroomAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\MessageAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\TokenAR::updateDB();
+\srag\Plugins\Opencast\Chat\Model\ConfigAR::updateDB();
+?>
+<#18>
+<?php
+xoctOpenCast::updateDB();
+?>
+<#19>
+<?php
+global $DIC;
+$DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)');
 ?>

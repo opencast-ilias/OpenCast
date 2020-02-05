@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+
 /**
  * Class xoctConf
  *
@@ -48,6 +50,10 @@ class xoctConf extends ActiveRecord {
 	const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
 	const F_VIDEO_PORTAL_LINK = 'video_portal_link';
 	const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
+	const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
+	const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
+	const F_PRESENTATION_NODE = 'presentation_node';
+	const F_ENABLE_CHAT = 'enable_chat';
 
 	const F_REPORT_QUALITY = 'report_quality';
 	const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
@@ -65,7 +71,7 @@ class xoctConf extends ActiveRecord {
 
 	const F_USE_STREAMING = 'use_streaming';
     const F_STREAMING_URL = 'streaming_url';
-    const F_USE_HIGHLOWRESSEGMENTPREVIEWS = 'use_highlowres_segment_preview';
+    const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
 	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
 	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
 
@@ -130,24 +136,24 @@ class xoctConf extends ActiveRecord {
 		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
 			default:
 			case xoctConf::SEP_EVERYTHING:
-				xoctEvent::$LOAD_ACL_SEPARATE = true;
-				xoctEvent::$LOAD_PUB_SEPARATE = true;
-				xoctEvent::$LOAD_MD_SEPARATE = true;
+				EventRepository::$load_acl_separate = true;
+                EventRepository::$load_pub_separate = true;
+                EventRepository::$load_md_separate = true;
 				break;
 			case xoctConf::SEP_EV_ACL_MD:
-				xoctEvent::$LOAD_ACL_SEPARATE = false;
-				xoctEvent::$LOAD_PUB_SEPARATE = true;
-				xoctEvent::$LOAD_MD_SEPARATE = false;
+                EventRepository::$load_acl_separate = false;
+				EventRepository::$load_pub_separate = true;
+				EventRepository::$load_md_separate = false;
 				break;
 			case xoctConf::SEP_EV_ACL_MD_PUB:
-				xoctEvent::$LOAD_ACL_SEPARATE = false;
-				xoctEvent::$LOAD_PUB_SEPARATE = false;
-				xoctEvent::$LOAD_MD_SEPARATE = false;
+				EventRepository::$load_acl_separate = false;
+				EventRepository::$load_pub_separate = false;
+				EventRepository::$load_md_separate = false;
 				break;
 		}
 
 		// META DATA
-		xoctEvent::$NO_METADATA = self::getConfig(self::F_NO_METADATA);
+		EventRepository::$no_metadata = self::getConfig(self::F_NO_METADATA);
 	}
 
 

@@ -13,6 +13,7 @@ class xoctException extends Exception {
 	const API_CREATION_FAILED = 30;
 	const NO_USER_MAPPING = 40;
 	const INTERNAL_ERROR = 50;
+	const NO_STREAMING_DATA = 60;
 	const API_CALL_STATUS_500 = 500;
 	const API_CALL_STATUS_403 = 403;
 	const API_CALL_STATUS_404 = 404;
@@ -32,6 +33,7 @@ class xoctException extends Exception {
 		self::NO_USER_MAPPING => 'Your user-account cannot communicate with the OpenCast-Server. please contact your system administrator.',
 		self::API_CALL_BAD_CREDENTIALS => 'The OpenCast-Server cannot be accessed at the moment.',
 		self::INTERNAL_ERROR => 'A plugin-internal error occured.',
+		self::NO_STREAMING_DATA => 'No streaming data found.',
 	);
 
 

@@ -1,11 +1,13 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\APIObject;
+
 /**
  * Class xoctPublicationMetadata
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctPublicationMetadata extends xoctObject {
+class xoctPublicationMetadata extends APIObject {
 
 	const MEDIA_TYPE_VIDEO = "video";
 	const ROLE_PRESENTATION = "presentation";
@@ -16,6 +18,13 @@ class xoctPublicationMetadata extends xoctObject {
 	 * @param string $id
 	 */
 	public function __construct($id = '') {
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRole() {
+		return strpos($this->getFlavor(), self::ROLE_PRESENTATION) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
 	}
 
 

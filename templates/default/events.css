@@ -135,6 +135,7 @@ div.il-card.thumbnail div.caption {
 
 .il-card ul li a {
 	overflow: visible;
+	width: 100%;
 }
 
 @media (max-width: 647px) {

@@ -38,6 +38,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_PERMISSION_TEMPLATE = 'permission_template';
 	const F_DEFAULT_VIEW = 'default_view';
 	const F_VIEW_CHANGEABLE = 'view_changeable';
+	const F_CHAT_ACTIVE = 'chat_active';
 
 	/**
 	 * @var  xoctSeries
@@ -243,6 +244,12 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
 		if (!$this->is_new) {
+		    if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+                $chat_active = new ilCheckboxInputGUI($this->txt(self::F_CHAT_ACTIVE), self::F_CHAT_ACTIVE);
+                $chat_active->setInfo($this->infoTxt(self::F_CHAT_ACTIVE));
+                $this->addItem($chat_active);
+            }
+
 			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK) && $this->series->isPublishedOnVideoPortal()) {
                 $video_portal_link = new ilCustomInputGUI(sprintf($this->txt(self::F_VIDEO_PORTAL_LINK), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), self::F_VIDEO_PORTAL_LINK);
                 $video_portal_link->setHtml($this->cast->getVideoPortalLink());
@@ -297,6 +304,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		if (xoct::isIlias54()) {
 			$array[self::F_VIEW_CHANGEABLE] = $this->cast->isViewChangeable();
 		}
+        if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+            $array[self::F_CHAT_ACTIVE] = $this->cast->isChatActive();
+        }
 		$this->setValuesByArray($array);
 	}
 
@@ -336,6 +346,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->cast->setDefaultView($this->getInput(self::F_DEFAULT_VIEW));
 			$this->cast->setViewChangeable($this->getInput(self::F_VIEW_CHANGEABLE));
 		}
+        if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+            $this->cast->setChatActive($this->getInput(self::F_CHAT_ACTIVE));
+        }
 
 		return true;
 	}

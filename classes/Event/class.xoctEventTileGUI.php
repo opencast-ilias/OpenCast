@@ -1,11 +1,10 @@
 <?php
 
 use ILIAS\UI\Factory;
-use ILIAS\UI\Implementation\Component\Signal;
-use ILIAS\UI\Implementation\Component\SignalGenerator;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 
 /**
  * Class xoctEventTileGUI
@@ -51,6 +50,10 @@ class xoctEventTileGUI {
 	 * @var int
 	 */
 	protected $limit;
+    /**
+     * @var EventRepository
+     */
+	protected $event_repository;
 
 	/**
 	 * xoctEventTileGUI constructor.
@@ -60,6 +63,7 @@ class xoctEventTileGUI {
 	public function __construct($parent_gui, $xoctOpenCast) {
 		$this->parent_gui = $parent_gui;
 		$this->xoctOpenCast = $xoctOpenCast;
+		$this->event_repository = new EventRepository(self::dic()->dic());
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
 		$this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
@@ -133,7 +137,7 @@ class xoctEventTileGUI {
 	 */
 	protected function parseData() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEvents = xoctEvent::getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], null, null, $this->page, $this->limit, true);
+		$xoctEvents = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], '', [], 0, 1000, '',true);
 		foreach ($xoctEvents as $key => $xoctEvent) {
 			if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast)) {
 				unset($xoctEvents[$key]);

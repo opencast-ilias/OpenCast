@@ -1,6 +1,8 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+
 /**
  * Class xoctEventAPI
  *
@@ -25,22 +27,22 @@ class xoctEventAPI {
 	}
 
 
-	/**
-	 * possible additional data:
-	 *
-	 *  description => text
-	 *  presenters => text
-	 *
-	 * @param String $series_id
-	 * @param String $title
-	 * @param        $start
-	 * @param        $end
-	 * @param String $location
-	 * @param array  $additional_data
-	 *
-	 * @return xoctEvent
-	 *
-	 */
+    /**
+     * possible additional data:
+     *
+     *  description => text
+     *  presenters => text
+     *
+     * @param String $series_id
+     * @param String $title
+     * @param        $start
+     * @param        $end
+     * @param String $location
+     * @param array  $additional_data
+     *
+     * @return xoctEvent
+     * @throws ilTimeZoneException
+     */
 	public function create($series_id, $title, $start, $end, $location, $additional_data = array()) {
 		$event = new xoctEvent();
 		$event->setSeriesIdentifier($series_id);
@@ -108,23 +110,28 @@ class xoctEventAPI {
 	}
 
 
-	/**
-	 * @param $event_id
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param $event_id
+     *
+     * @return bool
+     * @throws xoctException
+     */
 	public function delete($event_id) {
 		$event = new xoctEvent($event_id);
 		$event->delete();
 		return true;
 	}
 
+
     /**
      * @param array $filter
+     *
      * @return array
+     * @throws xoctException
      */
     public function filter(array $filter){
-        return \xoctEvent::getFiltered($filter);
+        global $DIC;
+        return (new EventRepository($DIC))->getFiltered($filter);
     }
 
 }
