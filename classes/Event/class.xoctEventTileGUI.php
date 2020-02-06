@@ -163,8 +163,8 @@ class xoctEventTileGUI {
                case 'description':
                case 'presenter':
                case 'location':
-               case 'owner':
-                   $getter = 'get' . $order . ($order == 'owner' ? 'username' : '');
+               case 'owner_username':
+                   $getter = 'get' . str_replace('_', '', $order);
                     if ($direction == 'asc') {
                         return strcasecmp($a->{$getter}(), $b->{$getter}());
                     } else {
