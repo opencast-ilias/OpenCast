@@ -167,7 +167,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 				'sort_field' => NULL,
 			),
 			'event_title' => array(
-				'selectable' => true,
+				'selectable' => false,
 				'sort_field' => 'title',
 			),
 			'event_description' => array(
