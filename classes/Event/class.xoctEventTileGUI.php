@@ -148,21 +148,35 @@ class xoctEventTileGUI {
         $tab_prop = new ilTablePropertiesStorage();
 
         $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'order')
-            ?? 'event_start';
+            ?? 'start';
         $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'direction')
             ?? 'asc';
         usort($xoctEvents, function (xoctEvent $a, xoctEvent $b) use ($order, $direction) {
-            return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
-            $comparator = ($direction == 'asc') ? '<' : '>';
            switch ($order) {
-               case 'event_start':
-                   return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
-               case 'event_title':
-
+               case 'start':
+                   if ($direction == 'asc') {
+                       return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
+                   } else {
+                       return $a->getStart()->getTimestamp() - $b->getStart()->getTimestamp();
+                   }
+               case 'title':
+               case 'description':
+               case 'presenter':
+               case 'location':
+               case 'owner_username':
+                   $getter = 'get' . str_replace('_', '', $order);
+                    if ($direction == 'asc') {
+                        return strcasecmp($a->{$getter}(), $b->{$getter}());
+                    } else {
+                        return strcasecmp($b->{$getter}(), $a->{$getter}());
+                    }
+               default:
+                   return 0;
            }
         });
 		$this->events = array_values($xoctEvents);
 	}
+
 
 	/**
 	 * @return bool
