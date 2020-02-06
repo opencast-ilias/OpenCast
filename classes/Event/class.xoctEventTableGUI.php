@@ -433,7 +433,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 					continue 2;
 			}
 
-			$set[$k] = utf8_decode($value);
+			$set[$k] = $value;
 		}
 		parent::fillRowCSV($a_csv, $set);
 	}
