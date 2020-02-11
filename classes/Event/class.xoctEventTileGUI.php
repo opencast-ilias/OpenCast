@@ -131,61 +131,74 @@ class xoctEventTileGUI {
 		return $container_tpl->get();
 	}
 
-	/**
+    /**
 	 * @return void
 	 * @throws xoctException
 	 */
 	protected function parseData() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEvents = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()], '', [], 0, 1000, '',true);
+		$xoctEvents = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()]);
 		foreach ($xoctEvents as $key => $xoctEvent) {
-			if (!ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+		    $event = $xoctEvent['object'] instanceof xoctEvent ? $xoctEvent['object'] : xoctEvent::find($xoctEvent['identifier']);
+			if (!ilObjOpenCastAccess::hasReadAccessOnEvent(
+                $event,
+                $xoctUser,
+                $this->xoctOpenCast)
+            ) {
 				unset($xoctEvents[$key]);
-			} elseif ($xoctEvent->isScheduled()) {
+			} elseif ($event->isScheduled()) {
 				$this->has_scheduled_events = true;
 			}
 		}
-        $tab_prop = new ilTablePropertiesStorage();
+        $xoctEvents = $this->sortData($xoctEvents);
+        $xoctEvents = array_map(function(array $element) {
+            return $element['object'] instanceof xoctEvent ? $element['object'] : xoctEvent::find($element['identifier']);
+        }, $xoctEvents);
 
-        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'order')
-            ?? 'start';
-        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'direction')
-            ?? 'asc';
-        usort($xoctEvents, function (xoctEvent $a, xoctEvent $b) use ($order, $direction) {
-           switch ($order) {
-               case 'start':
-                   if ($direction == 'asc') {
-                       return $b->getStart()->getTimestamp() - $a->getStart()->getTimestamp();
-                   } else {
-                       return $a->getStart()->getTimestamp() - $b->getStart()->getTimestamp();
-                   }
-               case 'title':
-               case 'description':
-               case 'presenter':
-               case 'location':
-               case 'owner_username':
-                   $getter = 'get' . str_replace('_', '', $order);
-                    if ($direction == 'asc') {
-                        return strcasecmp($a->{$getter}(), $b->{$getter}());
-                    } else {
-                        return strcasecmp($b->{$getter}(), $a->{$getter}());
-                    }
-               default:
-                   return 0;
-           }
-        });
-		$this->events = array_values($xoctEvents);
+        $this->events = array_values($xoctEvents);
 	}
 
 
-	/**
+
+    /**
+     * @param xoctEvent[] $xoctEvents
+     *
+     * @return mixed
+     */
+    protected function sortData(array $xoctEvents)
+    {
+        $tab_prop = new ilTablePropertiesStorage();
+
+        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'direction')
+            ?? 'asc';
+        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'order')
+            ?? 'start';
+        switch ($order) {
+            case 'start_unix':
+                $order = 'start';
+                break;
+            case 'created_unix':
+                $order = 'created';
+                break;
+        }
+
+        $xoctEvents = ilUtil::sortArray(
+            $xoctEvents,
+            $order,
+            $direction
+        );
+
+        return $xoctEvents;
+    }
+
+    /**
 	 * @return bool
 	 */
 	public function hasScheduledEvents() {
 		return $this->has_scheduled_events;
 	}
 
-	/**
+    /**
 	 * @param xoctEvent $xoctEvent
 	 * @return array
 	 * @throws DICException
@@ -206,7 +219,7 @@ class xoctEventTileGUI {
 		return $dropdown_items;
 	}
 
-	/**
+    /**
 	 * @return string
 	 */
 	protected function getPaginationHTML() {
@@ -222,7 +235,7 @@ class xoctEventTileGUI {
 		return $this->renderer->renderAsync($pagination);
 	}
 
-	/**
+    /**
 	 * @return string
 	 * @throws DICException
 	 * @throws ilTemplateException

@@ -275,14 +275,54 @@ class xoctEvent extends APIObject {
 
 				return $publications;
 			case 'presenter':
-				return implode(self::PRESENTER_SEP, $value);
+				return is_array($value) ? implode(self::PRESENTER_SEP, $value) : $value;
 			default:
 				return $value;
 		}
 	}
 
 
-	/**
+    /**
+     * @param $fieldname
+     * @param $value
+     *
+     * @return array|DateTime|int|Metadata|mixed|xoctAcl[]|xoctPublication[]
+     * @throws ReflectionException
+     */
+    protected function sleep($fieldname, $value)
+    {
+        switch ($fieldname) {
+            case 'created':
+            case 'start_time':
+                /** @var $value DateTime */
+                return $value instanceof DateTime ? $value->getTimestamp() : 0;
+                break;
+            case 'metadata':
+                /** @var $value Metadata */
+                return $value->__toArray();
+            case 'acl':
+                /** @var $value xoctAcl[] */
+                $acls = array();
+                foreach ($value as $acl) {
+                    $acls[] = $acl->__toArray();
+                }
+
+                return $acls;
+            case 'publications':
+                /** @var $value xoctPublication[] */
+                $publications = array();
+                foreach ($value as $pub) {
+                    $publications[] = $pub->__toArray();
+                }
+
+                return $publications;
+            default:
+                return $value;
+        }
+    }
+
+
+    /**
 	 * @param xoctUser $xoctUser
 	 *
 	 * @return bool
@@ -1668,28 +1708,13 @@ class xoctEvent extends APIObject {
 			$timezone = null;
 		}
 
-		$datetime = new DateTime($input);
+		$datetime = is_int($input) ? new DateTime(date('Y-m-d H:i:s', $input)) : new DateTime($input);
 		$datetime->setTimezone($timezone);
 		return $datetime;
 	}
 
 
 
-
-	/**
-	 * @param $fieldname
-	 * @param $value
-	 *
-	 * @return mixed
-	//	 */
-	//	protected function sleep($fieldname, $value) {
-	//		switch ($fieldname) {
-	//			case 'presenter':
-	//				return explode(self::PRESENTER_SEP, $value);
-	//			default:
-	//				return $value;
-	//		}
-	//	}
 
 	/**
 	 * @return stdClass

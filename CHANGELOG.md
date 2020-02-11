@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.4.1]
+- Fixed Tile sorting
+
 ## [2.4.0]
 - Dropped PHP 5.6 Support
 - Feature: Live Streams

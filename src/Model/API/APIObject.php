@@ -197,6 +197,8 @@ abstract class APIObject
                     foreach ($value as $k => $v) {
                         if ($v instanceof APIObject) {
                             $a[$k] = $v->__toStdClass();
+                        } elseif (is_array($v)) {
+                            $a[$k] = (object) $v;
                         } else {
                             $a[$k] = self::convertToUtf8($v);
                         }
