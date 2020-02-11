@@ -165,11 +165,14 @@ class xoctEventTileGUI {
                case 'location':
                case 'owner_username':
                    $getter = 'get' . str_replace('_', '', $order);
-                    if ($direction == 'asc') {
-                        return strcasecmp($a->{$getter}(), $b->{$getter}());
-                    } else {
-                        return strcasecmp($b->{$getter}(), $a->{$getter}());
-                    }
+                   if (!method_exists($a, $getter) || !method_exists($b, $getter)) {
+                       throw new xoctException('couldn\'t find method ' . $getter . ' in event object.');
+                   }
+                   if ($direction == 'asc') {
+                       return ilStr::strCmp($a->{$getter}(), $b->{$getter}());
+                   } else {
+                       return ilStr::strCmp($b->{$getter}(), $a->{$getter}());
+                   }
                default:
                    return 0;
            }
