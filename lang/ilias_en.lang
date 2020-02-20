@@ -121,6 +121,7 @@ config_workflow_parameter_value_0#:#None (Use Default)
 config_workflow_parameter_value_1#:#Always Active
 config_workflow_parameter_value_2#:#Always Inactive
 config_workflow_parameter_value_3#:#Show in Form
+config_workflow_parameter_value_4#:#Show in Form (checkbox selected)
 config_allow_workflow_params_in_series#:#Enable configuration in series
 config_overwrite_series_params#:#Overwrite series configurations
 config_overwrite_series_params_info#:#When active, saving this form will overwrite all parameter configurations in series with the configurations selected in the plugin settings.

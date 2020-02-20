@@ -13,6 +13,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	const VALUE_ALWAYS_ACTIVE = 1;
 	const VALUE_ALWAYS_INACTIVE = 2;
 	const VALUE_SHOW_IN_FORM = 3;
+	const VALUE_SHOW_IN_FORM_PRESET = 4;
 
 	const TYPE_CHECKBOX = 'checkbox';
 
@@ -20,7 +21,8 @@ class xoctWorkflowParameter extends ActiveRecord {
 		self::VALUE_IGNORE,
 		self::VALUE_ALWAYS_ACTIVE,
 		self::VALUE_ALWAYS_INACTIVE,
-		self::VALUE_SHOW_IN_FORM
+		self::VALUE_SHOW_IN_FORM,
+		self::VALUE_SHOW_IN_FORM_PRESET
 	];
 
 	/**
@@ -147,7 +149,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	 * @return integer
 	 */
 	public function getDefaultValueMember() {
-		return $this->default_value_member;
+		return (int) $this->default_value_member;
 	}
 
 
@@ -166,7 +168,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	 * @return int
 	 */
 	public function getDefaultValueAdmin() {
-		return $this->default_value_admin;
+		return (int) $this->default_value_admin;
 	}
 
 

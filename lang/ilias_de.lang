@@ -121,6 +121,7 @@ config_workflow_parameter_value_0#:#Keine (Standard verwenden)
 config_workflow_parameter_value_1#:#Immer aktiv
 config_workflow_parameter_value_2#:#Immer inaktiv
 config_workflow_parameter_value_3#:#Im Formular anbieten
+config_workflow_parameter_value_4#:#Im Formular anbieten (Checkbox ausgewählt)
 config_allow_workflow_params_in_series#:#Erlaube Konfiguration in Serien
 config_overwrite_series_params#:#Überschreibe Serienkonfigurationen
 config_overwrite_series_params_info#:#Wenn aktiv, werden beim Speichern alle Parameter-Konfigurationen in Serien mit den in der Pluginkonfiguration ausgewählten Einstellungen überschrieben.

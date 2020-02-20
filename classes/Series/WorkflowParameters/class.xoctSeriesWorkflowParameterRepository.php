@@ -93,7 +93,7 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $obj_id
 	 * @param $as_admin
 	 *
-	 * @return array Format $id => $title
+	 * @return array Format $id => ['title' => $title, 'preset' => $is_preset]
 	 */
 	public function getParametersInFormForObjId($obj_id, $as_admin) {
 		$parameter = [];
@@ -101,30 +101,45 @@ class xoctSeriesWorkflowParameterRepository {
 			/** @var xoctSeriesWorkflowParameter $input */
 			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
 				'obj_id' => $obj_id,
-				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM
-			])->get() as $input) {
-				$parameter[$input->getParamId()] = $input->xoct_workflow_param_title ?: $input->getParamId();
+				($as_admin ? 'value_admin' : 'value_member') => [xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM, xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]			])->get() as $input) {
+                if ($as_admin) {
+                    $preset = ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                } else {
+                    $preset = ($input->getDefaultValueMember() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                }
+				$parameter[$input->getParamId()] = [
+				    'title' => $input->xoct_workflow_param_title ?: $input->getParamId(),
+                    'preset' => $preset
+                ];
 			}
 		} else {
 			/** @var xoctWorkflowParameter $input */
 			foreach (xoctWorkflowParameter::where([
-				($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+				($as_admin ? 'default_value_admin' : 'default_value_member') => [xoctWorkflowParameter::VALUE_SHOW_IN_FORM, xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
 			])->get() as $input) {
-				$parameter[$input->getId()] = $input->getTitle() ?: $input->getId();
+			    if ($as_admin) {
+			        $preset = ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                } else {
+			        $preset = ($input->getDefaultValueMember() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                }
+				$parameter[$input->getId()] = [
+				    'title' => $input->getTitle() ?: $input->getId(),
+                    'preset' => $preset
+                ];
 			}
 		}
 		return $parameter;
 	}
 
 	/**
-	 * @return array Format $id => $title
+	 * @return array Format $id => ['title' => $title, 'preset' => $is_preset]
 	 */
 	public function getGeneralParametersInForm() : array
     {
 		$parameter = [];
         /** @var xoctWorkflowParameter $input */
         foreach (xoctWorkflowParameter::where([
-            'default_value_admin' => xoctWorkflowParameter::VALUE_SHOW_IN_FORM
+            'default_value_admin' => [xoctWorkflowParameter::VALUE_SHOW_IN_FORM, xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
         ])->get() as $input) {
             $parameter[$input->getId()] = $input->getTitle() ?: $input->getId();
         }
@@ -140,9 +155,10 @@ class xoctSeriesWorkflowParameterRepository {
 	 */
 	public function getFormItemsForObjId($obj_id, $as_admin) : array {
 		$items = [];
-		foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $title) {
-			$cb = new ilCheckboxInputGUI($title, EventFormGUI::F_WORKFLOW_PARAMETER . '['
+		foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
+			$cb = new ilCheckboxInputGUI($data['title'], EventFormGUI::F_WORKFLOW_PARAMETER . '['
 				. $id . ']');
+			$cb->setChecked($data['preset']);
 			$items[] = $cb;
 		}
 		return $items;
@@ -244,9 +260,10 @@ class xoctSeriesWorkflowParameterRepository {
     public function getGeneralFormItems() : array
     {
         $items = [];
-        foreach ($this->getGeneralParametersInForm() as $id => $title) {
-            $cb = new ilCheckboxInputGUI($title, EventFormGUI::F_WORKFLOW_PARAMETER . '['
+        foreach ($this->getGeneralParametersInForm() as $id => $data) {
+            $cb = new ilCheckboxInputGUI($data['title'], EventFormGUI::F_WORKFLOW_PARAMETER . '['
                 . $id . ']');
+            $cb->setChecked($data['preset']);
             $items[] = $cb;
         }
         return $items;
