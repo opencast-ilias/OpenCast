@@ -13,6 +13,7 @@ class xoctSeriesWorkflowParameter extends ActiveRecord {
 	const VALUE_ALWAYS_ACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE;
 	const VALUE_ALWAYS_INACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE;
 	const VALUE_SHOW_IN_FORM = xoctWorkflowParameter::VALUE_SHOW_IN_FORM;
+	const VALUE_SHOW_IN_FORM_PRESET = xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET;
 
 	/**
 	 * @return string

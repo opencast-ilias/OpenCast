@@ -144,7 +144,7 @@ if (xoctWorkflowParameter::count() === 0) {
 		->setId('autopublish')
 		->setTitle('Automatisch Publizieren')
 		->setDefaultValueMember(xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_SHOW_IN_FORM)
+		->setDefaultValueAdmin(xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
 		->setType(xoctWorkflowParameter::TYPE_CHECKBOX)
 		->create();
 	xoctSeriesWorkflowParameter::truncateDB();

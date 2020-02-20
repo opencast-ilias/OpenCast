@@ -386,7 +386,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 		//     $array = array_merge($array, $parameters);
         // }
 
-		$this->setValuesByArray($array);
+		$this->setValuesByArray($array, true);
 	}
 
 
