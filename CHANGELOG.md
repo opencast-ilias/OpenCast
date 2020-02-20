@@ -2,6 +2,7 @@
 
 ## [2.4.1]
 - Fixed Tile sorting
+- Feature/Fix: introduced "Show in Form (checkbox active)" for workflow parameters
 
 ## [2.4.0]
 - Dropped PHP 5.6 Support
