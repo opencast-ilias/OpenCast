@@ -638,8 +638,27 @@ class xoctEvent extends APIObject {
 		// Get Media URL
 		$media_object= $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getMedia();	
 		$media_url = $media_object[0]->url;
-		error_log($this->annotation_url . '&mediaURL='. $media_url);
-		return $this->annotation_url . '&mediaURL='. $media_url;
+
+		// Get user and course ref id
+		$ref_id = $_GET['ref_id'];
+		$user_id = xoctUser::getInstance(self::dic()->user())->getExtId();
+		$ilias_user_id = xoctUser::getInstance(self::dic()->user())->getIliasUserId();
+
+		// Check if user have admin rights
+		$admins = ilObjOpenCastAccess::getAdmins();
+		if (in_array($ilias_user_id, $admins)) {
+			$is_admin = 1;
+		} else {
+			$is_admin = 0;
+		}
+
+		// Create the hash
+		$hash_input = $user_id . $ref_id . $is_admin;
+		$auth_hash = hash("md5", $hash_input);
+
+		$annotation_complete_url = $this->annotation_url . '&mediaURL='. $media_url . '&user=' . $user_id . '&refid=' . $ref_id . '&auth=' . $auth_hash;
+		//error_log($annotation_complete_url);
+		return $annotation_complete_url;
 	}
 
 
