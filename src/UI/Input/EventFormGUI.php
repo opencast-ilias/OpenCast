@@ -9,6 +9,7 @@ use ilException;
 use ilInteractiveVideoTimePicker;
 use ilObjOpenCast;
 use ilObjOpenCastAccess;
+use ilObjPluginDispatchGUI;
 use ilOpenCastPlugin;
 use ilPropertyFormGUI;
 use ilRadioGroupInputGUI;
@@ -24,6 +25,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
+use srag\Plugins\Opencast\Model\API\Series\SeriesRepository;
 use xoct;
 use xoctConf;
 use xoctEvent;
@@ -103,6 +105,14 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @var xoctOpenCast
      */
     protected $xoctOpenCast;
+    /**
+     * @var string|null
+     */
+    protected $cmd_url_upload_chunks;
+    /**
+     * @var null
+     */
+    protected $form_action;
 
 
     /**
@@ -111,22 +121,35 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @param xoctOpenCast $xoctOpenCast
      * @param bool         $schedule
      *
+     * @param null         $form_action
+     * @param null         $cmd_url_upload_chunks
+     *
      * @throws DICException
      * @throws ilDateTimeException
      * @throws xoctException
      */
-	public function __construct($parent_gui, xoctEvent $object, xoctOpenCast $xoctOpenCast = null, $schedule = false) {
+	public function __construct(
+	    $parent_gui,
+        xoctEvent $object,
+        xoctOpenCast $xoctOpenCast = null,
+        $schedule = false,
+        $form_action = null,
+        $cmd_url_upload_chunks = null
+    ) {
 		parent::__construct();
-		$this->object = $object;
-		$this->xoctOpenCast = $xoctOpenCast;
-		$this->parent_gui = $parent_gui;
-		self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
-		$this->is_new = ($this->object->getIdentifier() == '');
-		$this->schedule = $schedule;
-		self::dic()->language()->loadLanguageModule('form');
-		$this->setId('xoct_event');
+		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
+        $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
+        $this->object = $object;
+        $this->xoctOpenCast = $xoctOpenCast;
+        $this->parent_gui = $parent_gui;
+        self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
+        $this->is_new = ($this->object->getIdentifier() == '');
+        $this->schedule = $schedule;
+        self::dic()->language()->loadLanguageModule('form');
+        $this->setId('xoct_event');
+
         $this->initForm();
-	}
+    }
 
 
 	/**
@@ -151,7 +174,7 @@ class EventFormGUI extends ilPropertyFormGUI {
      */
 	protected function initForm() {
 		$this->setTarget('_top');
-		$this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
+		$this->setFormAction($this->form_action);
 		$this->initButtons();
 
 		if (is_null($this->xoctOpenCast)) {
@@ -168,7 +191,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 			$allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
 
 			$te = new FileUploadInputGUI($this, self::PARENT_CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
-			$te->setUrl(self::dic()->ctrl()->getLinkTarget($this->parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS));
+			$te->setUrl($this->cmd_url_upload_chunks);
 			$te->setSuffixes($allow_audio ? array(
 				'mov',
 				'mp4',
@@ -402,16 +425,19 @@ class EventFormGUI extends ilPropertyFormGUI {
 			return false;
 		}
 
+        if (is_null($this->xoctOpenCast)) {
+            $series_id = $this->getInput(self::F_SERIES);
+            if ($series_id == self::OPT_OWN_SERIES) {
+                $series_id = (new SeriesRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()));
+            }
+        } else {
+            $series_id = $this->xoctOpenCast->getSeriesIdentifier();
+        }
+        $this->object->setSeriesIdentifier($series_id);
 
-		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
-		$title = $this->getInput(self::F_TITLE);
-
-        $this->object->setSeriesIdentifier(
-            is_null($this->xoctOpenCast) ?
-                $this->getInput(self::F_SERIES) :
-                $this->xoctOpenCast->getSeriesIdentifier()
-        );
-        $this->object->setTitle($title ? $title : $presenter->getTitle());
+        $presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
+        $title = $this->getInput(self::F_TITLE);
+        $this->object->setTitle($title != '' ? $title : $presenter->getTitle());
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));

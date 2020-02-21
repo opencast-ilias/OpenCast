@@ -1,5 +1,8 @@
 # Change Log
 
+## [x.x.x]
+- Refactoring and adjustments for page component plugin
+
 ## [2.4.1]
 - Fixed Tile sorting
 - Feature/Fix: introduced "Show in Form (checkbox active)" for workflow parameters

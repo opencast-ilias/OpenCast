@@ -862,6 +862,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => __DIR__ . '/../..' . '/src/Model/API/Event/EventRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Group\\Group' => __DIR__ . '/../..' . '/src/Model/API/Group/Group.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/API/Scheduling/Scheduling.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\Series\\SeriesRepository' => __DIR__ . '/../..' . '/src/Model/API/Series/SeriesRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\Workflow' => __DIR__ . '/../..' . '/src/Model/API/Workflow/Workflow.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\WorkflowCollection' => __DIR__ . '/../..' . '/src/Model/API/Workflow/WorkflowCollection.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\WorkflowOperation' => __DIR__ . '/../..' . '/src/Model/API/Workflow/WorkflowOperation.php',

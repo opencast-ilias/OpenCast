@@ -837,6 +837,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => $baseDir . '/src/Model/API/Event/EventRepository.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Group\\Group' => $baseDir . '/src/Model/API/Group/Group.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Scheduling\\Scheduling' => $baseDir . '/src/Model/API/Scheduling/Scheduling.php',
+    'srag\\Plugins\\Opencast\\Model\\API\\Series\\SeriesRepository' => $baseDir . '/src/Model/API/Series/SeriesRepository.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\Workflow' => $baseDir . '/src/Model/API/Workflow/Workflow.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\WorkflowCollection' => $baseDir . '/src/Model/API/Workflow/WorkflowCollection.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\WorkflowOperation' => $baseDir . '/src/Model/API/Workflow/WorkflowOperation.php',

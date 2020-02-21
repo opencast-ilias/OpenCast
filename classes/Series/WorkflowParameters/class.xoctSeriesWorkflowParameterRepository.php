@@ -141,7 +141,10 @@ class xoctSeriesWorkflowParameterRepository {
         foreach (xoctWorkflowParameter::where([
             'default_value_admin' => [xoctWorkflowParameter::VALUE_SHOW_IN_FORM, xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
         ])->get() as $input) {
-            $parameter[$input->getId()] = $input->getTitle() ?: $input->getId();
+            $parameter[$input->getId()] = [
+                'title' => $input->getTitle() ?: $input->getId(),
+                'preset' => ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
+            ];
         }
 		return $parameter;
 	}

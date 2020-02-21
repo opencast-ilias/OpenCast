@@ -52,7 +52,7 @@ class EventRepository
      * @return xoctEvent[] | array
      * @throws xoctException
      */
-    public static function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
+    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
         /**
          * @var $xoctEvent xoctEvent
          */
