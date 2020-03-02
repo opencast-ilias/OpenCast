@@ -656,7 +656,7 @@ class xoctEvent extends APIObject {
 		$hash_input = $user_id . $ref_id . $is_admin;
 		$auth_hash = hash("md5", $hash_input);
 
-		$annotation_complete_url = $this->annotation_url . '&mediaURL='. $media_url . '&user=' . $user_id . '&refid=' . $ref_id . '&auth=' . $auth_hash;
+		$annotation_complete_url = $this->annotation_url . '&mediaURL='. $media_url . '&refid=' . $ref_id . '&auth=' . $auth_hash;
 		//error_log($annotation_complete_url);
 		return $annotation_complete_url;
 	}
