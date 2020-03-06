@@ -147,11 +147,9 @@ class xoctConfExportGUI extends xoctGUI {
 			$xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getMdType()));
 		}
 
-
-		file_put_contents('/tmp/opencastexport.xml', $domxml->saveXML());
-		ob_end_clean();
-		ilUtil::deliverFile('/tmp/opencastexport.xml', 'opencastexport.xml');
-		unlink('/tmp/opencastexport.xml');
+		// ob_end_clean();
+		header('Content-Disposition: attachment; filename="opencastexport.xml"');
+		echo $domxml->saveXML();exit;
 	}
 
 

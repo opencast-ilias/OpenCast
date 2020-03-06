@@ -2,6 +2,7 @@
 
 ## [x.x.x]
 - Refactoring and adjustments for page component plugin
+- Fixed config export bug
 
 ## [2.4.1]
 - Fixed Tile sorting
