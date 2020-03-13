@@ -161,13 +161,16 @@ class xoctPlayerGUI extends xoctGUI
                     // TODO: move this responsibility
                     $valid_until = null;
                     if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+                    //    error_log('Duration in player: ' . $duration);
                         $duration_in_seconds = $duration / 1000;
                         $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
                         $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+                    //    error_log('Valid until player: ' . $valid_until);
                     }
-
+                    //error_log('Player, before sign: ' . $hls_url);
                     $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
                     $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
+                    //error_log('Player, after sign: ' . $hls_url);
                 }
 
                 return [

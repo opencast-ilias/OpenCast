@@ -639,6 +639,28 @@ class xoctEvent extends APIObject {
 		$media_object= $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getMedia();	
 		$media_url = $media_object[0]->url;
 
+		if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {			
+			//get duration and calculate expire date
+			$duration = $media_object[0]->duration;
+			
+			error_log('Duration AT: '.$duration);
+
+			$valid_until = null;
+			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+				$duration_in_seconds = $duration / 1000;
+				$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+				$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+			}
+			error_log('Valid until AT: '.$valid_until);
+			// Sign the url and parse the variables.
+			$media_url_signed = xoctSecureLink::sign($media_url, $valid_until);
+			$media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
+			$media_url = $media_url . '&' . $media_url_query;
+
+			//
+			error_log('signed media url: '.$media_url);
+		}
+
 		// Get user and course ref id
 		$ref_id = $_GET['ref_id'];
 		$user_id = xoctUser::getInstance(self::dic()->user())->getExtId();
@@ -679,6 +701,7 @@ class xoctEvent extends APIObject {
 				$this->player_url = $url;
 			}
 		}
+		error_log($this->player_url);
 		return $this->player_url;
 	}
 
