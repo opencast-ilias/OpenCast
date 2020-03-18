@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage;
 
 /**
  * Class xoctPublicationUsageGUI
@@ -19,7 +20,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function index() {
-		if(count(xoctPublicationUsage::getMissingUsageIds()) > 0) {
+		if(count(PublicationUsage::getMissingUsageIds()) > 0) {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption(self::plugin()->getPluginObject()->getPrefix() . '_publication_usage_add_new');
 			$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID));
@@ -41,7 +42,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		$form->addCommandButton(self::CMD_CANCEL, $this->txt(self::CMD_CANCEL));
 		$sel = new ilSelectInputGUI($this->txt(xoctPublicationUsageFormGUI::F_CHANNEL), xoctPublicationUsageFormGUI::F_CHANNEL);
 		$options = array();
-		foreach (xoctPublicationUsage::getMissingUsageIds() as $id) {
+		foreach (PublicationUsage::getMissingUsageIds() as $id) {
 			$options[$id] = $this->txt('type_' . $id);
 		}
 		$sel->setOptions($options);
@@ -58,7 +59,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		if (! $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]) {
 			self::dic()->ctrl()->redirect($this, self::CMD_SELECT_PUBLICATION_ID);
 		}
-		$xoctPublicationUsage = new xoctPublicationUsage();
+		$xoctPublicationUsage = new PublicationUsage();
 		$xoctPublicationUsage->setUsageId($_POST[xoctPublicationUsageFormGUI::F_CHANNEL]);
 		$xoctPublicationUsage->setTitle($this->txt('type_' . $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]));
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $xoctPublicationUsage);
@@ -71,7 +72,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function create() {
-		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, new xoctPublicationUsage());
+		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, new PublicationUsage());
 		$xoctPublicationUsageFormGUI->setValuesByPost();
 		if ($xoctPublicationUsageFormGUI->saveObject()) {
 			ilUtil::sendSuccess(self::plugin()->translate('publication_usage_msg_success'), true);
@@ -85,7 +86,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 *
 	 */
 	protected function edit() {
-		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, xoctPublicationUsage::find($_GET[self::IDENTIFIER]));
+		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, PublicationUsage::find($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->fillForm();
 		self::dic()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
 	}
@@ -95,7 +96,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function update() {
-		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, xoctPublicationUsage::find($_GET[self::IDENTIFIER]));
+		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, PublicationUsage::find($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->setValuesByPost();
 		if ($xoctPublicationUsageFormGUI->saveObject()) {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('publication_usage_msg_success'), true);
@@ -120,9 +121,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 */
 	protected function confirmDelete() {
 		/**
-		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 * @var $xoctPublicationUsage PublicationUsage
 		 */
-		$xoctPublicationUsage = xoctPublicationUsage::find($_GET[self::IDENTIFIER]);
+		$xoctPublicationUsage = PublicationUsage::find($_GET[self::IDENTIFIER]);
 		$confirm = new ilConfirmationGUI();
 		$confirm->addItem(self::IDENTIFIER, $xoctPublicationUsage->getUsageId(), $xoctPublicationUsage->getTitle());
 		$confirm->setFormAction(self::dic()->ctrl()->getFormAction($this));
@@ -138,9 +139,9 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 */
 	protected function delete() {
 		/**
-		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 * @var $xoctPublicationUsage PublicationUsage
 		 */
-		$xoctPublicationUsage = xoctPublicationUsage::find($_POST[self::IDENTIFIER]);
+		$xoctPublicationUsage = PublicationUsage::find($_POST[self::IDENTIFIER]);
 		$xoctPublicationUsage->delete();
 		$this->cancel();
 	}

@@ -1,9 +1,6 @@
 <#1>
 <?php
-
-use srag\Plugins\Opencast\Chat\Model\MessageAR;
-
-xoctPublicationUsage::updateDB();
+\srag\Plugins\OpenCast\Model\Config\PublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
 xoctIVTGroup::updateDB();

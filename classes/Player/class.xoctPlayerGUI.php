@@ -111,7 +111,7 @@ class xoctPlayerGUI extends xoctGUI
      * @throws xoctException
      */
     protected function getStreamingData(xoctEvent $xoctEvent) {
-        $publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER));
+        $publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(PublicationUsage::getUsage(PublicationUsage::USAGE_PLAYER));
 
         if (empty($publication_player->getMedia())) {
             throw new xoctException(xoctException::NO_STREAMING_DATA);
@@ -119,7 +119,7 @@ class xoctPlayerGUI extends xoctGUI
         // Multi stream
         $medias = array_values(array_filter($publication_player->getMedia(), function (xoctMedia $media) {
             return (strpos($media->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false
-                && in_array(xoctPublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
+                && in_array(PublicationUsage::USAGE_ENGAGE_STREAMING, $media->getTags()));
         }));
 
         /**
@@ -224,12 +224,12 @@ class xoctPlayerGUI extends xoctGUI
             }
         }
 
-        $segment_publication = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_SEGMENTS);
+        $segment_publication = PublicationUsage::find(PublicationUsage::USAGE_SEGMENTS);
         if ($segment_publication) {
             $segment_flavor = $segment_publication->getFlavor();
-            $publication_usage_segments = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_SEGMENTS);
+            $publication_usage_segments = PublicationUsage::getUsage(PublicationUsage::USAGE_SEGMENTS);
             $attachments = $publication_usage_segments->getMdType()
-            == xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF ? $xoctEvent->getFirstPublicationMetadataForUsage($publication_usage_segments)
+            == PublicationUsage::MD_TYPE_PUBLICATION_ITSELF ? $xoctEvent->getFirstPublicationMetadataForUsage($publication_usage_segments)
                 ->getAttachments() : $xoctEvent->getPublicationMetadataForUsage($publication_usage_segments);
 
             $segments = array_filter($attachments, function (xoctAttachment $attachment) use (&$segment_flavor) {
@@ -379,7 +379,7 @@ class xoctPlayerGUI extends xoctGUI
         $event_id = $_GET['event_id'];
         $mid = $_GET['mid'];
         $xoctEvent = xoctEvent::find($event_id);
-        $media = $xoctEvent->getFirstPublicationMetadataForUsage(xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER))->getMedia();
+        $media = $xoctEvent->getFirstPublicationMetadataForUsage(PublicationUsage::getUsage(PublicationUsage::USAGE_PLAYER))->getMedia();
         foreach ($media as $medium) {
             if ($medium->getId() == $mid) {
                 $url = $medium->getUrl();

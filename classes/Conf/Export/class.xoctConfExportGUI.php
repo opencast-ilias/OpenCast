@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\Config\PublicationUsage;
+
 /**
  * Class xoctConfExportGUI
  *
@@ -67,7 +70,7 @@ class xoctConfExportGUI extends xoctGUI {
 		}
 
 		/**
-		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 * @var $xoctPublicationUsage PublicationUsage
 		 */
 		$xoct_publication_usage = $domxml->getElementsByTagName('xoct_publication_usage');
 
@@ -76,14 +79,14 @@ class xoctConfExportGUI extends xoctGUI {
 			if (!$usage_id) {
 				continue;
 			}
-			$xoctPublicationUsage = xoctPublicationUsage::findOrGetInstance($usage_id);
+			$xoctPublicationUsage = PublicationUsage::findOrGetInstance($usage_id);
 			$xoctPublicationUsage->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
 			$xoctPublicationUsage->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
 			$xoctPublicationUsage->setChannel($node->getElementsByTagName('channel')->item(0)->nodeValue);
 			$xoctPublicationUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
 			$xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
-			if (!xoctPublicationUsage::where(array( 'usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
+			if (!PublicationUsage::where(array('usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
 				$xoctPublicationUsage->create();
 			} else {
 				$xoctPublicationUsage->update();
@@ -135,9 +138,9 @@ class xoctConfExportGUI extends xoctGUI {
 		// xoctPublicationUsages
 		$xml_xoctPublicationUsages = $config->appendChild(new DOMElement('xoct_publication_usages'));
 		/**
-		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 * @var $xoctPublicationUsage PublicationUsage
 		 */
-		foreach (xoctPublicationUsage::get() as $xoctPublicationUsage) {
+		foreach (PublicationUsage::get() as $xoctPublicationUsage) {
 			$xml_xoctPU = $xml_xoctPublicationUsages->appendChild(new DOMElement('xoct_publication_usage'));
 			$xml_xoctPU->appendChild(new DOMElement('usage_id'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getUsageId()));
 			$xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getTitle()));

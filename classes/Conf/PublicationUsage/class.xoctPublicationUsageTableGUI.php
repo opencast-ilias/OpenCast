@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage;
+
 /**
  * Class xoctEventTableGUI
  *
@@ -47,9 +49,9 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 	 */
 	public function fillRow($a_set) {
 		/**
-		 * @var $xoctPublicationUsage xoctPublicationUsage
+		 * @var $xoctPublicationUsage PublicationUsage
 		 */
-		$xoctPublicationUsage = xoctPublicationUsage::find($a_set['usage_id']);
+		$xoctPublicationUsage = PublicationUsage::find($a_set['usage_id']);
 		$this->tpl->setVariable('USAGE_ID', $xoctPublicationUsage->getUsageId());
 		$this->tpl->setVariable('TITLE', $xoctPublicationUsage->getTitle());
 		$this->tpl->setVariable('DESCRIPTION', $xoctPublicationUsage->getDescription());
@@ -75,9 +77,9 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 
 	/**
-	 * @param xoctPublicationUsage $xoctPublicationUsage
+	 * @param PublicationUsage $xoctPublicationUsage
 	 */
-	protected function addActionMenu(xoctPublicationUsage $xoctPublicationUsage) {
+	protected function addActionMenu(PublicationUsage $xoctPublicationUsage) {
 		$current_selection_list = new ilAdvancedSelectionListGUI();
 		$current_selection_list->setListTitle(self::plugin()->getPluginObject()->txt('common_actions'));
 		$current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsage->getUsageId());
@@ -92,7 +94,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 
 	protected function parseData() {
-		$this->setData(xoctPublicationUsage::getArray());
+		$this->setData(PublicationUsage::getArray());
 	}
 
 

@@ -5,6 +5,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\Workflow\WorkflowCollection;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage;
 
 /**
  * Class xoctEvent
@@ -599,13 +600,13 @@ class xoctEvent extends APIObject {
         }
 
 		$possible_publications = array(
-			xoctPublicationUsage::USAGE_THUMBNAIL,
-			xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK,
-			xoctPublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
+            PublicationUsage::USAGE_THUMBNAIL,
+            PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
+            PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
 		);
 		$i = 0;
 		while (!$this->thumbnail_url && $i < count($possible_publications)) {
-			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(PublicationUsage::find($possible_publications[$i]))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
 				$this->thumbnail_url = xoctSecureLink::sign($url);
 			} else {
@@ -627,7 +628,7 @@ class xoctEvent extends APIObject {
      */
 	public function getAnnotationLink() {
 		if (!isset($this->annotation_url)) {
-			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(PublicationUsage::find(PublicationUsage::USAGE_ANNOTATE))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
 				$this->annotation_url = xoctSecureLink::sign($url);
 			} else {
@@ -650,7 +651,7 @@ class xoctEvent extends APIObject {
 			return self::dic()->ctrl()->getLinkTargetByClass([ilRepositoryGUI::class, ilObjOpenCastGUI::class, xoctEventGUI::class, xoctPlayerGUI::class], xoctPlayerGUI::CMD_STREAM_VIDEO);
 		}
 		if (!isset($this->player_url)) {
-			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(PublicationUsage::find(PublicationUsage::USAGE_PLAYER))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
 				$this->player_url = xoctSecureLink::sign($url);
 			} else {
@@ -667,7 +668,7 @@ class xoctEvent extends APIObject {
 	 */
 	public function getDownloadLink() {
 		if (!isset($this->download_url)) {
-			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
+			$url = $this->getFirstPublicationMetadataForUsage(PublicationUsage::find(PublicationUsage::USAGE_DOWNLOAD))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS)) {
 				$this->download_url = xoctSecureLink::sign($url);
 			} else {
@@ -686,7 +687,7 @@ class xoctEvent extends APIObject {
 		if (!isset($this->cutting_url)) {
 			$url = str_replace('{event_id}', $this->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
 			if (!$url) {
-				$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_CUTTING))->getUrl();
+				$url = $this->getFirstPublicationMetadataForUsage(PublicationUsage::find(PublicationUsage::USAGE_CUTTING))->getUrl();
 			}
 			if (!$url) {
 				$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
@@ -707,11 +708,11 @@ class xoctEvent extends APIObject {
 	 * @return array
 	 */
 	public function getPublicationMetadataForUsage($xoctPublicationUsage) {
-		if (!$xoctPublicationUsage instanceof xoctPublicationUsage) {
+		if (!$xoctPublicationUsage instanceof PublicationUsage) {
 			return [new xoctPublication()];
 		}
 		/**
-		 * @var $xoctPublicationUsage  xoctPublicationUsage
+		 * @var $xoctPublicationUsage  PublicationUsage
 		 * @var $attachment            xoctAttachment
 		 * @var $media                 xoctMedia
 		 */
@@ -725,21 +726,21 @@ class xoctEvent extends APIObject {
 		}
 		$return = [];
 		switch ($xoctPublicationUsage->getMdType()) {
-			case xoctPublicationUsage::MD_TYPE_ATTACHMENT:
+			case PublicationUsage::MD_TYPE_ATTACHMENT:
 				foreach ($attachments as $attachment) {
 					if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
 						$return[] = $attachment;
 					}
 				}
 				break;
-			case xoctPublicationUsage::MD_TYPE_MEDIA:
+			case PublicationUsage::MD_TYPE_MEDIA:
 				foreach ($medias as $media) {
 					if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
 						$return[] = $media;
 					}
 				}
 				break;
-			case xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
+			case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
 				foreach ($this->getPublications() as $publication) {
 					if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
 						$return[] = $publication;
@@ -977,7 +978,7 @@ class xoctEvent extends APIObject {
 				if (!$this->getXoctEventAdditions()->getIsOnline()) {
 					$this->setProcessingState(self::STATE_OFFLINE);
 				} else {
-					$publication_player = xoctPublicationUsage::getUsage(xoctPublicationUsage::USAGE_PLAYER);
+					$publication_player = PublicationUsage::getUsage(PublicationUsage::USAGE_PLAYER);
 
 					// "not published" depends: if the internal player is used, the "api" publication must be present, else the "player" publication
 					if (!in_array($publication_player->getChannel(),$this->publication_status))
@@ -1780,7 +1781,7 @@ class xoctEvent extends APIObject {
 	 * @return bool
 	 */
 	public function isLiveEvent() {
-		$usage = xoctPublicationUsage::find(xoctPublicationUsage::USAGE_LIVE_EVENT);
+		$usage = PublicationUsage::find(PublicationUsage::USAGE_LIVE_EVENT);
 		if (!$usage) {
 			return false;
 		}

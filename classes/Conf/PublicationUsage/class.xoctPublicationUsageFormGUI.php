@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage;
+
 /**
  * Class xoctPublicationUsageFormGUI
  *
@@ -20,7 +22,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	const F_MD_TYPE = 'md_type';
 
 	/**
-	 * @var  xoctPublicationUsage
+	 * @var  PublicationUsage
 	 */
 	protected $object;
 	/**
@@ -31,7 +33,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 
 	/**
 	 * @param xoctPublicationUsageGUI $parent_gui
-	 * @param xoctPublicationUsage $xoctPublicationUsage
+	 * @param PublicationUsage        $xoctPublicationUsage
 	 */
 	public function __construct($parent_gui, $xoctPublicationUsage) {
 		parent::__construct();
@@ -70,9 +72,9 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		$te = new ilSelectInputGUI($this->parent_gui->txt(self::F_MD_TYPE), self::F_MD_TYPE);
 		$te->setRequired(true);
 		$te->setOptions(array(
-			xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt('md_type_' . xoctPublicationUsage::MD_TYPE_PUBLICATION_ITSELF),
-			xoctPublicationUsage::MD_TYPE_ATTACHMENT => $this->parent_gui->txt('md_type_' . xoctPublicationUsage::MD_TYPE_ATTACHMENT),
-			xoctPublicationUsage::MD_TYPE_MEDIA => $this->parent_gui->txt('md_type_' . xoctPublicationUsage::MD_TYPE_MEDIA)
+            PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_PUBLICATION_ITSELF),
+            PublicationUsage::MD_TYPE_ATTACHMENT         => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT),
+            PublicationUsage::MD_TYPE_MEDIA              => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
 		));
 		$this->addItem($te);
 
@@ -126,7 +128,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		if (! $this->fillObject()) {
 			return false;
 		}
-		if (! xoctPublicationUsage::where(array( 'usage_id' => $this->object->getUsageId() ))->hasSets()) {
+		if (! PublicationUsage::where(array('usage_id' => $this->object->getUsageId() ))->hasSets()) {
 			$this->object->create();
 		} else {
 			$this->object->update();
