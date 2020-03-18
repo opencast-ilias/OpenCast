@@ -18,8 +18,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	const F_DESCRIPTION = 'description';
 	const F_CHANNEL = 'channel';
 	const F_STATUS = 'status';
+	const F_SEARCH_KEY = 'search_key';
 	const F_FLAVOR = 'flavor';
+	const F_TAG = 'tag';
 	const F_MD_TYPE = 'md_type';
+	const F_ALLOW_MULTIPLE = 'allow_multiple';
 
 	/**
 	 * @var  PublicationUsage
@@ -36,6 +39,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	 * @param PublicationUsage        $xoctPublicationUsage
 	 */
 	public function __construct($parent_gui, $xoctPublicationUsage) {
+		global $DIC;
+		$DIC->ui()->mainTemplate()->addJavaScript(ilOpenCastPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js');
 		parent::__construct();
 		$this->object = $xoctPublicationUsage;
 		$this->parent_gui = $parent_gui;
@@ -78,8 +83,29 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(self::F_FLAVOR), self::F_FLAVOR);
-		$this->addItem($te);
+		$radio = new ilRadioGroupInputGUI($this->parent_gui->txt(self::F_SEARCH_KEY), self::F_SEARCH_KEY);
+		$radio->setInfo($this->parent_gui->txt(self::F_SEARCH_KEY . '_info'));
+
+		$opt = new ilRadioOption($this->parent_gui->txt(self::F_FLAVOR), self::F_FLAVOR);
+		$te = new ilTextInputGUI('', self::F_FLAVOR);
+		$opt->addSubItem($te);
+		$radio->addOption($opt);
+
+		$opt = new ilRadioOption($this->parent_gui->txt(self::F_TAG), self::F_TAG);
+		$te = new ilTextInputGUI('', self::F_TAG);
+		$opt->addSubItem($te);
+		$radio->addOption($opt);
+
+		$radio->setValue(self::F_FLAVOR);
+		$this->addItem($radio);
+
+		if ($this->object->getUsageId() === PublicationUsage::USAGE_DOWNLOAD) {
+			$allow_multiple = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_ALLOW_MULTIPLE), self::F_ALLOW_MULTIPLE);
+		} else {
+			$allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
+			$allow_multiple->setValue(0);
+		}
+		$this->addItem($allow_multiple);
 	}
 
 
@@ -92,8 +118,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 			self::F_TITLE => $this->object->getTitle(),
 			self::F_DESCRIPTION => $this->object->getDescription(),
 			self::F_CHANNEL => $this->object->getChannel(),
+			self::F_SEARCH_KEY => $this->object->getSearchKey(),
 			self::F_FLAVOR => $this->object->getFlavor(),
+			self::F_TAG => $this->object->getTag(),
 			self::F_MD_TYPE => $this->object->getMdType(),
+			self::F_ALLOW_MULTIPLE => $this->object->isAllowMultiple(),
 		);
 
 		$this->setValuesByArray($array);
@@ -114,8 +143,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		$this->object->setTitle($this->getInput(self::F_TITLE));
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setChannel($this->getInput(self::F_CHANNEL));
+		$this->object->setSearchKey($this->getInput(self::F_SEARCH_KEY));
 		$this->object->setFlavor($this->getInput(self::F_FLAVOR));
+		$this->object->setTag($this->getInput(self::F_TAG));
 		$this->object->setMdType($this->getInput(self::F_MD_TYPE));
+		$this->object->setAllowMultiple($this->getInput(self::F_ALLOW_MULTIPLE));
 
 		return true;
 	}

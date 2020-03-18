@@ -1,5 +1,8 @@
 <#1>
 <?php
+
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+
 \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
@@ -176,4 +179,26 @@ $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)
 <#20>
 <?php
 (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->delete('api');
+?>
+<#21>
+<?php
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
+/** @var PublicationUsage $publication_usage */
+foreach (\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::get() as $publication_usage) {
+	$publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+	$publication_usage->update();
+}
+?>
+<#22>
+<?php
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
+if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+    // to keep the existing behavior
+    $player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
+    if (!is_null($player_pub)) {
+        $player_pub->setSearchKey(xoctPublicationUsageFormGUI::F_TAG);
+        $player_pub->setTag('engage-streaming');
+        $player_pub->update();
+    }
+}
 ?>

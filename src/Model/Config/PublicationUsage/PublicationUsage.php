@@ -112,7 +112,23 @@ class PublicationUsage extends ActiveRecord
      * @con_fieldtype  text
      * @con_length     512
      */
+    protected $search_key;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype  text
+     * @con_length     512
+     */
     protected $flavor;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype  text
+     * @con_length     512
+     */
+    protected $tag;
     /**
      * @var int
      *
@@ -121,14 +137,22 @@ class PublicationUsage extends ActiveRecord
      * @con_length     1
      */
     protected $md_type = null;
+    /**
+     * @var bool
+     *
+     * @con_has_field  true
+     * @con_fieldtype  integer
+     * @con_length     1
+     */
+    protected $allow_multiple = false;
 
 
     /**
      * @return string
      */
-    public function getUsageId()
+    public function getUsageId() : string
     {
-        return $this->usage_id;
+        return $this->usage_id ?? '';
     }
 
 
@@ -144,9 +168,9 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle() : string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
 
@@ -162,9 +186,9 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription() : string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
 
@@ -180,9 +204,9 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getChannel()
+    public function getChannel() : string
     {
-        return $this->channel;
+        return $this->channel ?? '';
     }
 
 
@@ -212,31 +236,82 @@ class PublicationUsage extends ActiveRecord
         $this->status = $status;
     }
 
+    /**
+     * @return bool
+     */
+    public function isAllowMultiple() : bool
+    {
+        return (bool) $this->allow_multiple;
+    }
+
+    /**
+     * @param bool $allow_multiple
+     */
+    public function setAllowMultiple(bool $allow_multiple)
+    {
+        $this->allow_multiple = $allow_multiple;
+    }
 
     /**
      * @return string
      */
-    public function getFlavor()
+    public function getFlavor() : string
     {
-        return $this->flavor;
+        return $this->flavor ?? '';
     }
 
 
     /**
      * @param string $flavor
      */
-    public function setFlavor($flavor)
+    public function setFlavor(string $flavor)
     {
         $this->flavor = $flavor;
     }
 
 
     /**
+     * @return string
+     */
+    public function getSearchKey() : string
+    {
+        return $this->search_key ?? '';
+    }
+
+
+    /**
+     * @param string $search_key
+     */
+    public function setSearchKey(string $search_key)
+    {
+        $this->search_key = $search_key;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getTag() : string
+    {
+        return $this->tag ?? '';
+    }
+
+
+    /**
+     * @param string $tag
+     */
+    public function setTag(string $tag)
+    {
+        $this->tag = $tag;
+    }
+
+
+    /**
      * @return int
      */
-    public function getMdType()
+    public function getMdType() : int
     {
-        return $this->md_type;
+        return (int) $this->md_type;
     }
 
 

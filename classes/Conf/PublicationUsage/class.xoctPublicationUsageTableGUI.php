@@ -41,7 +41,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.publication_usage.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
-		$this->initColums();
+		$this->initColumns();
 		$this->parseData();
 	}
 
@@ -61,19 +61,29 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->tpl->setVariable('DESCRIPTION', $PublicationUsage->getDescription());
 		$this->tpl->setVariable('CHANNEL', $PublicationUsage->getChannel());
 		$this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $PublicationUsage->getMdType()));
-		$this->tpl->setVariable('FLAVOR', $PublicationUsage->getFlavor());
+		if ($PublicationUsage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
+			$this->tpl->setVariable('FLAVOR', '&nbsp');
+			$this->tpl->setVariable('TAG', '&nbsp');
+		} elseif ($PublicationUsage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
+			$this->tpl->setVariable('FLAVOR', $PublicationUsage->getFlavor());
+			$this->tpl->setVariable('TAG', '&nbsp');
+		} else {
+			$this->tpl->setVariable('TAG', $PublicationUsage->getTag());
+			$this->tpl->setVariable('FLAVOR', '&nbsp');
+		}
 
 		$this->addActionMenu($PublicationUsage);
 	}
 
 
-	protected function initColums() {
+	protected function initColumns() {
 		$this->addColumn($this->parent_obj->txt('usage_id'));
 		$this->addColumn($this->parent_obj->txt('title'));
 		$this->addColumn($this->parent_obj->txt('description'));
 		$this->addColumn($this->parent_obj->txt('channel'));
 		$this->addColumn($this->parent_obj->txt('md_type'));
 		$this->addColumn($this->parent_obj->txt('flavor'));
+		$this->addColumn($this->parent_obj->txt('tag'));
 		//		$this->addColumn($this->txt('status'));
 
 		$this->addColumn(self::plugin()->getPluginObject()->txt('common_actions'), '', '150px');

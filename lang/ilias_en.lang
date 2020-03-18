@@ -254,7 +254,7 @@ publication_usage_create#:#Create
 publication_usage_delete#:#Delete
 publication_usage_description#:#Description
 publication_usage_edit#:#Edit
-publication_usage_ext_id#:#Metadata-ID
+publication_usage_ext_id#:#Metadata ID
 publication_usage_flavor#:#Flavor
 publication_usage_md_type#:#Type
 publication_usage_md_type_0#:#Publication itself
@@ -262,12 +262,12 @@ publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
 publication_usage_md_type_select#:#Select...
 publication_usage_msg_success#:#Saved
-publication_usage_publication_id#:#Publication-ID
+publication_usage_publication_id#:#Publication ID
 publication_usage_select_usage_id#:#Usage
 publication_usage_title#:#Title
 publication_usage_type_annotate#:#Annotate
 publication_usage_type_api#:#API
-publication_usage_type_cutting#:#Cutting-Tool
+publication_usage_type_cutting#:#Cutting Tool
 publication_usage_type_segments#:#Segments Preview
 publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Thumbnail
@@ -275,7 +275,12 @@ publication_usage_update#:#Update
 publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
-publication_usage_type_live_event#:#Live-Event
+publication_usage_type_live_event#:#Live Event
+publication_usage_search_key#:#Search Key
+publication_usage_search_key_info#:#The media/attachments will be search for the specified flavor/tag.
+publication_usage_tag#:#Tag
+publication_usage_allow_multiple#:#Allow multiple
+publication_usage_allow_multiple_info#:#If active and multiple media/attachments can be found for the given flavor/tag, all of them will be offered to download.
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel

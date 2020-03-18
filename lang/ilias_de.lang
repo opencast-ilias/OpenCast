@@ -274,6 +274,11 @@ publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
 publication_usage_type_live_event#:#Live-Event
+publication_usage_search_key#:#Suchbegriff
+publication_usage_search_key_info#:#Die Medien/Attachments werden nach dem hier angegebenen Flavor/Tag durchsucht.
+publication_usage_tag#:#Tag
+publication_usage_allow_multiple#:#Mehrere Möglichkeiten zulassen
+publication_usage_allow_multiple_info#:#Wenn aktiviert und es werden mehrere Medien/Attachments mit dem oben angegebenen Flavor/Tag gefunden, werden diese alle zum Download angeboten.
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
