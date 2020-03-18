@@ -1,6 +1,8 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage;
+use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
 
 /**
  * Class xoctEventTableGUI
@@ -19,6 +21,10 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 	 * @var array
 	 */
 	protected $filter = array();
+	/**
+	 * @var PublicationUsageRepository
+	 */
+	protected $repository;
 
 
 	/**
@@ -26,6 +32,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 	 * @param string                  $a_parent_cmd
 	 */
 	public function  __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd) {
+		$this->repository = new PublicationUsageRepository();
 		$this->setId(self::TBL_ID);
 		$this->setPrefix(self::TBL_ID);
 		$this->setFormName(self::TBL_ID);
@@ -35,31 +42,28 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		$this->setRowTemplate('tpl.publication_usage.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
 		$this->initColums();
-		//		$this->initFilters();
-		//		$this->setDefaultOrderField('title');
-		//		$this->setEnableNumInfo(true);
-		//		$this->setExternalSorting(true);
-		//		$this->setExternalSegmentation(true);
 		$this->parseData();
 	}
 
 
 	/**
 	 * @param array $a_set
+	 *
+	 * @throws DICException
 	 */
 	public function fillRow($a_set) {
 		/**
-		 * @var $xoctPublicationUsage PublicationUsage
+		 * @var $PublicationUsage PublicationUsage
 		 */
-		$xoctPublicationUsage = PublicationUsage::find($a_set['usage_id']);
-		$this->tpl->setVariable('USAGE_ID', $xoctPublicationUsage->getUsageId());
-		$this->tpl->setVariable('TITLE', $xoctPublicationUsage->getTitle());
-		$this->tpl->setVariable('DESCRIPTION', $xoctPublicationUsage->getDescription());
-		$this->tpl->setVariable('CHANNEL', $xoctPublicationUsage->getChannel());
-		$this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $xoctPublicationUsage->getMdType()));
-		$this->tpl->setVariable('FLAVOR', $xoctPublicationUsage->getFlavor());
+		$PublicationUsage =  $this->repository->getUsage($a_set['usage_id']);
+		$this->tpl->setVariable('USAGE_ID', $PublicationUsage->getUsageId());
+		$this->tpl->setVariable('TITLE', $PublicationUsage->getTitle());
+		$this->tpl->setVariable('DESCRIPTION', $PublicationUsage->getDescription());
+		$this->tpl->setVariable('CHANNEL', $PublicationUsage->getChannel());
+		$this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $PublicationUsage->getMdType()));
+		$this->tpl->setVariable('FLAVOR', $PublicationUsage->getFlavor());
 
-		$this->addActionMenu($xoctPublicationUsage);
+		$this->addActionMenu($PublicationUsage);
 	}
 
 
@@ -78,6 +82,8 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 	/**
 	 * @param PublicationUsage $xoctPublicationUsage
+	 *
+	 * @throws DICException
 	 */
 	protected function addActionMenu(PublicationUsage $xoctPublicationUsage) {
 		$current_selection_list = new ilAdvancedSelectionListGUI();
@@ -94,7 +100,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 
 	protected function parseData() {
-		$this->setData(PublicationUsage::getArray());
+		$this->setData($this->repository->getArray());
 	}
 
 

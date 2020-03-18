@@ -6,6 +6,8 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
 
 /**
  * Class xoctPlayerGUI
@@ -25,11 +27,17 @@ class xoctPlayerGUI extends xoctGUI
      * @var xoctOpenCast
      */
     protected $xoctOpenCast;
+    /**
+     * @var PublicationUsageRepository
+     */
+    protected $publication_usage_repository;
+
 
     /**
      * @param xoctOpenCast $xoctOpenCast
      */
     public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+        $this->publication_usage_repository = new PublicationUsageRepository();
         $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
     }
 
@@ -111,7 +119,7 @@ class xoctPlayerGUI extends xoctGUI
      * @throws xoctException
      */
     protected function getStreamingData(xoctEvent $xoctEvent) {
-        $publication_player = $xoctEvent->getFirstPublicationMetadataForUsage(PublicationUsage::getUsage(PublicationUsage::USAGE_PLAYER));
+        $publication_player = $xoctEvent->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER));
 
         if (empty($publication_player->getMedia())) {
             throw new xoctException(xoctException::NO_STREAMING_DATA);
@@ -224,10 +232,10 @@ class xoctPlayerGUI extends xoctGUI
             }
         }
 
-        $segment_publication = PublicationUsage::find(PublicationUsage::USAGE_SEGMENTS);
+        $segment_publication = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_SEGMENTS);
         if ($segment_publication) {
             $segment_flavor = $segment_publication->getFlavor();
-            $publication_usage_segments = PublicationUsage::getUsage(PublicationUsage::USAGE_SEGMENTS);
+            $publication_usage_segments = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_SEGMENTS);
             $attachments = $publication_usage_segments->getMdType()
             == PublicationUsage::MD_TYPE_PUBLICATION_ITSELF ? $xoctEvent->getFirstPublicationMetadataForUsage($publication_usage_segments)
                 ->getAttachments() : $xoctEvent->getPublicationMetadataForUsage($publication_usage_segments);
@@ -379,7 +387,7 @@ class xoctPlayerGUI extends xoctGUI
         $event_id = $_GET['event_id'];
         $mid = $_GET['mid'];
         $xoctEvent = xoctEvent::find($event_id);
-        $media = $xoctEvent->getFirstPublicationMetadataForUsage(PublicationUsage::getUsage(PublicationUsage::USAGE_PLAYER))->getMedia();
+        $media = $xoctEvent->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER))->getMedia();
         foreach ($media as $medium) {
             if ($medium->getId() == $mid) {
                 $url = $medium->getUrl();

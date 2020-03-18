@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Config;
+namespace srag\Plugins\Opencast\Model\Config\PublicationUsage;
 
 use ActiveRecord;
 
 /**
- * Class xoctPublicationUsage
+ * Class PublicationUsage
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
@@ -15,7 +15,6 @@ class PublicationUsage extends ActiveRecord
     const TABLE_NAME = 'xoct_publication_usage';
     const USAGE_ANNOTATE = 'annotate';
     const USAGE_PLAYER = 'player';
-    const USAGE_API = 'api';
     const USAGE_THUMBNAIL = 'thumbnail';
     const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
     const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
@@ -31,11 +30,10 @@ class PublicationUsage extends ActiveRecord
     /**
      * @var array
      */
-    protected static $usage_ids
+    public static $usage_ids
         = array(
             self::USAGE_ANNOTATE,
             self::USAGE_PLAYER,
-            self::USAGE_API,
             self::USAGE_THUMBNAIL,
             self::USAGE_THUMBNAIL_FALLBACK,
             self::USAGE_THUMBNAIL_FALLBACK_2,
@@ -62,28 +60,6 @@ class PublicationUsage extends ActiveRecord
     public function getConnectorContainerName()
     {
         return self::TABLE_NAME;
-    }
-
-
-    /**
-     * @param $usage
-     *
-     * @return PublicationUsage
-     */
-    public static function getUsage($usage)
-    {
-        return self::find($usage);
-    }
-
-
-    /**
-     * @return array
-     */
-    public static function getMissingUsageIds()
-    {
-        $missing = array_diff(self::$usage_ids, self::getArray(null, 'usage_id'));
-
-        return $missing;
     }
 
 

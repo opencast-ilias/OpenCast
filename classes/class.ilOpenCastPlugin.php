@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

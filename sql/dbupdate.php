@@ -1,6 +1,6 @@
 <#1>
 <?php
-\srag\Plugins\OpenCast\Model\Config\PublicationUsage::updateDB();
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
 xoctIVTGroup::updateDB();
@@ -172,4 +172,8 @@ xoctOpenCast::updateDB();
 <?php
 global $DIC;
 $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)');
+?>
+<#20>
+<?php
+(new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->delete('api');
 ?>
