@@ -4,6 +4,8 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
 
 /**
  * Class xoctEventRenderer
@@ -160,16 +162,36 @@ class xoctEventRenderer {
 	 * @throws ilTemplateException
 	 */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($download_link = $this->xoctEvent->getDownloadLink())) {
+        $download_publications = $this->xoctEvent->getDownloadPublications();
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && count($download_publications) > 0) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
-			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
-			$link_tpl->setVariable('LINK_URL', $download_link);
+            $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
+			$sign = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS);
+			if ($multi) {
+			    $factory = self::dic()->ui()->factory();
+                $items = array_map(function($pub) use ($factory, $sign) {
+                    /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
+			        return $factory->link()->standard(
+                        ($pub instanceof xoctMedia) ? $pub->getWidth() . 'p' : $pub->getFlavor(),
+                        $sign ? xoctSecureLink::sign($pub->getUrl()) : $pub->getUrl()
+                    )->withOpenInNewViewport(true);
+                }, $download_publications);
+                $dropdown = $factory->dropdown()->standard(
+			        $items
+                )->withLabel(self::plugin()->translate('download', self::LANG_MODULE));
+			    return self::dic()->ui()->renderer()->renderAsync($dropdown);
+            } else {
+			    $link = array_shift($download_publications)->getUrl();
+                $link = $sign ? xoctSecureLink::sign($link) : $link;
+                $link_tpl = self::plugin()->template('default/tpl.player_link.html');
+                $link_tpl->setVariable('BUTTON_TYPE', $button_type);
+                $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
+                $link_tpl->setVariable('LINK_URL', $link);
 
-			return $link_tpl->get();
+                return $link_tpl->get();
+            }
 		} else {
 			return '';
 		}

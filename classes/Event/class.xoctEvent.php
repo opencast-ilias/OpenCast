@@ -73,9 +73,9 @@ class xoctEvent extends APIObject {
 	 */
 	protected $player_url = null;
 	/**
-	 * @var null
+	 * @var xoctPublication[]
 	 */
-	protected $download_url = null;
+	protected $download_publications = null;
 	/**
 	 * @var xoctEventAdditions
 	 */
@@ -669,20 +669,17 @@ class xoctEvent extends APIObject {
 	}
 
 
-	/**
-	 * @return null|string
-	 */
-	public function getDownloadLink() {
-		if (!isset($this->download_url)) {
-			$url = $this->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD))->getUrl();
-			if (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS)) {
-				$this->download_url = xoctSecureLink::sign($url);
-			} else {
-				$this->download_url = $url;
-			}
+    /**
+     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     */
+	public function getDownloadPublications() : array
+    {
+		if (!isset($this->download_publications)) {
+			$pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD));
+            $this->download_publications = $pubs;
 		}
 
-		return $this->download_url;
+		return $this->download_publications;
 	}
 
 
@@ -709,46 +706,65 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @param $xoctPublicationUsage
+	 * @param $PublicationUsage
 	 *
-	 * @return array
+	 * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
 	 */
-	public function getPublicationMetadataForUsage($xoctPublicationUsage) {
-		if (!$xoctPublicationUsage instanceof PublicationUsage) {
+	public function getPublicationMetadataForUsage($PublicationUsage) : array
+    {
+		if (!$PublicationUsage instanceof PublicationUsage) {
 			return [new xoctPublication()];
 		}
 		/**
-		 * @var $xoctPublicationUsage  PublicationUsage
+		 * @var $PublicationUsage  PublicationUsage
 		 * @var $attachment            xoctAttachment
-		 * @var $media                 xoctMedia
+		 * @var $medium                 xoctMedia
 		 */
-		$medias = [];
+		$media = [];
 		$attachments = [];
 		foreach ($this->getPublications() as $publication) {
-			if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
-				$medias = array_merge($medias, $publication->getMedia());
+			if ($publication->getChannel() == $PublicationUsage->getChannel()) {
+				$media = array_merge($media, $publication->getMedia());
 				$attachments = array_merge($attachments, $publication->getAttachments());
 			}
 		}
 		$return = [];
-		switch ($xoctPublicationUsage->getMdType()) {
+		switch ($PublicationUsage->getMdType()) {
 			case PublicationUsage::MD_TYPE_ATTACHMENT:
 				foreach ($attachments as $attachment) {
-					if ($attachment->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-						$return[] = $attachment;
-					}
+				    switch ($PublicationUsage->getSearchKey()) {
+                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                            if ($attachment->getFlavor() == $PublicationUsage->getFlavor()) {
+                                $return[] = $attachment;
+                            }
+                            break;
+                        case xoctPublicationUsageFormGUI::F_TAG:
+                            if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
+                                $return[] = $attachment;
+                            }
+                            break;
+                    }
 				}
 				break;
 			case PublicationUsage::MD_TYPE_MEDIA:
-				foreach ($medias as $media) {
-					if ($media->getFlavor() == $xoctPublicationUsage->getFlavor()) {
-						$return[] = $media;
-					}
+				foreach ($media as $medium) {
+                    switch ($PublicationUsage->getSearchKey()) {
+                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                            if ($medium->getFlavor() == $PublicationUsage->getFlavor()) {
+                                $return[] = $medium;
+                            }
+                            break;
+                        case xoctPublicationUsageFormGUI::F_TAG:
+                            if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
+                                $return[] = $medium;
+                            }
+                            break;
+                    }
 				}
 				break;
 			case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
 				foreach ($this->getPublications() as $publication) {
-					if ($publication->getChannel() == $xoctPublicationUsage->getChannel()) {
+					if ($publication->getChannel() == $PublicationUsage->getChannel()) {
 						$return[] = $publication;
 					}
 				}
