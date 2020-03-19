@@ -631,56 +631,53 @@ class xoctEvent extends APIObject {
 			if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
 				$this->annotation_url = xoctSecureLink::sign($url);
 			} else {
-
 				$this->annotation_url = $url;
 			}
 		}
-		// Get Media URL
-		$media_object= $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getMedia();	
-		$media_url = $media_object[0]->url;
 
-		if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {			
-			//get duration and calculate expire date
-			$duration = $media_object[0]->duration;
-			
-			error_log('Duration AT: '.$duration);
+		// If Annnotation token security is enabled
+		if(xoctConf::getConfig(xoctConf::F_ANNOTATION_TOKEN_SEC))  {
+			// Get Media URL
+			$media_object= $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getMedia();	
+			$media_url = $media_object[0]->url;
 
-			$valid_until = null;
-			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-				$duration_in_seconds = $duration / 1000;
-				$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-				$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {			
+				//get duration and calculate expire date
+				$duration = $media_object[0]->duration;
+				
+				$valid_until = null;
+				if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+					$duration_in_seconds = $duration / 1000;
+					$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+					$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+				}
+				// Sign the url and parse the variables.
+				$media_url_signed = xoctSecureLink::sign($media_url, $valid_until);
+				$media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
+				$media_url = $media_url . '&' . $media_url_query;
 			}
-			error_log('Valid until AT: '.$valid_until);
-			// Sign the url and parse the variables.
-			$media_url_signed = xoctSecureLink::sign($media_url, $valid_until);
-			$media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
-			$media_url = $media_url . '&' . $media_url_query;
 
-			//
-			error_log('signed media url: '.$media_url);
+			// Get user and course ref id
+			$ref_id = $_GET['ref_id'];
+			$user_id = xoctUser::getInstance(self::dic()->user())->getExtId();
+			$ilias_user_id = xoctUser::getInstance(self::dic()->user())->getIliasUserId();
+
+			// Check if user have admin rights
+			$admins = ilObjOpenCastAccess::getAdmins();
+			if (in_array($ilias_user_id, $admins)) {
+				$is_admin = 1;
+			} else {
+				$is_admin = 0;
+			}
+
+			// Create the hash
+			$hash_input = $user_id . $ref_id . $is_admin;
+			$auth_hash = hash("md5", $hash_input);
+
+			$this->annotation_url = $this->annotation_url . '&mediaURL='. $media_url . '&refid=' . $ref_id . '&auth=' . $auth_hash;
 		}
 
-		// Get user and course ref id
-		$ref_id = $_GET['ref_id'];
-		$user_id = xoctUser::getInstance(self::dic()->user())->getExtId();
-		$ilias_user_id = xoctUser::getInstance(self::dic()->user())->getIliasUserId();
-
-		// Check if user have admin rights
-		$admins = ilObjOpenCastAccess::getAdmins();
-		if (in_array($ilias_user_id, $admins)) {
-			$is_admin = 1;
-		} else {
-			$is_admin = 0;
-		}
-
-		// Create the hash
-		$hash_input = $user_id . $ref_id . $is_admin;
-		$auth_hash = hash("md5", $hash_input);
-
-		$annotation_complete_url = $this->annotation_url . '&mediaURL='. $media_url . '&refid=' . $ref_id . '&auth=' . $auth_hash;
-		//error_log($annotation_complete_url);
-		return $annotation_complete_url;
+		return $this->annotation_url;
 	}
 
 
