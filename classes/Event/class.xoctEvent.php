@@ -698,7 +698,6 @@ class xoctEvent extends APIObject {
 				$this->player_url = $url;
 			}
 		}
-		error_log($this->player_url);
 		return $this->player_url;
 	}
 
@@ -715,6 +714,7 @@ class xoctEvent extends APIObject {
 				$this->download_url = $url;
 			}
 		}
+		
 		return $this->download_url;
 	}
 
