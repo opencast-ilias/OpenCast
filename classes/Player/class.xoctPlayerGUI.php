@@ -165,6 +165,7 @@ class xoctPlayerGUI extends xoctGUI
                         $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
                         $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
                     }
+
                     $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
                     $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
                 }

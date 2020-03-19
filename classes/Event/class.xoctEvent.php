@@ -714,7 +714,7 @@ class xoctEvent extends APIObject {
 				$this->download_url = $url;
 			}
 		}
-		
+
 		return $this->download_url;
 	}
 
