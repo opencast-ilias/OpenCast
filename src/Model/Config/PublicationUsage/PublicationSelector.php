@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Config\PublicationUsage;
 
+use ilObjOpenCastAccess;
 use ilObjOpenCastGUI;
 use ilOpenCastPlugin;
 use ilRepositoryGUI;
@@ -18,6 +19,7 @@ use xoctPublication;
 use xoctPublicationUsageFormGUI;
 use xoctRequest;
 use xoctSecureLink;
+use xoctUser;
 
 /**
  * Class PublicationSelector
@@ -258,19 +260,56 @@ class PublicationSelector
 
 
     /**
+     * @param int $ref_id set the ref id if the link should be secured via hash mechanism
+     *
      * @return null|string
      * @throws xoctException
      */
-    public function getAnnotationLink()
+    public function getAnnotationLink(int $ref_id = 0)
     {
         if (!isset($this->annotation_url)) {
-            $url = $this->getFirstPublicationMetadataForUsage(
+            $annotation_publication = $this->getFirstPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
-            )->getUrl();
+            );
+            $url = $annotation_publication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
                 $this->annotation_url = xoctSecureLink::sign($url);
             } else {
                 $this->annotation_url = $url;
+            }
+
+            if ($ref_id > 0 && xoctConf::getConfig(xoctConf::F_ANNOTATION_TOKEN_SEC)) {
+                $xoctUser = xoctUser::getInstance(self::dic()->user());
+                // Get Media URL
+                $media_object = $annotation_publication instanceof xoctPublication ? $annotation_publication->getMedia() : [$annotation_publication];
+                $media_object = array_shift($media_object);
+                $media_url = $media_object->getUrl();
+
+                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    //get duration and calculate expire date
+                    $duration = $media_object->duration;
+
+                    $valid_until = null;
+                    if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+                        $duration_in_seconds = $duration / 1000;
+                        $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+                        $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+                    }
+                    // Sign the url and parse the variables.
+                    $media_url_signed = xoctSecureLink::sign($media_url, $valid_until);
+                    $media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
+                    $media_url = $media_url . '&' . $media_url_query;
+                }
+
+                // Get user and course ref id
+                $user_id = $xoctUser->getIdentifier();
+                $is_admin = (int) ilObjOpenCastAccess::hasWriteAccess($ref_id);
+
+                // Create the hash
+                $hash_input = $user_id . $ref_id . $is_admin;
+                $auth_hash = hash("md5", $hash_input);
+
+                $this->annotation_url = $this->annotation_url . '&mediaURL=' . $media_url . '&refid=' . $ref_id . '&auth=' . $auth_hash;
             }
         }
 
@@ -478,6 +517,4 @@ class PublicationSelector
     {
         return $this->publications;
     }
-
-
 }

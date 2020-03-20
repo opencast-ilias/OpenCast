@@ -523,6 +523,7 @@ class xoctEventGUI extends xoctGUI {
 
 		// redirect
 		$annotation_link = $xoctEvent->publications()->getAnnotationLink();
+
 		header('Location: ' . $annotation_link);
 	}
 

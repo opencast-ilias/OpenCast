@@ -2,6 +2,8 @@ admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
 config_activate_cache#:#Cache aktivieren
+config_annotation_token_security#:#Anmerkungs-Token-Sicherheit aktivieren
+config_annotation_token_security_info#:#Fügt die Kursreferenz und einen Sicherheitshash zum Annotationslink hinzugefügt.
 config_api_base#:#API-Basis-URL
 config_api_version#:#API-Version
 config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0

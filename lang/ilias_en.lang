@@ -2,6 +2,8 @@ admin_export#:#Export Settings
 admin_import#:#Import Settings
 common_actions#:#Actions
 config_activate_cache#:#Activate Cache
+config_annotation_token_security#:#Enable Annotation token security
+config_annotation_token_security_info#:#Adds the course reference and a security hash to the annotation link
 config_api_base#:#Api-Base-URL
 config_api_version#:#API Version
 config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0

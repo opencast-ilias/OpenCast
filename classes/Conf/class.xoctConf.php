@@ -33,6 +33,7 @@ class xoctConf extends ActiveRecord {
 	const F_LICENSES = 'licenses';
 	const F_UPLOAD_TOKEN = 'upload_token';
 	const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
+	const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
 	const F_REQUEST_COMBINATION_LEVEL = 'request_comb_lv';
 	const F_EDITOR_LINK = 'editor_link';
 	const SEP_EVERYTHING = 1;
