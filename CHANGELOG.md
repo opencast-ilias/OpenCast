@@ -1,7 +1,12 @@
 # Change Log
 
-## [x.x.x]
+## [2.5.0] (unreleased)
 - Refactoring and adjustments for page component plugin
+- Feature: allow multiple downloads
+- Feature: configure tags for publications
+- Feature: preview publication configurable
+- Improvement: refactored publications 
+- Improvement: removed api configuration
 
 ## [2.4.1]
 - Fixed Tile sorting
