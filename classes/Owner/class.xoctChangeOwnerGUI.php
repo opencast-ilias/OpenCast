@@ -38,8 +38,11 @@ class xoctChangeOwnerGUI extends xoctGUI {
         self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
+
     /**
+     * @throws \srag\DIC\OpenCast\Exception\DICException
      * @throws ilTemplateException
+     * @throws xoctException
      */
     protected function index() {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -48,7 +51,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
             self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
         }
         $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.change_owner.html', false, false);
-        $temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
+        $temp->setVariable('PREVIEW', $this->xoctEvent->publications()->getThumbnailUrl());
         $temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
         $temp->setVariable('L_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter'));
         $temp->setVariable('PH_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter_placeholder'));

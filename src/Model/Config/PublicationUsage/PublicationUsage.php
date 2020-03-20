@@ -21,6 +21,7 @@ class PublicationUsage extends ActiveRecord
     const USAGE_DOWNLOAD = 'download';
     const USAGE_CUTTING = 'cutting';
     const USAGE_SEGMENTS = 'segments';
+    const USAGE_PREVIEW = 'preview';
     const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
     const USAGE_LIVE_EVENT = 'live_event';
     const USAGE_ENGAGE_STREAMING = "engage-streaming";
@@ -40,6 +41,7 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_DOWNLOAD,
             self::USAGE_CUTTING,
             self::USAGE_SEGMENTS,
+            self::USAGE_PREVIEW,
             self::USAGE_LIVE_EVENT,
         );
 

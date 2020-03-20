@@ -88,6 +88,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 
 		$opt = new ilRadioOption($this->parent_gui->txt(self::F_FLAVOR), self::F_FLAVOR);
 		$te = new ilTextInputGUI('', self::F_FLAVOR);
+		$te->setInfo($this->parent_gui->txt(self::F_FLAVOR . '_info'));
 		$opt->addSubItem($te);
 		$radio->addOption($opt);
 

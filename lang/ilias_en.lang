@@ -256,6 +256,7 @@ publication_usage_description#:#Description
 publication_usage_edit#:#Edit
 publication_usage_ext_id#:#Metadata ID
 publication_usage_flavor#:#Flavor
+publication_usage_flavor_info#:#It's possible to search only for the flavor's first part, or the seconds part, respectively. E.g.: 'presentation/' or '/delivery'.
 publication_usage_md_type#:#Type
 publication_usage_md_type_0#:#Publication itself
 publication_usage_md_type_1#:#Attachment

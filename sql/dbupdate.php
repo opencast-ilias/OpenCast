@@ -202,3 +202,19 @@ if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
     }
 }
 ?>
+<#23>
+<?php
+// to keep the existing behavior
+$preview_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+$player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
+if (is_null($preview_pub) && !is_null($player_pub)) {
+	$preview_pub = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage();
+	$preview_pub->setTitle('Preview');
+	$preview_pub->setChannel($player_pub->getChannel());
+	$preview_pub->setUsageId(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+    $preview_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
+    $preview_pub->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+    $preview_pub->setFlavor('/player+preview');
+    $preview_pub->store();
+}
+?>
