@@ -522,7 +522,9 @@ class xoctEventGUI extends xoctGUI {
 
 
 		// redirect
-		$annotation_link = $xoctEvent->publications()->getAnnotationLink();
+		$annotation_link = $xoctEvent->publications()->getAnnotationLink(
+		    filter_input(INPUT_GET, 'ref_id', FILTER_SANITIZE_NUMBER_INT)
+        );
 
 		header('Location: ' . $annotation_link);
 	}
