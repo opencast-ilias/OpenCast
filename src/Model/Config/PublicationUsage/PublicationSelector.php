@@ -1,0 +1,483 @@
+<?php
+
+namespace srag\Plugins\Opencast\Model\Config\PublicationUsage;
+
+use ilObjOpenCastGUI;
+use ilOpenCastPlugin;
+use ilRepositoryGUI;
+use srag\DIC\OpenCast\DICTrait;
+use stdClass;
+use xoctAttachment;
+use xoctConf;
+use xoctEvent;
+use xoctEventGUI;
+use xoctException;
+use xoctMedia;
+use xoctPlayerGUI;
+use xoctPublication;
+use xoctPublicationUsageFormGUI;
+use xoctRequest;
+use xoctSecureLink;
+
+/**
+ * Class PublicationSelector
+ *
+ * @package srag\Plugins\Opencast\Model\Config\PublicationUsage
+ *
+ * @author  Theodor Truffer <tt@studer-raimann.ch>
+ */
+class PublicationSelector
+{
+
+    use DICTrait;
+    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
+    const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
+    const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
+    const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
+    /**
+     * @var self[]
+     */
+    protected static $instances = [];
+    /**
+     * @var bool
+     */
+    protected $loaded = false;
+    /**
+     * @var xoctEvent
+     */
+    protected $event;
+    /**
+     * @var xoctPublication[]
+     */
+    protected $publications = [];
+    /**
+     * @var PublicationUsageRepository
+     */
+    protected $publication_usage_repository;
+    /**
+     * @var xoctPublication|xoctMedia|xoctAttachment
+     */
+    protected $player_publications;
+    /**
+     * @var xoctPublication|xoctMedia|xoctAttachment
+     */
+    protected $download_publications;
+    /**
+     * @var xoctPublication|xoctMedia|xoctAttachment
+     */
+    protected $preview_publications;
+    /**
+     * @var string
+     */
+    protected $cutting_url;
+    /**
+     * @var string
+     */
+    protected $player_url;
+    /**
+     * @var string
+     */
+    protected $annotation_url;
+    /**
+     * @var string
+     */
+    protected $thumbnail_url;
+
+
+    /**
+     * PublicationSelector constructor.
+     *
+     * @param xoctEvent $event
+     */
+    protected function __construct(xoctEvent $event)
+    {
+        $this->event = $event;
+        $this->publication_usage_repository = new PublicationUsageRepository();
+    }
+
+
+    /**
+     * @param xoctEvent $event
+     *
+     * @return static
+     */
+    public static function getInstance(xoctEvent $event) : self
+    {
+        if (!isset(self::$instances[$event->getIdentifier()])) {
+            self::$instances[$event->getIdentifier()] = new self($event);
+        }
+
+        return self::$instances[$event->getIdentifier()];
+    }
+
+
+    /**
+     * @param stdClass[] $publication_data
+     *
+     * @throws xoctException
+     */
+    public function loadFromArray(array $publication_data)
+    {
+        $publication_data = array();
+        foreach ($publication_data as $p_array) {
+            $md = new xoctPublication();
+            if ($p_array instanceof stdClass) {
+                $md->loadFromStdClass($p_array);
+            } else {
+                $md->loadFromArray($p_array);
+            }
+            $publication_data[] = $md;
+        }
+
+        $this->publications = $publication_data;
+        $this->loaded = true;
+    }
+
+
+    /**
+     * @throws xoctException
+     */
+    protected function loadPublications()
+    {
+        $data = json_decode(xoctRequest::root()->events($this->event->getIdentifier())->publications()->get());
+
+        $publications = array();
+        foreach ($data as $d) {
+            $p = new xoctPublication();
+            $p->loadFromStdClass($d);
+            $publications[] = $p;
+        }
+        $this->publications = $publications;
+        $this->loaded = true;
+    }
+
+
+    /**
+     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @throws xoctException
+     */
+    public function getPlayerPublications() : array
+    {
+        if (!isset($this->player_publications)) {
+            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER));
+            $this->player_publications = $pubs;
+        }
+
+        return $this->player_publications;
+    }
+
+
+    /**
+     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @throws xoctException
+     */
+    public function getDownloadPublications() : array
+    {
+        if (!isset($this->download_publications)) {
+            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD));
+            $this->download_publications = $pubs;
+        }
+
+        return $this->download_publications;
+    }
+
+
+    /**
+     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @throws xoctException
+     */
+    public function getPreviewPublications() : array
+    {
+        if (!isset($this->preview_publications)) {
+            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PREVIEW));
+            $this->preview_publications = $pubs;
+        }
+
+        return $this->preview_publications;
+    }
+
+
+    /**
+     * @return null|string
+     */
+    public function getCuttingLink()
+    {
+        if (!isset($this->cutting_url)) {
+            $url = str_replace('{event_id}', $this->event->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
+            if (!$url) {
+                $url = $this->getFirstPublicationMetadataForUsage(
+                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CUTTING)
+                )->getUrl();
+            }
+            if (!$url) {
+                $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
+                $base = str_replace('/api', '', $base);
+                $this->cutting_url = $base . '/external-url/events/' . $this->event->getIdentifier() . '/editor';
+            }
+
+            $this->cutting_url = $url;
+        }
+
+        return $this->cutting_url;
+    }
+
+
+    /**
+     * @return null|string
+     * @throws xoctException
+     */
+    public function getPlayerLink()
+    {
+        if (!isset($this->player_url)) {
+            if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) || $this->event->isLiveEvent()) {
+                self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
+                self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->event->getIdentifier());
+                $this->player_url = self::dic()->ctrl()->getLinkTargetByClass(
+                    [
+                        ilRepositoryGUI::class,
+                        ilObjOpenCastGUI::class,
+                        xoctEventGUI::class,
+                        xoctPlayerGUI::class
+                    ], xoctPlayerGUI::CMD_STREAM_VIDEO);
+            } else {
+                $url = $this->getFirstPublicationMetadataForUsage(
+                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER)
+                )->getUrl();
+
+                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    $this->player_url = xoctSecureLink::sign($url);
+                } else {
+                    $this->player_url = $url;
+                }
+            }
+        }
+
+        return $this->player_url;
+    }
+
+
+    /**
+     * @return null|string
+     * @throws xoctException
+     */
+    public function getAnnotationLink()
+    {
+        if (!isset($this->annotation_url)) {
+            $url = $this->getFirstPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
+            )->getUrl();
+            if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
+                $this->annotation_url = xoctSecureLink::sign($url);
+            } else {
+                $this->annotation_url = $url;
+            }
+        }
+
+        return $this->annotation_url;
+    }
+
+
+    /**
+     * @return string
+     * @throws xoctException
+     */
+    public function getThumbnailUrl()
+    {
+        if (in_array(
+            $this->event->getProcessingState(),
+            [xoctEvent::STATE_SCHEDULED, xoctEvent::STATE_SCHEDULED_OFFLINE, xoctEvent::STATE_RECORDING]
+        )
+        ) {
+            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
+
+            return $this->thumbnail_url;
+        }
+
+        if (in_array(
+            $this->event->getProcessingState(),
+            [xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_OFFLINE]
+        )
+        ) {
+            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
+
+            return $this->thumbnail_url;
+        }
+
+        if ($this->event->getProcessingState() == xoctEvent::STATE_LIVE_RUNNING) {
+            $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
+
+            return $this->thumbnail_url;
+        }
+
+        $possible_publications = array(
+            PublicationUsage::USAGE_THUMBNAIL,
+            PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
+            PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
+        );
+
+        $i = 0;
+        while (!$this->thumbnail_url && $i < count($possible_publications)) {
+            $url = $this->getFirstPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage($possible_publications[$i])
+            )->getUrl();
+            if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+                $this->thumbnail_url = xoctSecureLink::sign($url);
+            } else {
+                $this->thumbnail_url = $url;
+            }
+            $i++;
+        }
+        if (!$this->thumbnail_url) {
+            $this->thumbnail_url = self::NO_PREVIEW;
+        }
+
+        return $this->thumbnail_url;
+    }
+
+
+    /**
+     * @param $PublicationUsage
+     *
+     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @throws xoctException
+     */
+    public function getPublicationMetadataForUsage($PublicationUsage) : array
+    {
+        if (!$this->loaded) {
+            $this->loadPublications();
+        }
+
+        if (!$PublicationUsage instanceof PublicationUsage) {
+            return [new xoctPublication()];
+        }
+        /**
+         * @var $PublicationUsage       PublicationUsage
+         * @var $attachment             xoctAttachment
+         * @var $medium                 xoctMedia
+         */
+        $media = [];
+        $attachments = [];
+        foreach ($this->getPublications() as $publication) {
+            if ($publication->getChannel() == $PublicationUsage->getChannel()) {
+                $media = array_merge($media, $publication->getMedia());
+                $attachments = array_merge($attachments, $publication->getAttachments());
+            }
+        }
+        $return = [];
+        switch ($PublicationUsage->getMdType()) {
+            case PublicationUsage::MD_TYPE_ATTACHMENT:
+                foreach ($attachments as $attachment) {
+                    switch ($PublicationUsage->getSearchKey()) {
+                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                            if ($this->checkFlavor($attachment->getFlavor(), $PublicationUsage->getFlavor())) {
+                                $return[] = $attachment;
+                            }
+                            break;
+                        case xoctPublicationUsageFormGUI::F_TAG:
+                            if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
+                                $return[] = $attachment;
+                            }
+                            break;
+                    }
+                }
+                break;
+            case PublicationUsage::MD_TYPE_MEDIA:
+                foreach ($media as $medium) {
+                    switch ($PublicationUsage->getSearchKey()) {
+                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                            if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
+                                $return[] = $attachment;
+                            }
+                            break;
+                        case xoctPublicationUsageFormGUI::F_TAG:
+                            if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
+                                $return[] = $medium;
+                            }
+                            break;
+                    }
+                }
+                break;
+            case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
+                foreach ($this->getPublications() as $publication) {
+                    if ($publication->getChannel() == $PublicationUsage->getChannel()) {
+                        $return[] = $publication;
+                    }
+                }
+                break;
+            default:
+                return [new xoctPublication()];
+        }
+
+        return $return;
+    }
+
+
+    /**
+     * @param $xoctPublicationUsage
+     *
+     * @return mixed|xoctPublication
+     */
+    public function getFirstPublicationMetadataForUsage($xoctPublicationUsage)
+    {
+        $metadata = $this->getPublicationMetadataForUsage($xoctPublicationUsage);
+
+        return count($metadata) ? array_shift($metadata) : new xoctPublication();
+    }
+
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     *
+     * @return bool
+     */
+    protected function startsWith(string $haystack, string $needle) : bool
+    {
+        $length = strlen($needle);
+
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     *
+     * @return bool
+     */
+    protected function endsWith(string $haystack, string $needle) : bool
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     *
+     * @return bool
+     */
+    protected function checkFlavor(string $haystack, string $needle) : bool
+    {
+        return ($haystack == $needle)
+            || ($this->startsWith($needle, '/') && $this->endsWith($haystack, $needle))
+            || ($this->endsWith($needle, '/') && $this->startsWith($haystack, $needle));
+    }
+
+
+    /**
+     * @return xoctPublication[]
+     */
+    public function getPublications() : array
+    {
+        return $this->publications;
+    }
+
+
+}

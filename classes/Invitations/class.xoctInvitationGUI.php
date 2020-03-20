@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctInvitationGUI
  *
@@ -38,6 +41,11 @@ class xoctInvitationGUI extends xoctGUI {
 	}
 
 
+    /**
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	protected function index() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
@@ -45,7 +53,7 @@ class xoctInvitationGUI extends xoctGUI {
 			self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
 		}
 		$temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.invitations.html', false, false);
-		$temp->setVariable('PREVIEW', $this->xoctEvent->getThumbnailUrl());
+		$temp->setVariable('PREVIEW', $this->xoctEvent->publications()->getThumbnailUrl());
 		$temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
         $temp->setVariable('L_FILTER', self::plugin()->translate('groups_participants_filter'));
         $temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));

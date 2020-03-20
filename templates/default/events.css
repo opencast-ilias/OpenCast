@@ -74,6 +74,26 @@
 	margin-bottom: 36px;
 }
 
+.xoct_event_buttons .dropdown {
+	display: inline-block;
+	width: 32%;
+}
+
+.xoct_event_buttons .dropdown button {
+	width: 100%;
+	text-align: center;
+}
+
+div.btn-group-vertical button.btn-default {
+	background-color: #dcb496;
+	border-color: #d6a683;
+}
+
+div.btn-group-vertical button.btn-default:hover, div.btn-group-vertical button.btn-default:focus, div.btn-group-vertical .open > .dropdown-toggle.btn-default {
+	background-color: #cf9970;
+	border-color: #c68655;
+}
+
 div.il-card .xoct_event_state span.label {
 	width: 100%;
 	white-space: pre-wrap;

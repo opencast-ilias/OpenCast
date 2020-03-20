@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
@@ -40,7 +43,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 		$this->db->dropTable(xoctOpenCast::TABLE_NAME, false);
 		$this->db->dropTable(xoctEventAdditions::TABLE_NAME, false);
 		$this->db->dropTable(xoctPermissionTemplate::TABLE_NAME, false);
-		$this->db->dropTable(xoctPublicationUsage::TABLE_NAME, false);
+		$this->db->dropTable(PublicationUsage::TABLE_NAME, false);
 		$this->db->dropTable(xoctSystemAccount::TABLE_NAME, false);
 		$this->db->dropTable(xoctConf::TABLE_NAME, false);
 		$this->db->dropTable(xoctReport::DB_TABLE, false);

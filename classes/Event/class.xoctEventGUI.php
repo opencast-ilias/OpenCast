@@ -485,13 +485,15 @@ class xoctEventGUI extends xoctGUI {
 		}
 
 		// redirect
-		$cutting_link = $xoctEvent->getCuttingLink();
+		$cutting_link = $xoctEvent->publications()->getCuttingLink();
 		header('Location: ' . $cutting_link);
 	}
 
-	/**
-	 *
-	 */
+
+    /**
+     *
+     * @throws xoctException
+     */
 	public function annotate() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
@@ -520,8 +522,8 @@ class xoctEventGUI extends xoctGUI {
 
 
 		// redirect
-		$cutting_link = $xoctEvent->getAnnotationLink();
-		header('Location: ' . $cutting_link);
+		$annotation_link = $xoctEvent->publications()->getAnnotationLink();
+		header('Location: ' . $annotation_link);
 	}
 
 
@@ -681,7 +683,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$ilConfirmationGUI = new ilConfirmationGUI();
 		$ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
-        if (count($xoctEvent->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+        if (count($xoctEvent->publications()->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
             $header_text = $this->txt('unpublish_confirm');
             $action_text = 'unpublish';
         } else {
@@ -707,7 +709,7 @@ class xoctEventGUI extends xoctGUI {
 			ilUtil::sendFailure($this->txt('msg_no_access'), true);
 			$this->cancel();
 		}
-        if (count($xoctEvent->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+        if (count($xoctEvent->publications()->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
             try {
                 $xoctEvent->unpublish();
                 ilUtil::sendSuccess($this->txt('msg_unpublish_started'), true);
@@ -779,23 +781,6 @@ class xoctEventGUI extends xoctGUI {
 		$event = new xoctEvent($_POST['import_identifier']);
 		$html .= 'Series after new read: ' . $event->getSeriesIdentifier() . '<br>';
 		self::dic()->mainTemplate()->setContent($html);
-	}
-
-
-	/**
-	 *
-	 */
-	protected function listAll() {
-		/**
-		 * @var $event xoctEvent
-		 */
-		$request = xoctRequest::root()->events()->parameter('limit', 1000);
-		$content = '';
-		foreach (json_decode($request->get()) as $d) {
-			$event = xoctEvent::find($d->identifier);
-			$content .= '<pre>' . print_r($event->__toStdClass(), 1) . '</pre>';
-		}
-		self::dic()->mainTemplate()->setContent($content);
 	}
 
 

@@ -4,6 +4,8 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
 
 /**
  * Class xoctEventRenderer
@@ -72,35 +74,43 @@ class xoctEventRenderer {
 		$this->insert($tpl, $variable, $this->getThumbnailHTML(), $block_title);
 	}
 
-	/**
-	 * @return string
-	 */
+
+    /**
+     * @return string
+     * @throws xoctException
+     */
 	public function getThumbnailHTML() {
-		return $this->renderer->render($this->factory->image()->responsive($this->xoctEvent->getThumbnailUrl(), 'Thumbnail'));
+		return $this->renderer->render($this->factory->image()->responsive($this->xoctEvent->publications()->getThumbnailUrl(), 'Thumbnail'));
 	}
 
-	/**
-	 * @param $tpl ilTemplate
-	 * @param string $block_title
-	 * @param string $variable
-	 * @param string $button_type
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param        $tpl ilTemplate
+     * @param string $block_title
+     * @param string $variable
+     * @param string $button_type
+     *
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
 		if ($player_link_html = $this->getPlayerLinkHTML($button_type)) {
 			$this->insert($tpl, $variable, $player_link_html, $block_title);
 		}
 	}
 
-	/**
-	 * @param string $button_type
-	 * @return string
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param string $button_type
+     *
+     * @return string
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if ($this->isEventAccessible() && ($player_link = $this->xoctEvent->getPlayerLink())) {
+		if ($this->isEventAccessible() && ($player_link = $this->xoctEvent->publications()->getPlayerLink())) {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
@@ -122,12 +132,13 @@ class xoctEventRenderer {
 
     /**
      * @return ilModalGUI
+     * @throws xoctException
      */
 	public function getPlayerModal() {
         $modal = ilModalGUI::getInstance();
         $modal->setId('modal_' . $this->xoctEvent->getIdentifier());
         $modal->setHeading($this->xoctEvent->getTitle());
-        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->getPlayerLink() . '"></iframe>');
+        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->publications()->getPlayerLink() . '"></iframe>');
         return $modal;
     }
 
@@ -153,50 +164,78 @@ class xoctEventRenderer {
 		}
 	}
 
-	/**
-	 * @param string $button_type
-	 * @return string
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param string $button_type
+     *
+     * @return string
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($download_link = $this->xoctEvent->getDownloadLink())) {
+        $download_publications = $this->xoctEvent->publications()->getDownloadPublications();
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && count($download_publications) > 0) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
-			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
-			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
-			$link_tpl->setVariable('LINK_URL', $download_link);
+            $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
+			$sign = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS);
+			if ($multi) {
+                $items = array_map(function($pub) use ($sign) {
+                    /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
+			        return $this->factory->link()->standard(
+                        ($pub instanceof xoctMedia) ? $pub->getWidth() . 'p' : $pub->getFlavor(),
+                        $sign ? xoctSecureLink::sign($pub->getUrl()) : $pub->getUrl()
+                    )->withOpenInNewViewport(true);
+                }, $download_publications);
+                $dropdown = $this->factory->dropdown()->standard(
+			        $items
+                )->withLabel(self::plugin()->translate('download', self::LANG_MODULE));
+			    return self::dic()->ui()->renderer()->renderAsync($dropdown);
+            } else {
+			    $link = array_shift($download_publications)->getUrl();
+                $link = $sign ? xoctSecureLink::sign($link) : $link;
+                $link_tpl = self::plugin()->template('default/tpl.player_link.html');
+                $link_tpl->setVariable('BUTTON_TYPE', $button_type);
+                $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
+                $link_tpl->setVariable('LINK_URL', $link);
 
-			return $link_tpl->get();
+                return $link_tpl->get();
+            }
 		} else {
 			return '';
 		}
 	}
 
-	/**
-	 * @param $tpl ilTemplate
-	 * @param string $block_title
-	 * @param string $variable
-	 * @param string $button_type
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param        $tpl ilTemplate
+     * @param string $block_title
+     * @param string $variable
+     * @param string $button_type
+     *
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
 		if ($annotation_link_html = $this->getAnnotationLinkHTML($button_type)) {
 			$this->insert($tpl, $variable, $annotation_link_html, $block_title);
 		}
 	}
 
-	/**
-	 * @param string $button_type
-	 * @return string
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param string $button_type
+     *
+     * @return string
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function getAnnotationLinkHTML($button_type = 'btn_info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($this->xoctEvent->getAnnotationLink())) {
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($this->xoctEvent->publications()->getAnnotationLink())) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && !$this->xoctOpenCast->getUseAnnotations()) {
 				return '';
 			}

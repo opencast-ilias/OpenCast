@@ -93,7 +93,7 @@ class xoctEventTileGUI {
 			$dropdown = $this->factory->dropdown()->standard($this->getActionButtons($xoctEvent));
 
 			$image = $this->factory->image()->standard(
-				$xoctEvent->getThumbnailUrl(),
+				$xoctEvent->publications()->getThumbnailUrl(),
 				"Thumbnail");
 
 			$tile_tpl = self::plugin()->template('default/tpl.event_tile.html');

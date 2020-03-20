@@ -1,9 +1,9 @@
 <#1>
 <?php
 
-use srag\Plugins\Opencast\Chat\Model\MessageAR;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 
-xoctPublicationUsage::updateDB();
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
 xoctConf::updateDB();
 xoctIVTGroup::updateDB();
@@ -175,4 +175,46 @@ xoctOpenCast::updateDB();
 <?php
 global $DIC;
 $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)');
+?>
+<#20>
+<?php
+(new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->delete('api');
+?>
+<#21>
+<?php
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
+/** @var PublicationUsage $publication_usage */
+foreach (\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::get() as $publication_usage) {
+	$publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+	$publication_usage->update();
+}
+?>
+<#22>
+<?php
+\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
+if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+    // to keep the existing behavior
+    $player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
+    if (!is_null($player_pub)) {
+        $player_pub->setSearchKey(xoctPublicationUsageFormGUI::F_TAG);
+        $player_pub->setTag('engage-streaming');
+        $player_pub->update();
+    }
+}
+?>
+<#23>
+<?php
+// to keep the existing behavior
+$preview_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+$player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
+if (is_null($preview_pub) && !is_null($player_pub)) {
+	$preview_pub = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage();
+	$preview_pub->setTitle('Preview');
+	$preview_pub->setChannel($player_pub->getChannel());
+	$preview_pub->setUsageId(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+    $preview_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
+    $preview_pub->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+    $preview_pub->setFlavor('/player+preview');
+    $preview_pub->store();
+}
 ?>
