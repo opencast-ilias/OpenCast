@@ -225,7 +225,8 @@ class xoctSeries extends APIObject {
 		$array['theme'] = $this->getTheme();
 
 		$data = json_decode(xoctRequest::root()->series()->post($array));
-
+		sleep(1);
+		
 		if ($data->identifier) {
 			$this->setIdentifier($data->identifier);
 		} else {
