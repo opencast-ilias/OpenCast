@@ -869,6 +869,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationSelector.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsage' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsage.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\Workflow' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/Workflow.php',
+        'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\WorkflowRepository' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/WorkflowRepository.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => __DIR__ . '/../..' . '/src/UI/Input/EventFormGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => __DIR__ . '/../..' . '/src/UI/Input/FileUploadInputGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => __DIR__ . '/../..' . '/src/UI/Input/Plupload.php',
@@ -951,12 +953,14 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctUserSettings' => __DIR__ . '/../..' . '/classes/Series/UserSettings/class.xoctUserSettings.php',
         'xoctVideoPortalSettingsFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctVideoPortalSettingsFormGUI.php',
         'xoctWaiterGUI' => __DIR__ . '/../..' . '/classes/class.xoctWaiterGUI.php',
+        'xoctWorkflowGUI' => __DIR__ . '/../..' . '/classes/Conf/Workflows/class.xoctWorkflowGUI.php',
         'xoctWorkflowParameter' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameter.php',
         'xoctWorkflowParameterFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterFormGUI.php',
         'xoctWorkflowParameterGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterGUI.php',
         'xoctWorkflowParameterRepository' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterRepository.php',
         'xoctWorkflowParameterTableGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
         'xoctWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
+        'xoctWorkflowTableGUI' => __DIR__ . '/../..' . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

@@ -218,3 +218,7 @@ if (is_null($preview_pub) && !is_null($player_pub)) {
     $preview_pub->store();
 }
 ?>
+<#24>
+<?php
+\srag\Plugins\Opencast\Model\Config\Workflow\Workflow::updateDB();
+?>
