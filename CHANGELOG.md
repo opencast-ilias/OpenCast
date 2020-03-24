@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.4.2]
+- Fixed race condition when creating series
+
 ## [2.4.1]
 - Fixed Tile sorting
 - Feature/Fix: introduced "Show in Form (checkbox active)" for workflow parameters
