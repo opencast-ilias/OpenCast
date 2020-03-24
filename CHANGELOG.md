@@ -9,6 +9,9 @@
 - Improvement: refactored publications 
 - Improvement: removed api configuration
 
+## [2.4.2]
+- Fixed race condition when creating series
+
 ## [2.4.1]
 - Fixed Tile sorting
 - Feature/Fix: introduced "Show in Form (checkbox active)" for workflow parameters
