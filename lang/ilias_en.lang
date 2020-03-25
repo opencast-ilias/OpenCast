@@ -9,6 +9,8 @@ config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
 config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.
+config_oc_studio_allowed#:#Enable Opencast Studio
+config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
@@ -177,6 +179,7 @@ event_multiple_start_time#:#Start Time
 event_multiple_end#:#End Date
 event_multiple_end_time#:#End Time
 event_multiple_weekdays#:#Repeat on
+event_opencast_studio#:#Opencast Studio
 event_owner#:#Owner
 event_owner_select#:#--not assigned--
 event_owner_username#:#Owner
