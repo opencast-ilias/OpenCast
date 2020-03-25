@@ -216,6 +216,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_CREATE_SCHEDULED_ALLOWED . '_info'));
 		$this->addItem($cb);
 
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_STUDIO_ALLOWED), xoctConf::F_STUDIO_ALLOWED);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_STUDIO_ALLOWED . '_info'));
+		$this->addItem($cb);
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED), xoctConf::F_AUDIO_ALLOWED);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);

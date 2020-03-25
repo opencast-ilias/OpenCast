@@ -36,6 +36,7 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_SWITCH_TO_TILES = 'switchToTiles';
 	const CMD_SHOW_CHAT_HISTORY = 'showChatHistory';
 	const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
+	const CMD_OPENCAST_STUDIO = 'opencaststudio';
 
 	/**
 	 * @var xoctOpenCast
@@ -112,6 +113,15 @@ class xoctEventGUI extends xoctGUI {
 			$b = ilLinkButton::getInstance();
 			$b->setCaption('rep_robj_xoct_event_schedule_new');
 			$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_SCHEDULE));
+			$b->setPrimary(true);
+			self::dic()->toolbar()->addButtonInstance($b);
+		}
+
+		// add "Opencast Studio" button
+		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && xoctConf::getConfig(xoctConf::F_STUDIO_ALLOWED)) {
+			$b = ilLinkButton::getInstance();
+			$b->setCaption('rep_robj_xoct_event_opencast_studio');
+			$b->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
 			$b->setPrimary(true);
 			self::dic()->toolbar()->addButtonInstance($b);
 		}
@@ -451,6 +461,18 @@ class xoctEventGUI extends xoctGUI {
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
+
+	/**
+	 * 
+	 */
+	public function opencaststudio(){
+		$xoctSeries =  $this->xoctOpenCast->getSeriesIdentifier();
+		$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
+		$base = str_replace('/api', '', $base);
+		$studio_link = $base . '/studio' . '?upload.seriesId=' . $xoctSeries;
+		header('Location:' . $studio_link);
+	}
+		
 
 	/**
 	 *

@@ -11,6 +11,8 @@ config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
 config_create_scheduled_allowed_info#:#Achtung: Das planen von Aufzeichnungsterminen ist erst ab Opencast API-Version 1.1.0 möglich.
+config_oc_studio_allowed#:#Opencast Studio aktivieren
+config_oc_studio_allowed_info#:#Ermöglichen Sie Benutzern den Zugriff auf Opencast Studio von Ilias aus (Erfordert Opencast > 8.3)
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
@@ -179,6 +181,7 @@ event_multiple_start_time#:#Startzeit
 event_multiple_end#:#Enddatum
 event_multiple_end_time#:#Endzeit
 event_multiple_weekdays#:#Wiederholungen
+event_opencast_studio#:#Opencast Studio
 event_owner#:#Besitzer
 event_owner_select#:#--nicht zugewiesen--
 event_owner_username#:#Besitzer
