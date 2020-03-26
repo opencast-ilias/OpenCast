@@ -1,12 +1,15 @@
 <?php
 
+use ILIAS\UI\Component\Modal\Modal;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
+use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use srag\Plugins\Opencast\UI\Input\Plupload;
+use srag\Plugins\Opencast\UI\Modal\EventModals;
 
 /**
  * Class xoctEventGUI
@@ -42,8 +45,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected $xoctOpenCast;
 
-
-	/**
+    /**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
 	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
@@ -51,6 +53,11 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+    /**
+     * @throws DICException
+     * @throws ilCtrlException
+     * @throws xoctException
+     */
     public function executeCommand()
     {
         $nextClass = self::dic()->ctrl()->getNextClass();
@@ -173,7 +180,7 @@ class xoctEventGUI extends xoctGUI {
 					' for user with id ' . self::dic()->user()->getId());
 		}
 
-		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $html . $this->getModalsHTML());
+		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $html);
 	}
 
 	/**
@@ -312,7 +319,8 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	public function asyncGetTableGUI() {
 		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-        $html = $xoctEventTableGUI->getHTML();
+		$html = $this->getModalsHTML();
+        $html .= $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
             $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
         }
@@ -326,7 +334,8 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	public function asyncGetTilesGUI() {
 		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
-        $html = $xoctEventTileGUI->getHTML();
+		$html = $this->getModalsHTML();
+        $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
             $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
         }
@@ -800,6 +809,13 @@ class xoctEventGUI extends xoctGUI {
 	 * @return string
 	 */
 	protected function getModalsHTML() {
+	    $modals = $this->initAndGetModals();
+
+	    $modals_html = '';
+        foreach ($modals->getAllComponents() as $modal) {
+            $modals_html .= self::dic()->ui()->renderer()->renderAsync($modal);
+	    }
+
 		$modal_date_html = $modal_quality_html = '';
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
 			$modal_date = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_DATE);
@@ -810,8 +826,29 @@ class xoctEventGUI extends xoctGUI {
 			$modal_quality_html = $modal_quality->getHTML();
 		}
 
-		return $modal_date_html . $modal_quality_html;
+		return $modal_date_html . $modal_quality_html . $modals_html;
 	}
+
+
+    /**
+     *
+     */
+	protected function initAndGetModals()
+	{
+	    $modals = new EventModals();
+
+        $workflow_repository = new WorkflowRepository();
+        if ($workflow_repository->anyWorkflowExists()) {
+            $modal_republish = self::dic()->ui()->factory()->modal()->roundtrip(
+                'republish',
+                self::dic()->ui()->factory()->input()->field()->select('workflow', $workflow_repository->getAllWorkflowsAsArray('workflow_id', 'title'))
+            );
+            $modals->setRepublishModal($modal_republish);
+        }
+
+        xoctEventRenderer::initModals($modals);
+        return $modals;
+    }
 
 
 	/**

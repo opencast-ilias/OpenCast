@@ -450,3 +450,10 @@ tiles_per_page#:#Kacheln pro Seite:
 event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
 event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
 event_live_over_text#:#Das Live Event wurde beendet.
+msg_workflows_info#:#Die hier konfigurierten Workflows können verwendet werden, um Events erneut zu publizieren.
+msg_workflow_created#:#Workflow erfolgreich erstellt.
+msg_workflow_updated#:#Workflow erfolgreich aktualisiert.
+config_button_add_workflow#:#Neuen Workflow hinzufügen
+workflow_table_title#:#Workflows
+tab_workflows#:#Workflows
+workflow#:#Workflow

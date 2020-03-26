@@ -38,6 +38,8 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         $this->workflow_repository = new WorkflowRepository();
         $this->factory = self::dic()->ui()->factory();
+        $this->setExternalSorting(true);
+        $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
     }
 
@@ -68,7 +70,7 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         switch ($column) {
             case 'id':
-                return $row->getId();
+                return $row->getWorkflowId();
             case 'title':
                 return $row->getTitle();
             case 'actions':

@@ -73,13 +73,15 @@ class xoctWorkflowGUI extends xoctGUI
             self::dic()->ctrl()->setParameter($this, 'workflow_id', $workflow->getId());
         }
         return $this->factory->input()->container()->form()->standard(
-            self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
+            is_null($workflow) ?
+                self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE)
+                : self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
             [
                 $this->factory->input()->field()->section(
                     [
-                        'id'    => is_null($workflow) ? $id : $id->withValue($workflow->getId()),
+                        'id'    => is_null($workflow) ? $id : $id->withValue($workflow->getWorkflowId()),
                         'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle())
-                    ], self::plugin()->translate('workflows')
+                    ], self::plugin()->translate('workflow')
                 )
             ]
         );
@@ -127,10 +129,10 @@ class xoctWorkflowGUI extends xoctGUI
      */
     protected function update()
     {
-        $workflow_id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
-        $form = $this->getForm(Workflow::find($workflow_id))->withRequest(self::dic()->http()->request());
+        $id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
+        $form = $this->getForm(Workflow::find($id))->withRequest(self::dic()->http()->request());
         if ($data = $form->getData()) {
-            $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $workflow_id);
+            $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $id);
             ilUtil::sendSuccess(self::plugin()->translate('msg_workflow_updated'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         } else {

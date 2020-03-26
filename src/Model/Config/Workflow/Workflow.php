@@ -26,16 +26,24 @@ class Workflow extends ActiveRecord
     }
 
     /**
+     * @var int
+     *
+     * @con_has_field    true
+     * @con_fieldtype    integer
+     * @con_length       8
+     * @con_is_primary   true
+     * @con_sequence     true
+     */
+    protected $id;
+    /**
      * @var string
      *
-     * @con_is_primary true
      * @con_is_unique  true
      * @con_has_field  true
      * @con_fieldtype  text
      * @con_length     64
      */
-    protected $id;
-
+    protected $workflow_id;
     /**
      * @var string
      *
@@ -47,20 +55,38 @@ class Workflow extends ActiveRecord
 
 
     /**
-     * @return string
+     * @return int
      */
-    public function getId() : string
+    public function getId() : int
     {
         return $this->id;
     }
 
 
     /**
-     * @param string $id
+     * @param int $id
      */
-    public function setId(string $id)
+    public function setId(int $id)
     {
         $this->id = $id;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getWorkflowId() : string
+    {
+        return $this->workflow_id;
+    }
+
+
+    /**
+     * @param string $workflow_id
+     */
+    public function setWorkflowId(string $workflow_id)
+    {
+        $this->workflow_id = $workflow_id;
     }
 
 

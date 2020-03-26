@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\API\Workflow;
+namespace srag\Plugins\Opencast\Model\API\WorkflowInstance;
 
 /**
  * Class WorkflowOperation

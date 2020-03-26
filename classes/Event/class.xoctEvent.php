@@ -4,7 +4,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
-use srag\Plugins\Opencast\Model\API\Workflow\WorkflowCollection;
+use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationSelector;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
@@ -546,113 +546,6 @@ class xoctEvent extends APIObject {
         return true;
 	}
 
-
-	/**
-	 * @param $xoctOpenCast xoctOpenCast
-	 * @return array
-	 */
-	public function getActions($xoctOpenCast) {
-		if (!in_array($this->getProcessingState(), array(
-			self::STATE_SUCCEEDED,
-			self::STATE_NOT_PUBLISHED,
-			self::STATE_READY_FOR_CUTTING,
-			self::STATE_OFFLINE,
-			self::STATE_FAILED,
-			self::STATE_SCHEDULED,
-			self::STATE_SCHEDULED_OFFLINE,
-			self::STATE_LIVE_RUNNING,
-			self::STATE_LIVE_SCHEDULED,
-			self::STATE_LIVE_OFFLINE,
-		))) {
-			return [];
-		}
-		/**
-		 * @var $xoctUser xoctUser
-		 */
-		$xoctUser = xoctUser::getInstance(self::dic()->user());
-
-		self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->getIdentifier());
-		self::dic()->ctrl()->setParameterByClass(xoctInvitationGUI::class, xoctEventGUI::IDENTIFIER, $this->getIdentifier());
-		self::dic()->ctrl()->setParameterByClass(xoctChangeOwnerGUI::class, xoctEventGUI::IDENTIFIER, $this->getIdentifier());
-
-		$actions = [];
-
-		if (ilObjOpenCast::DEV) {
-			$actions['event_view'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_VIEW)
-			];
-		}
-
-		// Edit Owner
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $this, $xoctUser, $xoctOpenCast)) {
-			$actions['event_edit_owner'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD)
-			];
-		}
-
-		// Share event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this, $xoctUser, $xoctOpenCast)) {
-			$actions['invite_others'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD),
-				'lang_var' => 'event_invite_others'
-			];
-		}
-
-		// Cut Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this, $xoctUser)) {
-			$actions['event_cut'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT),
-				'frame' => '_blank'
-			];
-		}
-
-		// Delete Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this, $xoctUser)) {
-			$actions['event_delete'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
-			];
-		}
-
-		// Edit Event
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this, $xoctUser)) {
-			if ($this->isScheduled() && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) {
-				// show different langvar when date is editable
-				$lang_var = 'event_edit_date';
-			} else {
-				$lang_var = 'event_edit';
-			}
-			$actions['event_edit'] = [
-				'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT),
-				'lang_var' => $lang_var
-			];
-		}
-
-		// Online/offline
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $this, $xoctUser)) {
-			if ($this->getXoctEventAdditions()->getIsOnline()) {
-				$actions['event_set_offline'] = [
-					'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_OFFLINE)
-				];
-			} else {
-				$actions['event_set_online'] =  [
-					'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_ONLINE)
-				];
-			}
-		}
-
-		// Report Quality
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this)) {
-			$actions['event_report_quality'] = [
-				'lang_var' => 'event_report_quality_problem',
-				'link' => '#',
-				'prevent_background_click' => false,
-				'onclick' => "($('input#xoct_report_quality_event_id').val('" . $this->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus();"
-			];
-		}
-
-		return $actions;
-	}
-
 	/**
 	 *
 	 */
@@ -714,9 +607,9 @@ class xoctEvent extends APIObject {
      */
     public function loadWorkflows() {
 	    if ($this->getIdentifier()) {
-	        $this->workflows = new WorkflowCollection($this->getIdentifier());
+	        $this->workflows = new WorkflowInstanceCollection($this->getIdentifier());
         } else {
-	        $this->workflows = new WorkflowCollection();
+	        $this->workflows = new WorkflowInstanceCollection();
         }
     }
 
@@ -874,7 +767,7 @@ class xoctEvent extends APIObject {
 	 */
 	protected $scheduling = null;
     /**
-     * @var WorkflowCollection
+     * @var WorkflowInstanceCollection
      */
 	protected $workflows;
 	/**
@@ -1301,18 +1194,18 @@ class xoctEvent extends APIObject {
 
 
     /**
-     * @return WorkflowCollection
+     * @return WorkflowInstanceCollection
      */
-    public function getWorkflows() : WorkflowCollection
+    public function getWorkflows() : WorkflowInstanceCollection
     {
         return $this->workflows;
     }
 
 
     /**
-     * @param WorkflowCollection $workflows
+     * @param WorkflowInstanceCollection $workflows
      */
-    public function setWorkflows(WorkflowCollection $workflows)
+    public function setWorkflows(WorkflowInstanceCollection $workflows)
     {
         $this->workflows = $workflows;
     }

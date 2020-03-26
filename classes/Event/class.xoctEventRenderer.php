@@ -1,11 +1,14 @@
 <?php
 
+use ILIAS\UI\Component\Component;
+use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
+use srag\Plugins\Opencast\UI\Modal\EventModals;
 
 /**
  * Class xoctEventRenderer
@@ -34,6 +37,10 @@ class xoctEventRenderer {
 	 * @var Renderer
 	 */
 	protected $renderer;
+    /**
+     * @var EventModals
+     */
+	protected static $modals;
 
 	/**
 	 * xoctEventRenderer constructor.
@@ -45,7 +52,19 @@ class xoctEventRenderer {
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
+		if (is_null(self::$modals)) {
+		    self::$modals = new EventModals();
+        }
 	}
+
+
+    /**
+     * @param EventModals $modals
+     */
+	public static function initModals(EventModals $modals)
+    {
+        self::$modals = $modals;
+    }
 
 	/**
 	 * @param $tpl ilTemplate
@@ -65,11 +84,14 @@ class xoctEventRenderer {
 		}
 	}
 
-	/**
-	 * @param $tpl ilTemplate
-	 * @param string $block_title
-	 * @param string $variable
-	 */
+
+    /**
+     * @param        $tpl ilTemplate
+     * @param string $block_title
+     * @param string $variable
+     *
+     * @throws xoctException
+     */
 	public function insertThumbnail(&$tpl, $block_title = 'thumbnail', $variable = 'THUMBNAIL') {
 		$this->insert($tpl, $variable, $this->getThumbnailHTML(), $block_title);
 	}
@@ -150,14 +172,17 @@ class xoctEventRenderer {
 	    return 'data-toggle="modal" data-target="#modal_' . $this->xoctEvent->getIdentifier() . '"';
     }
 
-	/**
-	 * @param $tpl ilTemplate
-	 * @param string $block_title
-	 * @param string $variable
-	 * @param string $button_type
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
+
+    /**
+     * @param        $tpl ilTemplate
+     * @param string $block_title
+     * @param string $variable
+     * @param string $button_type
+     *
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
 	public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info') {
 		if ($download_link_html = $this->getDownloadLinkHTML($button_type)) {
 			$this->insert($tpl, $variable, $download_link_html, $block_title);
@@ -450,5 +475,137 @@ class xoctEventRenderer {
         }
 
         return false;
+    }
+
+
+    /**
+     * @return Component[]
+     * @throws DICException
+     */
+    public function getActions() {
+        if (!in_array($this->xoctEvent->getProcessingState(), array(
+            xoctEvent::STATE_SUCCEEDED,
+            xoctEvent::STATE_NOT_PUBLISHED,
+            xoctEvent::STATE_READY_FOR_CUTTING,
+            xoctEvent::STATE_OFFLINE,
+            xoctEvent::STATE_FAILED,
+            xoctEvent::STATE_SCHEDULED,
+            xoctEvent::STATE_SCHEDULED_OFFLINE,
+            xoctEvent::STATE_LIVE_RUNNING,
+            xoctEvent::STATE_LIVE_SCHEDULED,
+            xoctEvent::STATE_LIVE_OFFLINE,
+        ))) {
+            return [];
+        }
+        /**
+         * @var $xoctUser xoctUser
+         */
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+
+        self::dic()->ctrl()->setParameterByClass(
+            xoctEventGUI::class,
+            xoctEventGUI::IDENTIFIER,
+            $this->xoctEvent->getIdentifier()
+        );
+        self::dic()->ctrl()->setParameterByClass(
+            xoctInvitationGUI::class,
+            xoctEventGUI::IDENTIFIER,
+            $this->xoctEvent->getIdentifier()
+        );
+        self::dic()->ctrl()->setParameterByClass(
+            xoctChangeOwnerGUI::class,
+            xoctEventGUI::IDENTIFIER,
+            $this->xoctEvent->getIdentifier()
+        );
+
+        $actions = [];
+
+        if (ilObjOpenCast::DEV) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_view'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_VIEW)
+            );
+        }
+
+        // Edit Owner
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_edit_owner'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD)
+            );
+        }
+
+        // Share event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_invite_others'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD)
+            );
+        }
+
+        // Cut Event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this->xoctEvent, $xoctUser)) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_cut'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT)
+            )->withOpenInNewViewport(true);
+        }
+
+        // Delete Event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this->xoctEvent, $xoctUser)) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_delete'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
+            );
+        }
+
+        // Edit Event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)) {
+            // show different langvar when date is editable
+            $lang_var = ($this->xoctEvent->isScheduled()
+                && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) ?
+                'event_edit_date'  : 'event_edit';
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate($lang_var),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT)
+            );
+        }
+
+        // Republish
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser) && !$this->xoctEvent->isScheduled() && !is_null(self::$modals->getRepublishModal())) {
+            $actions[] = $this->factory->button()->shy(
+                self::plugin()->translate('event_republish'),
+                self::$modals->getRepublishModal()->getShowSignal()
+            );
+        }
+
+        // Online/offline
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $this->xoctEvent, $xoctUser)) {
+            if ($this->xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+                $actions[] = $this->factory->link()->standard(
+                    self::plugin()->translate('event_set_offline'),
+                    self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_OFFLINE)
+                );
+            } else {
+                $actions[] = $this->factory->link()->standard(
+                    self::plugin()->translate('event_set_online'),
+                    self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_ONLINE)
+                );
+            }
+
+        }
+
+        // Report Quality
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->xoctEvent)) {
+            // $actions['event_report_quality'] = [
+            //     'lang_var' => 'event_report_quality_problem',
+            //     'link' => '#',
+            //     'prevent_background_click' => false,
+            //     'onclick' => "($('input#xoct_report_quality_event_id').val('" . $this->xoctEvent->getIdentifier() . "') && $('#xoct_report_quality_modal').modal('show')) && $('#xoct_report_quality_modal textarea#message').focus();"
+            // ];
+            // TODO
+        }
+
+        return $actions;
     }
 }

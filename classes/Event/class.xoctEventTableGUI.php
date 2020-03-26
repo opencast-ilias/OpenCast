@@ -237,30 +237,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @throws DICException
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
-		$actions = $xoctEvent->getActions($this->xoctOpenCast);
+		$renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
+		$actions = $renderer->getActions();
 		if (empty($actions)) {
 			return;
 		}
 
-		$ac = new ilAdvancedSelectionListGUI();
-		$ac->setListTitle(self::plugin()->translate('common_actions'));
-		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
-		$ac->setUseImages(false);
+		$dropdown = self::dic()->ui()->factory()->dropdown()->standard($actions)
+			->withLabel(self::plugin()->translate('common_actions'));
 
-		foreach ($actions as $key => $action) {
-			$ac->addItem(
-				self::plugin()->translate($action['lang_var'] ?: $key),
-				$key, $action['link'],
-				'',
-				'',
-				$action['frame'],
-				'',
-				$action['prevent_background_click'],
-				$action['onclick']
-			);
-		}
-
-		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
+		$this->tpl->setVariable('ACTIONS',
+			self::dic()->ui()->renderer()->renderAsync($dropdown)
+		);
 	}
 
 

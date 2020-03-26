@@ -13,6 +13,14 @@ class WorkflowRepository
 {
 
     /**
+     * @return bool
+     */
+    public function anyWorkflowExists() : bool
+    {
+        return (Workflow::count() > 0);
+    }
+
+    /**
      * @return Workflow[]
      */
     public function getAllWorkflows() : array
@@ -22,24 +30,27 @@ class WorkflowRepository
 
 
     /**
+     * @param null $key
+     * @param null $values
+     *
      * @return array
      */
-    public function getAllWorkflowsAsArray() : array
+    public function getAllWorkflowsAsArray($key = null, $values = null) : array
     {
-        return Workflow::getArray();
+        return Workflow::getArray($key, $values);
     }
 
 
     /**
-     * @param string $id
+     * @param string $workflow_id
      * @param string $title
-     * @param string $old_id
+     * @param int    $id
      */
-    public function store(string $id, string $title, string $old_id = '')
+    public function store(string $workflow_id, string $title, int $id = 0)
     {
         /** @var Workflow $workflow */
-        $workflow = Workflow::findOrGetInstance($old_id === '' ? $id : $old_id);
-        $workflow->setId($id);
+        $workflow = new Workflow($id == 0 ? null : $id);
+        $workflow->setWorkflowId($workflow_id);
         $workflow->setTitle($title);
         $workflow->store();
     }

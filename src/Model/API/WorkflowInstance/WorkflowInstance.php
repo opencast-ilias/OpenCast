@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\API\Workflow;
+namespace srag\Plugins\Opencast\Model\API\WorkflowInstance;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
@@ -10,7 +10,7 @@ use stdClass;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class Workflow extends APIObject
+class WorkflowInstance extends APIObject
 {
 
     /**

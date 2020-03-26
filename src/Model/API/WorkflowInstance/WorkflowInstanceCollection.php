@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\API\Workflow;
+namespace srag\Plugins\Opencast\Model\API\WorkflowInstance;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
@@ -12,7 +12,7 @@ use xoctRequest;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class WorkflowCollection extends APIObject
+class WorkflowInstanceCollection extends APIObject
 {
 
     /**
@@ -24,7 +24,7 @@ class WorkflowCollection extends APIObject
      */
     protected $event_id;
     /**
-     * @var Workflow[]
+     * @var WorkflowInstance[]
      */
     protected $workflows;
 
@@ -80,7 +80,7 @@ class WorkflowCollection extends APIObject
 
 
     /**
-     * @return Workflow[]
+     * @return WorkflowInstance[]
      */
     public function getWorkflows() : array
     {
@@ -89,7 +89,7 @@ class WorkflowCollection extends APIObject
 
 
     /**
-     * @param Workflow[] $workflows
+     * @param WorkflowInstance[] $workflows
      */
     public function setWorkflows(array $workflows)
     {

@@ -204,8 +204,9 @@ class xoctEventTileGUI {
 	 * @throws DICException
 	 */
 	protected function getActionButtons(xoctEvent $xoctEvent) {
+	    $renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
 		$dropdown_items = [];
-		foreach ($xoctEvent->getActions($this->xoctOpenCast) as $key => $action) {
+		foreach ($renderer->getActions() as $key => $action) {
 			if (isset($action['onclick'])) {
 				$onclick = $action['onclick'];
 				$dropdown_items[] = $this->factory->button()->shy(self::plugin()->translate($action['lang_var'] ?: $key), $action['link'])
