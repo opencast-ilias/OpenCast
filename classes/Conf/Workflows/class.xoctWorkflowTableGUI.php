@@ -43,6 +43,8 @@ class xoctWorkflowTableGUI extends TableGUI
      *
      * @param $parent
      * @param $parent_cmd
+     *
+     * @throws DICException
      */
     public function __construct($parent, $parent_cmd)
     {
@@ -52,6 +54,7 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
+        $this->setDescription(self::plugin()->translate('msg_workflows_info'));
     }
 
 

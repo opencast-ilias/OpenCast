@@ -42,7 +42,6 @@ class xoctWorkflowGUI extends xoctGUI
      */
     protected function index()
     {
-        ilUtil::sendInfo(self::plugin()->translate('msg_workflows_info'));
         $this->initToolbar();
         $table = new xoctWorkflowTableGUI($this, self::CMD_STANDARD);
         self::output()->output($table);
