@@ -572,11 +572,15 @@ class xoctEventRenderer {
         }
 
         // Republish
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser) && !$this->xoctEvent->isScheduled() && !is_null(self::$modals->getRepublishModal())) {
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)
+            && !$this->xoctEvent->isScheduled() && !is_null(self::$modals->getRepublishModal())
+        ) {
             $actions[] = $this->factory->button()->shy(
                 self::plugin()->translate('event_republish'),
                 self::$modals->getRepublishModal()->getShowSignal()
-            );
+            )->withOnLoadCode(function ($id) {
+                return "$({$id}).on('click', function(event){ console.log('ok'); $('input#republish_event_id').val('{$this->xoctEvent->getIdentifier()}'); });";
+            });
         }
 
         // Online/offline

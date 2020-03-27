@@ -137,7 +137,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 *
 	 * @return bool
 	 */
-	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) {
+	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) : bool
+	{
 		if ($xoctUser === NULL) {
 			$xoctUser = xoctUser::getInstance(self::dic()->user());
 		}
@@ -200,6 +201,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
+			default:
+				return false;
 		}
 	}
 

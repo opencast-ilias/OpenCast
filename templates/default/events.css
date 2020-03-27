@@ -158,6 +158,10 @@ div.il-card.thumbnail div.caption {
 	width: 100%;
 }
 
+div.modal-body form .ilFormFooter {
+	display: none;
+}
+
 @media (max-width: 647px) {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

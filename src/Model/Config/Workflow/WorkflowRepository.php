@@ -54,4 +54,27 @@ class WorkflowRepository
         $workflow->setTitle($title);
         $workflow->store();
     }
+
+
+    /**
+     * @param string $workflow_id
+     *
+     * @return bool
+     */
+    public function exists(string $workflow_id) : bool
+    {
+        return Workflow::where(['workflow_id' => $workflow_id])->hasSets();
+    }
+
+
+    /**
+     * @param $id
+     */
+    public function delete($id)
+    {
+        $workflow = Workflow::find($id);
+        if (!is_null($workflow)) {
+            $workflow->delete();
+        }
+    }
 }

@@ -146,15 +146,22 @@ class xoctWorkflowGUI extends xoctGUI
      */
     protected function confirmDelete()
     {
-        // TODO: Implement confirmDelete() method.
+        // not required, using modal
     }
 
 
     /**
-     *
+     * @throws DICException
      */
     protected function delete()
     {
-        // TODO: Implement delete() method.
+        $items = self::dic()->http()->request()->getParsedBody();
+        $items = $items['interruptive_items'];
+        if (is_array($items) && count($items) === 1) {
+            $id = array_shift($items);
+            $this->workflow_repository->delete($id);
+            ilUtil::sendSuccess(self::plugin()->translate('msg_workflow_deleted', self::LANG_MODULE), true);
+            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        }
     }
 }

@@ -39,8 +39,8 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_SWITCH_TO_TILES = 'switchToTiles';
 	const CMD_SHOW_CHAT_HISTORY = 'showChatHistory';
 	const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
-
-	/**
+    const CMD_REPUBLISH = 'republish';
+    /**
 	 * @var xoctOpenCast
 	 */
 	protected $xoctOpenCast;
@@ -104,6 +104,7 @@ class xoctEventGUI extends xoctGUI {
 	protected function prepareContent() {
 		xoctWaiterGUI::initJS();
 		xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
+        self::dic()->mainTemplate()->addJavascript("./src/UI/templates/js/Modal/modal.js");
 
 		// add "add" button
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
@@ -611,6 +612,36 @@ class xoctEventGUI extends xoctGUI {
 	}
 
 
+    /**
+     * @throws DICException
+     * @throws xoctException
+     */
+	protected function republish()
+    {
+        $post_body = self::dic()->http()->request()->getParsedBody();
+        if (isset($post_body['workflow_id']) && is_string($post_body['workflow_id'])
+            && isset($post_body['republish_event_id']) && is_string($post_body['republish_event_id'])
+        ) {
+            $workflow_id = strip_tags($post_body['workflow_id']);
+            $event_id = strip_tags($post_body['republish_event_id']);
+            if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, new xoctEvent($event_id))
+                || !(new WorkflowRepository())->exists($workflow_id)) {
+                ilUtil::sendFailure($this->txt('msg_no_access'), true);
+                $this->cancel();
+            }
+            xoctRequest::root()->workflows()
+                ->post([
+                    'event_identifier' => $event_id,
+                    'workflow_definition_identifier' => $workflow_id
+                ]);
+            ilUtil::sendSuccess($this->txt('msg_republish_started'), true);
+            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        } else {
+            ilUtil::sendFailure($this->txt('msg_no_access'), true);
+            $this->cancel();
+        }
+    }
+
 	/**
 	 *
 	 */
@@ -839,10 +870,28 @@ class xoctEventGUI extends xoctGUI {
 
         $workflow_repository = new WorkflowRepository();
         if ($workflow_repository->anyWorkflowExists()) {
+            $form = new ilPropertyFormGUI();
+            $form->setFormAction(self::dic()->ctrl()->getFormAction($this, "republish"));
+            $form->setId(uniqid('form'));
+
+            $select = new ilSelectInputGUI(self::plugin()->translate('workflow'), 'workflow_id');
+            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('workflow_id', 'title'));
+            $form->addItem($select);
+
+            $hidden = new ilHiddenInputGUI('republish_event_id');
+            $form->addItem($hidden);
+
+            $form_id = 'form_' . $form->getId();
+            $submit_btn = self::dic()->ui()->factory()->button()->primary(self::dic()->language()->txt("save"), '#')
+                ->withOnLoadCode(function ($id) use ($form_id) {
+                    return "$('#{$id}').click(function() { $('#{$form_id}').submit(); return false; });";
+                });
+
             $modal_republish = self::dic()->ui()->factory()->modal()->roundtrip(
-                'republish',
-                self::dic()->ui()->factory()->input()->field()->select('workflow', $workflow_repository->getAllWorkflowsAsArray('workflow_id', 'title'))
-            );
+                $this->txt('republish'),
+                self::dic()->ui()->factory()->legacy($form->getHTML())
+
+            )->withActionButtons([$submit_btn]);
             $modals->setRepublishModal($modal_republish);
         }
 

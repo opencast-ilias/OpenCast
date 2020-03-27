@@ -223,6 +223,7 @@ event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
 event_report_quality_problem#:#Report Quality Problems
+event_republish#:#Republish
 event_series#:#Series
 event_own_series#:#Own Series (%s)
 groups_available_participants_header#:#Available Participants
@@ -459,3 +460,6 @@ config_button_add_workflow#:#Create new workflow
 workflow_table_title#:#Workflows
 tab_workflows#:#Workflows
 workflow#:#Workflow
+event_msg_republish_started#:#Workflow started successfully.
+workflow_msg_confirm_delete_workflow#:#Please confirm to delete the following workflow.
+workflow_msg_workflow_deleted#:#Workflow deleted successfully.

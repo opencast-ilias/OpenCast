@@ -1,6 +1,8 @@
 <?php
 
+use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\Workflow\Workflow;
@@ -26,6 +28,14 @@ class xoctWorkflowTableGUI extends TableGUI
      * @var Factory
      */
     protected $factory;
+    /**
+     * @var Modal[]
+     */
+    protected $modals = [];
+    /**
+     * @var Renderer
+     */
+    protected $renderer;
 
 
     /**
@@ -38,6 +48,7 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         $this->workflow_repository = new WorkflowRepository();
         $this->factory = self::dic()->ui()->factory();
+        $this->renderer = self::dic()->ui()->renderer();
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
@@ -52,6 +63,16 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->addColumn(self::dic()->language()->txt('id'));
         $this->addColumn(self::dic()->language()->txt('title'));
         $this->addColumn(self::dic()->language()->txt('actions'), '', '', true);
+    }
+
+
+    public function getHTML()
+    {
+        $html = parent::getHTML();
+        foreach ($this->modals as $modal) {
+            $html .= $this->renderer->render($modal);
+        }
+        return $html;
     }
 
 
@@ -75,6 +96,19 @@ class xoctWorkflowTableGUI extends TableGUI
                 return $row->getTitle();
             case 'actions':
                 self::dic()->ctrl()->setParameter($this->parent_obj, 'workflow_id', $row->getId());
+                $delete_modal = $this->factory->modal()->interruptive(
+                    self::dic()->language()->txt('delete'),
+                    $this->txt('msg_confirm_delete_workflow'),
+                    self::dic()->ctrl()->getFormAction($this->parent_obj, xoctWorkflowGUI::CMD_DELETE)
+                )->withAffectedItems(
+                    [
+                        $this->factory->modal()->interruptiveItem(
+                            $row->getId(),
+                            $row->getTitle()
+                        )
+                    ]
+                );
+                $this->modals[] = $delete_modal;
                 $actions = $this->factory->dropdown()->standard(
                     [
                         $this->factory->button()->shy(
@@ -83,7 +117,7 @@ class xoctWorkflowTableGUI extends TableGUI
                         ),
                         $this->factory->button()->shy(
                             self::dic()->language()->txt('delete'),
-                            self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctWorkflowGUI::CMD_CONFIRM)
+                            $delete_modal->getShowSignal()
                         )
                     ]
                 )->withLabel(self::dic()->language()->txt('actions'));
