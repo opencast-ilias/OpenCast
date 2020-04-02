@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.5.0] (unreleased)
+## [2.6.0] (unreleased)
 - Refactoring and adjustments for page component plugin
 - Fixed config export bug
 - Feature: allow multiple downloads
@@ -8,6 +8,12 @@
 - Feature: preview publication configurable
 - Improvement: refactored publications 
 - Improvement: removed api configuration
+
+## [2.5.0]
+- Feature: Opencast Studio button in series
+
+## [2.4.2]
+- Fixed race condition when creating series
 
 ## [2.4.1]
 - Fixed Tile sorting
