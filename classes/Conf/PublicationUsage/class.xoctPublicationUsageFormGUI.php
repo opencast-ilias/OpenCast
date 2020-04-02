@@ -19,8 +19,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	const F_CHANNEL = 'channel';
 	const F_STATUS = 'status';
 	const F_SEARCH_KEY = 'search_key';
-	const F_FLAVOR = 'flavor';
-	const F_TAG = 'tag';
+	const F_FLAVOR = PublicationUsage::SEARCH_KEY_FLAVOR;
+	const F_TAG = PublicationUsage::SEARCH_KEY_TAG;
 	const F_MD_TYPE = 'md_type';
 	const F_ALLOW_MULTIPLE = 'allow_multiple';
 

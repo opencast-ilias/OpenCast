@@ -28,6 +28,8 @@ class PublicationUsage extends ActiveRecord
     const MD_TYPE_ATTACHMENT = 1;
     const MD_TYPE_MEDIA = 2;
     const MD_TYPE_PUBLICATION_ITSELF = 0;
+    const SEARCH_KEY_FLAVOR = 'flavor';
+    const SEARCH_KEY_TAG = 'tag';
     /**
      * @var array
      */

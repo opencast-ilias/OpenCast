@@ -136,171 +136,21 @@ class xoctPlayerGUI extends xoctGUI
             return $previews;
         }, []);
 
-        $duration = 0;
         $id = $xoctEvent->getIdentifier();
+        $duration = 0;
 
-        $streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
-            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($media->getUrl()) : $media->getUrl();
-            $duration = $duration ?: $media->getDuration();
-
-            $preview_url = $previews[$media->getRole()];
-            if ($preview_url !== null) {
-                $preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::sign($preview_url->getUrl()) : $preview_url->getUrl();
-            } else {
-                $preview_url = "";
-            }
-
-            if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
-
-                $smil_url_identifier = ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
-                $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
-                $hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
-                $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
-
-                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-                    // TODO: move this responsibility
-                    $valid_until = null;
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-                        $duration_in_seconds = $duration / 1000;
-                        $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-                        $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
-                    }
-
-                    $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
-                    $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
-                }
-
-                return [
-                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "content" => ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
-                    "sources" => [
-                        "hls" => [
-                            [
-                                "src" => $hls_url,
-                                "mimetype" => "application/x-mpegURL"
-                            ],
-                        ],
-                        "dash" => [
-                            [
-                                "src" => $dash_url,
-                                "mimetype" => "application/dash+xml"
-                            ]
-                        ]
-                    ],
-                    "preview" => $preview_url
-                ];
-            } else {
-                return [
-                    "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                    "content" => ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
-                    "sources" => [
-                        "mp4" => [
-                            [
-                                "src" => $url,
-                                "mimetype" => $media->getMediatype(),
-                                "res" => [
-                                    "w" => $media->getWidth(),
-                                    "h" => $media->getHeight()
-                                ]
-                            ]
-                        ]
-
-                    ],
-                    "preview" => $preview_url
-                ];
-            }
-        }, $medias);
+        $streams = $this->buildStreams($medias, $duration, $previews, $id);
 
         if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
-
-            $filteredStreams = array();
+            $filteredStreams = [];
             foreach ($streams as $stream) {
                 $filteredStreams[$stream['content']] = $stream;
             }
 
-            $streams = array();
+            $streams = [];
             foreach ($filteredStreams as $stream) {
                 $streams[] = $stream;
             }
-        }
-
-        $segment_publication = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_SEGMENTS);
-        if ($segment_publication) {
-            $segment_flavor = $segment_publication->getFlavor();
-            $attachments = $segment_publication->getMdType() == PublicationUsage::MD_TYPE_PUBLICATION_ITSELF ?
-                $xoctEvent->publications()->getFirstPublicationMetadataForUsage($segment_publication)->getAttachments() :
-                $xoctEvent->publications()->getPublicationMetadataForUsage($segment_publication);
-
-            $segments = array_filter($attachments, function (xoctAttachment $attachment) use (&$segment_flavor) {
-                return strpos($attachment->getFlavor(), $segment_flavor) !== false;
-            });
-
-            $segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
-                if (!isset($segments[$segment->getRef()])) {
-                    $segments[$segment->getRef()] = [];
-                }
-                $segments[$segment->getRef()][$segment->getFlavor()] = $segment;
-
-                return $segments;
-            }, []);
-
-            ksort($segments);
-            $frameList = array_values(array_map(function (array $segment) {
-
-                if (xoctConf::getConfig(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
-                    /**
-                     * @var xoctAttachment[] $segment
-                     */
-                    $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
-                    $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
-                    if ($high === null || $low === null) {
-                        $high = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
-                        $low = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
-                    }
-
-                    $time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
-                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-                    $time = $time->getTimestamp();
-
-                    $high_url = $high->getUrl();
-                    $low_url = $low->getUrl();
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $high_url = xoctSecureLink::sign($high_url);
-                        $low_url = xoctSecureLink::sign($low_url);
-                    }
-
-                    return [
-                        "id" => "frame_" . $time,
-                        "mimetype" => $high->getMediatype(),
-                        "time" => $time,
-                        "url" => $high_url,
-                        "thumb" => $low_url
-                    ];
-                } else {
-                    $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
-
-                    if ($preview === null) {
-                        $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
-                    }
-
-                    $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
-                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-                    $time = $time->getTimestamp();
-
-                    $url = $preview->getUrl();
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $url = xoctSecureLink::sign($url);
-                    }
-
-                    return [
-                        "id" => "frame_" . $time,
-                        "mimetype" => $preview->getMediatype(),
-                        "time" => $time,
-                        "url" => $url,
-                        "thumb" => $url
-                    ];
-                }
-            }, $segments));
         }
 
         $data = [
@@ -311,8 +161,9 @@ class xoctPlayerGUI extends xoctGUI
             ]
         ];
 
-        if (isset($frameList)) {
-            $data['frameList'] = $frameList;
+        $segments = $this->buildSegments($xoctEvent);
+        if (count($segments) > 0) {
+            $data['frameList'] = $segments;
         }
 
         return $data;
@@ -516,5 +367,171 @@ class xoctPlayerGUI extends xoctGUI
 
     protected function delete()
     {
+    }
+
+
+    /**
+     * @param xoctMedia[]      $media
+     * @param int       &$duration
+     * @param xoctPublicationMetadata[] $previews
+     * @param string     $id
+     *
+     * @return array|int
+     * @throws xoctException
+     */
+    function buildStreams(array $media, int &$duration, array $previews, string $id)
+    {
+        $streams = [];
+        foreach ($media as $medium) {
+            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($medium->getUrl()) : $medium->getUrl();
+            $duration = $duration ?: $medium->getDuration();
+
+            $preview_url = $previews[$medium->getRole()];
+            $preview_url = ($preview_url !== null) ?
+                xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::sign($preview_url->getUrl()) : $preview_url->getUrl()
+                    : "";
+
+            if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
+
+                $smil_url_identifier = ($medium->getRole() !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
+                $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
+                $hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
+                $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
+
+                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    $valid_until = null;
+                    if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+                        $duration_in_seconds = $duration / 1000;
+                        $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+                        $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+                    }
+
+                    $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
+                    $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
+                }
+
+                $streams[] = [
+                    "type"    => xoctMedia::MEDIA_TYPE_VIDEO,
+                    "content" => ($medium->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "sources" => [
+                        "hls"  => [
+                            [
+                                "src"      => $hls_url,
+                                "mimetype" => "application/x-mpegURL"
+                            ],
+                        ],
+                        "dash" => [
+                            [
+                                "src"      => $dash_url,
+                                "mimetype" => "application/dash+xml"
+                            ]
+                        ]
+                    ],
+                    "preview" => $preview_url
+                ];
+            } else {
+                $streams[] = [
+                    "type"    => xoctMedia::MEDIA_TYPE_VIDEO,
+                    "content" => ($medium->getRole() !== xoctMedia::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE),
+                    "sources" => [
+                        "mp4" => [
+                            [
+                                "src"      => $url,
+                                "mimetype" => $medium->getMediatype(),
+                                "res"      => [
+                                    "w" => $medium->getWidth(),
+                                    "h" => $medium->getHeight()
+                                ]
+                            ]
+                        ]
+
+                    ],
+                    "preview" => $preview_url
+                ];
+            }
+        }
+        return $streams;
+    }
+
+    /**
+     * @param xoctEvent $xoctEvent
+     *
+     * @return array
+     * @throws xoctException
+     */
+    protected function buildSegments(xoctEvent $xoctEvent) : array
+    {
+        $frameList = [];
+        $segments = $xoctEvent->publications()->getSegmentPublications();
+        if (count($segments) > 0) {
+            $segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
+                if (!isset($segments[$segment->getRef()])) {
+                    $segments[$segment->getRef()] = [];
+                }
+                $segments[$segment->getRef()][$segment->getFlavor()] = $segment;
+
+                return $segments;
+            }, []);
+
+            ksort($segments);
+            $frameList = array_values(array_map(function (array $segment) {
+
+                if (xoctConf::getConfig(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
+                    /**
+                     * @var xoctAttachment[] $segment
+                     */
+                    $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+                    $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
+                    if ($high === null || $low === null) {
+                        $high = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+                        $low = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+                    }
+
+                    $time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
+                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+                    $time = $time->getTimestamp();
+
+                    $high_url = $high->getUrl();
+                    $low_url = $low->getUrl();
+                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+                        $high_url = xoctSecureLink::sign($high_url);
+                        $low_url = xoctSecureLink::sign($low_url);
+                    }
+
+                    return [
+                        "id"       => "frame_" . $time,
+                        "mimetype" => $high->getMediatype(),
+                        "time"     => $time,
+                        "url"      => $high_url,
+                        "thumb"    => $low_url
+                    ];
+                } else {
+                    $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
+
+                    if ($preview === null) {
+                        $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
+                    }
+
+                    $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
+                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+                    $time = $time->getTimestamp();
+
+                    $url = $preview->getUrl();
+                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+                        $url = xoctSecureLink::sign($url);
+                    }
+
+                    return [
+                        "id"       => "frame_" . $time,
+                        "mimetype" => $preview->getMediatype(),
+                        "time"     => $time,
+                        "url"      => $url,
+                        "thumb"    => $url
+                    ];
+                }
+            }, $segments));
+        }
+
+        return $frameList;
     }
 }

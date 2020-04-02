@@ -58,17 +58,21 @@ class PublicationSelector
      */
     protected $publication_usage_repository;
     /**
-     * @var xoctPublication|xoctMedia|xoctAttachment
+     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
      */
     protected $player_publications;
     /**
-     * @var xoctPublication|xoctMedia|xoctAttachment
+     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
      */
     protected $download_publications;
     /**
-     * @var xoctPublication|xoctMedia|xoctAttachment
+     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
      */
     protected $preview_publications;
+    /**
+     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     */
+    protected $segment_publications;
     /**
      * @var string
      */
@@ -85,7 +89,6 @@ class PublicationSelector
      * @var string
      */
     protected $thumbnail_url;
-
 
     /**
      * PublicationSelector constructor.
@@ -162,7 +165,11 @@ class PublicationSelector
     public function getPlayerPublications() : array
     {
         if (!isset($this->player_publications)) {
-            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER));
+            $player_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER);
+            if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {   // force media for internal player
+                $player_usage->setMdType(PublicationUsage::MD_TYPE_MEDIA);
+            }
+            $pubs = $this->getPublicationMetadataForUsage($player_usage);
             $this->player_publications = $pubs;
         }
 
@@ -197,6 +204,21 @@ class PublicationSelector
         }
 
         return $this->preview_publications;
+    }
+
+
+    /**
+     * @return xoctAttachment[]
+     * @throws xoctException
+     */
+    public function getSegmentPublications() : array
+    {
+        if (!isset($this->segment_publications)) {
+            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_SEGMENTS));
+            $this->segment_publications = $pubs;
+        }
+
+        return $this->segment_publications;
     }
 
 
@@ -408,12 +430,12 @@ class PublicationSelector
             case PublicationUsage::MD_TYPE_ATTACHMENT:
                 foreach ($attachments as $attachment) {
                     switch ($PublicationUsage->getSearchKey()) {
-                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                        case PublicationUsage::SEARCH_KEY_FLAVOR:
                             if ($this->checkFlavor($attachment->getFlavor(), $PublicationUsage->getFlavor())) {
                                 $return[] = $attachment;
                             }
                             break;
-                        case xoctPublicationUsageFormGUI::F_TAG:
+                        case PublicationUsage::SEARCH_KEY_TAG:
                             if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
                                 $return[] = $attachment;
                             }
@@ -424,12 +446,12 @@ class PublicationSelector
             case PublicationUsage::MD_TYPE_MEDIA:
                 foreach ($media as $medium) {
                     switch ($PublicationUsage->getSearchKey()) {
-                        case xoctPublicationUsageFormGUI::F_FLAVOR:
+                        case PublicationUsage::SEARCH_KEY_FLAVOR:
                             if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
                                 $return[] = $attachment;
                             }
                             break;
-                        case xoctPublicationUsageFormGUI::F_TAG:
+                        case PublicationUsage::SEARCH_KEY_TAG:
                             if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
                                 $return[] = $medium;
                             }
@@ -508,7 +530,6 @@ class PublicationSelector
             || ($this->startsWith($needle, '/') && $this->endsWith($haystack, $needle))
             || ($this->endsWith($needle, '/') && $this->startsWith($haystack, $needle));
     }
-
 
     /**
      * @return xoctPublication[]
