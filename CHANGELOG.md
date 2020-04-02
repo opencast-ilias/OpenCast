@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.5.0]
+- Feature: Opencast Studio button in series
+
 ## [2.4.2]
 - Fixed race condition when creating series
 
