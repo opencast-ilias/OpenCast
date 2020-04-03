@@ -2,9 +2,10 @@
 
 namespace srag\CustomInputGUIs\OpenCast\LearningProgressPieUI;
 
+use ILIAS\Data\Color;
 use ilLearningProgressBaseGUI;
 use ilLPStatus;
-use ilTemplate;
+use srag\CustomInputGUIs\OpenCast\CustomInputGUIsTrait;
 use srag\DIC\OpenCast\DICTrait;
 
 /**
@@ -14,141 +15,169 @@ use srag\DIC\OpenCast\DICTrait;
  *
  * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
-abstract class AbstractLearningProgressPieUI {
+abstract class AbstractLearningProgressPieUI
+{
 
-	use DICTrait;
-	const LP_STATUS = [
-		ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM,
-		ilLPStatus::LP_STATUS_IN_PROGRESS_NUM,
-		ilLPStatus::LP_STATUS_COMPLETED_NUM
-		//ilLPStatus::LP_STATUS_FAILED_NUM
-	];
-	const LP_STATUS_COLOR = [
-		ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM => "#DDDDDD",
-		ilLPStatus::LP_STATUS_IN_PROGRESS_NUM => "#F6D842",
-		ilLPStatus::LP_STATUS_COMPLETED_NUM => "#BDCF32",
-		ilLPStatus::LP_STATUS_FAILED => "#B06060"
-	];
-	const BASE_ID = "learningprogresspie_";
-	/**
-	 * @var bool
-	 */
-	protected static $init = false;
-	/**
-	 * @var string
-	 */
-	protected $id = "";
-	/**
-	 * @var bool
-	 */
-	protected $show_legend = true;
-
-
-	/**
-	 * AbstractLearningProgressPieUI constructor
-	 */
-	public function __construct() {
-
-	}
-
-
-	/**
-	 * @param string $id
-	 *
-	 * @return self
-	 */
-	public function withId($id) {
-		$this->id = $id;
-
-		return $this;
-	}
+    use DICTrait;
+    use CustomInputGUIsTrait;
+    const LP_STATUS
+        = [
+            ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM,
+            ilLPStatus::LP_STATUS_IN_PROGRESS_NUM,
+            ilLPStatus::LP_STATUS_COMPLETED_NUM
+            //ilLPStatus::LP_STATUS_FAILED_NUM
+        ];
+    const LP_STATUS_COLOR
+        = [
+            ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM => [221, 221, 221],
+            ilLPStatus::LP_STATUS_IN_PROGRESS_NUM   => [246, 216, 66],
+            ilLPStatus::LP_STATUS_COMPLETED_NUM     => [189, 207, 50],
+            ilLPStatus::LP_STATUS_FAILED            => [176, 96, 96]
+        ];
+    /**
+     * @var bool
+     */
+    protected static $init = false;
+    /**
+     * @var bool
+     */
+    protected $show_legend = true;
+    /**
+     * @var bool
+     */
+    protected $show_empty = false;
+    /**
+     * @var array|null
+     */
+    protected $cache = null;
 
 
-	/**
-	 * @param bool show_legend
-	 *
-	 * @return self
-	 */
-	public function withShowLegend($show_legend) {
-		$this->show_legend = $show_legend;
+    /**
+     * AbstractLearningProgressPieUI constructor
+     */
+    public function __construct()
+    {
 
-		return $this;
-	}
+    }
 
 
-	/**
-	 *
-	 */
-	private function initJs()/*: void*/ {
-		if (self::$init === false) {
-			self::$init = true;
+    /**
+     * @param bool show_legend
+     *
+     * @return self
+     */
+    public function withShowLegend(bool $show_legend) : self
+    {
+        $this->show_legend = $show_legend;
 
-			$dir = __DIR__;
-			$dir = "./" . substr($dir, strpos($dir, "/Customizing/") + 1);
-
-			self::dic()->mainTemplate()->addJavaScript($dir . "/../../node_modules/d3/dist/d3.min.js");
-
-			self::dic()->mainTemplate()->addCss($dir . "/css/learningprogresspie.css");
-		}
-	}
+        return $this;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function render() {
-		$data = $this->parseData();
+    /**
+     * @param bool $show_empty
+     *
+     * @return self
+     */
+    public function withShowEmpty(bool $show_empty) : self
+    {
+        $this->show_empty = $show_empty;
 
-		if (count($data) > 0) {
-
-			$data = array_map(function ($status) use($data) {
-    return array('color' => self::LP_STATUS_COLOR[$status], 'label' => $data[$status], 'title' => $this->getText($status), 'value' => $data[$status]);
-}, self::LP_STATUS);
-
-			$data = array_filter($data, function (array $data) {
-    return $data['value'] > 0;
-});
-
-			$data = array_values($data);
-
-			if (count($data) > 0) {
-				$this->initJs();
-
-				$tpl = new ilTemplate(__DIR__ . "/templates/chart.html", false, false);
-
-				$tpl->setVariable("ID", self::BASE_ID . $this->id);
-				$tpl->setVariable("DATA", json_encode($data));
-				$tpl->setVariable("COUNT", json_encode($this->getCount()));
-				$tpl->setVariable("SHOW_LEGEND", json_encode($this->show_legend));
-
-				return self::output()->getHTML($tpl);
-			}
-		}
-
-		return "";
-	}
+        return $this;
+    }
 
 
-	/**
-	 * @param int $status
-	 *
-	 * @return string
-	 */
-	private function getText($status) {
-		self::dic()->language()->loadLanguageModule("trac");
-
-		return ilLearningProgressBaseGUI::_getStatusText($status);
-	}
-
-
-	/**
-	 * @return int[]
-	 */
-	protected abstract function parseData();
+    /**
+     * @return array
+     */
+    public function getTitles() : array
+    {
+        return array_map(function (int $status) : string {
+            return $this->getText($status);
+        }, self::LP_STATUS);
+    }
 
 
-	/**
-	 * @return int
-	 */
-	protected abstract function getCount();
+    /**
+     * @return array
+     */
+    public function getData() : array
+    {
+        if ($this->cache === null) {
+
+            $data = $this->parseData();
+
+            $data = array_map(function (int $status) use ($data): array {
+                return [
+                    "color" => self::LP_STATUS_COLOR[$status],
+                    "title" => $this->getText($status),
+                    "value" => ($data[$status] ?: 0)
+                ];
+            }, self::LP_STATUS);
+
+            if (!$this->show_empty) {
+                $data = array_filter($data, function (array $data) : bool {
+                    return ($data["value"] > 0);
+                });
+            }
+
+            $this->cache = [
+                "data"  => $data,
+                "count" => $this->getCount()
+            ];
+        }
+
+        return $this->cache;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function render() : string
+    {
+        $data = $this->getData();
+        $count = $data["count"];
+        $data = $data["data"];
+
+        if (count($data) > 0) {
+
+            $data = array_values($data);
+
+            $data = array_map(function (array $data)/*: PieChartItemInterface*/ {
+                return self::customInputGUIs()
+                    ->pieChartItem($data["title"], $data["value"], new Color($data["color"][0], $data["color"][1], $data["color"][2]));
+            }, $data);
+
+            return self::output()->getHTML(self::customInputGUIs()->pieChart($data)->withShowLegend($this->show_legend)
+                ->withCustomTotalValue($count));
+        }
+
+        return "";
+    }
+
+
+    /**
+     * @param int $status
+     *
+     * @return string
+     */
+    private function getText(int $status) : string
+    {
+        self::dic()->language()->loadLanguageModule("trac");
+
+        return ilLearningProgressBaseGUI::_getStatusText($status);
+    }
+
+
+    /**
+     * @return int[]
+     */
+    protected abstract function parseData() : array;
+
+
+    /**
+     * @return int
+     */
+    protected abstract function getCount() : int;
 }

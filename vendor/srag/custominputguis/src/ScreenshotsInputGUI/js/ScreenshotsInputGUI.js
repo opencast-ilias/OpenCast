@@ -4,11 +4,11 @@
  * @constructor
  */
 il.ScreenshotsInputGUI = function (post_var) {
-	this.post_var = post_var;
+    this.post_var = post_var;
 
-	this.screenshots = [];
+    this.screenshots = [];
 
-	this.init();
+    this.init();
 };
 
 /**
@@ -32,298 +32,253 @@ il.ScreenshotsInputGUI.SCREENSHOT_TEMPLATE = "";
  * @returns {il.ScreenshotsInputGUI|undefined}
  */
 il.ScreenshotsInputGUI.lastInstance = function () {
-	return this.INSTANCES[this.INSTANCES.length - 1];
+    return this.INSTANCES[this.INSTANCES.length - 1];
 };
 
 /**
  * @param {string} post_var
  */
 il.ScreenshotsInputGUI.newInstance = function (post_var) {
-	this.INSTANCES.push(new this(post_var));
+    this.INSTANCES.push(new this(post_var));
 };
 
 /**
  * @param {il.ScreenshotsInputGUI} screenshots
  */
 il.ScreenshotsInputGUI.removeInstance = function (screenshots) {
-	screenshots.removePreviewURLCache();
+    screenshots.removePreviewURLCache();
 
-	var i = this.INSTANCES.indexOf(screenshots);
+    var i = this.INSTANCES.indexOf(screenshots);
 
-	this.INSTANCES.splice(i, 1);
+    this.INSTANCES.splice(i, 1);
 };
 
 /**
  * @type {Object}
  */
 il.ScreenshotsInputGUI.prototype = {
-	constructor: il.ScreenshotsInputGUI,
+    constructor: il.ScreenshotsInputGUI,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	$add_page_screenshot: null,
+    /**
+     * @type {jQuery|null}
+     */
+    $add_page_screenshot: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	$add_screenshot: null,
+    /**
+     * @type {jQuery|null}
+     */
+    $add_screenshot: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	$form: null,
+    /**
+     * @type {jQuery|null}
+     */
+    $screenshot_file_input: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	$screenshot_file_input: null,
+    /**
+     * @type {jQuery|null}
+     */
+    $screenshots: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	$screenshots: null,
+    /**
+     * @type {jQuery|null}
+     */
+    element: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	element: null,
+    /**
+     * @type {jQuery|null}
+     */
+    modal: null,
 
-	/**
-	 * @type {jQuery|null}
-	 */
-	modal: null,
+    /**
+     * @type {string}
+     */
+    post_var: "",
 
-	/**
-	 * @type {string}
-	 */
-	post_var: "",
+    /**
+     * @type {string[]}
+     */
+    previewURLCache: [],
 
-	/**
-	 * @type {string[]}
-	 */
-	previewURLCache: [],
+    /**
+     * @type {File[]}
+     */
+    screenshots: [],
 
-	/**
-	 * @type {File[]}
-	 */
-	screenshots: [],
+    /**
+     *
+     */
+    addPageScreenshot: function () {
+        // Hide modal on the screenshot
+        this.hideModal();
 
-	/**
-	 * @type {string}
-	 */
-	submitButtonID: [],
+        html2canvas($("html")[0]).then(this.addPageScreenshot2.bind(this)).catch(this.addPageScreenshot4.bind(this));
+    },
 
-	/**
-	 *
-	 */
-	addPageScreenshot: function () {
-		// Hide modal on the screenshot
-		this.hideModal();
+    /**
+     * @param {HTMLCanvasElement} canvas
+     */
+    addPageScreenshot2: function (canvas) {
+        // Restore modal
+        this.restoreModal();
 
-		html2canvas($("html")[0]).then(this.addPageScreenshot2.bind(this)).catch(this.addPageScreenshot4.bind(this));
-	},
+        // Convert canvas screenshot to png blob for file upload
+        canvas.toBlob(this.addPageScreenshot3.bind(this), "image/png");
+    },
 
-	/**
-	 * @param {HTMLCanvasElement} canvas
-	 */
-	addPageScreenshot2: function (canvas) {
-		// Restore modal
-		this.restoreModal();
+    /**
+     * @param {Blob} blob
+     */
+    addPageScreenshot3: function (blob) {
+        var screenshot;
+        try {
+            screenshot = new File([blob], this.constructor.PAGE_SCREENSHOT_NAME + ".png", {type: blob.type});
+        } catch (ex) {
+            // Fix IE and Edge
+            screenshot = blob;
+        }
 
-		// Convert canvas screenshot to png blob for file upload
-		canvas.toBlob(this.addPageScreenshot3.bind(this), "image/png");
-	},
+        this.screenshots.push(screenshot);
 
-	/**
-	 * @param {Blob} blob
-	 */
-	addPageScreenshot3: function (blob) {
-		var screenshot;
-		try {
-			screenshot = new File([blob], this.constructor.PAGE_SCREENSHOT_NAME + ".png", {type: blob.type});
-		} catch (ex) {
-			// Fix IE and Edge
-			screenshot = blob;
-		}
+        this.updateScreenshots();
+    },
 
-		this.screenshots.push(screenshot);
+    /**
+     * @param {Error} ex
+     */
+    addPageScreenshot4: function (ex) {
+        // Restore modal
+        this.restoreModal();
 
-		this.updateScreenshots();
-	},
+        //console.log(ex);
+        alert(ex);
+    },
 
-	/**
-	 * @param {Error} ex
-	 */
-	addPageScreenshot4: function (ex) {
-		// Restore modal
-		this.restoreModal();
+    /**
+     *
+     */
+    addScreenshot: function () {
+        this.$screenshot_file_input.click();
+    },
 
-		//console.log(ex);
-		alert(ex);
-	},
+    /**
+     *
+     */
+    addScreenshotOnChange: function () {
+        var screenshot_file_input = $(".screenshot_file_input", this.element)[0];
 
-	/**
-	 *
-	 */
-	addScreenshot: function () {
-		this.$screenshot_file_input.click();
-	},
+        if (screenshot_file_input.value !== "") {
+            Array.prototype.forEach.call(screenshot_file_input.files, function (screenshot) {
+                this.screenshots.push(screenshot);
+            }, this);
 
-	/**
-	 *
-	 */
-	addScreenshotOnChange: function () {
-		var screenshot_file_input = $(".screenshot_file_input", this.element)[0];
+            screenshot_file_input.value = "";
 
-		if (screenshot_file_input.value !== "") {
-			Array.prototype.forEach.call(screenshot_file_input.files, function (screenshot) {
-				this.screenshots.push(screenshot);
-			}, this);
+            this.updateScreenshots();
+        }
+    },
 
-			screenshot_file_input.value = "";
+    /**
+     * @var {FormData} formData
+     */
+    addScreenshotsToUpload: function (formData) {
+        this.screenshots.forEach(function (screenshot) {
+            formData.append(this.post_var + "[]", screenshot);
+        }, this);
 
-			this.updateScreenshots();
-		}
-	},
+        this.removePreviewURLCache();
+    },
 
-	/**
-	 * @var {FormData} formData
-	 */
-	addScreenshotsToUpload: function (formData) {
-		this.screenshots.forEach(function (screenshot) {
-			formData.append(this.post_var + "[]", screenshot);
-		}, this);
+    /**
+     *
+     */
+    hideModal: function () {
+        if (this.modal !== null) {
+            this.modal.css("visibility", "hidden");
+            $(".modal-backdrop").css("visibility", "hidden");
+            $("body").css("overflow", "visible"); // Fix transparent not visible area from modal
+        }
+    },
 
-		this.removePreviewURLCache();
-	},
+    /**
+     *
+     */
+    init: function () {
+        this.element = $('input[type="file"][name="' + this.post_var + '"]').parent();
 
-	/**
-	 *
-	 */
-	hideModal: function () {
-		if (this.modal !== null) {
-			this.modal.css("visibility", "hidden");
-			$(".modal-backdrop").css("visibility", "hidden");
-			$("body").css("overflow", "visible"); // Fix transparent not visible area from modal
-		}
-	},
+        this.$add_screenshot = $(".add_screenshot", this.element);
+        this.$add_page_screenshot = $(".add_page_screenshot", this.element);
+        this.$screenshot_file_input = $(".screenshot_file_input", this.element);
+        this.$screenshots = $(".screenshots", this.element);
 
-	/**
-	 *
-	 */
-	init: function () {
-		this.element = $('input[type="file"][name="' + this.post_var + '"]').parent();
+        this.$add_screenshot.click(this.addScreenshot.bind(this));
+        this.$add_page_screenshot.click(this.addPageScreenshot.bind(this));
+        this.$screenshot_file_input.change(this.addScreenshotOnChange.bind(this));
+    },
 
-		this.$add_screenshot = $(".add_screenshot", this.element);
-		this.$add_page_screenshot = $(".add_page_screenshot", this.element);
-		this.$screenshot_file_input = $(".screenshot_file_input", this.element);
-		this.$form = this.$screenshot_file_input.parents("form");
-		this.$screenshots = $(".screenshots", this.element);
+    /**
+     *
+     */
+    removePreviewURLCache: function () {
+        this.previewURLCache.forEach(function (preview_url) {
+            URL.revokeObjectURL(preview_url);
+        });
+        this.previewURLCache = [];
+    },
 
-		this.$add_screenshot.click(this.addScreenshot.bind(this));
-		this.$add_page_screenshot.click(this.addPageScreenshot.bind(this));
-		this.$screenshot_file_input.change(this.addScreenshotOnChange.bind(this));
-		this.$form.submit(this.submit.bind(this));
-	},
+    /**
+     * @param {File|Blob} screenshot
+     */
+    removeScreenshot: function (screenshot) {
+        var i = this.screenshots.indexOf(screenshot);
 
-	/**
-	 *
-	 */
-	removePreviewURLCache: function () {
-		this.previewURLCache.forEach(function (preview_url) {
-			URL.revokeObjectURL(preview_url);
-		});
-		this.previewURLCache = [];
-	},
+        this.screenshots.splice(i, 1);
 
-	/**
-	 * @param {File|Blob} screenshot
-	 */
-	removeScreenshot: function (screenshot) {
-		var i = this.screenshots.indexOf(screenshot);
+        this.updateScreenshots();
+    },
 
-		this.screenshots.splice(i, 1);
+    /**
+     *
+     */
+    restoreModal: function () {
+        if (this.modal !== null) {
+            this.modal.css("visibility", "");
+            $(".modal-backdrop").css("visibility", "");
+            $("body").css("overflow", "");
+        }
+    },
 
-		this.updateScreenshots();
-	},
+    /**
+     *
+     */
+    updateScreenshots: function () {
+        this.$screenshots.empty();
+        this.removePreviewURLCache();
 
-	/**
-	 *
-	 */
-	restoreModal: function () {
-		if (this.modal !== null) {
-			this.modal.css("visibility", "");
-			$(".modal-backdrop").css("visibility", "");
-			$("body").css("overflow", "");
-		}
-	},
+        this.screenshots.forEach(this.updateScreenshot, this);
+    },
 
+    /**
+     * @param {File} screenshot
+     */
+    updateScreenshot: function (screenshot) {
+        var $screenshot = $(this.constructor.SCREENSHOT_TEMPLATE);
+        var $screenshot_name = $(".screenshot_name", $screenshot);
+        var $screenshot_remove = $(".screenshot_remove", $screenshot);
+        var $screenshot_preview_link = $(".screenshot_preview_link", $screenshot);
+        var $screenshot_preview = $(".screenshot_preview", $screenshot);
 
-	/**
-	 * @returns {boolean}
-	 */
-	submit: function () {
-		var $submit = $("#" + this.submitButtonID);
+        var preview_url = URL.createObjectURL(screenshot);
 
-		var post_url = this.$form.attr("action");
+        $screenshot_name.text(screenshot.name);
 
-		var data = new FormData(this.$form[0]); // Supports files upload
-		data.append($submit.prop("name"), $submit.val()); // Send submit button with cmd
+        $screenshot_remove.click(this.removeScreenshot.bind(this, screenshot));
 
-		this.addScreenshotsToUpload(data);
+        $screenshot_preview_link.prop("href", preview_url);
+        $screenshot_preview.prop("src", preview_url);
+        $screenshot_preview.prop("alt", screenshot.name);
 
-		$.ajax({
-			type: "post",
-			url: post_url,
-			contentType: false,
-			processData: false,
-			data: data,
-			success: this.submitFunction.bind(this)
-		});
+        this.$screenshots.append($screenshot);
 
-		return false;
-	},
-
-	/**
-	 *
-	 */
-	submitFunction: function () {
-
-	},
-
-	/**
-	 *
-	 */
-	updateScreenshots: function () {
-		this.$screenshots.empty();
-		this.removePreviewURLCache();
-
-		this.screenshots.forEach(this.updateScreenshot, this);
-	},
-
-	/**
-	 * @param {File} screenshot
-	 */
-	updateScreenshot: function (screenshot) {
-		var $screenshot = $(this.constructor.SCREENSHOT_TEMPLATE);
-		var $screenshot_name = $(".screenshot_name", $screenshot);
-		var $screenshot_remove = $(".screenshot_remove", $screenshot);
-		var $screenshot_preview_link = $(".screenshot_preview_link", $screenshot);
-		var $screenshot_preview = $(".screenshot_preview", $screenshot);
-
-		var preview_url = URL.createObjectURL(screenshot);
-
-		$screenshot_name.text(screenshot.name);
-
-		$screenshot_remove.click(this.removeScreenshot.bind(this, screenshot));
-
-		$screenshot_preview_link.prop("href", preview_url);
-		$screenshot_preview.prop("src", preview_url);
-		$screenshot_preview.prop("alt", screenshot.name);
-
-		this.$screenshots.append($screenshot);
-
-		this.previewURLCache.push(preview_url);
-	}
+        this.previewURLCache.push(preview_url);
+    }
 };
