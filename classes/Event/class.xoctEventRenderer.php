@@ -175,7 +175,7 @@ class xoctEventRenderer {
      */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
         $download_publications = $this->xoctEvent->publications()->getDownloadPublications();
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && count($download_publications) > 0) {
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && (count($download_publications) > 0)) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
