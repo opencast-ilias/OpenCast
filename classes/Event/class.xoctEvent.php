@@ -141,9 +141,9 @@ class xoctEvent extends APIObject {
 			$this->loadScheduling();
 		}
 
-		if ($this->isScheduled() && !$this->workflows) {
-		    $this->loadWorkflows();
-        }
+		// if ($this->isScheduled() && !$this->workflows) {
+		//     $this->loadWorkflows();
+        // }
 
 		if (!$this->getXoctEventAdditions()) {
 			$this->initAdditions();
