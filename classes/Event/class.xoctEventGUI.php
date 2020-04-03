@@ -889,34 +889,11 @@ class xoctEventGUI extends xoctGUI {
      */
 	protected function initAndGetModals()
 	{
-	    $modals = new EventModals();
+	    $modals = new EventModals($this, self::plugin()->getPluginObject(), self::dic()->dic(), new WorkflowRepository());
+        $modals->initRepublish();
+        $modals->initReportDate();
+        $modals->initQuality();
 
-        $workflow_repository = new WorkflowRepository();
-        if ($workflow_repository->anyWorkflowExists()) {
-            $form = new ilPropertyFormGUI();
-            $form->setFormAction(self::dic()->ctrl()->getFormAction($this, "republish"));
-            $form->setId(uniqid('form'));
-
-            $select = new ilSelectInputGUI(self::plugin()->translate('workflow'), 'workflow_id');
-            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('workflow_id', 'title'));
-            $form->addItem($select);
-
-            $hidden = new ilHiddenInputGUI('republish_event_id');
-            $form->addItem($hidden);
-
-            $form_id = 'form_' . $form->getId();
-            $submit_btn = self::dic()->ui()->factory()->button()->primary(self::dic()->language()->txt("save"), '#')
-                ->withOnLoadCode(function ($id) use ($form_id) {
-                    return "$('#{$id}').click(function() { $('#{$form_id}').submit(); return false; });";
-                });
-
-            $modal_republish = self::dic()->ui()->factory()->modal()->roundtrip(
-                $this->txt('republish'),
-                self::dic()->ui()->factory()->legacy($form->getHTML())
-
-            )->withActionButtons([$submit_btn]);
-            $modals->setRepublishModal($modal_republish);
-        }
 
         xoctEventRenderer::initModals($modals);
         return $modals;
