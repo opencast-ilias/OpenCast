@@ -46,6 +46,11 @@ class xoctEventGUI extends xoctGUI {
 	 * @var xoctOpenCast
 	 */
 	protected $xoctOpenCast;
+    /**
+     * @var EventModals
+     */
+    protected $modals;
+
 
     /**
 	 * @param xoctOpenCast $xoctOpenCast
@@ -89,8 +94,10 @@ class xoctEventGUI extends xoctGUI {
 	    self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
         self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
         self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
+        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
-		switch ($cmd) {
+
+        switch ($cmd) {
 			case self::CMD_STANDARD:
 				$this->prepareContent();
 				break;
@@ -157,7 +164,6 @@ class xoctEventGUI extends xoctGUI {
 			$b = ilButton::getInstance();
 			$b->setId('xoct_report_date_button');
 			$b->setCaption('rep_robj_xoct_event_report_date_modification');
-			$b->setOnClick("$('#xoct_report_date_modal').modal('show');");
 			$b->addCSSClass('hidden');
 
 			self::dic()->toolbar()->addButtonInstance($b);
@@ -330,13 +336,24 @@ class xoctEventGUI extends xoctGUI {
 	 * ajax call
 	 */
 	public function asyncGetTableGUI() {
-		$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-		$html = $this->getModalsHTML();
-        $html .= $xoctEventTableGUI->getHTML();
+        $modals_html = $this->getModalsHTML();
+        $xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+        $html = $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
-            $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
+            $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
+            $html .= "<script type='text/javascript'>
+                        $('#xoct_report_date_button').removeClass('hidden');
+                        $('#xoct_report_date_button').on('click', function(){
+                            $(this).trigger('$signal',
+							{
+								'id' : '$signal', 'event' : 'click',
+								'triggerer' : $(this),
+								'options' : JSON.parse('[]')
+							});
+                        });
+                    </script>";
         }
-        echo $html;
+        echo $html . $modals_html;
         exit();
 	}
 
@@ -349,7 +366,18 @@ class xoctEventGUI extends xoctGUI {
 		$html = $this->getModalsHTML();
         $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
-            $html .= "<script type='text/javascript'>$('#xoct_report_date_button').removeClass('hidden');</script>";
+            $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
+            $html .= "<script type='text/javascript'>
+                        $('#xoct_report_date_button').removeClass('hidden');
+                        $('#xoct_report_date_button').on('click', function(){
+                            $(this).trigger('$signal',
+							{
+								'id' : '$signal', 'event' : 'click',
+								'triggerer' : $(this),
+								'options' : JSON.parse('[]')
+							});
+                        });
+                    </script>";
         }
         echo $html;
         exit();
@@ -863,41 +891,13 @@ class xoctEventGUI extends xoctGUI {
 	 * @return string
 	 */
 	protected function getModalsHTML() {
-	    $modals = $this->initAndGetModals();
-
-	    $modals_html = '';
-        foreach ($modals->getAllComponents() as $modal) {
+        $modals_html = '';
+        foreach ($this->getModals()->getAllComponents() as $modal) {
             $modals_html .= self::dic()->ui()->renderer()->renderAsync($modal);
 	    }
 
-		$modal_date_html = $modal_quality_html = '';
-		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
-			$modal_date = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_DATE);
-			$modal_date_html = $modal_date->getHTML();
-		}
-		if (xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)) {
-			$modal_quality = new xoctReportingModalGUI($this, xoctReportingModalGUI::REPORTING_TYPE_QUALITY);
-			$modal_quality_html = $modal_quality->getHTML();
-		}
-
-		return $modal_date_html . $modal_quality_html . $modals_html;
+		return $modals_html;
 	}
-
-
-    /**
-     *
-     */
-	protected function initAndGetModals()
-	{
-	    $modals = new EventModals($this, self::plugin()->getPluginObject(), self::dic()->dic(), new WorkflowRepository());
-        $modals->initRepublish();
-        $modals->initReportDate();
-        $modals->initQuality();
-
-
-        xoctEventRenderer::initModals($modals);
-        return $modals;
-    }
 
 
 	/**
@@ -1008,6 +1008,25 @@ class xoctEventGUI extends xoctGUI {
 	public function getObjId() {
 		return $this->xoctOpenCast->getObjId();
 	}
+
+
+    /**
+     * @return EventModals
+     * @throws DICException
+     * @throws ilTemplateException
+     */
+	public function getModals() : EventModals
+    {
+    	if (is_null($this->modals)) {
+            $modals = new EventModals($this, self::plugin()->getPluginObject(), self::dic()->dic(), new WorkflowRepository());
+            $modals->initRepublish();
+            $modals->initReportDate();
+            $modals->initReportQuality();
+            $this->modals = $modals;
+            xoctEventRenderer::initModals($modals);
+        }
+    	return $this->modals;
+    }
 
 	/**
 	 * @return string

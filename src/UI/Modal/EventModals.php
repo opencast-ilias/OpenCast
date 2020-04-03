@@ -6,11 +6,15 @@ use ilHiddenInputGUI;
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Modal\Modal;
+use ILIAS\UI\Component\Modal\RoundTrip;
 use ilOpenCastPlugin;
 use ilPropertyFormGUI;
 use ilSelectInputGUI;
+use ilTemplate;
+use ilTemplateException;
 use ilTextAreaInputGUI;
 use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
+use xoctConf;
 
 /**
  * Class EventModals
@@ -97,30 +101,61 @@ class EventModals
     }
 
 
+    /**
+     * @throws ilTemplateException
+     */
     public function initReportDate()
     {
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction($this->dic->ctrl()->getFormAction($this->parent_gui, "reportDate"));
-        $form->setId(uniqid('form'));
+        $this->setReportDateModal($this->buildReportingModal(
+            'reportDate',
+            $this->plugin->txt('event_report_date_modification'),
+            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_DATE_TEXT))
+        ));
+    }
 
-        $message_input = new ilTextAreaInputGUI('', 'message');
-        $form->addItem($message_input);
 
-        $hidden = new ilHiddenInputGUI('event_id');
-        $form->addItem($hidden);
+    /**
+     * @throws ilTemplateException
+     */
+    public function initReportQuality()
+    {
+        $this->setReportQualityModal($this->buildReportingModal(
+            "reportQuality",
+            $this->plugin->txt('event_report_quality_problem'),
+            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_TEXT))
+        ));
+    }
 
-        $form_id = 'form_' . $form->getId();
-        $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
+
+    /**
+     * @param string $cmd
+     * @param string $title
+     * @param string $body
+     *
+     * @return RoundTrip
+     * @throws ilTemplateException
+     */
+    protected function buildReportingModal(string $cmd, string $title, string $body) : RoundTrip
+    {
+        $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->plugin->getDirectory());
+
+        $form_id = uniqid('form');
+        $tpl->setVariable('FORM_ID', $form_id);
+        $tpl->setVariable('FORM_ACTION', $this->dic->ctrl()->getFormAction($this->parent_gui, $cmd));
+        $tpl->setVariable('BODY', $body);
+
+        $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("send"), '#')
             ->withOnLoadCode(function ($id) use ($form_id) {
                 return "$('#{$id}').click(function() { $('#{$form_id}').submit(); return false; });";
             });
 
-        $modal_republish = $this->dic->ui()->factory()->modal()->roundtrip(
-            $this->plugin->txt('event_report_date_modification'),
-            $this->dic->ui()->factory()->legacy($form->getHTML())
+        $modal = $this->dic->ui()->factory()->modal()->roundtrip(
+            $title,
+            $this->dic->ui()->factory()->legacy($tpl->get())
 
         )->withActionButtons([$submit_btn]);
-        $this->setRepublishModal($modal_republish);
+
+        return $modal;
     }
 
 

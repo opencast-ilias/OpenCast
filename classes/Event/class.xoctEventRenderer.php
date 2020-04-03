@@ -52,9 +52,6 @@ class xoctEventRenderer {
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
-		if (is_null(self::$modals)) {
-		    self::$modals = new EventModals();
-        }
 	}
 
 
@@ -573,7 +570,7 @@ class xoctEventRenderer {
 
         // Republish
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)
-            && !$this->xoctEvent->isScheduled() && !is_null(self::$modals->getRepublishModal())
+            && !$this->xoctEvent->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getRepublishModal())
         ) {
             $actions[] = $this->factory->button()->shy(
                 self::plugin()->translate('event_republish'),
@@ -601,13 +598,13 @@ class xoctEventRenderer {
 
         // Report Quality
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->xoctEvent)
-            && !is_null(self::$modals->getReportQualityModal())
+            && !is_null(self::$modals) && !is_null(self::$modals->getReportQualityModal())
         ) {
             $actions[] = $this->factory->button()->shy(
                 self::plugin()->translate('event_report_quality_problem'),
                 self::$modals->getReportQualityModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click', function(event){ ($('input#xoct_report_quality_event_id').val('{$this->xoctEvent->getIdentifier()}');$('#xoct_report_quality_modal textarea#message').focus(); });";
+                return "$({$id}).on('click', function(event){ $('input#xoct_report_quality_event_id').val('{$this->xoctEvent->getIdentifier()}');$('#xoct_report_quality_modal textarea#message').focus(); });";
             });
         }
 
