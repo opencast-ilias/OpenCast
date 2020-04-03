@@ -448,7 +448,7 @@ class PublicationSelector
                 return [new xoctPublication()];
         }
 
-        return $return;
+        return array_filter($return);
     }
 
 
