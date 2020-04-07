@@ -19,6 +19,7 @@ Tip: Because of multiple autoloaders of plugins, it could be, that different ver
 So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/packages/srag/librariesnamespacechanger) in your plugin.
 
 ### Input-GUI's
+* [AbstractFormBuilder](./src/FormBuilder/doc/AbstractFormBuilder.md)
 * [AjaxCheckbox](./src/AjaxCheckbox/doc/AjaxCheckbox.md)
 * [CheckboxInputGUI](./src/CheckboxInputGUI/doc/CheckboxInputGUI.md)
 * [DateDurationInputGUI](./src/DateDurationInputGUI/doc/DateDurationInputGUI.md)

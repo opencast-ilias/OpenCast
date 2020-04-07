@@ -102,7 +102,7 @@ class UIInputComponentWrapperInputGUI extends ilFormPropertyGUI implements ilTab
     public function getDisabled()/*:bool*/
     {
         if (self::version()->is60()) {
-            return $this->input->getDisabled();
+            return $this->input->isDisabled();
         } else {
             throw new ilFormException("disabled not exists in ILIAS 5.4 or below!");
         }

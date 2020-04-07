@@ -93,7 +93,7 @@ abstract class AbstractAjaxAutoCompleteCtrl
     /**
      * @param array $ids
      *
-     * @return bool
+     * @return array
      */
     public abstract function fillOptions(array $ids) : array;
 }

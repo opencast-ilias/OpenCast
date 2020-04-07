@@ -10,7 +10,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         's' => 
         array (
             'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DIC\\' => 9,
+            'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\' => 21,
         ),
     );
@@ -20,7 +20,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DIC\\' => 
+        'srag\\DIC\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
@@ -787,6 +787,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIs' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIs.php',
         'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIsTrait' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIsTrait.php',
         'srag\\CustomInputGUIs\\OpenCast\\DateDurationInputGUI\\DateDurationInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/DateDurationInputGUI/DateDurationInputGUI.php',
+        'srag\\CustomInputGUIs\\OpenCast\\FormBuilder\\AbstractFormBuilder' => __DIR__ . '/..' . '/srag/custominputguis/src/FormBuilder/AbstractFormBuilder.php',
         'srag\\CustomInputGUIs\\OpenCast\\GlyphGUI\\GlyphGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/GlyphGUI/GlyphGUI.php',
         'srag\\CustomInputGUIs\\OpenCast\\HiddenInputGUI\\HiddenInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/HiddenInputGUI/HiddenInputGUI.php',
         'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\InputGUIWrapperConstraint' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperConstraint.php',

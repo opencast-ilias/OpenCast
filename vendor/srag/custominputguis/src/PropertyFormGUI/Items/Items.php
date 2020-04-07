@@ -62,6 +62,8 @@ final class Items
      * @param PropertyFormGUI|TableGUI            $parent
      *
      * @return ilFormPropertyGUI|ilFormSectionHeaderGUI|ilRadioOption
+     *
+     * @deprecated
      */
     public static final function getItem($key, array $field, $parent_item, $parent)
     {
@@ -137,6 +139,8 @@ final class Items
      * @param ilFormPropertyGUI|ilFormSectionHeaderGUI|ilRadioOption $item
      *
      * @return mixed
+     *
+     * @deprecated
      */
     public static function getValueFromItem($item)
     {
@@ -229,6 +233,8 @@ final class Items
     /**
      * @param ilFormPropertyGUI|ilFormSectionHeaderGUI|ilRadioOption $item
      * @param array                                                  $properties
+     *
+     * @deprecated
      */
     private static function setPropertiesToItem($item, array $properties)/*: void*/
     {
@@ -292,6 +298,8 @@ final class Items
     /**
      * @param ilFormPropertyGUI|ilFormSectionHeaderGUI|ilRadioOption $item
      * @param mixed                                                  $value
+     *
+     * @deprecated
      */
     public static function setValueToItem($item, $value)/*: void*/
     {

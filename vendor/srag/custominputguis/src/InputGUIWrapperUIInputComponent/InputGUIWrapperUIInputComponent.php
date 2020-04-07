@@ -9,6 +9,7 @@ use ILIAS\Transformation\Factory as TransformationFactory;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ILIAS\UI\Implementation\Component\Input\NameSource;
 use ILIAS\Validation\Factory as ValidationFactory;
+use ilRepositorySelector2InputGUI;
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
 use srag\DIC\OpenCast\DICTrait;
 
@@ -114,6 +115,15 @@ class InputGUIWrapperUIInputComponent extends Input
     /**
      * @inheritDoc
      */
+    public function isDisabled()/*:bool*/
+    {
+        return $this->input->getDisabled();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function isRequired()/*:bool*/
     {
         return $this->input->getRequired();
@@ -148,6 +158,22 @@ class InputGUIWrapperUIInputComponent extends Input
     /**
      * @inheritDoc
      */
+    public function withDisabled(/*bool*/ $disabled) : self
+    {
+        $this->checkBoolArg("disabled", $disabled);
+
+        $clone = clone $this;
+        $clone->input = clone $this->input;
+
+        $clone->input->setDisabled($disabled);
+
+        return $clone;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function withError(/*string*/ $error) : self
     {
         $clone = clone $this;
@@ -162,12 +188,32 @@ class InputGUIWrapperUIInputComponent extends Input
     /**
      * @inheritDoc
      */
+    public function withLabel(/*string*/ $label) : self
+    {
+        $this->checkStringArg("label", $label);
+
+        $clone = clone $this;
+        $clone->input = clone $this->input;
+
+        $clone->input->setTitle($label);
+
+        return $clone;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function withNameFrom(NameSource $source) : self
     {
         $clone = parent::withNameFrom($source);
         $clone->input = clone $this->input;
 
         $clone->input->setPostVar($clone->getName());
+
+        if ($clone->input instanceof ilRepositorySelector2InputGUI) {
+            $clone->input->getExplorerGUI()->setSelectMode($clone->getName() . "_sel", $this->input->multi_nodes);
+        }
 
         return $clone;
     }

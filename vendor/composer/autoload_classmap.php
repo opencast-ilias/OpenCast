@@ -762,6 +762,7 @@ return array(
     'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIs' => $vendorDir . '/srag/custominputguis/src/CustomInputGUIs.php',
     'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIsTrait' => $vendorDir . '/srag/custominputguis/src/CustomInputGUIsTrait.php',
     'srag\\CustomInputGUIs\\OpenCast\\DateDurationInputGUI\\DateDurationInputGUI' => $vendorDir . '/srag/custominputguis/src/DateDurationInputGUI/DateDurationInputGUI.php',
+    'srag\\CustomInputGUIs\\OpenCast\\FormBuilder\\AbstractFormBuilder' => $vendorDir . '/srag/custominputguis/src/FormBuilder/AbstractFormBuilder.php',
     'srag\\CustomInputGUIs\\OpenCast\\GlyphGUI\\GlyphGUI' => $vendorDir . '/srag/custominputguis/src/GlyphGUI/GlyphGUI.php',
     'srag\\CustomInputGUIs\\OpenCast\\HiddenInputGUI\\HiddenInputGUI' => $vendorDir . '/srag/custominputguis/src/HiddenInputGUI/HiddenInputGUI.php',
     'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\InputGUIWrapperConstraint' => $vendorDir . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperConstraint.php',
