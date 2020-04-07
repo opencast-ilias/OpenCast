@@ -644,7 +644,7 @@ class xoctCurl {
 		// build file parameters
 		foreach ($this->getFiles() as $k => $v) {
 			$k = $v->getPostVar();
-			$v = $v->getFilePath();
+			$v = $v->getTmpName();
 
 			switch (true) {
 				case false === $v = realpath(filter_var($v)):

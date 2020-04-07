@@ -13,7 +13,7 @@ var xoctFileuploader = {
             browse_button: xoctFileuploaderSettings.pick_button,
             url: xoctFileuploaderSettings.getUrl(),
             chunk_size: xoctFileuploaderSettings.chunk_size,
-            unique_names: false,
+            unique_names: true,
             has_files: false,
             filters: {
                 max_file_size: xoctFileuploaderSettings.max_file_size,
