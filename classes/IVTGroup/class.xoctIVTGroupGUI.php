@@ -80,13 +80,32 @@ class xoctIVTGroupGUI extends xoctGUI {
 	public function getAll() {
 		$arr = array();
 		foreach (xoctIVTGroup::getAllForId($this->xoctOpenCast->getObjId()) as $group) {
+		    $users = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->getArray(null, 'user_id');
 			$stdClass = $group->__asStdClass();
-			$stdClass->user_count = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
+			$stdClass->user_count = count($users);
 			$stdClass->name = $stdClass->title;
+			$stdClass->users = $users;
 			$arr[] = $stdClass;
 		}
 		usort($arr, ['xoctGUI', 'compareStdClassByName']);
 		$this->outJson($arr);
+	}
+
+	public function getParticipants() {
+        $data = array();
+        /**
+         * @var $xoctGroupParticipant xoctIVTGroupParticipant
+         */
+        foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant)
+        {
+            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+            $data[] = $stdClass;
+        }
+
+        usort($data, ['xoctGUI', 'compareStdClassByName']);
+
+        $this->outJson($data);
 	}
 
 

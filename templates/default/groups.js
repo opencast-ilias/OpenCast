@@ -7,6 +7,8 @@ var xoctGroup = {
     selected_id: 0,
     data_url: '',
     container: null,
+    groups: [],
+    participants: [],
     lng: [
         delete_group = "Delete Group?",
         no_title = "Please insert title",
@@ -69,8 +71,13 @@ var xoctGroup = {
         var self = this;
         this.before_load();
         var url = this.data_url;
+        $.ajax({url: url, type: "GET", data: {"cmd": "getParticipants"}}).done(function (data) {
+            self.participants = data;
+        });
+
         $.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
             self.clear();
+            self.groups = data;
             for (var i in data) {
                 self.container.append('<a class="list-group-item xoct_group" data-group-id="' + data[i].id + '">'
                     + data[i].name
@@ -93,7 +100,6 @@ var xoctGroup = {
             xoctGroupParticipant.load();
             self.after_load();
             fallback();
-
         });
     },
     /**
@@ -107,6 +113,7 @@ var xoctGroup = {
         if (confirm(this.lng['delete_group'])) {
             this.before_load();
             $.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
+
                 if (data) {
                     $('[data-group-id="' + id + '"]').remove();
                     self.load();
@@ -140,6 +147,41 @@ var xoctGroup = {
         });
         xoctGroupParticipant.clear();
     },
+
+    getGroup: function (id) {
+        var return_group = null;
+        this.groups.forEach(function(group) {
+            if (parseInt(group.id) === parseInt(id)) {
+                return_group = group;
+            }
+        });
+        return return_group;
+    },
+
+    getSelectedGroup: function () {
+        return this.getGroup(this.selected_id);
+    },
+
+    isInAnyGroup: function (user_id) {
+        var is_in_group = false;
+        this.groups.forEach(function(group) {
+            if (group.users.indexOf(user_id) !== -1) {
+                is_in_group = true;
+            }
+        });
+        return is_in_group;
+    },
+
+    getParticipant: function(user_id) {
+        var return_participant = null;
+        this.participants.forEach(function(participant) {
+            if (parseInt(participant.user_id) === parseInt(user_id)) {
+                return_participant = participant;
+            }
+        });
+        return return_participant;
+    },
+
     /**
      * Create a New Group
      * @param title

@@ -139,23 +139,28 @@ var xoctGroupParticipant = {
         var self = this;
         this.before_load();
         var url = this.data_url;
-        $.ajax({url: url, type: "GET", data: {"cmd": "getAvailable", "group_id": xoctGroup.selected_id}}).done(function (data) {
-            self.container_available.empty();
-            for (var i in data) {
-                self.container_available.append(
-                    '<li class="list-group-item xoct_participant_available" data-user-id="' + data[i].user_id + '">'
-                    //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
-                    + '<div style="margin-right:30px;">'
-                    + data[i].name + ''
-                    + '</div>'
-                    + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
-                    + '</li>');
-            }
-            if (!data || data.length == 0) {
-                self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
-            }
-            self.after_load();
-        });
+        var data = xoctGroup.getSelectedGroup();
+        self.container_available.empty();
+        if (typeof data == 'undefined') {
+            return;
+        }
+        for (var i in data.users) {
+            var checkmark = '';
+            // if ()
+            participant = xoctGroup.getParticipant(i);
+            self.container_available.append(
+                '<li class="list-group-item xoct_participant_available" data-user-id="' + participant.user_id + '">'
+                //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
+                + '<div style="margin-right:30px;">'
+                + participant.name + ''
+                + '</div>'
+                + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
+                + '</li>');
+        }
+        if (!data || data.length == 0) {
+            self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
+        }
+        self.after_load();
     },
     /**
      *
@@ -165,21 +170,22 @@ var xoctGroupParticipant = {
         var self = this;
         this.before_load();
         var url = this.data_url;
-        $.ajax({url: url, type: "GET", data: {"cmd": "getPerGroup", "group_id": group_id}}).done(function (data) {
-            self.container_per_group.empty();
-            for (var i in data) {
-                self.container_per_group.append('<li class="list-group-item" data-id="'
-                    + data[i].id
-                    + '"><div style="margin-right:30px;">'
-                    + data[i].name
-                    + '</div>'
-                    + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
-            }
-            if (!data || data.length == 0) {
-                self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
-            }
-            self.after_load();
-        });
+        var data = xoctGroup.getGroup(group_id);
+        self.container_per_group.empty();
+        for (var i in data.users) {
+            participant = xoctGroup.getParticipant(i);
+
+            self.container_per_group.append('<li class="list-group-item" data-id="'
+                + participant.user_id
+                + '"><div style="margin-right:30px;">'
+                + participant.name
+                + '</div>'
+                + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
+        }
+        if (!data || data.length == 0) {
+            self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
+        }
+        self.after_load();
     },
     /**
      *
