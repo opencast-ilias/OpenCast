@@ -76,6 +76,7 @@ class xoctConf extends ActiveRecord {
     const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
 	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
 	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
+	const F_INGEST_UPLOAD = 'ingest_upload';
 
 	/**
 	 * @var array

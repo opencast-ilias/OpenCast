@@ -321,32 +321,6 @@ class xoctEvent extends APIObject {
 		}
 	}
 
-
-    /**
-     * @throws ReflectionException
-     * @throws xoctException
-     */
-	public function create() {
-		$data = array();
-
-		$this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
-		$this->setOwner(xoctUser::getInstance(self::dic()->user()));
-		$this->updateMetadataFromFields(false);
-
-		$data['metadata'] = json_encode([$this->getMetadata()->__toStdClass()]);
-		$data['processing'] = json_encode($this->getProcessing());
-		$data['acl'] = json_encode($this->getAcl());
-
-		$presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
-		$data['presentation'] = $presenter->getCURLFile();
-		//		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
-		$return = json_decode(xoctRequest::root()->events()->post($data));
-		//		}
-
-		$this->setIdentifier($return->identifier);
-	}
-
-
 	/**
 	 *
 	 */
@@ -1391,7 +1365,7 @@ class xoctEvent extends APIObject {
 	/**
 	 *
 	 */
-	protected function updateMetadataFromFields($scheduled) {
+	public function updateMetadataFromFields($scheduled) {
 		$title = $this->getMetadata()->getField('title');
 		$title->setValue($this->getTitle());
 

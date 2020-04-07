@@ -25,6 +25,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Series\SeriesRepository;
 use xoct;
 use xoctConf;
@@ -113,6 +114,10 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @var null
      */
     protected $form_action;
+    /**
+     * @var EventRepository
+     */
+    protected $event_repository;
 
 
     /**
@@ -137,6 +142,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         $cmd_url_upload_chunks = null
     ) {
 		parent::__construct();
+		$this->event_repository = new EventRepository(self::dic()->dic());
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
         $this->object = $object;
@@ -571,7 +577,7 @@ class EventFormGUI extends ilPropertyFormGUI {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
-                $this->object->create();
+                $this->event_repository->upload($this->object);
 			}
 		}
 

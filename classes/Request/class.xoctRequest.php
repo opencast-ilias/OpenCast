@@ -168,6 +168,7 @@ class xoctRequest {
 	const BRANCH_WORKFLOWS = 6;
 	const BRANCH_WORKFLOW_DEFINITIONS = 7;
 	const BRANCH_SEARCH = 8;
+	const BRANCH_INGEST = 9;
 
 	/**
 	 * @var array
@@ -477,7 +478,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @return $this
 	 * @throws xoctException
 	 */
@@ -505,7 +506,78 @@ class xoctRequest {
 		return $this;
 	}
 
-	/**
+
+    /**
+     * @param string $workflow_definition_id
+     *
+     * @return $this
+     * @throws xoctException
+     */
+	public function ingest(string $workflow_definition_id = '') : self
+    {
+        $this->checkBranch([self::BRANCH_BASE, self::BRANCH_INGEST]);
+        $this->addPart('ingest');
+        if ($workflow_definition_id) {
+            $this->addPart($workflow_definition_id);
+        }
+        $this->branch = self::BRANCH_INGEST;
+
+        return $this;
+    }
+
+
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function addDCCatalog()
+    {
+        $this->checkBranch([self::BRANCH_INGEST]);
+        $this->addPart('addDCCatalog');
+
+        return $this;
+    }
+
+
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function addAttachment()
+    {
+        $this->checkBranch([self::BRANCH_INGEST]);
+        $this->addPart('addAttachment');
+
+        return $this;
+    }
+
+
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function addTrack()
+    {
+        $this->checkBranch([self::BRANCH_INGEST]);
+        $this->addPart('createMediaPackage');
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws xoctException
+     */
+    public function createMediaPackage() : self
+    {
+        $this->checkBranch([self::BRANCH_INGEST]);
+        $this->addPart('createMediaPackage');
+
+        return $this;
+    }
+
+
+    /**
 	 * @param $part
 	 */
 	protected function addPart($part) {
@@ -513,7 +585,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @return array
 	 */
 	public function getParts() {
@@ -521,7 +593,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @param array $parts
 	 */
 	public function setParts($parts) {
@@ -529,7 +601,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @return string
 	 */
 	public function getBase() {
@@ -537,7 +609,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @param string $base
 	 */
 	public function setBase($base) {
@@ -545,7 +617,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @return array
 	 */
 	public function getParameters() {
@@ -553,7 +625,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @param array $parameters
 	 */
 	public function setParameters($parameters) {
@@ -561,7 +633,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @param $key
 	 * @param $value
 	 *
@@ -579,7 +651,7 @@ class xoctRequest {
 	}
 
 
-	/**
+    /**
 	 * @return int
 	 */
 	protected function getBranch() {
