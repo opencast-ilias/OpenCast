@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.20.4]
+- Fix
+
+## [0.20.3]
+- `rbac` changes
+
+## [0.20.2]
+- Auto replace manually line breaks text in language files to real line breaks
+
+## [0.20.1]
+- Fix
+
+## [0.20.0]
+- Deprecate `self::dic()->mainTemplate()`
+- Switch from `ilTemplate` to `Template`
+
+## [0.19.4]
+- Fix
+
+## [0.19.3]
+- Remove ILIAS 5.2 hints
+
+## [0.19.2]
+- `setLocator` on output
+
+## [0.19.1]
+- Fix
+
+## [0.19.0]
+- Add some new ILIAS 6 methods
+
+## [0.18.5]
+- Fix ILIAS 6 version
+
+## [0.18.4]
+- Add exists `self::dic()->dic()` to interface
+
+## [0.18.3]
+- ILIAS 6.0 `uiServices`
+
+## [0.18.2]
+- Supports output `ilTemplateWrapper`
+
+## [0.18.1]
+- Fix ILIAS 6.0 global template
+
 ## [0.18.0]
 - Fix ILIAS 6.0 global template
 
