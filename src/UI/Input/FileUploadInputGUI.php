@@ -105,7 +105,7 @@ class FileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
      *
      */
 	protected function initJS() {
-		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader.min.js');
+		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader_v2.min.js');
 		$pl = ilOpenCastPlugin::getInstance();
 		$settings = new stdClass();
 		$settings->lng = new stdClass();
