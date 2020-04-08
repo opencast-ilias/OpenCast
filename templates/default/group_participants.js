@@ -138,16 +138,11 @@ var xoctGroupParticipant = {
     load: function () {
         var self = this;
         this.before_load();
-        var url = this.data_url;
-        var data = xoctGroup.getSelectedGroup();
         self.container_available.empty();
-        if (typeof data == 'undefined') {
-            return;
-        }
-        for (var i in data.users) {
+        var participants = xoctGroup.getAvailableParticipantsForSelectedGroup();
+        participants.forEach(function(participant) {
             var checkmark = '';
             // if ()
-            participant = xoctGroup.getParticipant(i);
             self.container_available.append(
                 '<li class="list-group-item xoct_participant_available" data-user-id="' + participant.user_id + '">'
                 //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
@@ -156,8 +151,8 @@ var xoctGroupParticipant = {
                 + '</div>'
                 + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
                 + '</li>');
-        }
-        if (!data || data.length == 0) {
+        });
+        if (!participants || participants.length == 0) {
             self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
         }
         self.after_load();
@@ -169,20 +164,17 @@ var xoctGroupParticipant = {
     loadForGroupId: function (group_id) {
         var self = this;
         this.before_load();
-        var url = this.data_url;
-        var data = xoctGroup.getGroup(group_id);
         self.container_per_group.empty();
-        for (var i in data.users) {
-            participant = xoctGroup.getParticipant(i);
-
+        var participants = xoctGroup.getSelectedGroupParticipants();
+        participants.forEach(function(participant) {
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id
                 + '"><div style="margin-right:30px;">'
                 + participant.name
                 + '</div>'
                 + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
-        }
-        if (!data || data.length == 0) {
+        });
+        if (!participants || participants.length == 0) {
             self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
         }
         self.after_load();

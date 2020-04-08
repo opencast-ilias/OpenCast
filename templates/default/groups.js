@@ -128,6 +128,7 @@ var xoctGroup = {
      * @param force
      */
     selectGroup: function (id, force) {
+        console.log('select group ' + id);
         force = typeof(force) == 'undefined' ? false : force;
         if (this.selected_id == id && !force) {
             this.deselectAll();
@@ -162,6 +163,28 @@ var xoctGroup = {
         return this.getGroup(this.selected_id);
     },
 
+    getSelectedGroupParticipants: function () {
+        var self = this;
+        var group = this.getSelectedGroup();
+        var participants = [];
+        for (let i in group.users) {
+            participants.push(self.getParticipant(group.users[i]));
+        }
+        return participants;
+    },
+
+    getAvailableParticipantsForSelectedGroup: function () {
+        var self = this;
+        var group = this.getSelectedGroup();
+        var participants = [];
+        for (let i in self.participants) {
+            if (!group.users.includes(self.participants[i].user_id)) {
+                participants.push(self.participants[i]);
+            }
+        }
+        return participants;
+    },
+
     isInAnyGroup: function (user_id) {
         var is_in_group = false;
         this.groups.forEach(function(group) {
@@ -173,12 +196,14 @@ var xoctGroup = {
     },
 
     getParticipant: function(user_id) {
+        console.log('getparticipant ' + user_id);
         var return_participant = null;
         this.participants.forEach(function(participant) {
             if (parseInt(participant.user_id) === parseInt(user_id)) {
                 return_participant = participant;
             }
         });
+        console.log(return_participant);
         return return_participant;
     },
 
