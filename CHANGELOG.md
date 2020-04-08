@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.5.1]
+- Bugfix: Avoid upload bug by using unique IDs to save files
+- Bugfix: Fixed cleanup of old temp files
+
 ## [2.5.0]
 - Feature: Opencast Studio button in series
 
