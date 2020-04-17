@@ -73,35 +73,41 @@ var xoctGroup = {
         var url = this.data_url;
         $.ajax({url: url, type: "GET", data: {"cmd": "getParticipants"}}).done(function (data) {
             self.participants = data;
-        });
 
-        $.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
-            self.clear();
-            self.groups = data;
-            for (var i in data) {
-                self.container.append('<a class="list-group-item xoct_group" data-group-id="' + data[i].id + '">'
-                    + data[i].name
-                    + '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
-                    + '<Button class="btn pull-right">' + data[i].user_count + '</button>'
-                    + '</li>');
-            }
-            if (!data || data.length == 0) {
-                self.container.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
-            }
-            if (data && data.length == 1) {
-                self.selectGroup(data[0].id);
-            } else {
-                if (select_current) {
-                    self.selectGroup(selected_storage);
-                }
-            }
+            $.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
+                self.groups = data;
+                self.loadGroupGUI(select_current, selected_storage);
 
-            xoctGroupParticipant.clear();
-            xoctGroupParticipant.load();
-            self.after_load();
-            fallback();
+                xoctGroupParticipant.clear();
+                xoctGroupParticipant.load();
+                self.after_load();
+                fallback();
+            });
         });
     },
+
+    loadGroupGUI: function (select_current, selected_storage) {
+        var self = this;
+        self.clear();
+        for (let i in self.groups) {
+            self.container.append('<a class="list-group-item xoct_group" data-group-id="' + self.groups[i].id + '">'
+                + self.groups[i].title
+                + '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
+                + '<Button class="btn pull-right" id="xoct_user_counter_' + self.groups[i].id + '">' + self.groups[i].users.length + '</button>'
+                + '</li>');
+        }
+        if (!self.groups || self.groups.length === 0) {
+            self.container.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
+        }
+        if (self.groups && self.groups.length === 1) {
+            self.selectGroup(self.groups[0].id);
+        } else {
+            if (select_current) {
+                self.selectGroup(selected_storage);
+            }
+        }
+    },
+
     /**
      *
      * @param id
@@ -113,11 +119,10 @@ var xoctGroup = {
         if (confirm(this.lng['delete_group'])) {
             this.before_load();
             $.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
-
-                if (data) {
-                    $('[data-group-id="' + id + '"]').remove();
-                    self.load();
-                }
+                self.groups = self.groups.filter(function(value, index, arr) {
+                    return value.id.toString() !== id.toString();
+                });
+                self.loadGroupGUI();
                 self.after_load();
             });
         }
@@ -128,7 +133,6 @@ var xoctGroup = {
      * @param force
      */
     selectGroup: function (id, force) {
-        console.log('select group ' + id);
         force = typeof(force) == 'undefined' ? false : force;
         if (this.selected_id == id && !force) {
             this.deselectAll();
@@ -163,6 +167,18 @@ var xoctGroup = {
         return this.getGroup(this.selected_id);
     },
 
+    removeParticipant: function(id) {
+        this.getSelectedGroup().users = this.getSelectedGroup().users.filter(function(value, index, arr) {
+            return value.toString() !== id.toString();
+        });
+        $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
+    },
+
+    addParticipant: function (id) {
+        this.getSelectedGroup().users.push(id.toString());
+        $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
+    },
+
     getSelectedGroupParticipants: function () {
         var self = this;
         var group = this.getSelectedGroup();
@@ -175,6 +191,9 @@ var xoctGroup = {
 
     getAvailableParticipantsForSelectedGroup: function () {
         var self = this;
+        if (self.selected_id === 0) {
+            return self.participants;
+        }
         var group = this.getSelectedGroup();
         var participants = [];
         for (let i in self.participants) {
@@ -196,15 +215,9 @@ var xoctGroup = {
     },
 
     getParticipant: function(user_id) {
-        console.log('getparticipant ' + user_id);
-        var return_participant = null;
-        this.participants.forEach(function(participant) {
-            if (parseInt(participant.user_id) === parseInt(user_id)) {
-                return_participant = participant;
-            }
+        return this.participants.find(function(participant) {
+            return participant.user_id === user_id;
         });
-        console.log(return_participant);
-        return return_participant;
     },
 
     /**
@@ -223,9 +236,8 @@ var xoctGroup = {
         this.deselectAll();
         this.before_load();
         $.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-            self.load(function () {
-                self.selectGroup(data.id, true);
-            });
+            self.groups.push(data);
+            self.loadGroupGUI();
             self.after_load();
             fallback(data);
         });

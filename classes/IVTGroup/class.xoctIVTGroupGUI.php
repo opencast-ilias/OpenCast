@@ -98,12 +98,11 @@ class xoctIVTGroupGUI extends xoctGUI {
          */
         foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant)
         {
-            $stdClass = $xoctGroupParticipant->__asStdClass();
-            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
-            $data[] = $stdClass;
+            $data[] = [
+                'user_id' => $xoctGroupParticipant->getUserId(),
+                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation()
+            ];
         }
-
-        usort($data, ['xoctGUI', 'compareStdClassByName']);
 
         $this->outJson($data);
 	}
@@ -114,7 +113,10 @@ class xoctIVTGroupGUI extends xoctGUI {
 		$obj->setSerieId($this->xoctOpenCast->getObjId());
 		$obj->setTitle($_POST['title']);
 		$obj->create();
-		$this->outJson($obj->__asStdClass());
+		$json = $obj->__asStdClass();
+		$json->users = [];
+		$json->user_count = 0;
+		$this->outJson($json);
 	}
 
 

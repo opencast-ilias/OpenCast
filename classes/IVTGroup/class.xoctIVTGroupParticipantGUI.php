@@ -121,11 +121,11 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 
 	protected function delete()
 	{
-		if (!$_POST['id'])
+		if (!$_POST['id'] || !$_POST['group_id'])
 		{
 			$this->outJson(false);
 		}
-		$o = new xoctIVTGroupParticipant($_POST['id']);
+		$o = xoctIVTGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
 		$o->delete();
 		$this->outJson(true);
 	}

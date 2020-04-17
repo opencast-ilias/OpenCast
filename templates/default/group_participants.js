@@ -94,12 +94,14 @@ var xoctGroupParticipant = {
             this.before_load();
             var self = this;
             var url = this.data_url;
-            $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id}}).done(function (data) {
+            $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+                xoctGroup.removeParticipant(id);
                 self.after_load();
+                console.log('load');
                 self.load();
-                self.loadForGroupId(xoctGroup.selected_id);
-                xoctGroup.load(function () {
-                }, true);
+                self.loadForGroupId();
+                // xoctGroup.load(function () {
+                // }, true);
             });
 
         }
@@ -119,11 +121,10 @@ var xoctGroupParticipant = {
         var self = this;
         var url = this.data_url;
         $.ajax({url: url + "&cmd=create", type: "POST", data: {"user_id": user_id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+            xoctGroup.addParticipant(user_id);
             self.after_load();
             self.load();
             self.loadForGroupId(group_id);
-            xoctGroup.load(function () {
-            }, true);
         });
 
     },
@@ -140,6 +141,7 @@ var xoctGroupParticipant = {
         this.before_load();
         self.container_available.empty();
         var participants = xoctGroup.getAvailableParticipantsForSelectedGroup();
+
         participants.forEach(function(participant) {
             var checkmark = '';
             // if ()
@@ -155,6 +157,7 @@ var xoctGroupParticipant = {
         if (!participants || participants.length == 0) {
             self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
         }
+        self.filter($(self.filter_container).val());
         self.after_load();
     },
     /**
@@ -166,6 +169,8 @@ var xoctGroupParticipant = {
         this.before_load();
         self.container_per_group.empty();
         var participants = xoctGroup.getSelectedGroupParticipants();
+        console.log('participants:');
+        console.log(participants);
         participants.forEach(function(participant) {
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id
