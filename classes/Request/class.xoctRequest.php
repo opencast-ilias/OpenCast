@@ -8,9 +8,11 @@ class xoctRequest {
 
 	const X_RUN_AS_USER = 'X-RUN-AS-USER';
 	const X_RUN_WITH_ROLES = 'X-RUN-WITH-ROLES';
-
-
-	/**
+    /**
+     * @var bool
+     */
+    private $rest_api;
+    /**
 	 * @param xoctRequestSettings $xoctRequestSettings
 	 */
 	public static function init(xoctRequestSettings $xoctRequestSettings) {
@@ -18,7 +20,9 @@ class xoctRequest {
 	}
 
 
-	/**
+
+
+    /**
 	 * @param array $roles
 	 *
 	 * @param string $as_user
@@ -46,16 +50,18 @@ class xoctRequest {
 	}
 
 
-	/**
-	 * @param array  $post_data
-	 * @param array  $roles
-	 * @param string $as_user
-	 *
-	 * @return string
-	 */
-	public function post(array $post_data, array $roles = array(), $as_user = '') {
+    /**
+     * @param array  $post_data
+     * @param array  $roles
+     * @param string $as_user
+     *
+     * @param string $base_url
+     *
+     * @return string
+     */
+	public function post(array $post_data, array $roles = array(), string $as_user = '', string $base_url = '') {
 		$xoctCurl = new xoctCurl();
-		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->setUrl($this->getUrl($base_url));
 		$xoctCurl->setPostFields($post_data);
 		
 		if ($as_user) {
@@ -72,17 +78,19 @@ class xoctRequest {
 	}
 
 
-	/**
-	 * @param array            $post_data
-	 * @param xoctUploadFile[] $files
-	 * @param array            $roles
-	 * @param string           $as_user
-	 *
-	 * @return string
-	 */
-	public function postFiles(array $post_data, array $files, array $roles = array(), $as_user = '') {
+    /**
+     * @param array            $post_data
+     * @param xoctUploadFile[] $files
+     * @param array            $roles
+     * @param string           $as_user
+     *
+     * @param string           $base_url
+     *
+     * @return string
+     */
+	public function postFiles(array $post_data, array $files, array $roles = array(), string $as_user = '', string $base_url = '') {
 		$xoctCurl = new xoctCurl();
-		$xoctCurl->setUrl($this->getUrl());
+		$xoctCurl->setUrl($this->getUrl($base_url));
 		$xoctCurl->setPostFields($post_data);
 		$xoctCurl->setRequestContentType('multipart/form-data');
 
@@ -147,16 +155,20 @@ class xoctRequest {
 	/**
 	 * @return xoctRequest
 	 */
-	public static function root() {
+	public static function root()
+    {
 		return new self();
 	}
-
 
     /**
      * xoctRequest constructor.
      */
-    protected function __construct() {
-	}
+    protected function __construct()
+    {
+        if (!self::$base) {
+            xoctConf::setApiSettings();
+        }
+    }
 
 
 	const BRANCH_OTHER = - 1;
@@ -169,6 +181,8 @@ class xoctRequest {
 	const BRANCH_WORKFLOW_DEFINITIONS = 7;
 	const BRANCH_SEARCH = 8;
 	const BRANCH_INGEST = 9;
+	const BRANCH_WORKFLOW = 10;
+    const BRANCH_SERVICES = 11;
 
 	/**
 	 * @var array
@@ -508,6 +522,68 @@ class xoctRequest {
 
 
     /**
+     * @return $this
+     * @throws xoctException
+     */
+	public function services() : self
+    {
+        $this->rest_api = true;
+        $this->checkBranch([self::BRANCH_BASE]);
+        $this->addPart('services');
+        $this->branch = self::BRANCH_SERVICES;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $service_type
+     *
+     * @return $this
+     * @throws xoctException
+     */
+    public function available(string $service_type) : self
+    {
+        $this->checkBranch([self::BRANCH_SERVICES]);
+        $this->addPart('available.json');
+        $this->parameter('serviceType', $service_type);
+
+        return $this;
+    }
+
+    /**
+     * REST-Endpoint
+     *
+     * @return $this
+     * @throws xoctException
+     */
+	public function workflow() : self
+    {
+        $this->rest_api = true;
+        $this->checkBranch([self::BRANCH_BASE]);
+        $this->addPart('workflow');
+        $this->branch = self::BRANCH_WORKFLOW;
+
+        return $this;
+    }
+
+
+    /**
+     * Start a workflow
+     * https://stable.opencast.org/docs.html?path=/workflow#start-4
+     *
+     * @return $this
+     * @throws xoctException
+     */
+    public function start() : self
+    {
+        $this->checkBranch([self::BRANCH_WORKFLOW]);
+        $this->addPart('start');
+
+        return $this;
+    }
+
+    /**
      * @param string $workflow_definition_id
      *
      * @return $this
@@ -515,6 +591,7 @@ class xoctRequest {
      */
 	public function ingest(string $workflow_definition_id = '') : self
     {
+        $this->rest_api = true;
         $this->checkBranch([self::BRANCH_BASE, self::BRANCH_INGEST]);
         $this->addPart('ingest');
         if ($workflow_definition_id) {
@@ -530,7 +607,7 @@ class xoctRequest {
      * @return $this
      * @throws xoctException
      */
-    public function addDCCatalog()
+    public function addDCCatalog() : self
     {
         $this->checkBranch([self::BRANCH_INGEST]);
         $this->addPart('addDCCatalog');
@@ -543,7 +620,7 @@ class xoctRequest {
      * @return $this
      * @throws xoctException
      */
-    public function addAttachment()
+    public function addAttachment() : self
     {
         $this->checkBranch([self::BRANCH_INGEST]);
         $this->addPart('addAttachment');
@@ -556,10 +633,10 @@ class xoctRequest {
      * @return $this
      * @throws xoctException
      */
-    public function addTrack()
+    public function addTrack() : self
     {
         $this->checkBranch([self::BRANCH_INGEST]);
-        $this->addPart('createMediaPackage');
+        $this->addPart('addTrack');
 
         return $this;
     }
@@ -605,7 +682,7 @@ class xoctRequest {
 	 * @return string
 	 */
 	public function getBase() {
-		return self::$base;
+		return $this->rest_api ? rtrim(self::$base, '/api') : self::$base;
 	}
 
 

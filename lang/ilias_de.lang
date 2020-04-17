@@ -138,7 +138,7 @@ config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.:
 config_enable_chat#:#Chat aktivieren
 config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
 config_ingest_upload#:#Upload via Ingest-Nodes
-config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden.
+config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren

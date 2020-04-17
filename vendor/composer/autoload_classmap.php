@@ -880,6 +880,8 @@ return array(
     'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => $baseDir . '/src/UI/Input/FileUploadInputGUI.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => $baseDir . '/src/UI/Input/Plupload.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\xoctPluploadException' => $baseDir . '/src/UI/Input/Plupload.php',
+    'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => $baseDir . '/src/Util/Transformator/ACLtoXML.php',
+    'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => $baseDir . '/src/Util/Transformator/MetadataToXML.php',
     'xoct' => $baseDir . '/classes/class.xoct.php',
     'xoctAcl' => $baseDir . '/classes/Series/Acl/class.xoctAcl.php',
     'xoctAclStandardSets' => $baseDir . '/classes/Series/Acl/class.xoctAclStandardSets.php',

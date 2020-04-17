@@ -551,7 +551,6 @@ class EventFormGUI extends ilPropertyFormGUI {
 
 
     /**
-     * @return bool|string
      * @throws DICException
      * @throws ReflectionException
      * @throws ilException
@@ -581,7 +580,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 			}
 		}
 
-		return $this->object->getIdentifier();
+		return true;
 	}
 
 	/**

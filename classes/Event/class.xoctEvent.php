@@ -390,7 +390,7 @@ class xoctEvent extends APIObject {
 			$this->addAcl($acl);
 		}
 
-		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array( 'acl' => json_encode($this->getAcl()) ));
+		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array('acl' => json_encode($this->getAcl()) ));
 		self::removeFromCache($this->getIdentifier());
 	}
 
