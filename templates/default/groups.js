@@ -4,6 +4,7 @@
  * @type {{init: Function, selected_id: number, data_url: string, load: Function, deleteGroup: Function, selectGroup: Function, deselectAll: Function, create: Function}}
  */
 var xoctGroup = {
+    is_admin: false,
     selected_id: 0,
     data_url: '',
     container: null,
@@ -25,10 +26,13 @@ var xoctGroup = {
      *
      * @param data_url
      * @param container
-     * @param before_load
-     * @param after_load
+     * @param is_admin
      */
-    init: function (data_url, container, before_load, after_load) {
+    init: function (data_url, container, is_admin, before_load, after_load) {
+        this.is_admin = is_admin;
+        if (!this.is_admin) {
+            $('.xoct_admin_only').hide();
+        }
         if (typeof before_load != 'undefined') {
             this.before_load = before_load;
         }
@@ -40,7 +44,6 @@ var xoctGroup = {
         $(container).html('<ul id="xoct_groups" class="list-group"></ul>');
         this.container = $('#xoct_groups');
         this.load();
-
 
         $(document).on('click', '.xoct_group_delete', function () {
             xoctGroup.deleteGroup($(this).parent().data('group-id'));
@@ -92,7 +95,7 @@ var xoctGroup = {
         for (let i in self.groups) {
             self.container.append('<a class="list-group-item xoct_group" data-group-id="' + self.groups[i].id + '">'
                 + self.groups[i].title
-                + '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
+                + '<button class="btn btn-danger xoct_group_delete pull-right xoct_admin_only"><span class="glyphicon glyphicon-remove"></span></button>'
                 + '<Button class="btn pull-right" id="xoct_user_counter_' + self.groups[i].id + '">' + self.groups[i].users.length + '</button>'
                 + '</li>');
         }
@@ -105,6 +108,10 @@ var xoctGroup = {
             if (select_current) {
                 self.selectGroup(selected_storage);
             }
+        }
+
+        if (!this.is_admin) {
+            $('.xoct_admin_only').hide();
         }
     },
 

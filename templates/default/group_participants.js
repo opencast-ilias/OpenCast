@@ -182,12 +182,15 @@ var xoctGroupParticipant = {
                 + '"><div style="margin-right:30px;">'
                 + participant.name
                 + '</div>'
-                + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
+                + '<button class="btn btn-default xoct_remove_user pull-right xoct_admin_only"><span class="glyphicon glyphicon-minus"></span></button></li>');
         });
         if (!participants || participants.length == 0) {
             self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
         }
         self.after_load();
+        if (!xoctGroup.is_admin) {
+            $('.xoct_admin_only').hide();
+        }
     },
     /**
      *

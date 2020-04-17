@@ -8,6 +8,14 @@
 class xoctIVTGroupParticipantGUI extends xoctGUI
 {
 
+    /**
+     * @var array
+     */
+    protected static $admin_commands = [
+        self::CMD_CREATE,
+        self::CMD_DELETE
+    ];
+
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
@@ -25,6 +33,22 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
 	}
 
+    /**
+     * @param $cmd
+     */
+    protected function performCommand($cmd)
+    {
+        if (in_array($cmd, self::$admin_commands)) {
+            $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
+        } else {
+            $access = ilObjOpenCastAccess::hasPermission('read');
+        }
+        if (!$access) {
+            ilUtil::sendFailure('No access.');
+            self::dic()->ctrl()->redirectByClass('xoctEventGUI');
+        }
+        parent::performCommand($cmd);
+    }
 
 	/**
 	 * @param $data
