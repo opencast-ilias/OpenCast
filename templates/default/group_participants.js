@@ -144,10 +144,15 @@ var xoctGroupParticipant = {
 
         participants.forEach(function(participant) {
             var checkmark = '';
+            if (xoctGroup.isInAnyGroup(participant.user_id)) {
+                checkmark = '<img class="xoct_checkmark" width="10px" height="10px" ' +
+                    'src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/checkmark.svg"' +
+                    '>';
+            }
             // if ()
             self.container_available.append(
                 '<li class="list-group-item xoct_participant_available" data-user-id="' + participant.user_id + '">'
-                //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
+                + checkmark
                 + '<div style="margin-right:30px;">'
                 + participant.name + ''
                 + '</div>'
