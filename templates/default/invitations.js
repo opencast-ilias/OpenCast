@@ -12,7 +12,8 @@ var xoctInvitation = {
 	lng: [
 		delete_group = "Delete Group?",
 		no_title = "Please insert title",
-		none_available = "None available"
+		none_available = "None available",
+		invite_all = "Invite All"
 	],
 	before_load: function () {
 	},
@@ -31,7 +32,11 @@ var xoctInvitation = {
 
 		this.data_url = data_url;
 		$(container_invited).html('<ul id="xoct_invitations" class="list-group"></ul>');
-		$(container_available).html('<ul id="xoct_available" class="list-group"></ul>');
+		$(container_available).html(
+			'<button id="xoct_invite_all" class="btn btn-primary">'
+			+ this.lng.invite_all
+			+ '</button><ul id="xoct_available" class="list-group"></ul>'
+		);
 		this.container_invited = $('#xoct_invitations');
 		this.container_available = $('#xoct_available');
         this.filter_container = $('#xoct_participant_filter');
@@ -61,6 +66,10 @@ var xoctInvitation = {
             self.filter('');
             $(this).remove();
         });
+
+        $(document).on('click', '#xoct_invite_all', function() {
+        	self.inviteAll();
+        })
 
 	},
 	clear: function () {
@@ -110,7 +119,22 @@ var xoctInvitation = {
 		this.before_load();
 
 		$.ajax({url: url + "&cmd=create", type: "POST", data: {"id": id}}).done(function (data) {
-			console.log(data);
+			self.load();
+			self.after_load();
+		});
+	},
+
+	inviteAll: function() {
+		var ids = [];
+		$('#xoct_available li:visible').each(function(i) {
+			ids.push($(this).attr('data-invitation-id'));
+		});
+
+		var url = this.data_url;
+		var self = this;
+		this.before_load();
+
+		$.ajax({url: url + "&cmd=createMultiple", type: "POST", data: {"ids": ids}}).done(function (data) {
 			self.load();
 			self.after_load();
 		});

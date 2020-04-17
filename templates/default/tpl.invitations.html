@@ -3,13 +3,13 @@
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
 	$(document).ready(function () {
-		xoctWaiter.init();
-		xoctInvitation.init('{BASE_URL}', '#xoct_invitations_container', '#xoct_available_participant_container', function () {
+        xoctWaiter.init();
+        xoctInvitation.lngFromJson('{LANGUAGE}');
+        xoctInvitation.init('{BASE_URL}', '#xoct_invitations_container', '#xoct_available_participant_container', function () {
 			xoctWaiter.show()
 		}, function () {
 			xoctWaiter.hide()
 		});
-		xoctInvitation.lngFromJson('{LANGUAGE}');
 	});
 </script>
 <div class="row">

@@ -246,6 +246,7 @@ owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
+invitations_invite_all#:#Alle Hinzufügen
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
