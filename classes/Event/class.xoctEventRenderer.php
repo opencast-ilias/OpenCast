@@ -479,7 +479,8 @@ class xoctEventRenderer {
      * @return Component[]
      * @throws DICException
      */
-    public function getActions() {
+    public function getActions() : array
+    {
         if (!in_array($this->xoctEvent->getProcessingState(), array(
             xoctEvent::STATE_SUCCEEDED,
             xoctEvent::STATE_NOT_PUBLISHED,
