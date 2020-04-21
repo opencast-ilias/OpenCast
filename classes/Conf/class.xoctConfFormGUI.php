@@ -541,6 +541,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE), xoctConf::F_UPLOAD_CHUNK_SIZE);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
 		$this->addItem($te);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD), xoctConf::F_INGEST_UPLOAD);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD . '_info'));
+		$this->addItem($cb);
 	}
 
 }
