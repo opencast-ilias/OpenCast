@@ -11,7 +11,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             'srag\\LibrariesNamespaceChanger\\' => 31,
             'srag\\DIC\\OpenCast\\' => 18,
-            'srag\\CustomInputGUIs\\' => 21,
+            'srag\\CustomInputGUIs\\OpenCast\\' => 30,
         ),
     );
 
@@ -24,7 +24,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\' => 
+        'srag\\CustomInputGUIs\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
@@ -909,6 +909,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\UI\\Input\\xoctPluploadException' => __DIR__ . '/../..' . '/src/UI/Input/Plupload.php',
         'srag\\Plugins\\Opencast\\UI\\Modal\\EventModals' => __DIR__ . '/../..' . '/src/UI/Modal/EventModals.php',
         'srag\\Plugins\\Opencast\\UI\\Modal\\RepublishModal' => __DIR__ . '/../..' . '/src/UI/Modal/RepublishModal.php',
+        'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => __DIR__ . '/../..' . '/src/Util/Transformator/ACLtoXML.php',
+        'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => __DIR__ . '/../..' . '/src/Util/Transformator/MetadataToXML.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
         'xoctAcl' => __DIR__ . '/../..' . '/classes/Series/Acl/class.xoctAcl.php',
         'xoctAclStandardSets' => __DIR__ . '/../..' . '/classes/Series/Acl/class.xoctAclStandardSets.php',

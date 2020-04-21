@@ -35,6 +35,7 @@ class Metadata extends APIObject
     const FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES = "presenter/segment+preview+lowres";
     const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
     const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
+
     /**
      * @var string
      */
@@ -391,6 +392,15 @@ class MetadataField extends APIObject
         $stdClass->value = $this->getValue();
 
         return $stdClass;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function __toXML() : string
+    {
+
     }
 }
 

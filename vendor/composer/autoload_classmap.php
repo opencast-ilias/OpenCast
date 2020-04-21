@@ -884,6 +884,8 @@ return array(
     'srag\\Plugins\\Opencast\\UI\\Input\\xoctPluploadException' => $baseDir . '/src/UI/Input/Plupload.php',
     'srag\\Plugins\\Opencast\\UI\\Modal\\EventModals' => $baseDir . '/src/UI/Modal/EventModals.php',
     'srag\\Plugins\\Opencast\\UI\\Modal\\RepublishModal' => $baseDir . '/src/UI/Modal/RepublishModal.php',
+    'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => $baseDir . '/src/Util/Transformator/ACLtoXML.php',
+    'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => $baseDir . '/src/Util/Transformator/MetadataToXML.php',
     'xoct' => $baseDir . '/classes/class.xoct.php',
     'xoctAcl' => $baseDir . '/classes/Series/Acl/class.xoctAcl.php',
     'xoctAclStandardSets' => $baseDir . '/classes/Series/Acl/class.xoctAclStandardSets.php',

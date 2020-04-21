@@ -8,5 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'srag\\LibrariesNamespaceChanger\\' => array($vendorDir . '/srag/librariesnamespacechanger/src'),
     'srag\\DIC\\OpenCast\\' => array($vendorDir . '/srag/dic/src'),
-    'srag\\CustomInputGUIs\\' => array($vendorDir . '/srag/custominputguis/src'),
+    'srag\\CustomInputGUIs\\OpenCast\\' => array($vendorDir . '/srag/custominputguis/src'),
 );
