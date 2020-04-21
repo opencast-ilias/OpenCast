@@ -5,6 +5,8 @@ namespace srag\Plugins\Opencast\Util\Transformator;
 use ilDateTime;
 use ilXmlWriter;
 use Metadata;
+use DateTimeZone;
+use Exception;
 
 /**
  * Class MetadataToXML
@@ -52,8 +54,21 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:source', [], $this->metadata->getField('source')->getValue());
         $xml_writer->xmlElement('dcterms:creator', [], implode(',', $this->metadata->getField('creator')->getValue()));
         $xml_writer->xmlElement('dcterms:spatial', [], $this->metadata->getField('location')->getValue());
-        $xml_writer->xmlElement('dcterms:startDate', [], $this->metadata->getField('startDate')->getValue());
-        $xml_writer->xmlElement('dcterms:startTime', [], $this->metadata->getField('startTime')->getValue());
+
+        $start_end_string_iso = (new ilDateTime(
+            strtotime($this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField('startTime')->getValue()),
+            IL_CAL_UNIX)
+        )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z');
+        $xml_writer->xmlElement('dcterms:temporal', [
+            'xsi:type' => 'dcterms:Period'
+        ], 'start=' . $start_end_string_iso . '; ' . 'end=' . $start_end_string_iso . '; scheme=W3C-DTF;');
+
+        $xml_writer->xmlElement(
+            'dcterms:created',
+            [],
+            (new ilDateTime(time(), IL_CAL_UNIX))
+                ->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z', 'UTC')
+        );
 
         $xml_writer->xmlEndTag('dublincore');
         return $xml_writer->xmlStr;
