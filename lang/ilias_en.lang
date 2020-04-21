@@ -149,9 +149,9 @@ event_create#:#Upload Event
 event_createScheduled#:#Create Event
 event_created#:#Created
 event_creator#:#Creator
-event_cut#:#Cut Event
+event_cut#:#Cut
 event_date#:#Date
-event_delete#:#Delete Event
+event_delete#:#Delete
 event_unpublish#:#Delete Publications
 event_delete_confirm#:#This will delete the Event in ILIAS and in Opencast. Do you want to proceed?
 event_unpublish_confirm#:#You have to remove all publications from this event in order to delete this event. Do you want to proceed?

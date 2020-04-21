@@ -149,9 +149,9 @@ event_create#:#Aufzeichnung hochladen
 event_createScheduled#:#Aufzeichnungstermin(e) erstellen
 event_created#:#Erstellt
 event_creator#:#Ersteller
-event_cut#:#Aufzeichnung schneiden
+event_cut#:#Schneiden
 event_date#:#Datum
-event_delete#:#Aufzeichnung löschen
+event_delete#:#Löschen
 event_unpublish#:#Publikationen entfernen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich entfernen?
