@@ -133,6 +133,7 @@ class xoctEventRenderer {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
+			$link_tpl->setVariable('TARGET', '_blank');
 			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
 				$modal = $this->getPlayerModal();
 				$link_tpl->setVariable('LINK_URL', '#');
@@ -202,23 +203,25 @@ class xoctEventRenderer {
 				return '';
 			}
             $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
-			$sign = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS);
 			if ($multi) {
-                $items = array_map(function($pub) use ($sign) {
+                $items = array_map(function($pub) {
+                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->xoctEvent->getIdentifier());
+                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
                     /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
 			        return $this->factory->link()->standard(
                         ($pub instanceof xoctMedia) ? $pub->getWidth() . 'p' : $pub->getFlavor(),
-                        $sign ? xoctSecureLink::sign($pub->getUrl()) : $pub->getUrl()
-                    )->withOpenInNewViewport(true);
+                        self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
+                    );
                 }, $download_publications);
                 $dropdown = $this->factory->dropdown()->standard(
 			        $items
                 )->withLabel(self::plugin()->translate('download', self::LANG_MODULE));
 			    return self::dic()->ui()->renderer()->renderAsync($dropdown);
             } else {
-			    $link = array_shift($download_publications)->getUrl();
-                $link = $sign ? xoctSecureLink::sign($link) : $link;
+                self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->xoctEvent->getIdentifier());
+                $link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
                 $link_tpl = self::plugin()->template('default/tpl.player_link.html');
+                $link_tpl->setVariable('TARGET', '_self');
                 $link_tpl->setVariable('BUTTON_TYPE', $button_type);
                 $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));
                 $link_tpl->setVariable('LINK_URL', $link);
@@ -265,7 +268,8 @@ class xoctEventRenderer {
             self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->xoctEvent->getIdentifier());
             $annotations_link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
-			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
+            $link_tpl->setVariable('TARGET', '_blank');
+            $link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('annotate', self::LANG_MODULE));
 			$link_tpl->setVariable('LINK_URL', $annotations_link);
 

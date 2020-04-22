@@ -41,8 +41,9 @@ class xoctEventGUI extends xoctGUI {
 	const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
     const CMD_REPUBLISH = 'republish';
 	const CMD_OPENCAST_STUDIO = 'opencaststudio';
+    const CMD_DOWNLOAD = 'download';
 
-	/**
+    /**
 	 * @var xoctOpenCast
 	 */
 	protected $xoctOpenCast;
@@ -549,6 +550,45 @@ class xoctEventGUI extends xoctGUI {
 		$cutting_link = $xoctEvent->publications()->getCuttingLink();
 		header('Location: ' . $cutting_link);
 	}
+
+    /**
+     * @throws xoctException
+     */
+	public function download()
+    {
+        $event_id = filter_input(INPUT_GET, 'event_id', FILTER_SANITIZE_STRING);
+        $publication_id = filter_input(INPUT_GET, 'pub_id', FILTER_SANITIZE_STRING);
+        $event = xoctEvent::find($event_id);
+        $download_publications = $event->publications()->getDownloadPublications();
+        if ($publication_id) {
+            $publication = array_filter($download_publications, function($publication) use ($publication_id) {
+                return $publication->getId() == $publication_id;
+            });
+            $publication = array_shift($publication);
+        } else {
+           $publication = array_shift($download_publications);
+        }
+        $url = $publication->getUrl();
+        $extension = pathinfo($url)['extension'];
+        $url = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::sign($url) : $url;
+
+        // get filesize
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, TRUE);
+        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+        curl_exec($ch);
+        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+        curl_close($ch);
+
+        // deliver file
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . $publication->getMediatype());
+        header('Content-Disposition: attachment; filename="' . $event->getTitle() . '.' . $extension . '"');
+        header('Content-Length: ' . $size);
+        readfile($url);
+        exit;
+    }
 
 
     /**
