@@ -553,26 +553,6 @@ class xoctEventRenderer {
             )->withOpenInNewViewport(true);
         }
 
-        // Delete Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this->xoctEvent, $xoctUser)) {
-            $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_delete'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
-            );
-        }
-
-        // Edit Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)) {
-            // show different langvar when date is editable
-            $lang_var = ($this->xoctEvent->isScheduled()
-                && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) ?
-                'event_edit_date'  : 'event_edit';
-            $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate($lang_var),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT)
-            );
-        }
-
         // Republish
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)
             && !$this->xoctEvent->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getRepublishModal())
@@ -601,6 +581,26 @@ class xoctEventRenderer {
 
         }
 
+        // Delete Event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this->xoctEvent, $xoctUser)) {
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate('event_delete'),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
+            );
+        }
+
+        // Edit Event
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->xoctEvent, $xoctUser)) {
+            // show different langvar when date is editable
+            $lang_var = ($this->xoctEvent->isScheduled()
+                && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) ?
+                'event_edit_date'  : 'event_edit';
+            $actions[] = $this->factory->link()->standard(
+                self::plugin()->translate($lang_var),
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT)
+            );
+        }
+        
         // Report Quality
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->xoctEvent)
             && !is_null(self::$modals) && !is_null(self::$modals->getReportQualityModal())
