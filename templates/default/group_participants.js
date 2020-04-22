@@ -174,8 +174,6 @@ var xoctGroupParticipant = {
         this.before_load();
         self.container_per_group.empty();
         var participants = xoctGroup.getSelectedGroupParticipants();
-        console.log('participants:');
-        console.log(participants);
         participants.forEach(function(participant) {
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id

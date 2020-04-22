@@ -75,7 +75,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
-			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
 			$data[] = $stdClass;
 		}
 

@@ -127,7 +127,7 @@ class xoctIVTGroupGUI extends xoctGUI {
         {
             $data[] = [
                 'user_id' => $xoctGroupParticipant->getUserId(),
-                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation()
+                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess())
             ];
         }
 

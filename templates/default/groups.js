@@ -81,8 +81,6 @@ var xoctGroup = {
                 self.groups = data;
                 self.loadGroupGUI(select_current, selected_storage);
 
-                xoctGroupParticipant.clear();
-                xoctGroupParticipant.load();
                 self.after_load();
                 fallback();
             });
@@ -107,6 +105,9 @@ var xoctGroup = {
         } else {
             if (select_current) {
                 self.selectGroup(selected_storage);
+            } else {
+                xoctGroupParticipant.clear();
+                xoctGroupParticipant.load();
             }
         }
 
