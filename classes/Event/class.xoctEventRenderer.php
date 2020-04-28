@@ -204,6 +204,17 @@ class xoctEventRenderer {
 			}
             $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
 			if ($multi) {
+			    usort($download_publications, function ($pub1, $pub2) {
+                    /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
+                    /** @var $pub2 xoctPublication|xoctMedia|xoctAttachment */
+                    if ($pub1 instanceof xoctMedia && $pub2 instanceof xoctMedia) {
+			            if ($pub1->getWidth() == $pub2->getWidth()) {
+			                return 0;
+                        }
+                        return ($pub1->getWidth() > $pub2->getWidth()) ? -1 : 1;
+                    }
+			        return -strcmp($pub1->getFlavor(), $pub2->getFlavor());
+                });
                 $items = array_map(function($pub) {
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->xoctEvent->getIdentifier());
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
