@@ -208,10 +208,10 @@ class xoctEventRenderer {
                     /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
                     /** @var $pub2 xoctPublication|xoctMedia|xoctAttachment */
                     if ($pub1 instanceof xoctMedia && $pub2 instanceof xoctMedia) {
-			            if ($pub1->getWidth() == $pub2->getWidth()) {
+			            if ($pub1->getHeight() == $pub2->getHeight()) {
 			                return 0;
                         }
-                        return ($pub1->getWidth() > $pub2->getWidth()) ? -1 : 1;
+                        return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
                     }
 			        return -strcmp($pub1->getFlavor(), $pub2->getFlavor());
                 });
@@ -220,7 +220,7 @@ class xoctEventRenderer {
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
                     /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
 			        return $this->factory->link()->standard(
-                        ($pub instanceof xoctMedia) ? $pub->getWidth() . 'p' : $pub->getFlavor(),
+                        ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor(),
                         self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
                     );
                 }, $download_publications);
