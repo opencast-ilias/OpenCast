@@ -250,7 +250,7 @@ owner_only_one_owner#:#Only one owner can be chosen per video.
 invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
-invitations_invite_all#:#Add All
+invitations_invite_all#:#Add all
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
