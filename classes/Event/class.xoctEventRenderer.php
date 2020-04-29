@@ -219,8 +219,10 @@ class xoctEventRenderer {
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->xoctEvent->getIdentifier());
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
                     /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
-			        return $this->factory->link()->standard(
-                        ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor(),
+                    $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor();
+                    $label = $label == '1080p' ? ($label . ' (HD)') : $label;
+                    return $this->factory->link()->standard(
+                        $label,
                         self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
                     );
                 }, $download_publications);
