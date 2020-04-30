@@ -54,6 +54,7 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:source', [], $this->metadata->getField('source')->getValue());
         $xml_writer->xmlElement('dcterms:creator', [], implode(',', $this->metadata->getField('creator')->getValue()));
         $xml_writer->xmlElement('dcterms:spatial', [], $this->metadata->getField('location')->getValue());
+        $xml_writer->xmlElement('dcterms:rightsHolder', [], $this->metadata->getField('rightsHolder')->getValue());
 
         $start_end_string_iso = (new ilDateTime(
             strtotime($this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField('startTime')->getValue()),
