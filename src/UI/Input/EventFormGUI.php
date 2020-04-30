@@ -673,10 +673,16 @@ class EventFormGUI extends ilPropertyFormGUI {
      */
     protected function getSeriesOptions() : array
     {
-        $series_options = [self::OPT_OWN_SERIES => sprintf($this->txt(self::OPT_OWN_SERIES), xoctUser::getInstance($this->user)->getIdentifier())];
+        $own_series_title = 'Eigene Serie von ' . $this->user->getLogin();
+        $series_options = [];
         foreach (xoctSeries::getAllForUser(xoctUser::getInstance(self::dic()->user())->getUserRoleName()) as $serie) {
-            $series_options[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
+            if ($serie->getTitle() !== $own_series_title) {
+                $series_options[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
+            }
         }
+
+        asort($series_options);
+        $series_options = [self::OPT_OWN_SERIES => $own_series_title] + $series_options;
 
         return $series_options;
     }
