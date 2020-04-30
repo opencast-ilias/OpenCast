@@ -7,6 +7,7 @@ use xoctException;
 use xoctRequest;
 use xoctSeries;
 use xoctUser;
+use ilObjUser;
 
 /**
  * Class SeriesRepository
@@ -26,14 +27,15 @@ class SeriesRepository
      */
     public function getOrCreateOwnSeries(xoctUser $xoct_user) : string
     {
+        $series_title = 'Eigene Serie von ' . ilObjUser::_lookupLogin($xoct_user->getIliasUserId());
         $existing = xoctRequest::root()->series()->parameter(
             'filter',
-            'title:' . $xoct_user->getIdentifier()
+            'title:' . $series_title
         )->get();
         $existing = json_decode($existing, true);
         if (empty($existing)) {
             $series = new xoctSeries();
-            $series->setTitle($xoct_user->getIdentifier());
+            $series->setTitle($series_title);
             $std_acls = new xoctAclStandardSets();
             $series->setAccessPolicies($std_acls->getAcls());
             $series->addProducer($xoct_user, true);
