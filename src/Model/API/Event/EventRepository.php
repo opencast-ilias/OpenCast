@@ -238,7 +238,9 @@ class EventRepository
             throw new xoctException(xoctException::API_CALL_STATUS_500, 'no available ingest nodes found');
         }
         $available_hosts = [];
-        foreach ($nodes['services']['service'] as $node) {
+        $services = $nodes['services']['service'];
+        $services = isset($services['type']) ? [$services] : $services; // only one service?
+        foreach ($services as $node) {
             if ($node['active'] && $node['host']) {
                 $available_hosts[] = $node['host'];
             }
