@@ -20,6 +20,7 @@ use xoctPublicationUsageFormGUI;
 use xoctRequest;
 use xoctSecureLink;
 use xoctUser;
+use xoctPublicationMetadata;
 
 /**
  * Class PublicationSelector
@@ -378,7 +379,7 @@ class PublicationSelector
     /**
      * @param $PublicationUsage
      *
-     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @return xoctPublicationMetadata[]|xoctMedia[]|xoctAttachment[]
      * @throws xoctException
      */
     public function getPublicationMetadataForUsage($PublicationUsage) : array

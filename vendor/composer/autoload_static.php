@@ -900,6 +900,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\API\\Workflow\\WorkflowOperation' => __DIR__ . '/../..' . '/src/Model/API/Workflow/WorkflowOperation.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationSelector.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsage' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsage.php',
+        'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageDefault' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageDefault.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => __DIR__ . '/../..' . '/src/UI/Input/EventFormGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => __DIR__ . '/../..' . '/src/UI/Input/FileUploadInputGUI.php',

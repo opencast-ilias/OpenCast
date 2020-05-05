@@ -19,7 +19,7 @@ class PublicationUsageRepository
      */
     public function getUsage($usage)
     {
-        return PublicationUsage::find($usage);
+        return PublicationUsage::find($usage) ?: PublicationUsageDefault::getDefaultUsage($usage);
     }
 
 
