@@ -6,6 +6,7 @@
 - Feature: allow multiple downloads
 - Feature: configure tags for publications
 - Feature: preview publication configurable
+- Improvement: introduced default values for publication configuration
 - Improvement: refactored publications 
 - Improvement: removed api configuration
 
