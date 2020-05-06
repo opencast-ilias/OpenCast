@@ -126,7 +126,7 @@ class Workflow extends ActiveRecord
     /**
      * @param string $parameters
      */
-    public function setParameters(string $parameters) : void
+    public function setParameters(string $parameters)
     {
         $this->parameters = $parameters;
     }
