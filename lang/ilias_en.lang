@@ -471,3 +471,5 @@ workflow#:#Workflow
 event_msg_republish_started#:#Workflow started successfully.
 workflow_msg_confirm_delete_workflow#:#Please confirm to delete the following workflow.
 workflow_msg_workflow_deleted#:#Workflow deleted successfully.
+parameters#:#Parameters
+parameters_info#:#Enter comma-separated workflow parameters which should be set 'true'.

@@ -40,18 +40,19 @@ class WorkflowRepository
         return Workflow::getArray($key, $values);
     }
 
-
     /**
      * @param string $workflow_id
      * @param string $title
+     * @param string $parameters
      * @param int    $id
      */
-    public function store(string $workflow_id, string $title, int $id = 0)
+    public function store(string $workflow_id, string $title, string $parameters, int $id = 0)
     {
         /** @var Workflow $workflow */
         $workflow = new Workflow($id == 0 ? null : $id);
         $workflow->setWorkflowId($workflow_id);
         $workflow->setTitle($title);
+        $workflow->setParameters($parameters);
         $workflow->store();
     }
 
@@ -76,5 +77,14 @@ class WorkflowRepository
         if (!is_null($workflow)) {
             $workflow->delete();
         }
+    }
+
+    /**
+     * @param string $workflow_id
+     * @return Workflow|null
+     */
+    public function getByWorkflowId(string $workflow_id)
+    {
+        return Workflow::where(['workflow_id' => $workflow_id])->first();
     }
 }

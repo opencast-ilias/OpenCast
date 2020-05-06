@@ -65,6 +65,7 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         $this->addColumn(self::dic()->language()->txt('id'));
         $this->addColumn(self::dic()->language()->txt('title'));
+        $this->addColumn(self::plugin()->translate('parameters'));
         $this->addColumn(self::dic()->language()->txt('actions'), '', '', true);
     }
 
@@ -97,6 +98,8 @@ class xoctWorkflowTableGUI extends TableGUI
                 return $row->getWorkflowId();
             case 'title':
                 return $row->getTitle();
+            case 'parameters':
+                return $row->getParameters();
             case 'actions':
                 self::dic()->ctrl()->setParameter($this->parent_obj, 'workflow_id', $row->getId());
                 $delete_modal = $this->factory->modal()->interruptive(
@@ -128,15 +131,16 @@ class xoctWorkflowTableGUI extends TableGUI
         }
     }
 
-
     /**
      * @inheritDoc
+     * @throws DICException
      */
     protected function getSelectableColumns2()
     {
         return [
             ['txt' => self::dic()->language()->txt('id'), 'id' => 'id'],
             ['txt' => self::dic()->language()->txt('title'), 'id' => 'title'],
+            ['txt' => self::plugin()->translate('parameters'), 'id' => 'parameters'],
             ['txt' => self::dic()->language()->txt('actions'), 'id' => 'actions']
         ];
     }

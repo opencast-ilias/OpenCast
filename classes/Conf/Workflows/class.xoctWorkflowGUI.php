@@ -68,6 +68,8 @@ class xoctWorkflowGUI extends xoctGUI
     {
         $id = $this->factory->input()->field()->text(self::dic()->language()->txt('id'))->withRequired(true);
         $title = $this->factory->input()->field()->text(self::dic()->language()->txt('title'))->withRequired(true);
+        $parameters = $this->factory->input()->field()->text(self::plugin()->translate('parameters'))->withByline(self::plugin()->translate('parameters_info'));
+
         if (!is_null($workflow)) {
             self::dic()->ctrl()->setParameter($this, 'workflow_id', $workflow->getId());
         }
@@ -79,7 +81,8 @@ class xoctWorkflowGUI extends xoctGUI
                 $this->factory->input()->field()->section(
                     [
                         'id'    => is_null($workflow) ? $id : $id->withValue($workflow->getWorkflowId()),
-                        'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle())
+                        'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle()),
+                        'parameters' => is_null($workflow) ? $parameters : $parameters->withValue($workflow->getParameters())
                     ], self::plugin()->translate('workflow')
                 )
             ]
@@ -102,7 +105,7 @@ class xoctWorkflowGUI extends xoctGUI
     {
         $form = $this->getForm()->withRequest(self::dic()->http()->request());
         if ($data = $form->getData()) {
-            $this->workflow_repository->store($data[0]['id'], $data[0]['title']);
+            $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $data[0]['parameters']);
             ilUtil::sendSuccess(self::plugin()->translate('msg_workflow_created'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         } else {
@@ -131,7 +134,7 @@ class xoctWorkflowGUI extends xoctGUI
         $id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
         $form = $this->getForm(Workflow::find($id))->withRequest(self::dic()->http()->request());
         if ($data = $form->getData()) {
-            $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $id);
+            $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $data[0]['parameters'], $id);
             ilUtil::sendSuccess(self::plugin()->translate('msg_workflow_updated'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         } else {

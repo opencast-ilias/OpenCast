@@ -251,3 +251,7 @@ if (!is_null($segments_pub)) {
 	$segments_pub->update();
 }
 ?>
+<#26>
+<?php
+\srag\Plugins\Opencast\Model\Config\Workflow\Workflow::updateDB();
+?>

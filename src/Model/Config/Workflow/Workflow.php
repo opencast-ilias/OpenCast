@@ -52,6 +52,14 @@ class Workflow extends ActiveRecord
      * @con_length     512
      */
     protected $title;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype  text
+     * @con_length     512
+     */
+    protected $parameters;
 
 
     /**
@@ -106,5 +114,22 @@ class Workflow extends ActiveRecord
     {
         $this->title = $title;
     }
+
+    /**
+     * @return string
+     */
+    public function getParameters() : string
+    {
+        return $this->parameters ?: '';
+    }
+
+    /**
+     * @param string $parameters
+     */
+    public function setParameters(string $parameters) : void
+    {
+        $this->parameters = $parameters;
+    }
+
 
 }

@@ -715,16 +715,24 @@ class xoctEventGUI extends xoctGUI {
         ) {
             $workflow_id = strip_tags($post_body['workflow_id']);
             $event_id = strip_tags($post_body['republish_event_id']);
+            $workflow = (new WorkflowRepository())->getByWorkflowId($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, new xoctEvent($event_id))
-                || !(new WorkflowRepository())->exists($workflow_id)) {
+                || is_null($workflow)) {
                 ilUtil::sendFailure($this->txt('msg_no_access'), true);
                 $this->cancel();
             }
-            xoctRequest::root()->workflows()
-                ->post([
-                    'event_identifier' => $event_id,
-                    'workflow_definition_identifier' => $workflow_id
-                ]);
+            $request = [
+                'event_identifier' => $event_id,
+                'workflow_definition_identifier' => $workflow_id,
+            ];
+            $params = [];
+            foreach (explode(',', $workflow->getParameters()) as $param) {
+                $params[$param] = 'true';
+            }
+            if (!empty($params)) {
+                $request['configuration'] = json_encode($params);
+            }
+            xoctRequest::root()->workflows()->post($request);
             ilUtil::sendSuccess($this->txt('msg_republish_started'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         } else {
