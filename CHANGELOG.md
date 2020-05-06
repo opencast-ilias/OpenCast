@@ -4,6 +4,7 @@
 - Refactoring and adjustments for page component plugin
 - Fixed config export bug
 - Feature: allow multiple downloads
+- Feature: new "Download Fallback" publication
 - Feature: configure tags for publications
 - Feature: preview publication configurable
 - Improvement: introduced default values for publication configuration
