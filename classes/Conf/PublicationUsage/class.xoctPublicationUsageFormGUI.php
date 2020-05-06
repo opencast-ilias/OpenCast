@@ -148,7 +148,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		$this->object->setFlavor($this->getInput(self::F_FLAVOR));
 		$this->object->setTag($this->getInput(self::F_TAG));
 		$this->object->setMdType($this->getInput(self::F_MD_TYPE));
-		$this->object->setAllowMultiple($this->getInput(self::F_ALLOW_MULTIPLE));
+		$this->object->setAllowMultiple((bool)$this->getInput(self::F_ALLOW_MULTIPLE));
 
 		return true;
 	}

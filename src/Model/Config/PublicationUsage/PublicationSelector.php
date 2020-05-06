@@ -20,6 +20,7 @@ use xoctPublicationUsageFormGUI;
 use xoctRequest;
 use xoctSecureLink;
 use xoctUser;
+use xoctPublicationMetadata;
 
 /**
  * Class PublicationSelector
@@ -230,9 +231,10 @@ class PublicationSelector
         if (!isset($this->cutting_url)) {
             $url = str_replace('{event_id}', $this->event->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
             if (!$url) {
-                $url = $this->getFirstPublicationMetadataForUsage(
+                $xoctPublication = $this->getFirstPublicationMetadataForUsage(
                     $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CUTTING)
-                )->getUrl();
+                );
+                $url = is_null($xoctPublication) ? '' : $xoctPublication->getUrl();
             }
             if (!$url) {
                 $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
@@ -293,7 +295,7 @@ class PublicationSelector
             $annotation_publication = $this->getFirstPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
             );
-            $url = $annotation_publication->getUrl();
+            $url = is_null($annotation_publication) ? '' : $annotation_publication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
                 $this->annotation_url = xoctSecureLink::sign($url);
             } else {
@@ -379,9 +381,13 @@ class PublicationSelector
 
         $i = 0;
         while (!$this->thumbnail_url && $i < count($possible_publications)) {
-            $url = $this->getFirstPublicationMetadataForUsage(
+            $xoctPublication = $this->getFirstPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage($possible_publications[$i])
-            )->getUrl();
+            );
+            if (is_null($xoctPublication)) {
+                continue;
+            }
+            $url = $xoctPublication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
                 $this->thumbnail_url = xoctSecureLink::sign($url);
             } else {
@@ -410,7 +416,7 @@ class PublicationSelector
         }
 
         if (!$PublicationUsage instanceof PublicationUsage) {
-            return [new xoctPublication()];
+            return [];
         }
         /**
          * @var $PublicationUsage       PublicationUsage

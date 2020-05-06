@@ -900,6 +900,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowOperation' => __DIR__ . '/../..' . '/src/Model/API/WorkflowInstance/WorkflowOperation.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationSelector.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsage' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsage.php',
+        'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageDefault' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageDefault.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\Workflow' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/Workflow.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\WorkflowRepository' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/WorkflowRepository.php',

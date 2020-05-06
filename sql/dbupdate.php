@@ -220,24 +220,19 @@ if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
 ?>
 <#23>
 <?php
-/**
- * to keep the existing behavior:
- * create a preview publication, with the same configuration as player publication,
- * but with the flavor '/player+preview' (that was hard-coded until now)
- */
-$repository = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository();
-$preview_pub = $repository->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
-$player_pub = $repository->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
-if (is_null($preview_pub) && !is_null($player_pub)) {
-	$preview_pub = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage();
-	$preview_pub->setTitle('Preview');
-	$preview_pub->setChannel($player_pub->getChannel());
-	$preview_pub->setUsageId(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
-    $preview_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
-    $preview_pub->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
-    $preview_pub->setFlavor('/player+preview');
-    $preview_pub->store();
-}
+//// to keep the existing behavior
+//$preview_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+//$player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
+//if (is_null($preview_pub) && !is_null($player_pub)) {
+//	$preview_pub = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage();
+//	$preview_pub->setTitle('Preview');
+//	$preview_pub->setChannel($player_pub->getChannel());
+//	$preview_pub->setUsageId(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PREVIEW);
+//    $preview_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
+//    $preview_pub->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+//    $preview_pub->setFlavor('/player+preview');
+//    $preview_pub->store();
+//}
 ?>
 <#24>
 <?php
@@ -246,24 +241,12 @@ if (is_null($preview_pub) && !is_null($player_pub)) {
 <#25>
 <?php
 /**
- * create segments publication if not existent
  * change segment pub md type to attachment if existent
  */
 $repository = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository();
 $usage_segments = \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_SEGMENTS;
 $segments_pub = $repository->getUsage($usage_segments);
-if (is_null($segments_pub)) {
-    $player_pub = $repository->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
-    $repository->store(
-        $usage_segments,
-	    'Segments',
-	    '',
-	    $player_pub->getChannel(),
-	    \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT,
-	    \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::SEARCH_KEY_FLAVOR,
-	    'presentation/segments+preview'
-    );
-} else {
+if (!is_null($segments_pub)) {
 	$segments_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
 	$segments_pub->update();
 }

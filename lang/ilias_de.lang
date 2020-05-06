@@ -281,8 +281,10 @@ publication_usage_type_player#:#Player
 publication_usage_type_thumbnail#:#Vorschaubild
 publication_usage_update#:#Aktualisieren
 publication_usage_usage_id#:#Nutzung
+publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_preview#:#Preview
 publication_usage_type_live_event#:#Live-Event
 publication_usage_search_key#:#Suchbegriff
 publication_usage_search_key_info#:#Die Medien/Attachments werden nach dem hier angegebenen Flavor/Tag durchsucht.

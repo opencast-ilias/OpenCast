@@ -875,6 +875,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowOperation' => $baseDir . '/src/Model/API/WorkflowInstance/WorkflowOperation.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationSelector' => $baseDir . '/src/Model/Config/PublicationUsage/PublicationSelector.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsage' => $baseDir . '/src/Model/Config/PublicationUsage/PublicationUsage.php',
+    'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageDefault' => $baseDir . '/src/Model/Config/PublicationUsage/PublicationUsageDefault.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => $baseDir . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\Workflow' => $baseDir . '/src/Model/Config/Workflow/Workflow.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\WorkflowRepository' => $baseDir . '/src/Model/Config/Workflow/WorkflowRepository.php',
