@@ -432,7 +432,20 @@ class xoctEventRenderer {
 		return $this->xoctEvent->getStart()->format($format);
 	}
 
-	/**
+    /**
+     * @param ilTemplate $tpl
+     * @param string     $block_title
+     * @param string     $variable
+     */
+    public function insertUnprotectedLink(
+        ilTemplate &$tpl,
+        string $block_title = 'unprotected_link',
+        string $variable = 'UNPROTECTED_LINK'
+    ) {
+        $this->insert($tpl, $variable, $this->xoctEvent->publications()->getUnprotectedLink() ?: '', $block_title);
+    }
+
+    /**
 	 * @param $tpl ilTemplate
 	 * @param string $block_title
 	 * @param string $variable
@@ -443,7 +456,8 @@ class xoctEventRenderer {
 		$this->insert($tpl, $variable, $this->getOwnerHTML(), $block_title);
 	}
 
-	/**
+
+    /**
 	 * @return string
 	 * @throws DICException
 	 * @throws ilTemplateException
@@ -490,7 +504,6 @@ class xoctEventRenderer {
 
         return false;
     }
-
 
     /**
      * @return Component[]
@@ -613,7 +626,7 @@ class xoctEventRenderer {
                 self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT)
             );
         }
-        
+
         // Report Quality
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->xoctEvent)
             && !is_null(self::$modals) && !is_null(self::$modals->getReportQualityModal())

@@ -25,7 +25,7 @@ class PublicationUsage extends ActiveRecord
     const USAGE_PREVIEW = 'preview';
     const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
     const USAGE_LIVE_EVENT = 'live_event';
-    const USAGE_ENGAGE_STREAMING = "engage-streaming";
+    const USAGE_UNPROTECTED_LINK = 'unprotected_link';
     const MD_TYPE_ATTACHMENT = 1;
     const MD_TYPE_MEDIA = 2;
     const MD_TYPE_PUBLICATION_ITSELF = 0;
@@ -47,6 +47,7 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_SEGMENTS,
             self::USAGE_PREVIEW,
             self::USAGE_LIVE_EVENT,
+            self::USAGE_UNPROTECTED_LINK,
         );
 
 

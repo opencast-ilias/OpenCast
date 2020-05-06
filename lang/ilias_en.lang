@@ -289,6 +289,7 @@ publication_usage_type_download#:#Download
 publication_usage_type_download_fallback#:#Download Fallback
 publication_usage_type_preview#:#Preview
 publication_usage_type_live_event#:#Live Event
+publication_usage_type_unprotected_link#:#Unprotected Link
 publication_usage_search_key#:#Search Key
 publication_usage_search_key_info#:#The media/attachments will be search for the specified flavor/tag.
 publication_usage_tag#:#Tag
@@ -474,3 +475,4 @@ workflow_msg_confirm_delete_workflow#:#Please confirm to delete the following wo
 workflow_msg_workflow_deleted#:#Workflow deleted successfully.
 parameters#:#Parameters
 parameters_info#:#Enter comma-separated workflow parameters which should be set 'true'.
+unprotected_link#:#Unprotected Link

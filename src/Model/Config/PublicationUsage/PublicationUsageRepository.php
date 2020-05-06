@@ -14,6 +14,15 @@ class PublicationUsageRepository
 
     /**
      * @param string $usage
+     * @return bool
+     */
+    public function exists(string $usage) : bool
+    {
+        return !is_null(PublicationUsage::find($usage));
+    }
+
+    /**
+     * @param string $usage
      *
      * @return PublicationUsage|null
      */

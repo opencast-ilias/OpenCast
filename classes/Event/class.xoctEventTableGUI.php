@@ -2,6 +2,8 @@
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 
 /**
  * Class xoctEventTableGUI
@@ -148,6 +150,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$renderer->insertOwner($this->tpl);
 		}
 
+		if (in_array('unprotected_link', $this->selected_column) && $this->isColumsSelected('unprotected_link')) {
+			$renderer->insertUnprotectedLink($this->tpl);
+		}
+
 		$this->addActionMenu($xE);
 	}
 
@@ -192,10 +198,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 				'sort_field' => 'owner_username',
 				'default' => $this->getOwnerColDefault(),
 			),
+			'unprotected_link' => array(
+				'selectable' => true,
+				'sort_field' => 'unprotected_link',
+			),
 			'common_actions' => array(
 				'selectable' => false,
 			),
 		);
+
+		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
+			unset($columns['unprotected_link']);
+		}
 
 		return $columns;
 	}
@@ -219,13 +233,13 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @throws DICException
 	 */
 	protected function initColumns() {
-		$selected_colums = $this->getSelectedColumns();
+		$selected_columns = $this->getSelectedColumns();
 
 		foreach ($this->getAllColums() as $text => $col) {
 			if (!$this->isColumsSelected($text)) {
 				continue;
 			}
-			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
+			if ($col['selectable'] == false OR in_array($text, $selected_columns)) {
 				$this->addColumn(self::plugin()->translate($text), $col['sort_field'], $col['width']);
 			}
 		}

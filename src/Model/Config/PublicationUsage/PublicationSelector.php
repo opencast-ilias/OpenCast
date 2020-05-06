@@ -90,6 +90,10 @@ class PublicationSelector
      * @var string
      */
     protected $thumbnail_url;
+    /**
+     * @var string
+     */
+    protected $unprotected_link;
 
     /**
      * PublicationSelector constructor.
@@ -347,6 +351,17 @@ class PublicationSelector
         return $this->annotation_url;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getUnprotectedLink()
+    {
+        if (!isset($this->unprotected_link)) {
+            $publication = $this->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_UNPROTECTED_LINK));
+            $this->unprotected_link = is_null($publication) ? null : $publication->getUrl();
+        }
+        return $this->unprotected_link;
+    }
 
     /**
      * @return string
