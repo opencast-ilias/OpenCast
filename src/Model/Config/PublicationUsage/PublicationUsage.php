@@ -19,6 +19,7 @@ class PublicationUsage extends ActiveRecord
     const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
     const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
     const USAGE_DOWNLOAD = 'download';
+    const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
     const USAGE_CUTTING = 'cutting';
     const USAGE_SEGMENTS = 'segments';
     const USAGE_PREVIEW = 'preview';
@@ -41,6 +42,7 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_THUMBNAIL_FALLBACK,
             self::USAGE_THUMBNAIL_FALLBACK_2,
             self::USAGE_DOWNLOAD,
+            self::USAGE_DOWNLOAD_FALLBACK,
             self::USAGE_CUTTING,
             self::USAGE_SEGMENTS,
             self::USAGE_PREVIEW,

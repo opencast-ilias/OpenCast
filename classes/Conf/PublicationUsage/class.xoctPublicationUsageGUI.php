@@ -110,7 +110,11 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function update() {
-		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this,  $this->repository->getUsage($_GET[self::IDENTIFIER]));
+	    $usage_id = $_GET[self::IDENTIFIER];
+		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
+		    $this,
+            $usage_id ? $this->repository->getUsage($_GET[self::IDENTIFIER]) : new PublicationUsage()
+        );
 		$xoctPublicationUsageFormGUI->setValuesByPost();
 		if ($xoctPublicationUsageFormGUI->saveObject()) {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('publication_usage_msg_success'), true);

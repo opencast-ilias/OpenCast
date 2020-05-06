@@ -286,6 +286,7 @@ publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback#:#Thumbnail Fallback
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_download_fallback#:#Download Fallback
 publication_usage_type_preview#:#Preview
 publication_usage_type_live_event#:#Live Event
 publication_usage_search_key#:#Search Key

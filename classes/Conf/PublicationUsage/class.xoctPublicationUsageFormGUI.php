@@ -100,7 +100,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 		$radio->setValue(self::F_FLAVOR);
 		$this->addItem($radio);
 
-		if ($this->object->getUsageId() === PublicationUsage::USAGE_DOWNLOAD) {
+		if (in_array($this->object->getUsageId(), [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK])) {
 			$allow_multiple = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_ALLOW_MULTIPLE), self::F_ALLOW_MULTIPLE);
 		} else {
 			$allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);

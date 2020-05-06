@@ -185,7 +185,14 @@ class PublicationSelector
     public function getDownloadPublications() : array
     {
         if (!isset($this->download_publications)) {
-            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD));
+            $pubs = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD)
+            );
+            if (empty($pubs)) {
+                $pubs = $this->getPublicationMetadataForUsage(
+                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK)
+                );
+            }
             $this->download_publications = $pubs;
         }
 
