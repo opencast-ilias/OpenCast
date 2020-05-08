@@ -84,6 +84,8 @@ class xoctConfExportGUI extends xoctGUI {
 			$xoctPublicationUsage->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
 			$xoctPublicationUsage->setChannel($node->getElementsByTagName('channel')->item(0)->nodeValue);
 			$xoctPublicationUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
+			$xoctPublicationUsage->setTag($node->getElementsByTagName('tag')->item(0)->nodeValue ?: '');
+			$xoctPublicationUsage->setSearchKey($node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor');
 			$xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
 			if (!PublicationUsage::where(array('usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
@@ -147,6 +149,8 @@ class xoctConfExportGUI extends xoctGUI {
 			$xml_xoctPU->appendChild(new DOMElement('description'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getDescription()));
 			$xml_xoctPU->appendChild(new DOMElement('channel'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getChannel()));
 			$xml_xoctPU->appendChild(new DOMElement('flavor'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getFlavor()));
+			$xml_xoctPU->appendChild(new DOMElement('tag'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getTag()));
+			$xml_xoctPU->appendChild(new DOMElement('search_key'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getSearchKey()));
 			$xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getMdType()));
 		}
 
