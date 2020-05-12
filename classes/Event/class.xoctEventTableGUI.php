@@ -1,4 +1,5 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
@@ -114,11 +115,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 	public function fillRow($a_set)
 	{
 		/**
-		 * @var $xE        xoctEvent
+		 * @var $event        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$xE = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
-		$renderer = new xoctEventRenderer($xE, $this->xoctOpenCast);
+		$event = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
+		$renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
 
 		$renderer->insertThumbnail($this->tpl, null);
 		$renderer->insertPlayerLink($this->tpl);
@@ -151,10 +152,14 @@ class xoctEventTableGUI extends ilTable2GUI {
 		}
 
 		if (in_array('unprotected_link', $this->selected_column) && $this->isColumsSelected('unprotected_link')) {
-			$renderer->insertUnprotectedLink($this->tpl);
+			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK, $event)) {
+				$renderer->insertUnprotectedLink($this->tpl);
+			} else {
+				$renderer->insert($tpl, 'UNPROTECTED_LINK', '', 'unprotected_link');
+			}
 		}
 
-		$this->addActionMenu($xE);
+		$this->addActionMenu($event);
 	}
 
 
@@ -201,13 +206,15 @@ class xoctEventTableGUI extends ilTable2GUI {
 			'unprotected_link' => array(
 				'selectable' => true,
 				'sort_field' => 'unprotected_link',
+				'default' => false
 			),
 			'common_actions' => array(
 				'selectable' => false,
 			),
 		);
 
-		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
+		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
+			|| (!ilObjOpenCastAccess::hasWriteAccess() && !$this->getOwnerColDefault())) {
 			unset($columns['unprotected_link']);
 		}
 

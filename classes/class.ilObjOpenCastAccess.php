@@ -29,6 +29,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	const ACTION_EXPORT_CSV = 'export_csv';
 	const ACTION_REPORT_QUALITY_PROBLEM = 'report_quality_problem';
 	const ACTION_REPORT_DATE_CHANGE = 'report_date_change';
+	const ACTION_VIEW_UNPROTECTED_LINK = 'unprotected_link';
 
 	const PERMISSION_EDIT_VIDEOS = 'edit_videos';
 	const PERMISSION_UPLOAD = 'upload';
@@ -127,15 +128,14 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		return self::dic()->access()->checkAccess('write', '', $ref_id);
 	}
 
-
 	/**
 	 * @param                   $cmd
 	 * @param xoctEvent|NULL    $xoctEvent
 	 * @param xoctUser|NULL     $xoctUser
 	 * @param xoctOpenCast|NULL $xoctOpenCast
 	 * @param null              $ref_id
-	 *
 	 * @return bool
+	 * @throws xoctException
 	 */
 	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) : bool
 	{
@@ -185,15 +185,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				return
 					self::hasPermission(self::PERMISSION_UPLOAD)
 					|| self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
+			case self::ACTION_EXPORT_CSV:
 			case self::ACTION_MANAGE_IVT_GROUPS:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_EDIT_SETTINGS:
 				return
 					self::hasWriteAccess(); // = permission: 'edit settings'
-			case self::ACTION_EXPORT_CSV:
-				return
-					self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_REPORT_QUALITY_PROBLEM:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
@@ -201,6 +199,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
+			case self::ACTION_VIEW_UNPROTECTED_LINK:
+				return self::hasWriteAccess() || $xoctEvent->isOwner($xoctUser);
 			default:
 				return false;
 		}
