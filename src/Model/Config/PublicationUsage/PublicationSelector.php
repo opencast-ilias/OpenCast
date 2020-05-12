@@ -129,7 +129,7 @@ class PublicationSelector
      */
     public function loadFromArray(array $publication_data)
     {
-        $publication_data = array();
+        $publications = array();
         foreach ($publication_data as $p_array) {
             $md = new xoctPublication();
             if ($p_array instanceof stdClass) {
@@ -137,10 +137,10 @@ class PublicationSelector
             } else {
                 $md->loadFromArray($p_array);
             }
-            $publication_data[] = $md;
+            $publications[] = $md;
         }
 
-        $this->publications = $publication_data;
+        $this->publications = $publications;
         $this->loaded = true;
     }
 
