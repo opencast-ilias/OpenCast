@@ -461,16 +461,22 @@ class xoctRequest {
 	 *
 	 * @param null $valid_until
 	 *
+	 * @param null $ip
+	 *
 	 * @return string
 	 * @throws xoctException
 	 */
-	public function sign($url, $valid_until = null) {
+	public function sign($url, $valid_until = null, $ip = null) {
 		$this->checkBranch(array( self::BRANCH_SECURITY ));
 		$this->addPart('sign');
 		$data = array( 'url' => $url );
 
 		if ($valid_until) {
 			$data['valid-until'] = $valid_until;
+		}
+
+		if ($ip) {
+			$data['valid-source'] = $ip;
 		}
 
 		return $this->post($data);

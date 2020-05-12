@@ -51,16 +51,20 @@ config_security_info#:#Improves the security by using Opencasts "Stream Security
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_annotation_links_time#:#Validity in seconds
 config_sign_annotation_links_time_info#:#How long the Annotation-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_annotation_links_with_ip#:#Sign for client IP
 config_sign_player_links#:#Sign Player Link
 config_sign_player_links_overwrite_default#:#Use event duration for the validity of the signature
 config_sign_player_links_additional_time_percent#:#Additional Time
 config_sign_player_links_additional_time_percent_info#:#How much additional time should be added to the validity of the signature in percent, depending on the event duration?
+config_sign_player_links_with_ip#:#Sign for client IP
 config_sign_download_links#:#Sign Download Link
 config_sign_download_links_time#:#Validity in seconds
 config_sign_download_links_time_info#:#How long the Download-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_download_links_with_ip#:#Sign for client IP
 config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_sign_thumbnail_links_time#:#Validity in seconds
 config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_thumbnail_links_with_ip#:#Sign for client IP
 config_request_comb_lv#:#Request Combination Level
 config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
 config_groups#:#Opencast Groups

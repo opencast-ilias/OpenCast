@@ -15,14 +15,16 @@ class xoctSecureLink {
 
 
 	/**
-	 * @param      $url
+	 * @param       $url
 	 *
-	 * @param null $valid_until
+	 * @param null  $valid_until
+	 *
+	 * @param false $restict_ip
 	 *
 	 * @return mixed
 	 * @throws xoctException
 	 */
-	public static function sign($url, $valid_until = null) {
+	public static function sign($url, $valid_until = null, $restict_ip = false) {
 		if (!$url) {
 			return '';
 		}
@@ -30,7 +32,9 @@ class xoctSecureLink {
 			return self::$cache[$url];
 		}
 
-		$data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until));
+		$ip = ($restict_ip) ? $_SERVER['REMOTE_ADDR'] : null;
+
+		$data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
 
 		if ($data->error) {
 			return '';

@@ -34,6 +34,7 @@ class xoctConf extends ActiveRecord {
 	const F_UPLOAD_TOKEN = 'upload_token';
 	const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
 	const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
+	const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
 	const F_REQUEST_COMBINATION_LEVEL = 'request_comb_lv';
 	const F_EDITOR_LINK = 'editor_link';
 	const SEP_EVERYTHING = 1;
@@ -44,10 +45,13 @@ class xoctConf extends ActiveRecord {
 	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
 	const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
 	const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
+	const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
 	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
 	const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
+	const F_SIGN_DOWNLOAD_LINKS_WITH_IP = 'sign_download_links_with_ip';
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
+	const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
 	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
 	const F_AUDIO_ALLOWED = 'audio_allowed';
 	const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';

@@ -51,16 +51,20 @@ config_security_info#:#Erhöht die Sicherheit mithilfe von Opencasts "Stream Sec
 config_sign_annotation_links#:#Annotationslink signieren
 config_sign_annotation_links_time#:#Gültigkeit in Sekunden
 config_sign_annotation_links_time_info#:#Wie lange der Link für Annotation gültig sein soll. (0 entspricht Verwaltung durch Opencast)
+config_sign_annotation_links_with_ip#:#Für Client-IP signieren
 config_sign_player_links#:#Playerlink signieren
 config_sign_player_links_overwrite_default#:#Benutze Aufzeichnungsdauer als Dauer für die Gültigkeit der Signatur
 config_sign_player_links_additional_time_percent#:#Zusätzliche Zeit
 config_sign_player_links_additional_time_percent_info#:#Wieviel zusätzliche Zeit soll der Gültigkeit der Signatur in Prozent, abhängig von der Dauer, hinzugefügt werden?
+config_sign_player_links_with_ip#:#Für Client-IP signieren
 config_sign_download_links#:#Downloadlink signieren
 config_sign_download_links_time#:#Gültigkeit in Sekunden
 config_sign_download_links_time_info#:#Wie lange der Link für Download gültig sein soll. (0 entspricht Verwaltung durch Opencast)
+config_sign_download_links_with_ip#:#Für Client-IP signieren
 config_sign_thumbnail_links#:#Thumbnaillink signieren
 config_sign_thumbnail_links_time#:#Gültigkeit in Sekunden
 config_sign_thumbnail_links_time_info#:#Wie lange der Link für Thumbnail gültig sein soll. (0 entspricht Verwaltung durch Opencast)
+config_sign_thumbnail_links_with_ip#:#Für Client-IP signieren
 config_request_comb_lv#:#Request Kombinations Level
 config_request_comb_lv_info#:#Definiert die Zusammensetzung der Anfragen, mit welchen die Events von Opencast geholt werden (viele kleine/wenige grosse Anfragen). Dies hat keinen Einfluss auf die Funktionalität, beeinflusst jedoch die Performanz.
 config_groups#:#Opencast-Gruppen
