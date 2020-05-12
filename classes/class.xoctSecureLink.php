@@ -40,6 +40,25 @@ class xoctSecureLink {
 		return $data->url;
 	}
 
+
+	/**
+	 * @param   $url
+	 *
+	 * @param 0 $duration
+	 *
+	 * @return mixed
+	 * @throws xoctException
+	 */
+	public static function signPlayer($url, $duration = 0) {
+		$valid_until = null;
+		if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT) && $duration > 0) {
+			$duration_in_seconds = $duration / 1000;
+			$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+			$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+		}
+		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_WITH_IP));
+	}
+
 }
 
 ?>

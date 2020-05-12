@@ -652,7 +652,7 @@ class xoctEvent extends APIObject {
 		if (!isset($this->player_url)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_PLAYER))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-				$this->player_url = xoctSecureLink::sign($url);
+				$this->player_url = xoctSecureLink::signPlayer($url);
 			} else {
 				$this->player_url = $url;
 			}
