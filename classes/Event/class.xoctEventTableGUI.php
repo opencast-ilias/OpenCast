@@ -213,8 +213,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			),
 		);
 
-		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
-			|| (!ilObjOpenCastAccess::hasWriteAccess() && !$this->getOwnerColDefault())) {
+		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
 			unset($columns['unprotected_link']);
 		}
 
