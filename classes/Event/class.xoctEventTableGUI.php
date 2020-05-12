@@ -155,7 +155,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK, $event)) {
 				$renderer->insertUnprotectedLink($this->tpl);
 			} else {
-				$renderer->insert($tpl, 'UNPROTECTED_LINK', '', 'unprotected_link');
+				$renderer->insert($this->tpl, 'UNPROTECTED_LINK', '', 'unprotected_link');
 			}
 		}
 
