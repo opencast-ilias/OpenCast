@@ -92,11 +92,10 @@ class xoctEventGUI extends xoctGUI {
 	 * @param $cmd
 	 */
 	protected function performCommand($cmd) {
-	    self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+        self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
         self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
         self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
         self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
-
 
         switch ($cmd) {
 			case self::CMD_STANDARD:
@@ -115,6 +114,11 @@ class xoctEventGUI extends xoctGUI {
 		xoctWaiterGUI::initJS();
 		xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
         self::dic()->mainTemplate()->addJavascript("./src/UI/templates/js/Modal/modal.js");
+        self::dic()->mainTemplate()->addOnLoadCode('xoctEvent.init(\'' . json_encode([
+                'msg_link_copied' => self::plugin()->translate('msg_link_copied'),
+                'tooltip_copy_link' => self::plugin()->translate('tooltip_copy_link')
+            ]) . '\');');
+
 
 		// add "add" button
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {

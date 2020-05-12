@@ -442,7 +442,11 @@ class xoctEventRenderer {
         string $block_title = 'unprotected_link',
         string $variable = 'UNPROTECTED_LINK'
     ) {
-        $this->insert($tpl, $variable, $this->xoctEvent->publications()->getUnprotectedLink() ?: '', $block_title);
+        $link_tpl = self::plugin()->template('default/tpl.event_link.html');
+        $link = $this->xoctEvent->publications()->getUnprotectedLink() ?: '';
+        $link_tpl->setVariable('URL', $link);
+        $link_tpl->setVariable('TOOLTIP_TEXT', self::plugin()->translate('tooltip_copy_link'));
+        $this->insert($tpl, $variable, $link ? $link_tpl->get() : '', $block_title);
     }
 
     /**

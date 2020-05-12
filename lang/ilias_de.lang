@@ -474,3 +474,5 @@ workflow_msg_workflow_deleted#:#Workflow erfolgreich gelöscht.
 parameters#:#Parameter
 parameters_info#:#Hier angegebene Workflow-Parameter werden mit dem Wert 'true' mitgeschickt (Parameter durch Komma trennen).
 unprotected_link#:#Ungeschützter Link
+msg_link_copied#:#Link kopiert
+tooltip_copy_link#:#Link in die Zwischenablage kopieren
