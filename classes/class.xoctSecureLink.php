@@ -32,7 +32,7 @@ class xoctSecureLink {
 			return self::$cache[$url];
 		}
 
-		$ip = ($restict_ip) ? $_SERVER['REMOTE_ADDR'] : null;
+		$ip = ($restict_ip) ? self::getClientIP() : null;
 
 		$data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
 
@@ -99,9 +99,34 @@ class xoctSecureLink {
 	public static function signDownload($url) {
 		$duration = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME);
 		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
-		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS_WITH_IP));
+		return self::sign($url, $valid_until);
 	}
 
+	/**
+	 * @return mixed|string
+	 */
+	protected static function getClientIP() : string
+	{
+		if ($_SERVER['HTTP_CLIENT_IP']) {
+			return $_SERVER['HTTP_CLIENT_IP'];
+		}
+		if ($_SERVER['HTTP_X_FORWARDED_FOR']) {
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		}
+		if ($_SERVER['HTTP_X_FORWARDED']) {
+			return $_SERVER['HTTP_X_FORWARDED'];
+		}
+		if ($_SERVER['HTTP_FORWARDED_FOR']) {
+			return $_SERVER['HTTP_FORWARDED_FOR'];
+		}
+		if ($_SERVER['HTTP_FORWARDED']) {
+			return $_SERVER['HTTP_FORWARDED'];
+		}
+		if ($_SERVER['REMOTE_ADDR']) {
+			return $_SERVER['REMOTE_ADDR'];
+		}
+		return '';
+	}
 }
 
 ?>

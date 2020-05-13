@@ -49,7 +49,6 @@ class xoctConf extends ActiveRecord {
 	const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
 	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
 	const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
-	const F_SIGN_DOWNLOAD_LINKS_WITH_IP = 'sign_download_links_with_ip';
 	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
 	const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
 	const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
