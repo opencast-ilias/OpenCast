@@ -145,7 +145,7 @@ class xoctPlayerGUI extends xoctGUI
 
             $preview_url = $previews[$media->getRole()];
             if ($preview_url !== null) {
-                $preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::sign($preview_url->getUrl()) : $preview_url->getUrl();
+                $preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::signThumbnail($preview_url->getUrl()) : $preview_url->getUrl();
             } else {
                 $preview_url = "";
             }
@@ -258,8 +258,8 @@ class xoctPlayerGUI extends xoctGUI
                     $high_url = $high->getUrl();
                     $low_url = $low->getUrl();
                     if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $high_url = xoctSecureLink::sign($high_url);
-                        $low_url = xoctSecureLink::sign($low_url);
+                        $high_url = xoctSecureLink::signThumbnail($high_url);
+                        $low_url = xoctSecureLink::signThumbnail($low_url);
                     }
 
                     return [
@@ -282,7 +282,7 @@ class xoctPlayerGUI extends xoctGUI
 
                     $url = $preview->getUrl();
                     if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $url = xoctSecureLink::sign($url);
+                        $url = xoctSecureLink::signThumbnail($url);
                     }
 
                     return [

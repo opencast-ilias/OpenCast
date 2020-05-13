@@ -42,6 +42,32 @@ class xoctSecureLink {
 
 
 	/**
+	 * @param $url
+	 *
+	 * @return mixed
+	 * @throws xoctException
+	 */
+	public static function signThumbnail($url) {
+		$duration = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME);
+		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
+		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
+	}
+
+
+	/**
+	 * @param $url
+	 *
+	 * @return mixed
+	 * @throws xoctException
+	 */
+	public static function signAnnotation($url) {
+		$duration = xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS_TIME);
+		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
+		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS_WITH_IP));
+	}
+
+
+	/**
 	 * @param   $url
 	 *
 	 * @param 0 $duration
@@ -57,6 +83,19 @@ class xoctSecureLink {
 			$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
 		}
 		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_WITH_IP));
+	}
+
+
+	/**
+	 * @param $url
+	 *
+	 * @return mixed
+	 * @throws xoctException
+	 */
+	public static function signDownload($url) {
+		$duration = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME);
+		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
+		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS_WITH_IP));
 	}
 
 }

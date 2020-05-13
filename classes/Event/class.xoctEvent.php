@@ -607,7 +607,7 @@ class xoctEvent extends APIObject {
 		while (!$this->thumbnail_url && $i < count($possible_publications)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find($possible_publications[$i]))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-				$this->thumbnail_url = xoctSecureLink::sign($url);
+				$this->thumbnail_url = xoctSecureLink::signThumbnail($url);
 			} else {
 				$this->thumbnail_url = $url;
 			}
@@ -629,9 +629,8 @@ class xoctEvent extends APIObject {
 		if (!isset($this->annotation_url)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_ANNOTATE))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
-				$this->annotation_url = xoctSecureLink::sign($url);
+				$this->annotation_url = xoctSecureLink::signAnnotation($url);
 			} else {
-
 				$this->annotation_url = $url;
 			}
 		}
@@ -669,7 +668,7 @@ class xoctEvent extends APIObject {
 		if (!isset($this->download_url)) {
 			$url = $this->getFirstPublicationMetadataForUsage(xoctPublicationUsage::find(xoctPublicationUsage::USAGE_DOWNLOAD))->getUrl();
 			if (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS)) {
-				$this->download_url = xoctSecureLink::sign($url);
+				$this->download_url = xoctSecureLink::signDownload($url);
 			} else {
 				$this->download_url = $url;
 			}

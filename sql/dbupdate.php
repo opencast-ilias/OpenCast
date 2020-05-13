@@ -176,3 +176,9 @@ xoctOpenCast::updateDB();
 global $DIC;
 $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)');
 ?>
+<#20>
+<?php
+xoctConf::set(xoctConf::F_SIGN_ANNOTATION_LINKS_TIME, 0);
+xoctConf::set(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME, 0);
+xoctConf::set(xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME, 0);
+?>
