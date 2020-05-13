@@ -1,12 +1,14 @@
 # Change Log
 
-## [2.6.0] (unreleased)
+## [3.0.0] (unreleased)
 - Feature: allow multiple downloads
 - Feature: new "Download Fallback" publication
+- Feature: republish events with configurable workflows
 - Feature: configure tags for publications
 - Feature: preview publication configurable
 - Feature: signed link duration configurable for all link types
 - Feature: signed links can be restricted to the current ip address
+- Feature: "unprotected link" publication to show copyable link in event list
 - Improvement: introduced default values for publication configuration (a "standard" Opencast should work without any publications configured now)
 - Improvement: refactored publications 
 - Improvement: removed api publication (unused)
