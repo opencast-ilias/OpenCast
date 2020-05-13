@@ -140,15 +140,8 @@ class xoctPlayerGUI extends xoctGUI
         $id = $xoctEvent->getIdentifier();
 
         $streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
+            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($media->getUrl()) : $media->getUrl();
             $duration = $duration ?: $media->getDuration();
-            $valid_until = null;
-            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-                $duration_in_seconds = $duration / 1000;
-                $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-                $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
-            }
-
-            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($media->getUrl(), $valid_until) : $media->getUrl();
 
             $preview_url = $previews[$media->getRole()];
             if ($preview_url !== null) {
@@ -158,12 +151,21 @@ class xoctPlayerGUI extends xoctGUI
             }
 
             if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
+
                 $smil_url_identifier = ($media->getRole() !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
                 $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
                 $hls_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/playlist.m3u8";
                 $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
                 if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                    // TODO: move this responsibility
+                    $valid_until = null;
+                    if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
+                        $duration_in_seconds = $duration / 1000;
+                        $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+                        $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+                    }
+
                     $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
                     $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
                 }
