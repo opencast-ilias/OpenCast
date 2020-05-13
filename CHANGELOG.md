@@ -1,15 +1,17 @@
 # Change Log
 
 ## [2.6.0] (unreleased)
-- Refactoring and adjustments for page component plugin
-- Fixed config export bug
 - Feature: allow multiple downloads
 - Feature: new "Download Fallback" publication
 - Feature: configure tags for publications
 - Feature: preview publication configurable
-- Improvement: introduced default values for publication configuration
+- Feature: signed link duration configurable for all link types
+- Feature: signed links can be restricted to the current ip address
+- Improvement: introduced default values for publication configuration (a "standard" Opencast should work without any publications configured now)
 - Improvement: refactored publications 
-- Improvement: removed api configuration
+- Improvement: removed api publication (unused)
+- Fixed: config export bug
+- Refactoring and adjustments for page component plugin
 
 ## [2.5.1]
 - Bugfix: Avoid upload bug by using unique IDs to save files
