@@ -4,6 +4,7 @@
 - Feature: allow multiple downloads
 - Feature: new "Download Fallback" publication
 - Feature: republish events with configurable workflows
+- Feature: video upload via ingest nodes configurable
 - Feature: configure tags for publications
 - Feature: preview publication configurable
 - Feature: signed link duration configurable for all link types
