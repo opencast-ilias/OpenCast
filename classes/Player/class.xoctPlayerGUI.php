@@ -140,12 +140,13 @@ class xoctPlayerGUI extends xoctGUI
         $id = $xoctEvent->getIdentifier();
 
         $streams = array_map(function (xoctMedia $media) use (&$duration, &$previews, &$id) {
-            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::sign($media->getUrl()) : $media->getUrl();
             $duration = $duration ?: $media->getDuration();
+
+            $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::signPlayer($media->getUrl(), $duration) : $media->getUrl();
 
             $preview_url = $previews[$media->getRole()];
             if ($preview_url !== null) {
-                $preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::sign($preview_url->getUrl()) : $preview_url->getUrl();
+                $preview_url = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS) ? xoctSecureLink::signThumbnail($preview_url->getUrl()) : $preview_url->getUrl();
             } else {
                 $preview_url = "";
             }
@@ -158,16 +159,8 @@ class xoctPlayerGUI extends xoctGUI
                 $dash_url = $streaming_server_url . "/smil:engage-player_" . $id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
                 if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-                    // TODO: move this responsibility
-                    $valid_until = null;
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT)) {
-                        $duration_in_seconds = $duration / 1000;
-                        $additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-                        $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
-                    }
-
-                    $hls_url = xoctSecureLink::sign($hls_url, $valid_until);
-                    $dash_url = xoctSecureLink::sign($dash_url, $valid_until);
+                    $hls_url = xoctSecureLink::signPlayer($hls_url, $duration);
+                    $dash_url = xoctSecureLink::signPlayer($dash_url, $duration);
                 }
 
                 return [
@@ -265,8 +258,8 @@ class xoctPlayerGUI extends xoctGUI
                     $high_url = $high->getUrl();
                     $low_url = $low->getUrl();
                     if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $high_url = xoctSecureLink::sign($high_url);
-                        $low_url = xoctSecureLink::sign($low_url);
+                        $high_url = xoctSecureLink::signThumbnail($high_url);
+                        $low_url = xoctSecureLink::signThumbnail($low_url);
                     }
 
                     return [
@@ -289,7 +282,7 @@ class xoctPlayerGUI extends xoctGUI
 
                     $url = $preview->getUrl();
                     if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                        $url = xoctSecureLink::sign($url);
+                        $url = xoctSecureLink::signThumbnail($url);
                     }
 
                     return [
@@ -377,16 +370,18 @@ class xoctPlayerGUI extends xoctGUI
     protected function deliverVideo() {
         $event_id = $_GET['event_id'];
         $mid = $_GET['mid'];
+        $duration = 0;
         $xoctEvent = xoctEvent::find($event_id);
         $media = $xoctEvent->publications()->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER))->getMedia();
         foreach ($media as $medium) {
             if ($medium->getId() == $mid) {
                 $url = $medium->getUrl();
+                $duration = $duration ?: $medium->getDuration();
                 break;
             }
         }
         if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-            $url = xoctSecureLink::sign($url);
+            $url = xoctSecureLink::signPlayer($url, $duration);
         }
         //		$ctype= 'video/mp4';
         //		header('Content-Type: ' . $ctype);

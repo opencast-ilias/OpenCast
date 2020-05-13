@@ -186,7 +186,7 @@ class xoctEventRenderer {
                     /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
 			        return $this->factory->link()->standard(
                         ($pub instanceof xoctMedia) ? $pub->getWidth() . 'p' : $pub->getFlavor(),
-                        $sign ? xoctSecureLink::sign($pub->getUrl()) : $pub->getUrl()
+                        $sign ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
                     )->withOpenInNewViewport(true);
                 }, $download_publications);
                 $dropdown = $this->factory->dropdown()->standard(
@@ -195,7 +195,7 @@ class xoctEventRenderer {
 			    return self::dic()->ui()->renderer()->renderAsync($dropdown);
             } else {
 			    $link = array_shift($download_publications)->getUrl();
-                $link = $sign ? xoctSecureLink::sign($link) : $link;
+                $link = $sign ? xoctSecureLink::signDownload($link) : $link;
                 $link_tpl = self::plugin()->template('default/tpl.player_link.html');
                 $link_tpl->setVariable('BUTTON_TYPE', $button_type);
                 $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate('download', self::LANG_MODULE));

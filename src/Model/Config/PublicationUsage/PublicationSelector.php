@@ -250,7 +250,7 @@ class PublicationSelector
                 )->getUrl();
 
                 if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-                    $this->player_url = xoctSecureLink::sign($url);
+                    $this->player_url = xoctSecureLink::signPlayer($url);
                 } else {
                     $this->player_url = $url;
                 }
@@ -275,7 +275,7 @@ class PublicationSelector
             );
             $url = is_null($annotation_publication) ? '' : $annotation_publication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
-                $this->annotation_url = xoctSecureLink::sign($url);
+                $this->annotation_url = xoctSecureLink::signAnnotation($url);
             } else {
                 $this->annotation_url = $url;
             }
@@ -298,7 +298,7 @@ class PublicationSelector
                         $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
                     }
                     // Sign the url and parse the variables.
-                    $media_url_signed = xoctSecureLink::sign($media_url, $valid_until);
+                    $media_url_signed = xoctSecureLink::signPlayer($media_url, $valid_until);
                     $media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
                     $media_url = $media_url . '&' . $media_url_query;
                 }
@@ -367,7 +367,7 @@ class PublicationSelector
             }
             $url = $xoctPublication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
-                $this->thumbnail_url = xoctSecureLink::sign($url);
+                $this->thumbnail_url = xoctSecureLink::signThumbnail($url);
             } else {
                 $this->thumbnail_url = $url;
             }
