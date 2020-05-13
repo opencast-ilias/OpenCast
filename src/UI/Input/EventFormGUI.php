@@ -683,7 +683,7 @@ class EventFormGUI extends ilPropertyFormGUI {
             $series_options[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
         }
 
-        asort($series_options);
+        natcasesort($series_options);
         if (!$own_series_exists) {
             $series_options = [self::OPT_OWN_SERIES => $own_series_title] + $series_options;
         }

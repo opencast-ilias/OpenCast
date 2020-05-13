@@ -95,7 +95,9 @@ xoctSeriesWorkflowParameter::updateDB();
 ?>
 <#14>
 <?php
-// define standard workflow parameters
+/**
+ * define standard workflow parameters as they were hard-coded before
+ */
 if (xoctWorkflowParameter::count() === 0) {
 	$params = [];
 	$params[] = (new xoctWorkflowParameter())
@@ -178,10 +180,17 @@ $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)
 ?>
 <#20>
 <?php
+/**
+ * the api publication is not used
+ */
 (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->delete('api');
 ?>
 <#21>
 <?php
+/**
+ * publications can alternatively search for tags now, so we set all publications to
+ * 'flavor', to keep the existing behavior
+ */
 \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 /** @var PublicationUsage $publication_usage */
 foreach (\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::get() as $publication_usage) {
@@ -191,6 +200,11 @@ foreach (\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::
 ?>
 <#22>
 <?php
+/**
+ * to keep the existing behavior:
+ * if the internal player is active, change player publication to search for media
+ * with the tag 'engage-streaming' (that was hard-coded until now)
+ */
 \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
     // to keep the existing behavior
@@ -199,6 +213,7 @@ if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
         $player_pub->setMdType(PublicationUsage::MD_TYPE_MEDIA);
         $player_pub->setSearchKey(xoctPublicationUsageFormGUI::F_TAG);
         $player_pub->setTag('engage-streaming');
+        $player_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_MEDIA);
         $player_pub->update();
     }
 }
@@ -218,4 +233,25 @@ if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
 //    $preview_pub->setFlavor('/player+preview');
 //    $preview_pub->store();
 //}
+?>
+<#24>
+<?php
+\srag\Plugins\Opencast\Model\Config\Workflow\Workflow::updateDB();
+?>
+<#25>
+<?php
+/**
+ * change segment pub md type to attachment if existent
+ */
+$repository = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository();
+$usage_segments = \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_SEGMENTS;
+$segments_pub = $repository->getUsage($usage_segments);
+if (!is_null($segments_pub)) {
+	$segments_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_ATTACHMENT);
+	$segments_pub->update();
+}
+?>
+<#26>
+<?php
+\srag\Plugins\Opencast\Model\Config\Workflow\Workflow::updateDB();
 ?>

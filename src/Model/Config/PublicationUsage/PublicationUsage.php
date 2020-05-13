@@ -19,15 +19,18 @@ class PublicationUsage extends ActiveRecord
     const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
     const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
     const USAGE_DOWNLOAD = 'download';
+    const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
     const USAGE_CUTTING = 'cutting';
     const USAGE_SEGMENTS = 'segments';
     const USAGE_PREVIEW = 'preview';
     const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
     const USAGE_LIVE_EVENT = 'live_event';
-    const USAGE_ENGAGE_STREAMING = "engage-streaming";
+    const USAGE_UNPROTECTED_LINK = 'unprotected_link';
     const MD_TYPE_ATTACHMENT = 1;
     const MD_TYPE_MEDIA = 2;
     const MD_TYPE_PUBLICATION_ITSELF = 0;
+    const SEARCH_KEY_FLAVOR = 'flavor';
+    const SEARCH_KEY_TAG = 'tag';
     /**
      * @var array
      */
@@ -39,10 +42,12 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_THUMBNAIL_FALLBACK,
             self::USAGE_THUMBNAIL_FALLBACK_2,
             self::USAGE_DOWNLOAD,
+            self::USAGE_DOWNLOAD_FALLBACK,
             self::USAGE_CUTTING,
             self::USAGE_SEGMENTS,
             self::USAGE_PREVIEW,
             self::USAGE_LIVE_EVENT,
+            self::USAGE_UNPROTECTED_LINK,
         );
 
 

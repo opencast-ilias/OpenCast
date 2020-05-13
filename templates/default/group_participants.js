@@ -94,12 +94,14 @@ var xoctGroupParticipant = {
             this.before_load();
             var self = this;
             var url = this.data_url;
-            $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id}}).done(function (data) {
+            $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+                xoctGroup.removeParticipant(id);
                 self.after_load();
+                console.log('load');
                 self.load();
-                self.loadForGroupId(xoctGroup.selected_id);
-                xoctGroup.load(function () {
-                }, true);
+                self.loadForGroupId();
+                // xoctGroup.load(function () {
+                // }, true);
             });
 
         }
@@ -119,11 +121,10 @@ var xoctGroupParticipant = {
         var self = this;
         var url = this.data_url;
         $.ajax({url: url + "&cmd=create", type: "POST", data: {"user_id": user_id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+            xoctGroup.addParticipant(user_id);
             self.after_load();
             self.load();
             self.loadForGroupId(group_id);
-            xoctGroup.load(function () {
-            }, true);
         });
 
     },
@@ -138,24 +139,31 @@ var xoctGroupParticipant = {
     load: function () {
         var self = this;
         this.before_load();
-        var url = this.data_url;
-        $.ajax({url: url, type: "GET", data: {"cmd": "getAvailable", "group_id": xoctGroup.selected_id}}).done(function (data) {
-            self.container_available.empty();
-            for (var i in data) {
-                self.container_available.append(
-                    '<li class="list-group-item xoct_participant_available" data-user-id="' + data[i].user_id + '">'
-                    //+'<img height=25px" width="25px" src="./templates/default/images/no_photo_xsmall.jpg" class="img-circle" alt="Circular Image"> '
-                    + '<div style="margin-right:30px;">'
-                    + data[i].name + ''
-                    + '</div>'
-                    + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
-                    + '</li>');
+        self.container_available.empty();
+        var participants = xoctGroup.getAvailableParticipantsForSelectedGroup();
+
+        participants.forEach(function(participant) {
+            var checkmark = '';
+            if (xoctGroup.isInAnyGroup(participant.user_id)) {
+                checkmark = '<img class="xoct_checkmark" width="10px" height="10px" ' +
+                    'src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/checkmark.svg"' +
+                    '>';
             }
-            if (!data || data.length == 0) {
-                self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
-            }
-            self.after_load();
+            // if ()
+            self.container_available.append(
+                '<li class="list-group-item xoct_participant_available" data-user-id="' + participant.user_id + '">'
+                + checkmark
+                + '<div style="margin-right:30px;">'
+                + participant.name + ''
+                + '</div>'
+                + '<button class="btn btn-primary xoct_add_user pull-right"><span class="glyphicon glyphicon-plus"></span></button>'
+                + '</li>');
         });
+        if (!participants || participants.length == 0) {
+            self.container_available.html('<li class="list-group-item">' + self.lng['none_available_all'] + '</li>');
+        }
+        self.filter($(self.filter_container).val());
+        self.after_load();
     },
     /**
      *
@@ -164,22 +172,23 @@ var xoctGroupParticipant = {
     loadForGroupId: function (group_id) {
         var self = this;
         this.before_load();
-        var url = this.data_url;
-        $.ajax({url: url, type: "GET", data: {"cmd": "getPerGroup", "group_id": group_id}}).done(function (data) {
-            self.container_per_group.empty();
-            for (var i in data) {
-                self.container_per_group.append('<li class="list-group-item" data-id="'
-                    + data[i].id
-                    + '"><div style="margin-right:30px;">'
-                    + data[i].name
-                    + '</div>'
-                    + '<button class="btn btn-default xoct_remove_user pull-right"><span class="glyphicon glyphicon-minus"></span></button></li>');
-            }
-            if (!data || data.length == 0) {
-                self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
-            }
-            self.after_load();
+        self.container_per_group.empty();
+        var participants = xoctGroup.getSelectedGroupParticipants();
+        participants.forEach(function(participant) {
+            self.container_per_group.append('<li class="list-group-item" data-id="'
+                + participant.user_id
+                + '"><div style="margin-right:30px;">'
+                + participant.name
+                + '</div>'
+                + '<button class="btn btn-default xoct_remove_user pull-right xoct_admin_only"><span class="glyphicon glyphicon-minus"></span></button></li>');
         });
+        if (!participants || participants.length == 0) {
+            self.container_per_group.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
+        }
+        self.after_load();
+        if (!xoctGroup.is_admin) {
+            $('.xoct_admin_only').hide();
+        }
     },
     /**
      *

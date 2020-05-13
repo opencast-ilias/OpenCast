@@ -16,6 +16,7 @@ class xoctMainGUI extends xoctGUI {
 	const TAB_EXPORT = 'export';
 	const TAB_REPORTS = 'reports';
 	const TAB_WORKFLOW_PARAMETERS = 'workflow_params';
+	const TAB_WORKFLOWS = 'workflows';
 
 	const SUBTAB_API = 'api';
 	const SUBTAB_SERIES = 'series';
@@ -33,6 +34,7 @@ class xoctMainGUI extends xoctGUI {
 		$nextClass = self::dic()->ctrl()->getNextClass();
 
 		self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+		self::dic()->tabs()->addTab(self::TAB_WORKFLOWS, self::plugin()->translate('tab_' . self::TAB_WORKFLOWS), self::dic()->ctrl()->getLinkTarget(new xoctWorkflowGUI()));
 		self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget(new xoctWorkflowParameterGUI()));
 		self::dic()->tabs()->addTab(self::TAB_PUBLICATION_USAGE, self::plugin()->translate('tab_'
 			. self::TAB_PUBLICATION_USAGE), self::dic()->ctrl()->getLinkTarget(new xoctPublicationUsageGUI()));
@@ -60,6 +62,11 @@ class xoctMainGUI extends xoctGUI {
 				self::dic()->tabs()->activateTab(self::TAB_REPORTS);
 				$xoctReportOverviewGUI = new xoctReportOverviewGUI();
 				self::dic()->ctrl()->forwardCommand($xoctReportOverviewGUI);
+				break;
+			case strtolower(xoctWorkflowGUI::class):
+				self::dic()->tabs()->activateTab(self::TAB_WORKFLOWS);
+				$xoctWorkflowGUI = new xoctWorkflowGUI();
+				self::dic()->ctrl()->forwardCommand($xoctWorkflowGUI);
 				break;
 			case strtolower(xoctWorkflowParameterGUI::class):
 				self::dic()->tabs()->activateTab(self::TAB_WORKFLOW_PARAMETERS);

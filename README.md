@@ -20,12 +20,13 @@ git clone https://github.com/studer-raimann/OpenCast.git
 As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
 ### Workaround for internal Paella Player
-If you're using the plugin-internal Paella Player, you will have to implement a small workaround for a bug in the current version of Paella Player. Start in you ILIAS root directory:
+If you're using the plugin-internal Paella Player, you will have to implement a small workaround for a bug in the current version of Paella Player. Start in your ILIAS root directory:
 ```bash
 ln -s Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/resources/ .
 ```
 
 ### Installation Live Chat
+This is only required if the plugin is configured to show live events and if you wish to display a live chat during these events.
 
 #### Install Node JS
 The live chat runs on a node js server and was tested with node version 10.x. To install nodejs v10.x on Ubuntu, execute:

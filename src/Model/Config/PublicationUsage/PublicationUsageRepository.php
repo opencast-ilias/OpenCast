@@ -13,11 +13,20 @@ class PublicationUsageRepository
 {
 
     /**
-     * @param $usage
+     * @param string $usage
+     * @return bool
+     */
+    public function exists(string $usage) : bool
+    {
+        return !is_null(PublicationUsage::find($usage));
+    }
+
+    /**
+     * @param string $usage
      *
      * @return PublicationUsage|null
      */
-    public function getUsage($usage)
+    public function getUsage(string $usage)
     {
         return PublicationUsage::find($usage) ?: PublicationUsageDefault::getDefaultUsage($usage);
     }
@@ -47,13 +56,49 @@ class PublicationUsageRepository
 
 
     /**
-     * @param $usage
+     * @param string $usage
      */
-    public function delete($usage)
+    public function delete(string $usage)
     {
         $usage = $this->getUsage($usage);
         if (!is_null($usage)) {
             $usage->delete();
         }
+    }
+
+
+    /**
+     * @param string $usage
+     * @param string $title
+     * @param string $description
+     * @param string $channel
+     * @param int    $md_type
+     * @param string $search_key
+     * @param string $flavor
+     * @param string $tag
+     * @param bool   $allow_multiple
+     */
+    public function store(
+        string $usage,
+        string $title,
+        string $description,
+        string $channel,
+        int $md_type,
+        string $search_key = '',
+        string $flavor = '',
+        string $tag = '',
+        bool $allow_multiple = false
+    ) {
+        /** @var PublicationUsage $usage */
+        $usage = PublicationUsage::findOrGetInstance($usage);
+        $usage->setTitle($title);
+        $usage->setDescription($description);
+        $usage->setChannel($channel);
+        $usage->setMdType($md_type);
+        $usage->setSearchKey($search_key);
+        $usage->setFlavor($flavor);
+        $usage->setTag($tag);
+        $usage->setAllowMultiple($allow_multiple);
+        $usage->store();
     }
 }

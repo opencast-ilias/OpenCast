@@ -158,6 +158,49 @@ div.il-card.thumbnail div.caption {
 	width: 100%;
 }
 
+div.modal-body form .ilFormFooter {
+	display: none;
+}
+
+/* unprotected link tooltips */
+.xoct_tooltip {
+	position: relative;
+	display: inline-block;
+}
+
+.xoct_tooltip .xoct_tooltiptext {
+	visibility: hidden;
+	width: 140px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px;
+	position: absolute;
+	z-index: 1;
+	bottom: 150%;
+	left: 50%;
+	margin-left: -75px;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.xoct_tooltip .xoct_tooltiptext::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #555 transparent transparent transparent;
+}
+
+.xoct_tooltip:hover .xoct_tooltiptext {
+	visibility: visible;
+	opacity: 1;
+}
+
 @media (max-width: 647px) {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

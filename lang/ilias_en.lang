@@ -159,9 +159,9 @@ event_create#:#Upload Event
 event_createScheduled#:#Create Event
 event_created#:#Created
 event_creator#:#Creator
-event_cut#:#Cut Event
+event_cut#:#Cut
 event_date#:#Date
-event_delete#:#Delete Event
+event_delete#:#Delete
 event_unpublish#:#Delete Publications
 event_delete_confirm#:#This will delete the Event in ILIAS and in Opencast. Do you want to proceed?
 event_unpublish_confirm#:#You have to remove all publications from this event in order to delete this event. Do you want to proceed?
@@ -238,6 +238,7 @@ event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
 event_report_quality_problem#:#Report Quality Problems
+event_republish#:#Publish
 event_series#:#Series
 event_own_series#:#Own Series (%s)
 groups_available_participants_header#:#Available Participants
@@ -259,6 +260,7 @@ owner_only_one_owner#:#Only one owner can be chosen per video.
 invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
+invitations_invite_all#:#Add all
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
@@ -294,8 +296,10 @@ publication_usage_usage_id#:#Usage
 publication_usage_type_thumbnail_fallback#:#Thumbnail Fallback
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_download_fallback#:#Download Fallback
 publication_usage_type_preview#:#Preview
 publication_usage_type_live_event#:#Live Event
+publication_usage_type_unprotected_link#:#Unprotected Link
 publication_usage_search_key#:#Search Key
 publication_usage_search_key_info#:#The media/attachments will be search for the specified flavor/tag.
 publication_usage_tag#:#Tag
@@ -469,3 +473,18 @@ tiles_per_page#:#Tiles per page:
 event_live_waiting_text#:#Live Event hasn't started yet. <br>Scheduled start time: %s
 event_live_interrupted_text#:#The Live Event has been paused or prematurely terminated.
 event_live_over_text#:#Live Event finished.
+msg_workflows_info#:#The configured workflows can be used to republish events.
+msg_workflow_created#:#Workflow created successfully.
+msg_workflow_updated#:#Workflow updated successfully.
+config_button_add_workflow#:#Create new workflow
+workflow_table_title#:#Workflows
+tab_workflows#:#Workflows
+workflow#:#Workflow
+event_msg_republish_started#:#Workflow started successfully.
+workflow_msg_confirm_delete_workflow#:#Please confirm to delete the following workflow.
+workflow_msg_workflow_deleted#:#Workflow deleted successfully.
+parameters#:#Parameters
+parameters_info#:#Enter comma-separated workflow parameters which should be set 'true'.
+unprotected_link#:#Unprotected Link
+msg_link_copied#:#Link copied
+tooltip_copy_link#:#Copy link to clipboard

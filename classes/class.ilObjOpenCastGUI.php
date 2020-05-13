@@ -185,9 +185,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_series_settings'), self::dic()->ctrl()->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT_GENERAL));
 		}
 
-		if ($xoctOpenCast->getPermissionPerClip()
-			&& ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS)
-			&& (self::dic()->tree()->checkForParentType($this->ref_id, 'crs') || self::dic()->tree()->checkForParentType($this->ref_id, 'grp'))) {
+		if ($xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::hasPermission('read')) {
 			self::dic()->tabs()->addTab(self::TAB_GROUPS, self::plugin()->translate('tab_groups'), self::dic()->ctrl()->getLinkTarget(new xoctIVTGroupGUI()));
 		}
 		if (self::dic()->user()->getId() == 6 AND ilObjOpenCast::DEV) {

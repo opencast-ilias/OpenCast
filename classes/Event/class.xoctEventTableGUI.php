@@ -1,7 +1,10 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
 
 /**
  * Class xoctEventTableGUI
@@ -112,11 +115,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 	public function fillRow($a_set)
 	{
 		/**
-		 * @var $xE        xoctEvent
+		 * @var $event        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$xE = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
-		$renderer = new xoctEventRenderer($xE, $this->xoctOpenCast);
+		$event = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
+		$renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
 
 		$renderer->insertThumbnail($this->tpl, null);
 		$renderer->insertPlayerLink($this->tpl);
@@ -148,7 +151,15 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$renderer->insertOwner($this->tpl);
 		}
 
-		$this->addActionMenu($xE);
+		if (in_array('unprotected_link', $this->selected_column) && $this->isColumsSelected('unprotected_link')) {
+			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK, $event)) {
+				$renderer->insertUnprotectedLink($this->tpl);
+			} else {
+				$renderer->insert($this->tpl, 'UNPROTECTED_LINK', '', 'unprotected_link');
+			}
+		}
+
+		$this->addActionMenu($event);
 	}
 
 
@@ -192,10 +203,19 @@ class xoctEventTableGUI extends ilTable2GUI {
 				'sort_field' => 'owner_username',
 				'default' => $this->getOwnerColDefault(),
 			),
+			'unprotected_link' => array(
+				'selectable' => true,
+				'sort_field' => 'unprotected_link',
+				'default' => false
+			),
 			'common_actions' => array(
 				'selectable' => false,
 			),
 		);
+
+		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
+			unset($columns['unprotected_link']);
+		}
 
 		return $columns;
 	}
@@ -219,13 +239,13 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @throws DICException
 	 */
 	protected function initColumns() {
-		$selected_colums = $this->getSelectedColumns();
+		$selected_columns = $this->getSelectedColumns();
 
 		foreach ($this->getAllColums() as $text => $col) {
 			if (!$this->isColumsSelected($text)) {
 				continue;
 			}
-			if ($col['selectable'] == false OR in_array($text, $selected_colums)) {
+			if ($col['selectable'] == false OR in_array($text, $selected_columns)) {
 				$this->addColumn(self::plugin()->translate($text), $col['sort_field'], $col['width']);
 			}
 		}
@@ -237,30 +257,18 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @throws DICException
 	 */
 	protected function addActionMenu(xoctEvent $xoctEvent) {
-		$actions = $xoctEvent->getActions($this->xoctOpenCast);
+		$renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
+		$actions = $renderer->getActions();
 		if (empty($actions)) {
 			return;
 		}
 
-		$ac = new ilAdvancedSelectionListGUI();
-		$ac->setListTitle(self::plugin()->translate('common_actions'));
-		$ac->setId('event_actions_' . $xoctEvent->getIdentifier());
-		$ac->setUseImages(false);
+		$dropdown = self::dic()->ui()->factory()->dropdown()->standard($actions)
+			->withLabel(self::plugin()->translate('common_actions'));
 
-		foreach ($actions as $key => $action) {
-			$ac->addItem(
-				self::plugin()->translate($action['lang_var'] ?: $key),
-				$key, $action['link'],
-				'',
-				'',
-				$action['frame'],
-				'',
-				$action['prevent_background_click'],
-				$action['onclick']
-			);
-		}
-
-		$this->tpl->setVariable('ACTIONS', $ac->getHTML());
+		$this->tpl->setVariable('ACTIONS',
+			self::dic()->ui()->renderer()->renderAsync($dropdown)
+		);
 	}
 
 

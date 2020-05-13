@@ -159,9 +159,9 @@ event_create#:#Aufzeichnung hochladen
 event_createScheduled#:#Aufzeichnungstermin(e) erstellen
 event_created#:#Erstellt
 event_creator#:#Ersteller
-event_cut#:#Aufzeichnung schneiden
+event_cut#:#Schneiden
 event_date#:#Datum
-event_delete#:#Aufzeichnung löschen
+event_delete#:#Löschen
 event_unpublish#:#Publikationen entfernen
 event_delete_confirm#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auch auf Opencast). Wollen Sie diese Aufzeichnung wirklich löschen?
 event_unpublish_confirm#:#Damit diese Aufzeichnung gelöscht werden kann, müssen erst alle Publikationen in Opencast entfernt werden. Wollen Sie die Publikationen wirklich entfernen?
@@ -204,6 +204,7 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
+event_republish#:#Publizieren
 event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start
@@ -257,6 +258,7 @@ owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
+invitations_invite_all#:#Alle hinzufügen
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
@@ -292,8 +294,10 @@ publication_usage_usage_id#:#Nutzung
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback
 publication_usage_type_thumbnail_fallback_2#:#Thumbnail Fallback 2
 publication_usage_type_download#:#Download
+publication_usage_type_download_fallback#:#Download Fallback
 publication_usage_type_preview#:#Preview
 publication_usage_type_live_event#:#Live-Event
+publication_usage_type_unprotected_link#:#Ungeschützter Link
 publication_usage_search_key#:#Suchbegriff
 publication_usage_search_key_info#:#Die Medien/Attachments werden nach dem hier angegebenen Flavor/Tag durchsucht.
 publication_usage_tag#:#Tag
@@ -467,3 +471,18 @@ tiles_per_page#:#Kacheln pro Seite:
 event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
 event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
 event_live_over_text#:#Das Live Event wurde beendet.
+msg_workflows_info#:#Die hier konfigurierten Workflows können verwendet werden, um Events erneut zu publizieren.
+msg_workflow_created#:#Workflow erfolgreich erstellt.
+msg_workflow_updated#:#Workflow erfolgreich aktualisiert.
+config_button_add_workflow#:#Neuen Workflow hinzufügen
+workflow_table_title#:#Workflows
+tab_workflows#:#Workflows
+workflow#:#Workflow
+event_msg_republish_started#:#Workflow erfolgreich gestartet.
+workflow_msg_confirm_delete_workflow#:#Sind Sie sicher, dass folgender Workflow gelöscht werden soll?
+workflow_msg_workflow_deleted#:#Workflow erfolgreich gelöscht.
+parameters#:#Parameter
+parameters_info#:#Hier angegebene Workflow-Parameter werden mit dem Wert 'true' mitgeschickt (Parameter durch Komma trennen).
+unprotected_link#:#Ungeschützter Link
+msg_link_copied#:#Link kopiert
+tooltip_copy_link#:#Link in die Zwischenablage kopieren

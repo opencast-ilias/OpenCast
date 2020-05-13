@@ -8,6 +8,14 @@
 class xoctIVTGroupParticipantGUI extends xoctGUI
 {
 
+    /**
+     * @var array
+     */
+    protected static $admin_commands = [
+        self::CMD_CREATE,
+        self::CMD_DELETE
+    ];
+
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
@@ -25,6 +33,22 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
 	}
 
+    /**
+     * @param $cmd
+     */
+    protected function performCommand($cmd)
+    {
+        if (in_array($cmd, self::$admin_commands)) {
+            $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
+        } else {
+            $access = ilObjOpenCastAccess::hasPermission('read');
+        }
+        if (!$access) {
+            ilUtil::sendFailure('No access.');
+            self::dic()->ctrl()->redirectByClass('xoctEventGUI');
+        }
+        parent::performCommand($cmd);
+    }
 
 	/**
 	 * @param $data
@@ -51,7 +75,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
-			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
 			$data[] = $stdClass;
 		}
 
@@ -121,11 +145,11 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 
 	protected function delete()
 	{
-		if (!$_POST['id'])
+		if (!$_POST['id'] || !$_POST['group_id'])
 		{
 			$this->outJson(false);
 		}
-		$o = new xoctIVTGroupParticipant($_POST['id']);
+		$o = xoctIVTGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
 		$o->delete();
 		$this->outJson(true);
 	}

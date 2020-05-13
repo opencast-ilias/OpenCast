@@ -4,9 +4,12 @@
  * @type {{init: Function, selected_id: number, data_url: string, load: Function, deleteGroup: Function, selectGroup: Function, deselectAll: Function, create: Function}}
  */
 var xoctGroup = {
+    is_admin: false,
     selected_id: 0,
     data_url: '',
     container: null,
+    groups: [],
+    participants: [],
     lng: [
         delete_group = "Delete Group?",
         no_title = "Please insert title",
@@ -23,10 +26,13 @@ var xoctGroup = {
      *
      * @param data_url
      * @param container
-     * @param before_load
-     * @param after_load
+     * @param is_admin
      */
-    init: function (data_url, container, before_load, after_load) {
+    init: function (data_url, container, is_admin, before_load, after_load) {
+        this.is_admin = is_admin;
+        if (!this.is_admin) {
+            $('.xoct_admin_only').hide();
+        }
         if (typeof before_load != 'undefined') {
             this.before_load = before_load;
         }
@@ -38,7 +44,6 @@ var xoctGroup = {
         $(container).html('<ul id="xoct_groups" class="list-group"></ul>');
         this.container = $('#xoct_groups');
         this.load();
-
 
         $(document).on('click', '.xoct_group_delete', function () {
             xoctGroup.deleteGroup($(this).parent().data('group-id'));
@@ -69,33 +74,48 @@ var xoctGroup = {
         var self = this;
         this.before_load();
         var url = this.data_url;
-        $.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
-            self.clear();
-            for (var i in data) {
-                self.container.append('<a class="list-group-item xoct_group" data-group-id="' + data[i].id + '">'
-                    + data[i].name
-                    + '<button class="btn btn-danger xoct_group_delete pull-right"><span class="glyphicon glyphicon-remove"></span></button>'
-                    + '<Button class="btn pull-right">' + data[i].user_count + '</button>'
-                    + '</li>');
-            }
-            if (!data || data.length == 0) {
-                self.container.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
-            }
-            if (data && data.length == 1) {
-                self.selectGroup(data[0].id);
-            } else {
-                if (select_current) {
-                    self.selectGroup(selected_storage);
-                }
-            }
+        $.ajax({url: url, type: "GET", data: {"cmd": "getParticipants"}}).done(function (data) {
+            self.participants = data;
 
-            xoctGroupParticipant.clear();
-            xoctGroupParticipant.load();
-            self.after_load();
-            fallback();
+            $.ajax({url: url, type: "GET", data: {"cmd": "getAll"}}).done(function (data) {
+                self.groups = data;
+                self.loadGroupGUI(select_current, selected_storage);
 
+                self.after_load();
+                fallback();
+            });
         });
     },
+
+    loadGroupGUI: function (select_current, selected_storage) {
+        var self = this;
+        self.clear();
+        for (let i in self.groups) {
+            self.container.append('<a class="list-group-item xoct_group" data-group-id="' + self.groups[i].id + '">'
+                + self.groups[i].title
+                + '<button class="btn btn-danger xoct_group_delete pull-right xoct_admin_only"><span class="glyphicon glyphicon-remove"></span></button>'
+                + '<Button class="btn pull-right" id="xoct_user_counter_' + self.groups[i].id + '">' + self.groups[i].users.length + '</button>'
+                + '</li>');
+        }
+        if (!self.groups || self.groups.length === 0) {
+            self.container.html('<li class="list-group-item">' + self.lng['none_available'] + '</li>');
+        }
+        if (self.groups && self.groups.length === 1) {
+            self.selectGroup(self.groups[0].id);
+        } else {
+            if (select_current) {
+                self.selectGroup(selected_storage);
+            } else {
+                xoctGroupParticipant.clear();
+                xoctGroupParticipant.load();
+            }
+        }
+
+        if (!this.is_admin) {
+            $('.xoct_admin_only').hide();
+        }
+    },
+
     /**
      *
      * @param id
@@ -107,10 +127,10 @@ var xoctGroup = {
         if (confirm(this.lng['delete_group'])) {
             this.before_load();
             $.ajax({url: url, type: "GET", data: {"cmd": "delete", "id": id}}).done(function (data) {
-                if (data) {
-                    $('[data-group-id="' + id + '"]').remove();
-                    self.load();
-                }
+                self.groups = self.groups.filter(function(value, index, arr) {
+                    return value.id.toString() !== id.toString();
+                });
+                self.loadGroupGUI();
                 self.after_load();
             });
         }
@@ -140,6 +160,74 @@ var xoctGroup = {
         });
         xoctGroupParticipant.clear();
     },
+
+    getGroup: function (id) {
+        var return_group = null;
+        this.groups.forEach(function(group) {
+            if (parseInt(group.id) === parseInt(id)) {
+                return_group = group;
+            }
+        });
+        return return_group;
+    },
+
+    getSelectedGroup: function () {
+        return this.getGroup(this.selected_id);
+    },
+
+    removeParticipant: function(id) {
+        this.getSelectedGroup().users = this.getSelectedGroup().users.filter(function(value, index, arr) {
+            return value.toString() !== id.toString();
+        });
+        $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
+    },
+
+    addParticipant: function (id) {
+        this.getSelectedGroup().users.push(id.toString());
+        $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
+    },
+
+    getSelectedGroupParticipants: function () {
+        var self = this;
+        var group = this.getSelectedGroup();
+        var participants = [];
+        for (let i in group.users) {
+            participants.push(self.getParticipant(group.users[i]));
+        }
+        return participants;
+    },
+
+    getAvailableParticipantsForSelectedGroup: function () {
+        var self = this;
+        if (self.selected_id === 0) {
+            return self.participants;
+        }
+        var group = this.getSelectedGroup();
+        var participants = [];
+        for (let i in self.participants) {
+            if (!group.users.includes(self.participants[i].user_id)) {
+                participants.push(self.participants[i]);
+            }
+        }
+        return participants;
+    },
+
+    isInAnyGroup: function (user_id) {
+        var is_in_group = false;
+        this.groups.forEach(function(group) {
+            if (group.users.indexOf(user_id) !== -1) {
+                is_in_group = true;
+            }
+        });
+        return is_in_group;
+    },
+
+    getParticipant: function(user_id) {
+        return this.participants.find(function(participant) {
+            return participant.user_id === user_id;
+        });
+    },
+
     /**
      * Create a New Group
      * @param title
@@ -156,9 +244,8 @@ var xoctGroup = {
         this.deselectAll();
         this.before_load();
         $.ajax({url: url + "&cmd=create", type: "POST", data: {"title": title}}).done(function (data) {
-            self.load(function () {
-                self.selectGroup(data.id, true);
-            });
+            self.groups.push(data);
+            self.loadGroupGUI();
             self.after_load();
             fallback(data);
         });

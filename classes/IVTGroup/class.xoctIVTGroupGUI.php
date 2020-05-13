@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctIVTGroupGUI
  *
@@ -7,6 +10,15 @@
  * @ilCtrl_IsCalledBy xoctIVTGroupGUI: ilObjOpenCastGUI
  */
 class xoctIVTGroupGUI extends xoctGUI {
+
+
+    /**
+     * @var array
+     */
+    protected static $admin_commands = [
+        self::CMD_CREATE,
+        self::CMD_DELETE
+    ];
 
 	/**
 	 * @param xoctOpenCast $xoctOpenCast
@@ -25,17 +37,32 @@ class xoctIVTGroupGUI extends xoctGUI {
 	}
 
 
-	public function executeCommand() {
-		if (! ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS) ||
-			!(self::dic()->tree()->checkForParentType($_GET['ref_id'], 'crs') || self::dic()->tree()->checkForParentType($_GET['ref_id'], 'grp'))) {
-			self::dic()->ctrl()->redirectByClass('xoctEventGUI');
-		}
-		parent::executeCommand();
-	}
+    /**
+     * @param $cmd
+     */
+    protected function performCommand($cmd)
+    {
+        if (in_array($cmd, self::$admin_commands)) {
+            $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
+        } else {
+            $access = ilObjOpenCastAccess::hasPermission('read');
+        }
+        if (!$access) {
+            ilUtil::sendFailure('No access.');
+            self::dic()->ctrl()->redirectByClass('xoctEventGUI');
+        }
+        parent::performCommand($cmd);
+    }
 
 
-	protected function index() {
+    /**
+     * @throws DICException
+     * @throws ilTemplateException
+     */
+    protected function index()
+    {
 		$temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.groups.html', false, false);
+		$temp->setVariable('IS_ADMIN', (int) ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS));
 		$temp->setVariable('HEADER_GROUPS', self::plugin()->translate('groups_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS', self::plugin()->translate('groups_participants_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->translate('groups_available_participants_header'));
@@ -80,13 +107,31 @@ class xoctIVTGroupGUI extends xoctGUI {
 	public function getAll() {
 		$arr = array();
 		foreach (xoctIVTGroup::getAllForId($this->xoctOpenCast->getObjId()) as $group) {
+		    $users = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->getArray(null, 'user_id');
 			$stdClass = $group->__asStdClass();
-			$stdClass->user_count = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->count();
+			$stdClass->user_count = count($users);
 			$stdClass->name = $stdClass->title;
+			$stdClass->users = $users;
 			$arr[] = $stdClass;
 		}
 		usort($arr, ['xoctGUI', 'compareStdClassByName']);
 		$this->outJson($arr);
+	}
+
+	public function getParticipants() {
+        $data = array();
+        /**
+         * @var $xoctGroupParticipant xoctIVTGroupParticipant
+         */
+        foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant)
+        {
+            $data[] = [
+                'user_id' => $xoctGroupParticipant->getUserId(),
+                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess())
+            ];
+        }
+
+        $this->outJson($data);
 	}
 
 
@@ -95,7 +140,10 @@ class xoctIVTGroupGUI extends xoctGUI {
 		$obj->setSerieId($this->xoctOpenCast->getObjId());
 		$obj->setTitle($_POST['title']);
 		$obj->create();
-		$this->outJson($obj->__asStdClass());
+		$json = $obj->__asStdClass();
+		$json->users = [];
+		$json->user_count = 0;
+		$this->outJson($json);
 	}
 
 

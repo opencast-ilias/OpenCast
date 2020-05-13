@@ -1,22 +1,7 @@
-<div id="{MOD_ID}" class="modal fade">
-	<div class="modal-dialog {CLASS}">
-		<form id="{MOD_ID}_form" role="form" action="{FORM_ACTION}" method="post" novalidate="novalidate">
-			<input name="event_id" type="hidden" id="xoct_report_quality_event_id">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<h4 class="modal-title">{HEADING}</h4>
-				</div>
-				<div class="modal-body">
-					{BODY}
-				</div>
-				<textarea class="form-control xoct_reporting_message" name="message" id="message" rows="7" required="required"></textarea>
-				<!-- BEGIN footer -->
-				<div class="modal-footer">
-					<!-- BEGIN button -->{BUTTON}<!-- END button -->
-				</div>
-				<!-- END footer -->
-			</div>
-		</form>
+<form id="{FORM_ID}" role="form" action="{FORM_ACTION}" method="post" novalidate="novalidate">
+	<input name="event_id" type="hidden" id="xoct_report_quality_event_id">
+	<div class="modal-body">
+		{BODY}
 	</div>
-</div>
+	<textarea class="form-control xoct_reporting_message" name="message" id="message" rows="7" required="required"></textarea>
+</form>

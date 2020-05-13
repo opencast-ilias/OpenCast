@@ -131,12 +131,12 @@ class xoctUser {
 		}
 	}
 
-
-	/**
-	 * @return string
-	 */
-	public function getNamePresentation() {
-		return $this->getLastName() . ', ' . $this->getFirstName() . ' (' . $this->getEmail() . ')';
+    /**
+     * @param bool $show_email
+     * @return string
+     */
+	public function getNamePresentation($show_email = true) {
+		return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail() . ')' : '');
 	}
 
 
