@@ -209,7 +209,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_EDITOR_LINK), xoctConf::F_EDITOR_LINK);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_EDITOR_LINK . '_info'));
-		$te->setRequired(true);
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_CREATE_SCHEDULED_ALLOWED), xoctConf::F_CREATE_SCHEDULED_ALLOWED);

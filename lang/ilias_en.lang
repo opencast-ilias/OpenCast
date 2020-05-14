@@ -52,7 +52,7 @@ config_security#:#Security
 config_security_info#:#Improves the security by using Opencasts "Stream Security". Only activate, if Opencast is configured to use it.
 config_sign_annotation_links#:#Sign Annotation Link
 config_sign_annotation_links_time#:#Validity in seconds
-config_sign_annotation_links_time_info#:#How long the Annotation-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_annotation_links_time_info#:#How long the Annotation-Link should be valid for (0 uses setting from Opencast).
 config_sign_annotation_links_with_ip#:#Sign for client IP
 config_sign_player_links#:#Sign Player Link
 config_sign_player_links_overwrite_default#:#Use event duration for the validity of the signature
@@ -62,11 +62,11 @@ config_sign_player_links_with_ip#:#Sign for client IP
 config_sign_download_links#:#Sign Download Link
 config_sign_download_links_info#:#The download links are not visible to the user, because the download is routed via the ILIAS server.
 config_sign_download_links_time#:#Validity in seconds
-config_sign_download_links_time_info#:#How long the Download-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_download_links_time_info#:#How long the Download Link should be valid for (0 uses setting from Opencast).
 config_sign_download_links_with_ip#:#Sign for client IP
 config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_sign_thumbnail_links_time#:#Validity in seconds
-config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be valid for. (0 uses setting from OpenCast)
+config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be valid for (0 uses setting from Opencast).
 config_sign_thumbnail_links_with_ip#:#Sign for client IP
 config_request_comb_lv#:#Request Combination Level
 config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
