@@ -64,7 +64,7 @@
     </xoct_conf>
     <xoct_conf>
       <name>eula</name>
-      <value><![CDATA[<p>I accept the OpenCast service conditions.</p>]]></value>
+      <value><![CDATA[<p>I accept the Opencast service conditions.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>group_producers</name>
@@ -93,7 +93,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>license_info</name>
-      <value><![CDATA[<p>I accept the OpenCast service conditions.</p>]]></value>
+      <value><![CDATA[<p>I accept the Opencast service conditions.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>no_metadata</name>
