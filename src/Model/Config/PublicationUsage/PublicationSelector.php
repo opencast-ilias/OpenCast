@@ -476,7 +476,7 @@ class PublicationSelector
                     switch ($PublicationUsage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
                             if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $return[] = $attachment;
+                                $return[] = $medium;
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
