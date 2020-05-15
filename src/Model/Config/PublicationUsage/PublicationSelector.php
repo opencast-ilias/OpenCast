@@ -250,7 +250,7 @@ class PublicationSelector
             if (!$url) {
                 $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
                 $base = str_replace('/api', '', $base);
-                $this->cutting_url = $base . '/external-url/events/' . $this->event->getIdentifier() . '/editor';
+                $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier() . '/tools/editor';
             }
 
             $this->cutting_url = $url;

@@ -19,6 +19,9 @@ git clone https://github.com/studer-raimann/OpenCast.git
 ```
 As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
+### Configuration
+After a fresh installation, the plugin configuration will already contain a basic configuration. A few things will have to be adjusted to make the plugin work though.
+
 ### Workaround for internal Paella Player
 If you're using the plugin-internal Paella Player, you will have to implement a small workaround for a bug in the current version of Paella Player. Start in your ILIAS root directory:
 ```bash

@@ -342,7 +342,11 @@ class xoctSeries extends APIObject {
 			return $existing;
 		}
 		$return = array();
-		$data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string )));
+		try {
+            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string )));
+        } catch (Exception $e) {
+		    return [];
+        }
 		foreach ($data as $d) {
 			$obj = new self();
 			try {

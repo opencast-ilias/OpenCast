@@ -210,7 +210,7 @@ if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
     // to keep the existing behavior
     $player_pub = (new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::USAGE_PLAYER);
     if (!is_null($player_pub)) {
-        $player_pub->setMdType(PublicationUsage::MD_TYPE_MEDIA);
+        $player_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_MEDIA);
         $player_pub->setSearchKey(xoctPublicationUsageFormGUI::F_TAG);
         $player_pub->setTag('engage-streaming');
         $player_pub->setMdType(\srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::MD_TYPE_MEDIA);

@@ -18,7 +18,7 @@ config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Password
 config_curl_username#:#API-Username
 config_editor_link#:#Link to Opencast Video Editor
-config_editor_link_info#:#The placeholder &#123event_id} can be used. E.g.: https://myopencast.com/external-url/events/&#123event_id}/editor
+config_editor_link_info#:#Link used for the action 'cut'. The placeholder &#123event_id} can be used. Default: https://[your-opencast-url.com]/admin-ng/index.html#!/events/events/&#123event_id}/tools/editor
 config_eula#:#EULA
 config_events#:#Events
 config_series#:#Series
