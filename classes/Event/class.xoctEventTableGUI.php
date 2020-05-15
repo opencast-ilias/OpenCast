@@ -151,7 +151,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$renderer->insertOwner($this->tpl);
 		}
 
-		if (in_array('unprotected_link', $this->selected_column) && $this->isColumsSelected('unprotected_link')) {
+		if (in_array('unprotected_link', array_keys($this->selected_column)) && $this->isColumsSelected('unprotected_link')) {
 			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK, $event)) {
 				$renderer->insertUnprotectedLink($this->tpl);
 			} else {
