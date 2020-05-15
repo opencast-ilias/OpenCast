@@ -484,9 +484,11 @@ class xoctEventGUI extends xoctGUI {
 		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
-	/**
-	 *
-	 */
+    /**
+     * @throws DICException
+     * @throws ilDateTimeException
+     * @throws xoctException
+     */
 	protected function edit() {
 		/**
 		 * @var xoctEvent $xoctEvent
@@ -654,31 +656,6 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEvent->getXoctEventAdditions()->setIsOnline(false);
 		$xoctEvent->getXoctEventAdditions()->update();
 		$this->cancel();
-	}
-
-
-	/**
-	 *
-	 */
-	protected function saveAndStay() {
-		/**
-		 * @var xoctEvent $xoctEvent
-		 */
-		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
-		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $xoctEvent, $xoctUser)) {
-			ilUtil::sendFailure($this->txt('msg_no_access'), true);
-			$this->cancel();
-		}
-
-		$xoctEventFormGUI = new EventFormGUI($this, xoctEvent::find($_GET[self::IDENTIFIER]), $this->xoctOpenCast);
-		$xoctEventFormGUI->setValuesByPost();
-
-		if ($xoctEventFormGUI->saveObject()) {
-			ilUtil::sendSuccess($this->txt('msg_success'), true);
-			self::dic()->ctrl()->redirect($this, self::CMD_EDIT);
-		}
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 

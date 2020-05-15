@@ -144,11 +144,11 @@ class EventFormGUI extends ilPropertyFormGUI {
 		parent::__construct();
 		$this->event_repository = new EventRepository(self::dic()->dic());
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
+        self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
         $this->object = $object;
         $this->xoctOpenCast = $xoctOpenCast;
         $this->parent_gui = $parent_gui;
-        self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->is_new = ($this->object->getIdentifier() == '');
         $this->schedule = $schedule;
         self::dic()->language()->loadLanguageModule('form');
