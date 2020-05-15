@@ -341,6 +341,7 @@ series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
 series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen können
 series_streaming_only#:#Nur Streaming
+series_streaming_only_info#:#Entfernt 'Download'-Buttons.
 series_title#:#Titel
 series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren

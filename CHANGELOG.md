@@ -13,6 +13,7 @@
 - Improvement: introduced default values for publication configuration (a "standard" Opencast should work without any publications configured now)
 - Improvement: refactored publications 
 - Improvement: removed api publication (unused)
+- Improvement: hide download-/annotation-related settings in series form if corresponding publications don't exist
 - Fixed: config export bug
 - Refactoring and adjustments for page component plugin
 

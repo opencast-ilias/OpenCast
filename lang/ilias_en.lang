@@ -344,6 +344,7 @@ series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
 series_show_upload_token_info#:#Displays a code which students can use to upload own Events
 series_streaming_only#:#Streaming only
+series_streaming_only_info#:#Hides 'Download' Buttons.
 series_title#:#Title
 series_update#:#Update
 series_use_annotations#:#Activate Annotations

@@ -255,3 +255,14 @@ if (!is_null($segments_pub)) {
 <?php
 \srag\Plugins\Opencast\Model\Config\Workflow\Workflow::updateDB();
 ?>
+<#27>
+<?php
+/**
+ * usage 'api' is not used anymore
+ */
+$repository = new \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository();
+$api_pub = $repository->getUsage('api');
+if (!is_null($api_pub)) {
+    $api_pub->delete();
+}
+?>
