@@ -1,10 +1,10 @@
 admin_export#:#Export Settings
 admin_import#:#Import Settings
 common_actions#:#Actions
-config_activate_cache#:#Activate Cache
+config_activate_cache#:#Activate cache
 config_annotation_token_security#:#Enable Annotation token security
 config_annotation_token_security_info#:#Adds the course reference and a security hash to the annotation link
-config_api_base#:#Api-Base-URL
+config_api_base#:#API base URL
 config_api_version#:#API Version
 config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
 config_audio_allowed#:#Audio Files
@@ -14,9 +14,9 @@ config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Openc
 config_oc_studio_allowed#:#Enable Opencast Studio
 config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
 config_curl#:#cURL
-config_curl_debug_level#:#Debug-Level
-config_curl_password#:#API-Password
-config_curl_username#:#API-Username
+config_curl_debug_level#:#Debug level
+config_curl_password#:#API password
+config_curl_username#:#API username
 config_editor_link#:#Link to Opencast Video Editor
 config_editor_link_info#:#Link used for the action 'cut'. The placeholder &#123event_id} can be used. Default: https://[your-opencast-url.com]/admin-ng/index.html#!/events/events/&#123event_id}/tools/editor
 config_eula#:#EULA
@@ -24,7 +24,7 @@ config_events#:#Events
 config_series#:#Series
 config_licenses#:#Licenses
 config_licenses_info#:#Add new lines with URL#Name
-config_license_info#:#License-Info
+config_license_info#:#License info
 config_log_level_0#:#Deactivated
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
@@ -36,15 +36,15 @@ config_role_anonymous#:#Anonymous
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Member
-config_role_ivt_email_prefix#:#Prefix for Owner-role (E-Mail is attached)
-config_role_ivt_external_prefix#:#Prefix for Owner-role (Ext-Account is attached)
-config_role_organisation_prefix#:#Prefix for Organization-Roles (Domain of Mapping is attached)
+config_role_ivt_email_prefix#:#Prefix for owner role (email is attached)
+config_role_ivt_external_prefix#:#Prefix for owner role (external account is attached)
+config_role_organisation_prefix#:#Prefix for organization roles (domain of mapping is attached)
 config_role_producer#:#Producer
-config_role_user_prefix#:#Prefix for User-Roles (Mapping is attached)
+config_role_user_prefix#:#Prefix for user roles (mapping is attached)
 config_update#:#Update
 config_upload_token#:#Activate Upload-Token
-config_use_modals#:#Open Player in Modal
-config_user_mapping#:#User-Mapping
+config_use_modals#:#Open player in modal
+config_user_mapping#:#User mapping
 config_workflow#:#Processing Workflow ID
 config_workflow_unpublish#:#Unpublish Workflow ID
 config_advanced#:#Advanced
@@ -68,8 +68,8 @@ config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_sign_thumbnail_links_time#:#Validity in seconds
 config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be valid for (0 uses setting from Opencast).
 config_sign_thumbnail_links_with_ip#:#Sign for client IP
-config_request_comb_lv#:#Request Combination Level
-config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality, yet it affects the performance.
+config_request_comb_lv#:#Request combination level
+config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality but may affect the performance.
 config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
@@ -86,7 +86,7 @@ config_activate_cache_info#:#Improves the loading time for event lists by storin
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in Opencast after uploading an event.
 config_workflow_unpublish_info#:#ID of the workflow which will be executed in Opencast before deleting an event. Requires API version 1.1.0.
-config_user_mapping_info#:#Userfield in ILIAS which shall be used to identify the user in Opencast.
+config_user_mapping_info#:#Userfield in ILIAS which will be used to identify the user in Opencast.
 config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
 config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
 config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}
@@ -94,7 +94,7 @@ config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User mapping in uppercase
 config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
-config_internal_player#:#Internal Video-Player
+config_internal_player#:#Internal video player
 config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to Opencast.
 config_streaming#:#Streaming
 config_streaming_url#:#Wowza URL
@@ -107,7 +107,7 @@ config_report_quality_text#:#Info Text
 config_report_quality_text_info#:#Text which will be display as an info in the reporting form.
 config_report_quality_access#:#Access
 config_report_quality_access_1#:#All users
-config_report_quality_access_2#:#Only vide owner and users with the permission "Edit Videos".
+config_report_quality_access_2#:#Only video owner and users with the permission "Edit Videos".
 config_report_date#:#Enable "Report Date Modification"
 config_report_date_info#:#Enables the possibility to report wrong dates of events inside Opencast objects.
 config_report_date_email#:#Email
@@ -127,7 +127,7 @@ config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
 config_permission_templates#:#Permission Templates
-config_upload_chunk_size#:#Upload Chunk Size (MB)
+config_upload_chunk_size#:#Upload chunk size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
 config_btn_load_parameters#:#Load Parameters via API
 config_btn_edit_parameters#:#Add/Edit Parameters
