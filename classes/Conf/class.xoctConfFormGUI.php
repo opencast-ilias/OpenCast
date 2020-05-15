@@ -356,6 +356,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRows(5);
 		$this->addItem($te);
 
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
+		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
+		$this->addItem($te);
+
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
 		$te->setRequired(true);
 		$te->setUseRte(true);
@@ -377,10 +381,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$te->setRows(5);
-		$this->addItem($te);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
 		$this->addItem($te);
 
 		// DATE REPORT
