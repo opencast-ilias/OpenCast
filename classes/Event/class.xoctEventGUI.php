@@ -245,7 +245,7 @@ class xoctEventGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function initViewSwitcherHTML($active) {
-		if (xoct::isIlias54() && $this->xoctOpenCast->isViewChangeable()) {
+		if ($this->xoctOpenCast->isViewChangeable()) {
 			$f = self::dic()->ui()->factory();
 			$renderer = self::dic()->ui()->renderer();
 

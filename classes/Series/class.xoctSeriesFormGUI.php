@@ -309,10 +309,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_PERMISSION_TEMPLATE      => $this->series->getPermissionTemplateId(),
 			self::F_PUBLISH_ON_VIDEO_PORTAL  => $this->series->isPublishedOnVideoPortal(),
 			self::F_DEFAULT_VIEW  			 => $this->cast->getDefaultView(),
+            self::F_VIEW_CHANGEABLE          => $this->cast->isViewChangeable()
 		];
-		if (xoct::isIlias54()) {
-			$array[self::F_VIEW_CHANGEABLE] = $this->cast->isViewChangeable();
-		}
         if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
             $array[self::F_CHAT_ACTIVE] = $this->cast->isChatActive();
         }
@@ -351,10 +349,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setPermissionAllowSetOwn($this->getInput(self::F_PERMISSION_ALLOW_SET_OWN));
 		$this->cast->setOnline($this->getInput(self::F_OBJ_ONLINE));
 		$this->cast->setAgreementAccepted(true);
-		if (xoct::isIlias54()) {
-			$this->cast->setDefaultView($this->getInput(self::F_DEFAULT_VIEW));
-			$this->cast->setViewChangeable($this->getInput(self::F_VIEW_CHANGEABLE));
-		}
+        $this->cast->setDefaultView($this->getInput(self::F_DEFAULT_VIEW));
+        $this->cast->setViewChangeable($this->getInput(self::F_VIEW_CHANGEABLE));
         if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
             $this->cast->setChatActive($this->getInput(self::F_CHAT_ACTIVE));
         }

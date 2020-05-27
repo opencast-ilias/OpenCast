@@ -37,9 +37,6 @@ class xoctUserSettings {
 	 * @return int
 	 */
 	public static function getViewTypeForUser($user_id, $ref_id) {
-		if (!xoct::isIlias54()) {
-			return self::VIEW_TYPE_LIST;
-		}
 		/** @var xoctUserSetting $xoctUserSetting */
 		$xoctUserSetting = xoctUserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_VIEW_TYPE])->first();
 		/** @var xoctOpenCast $xoctOpenCast */

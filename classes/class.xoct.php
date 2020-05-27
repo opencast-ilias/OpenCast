@@ -58,34 +58,6 @@ class xoct {
 	/**
 	 * @return bool
 	 */
-	public static function isIlias50() {
-		return self::getILIASVersion() >= self::ILIAS_50;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias51() {
-		return self::getILIASVersion() >= self::ILIAS_51;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias52() {
-		return self::getILIASVersion() >= self::ILIAS_52;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias53() {
-		return self::getILIASVersion() >= self::ILIAS_53;
-	}
-
-	/**
-	 * @return bool
-	 */
 	public static function isIlias54() {
 		return self::getILIASVersion() >= self::ILIAS_54;
 	}
