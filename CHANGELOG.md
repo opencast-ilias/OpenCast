@@ -1,5 +1,9 @@
 # Change Log
 
+## [unreleased]
+- Change: ILIAS 6 compatability
+- Change: dropped ILIAS 5.3 compatability
+
 ## [3.0.0]
 - Feature: allow multiple downloads
 - Feature: new "Download Fallback" publication
