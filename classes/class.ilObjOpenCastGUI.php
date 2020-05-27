@@ -72,7 +72,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			xoctConf::setApiSettings();
 			$next_class = self::dic()->ctrl()->getNextClass();
 			$cmd = self::dic()->ctrl()->getCmd();
-			self::dic()->mainTemplate()->getStandardTemplate();
+			if (xoct::isIlias6()) {
+			    self::dic()->ui()->mainTemplate()->loadStandardTemplate();
+            } else {
+                self::dic()->mainTemplate()->getStandardTemplate();
+            }
 
 			switch ($next_class) {
                 case 'xoctivtgroupparticipantgui':
@@ -80,48 +84,48 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctIVTGroupParticipantGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'xoctinvitationgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'xoctchangeownergui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'xoctseriesgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'xocteventgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctEventGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'xoctivtgroupgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctIVTGroupGUI($xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
-                    self::dic()->mainTemplate()->show();
+                    $this->showMainTemplate();
                     break;
                 case 'ilpermissiongui':
-					$this->initHeader(false);
-					parent::executeCommand();
-					break;
-				default:
+                    $this->initHeader(false);
+                    parent::executeCommand();
+                    break;
+                default:
 					// workaround for object deletion; 'parent::executeCommand()' shows the template and leads to "Headers already sent" error
 					if ($next_class == "" && $cmd == 'deleteObject') {
 						$this->deleteObject();
@@ -133,10 +137,22 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
             if (!$this->creation_mode) {
-                self::dic()->mainTemplate()->show();
+                $this->showMainTemplate();
             }
 		}
 	}
+
+    /**
+     *
+     */
+	protected function showMainTemplate()
+    {
+        if (xoct::isIlias6()) {
+            self::dic()->mainTemplate()->printToStdout();
+        } else {
+            self::dic()->mainTemplate()->show();
+        }
+    }
 
 
 	protected function showContent() {
