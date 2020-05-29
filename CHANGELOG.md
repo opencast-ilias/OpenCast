@@ -3,6 +3,7 @@
 ## [unreleased]
 - Change: ILIAS 6 compatability
 - Change: dropped ILIAS 5.3 compatability
+- Fix: Fixed small caching bugs
 
 ## [3.0.0]
 - Feature: allow multiple downloads
