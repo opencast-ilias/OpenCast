@@ -57,7 +57,11 @@ class xoctEvent extends APIObject {
 		xoctEvent::STATE_LIVE_RUNNING       => 'info',
 		xoctEvent::STATE_LIVE_OFFLINE       => 'info',
 	);
-	/**
+    /**
+     * @var PublicationSelector
+     */
+    protected $publications;
+    /**
 	 * @var xoctEventAdditions
 	 */
 	protected $xoctEventAdditions = null;
@@ -1416,7 +1420,10 @@ class xoctEvent extends APIObject {
      */
     public function publications() : PublicationSelector
     {
-        return PublicationSelector::getInstance($this);
+        if (!$this->publications) {
+            $this->publications = new PublicationSelector($this);
+        }
+        return $this->publications;
     }
 
 

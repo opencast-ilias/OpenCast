@@ -100,25 +100,10 @@ class PublicationSelector
      *
      * @param xoctEvent $event
      */
-    protected function __construct(xoctEvent $event)
+    public function __construct(xoctEvent $event)
     {
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
-    }
-
-
-    /**
-     * @param xoctEvent $event
-     *
-     * @return static
-     */
-    public static function getInstance(xoctEvent $event) : self
-    {
-        if (!isset(self::$instances[$event->getIdentifier()])) {
-            self::$instances[$event->getIdentifier()] = new self($event);
-        }
-
-        return self::$instances[$event->getIdentifier()];
     }
 
 

@@ -108,19 +108,19 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	/**
-	 * @param bool $get_exceoptions
+	 * @param bool $get_exceptions
 	 * @return xoctSeries
 	 * @throws Exception
 	 */
-	protected function getSeries($get_exceoptions = false) {
+	protected function getSeries($get_exceptions = false) {
 		$xoctSeries = new xoctSeries();
 		try {
-			$xoctOpenCast = $this->getOpenCast($get_exceoptions);
+			$xoctOpenCast = $this->getOpenCast($get_exceptions);
 			if ($xoctOpenCast instanceof xoctOpenCast) {
 				$xoctSeries = $xoctOpenCast->getSeries();
 			}
 		} catch (xoctException $e) {
-			if ($get_exceoptions) {
+			if ($get_exceptions) {
 				throw $e;
 			}
 		}
