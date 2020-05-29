@@ -14,16 +14,15 @@ class xoct {
 	const ILIAS_52 = 52;
 	const ILIAS_53 = 53;
 	const ILIAS_54 = 54;
-	const ILIAS_60 = 60;
-	const MIN_ILIAS_VERSION = self::ILIAS_53;
+	const ILIAS_6 = 6;
+	const MIN_ILIAS_VERSION = self::ILIAS_54;
 
 	/**
 	 * @return int
 	 */
 	public static function getILIASVersion() {
-		if (strpos(ILIAS_VERSION_NUMERIC, 'alpha') || strpos(ILIAS_VERSION_NUMERIC, 'beta')
-			|| ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.4.999')) {
-			return self::ILIAS_60;
+		if (self::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.4.999')) {
+			return self::ILIAS_6;
 		}
 		if (ilComponent::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.3.999')) {
 			return self::ILIAS_54;
@@ -44,39 +43,31 @@ class xoct {
 		return 0;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public static function isIlias50() {
-		return self::getILIASVersion() >= self::ILIAS_50;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias51() {
-		return self::getILIASVersion() >= self::ILIAS_51;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias52() {
-		return self::getILIASVersion() >= self::ILIAS_52;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isIlias53() {
-		return self::getILIASVersion() >= self::ILIAS_53;
-	}
+    /**
+     * ilComponent's method doesn't work with ILIAS >6 yet because versions need to be of the format x.y.z
+     *
+     * @param string $v1
+     * @param string $v2
+     * @return bool
+     */
+	protected static function isVersionGreaterString(string $v1, string $v2) : bool
+    {
+        return ilComponent::isVersionGreater(explode('.', $v1), explode('.', $v2));
+    }
 
 	/**
 	 * @return bool
 	 */
 	public static function isIlias54() {
 		return self::getILIASVersion() >= self::ILIAS_54;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isIlias6() : bool
+    {
+		return self::getILIASVersion() >= self::ILIAS_6;
 	}
 
 	public static function isApiVersionGreaterThan($api_version) {

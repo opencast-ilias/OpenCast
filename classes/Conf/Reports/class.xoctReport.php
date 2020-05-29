@@ -41,7 +41,7 @@ class xoctReport extends ActiveRecord {
                 $this->getSubject(),
                 $this->getMessage(),
                 array(),
-                $type
+                xoct::isIlias6() ? false : $type
             );
         }
     }
