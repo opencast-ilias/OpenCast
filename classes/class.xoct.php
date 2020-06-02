@@ -14,7 +14,7 @@ class xoct {
 	const ILIAS_52 = 52;
 	const ILIAS_53 = 53;
 	const ILIAS_54 = 54;
-	const ILIAS_6 = 6;
+	const ILIAS_6 = 60;
 	const MIN_ILIAS_VERSION = self::ILIAS_54;
 
 	/**
