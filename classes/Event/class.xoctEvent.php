@@ -253,8 +253,9 @@ class xoctEvent extends APIObject {
 
 				return $acls;
 			case 'publications':
-				$this->publications()->loadFromArray($value);
-				return null;
+			    $publications = new PublicationSelector($this);
+			    $publications->loadFromArray($value);
+				return $publications;
 			case 'presenter':
 				return is_array($value) ? implode(self::PRESENTER_SEP, $value) : $value;
 			default:
