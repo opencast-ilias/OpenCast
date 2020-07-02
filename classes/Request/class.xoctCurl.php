@@ -79,6 +79,7 @@ class xoctCurl {
 
 		curl_setopt($ch, CURLOPT_URL, $this->getUrl());
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->getRequestType());
+	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 
 		$this->prepare($ch);
 
