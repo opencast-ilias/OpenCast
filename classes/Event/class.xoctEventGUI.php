@@ -580,6 +580,7 @@ class xoctEventGUI extends xoctGUI {
 
         // get filesize
         $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HEADER, TRUE);
         curl_setopt($ch, CURLOPT_NOBODY, TRUE);
