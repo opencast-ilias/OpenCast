@@ -1,5 +1,8 @@
 # Change Log
 
+## [x]
+- Follow curl redirects
+
 ## [3.1.0]
 - Change: ILIAS 6 compatability
 - Change: dropped ILIAS 5.3 compatability
