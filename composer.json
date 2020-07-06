@@ -30,25 +30,7 @@
   "autoload": {
     "classmap": [
       "./classes/",
-      "./src/",
-      "../../../../../../../Services/Table",
-      "../../../../../../../Services/Form",
-      "../../../../../../../Services/Repository",
-      "../../../../../../../Services/Component",
-      "../../../../../../../Services/ActiveRecord",
-      "../../../../../../../Services/UIComponent",
-      "../../../../../../../Services/Utilities",
-      "../../../../../../../Services/GlobalCache",
-      "../../../../../../../Services/Tracking",
-      "../../../../../../../Services/Calendar/classes/class.ilTimeZone.php",
-      "../../../../../../../Services/WebAccessChecker",
-      "../../../../../../../Services/InfoScreen",
-      "../../../../../../../Services/Link",
-      "../../../../../../../Services/Logging",
-      "../../../../../../../Services/Mail",
-      "../../../../../../../Services/Accordion",
-      "../../../../../../../Modules/Course",
-      "../../../../../../../Modules/Group"
+      "./src/"
     ]
   },
   "config": {
