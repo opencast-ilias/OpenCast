@@ -9,6 +9,7 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVE
 $host = $_SERVER['SERVER_NAME'];
 
 $ch = curl_init($protocol . $host . '/srchat/check_connection');
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_NOBODY, true);
 curl_setopt($ch, CURLOPT_HEADER, true);
 curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
