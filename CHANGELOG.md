@@ -1,7 +1,9 @@
 # Change Log
 
-## [x]
+## [3.1.1]
 - Follow curl redirects
+- Fix core autoload conflict
+
 
 ## [3.1.0]
 - Change: ILIAS 6 compatability
