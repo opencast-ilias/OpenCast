@@ -1,5 +1,8 @@
 # Change Log
 
+## [x]
+- Fix Docker-ILIAS log
+
 ## [3.1.1]
 - Follow curl redirects
 - Fix core autoload conflict
