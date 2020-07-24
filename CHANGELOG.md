@@ -1,6 +1,7 @@
 # Change Log
 
 ## [x]
+- Add line break after each iframe
 - Remove possible iframe border
 - Fix Docker-ILIAS log
 
