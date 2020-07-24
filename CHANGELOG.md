@@ -1,6 +1,7 @@
 # Change Log
 
 ## [x]
+- Remove possible iframe border
 - Fix Docker-ILIAS log
 
 ## [3.1.1]

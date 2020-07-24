@@ -158,7 +158,7 @@ class xoctEventRenderer {
         $modal = ilModalGUI::getInstance();
         $modal->setId('modal_' . $this->xoctEvent->getIdentifier());
         $modal->setHeading($this->xoctEvent->getTitle());
-        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->publications()->getPlayerLink() . '"></iframe>');
+        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->publications()->getPlayerLink() . '" style="border:none;"></iframe>');
         return $modal;
     }
 
