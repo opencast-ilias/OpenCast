@@ -87,4 +87,13 @@ class WorkflowRepository
     {
         return Workflow::where(['workflow_id' => $workflow_id])->first();
     }
+
+    /**
+     * @param int $id
+     * @return Workflow|null
+     */
+    public function getById(int $id)
+    {
+        return Workflow::where(['id' => $id])->first();
+    }
 }

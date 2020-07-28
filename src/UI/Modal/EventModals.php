@@ -79,7 +79,7 @@ class EventModals
             $form->setId(uniqid('form'));
 
             $select = new ilSelectInputGUI($this->plugin->txt('workflow'), 'workflow_id');
-            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('workflow_id', 'title'));
+            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('id', 'title'));
             $form->addItem($select);
 
             $hidden = new ilHiddenInputGUI('republish_event_id');

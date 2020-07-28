@@ -697,7 +697,7 @@ class xoctEventGUI extends xoctGUI {
         ) {
             $workflow_id = strip_tags($post_body['workflow_id']);
             $event_id = strip_tags($post_body['republish_event_id']);
-            $workflow = (new WorkflowRepository())->getByWorkflowId($workflow_id);
+            $workflow = (new WorkflowRepository())->getById($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, new xoctEvent($event_id))
                 || is_null($workflow)) {
                 ilUtil::sendFailure($this->txt('msg_no_access'), true);
@@ -705,7 +705,7 @@ class xoctEventGUI extends xoctGUI {
             }
             $request = [
                 'event_identifier' => $event_id,
-                'workflow_definition_identifier' => $workflow_id,
+                'workflow_definition_identifier' => $workflow->getWorkflowId(),
             ];
             $params = [];
             foreach (explode(',', $workflow->getParameters()) as $param) {
