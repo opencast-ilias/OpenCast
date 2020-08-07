@@ -509,16 +509,24 @@ class xoctEventGUI extends xoctGUI {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function opencaststudio(){
 		$xoctSeries =  $this->xoctOpenCast->getSeriesIdentifier();
 		$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 		$base = str_replace('/api', '', $base);
-		$studio_link = $base . '/studio' . '?upload.seriesId=' . $xoctSeries;
+
+		$schema = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+		$return_link =  $schema . '://' . $_SERVER['HTTP_HOST'] . '/'
+			. self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
+
+		$studio_link = $base . '/studio'
+			. '?upload.seriesId=' . $xoctSeries
+			. '&return.label=ILIAS'
+			. '&return.target=' . urlencode($return_link);
 		header('Location:' . $studio_link);
 	}
-		
+
 
 	/**
 	 *
