@@ -21,6 +21,8 @@ config_editor_link#:#Link zum Opencast-Video-Editor
 config_editor_link_info#:#Link, welcher für die Aktion "Schneiden" verwendet wird. Als Platzhalter kann &#123event_id} verwendet werden. Default: https://[ihre-opencast-url.de]/admin-ng/index.html#!/events/events/&#123event_id}/tools/editor
 config_eula#:#Nutzungsvereinbarung
 config_events#:#Aufzeichnungen
+config_external_download_source#:#Externe Downloadquelle
+config_external_download_source_info#:#Aktivieren Sie diese Option im Falle einer externen Webseite, um die Downloads anzuzeigen
 config_series#:#Serien
 config_licenses#:#Lizenzen
 config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
