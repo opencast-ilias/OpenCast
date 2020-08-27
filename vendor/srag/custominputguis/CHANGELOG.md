@@ -1,5 +1,84 @@
 # Changelog
 
+## [0.38.0]
+- `AjaxAutoCompleteCtrl` skip ids
+
+## [0.37.0]
+- Move `PieChart` and `LearningProgressPieUI` to seperate libraries
+
+## [0.36.4]
+- Fix
+
+## [0.36.3]
+- `AbstractFormBuilder`: Fix radios in section
+
+## [0.36.2]
+- Fix language select meta bar which current ctrl gui has namespaces (public page)
+
+## [0.36.1]
+- Fix disabled `ilCheckboxInputGUI` in `InputGUIWrapperUIInputComponent` on form error
+
+## [0.36.0]
+- Remove ProgressMeter (For ILIAS 5.3, use from Core for >= ILIAS 5.4)
+- Refactored to PHP 7.0
+
+## [0.35.1]
+- Fix
+
+## [0.35.0]
+- `CustomInputGUIsLoaderDetector`
+
+## [0.34.18]
+- Fix ILIAS 6
+
+## [0.34.17]
+- Fix ILIAS 6
+
+## [0.34.16]
+- Fix ILIAS 6
+
+## [0.34.15]
+- Fix ILIAS 6
+
+## [0.34.14]
+- Fix ILIAS 6
+
+## [0.34.13]
+- Fix ILIAS 6
+
+## [0.34.12]
+- Fix ILIAS 6
+
+## [0.34.11]
+- Fix ILIAS 6
+
+## [0.34.10]
+- Fix
+
+## [0.34.9]
+- Fix ILIAS 6
+
+## [0.34.8]
+- Fix ILIAS 6
+
+## [0.34.7]
+- Fix
+
+## [0.34.6]
+- Fix
+
+## [0.34.5]
+- Fix
+
+## [0.34.4]
+- Fix
+
+## [0.34.3]
+- Fix
+
+## [0.34.2]
+- Fix
+
 ## [0.34.1]
 - Fix
 

@@ -9,7 +9,9 @@ use ilAsqFactory;
 use ilAuthSession;
 use ilBenchmark;
 use ilBookingManagerService;
+use ilBookingReservationDBRepositoryFactory;
 use ilBrowser;
+use ilCertificateActiveValidator;
 use ilComponentLogger;
 use ilConditionService;
 use ilCtrl;
@@ -17,6 +19,7 @@ use ilCtrlStructureReader;
 use ilDBInterface;
 use ilErrorHandling;
 use ilExerciseFactory;
+use ilFavouritesDBRepository;
 use ilGlobalTemplateInterface;
 use ilHelpGUI;
 use ILIAS;
@@ -30,6 +33,10 @@ use ILIAS\Filesystem\Filesystems;
 use ILIAS\FileUpload\FileUpload;
 use ILIAS\GlobalScreen\Services as GlobalScreenService;
 use ILIAS\Refinery\Factory as RefineryFactory;
+use ILIAS\UI\Implementation\Render\JavaScriptBinding;
+use ILIAS\UI\Implementation\Render\Loader;
+use ILIAS\UI\Implementation\Render\ResourceRegistry;
+use ILIAS\UI\Implementation\Render\TemplateFactory;
 use ilIniFile;
 use ilLanguage;
 use ilLearningHistoryService;
@@ -38,11 +45,13 @@ use ilLoggerFactory;
 use ilMailMimeSenderFactory;
 use ilMailMimeTransportFactory;
 use ilMainMenuGUI;
+use ilMMItemRepository;
 use ilNavigationHistory;
 use ilNewsService;
 use ilObjectDataCache;
 use ilObjectDefinition;
 use ilObjectService;
+use ilObjUseBookDBRepository;
 use ilObjUser;
 use ilPluginAdmin;
 use ilRbacAdmin;
@@ -125,9 +134,36 @@ final class ILIAS60DIC extends AbstractDIC
     /**
      * @inheritDoc
      */
+    public function bookingObjUseBook() : ilObjUseBookDBRepository
+    {
+        return new ilObjUseBookDBRepository($this->database());
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function bookingReservation() : ilBookingReservationDBRepositoryFactory
+    {
+        return new ilBookingReservationDBRepositoryFactory();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function browser() : ilBrowser
     {
         return $this->dic["ilBrowser"];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function certificateActiveValidator() : ilCertificateActiveValidator
+    {
+        return new ilCertificateActiveValidator();
     }
 
 
@@ -206,6 +242,15 @@ final class ILIAS60DIC extends AbstractDIC
     /**
      * @inheritDoc
      */
+    public function favourites() : ilFavouritesDBRepository
+    {
+        return new ilFavouritesDBRepository();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function filesystem() : Filesystems
     {
         return $this->dic->filesystem();
@@ -263,6 +308,15 @@ final class ILIAS60DIC extends AbstractDIC
     public function iliasIni() : ilIniFile
     {
         return $this->dic->iliasIni();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function javaScriptBinding() : JavaScriptBinding
+    {
+        return $this->dic["ui.javascript_binding"];
     }
 
 
@@ -344,6 +398,15 @@ final class ILIAS60DIC extends AbstractDIC
     public function mainMenu() : ilMainMenuGUI
     {
         return $this->dic["ilMainMenu"];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function mainMenuItem() : ilMMItemRepository
+    {
+        return new ilMMItemRepository();
     }
 
 
@@ -466,6 +529,33 @@ final class ILIAS60DIC extends AbstractDIC
     /**
      * @inheritDoc
      */
+    public function rendererLoader() : Loader
+    {
+        return $this->dic["ui.component_renderer_loader"];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function repositoryTree() : ilTree
+    {
+        return $this->dic->repositoryTree();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function resourceRegistry() : ResourceRegistry
+    {
+        return $this->dic["ui.resource_registry"];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function session() : Session
     {
         return $this->dic["sess"];
@@ -511,6 +601,15 @@ final class ILIAS60DIC extends AbstractDIC
     /**
      * @inheritDoc
      */
+    public function templateFactory() : TemplateFactory
+    {
+        return $this->dic["ui.template_factory"];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function toolbar() : ilToolbarGUI
     {
         return $this->dic->toolbar();
@@ -519,10 +618,12 @@ final class ILIAS60DIC extends AbstractDIC
 
     /**
      * @inheritDoc
+     *
+     * @deprecated Please use `self::dic()->repositoryTree()`
      */
     public function tree() : ilTree
     {
-        return $this->dic->repositoryTree();
+        return $this->repositoryTree();
     }
 
 

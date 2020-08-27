@@ -19,11 +19,10 @@ class NumberInputGUI extends ilNumberInputGUI implements ilTableFilterItem, ilTo
 
     use DICTrait;
 
-
     /**
      * @inheritDoc
      */
-    public function getTableFilterHTML()/*: string*/
+    public function getTableFilterHTML() : string
     {
         return $this->render();
     }
@@ -32,7 +31,7 @@ class NumberInputGUI extends ilNumberInputGUI implements ilTableFilterItem, ilTo
     /**
      * @inheritDoc
      */
-    public function getToolbarHTML()/*: string*/
+    public function getToolbarHTML() : string
     {
         return $this->render();
     }
