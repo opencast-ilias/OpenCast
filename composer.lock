@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "626fc4fd51302778accbd9773f5bed83",
+    "content-hash": "5e03a9e754e2057483263621b79a5768",
     "packages": [
         {
             "name": "srag/custominputguis",
-            "version": "v0.34.1",
+            "version": "v0.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/CustomInputGUIs.git",
-                "reference": "bb985efda3c58857328287cf6da2587fb88896f3"
+                "reference": "76dc3588b2a41f14c62c12a5af57f077c75f7555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/bb985efda3c58857328287cf6da2587fb88896f3",
-                "reference": "bb985efda3c58857328287cf6da2587fb88896f3",
+                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/76dc3588b2a41f14c62c12a5af57f077c75f7555",
+                "reference": "76dc3588b2a41f14c62c12a5af57f077c75f7555",
                 "shasum": ""
             },
             "require": {
@@ -27,7 +27,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "srag\\CustomInputGUIs\\OpenCast\\": "src/"
+                    "srag\\CustomInputGUIs\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -51,20 +51,20 @@
                 "input",
                 "table"
             ],
-            "time": "2020-04-07T08:03:41+00:00"
+            "time": "2020-08-07T07:15:06+00:00"
         },
         {
             "name": "srag/dic",
-            "version": "v0.20.4",
+            "version": "v0.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/DIC.git",
-                "reference": "b5f107eddf513280f7c9ca7e05e7a42eb8d9fc95"
+                "reference": "022cb0b92b003096380055a450597a5dbdbbe831"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/b5f107eddf513280f7c9ca7e05e7a42eb8d9fc95",
-                "reference": "b5f107eddf513280f7c9ca7e05e7a42eb8d9fc95",
+                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/022cb0b92b003096380055a450597a5dbdbbe831",
+                "reference": "022cb0b92b003096380055a450597a5dbdbbe831",
                 "shasum": ""
             },
             "require": {
@@ -73,7 +73,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "srag\\DIC\\OpenCast\\": "src/"
+                    "srag\\DIC\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -96,20 +96,20 @@
                 "globals",
                 "trait"
             ],
-            "time": "2020-03-26T12:38:05+00:00"
+            "time": "2020-06-09T05:30:37+00:00"
         },
         {
             "name": "srag/librariesnamespacechanger",
-            "version": "v0.8.6",
+            "version": "v0.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/studer-raimann/LibrariesNamespaceChanger.git",
-                "reference": "3cded4dd32c9ee09eeb782d84266fcf8ad01b4b1"
+                "reference": "8356263f5cb8d73ec05afa88712794fb0781711d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/studer-raimann/LibrariesNamespaceChanger/zipball/3cded4dd32c9ee09eeb782d84266fcf8ad01b4b1",
-                "reference": "3cded4dd32c9ee09eeb782d84266fcf8ad01b4b1",
+                "url": "https://api.github.com/repos/studer-raimann/LibrariesNamespaceChanger/zipball/8356263f5cb8d73ec05afa88712794fb0781711d",
+                "reference": "8356263f5cb8d73ec05afa88712794fb0781711d",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
                 "ILIAS",
                 "libraries"
             ],
-            "time": "2020-03-19T13:25:19+00:00"
+            "time": "2020-08-05T12:50:30+00:00"
         }
     ],
     "packages-dev": [],
@@ -149,7 +149,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.5.9 || ^7.0"
+        "php": ">=7.0"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

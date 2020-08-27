@@ -23,7 +23,6 @@ final class Output implements OutputInterface
 
     use DICTrait;
 
-
     /**
      * Output constructor
      */
@@ -99,7 +98,7 @@ final class Output implements OutputInterface
             exit;
         } else {
             if ($main_template) {
-                if (self::version()->is60()) {
+                if (self::version()->is6()) {
                     self::dic()->ui()->mainTemplate()->loadStandardTemplate();
                 } else {
                     self::dic()->ui()->mainTemplate()->getStandardTemplate();
@@ -108,10 +107,12 @@ final class Output implements OutputInterface
 
             self::dic()->ui()->mainTemplate()->setLocator();
 
-            self::dic()->ui()->mainTemplate()->setContent($html);
+            if (!empty($html)) {
+                self::dic()->ui()->mainTemplate()->setContent($html);
+            }
 
             if ($show) {
-                if (self::version()->is60()) {
+                if (self::version()->is6()) {
                     self::dic()->ui()->mainTemplate()->printToStdout();
                 } else {
                     self::dic()->ui()->mainTemplate()->show();

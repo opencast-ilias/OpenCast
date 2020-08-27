@@ -2,6 +2,8 @@
 
 namespace srag\LibrariesNamespaceChanger;
 
+use Closure;
+use Composer\Config;
 use Composer\Script\Event;
 
 /**
@@ -17,9 +19,11 @@ final class LibrariesNamespaceChanger
 {
 
     /**
-     * @var self|null
+     * @var string
+     *
+     * @internal
      */
-    private static $instance = null;
+    const PLUGIN_NAME_REG_EXP = "/\/([A-Za-z0-9_]+)\/vendor\//";
     /**
      * @var array
      */
@@ -31,39 +35,13 @@ final class LibrariesNamespaceChanger
             "xml"
         ];
     /**
+     * @var self|null
+     */
+    private static $instance = null;
+    /**
      * @var string
-     *
-     * @internal
      */
-    const PLUGIN_NAME_REG_EXP = "/\/([A-Za-z0-9_]+)\/vendor\//";
-
-
-    /**
-     * @param Event $event
-     *
-     * @return self
-     */
-    private static function getInstance(Event $event) : self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self($event);
-        }
-
-        return self::$instance;
-    }
-
-
-    /**
-     * @param Event $event
-     *
-     * @internal
-     */
-    public static function rewriteLibrariesNamespaces(Event $event)/*: void*/
-    {
-        self::getInstance($event)->doRewriteLibrariesNamespaces();
-    }
-
-
+    private static $plugin_root = "";
     /**
      * @var Event
      */
@@ -82,6 +60,36 @@ final class LibrariesNamespaceChanger
 
 
     /**
+     * @param Event $event
+     *
+     * @internal
+     */
+    public static function rewriteLibrariesNamespaces(Event $event)/*: void*/
+    {
+        self::$plugin_root = rtrim(Closure::bind(function () : string {
+            return $this->baseDir;
+        }, $event->getComposer()->getConfig(), Config::class)(), "/");
+
+        self::getInstance($event)->doRewriteLibrariesNamespaces();
+    }
+
+
+    /**
+     * @param Event $event
+     *
+     * @return self
+     */
+    private static function getInstance(Event $event) : self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($event);
+        }
+
+        return self::$instance;
+    }
+
+
+    /**
      *
      */
     private function doRewriteLibrariesNamespaces()/*: void*/
@@ -94,11 +102,11 @@ final class LibrariesNamespaceChanger
 
         $libraries = [];
         foreach (
-            array_filter(scandir(__DIR__ . "/../../"), function (string $folder) : bool {
+            array_filter(scandir(self::$plugin_root . "/vendor/srag"), function (string $folder) : bool {
                 return (!in_array($folder, [".", "..", "librariesnamespacechanger"]));
             }) as $folder
         ) {
-            $folder = __DIR__ . "/../../" . $folder;
+            $folder = self::$plugin_root . "/vendor/srag/" . $folder;
 
             $composer_json = json_decode(file_get_contents($folder . "/composer.json"), true);
 
@@ -127,7 +135,7 @@ final class LibrariesNamespaceChanger
         foreach (array_keys($libraries) as $folder) {
             $this->getFiles($folder, $files);
         }
-        $this->getFiles(__DIR__ . "/../../../composer", $files);
+        $this->getFiles(self::$plugin_root . "/vendor/composer", $files);
 
         foreach ($libraries as $folder => $namespaces) {
 
@@ -155,24 +163,6 @@ final class LibrariesNamespaceChanger
 
 
     /**
-     * @return string
-     */
-    private function getPluginName() : string
-    {
-        $matches = [];
-        preg_match(self::PLUGIN_NAME_REG_EXP, __DIR__, $matches);
-
-        if (is_array($matches) && count($matches) >= 2) {
-            $plugin_name = $matches[1];
-
-            return $plugin_name;
-        } else {
-            return "";
-        }
-    }
-
-
-    /**
      * @param string $folder
      * @param array  $files
      */
@@ -193,6 +183,24 @@ final class LibrariesNamespaceChanger
                     }
                 }
             }
+        }
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getPluginName() : string
+    {
+        $matches = [];
+        preg_match(self::PLUGIN_NAME_REG_EXP, __DIR__, $matches);
+
+        if (is_array($matches) && count($matches) >= 2) {
+            $plugin_name = $matches[1];
+
+            return $plugin_name;
+        } else {
+            return "";
         }
     }
 }

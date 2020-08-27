@@ -2,6 +2,8 @@
 
 namespace srag\LibrariesNamespaceChanger;
 
+use Closure;
+use Composer\Config;
 use Composer\Script\Event;
 
 /**
@@ -16,14 +18,10 @@ use Composer\Script\Event;
 final class PHP72Backport
 {
 
-    const REGEXP_EXPRESSION = "[A-Za-z0-9_\":\s\[\]]+";
+    const REGEXP_EXPRESSION = "[A-Za-z0-9_\":\s\[\]\(\)]+";
     const REGEXP_FUNCTION = "function\s*(" . self::REGEXP_NAME . ")?\s*\((" . self::REGEXP_PARAM . ")?(," . self::REGEXP_PARAM . ")*\)(\s*(\/\*)?\s*:\s*\??" . self::REGEXP_NAME . "\s*(\*\/)?)?";
-    const REGEXP_NAME = "[A-Za-z_][A-Za-z0-9_]*";
-    const REGEXP_PARAM = "\s*(\/\*)?\s*\??\s*(" . self::REGEXP_NAME . ")?\s*(\*\/)?\s*\\$" . self::REGEXP_NAME . "(\s*=\s*" . self::REGEXP_EXPRESSION . ")?\s*";
-    /**
-     * @var self|null
-     */
-    private static $instance = null;
+    const REGEXP_NAME = "\\\\?[A-Za-z_][A-Za-z0-9_\\\\]*";
+    const REGEXP_PARAM = "\s*(\/\*)?\s*\??\s*(\*\/)?\s*(" . self::REGEXP_NAME . ")?\s*(\*\/)?\s*&?\s*?\\$" . self::REGEXP_NAME . "(\s*=\s*" . self::REGEXP_EXPRESSION . ")?\s*";
     /**
      * @var array
      */
@@ -32,34 +30,14 @@ final class PHP72Backport
             "md",
             "php"
         ];
-
-
     /**
-     * @param Event $event
-     *
-     * @return self
+     * @var self|null
      */
-    private static function getInstance(Event $event) : self
-    {
-        if (self::$instance === null) {
-            self::$instance = new self($event);
-        }
-
-        return self::$instance;
-    }
-
-
+    private static $instance = null;
     /**
-     * @param Event $event
-     *
-     * @internal
+     * @var string
      */
-    public static function PHP72Backport(Event $event)/*: void*/
-    {
-        self::getInstance($event)->doPHP72Backport();
-    }
-
-
+    private static $plugin_root = "";
     /**
      * @var Event
      */
@@ -78,21 +56,32 @@ final class PHP72Backport
 
 
     /**
+     * @param Event $event
      *
+     * @internal
      */
-    private function doPHP72Backport()/*: void*/
+    public static function PHP72Backport(Event $event)/*: void*/
     {
-        $files = [];
+        self::$plugin_root = rtrim(Closure::bind(function () : string {
+            return $this->baseDir;
+        }, $event->getComposer()->getConfig(), Config::class)(), "/");
 
-        $this->getFiles(__DIR__ . "/../../../..", $files);
+        self::getInstance($event)->doPHP72Backport();
+    }
 
-        foreach ($files as $file) {
-            $code = file_get_contents($file);
 
-            $code = $this->convertPHP72To70($code);
-
-            file_put_contents($file, $code);
+    /**
+     * @param Event $event
+     *
+     * @return self
+     */
+    private static function getInstance(Event $event) : self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self($event);
         }
+
+        return self::$instance;
     }
 
 
@@ -135,6 +124,25 @@ final class PHP72Backport
 
 
     /**
+     *
+     */
+    private function doPHP72Backport()/*: void*/
+    {
+        $files = [];
+
+        $this->getFiles(self::$plugin_root, $files);
+
+        foreach ($files as $file) {
+            $code = file_get_contents($file);
+
+            $code = $this->convertPHP72To70($code);
+
+            file_put_contents($file, $code);
+        }
+    }
+
+
+    /**
      * @param string $folder
      * @param array  $files
      */
@@ -147,6 +155,10 @@ final class PHP72Backport
                 $path = $folder . "/" . $file;
 
                 if (is_dir($path)) {
+                    if (in_array($file, ["templates"])) {
+                        continue;
+                    }
+
                     $this->getFiles($path, $files);
                 } else {
                     $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));

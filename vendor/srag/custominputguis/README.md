@@ -1,8 +1,10 @@
+# CustomInputGUIs Library for ILIAS Plugins
+
 Custom Input-GUI's
 
-### Usage
+## Usage
 
-#### Composer
+### Composer
 First add the following to your `composer.json` file:
 ```json
 "require": {
@@ -18,15 +20,15 @@ Tip: Because of multiple autoloaders of plugins, it could be, that different ver
 
 So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/packages/srag/librariesnamespacechanger) in your plugin.
 
-### Input-GUI's
+## Input-GUI's
 * [AbstractFormBuilder](./src/FormBuilder/doc/AbstractFormBuilder.md)
 * [AjaxCheckbox](./src/AjaxCheckbox/doc/AjaxCheckbox.md)
 * [CheckboxInputGUI](./src/CheckboxInputGUI/doc/CheckboxInputGUI.md)
+* [ColorPickerInputGUI](./src/ColorPickerInputGUI/doc/ColorPickerInputGUI.md)
 * [DateDurationInputGUI](./src/DateDurationInputGUI/doc/DateDurationInputGUI.md)
 * [GlyphGUI](./src/GlyphGUI/doc/GlyphGUI.md)
 * [HiddenInputGUI](./src/HiddenInputGUI/doc/HiddenInputGUI.md)
 * [InputGUIWrapperUIInputComponent](./src/InputGUIWrapperUIInputComponent/doc/InputGUIWrapperUIInputComponent.md)
-* [LearningProgressPieUI](./src/LearningProgressPieUI/doc/LearningProgressPieUI.md)
 * [MultilangualTabsInputGUI](./src/TabsInputGUI/doc/MultilangualTabsInputGUI.md)
 * [MultiLineNewInputGUI](./src/MultiLineNewInputGUI/doc/MultiLineNewInputGUI.md)
 * [MultiLineInputGUI](./src/MultiLineInputGUI/doc/MultiLineInputGUI.md)
@@ -34,8 +36,6 @@ So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/pac
 * [MultiSelectSearchInputGUI](./src/MultiSelectSearchInputGUI/doc/MultiSelectSearchInputGUI.md)
 * [MultiSelectSearchInput2GUI](./src/MultiSelectSearchInputGUI/doc/MultiSelectSearchInput2GUI.md)
 * [NumberInputGUI](./src/NumberInputGUI/doc/NumberInputGUI.md)
-* [PieChart](./src/PieChart/doc/PieChart.md)
-* [ProgressMeter](./src/ProgressMeter/doc/ProgressMeter.md)
 * [PropertyFormGUI](./src/PropertyFormGUI/doc/PropertyFormGUI.md)
 * [ScreenshotsInputGUI](./src/ScreenshotsInputGUI/doc/ScreenshotsInputGUI.md)
 * [StaticHTMLPresentationInputGUI](./src/StaticHTMLPresentationInputGUI/doc/StaticHTMLPresentationInputGUI.md)
@@ -50,11 +50,11 @@ So I recommand to use [srag/librariesnamespacechanger](https://packagist.org/pac
 * [Waiter](./src/Waiter/doc/Waiter.md)
 * [WeekdayInputGUI](./src/WeekdayInputGUI/doc/WeekdayInputGUI.md)
 
-### Requirements
-* ILIAS 5.3 or ILIAS 5.4
+## Requirements
+* ILIAS 5.4 or ILIAS 6
 * PHP >=7.0
 
-### Adjustment suggestions
+## Adjustment suggestions
 * External users can report suggestions and bugs at https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_LINP
 * Adjustment suggestions by pull requests via github
 * Customer of studer + raimann ag: 

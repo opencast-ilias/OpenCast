@@ -26,7 +26,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 *
 	 * @return mixed|void
 	 */
-	protected function getValue($key) {
+	protected function getValue(string $key) {
 
 	}
 
@@ -77,7 +77,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 * @param string $key
 	 * @param mixed  $value
 	 */
-	protected function storeValue($key, $value) {
+	protected function storeValue(string $key, $value) {
 		switch ($key) {
 			case xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
 				xoctConf::set(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
