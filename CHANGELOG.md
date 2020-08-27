@@ -1,10 +1,12 @@
 # Change Log
 
 ## [x]
+- Fix latest ILIAS 6
 - Fix republish workflows with same name
 - Add line break after each iframe
 - Remove possible iframe border
 - Fix Docker-ILIAS log
+- Min. PHP 7.0
 
 ## [3.1.1]
 - Follow curl redirects

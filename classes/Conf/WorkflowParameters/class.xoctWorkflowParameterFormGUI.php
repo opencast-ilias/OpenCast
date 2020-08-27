@@ -40,7 +40,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 *
 	 * @return mixed|void
 	 */
-	protected function getValue($key) {
+	protected function getValue(string $key) {
 	}
 
 
@@ -116,7 +116,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	/**
 	 * @return bool
 	 */
-	public function storeForm() {
+	public function storeForm() : bool {
 		if (!$this->storeFormCheck()) {
 			return false;
 		}
@@ -137,6 +137,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @param string $key
 	 * @param mixed  $value
 	 */
-	protected function storeValue($key, $value) {
+	protected function storeValue(string $key, $value) {
 	}
 }

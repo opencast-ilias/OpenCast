@@ -21,13 +21,13 @@ final class PropertyFormGUIException extends ilFormException
      *
      * @deprecated
      */
-    const CODE_INVALID_PROPERTY_CLASS = 1;
+    const CODE_INVALID_FIELD = 2;
     /**
      * @var int
      *
      * @deprecated
      */
-    const CODE_INVALID_FIELD = 2;
+    const CODE_INVALID_PROPERTY_CLASS = 1;
     /**
      * @var int
      *
@@ -44,10 +44,8 @@ final class PropertyFormGUIException extends ilFormException
      *
      * @deprecated
      */
-    public function __construct(/*string*/
-        $message, /*int*/
-        $code
-    ) {
+    public function __construct(string $message, int $code)
+    {
         parent::__construct($message, $code);
     }
 }

@@ -52,7 +52,7 @@ class xoct {
      */
 	protected static function isVersionGreaterString(string $v1, string $v2) : bool
     {
-        return ilComponent::isVersionGreater(explode('.', $v1), explode('.', $v2));
+        return version_compare($v1, $v2, '>');
     }
 
 	/**

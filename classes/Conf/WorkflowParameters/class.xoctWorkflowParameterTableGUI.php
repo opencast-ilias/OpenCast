@@ -47,7 +47,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	 *
 	 * @return string
 	 */
-	protected function getColumnValue($column, $row, $format = self::DEFAULT_FORMAT) {
+    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT) : string {
 		switch ($column) {
 			default:
 				$column = $row[$column];
@@ -61,7 +61,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	/**
 	 * @return array
 	 */
-	protected function getSelectableColumns2() {
+	protected function getSelectableColumns2() : array {
 		return [];
 	}
 

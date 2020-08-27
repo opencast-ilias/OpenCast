@@ -18,6 +18,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
 {
 
     use DICTrait;
+
     /**
      * @var string
      */
@@ -41,7 +42,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
             'p',
             'br',
             'b',
-            'span',
+            'span'
         ));
         $this->usePurifier(true);
         $this->disableButtons(array(
@@ -58,7 +59,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
             'copy',
             'paste',
             'pastetext',
-            'formatselect',
+            'formatselect'
         ));
     }
 
@@ -66,20 +67,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @return string
      */
-    public function render()/*: string*/
-    {
-        $tpl = new Template(__DIR__ . '/templates/tpl.text_area_helper.html', false, false);
-        $this->insert($tpl);
-        $tpl->setVariable('INLINE_STYLE', $this->getInlineStyle());
-
-        return self::output()->getHTML($tpl);
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getInlineStyle()/*: string*/
+    public function getInlineStyle() : string
     {
         return $this->inline_style;
     }
@@ -88,9 +76,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @param string $inline_style
      */
-    public function setInlineStyle(/*string*/
-        $inline_style
-    )/*: void*/
+    public function setInlineStyle(string $inline_style)/*: void*/
     {
         $this->inline_style = $inline_style;
     }
@@ -99,7 +85,7 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @return int
      */
-    public function getMaxlength()/*: int*/
+    public function getMaxlength() : int
     {
         return $this->maxlength;
     }
@@ -108,10 +94,21 @@ class TextAreaInputGUI extends ilTextAreaInputGUI
     /**
      * @param int $maxlength
      */
-    public function setMaxlength(/*int*/
-        $maxlength
-    )/*: void*/
+    public function setMaxlength(int $maxlength)/*: void*/
     {
         $this->maxlength = $maxlength;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function render() : string
+    {
+        $tpl = new Template(__DIR__ . '/templates/tpl.text_area_helper.html', false, false);
+        $this->insert($tpl);
+        $tpl->setVariable('INLINE_STYLE', $this->getInlineStyle());
+
+        return self::output()->getHTML($tpl);
     }
 }

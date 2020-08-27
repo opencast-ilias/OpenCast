@@ -23,6 +23,20 @@ class TextInputGUIWithModernAutoComplete extends TextInputGUI
 
 
     /**
+     * TextInputGUIWithModernAutoComplete constructor
+     *
+     * @param string $a_title
+     * @param string $a_postvar
+     */
+    public function __construct(string $a_title = "", string $a_postvar = "")
+    {
+        parent::__construct($a_title, $a_postvar);
+
+        self::init();
+    }
+
+
+    /**
      *
      */
     public static function init()/*: void*/
@@ -47,23 +61,7 @@ class TextInputGUIWithModernAutoComplete extends TextInputGUI
 
 
     /**
-     * TextInputGUIWithModernAutoComplete constructor
-     *
-     * @param string $a_title
-     * @param string $a_postvar
-     */
-    public function __construct(string $a_title = "", string $a_postvar = "")
-    {
-        parent::__construct($a_title, $a_postvar);
-
-        self::init();
-    }
-
-
-    /**
-     * @param string $a_mode
-     *
-     * @return string
+     * @inheritDoc
      */
     public function render(/*string*/ $a_mode = "") : string
     {
