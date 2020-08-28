@@ -220,7 +220,8 @@ class xoctEventRenderer {
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
                     /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
                     $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor();
-                    $label = $label == '1080p' ? ($label . ' (HD)') : $label;
+                    $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
+                    $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
                     return $this->factory->link()->standard(
                         $label,
                         self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
