@@ -516,8 +516,7 @@ class xoctEventGUI extends xoctGUI {
 		$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 		$base = str_replace('/api', '', $base);
 
-		$schema = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-		$return_link =  $schema . '://' . $_SERVER['HTTP_HOST'] . '/'
+		$return_link =  ILIAS_HTTP_PATH . '/'
 			. self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
 
 		$studio_link = $base . '/studio'
