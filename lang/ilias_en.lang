@@ -11,6 +11,8 @@ config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
 config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.
+config_external_download_source#:#External download source
+config_external_download_source_info#:#Enable this option in case of an external web page to show the downloads
 config_oc_studio_allowed#:#Enable Opencast Studio
 config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
 config_curl#:#cURL
