@@ -509,16 +509,23 @@ class xoctEventGUI extends xoctGUI {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function opencaststudio(){
 		$xoctSeries =  $this->xoctOpenCast->getSeriesIdentifier();
 		$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 		$base = str_replace('/api', '', $base);
-		$studio_link = $base . '/studio' . '?upload.seriesId=' . $xoctSeries;
+
+		$return_link =  ILIAS_HTTP_PATH . '/'
+			. self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
+
+		$studio_link = $base . '/studio'
+			. '?upload.seriesId=' . $xoctSeries
+			. '&return.label=ILIAS'
+			. '&return.target=' . urlencode($return_link);
 		header('Location:' . $studio_link);
 	}
-		
+
 
 	/**
 	 *
@@ -587,13 +594,19 @@ class xoctEventGUI extends xoctGUI {
         curl_exec($ch);
         $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
         curl_close($ch);
-
+		if(xoctConf::getConfig(xoctConf::F_EXT_DL_SOURCE)){
+			// Open external source page
+			header('Location: '.$url);
+		} else {
         // deliver file
-        header('Content-Description: File Transfer');
-        header('Content-Type: ' . $publication->getMediatype());
-        header('Content-Disposition: attachment; filename="' . $event->getTitle() . '.' . $extension . '"');
-        header('Content-Length: ' . $size);
-        readfile($url);
+        	header('Content-Description: File Transfer');
+        	header('Content-Type: ' . $publication->getMediatype());
+        	header('Content-Disposition: attachment; filename="' . $event->getTitle() . '.' . $extension . '"');
+        	header('Content-Length: ' . $size);
+			readfile($url);
+		}
+		
+		
         exit;
     }
 

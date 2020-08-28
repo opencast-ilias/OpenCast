@@ -1,5 +1,10 @@
 # Change Log
 
+## [3.3.0]
+- Download event button has now the option "External download Source"
+- Added Labels for FullHD and UltraHD
+- Add support for Opencast Studio return link
+
 ## [3.2.0]
 - Fix latest ILIAS 6
 - Fix republish workflows with same name
