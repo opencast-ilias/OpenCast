@@ -389,7 +389,12 @@ class MetadataField extends APIObject
     {
         $stdClass = new stdClass();
         $stdClass->id = $this->getId();
-        $stdClass->value = $this->getValue();
+
+        $value = $this->getValue();
+        if (is_string($value)) {
+            $value = $this->fixPercentCharacter($value);
+        }
+        $stdClass->value = $value;
 
         return $stdClass;
     }

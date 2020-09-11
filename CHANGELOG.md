@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.3.1]
+- Fix save object metadata with % character
+
 ## [3.3.0]
 - Download event button has now the option "External download Source"
 - Added Labels for FullHD and UltraHD

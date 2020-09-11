@@ -344,5 +344,16 @@ abstract class APIObject
     protected function afterObjectLoad()
     {
     }
+
+
+    /**
+     * @param string $string
+     *
+     * @return string
+     */
+    protected function fixPercentCharacter(string $string) : string
+    {
+        return str_replace('%', rawurlencode('%'), $string);
+    }
 }
 
