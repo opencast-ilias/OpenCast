@@ -353,6 +353,7 @@ abstract class APIObject
      */
     protected function fixPercentCharacter(string $string) : string
     {
+        // TODO: Bug in OpenCast server? The server think the JSON body is url encoded, but % is valid in JSON
         return str_replace('%', rawurlencode('%'), $string);
     }
 }
