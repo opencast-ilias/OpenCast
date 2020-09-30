@@ -116,6 +116,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => $baseDir . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\Workflow' => $baseDir . '/src/Model/Config/Workflow/Workflow.php',
     'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\WorkflowRepository' => $baseDir . '/src/Model/Config/Workflow/WorkflowRepository.php',
+    'srag\\Plugins\\Opencast\\Model\\DTO\\DownloadDto' => $baseDir . '/src/Model/DTO/DownloadDto.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => $baseDir . '/src/UI/Input/EventFormGUI.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => $baseDir . '/src/UI/Input/FileUploadInputGUI.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => $baseDir . '/src/UI/Input/Plupload.php',

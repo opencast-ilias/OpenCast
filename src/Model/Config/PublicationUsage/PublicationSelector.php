@@ -21,6 +21,7 @@ use xoctRequest;
 use xoctSecureLink;
 use xoctUser;
 use xoctPublicationMetadata;
+use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 
 /**
  * Class PublicationSelector
@@ -186,6 +187,36 @@ class PublicationSelector
         }
 
         return $this->download_publications;
+    }
+
+    /**
+     * @return DownloadDto[]
+     * @throws xoctException
+     */
+    public function getDownloadDtos() : array {
+        $download_publications = $this->getDownloadPublications();
+        usort($download_publications, function ($pub1, $pub2) {
+            /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
+            /** @var $pub2 xoctPublication|xoctMedia|xoctAttachment */
+            if ($pub1 instanceof xoctMedia && $pub2 instanceof xoctMedia) {
+                if ($pub1->getHeight() == $pub2->getHeight()) {
+                    return 0;
+                }
+                return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
+            }
+            return -strcmp($pub1->getFlavor(), $pub2->getFlavor());
+        });
+        return array_map(function($pub) {
+            /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
+            $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor();
+            $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
+            $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
+            return new DownloadDto(
+                $pub->getId(),
+                $label,
+                xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
+            );
+        }, $download_publications);
     }
 
 

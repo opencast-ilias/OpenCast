@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.3.2]
+- Refactored download publications for easier integration in InteractiveVideo plugin
+
 ## [3.3.1]
 - Fix save object metadata with % character
 

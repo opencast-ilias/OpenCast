@@ -197,36 +197,21 @@ class xoctEventRenderer {
      * @throws xoctException
      */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
-        $download_publications = $this->xoctEvent->publications()->getDownloadPublications();
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && (count($download_publications) > 0)) {
+        $download_dtos = $this->xoctEvent->publications()->getDownloadDtos();
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
             $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
 			if ($multi) {
-			    usort($download_publications, function ($pub1, $pub2) {
-                    /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
-                    /** @var $pub2 xoctPublication|xoctMedia|xoctAttachment */
-                    if ($pub1 instanceof xoctMedia && $pub2 instanceof xoctMedia) {
-			            if ($pub1->getHeight() == $pub2->getHeight()) {
-			                return 0;
-                        }
-                        return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
-                    }
-			        return -strcmp($pub1->getFlavor(), $pub2->getFlavor());
-                });
-                $items = array_map(function($pub) {
+                $items = array_map(function($dto) {
                     self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->xoctEvent->getIdentifier());
-                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $pub->getId());
-                    /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
-                    $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor();
-                    $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
-                    $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
+                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
                     return $this->factory->link()->standard(
-                        $label,
+                        $dto->getResolution(),
                         self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
                     );
-                }, $download_publications);
+                }, $download_dtos);
                 $dropdown = $this->factory->dropdown()->standard(
 			        $items
                 )->withLabel(self::plugin()->translate('download', self::LANG_MODULE));
