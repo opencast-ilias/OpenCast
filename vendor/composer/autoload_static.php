@@ -10,8 +10,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         's' => 
         array (
             'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DIC\\' => 9,
-            'srag\\CustomInputGUIs\\' => 21,
+            'srag\\DIC\\OpenCast\\' => 18,
+            'srag\\CustomInputGUIs\\OpenCast\\' => 30,
         ),
     );
 
@@ -20,11 +20,11 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DIC\\' => 
+        'srag\\DIC\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\' => 
+        'srag\\CustomInputGUIs\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
@@ -141,6 +141,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Config\\PublicationUsage\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Config/PublicationUsage/PublicationUsageRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\Workflow' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/Workflow.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\Workflow\\WorkflowRepository' => __DIR__ . '/../..' . '/src/Model/Config/Workflow/WorkflowRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\DTO\\DownloadDto' => __DIR__ . '/../..' . '/src/Model/DTO/DownloadDto.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => __DIR__ . '/../..' . '/src/UI/Input/EventFormGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => __DIR__ . '/../..' . '/src/UI/Input/FileUploadInputGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => __DIR__ . '/../..' . '/src/UI/Input/Plupload.php',
