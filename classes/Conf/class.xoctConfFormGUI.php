@@ -527,6 +527,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('advanced'));
 		$this->addItem($h);
 
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_COMMON_IDP), xoctConf::F_COMMON_IDP);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_COMMON_IDP . '_info'));
+		$this->addItem($cb);
+
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_USER_MAPPING), xoctConf::F_USER_MAPPING);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_USER_MAPPING . '_info'));
 		$te->setOptions(array(

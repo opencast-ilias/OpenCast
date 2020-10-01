@@ -85,6 +85,7 @@ class xoctConf extends ActiveRecord {
 	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
 	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
 	const F_INGEST_UPLOAD = 'ingest_upload';
+	const F_COMMON_IDP = 'common_idp';
 
 	/**
 	 * @var array

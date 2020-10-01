@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.3.3]
+- Added config for 'Common IdP' (currently used for OpencastPageComponent's permission checks)
+
 ## [3.3.2]
 - Refactored download publications for easier integration in InteractiveVideo plugin
 
