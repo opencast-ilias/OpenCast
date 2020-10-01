@@ -266,3 +266,7 @@ if (!is_null($api_pub)) {
     $api_pub->delete();
 }
 ?>
+<#28>
+<?php
+xoctConf::set(xoctConf::F_COMMON_IDP, 1);
+?>

@@ -105,6 +105,10 @@ The download links are not visible to the user, because the download is executed
  Sends the course reference ID, and the user, admin or a student, as a hash to the annotation tool. With that information, the tool will verify if the user is coming from ILIAS and if it is the same user as the user logged in ILIAS. 
 
 ### Advanced
+
+##### Common IdP
+Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks: if a common IdP is used, the plugin can send the username to Opencast to check for permissions, so Opencast can validate all roles possessed by this user. Otherwise, the user very likely doesn't exist in Opencast, so the plugin can only send the user-specific role for permission checks. This is currently only used by the PageComponent plugin. 
+
 ##### User mapping
 Defines which user attribute will be used to map an ILIAS user to an Opencast user (or user role, respectively). If your ILIAS and Opencast are both connected to the same Identity Provider (e.g. an LDAP server) this should be the 'External-ID', since ILIAS stores the ID coming from the IdP in this attribute.
 
