@@ -572,7 +572,7 @@ class EventFormGUI extends ilPropertyFormGUI {
             if ($this->schedule) {
                 try {
                     $this->object->schedule($this->buildRRule());
-                } catch (ilException $e) {
+                } catch (xoctException $e) {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
