@@ -1,5 +1,8 @@
 # Change Log
 
+## [X.X.X]
+- Fix: properly show scheduling conflict messages
+
 ## [3.3.3]
 - Added config for 'Common IdP' (currently used for OpencastPageComponent's permission checks)
 
