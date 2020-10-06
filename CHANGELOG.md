@@ -1,7 +1,9 @@
 # Change Log
 
-## [X.X.X]
+## [3.3.4]
 - Fix: properly show scheduling conflict messages
+- Fix: Fatal error when opening workflow configuration
+- Fix: Unpublish Workflow didn't work properly in some situations
 
 ## [3.3.3]
 - Added config for 'Common IdP' (currently used for OpencastPageComponent's permission checks)
