@@ -204,11 +204,12 @@ class PublicationSelector
                 }
                 return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
             }
-            return -strcmp($pub1->getFlavor(), $pub2->getFlavor());
+            return 0;
         });
-        return array_map(function($pub) {
+        return array_map(function($pub, $i) {
             /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
-            $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' : $pub->getFlavor();
+            $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' :
+                ($pub instanceof xoctAttachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
             return new DownloadDto(
@@ -216,7 +217,7 @@ class PublicationSelector
                 $label,
                 xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
             );
-        }, $download_publications);
+        }, $download_publications, array_keys($download_publications));
     }
 
 
