@@ -151,7 +151,7 @@ class xoctWorkflowTableGUI extends TableGUI
      *
      * @return bool
      */
-    public function isColumnSelected($col)
+    public function isColumnSelected($col) : bool
     {
         return true;
     }
