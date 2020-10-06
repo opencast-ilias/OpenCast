@@ -449,10 +449,6 @@ class PublicationSelector
      */
     public function getPublicationMetadataForUsage($PublicationUsage) : array
     {
-        if (!$this->loaded) {
-            $this->loadPublications();
-        }
-
         if (!$PublicationUsage instanceof PublicationUsage) {
             return [];
         }
@@ -517,11 +513,10 @@ class PublicationSelector
         return array_filter($return);
     }
 
-
     /**
      * @param $xoctPublicationUsage
-     *
      * @return mixed|xoctPublication
+     * @throws xoctException
      */
     public function getFirstPublicationMetadataForUsage($xoctPublicationUsage)
     {
@@ -577,9 +572,13 @@ class PublicationSelector
 
     /**
      * @return xoctPublication[]
+     * @throws xoctException
      */
     public function getPublications() : array
     {
+        if (!$this->loaded) {
+            $this->loadPublications();
+        }
         return $this->publications;
     }
 }

@@ -564,7 +564,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 		if ($this->object->getIdentifier()) {
 			try {
 				$this->object->update();
-			} catch (ilException $e) {
+			} catch (xoctException $e) {
 				return $this->checkAndShowConflictMessage($e);
 			}
 			$this->object->getXoctEventAdditions()->update();
@@ -572,7 +572,7 @@ class EventFormGUI extends ilPropertyFormGUI {
             if ($this->schedule) {
                 try {
                     $this->object->schedule($this->buildRRule());
-                } catch (ilException $e) {
+                } catch (xoctException $e) {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
@@ -650,7 +650,7 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @throws DICException
      * @throws ilException
      */
-	protected function checkAndShowConflictMessage(ilException $e) {
+	protected function checkAndShowConflictMessage(xoctException $e) {
 		if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
 			$conflicts = json_decode(substr($e->getMessage(), 10), true);
 			$message = $this->txt('msg_scheduling_conflict') . '<br>';
