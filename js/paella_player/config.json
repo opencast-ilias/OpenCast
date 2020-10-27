@@ -240,7 +240,14 @@
         "position": "right",
         "legalUrl": "https://en.wikipedia.org/wiki/General_Data_Protection_Regulation"
       },
-
+      "es.upv.paella.timeMarksPlaybackCanvasPlugin": {
+        "enabled": true,
+        "color": "gray"
+      },
+      "es.upv.paella.BufferedPlaybackCanvasPlugin": {
+        "enabled": true,
+        "color": "rgba(0,0,0,0.4)"
+      },
       "//***** TabBar Plugins": "",
       "es.upv.paella.commentsPlugin": {
         "enabled": false

@@ -162,9 +162,7 @@ class xoctPlayerGUI extends xoctGUI
         ];
 
         $segments = $this->buildSegments($xoctEvent);
-        if (count($segments) > 0) {
-            $data['frameList'] = $segments;
-        }
+        $data['frameList'] = $segments;
 
         return $data;
     }
