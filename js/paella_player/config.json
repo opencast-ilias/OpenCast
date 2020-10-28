@@ -160,7 +160,8 @@
       },
       "es.upv.paella.multipleQualitiesPlugin": {
         "enabled": true,
-        "showWidthRes": true
+        "showWidthRes": true,
+        "minVisibleQuality": 60
       },
       "es.upv.paella.playbackRatePlugin": {
         "enabled": true,
