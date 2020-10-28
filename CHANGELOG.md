@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.4.0]
+- Fix/Improvement: Updated Paella Player to v6.4.3 (fixes broken player buttons)
+
 ## [3.3.4]
 - Fix: properly show scheduling conflict messages
 - Fix: Fatal error when opening workflow configuration
