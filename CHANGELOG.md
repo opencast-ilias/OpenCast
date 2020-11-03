@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.4.1]
+- Fix: paella time-marks plugin broke live stream player
+
 ## [3.4.0]
 - Fix/Improvement: Updated Paella Player to v6.4.3 (fixes broken player buttons)
 
