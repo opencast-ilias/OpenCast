@@ -56,11 +56,29 @@ class xoctPlayerGUI extends xoctGUI
         $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player");
 
         $js_config = new stdClass();
-        $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config.json";
+        $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config"
+            . ($xoctEvent->isLiveEvent() ? "_live" : "") . ".json";
         $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
 
         try {
             $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
+            // dev: local streaming server
+//            $data = [
+//              'streams' => [
+//                  [
+//                      'content' => self::ROLE_MASTER,
+//                      'sources' => [
+//                          "hls" => [
+//                              [
+//                                  "src" => 'http://localhost:8080/hls/hello.m3u8',
+//                                  "mimetype" => 'video/mp4',
+//                                  "isLiveStream" => true
+//                              ]
+//                          ]
+//                      ]
+//                  ]
+//              ]
+//            ];
         } catch (xoctException $e) {
             echo $e->getMessage();
             exit;
