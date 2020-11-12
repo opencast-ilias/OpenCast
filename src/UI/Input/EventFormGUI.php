@@ -235,6 +235,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 				'video/x-matroska',
 				'video/x-msvideo',
 				'video/x-dv',
+                'video/x-m4v',
 				'audio/mp4',
 				'audio/x-m4a',
 				'audio/ogg',
@@ -260,6 +261,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 				'video/x-matroska',
 				'video/x-msvideo',
 				'video/x-dv',
+                'video/x-m4v'
 			));
 			$te->setRequired(true);
 			$this->addItem($te);
