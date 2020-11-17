@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.4.2]
+- Fix: upload error (wrong acl format)
+
 ## [3.4.1]
 - Fix: paella time-marks plugin broke live stream player
 

@@ -1123,7 +1123,7 @@ class xoctEvent extends APIObject {
 	 * @return xoctAcl[]
 	 */
 	public function getAcl() {
-		return $this->acl;
+		return array_values($this->acl);
 	}
 
 
