@@ -214,8 +214,7 @@ class PublicationSelector
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
             return new DownloadDto(
                 $pub->getId(),
-                $label,
-                xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
+                $label
             );
         }, $download_publications, array_keys($download_publications));
     }
@@ -310,6 +309,12 @@ class PublicationSelector
         return $this->player_url;
     }
 
+    public function getAnnotationPublication()
+    {
+        return $this->getFirstPublicationMetadataForUsage(
+            $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
+        );
+    }
 
     /**
      * @param int $ref_id set the ref id if the link should be secured via hash mechanism
@@ -320,10 +325,13 @@ class PublicationSelector
     public function getAnnotationLink(int $ref_id = 0)
     {
         if (!isset($this->annotation_url)) {
-            $annotation_publication = $this->getFirstPublicationMetadataForUsage(
-                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
-            );
-            $url = is_null($annotation_publication) ? '' : $annotation_publication->getUrl();
+            $annotation_publication = $this->getAnnotationPublication();
+            if (is_null($annotation_publication)) {
+                $this->annotation_url = '';
+                return '';
+            }
+
+            $url = $annotation_publication->getUrl();
             if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
                 $this->annotation_url = xoctSecureLink::signAnnotation($url);
             } else {

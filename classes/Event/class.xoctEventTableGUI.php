@@ -123,8 +123,14 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 		$renderer->insertThumbnail($this->tpl, null);
 		$renderer->insertPlayerLink($this->tpl);
-		$renderer->insertDownloadLink($this->tpl);
-		$renderer->insertAnnotationLink($this->tpl);
+
+		if (!$this->xoctOpenCast->getStreamingOnly()) {
+			$renderer->insertDownloadLink($this->tpl);
+		}
+
+		if ($this->xoctOpenCast->getUseAnnotations()) {
+			$renderer->insertAnnotationLink($this->tpl);
+		}
 
 		if ($this->isColumsSelected('event_title')) {
 			$renderer->insertTitle($this->tpl);

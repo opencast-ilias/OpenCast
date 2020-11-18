@@ -1,6 +1,5 @@
 <?php
 
-use ILIAS\UI\Component\Modal\Modal;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
@@ -42,6 +41,10 @@ class xoctEventGUI extends xoctGUI {
     const CMD_REPUBLISH = 'republish';
 	const CMD_OPENCAST_STUDIO = 'opencaststudio';
     const CMD_DOWNLOAD = 'download';
+    /**
+     * @var ilObjOpenCastGUI
+     */
+    private $parent_gui;
 
     /**
 	 * @var xoctOpenCast
@@ -52,13 +55,14 @@ class xoctEventGUI extends xoctGUI {
      */
     protected $modals;
 
-
     /**
-	 * @param xoctOpenCast $xoctOpenCast
-	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+     * @param ilObjOpenCastGUI $parent_gui
+     * @param xoctOpenCast     $xoctOpenCast
+     */
+	public function __construct(ilObjOpenCastGUI $parent_gui, xoctOpenCast $xoctOpenCast) {
 		$this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
-	}
+        $this->parent_gui = $parent_gui;
+    }
 
 
     /**
@@ -184,11 +188,11 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function index() {
 		ilChangeEvent::_recordReadEvent(
-			$this->xoctOpenCast->getILIASObject()->getType(),
-			$this->xoctOpenCast->getILIASObject()->getRefId(),
-			$this->xoctOpenCast->getObjId(),
-			self::dic()->user()->getId()
-		);
+            $this->parent_gui->object->getType(),
+            $this->parent_gui->object->getRefId(),
+            $this->xoctOpenCast->getObjId(),
+            self::dic()->user()->getId()
+        );
 
 		switch (xoctUserSettings::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
 			case xoctUserSettings::VIEW_TYPE_LIST:

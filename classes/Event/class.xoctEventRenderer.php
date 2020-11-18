@@ -259,11 +259,9 @@ class xoctEventRenderer {
      * @throws xoctException
      */
 	public function getAnnotationLinkHTML($button_type = 'btn_info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && ($this->xoctEvent->publications()->getAnnotationLink())) {
-			if ($this->xoctOpenCast instanceof xoctOpenCast && !$this->xoctOpenCast->getUseAnnotations()) {
-				return '';
-			}
-
+		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)
+            && ($this->xoctEvent->publications()->getAnnotationPublication()))
+		{
             self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->xoctEvent->getIdentifier());
             $annotations_link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');

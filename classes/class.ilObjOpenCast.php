@@ -45,6 +45,10 @@ class ilObjOpenCast extends ilObjectPlugin {
 		 * @var $xoctOpenCast xoctOpenCast
 		 */
 		$xoctOpenCast = xoctOpenCast::find($this->getId());
+		if (self::dic()->ctrl()->isAsynch()) {
+			// don't update title/description on async calls
+			return;
+		}
 
 		// catch exception: the series may already be deleted in opencast (404 exception)
 		try {
