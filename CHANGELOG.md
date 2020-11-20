@@ -1,5 +1,10 @@
 # Change Log
 
+## [3.5.0]
+- Improvement: better performance by ommiting some unnecessary requests
+- Improvement: allow upload of .m4v files
+- Improvement: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
+
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
 
