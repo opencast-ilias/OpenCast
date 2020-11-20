@@ -31,10 +31,14 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 * @var xoctEventGUI
 	 */
 	protected $parent_obj;
-    /**
+	/**
      * @var bool
      */
 	protected $has_scheduled_events = false;
+	/**
+	 * @var bool
+	 */
+	protected $has_unprotected_links = false;
 	/**
 	 * @var EventRepository
 	 */
@@ -51,25 +55,24 @@ class xoctEventTableGUI extends ilTable2GUI {
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true) {
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->event_repository = new EventRepository(self::dic()->dic());
+		$this->parent_obj = $a_parent_obj;
 		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);
 		$this->setFormName($a_val);
 		$this->setId($a_val);
 		self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
-		$this->parent_obj = $a_parent_obj;
 		$this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
-		$this->initColumns();
 		$this->initFilters();
+		if ($load_data) {
+			$this->parseData();
+		}
+		$this->initColumns();
 		$this->setDefaultOrderField('created_unix');
 
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
 			$this->setExportFormats(array( self::EXPORT_CSV ));
-		}
-
-		if ($load_data) {
-			$this->parseData();
 		}
 	}
 
@@ -157,12 +160,10 @@ class xoctEventTableGUI extends ilTable2GUI {
 			$renderer->insertOwner($this->tpl);
 		}
 
-		if (in_array('unprotected_link', array_keys($this->selected_column)) && $this->isColumsSelected('unprotected_link')) {
-			if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK, $event)) {
-				$renderer->insertUnprotectedLink($this->tpl);
-			} else {
-				$renderer->insert($this->tpl, 'UNPROTECTED_LINK', '', 'unprotected_link');
-			}
+		if ($this->has_unprotected_links
+			&& ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK))
+		{
+			$renderer->insertUnprotectedLink($this->tpl);
 		}
 
 		$this->addActionMenu($event);
@@ -210,16 +211,17 @@ class xoctEventTableGUI extends ilTable2GUI {
 				'default' => $this->getOwnerColDefault(),
 			),
 			'unprotected_link' => array(
-				'selectable' => true,
+				'selectable' => false,
 				'sort_field' => 'unprotected_link',
-				'default' => false
 			),
 			'common_actions' => array(
 				'selectable' => false,
 			),
 		);
 
-		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
+		if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
+			|| !$this->has_unprotected_links
+			|| !ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
 			unset($columns['unprotected_link']);
 		}
 
@@ -320,8 +322,13 @@ class xoctEventTableGUI extends ilTable2GUI {
 		$a_data = array_filter($a_data, $this->filterArray());
 
         foreach ($a_data as $row) {
-			if ($row['object']->isScheduled()) {
+	        /** @var $object xoctEvent */
+	        $object = $row['object'];
+        	if ($object->isScheduled()) {
 				$this->has_scheduled_events = true;
+			}
+			if ($object->publications()->getUnprotectedLink()) {
+				$this->has_unprotected_links = true;
 			}
 		}
 		$this->setData($a_data);

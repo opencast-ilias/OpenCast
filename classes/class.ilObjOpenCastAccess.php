@@ -186,6 +186,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					self::hasPermission(self::PERMISSION_UPLOAD)
 					|| self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			case self::ACTION_EXPORT_CSV:
+			case self::ACTION_VIEW_UNPROTECTED_LINK:
 			case self::ACTION_MANAGE_IVT_GROUPS:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
@@ -199,8 +200,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
-			case self::ACTION_VIEW_UNPROTECTED_LINK:
-				return self::hasWriteAccess() || $xoctEvent->isOwner($xoctUser);
 			default:
 				return false;
 		}
