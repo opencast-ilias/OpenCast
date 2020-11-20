@@ -217,8 +217,11 @@ class xoctEventGUI extends xoctGUI {
 	protected function indexList() {
 		$this->initViewSwitcherHTML('list');
 
-		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt']) || !empty($_POST)) {
-			// you're here when exporting or changing selected columns
+		if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt'])
+            || !empty($_POST)
+            || xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY))
+		{
+			// you're here when exporting or changing selected columns, or if load_table_sync is configured
 			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
 			if ($xoctEventTableGUI->hasScheduledEvents()) {
 				self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
@@ -227,7 +230,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 
 		self::dic()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
-		$this->loadAjaxCodeForList();	// the tableGUI is loaded asynchronously
+		$this->loadAjaxCodeForList();	// load table asynchronously
 		return '<div id="xoct_table_placeholder"></div>';
 	}
 
@@ -239,7 +242,11 @@ class xoctEventGUI extends xoctGUI {
 	protected function indexTiles() {
 		$this->initViewSwitcherHTML('tiles');
 
-		$this->loadAjaxCodeForTiles();	// the tilesGUI is loaded asynchronously
+		if (xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
+		    return $this->getTilesGUI();
+        }
+
+		$this->loadAjaxCodeForTiles();	// load tiles asynchronously
 		return '<div id="xoct_tiles_placeholder"></div>';
 	}
 
@@ -370,9 +377,22 @@ class xoctEventGUI extends xoctGUI {
 	/**
 	 * ajax call
 	 */
-	public function asyncGetTilesGUI() {
-		$xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
-		$html = $this->getModalsHTML();
+	public function asyncGetTilesGUI()
+    {
+        echo $this->getTilesGUI();
+        exit();
+	}
+
+    /**
+     * @return string
+     * @throws DICException
+     * @throws ilTemplateException
+     * @throws xoctException
+     */
+	protected function getTilesGUI()  : string
+    {
+        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
+        $html = $this->getModalsHTML();
         $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
@@ -388,9 +408,10 @@ class xoctEventGUI extends xoctGUI {
                         });
                     </script>";
         }
-        echo $html;
-        exit();
-	}
+        return $html;
+    }
+
+
 
 
 	/**

@@ -87,6 +87,7 @@ class xoctConf extends ActiveRecord {
 	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
 	const F_INGEST_UPLOAD = 'ingest_upload';
 	const F_COMMON_IDP = 'common_idp';
+	const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
 
 	/**
 	 * @var array

@@ -578,6 +578,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD), xoctConf::F_INGEST_UPLOAD);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD . '_info'));
 		$this->addItem($cb);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY), xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY . '_info'));
+		$this->addItem($cb);
 	}
 
 }

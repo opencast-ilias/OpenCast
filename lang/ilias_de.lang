@@ -29,6 +29,8 @@ config_series#:#Serien
 config_licenses#:#Lizenzen
 config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
 config_license_info#:#Lizenz-Informationen
+config_load_table_sync#:#Event-Tabelle synchron laden
+config_load_table_sync_info#:#Wenn aktiv, wird die Event-Tabelle direkt geladen (in einem Request), statt indirekt (asynchron, in zwei Requests) nach dem Anzeigen der Seite (bemerkbar durch Ladesymbol nach dem Anzeigen der Seite). Dadurch wird die Gesamtladezeit verringert, dafür dauert es länger, bis die Seite angezeigt wird.
 config_log_level_0#:#Deaktiviert
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM

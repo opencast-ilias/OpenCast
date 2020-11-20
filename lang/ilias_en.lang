@@ -29,6 +29,8 @@ config_series#:#Series
 config_licenses#:#Licenses
 config_licenses_info#:#Add new lines with URL#Name
 config_license_info#:#License info
+config_load_table_sync#:#Load event table synchronously
+config_load_table_sync_info#:#If active, the event table will be loaded directly (in one request) instead of indirectly/asynchronously (in two requests) after displaying the page (noticeable by the loading icon). This reduces the overall loading time but increases the time until the page is displayed.
 config_log_level_0#:#Deactivated
 config_log_level_1#:#LOW
 config_log_level_2#:#MEDIUM
