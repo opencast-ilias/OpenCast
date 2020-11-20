@@ -472,9 +472,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setInfo($this->parent_gui->txt('security_info'));
 		$this->addItem($h);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS), xoctConf::F_PRESIGN_LINKS);
-		$this->addItem($cb);
-
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
 		$this->addItem($cb);
 
@@ -518,6 +515,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ANNOTATION_TOKEN_SEC), xoctConf::F_ANNOTATION_TOKEN_SEC);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ANNOTATION_TOKEN_SEC . '_info'));
+		$this->addItem($cb);
+
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS), xoctConf::F_PRESIGN_LINKS);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS . '_info'));
 		$this->addItem($cb);
 	}
 

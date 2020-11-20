@@ -149,6 +149,8 @@ config_start_x_minutes_before_live#:#Beitritt bevor Start
 config_start_x_minutes_before_live_info#:#Gibt an, wieviele Minuten vor Start des Events der Player geöffnet werden kann.
 config_presentation_node#:#URL Presentation Node
 config_presentation_node_info#:#Wird zum Holen des Live-Streams benötigt. Z.B.: https://presentation.opencast.meine-uni.de/
+config_presign_links#:#Presign (experimental)
+config_presign_links_info#:#Wenn aktiv, werden die Links bereits signiert von Opencast ausgeliefert. Dies kann die Performanz beeinflussen. Beachten Sie, dass obige Konfiguration trotzdem benötigt wird, da in gewissen Situationen Links vom Plugin signiert werden müssen.
 config_enable_chat#:#Chat aktivieren
 config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
 config_ingest_upload#:#Upload via Ingest-Nodes

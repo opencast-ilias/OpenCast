@@ -150,6 +150,8 @@ config_start_x_minutes_before_live#:#Enter before start
 config_start_x_minutes_before_live_info#:#Defines how many minutes before the start of the event the player is accessable.
 config_presentation_node#:#URL Presentation Node
 config_presentation_node_info#:#Required to fetch the Live Streams. Example: https://presentation.opencast.my-university.de/
+config_presign_links#:#Presign (experimental)
+config_presign_links_info#:#If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
 config_enable_chat#:#Activate Chat
 config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
 config_ingest_upload#:#Upload via Ingest Nodes
