@@ -35,11 +35,11 @@ class ilObjOpenCast extends ilObjectPlugin {
 	public function doCreate() {
 	}
 
-
 	/**
 	 * @throws xoctException
 	 */
-	public function doRead() {
+	public function updateObjectFromSeries()
+	{
 		xoctConf::setApiSettings();
 		/**
 		 * @var $xoctOpenCast xoctOpenCast

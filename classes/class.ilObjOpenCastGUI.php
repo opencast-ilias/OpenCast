@@ -386,6 +386,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		self::dic()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
 		self::dic()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
 
+		$this->object->updateObjectFromSeries();
+
 		return $xoctOpenCast;
 	}
 
