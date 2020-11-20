@@ -83,7 +83,7 @@ class xoctCache extends ilGlobalCache {
 	private function isOpenCastCacheEnabled() {
 		try {
 			return (int)xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE);
-		} catch (Exception $exceptione) //catch exception while dbupdate is running. (xlvoConf is not ready at that time).
+		} catch (Exception $exceptione) //catch exception while dbupdate is running. (xoctConf is not ready at that time).
 		{
 			return false;
 		}
@@ -99,19 +99,13 @@ class xoctCache extends ilGlobalCache {
 		switch ($service_type) {
 			case self::TYPE_APC:
 				return 'ilApc';
-				break;
 			case self::TYPE_MEMCACHED:
 				return 'ilMemcache';
-				break;
 			case self::TYPE_XCACHE:
 				return 'ilXcache';
-				break;
 			case self::TYPE_STATIC:
-				return 'ilStaticCache';
-				break;
 			default:
 				return 'ilStaticCache';
-				break;
 		}
 	}
 
