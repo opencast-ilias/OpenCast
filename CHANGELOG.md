@@ -4,6 +4,8 @@
 - Improvement: better performance by ommiting some unnecessary requests
 - Improvement: allow upload of .m4v files
 - Improvement: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
+- Feature: config for presigning urls (possible performance boost)
+- Feature: config for synchronous loading of table (possible performance boost)
 
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
