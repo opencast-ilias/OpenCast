@@ -472,6 +472,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setInfo($this->parent_gui->txt('security_info'));
 		$this->addItem($h);
 
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS), xoctConf::F_PRESIGN_LINKS);
+		$this->addItem($cb);
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
 		$this->addItem($cb);
 

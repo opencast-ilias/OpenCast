@@ -25,6 +25,9 @@ class xoctSecureLink {
 	 * @throws xoctException
 	 */
 	protected static function sign($url, $valid_until = null, $restict_ip = false) {
+		if (xoctConf::getConfig(xoctConf::F_PRESIGN_LINKS)) {
+			return $url;
+		}
 		if (!$url) {
 			return '';
 		}

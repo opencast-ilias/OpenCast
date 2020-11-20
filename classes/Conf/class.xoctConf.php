@@ -44,6 +44,7 @@ class xoctConf extends ActiveRecord {
 	const SEP_EV_ACL_MD_PUB = 3;
 	const F_NO_METADATA = 'no_metadata';
 	const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
+	const F_PRESIGN_LINKS = 'presign_links';
 	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
 	const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
 	const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";

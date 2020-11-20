@@ -208,6 +208,10 @@ class EventRepository
             $request->parameter('withscheduling', true);
         }
 
+        if (xoctConf::getConfig(xoctConf::F_PRESIGN_LINKS)) {
+            $request->parameter('sign', true);
+        }
+
         $data = json_decode($request->get($roles, $for_user)) ?: [];
         $return = array();
 
