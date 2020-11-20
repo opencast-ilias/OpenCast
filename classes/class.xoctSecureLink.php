@@ -25,7 +25,8 @@ class xoctSecureLink {
 	 * @throws xoctException
 	 */
 	protected static function sign($url, $valid_until = null, $restict_ip = false) {
-		if (xoctConf::getConfig(xoctConf::F_PRESIGN_LINKS)) {
+		if (strpos($url, 'policy=') !== false && strpos($url, 'signature=') !== false) {
+			// already signed, e.g. when presigning is active
 			return $url;
 		}
 		if (!$url) {
