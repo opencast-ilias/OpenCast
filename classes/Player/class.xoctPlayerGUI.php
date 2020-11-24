@@ -49,7 +49,7 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo() {
         $xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
-        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$this->event->isLiveEvent()) {
+        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$xoctEvent->isLiveEvent()) {
             header('Location: ' . $xoctEvent->publications()->getPlayerLink());
             exit;
         }
