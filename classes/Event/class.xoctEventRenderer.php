@@ -129,7 +129,7 @@ class xoctEventRenderer {
      * @throws xoctException
      */
 	public function getPlayerLinkHTML($button_type = 'btn-info') {
-		if ($this->isEventAccessible() && ($player_link = $this->xoctEvent->publications()->getPlayerLink())) {
+		if ($this->isEventAccessible() && !is_null($this->xoctEvent->publications()->getPlayerPublication())) {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->xoctEvent->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
@@ -140,7 +140,7 @@ class xoctEventRenderer {
 				$link_tpl->setVariable('MODAL', $modal->getHTML());
 				$link_tpl->setVariable('MODAL_LINK', $this->getModalLink());
 			} else {
-				$link_tpl->setVariable('LINK_URL', $player_link);
+				$link_tpl->setVariable('LINK_URL', $this->getInternalPlayerLink());
 			}
 
 			return $link_tpl->get();
@@ -148,6 +148,22 @@ class xoctEventRenderer {
 			return '';
 		}
 	}
+
+    /**
+     * @return string
+     */
+	public function getInternalPlayerLink() : string
+    {
+        self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
+        self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->xoctEvent->getIdentifier());
+        return self::dic()->ctrl()->getLinkTargetByClass(
+            [
+                ilRepositoryGUI::class,
+                ilObjOpenCastGUI::class,
+                xoctEventGUI::class,
+                xoctPlayerGUI::class
+            ], xoctPlayerGUI::CMD_STREAM_VIDEO);
+    }
 
 
     /**
@@ -158,7 +174,7 @@ class xoctEventRenderer {
         $modal = ilModalGUI::getInstance();
         $modal->setId('modal_' . $this->xoctEvent->getIdentifier());
         $modal->setHeading($this->xoctEvent->getTitle());
-        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->xoctEvent->publications()->getPlayerLink() . '" style="border:none;"></iframe><br>');
+        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->getInternalPlayerLink() . '" style="border:none;"></iframe><br>');
         return $modal;
     }
 

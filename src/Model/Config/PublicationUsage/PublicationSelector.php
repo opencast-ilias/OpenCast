@@ -275,6 +275,16 @@ class PublicationSelector
         return $this->cutting_url;
     }
 
+    /**
+     * @return xoctPublication
+     * @throws xoctException
+     */
+    public function getPlayerPublication()
+    {
+        return $this->getFirstPublicationMetadataForUsage(
+            $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER)
+        );
+    }
 
     /**
      * @return null|string
@@ -283,26 +293,12 @@ class PublicationSelector
     public function getPlayerLink()
     {
         if (!isset($this->player_url)) {
-            if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) || $this->event->isLiveEvent()) {
-                self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
-                self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->event->getIdentifier());
-                $this->player_url = self::dic()->ctrl()->getLinkTargetByClass(
-                    [
-                        ilRepositoryGUI::class,
-                        ilObjOpenCastGUI::class,
-                        xoctEventGUI::class,
-                        xoctPlayerGUI::class
-                    ], xoctPlayerGUI::CMD_STREAM_VIDEO);
-            } else {
-                $url = $this->getFirstPublicationMetadataForUsage(
-                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER)
-                )->getUrl();
+            $url = $this->getPlayerPublication()->getUrl();
 
-                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-                    $this->player_url = xoctSecureLink::signPlayer($url);
-                } else {
-                    $this->player_url = $url;
-                }
+            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                $this->player_url = xoctSecureLink::signPlayer($url);
+            } else {
+                $this->player_url = $url;
             }
         }
 

@@ -49,6 +49,10 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo() {
         $xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
+        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$this->event->isLiveEvent()) {
+            header('Location: ' . $xoctEvent->publications()->getPlayerLink());
+            exit;
+        }
 
         $tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", true, true);
 
@@ -62,23 +66,6 @@ class xoctPlayerGUI extends xoctGUI
 
         try {
             $data = $xoctEvent->isLiveEvent() ? $this->getLiveStreamingData($xoctEvent) : $this->getStreamingData($xoctEvent);
-            // dev: local streaming server
-//            $data = [
-//              'streams' => [
-//                  [
-//                      'content' => self::ROLE_MASTER,
-//                      'sources' => [
-//                          "hls" => [
-//                              [
-//                                  "src" => 'http://localhost:8080/hls/hello.m3u8',
-//                                  "mimetype" => 'video/mp4',
-//                                  "isLiveStream" => true
-//                              ]
-//                          ]
-//                      ]
-//                  ]
-//              ]
-//            ];
         } catch (xoctException $e) {
             echo $e->getMessage();
             exit;
