@@ -41,27 +41,6 @@ class xoctPlayerGUI extends xoctGUI
     }
 
     /**
-     * @param xoctMedia $medium
-     * @param string    $event_id
-     * @param int       $duration
-     * @return string[]
-     * @throws xoctException
-     */
-    protected function buildStreamingUrls(xoctMedia $medium, string $event_id, int $duration) : array
-    {
-        $smil_url_identifier = ($medium->getRole() !== xoctMedia::ROLE_PRESENTATION ? "_presenter" : "_presentation");
-        $streaming_server_url = xoctConf::getConfig(xoctConf::F_STREAMING_URL);
-        $hls_url = $streaming_server_url . "/smil:engage-player_" . $event_id . $smil_url_identifier . ".smil/playlist.m3u8";
-        $dash_url = $streaming_server_url . "/smil:engage-player_" . $event_id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
-
-        if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
-            $hls_url = xoctSecureLink::signPlayer($hls_url, $duration);
-            $dash_url = xoctSecureLink::signPlayer($dash_url, $duration);
-        }
-        return array($hls_url, $dash_url);
-    }
-
-    /**
      * @throws DICException
      * @throws arException
      * @throws ilTemplateException
@@ -69,6 +48,7 @@ class xoctPlayerGUI extends xoctGUI
     public function streamVideo() {
         $xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
         if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$xoctEvent->isLiveEvent()) {
+            // redirect to opencast
             header('Location: ' . $xoctEvent->publications()->getPlayerLink());
             exit;
         }
@@ -112,7 +92,7 @@ class xoctPlayerGUI extends xoctGUI
         $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
 
         if ($event->isLiveEvent()) {
-            $js_config->check_script_hls = self::plugin()->directory() . '/src/Util/check_hls_status.php'; // used for live stream
+            $js_config->check_script_hls = self::plugin()->directory() . '/src/Util/check_hls_status.php'; // script to check live stream availability
             $js_config->is_live_stream = true;
             $js_config->event_start = $event->getScheduling()->getStart()->getTimestamp();
             $js_config->event_end = $event->getScheduling()->getEnd()->getTimestamp();
@@ -151,6 +131,7 @@ class xoctPlayerGUI extends xoctGUI
             $ChatGUI = new ChatGUI($TokenAR);
             $tpl->setVariable('CHAT', $ChatGUI->render(true));
         } elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
+            // show chat history for past live events
             $tpl->setVariable("STYLE_SHEET_LOCATION",
                 ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());

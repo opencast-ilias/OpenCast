@@ -25,7 +25,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         $media_package = $episode_data['search-results']['result']['mediapackage'];
 
         $streams = [];
-        if( isset($media_package['media']['track'][0]))
+        if(isset($media_package['media']['track'][0]))  // multi stream
         {
             foreach ($media_package['media']['track'] as $track) {
                 $role = strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE;
@@ -42,7 +42,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                     ]
                 ];
             }
-        } else {
+        } else {    // single stream
             $track = $media_package['media']['track'];
             $streams[] = [
                 "content" => self::ROLE_MASTER,
