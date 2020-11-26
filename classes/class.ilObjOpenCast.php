@@ -56,9 +56,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 		} catch (xoctException $e) {
 			if (ilContext::hasHTML()) {
 				ilUtil::sendInfo($e->getMessage(), true);
-			} else {
-				// if the exception is thrown during a cron job e.g., we want the exception to be thrown
-				throw $e;
 			}
 			return;
 		}
