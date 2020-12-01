@@ -17,7 +17,7 @@ xoctPaellaPlayer = {
         this.data = data;
         this.config = config;
         if (this.config.is_live_stream === true) {
-            this.checkStreams().then(function(stream_available) {
+            this.hasWorkingStream().then(function(stream_available) {
                 if (stream_available === 'true') {
                     xoctPaellaPlayer.loadPlayer();
                     xoctPaellaPlayer.checkStreamStatus();
@@ -62,9 +62,11 @@ xoctPaellaPlayer = {
 
     loadPlayer: function() {
         $('#overlay_live_waiting').hide();
-        paella.load('playerContainer', {
-            data: xoctPaellaPlayer.data,
-            configUrl: xoctPaellaPlayer.config.paella_config_file,
+        this.filterStreams().then(() => {
+            paella.load('playerContainer', {
+                data: xoctPaellaPlayer.data,
+                configUrl: xoctPaellaPlayer.config.paella_config_file,
+            });
         });
     },
 
@@ -100,7 +102,7 @@ xoctPaellaPlayer = {
      * check for working streams
      * @returns {Promise<boolean>}
      */
-    checkStreams: async function() {
+    hasWorkingStream: async function() {
         var working_stream_found = false;
         for (const stream of xoctPaellaPlayer.data.streams) {
             if (working_stream_found === false ) {
@@ -117,7 +119,7 @@ xoctPaellaPlayer = {
      */
     checkAndLoadLive: async function() {
         var i = setInterval(async function() {
-            if (await xoctPaellaPlayer.checkStreams() === 'true') {
+            if (await xoctPaellaPlayer.hasWorkingStream() === 'true') {
                 xoctPaellaPlayer.hideOverlays();
                 xoctPaellaPlayer.loadPlayer();
                 clearInterval(i);
@@ -138,7 +140,7 @@ xoctPaellaPlayer = {
         let f = async function() {
             console.log('check stream status');
             var ts = Math.round(new Date().getTime() / 1000);
-            if (await xoctPaellaPlayer.checkStreams() !== 'true') {
+            if (await xoctPaellaPlayer.hasWorkingStream() !== 'true') {
                 if (ts < xoctPaellaPlayer.config.event_start) {
                     xoctPaellaPlayer.status = 'waiting';
                 } else if (ts >= xoctPaellaPlayer.config.event_end) {
@@ -166,5 +168,16 @@ xoctPaellaPlayer = {
             }
         };
         i = setInterval(f, 20000)
+    },
+
+    filterStreams: async function() {
+        if (this.config.is_live_stream) {
+            for (const streamKey in xoctPaellaPlayer.data.streams) {
+                if (xoctPaellaPlayer.data.streams.hasOwnProperty(streamKey) &&
+                  (await xoctPaellaPlayer.isStreamWorking(xoctPaellaPlayer.data.streams[streamKey].sources.hls[0].src) !== 'true')) {
+                    xoctPaellaPlayer.data.streams.splice(streamKey, 1);
+                }
+            }
+        }
     }
 }
