@@ -3,7 +3,8 @@
 ## [3.5.0]
 - Improvement: better performance by ommiting some unnecessary requests
 - Improvement: allow upload of .m4v files
-- Improvement: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
+- Improvement: added available playback rates 1.75 and 2.0
+- Feature: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
 - Fix: internal player showed two streams but no quality selector on a single stream with multiple qualities
