@@ -4,6 +4,7 @@
 - Improvement: better performance by ommiting some unnecessary requests
 - Improvement: allow upload of .m4v files
 - Improvement: added available playback rates 1.75 and 2.0
+- Improvement: check and filter not-transmitting streams for multi-live-streams
 - Feature: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
