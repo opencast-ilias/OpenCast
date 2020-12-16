@@ -13,6 +13,10 @@ xoctPaellaPlayer = {
 
     status: 'playing',
 
+    // 10 minute buffer before the event is considered 'started', to avoid wrong status message for
+    // events started too late
+    event_start_buffer: 60 * 10,
+
     init: function(data, config) {
         this.data = data;
         this.config = config;
@@ -63,7 +67,7 @@ xoctPaellaPlayer = {
     loadPlayer: function() {
         $('#overlay_live_waiting').hide();
         this.filterStreams().then(() => {
-            paella.load('playerContainer', {
+            paella.lazyLoad('playerContainer', {
                 data: xoctPaellaPlayer.data,
                 configUrl: xoctPaellaPlayer.config.paella_config_file,
             });
@@ -141,10 +145,10 @@ xoctPaellaPlayer = {
             console.log('check stream status');
             var ts = Math.round(new Date().getTime() / 1000);
             if (await xoctPaellaPlayer.hasWorkingStream() !== 'true') {
-                if (ts < xoctPaellaPlayer.config.event_start) {
-                    xoctPaellaPlayer.status = 'waiting';
-                } else if (ts >= xoctPaellaPlayer.config.event_end) {
+                if (ts >= xoctPaellaPlayer.config.event_end) {
                     xoctPaellaPlayer.status = 'over';
+                } else if (ts < (xoctPaellaPlayer.config.event_start + xoctPaellaPlayer.event_start_buffer)) {
+                    xoctPaellaPlayer.status = 'waiting';
                 } else {
                     xoctPaellaPlayer.status = 'interrupted';
                 }

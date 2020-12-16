@@ -41,7 +41,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             "metadata" => [
                 "title" => $this->event->getTitle(),
                 "duration" => $duration,
-                //                "preview" => $xoctEvent->publications()->getThumbnailUrl()
+                "preview" => $this->event->publications()->getThumbnailUrl()
             ]
         ];
         $data['frameList'] = $this->buildSegments($this->event);
