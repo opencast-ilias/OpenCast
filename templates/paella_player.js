@@ -76,7 +76,7 @@ xoctPaellaPlayer = {
 
     triggerOverlays: function() {
         let ts = Math.round(new Date().getTime() / 1000);
-        if (ts < xoctPaellaPlayer.config.event_start) {
+        if (ts < (xoctPaellaPlayer.config.event_start + xoctPaellaPlayer.event_start_buffer)) {
             xoctPaellaPlayer.showOverlay('waiting');
         } else if (ts > xoctPaellaPlayer.config.event_end) {
             xoctPaellaPlayer.showOverlay('over');
