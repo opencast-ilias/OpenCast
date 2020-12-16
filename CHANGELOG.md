@@ -5,11 +5,13 @@
 - Improvement: allow upload of .m4v files
 - Improvement: added available playback rates 1.75 and 2.0
 - Improvement: check and filter not-transmitting streams for multi-live-streams
+- Improvement: avoid showing 'interrupted' message for delayed live streams
 - Feature: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
 - Fix: internal player showed two streams but no quality selector on a single stream with multiple qualities
 - Fix: omit error when emptying trash with old Opencast object via cron job
+- Fix: show preview image in paella player
 
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
