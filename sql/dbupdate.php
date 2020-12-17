@@ -270,3 +270,12 @@ if (!is_null($api_pub)) {
 <?php
 xoctConf::set(xoctConf::F_COMMON_IDP, 1);
 ?>
+<#29>
+<?php
+// combine owner role prefix ext & email
+$is_mapping_email = xoctConf::getConfig(xoctConf::F_USER_MAPPING) == xoctUser::MAP_EMAIL;
+$role_owner_prefix = xoctConf::getConfig($is_mapping_email ? 'role_ivt_email_prefix' : 'role_ivt_external_prefix');
+if ($role_owner_prefix) {
+    xoctConf::set(xoctConf::F_ROLE_OWNER_PREFIX, $role_owner_prefix);
+}
+?>

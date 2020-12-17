@@ -19,16 +19,7 @@ class xoctAcl extends APIObject {
 	 * @return bool
 	 */
 	public function isIVTAcl() {
-		switch (xoctUser::getUserMapping()) {
-			case xoctUser::MAP_EMAIL:
-				return (strpos($this->getRole(), xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX)) === 0);
-				break;
-			case xoctUser::MAP_EXT_ID:
-				return (strpos($this->getRole(), xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX)) === 0);
-				break;
-		}
-
-		return false;
+        return (strpos($this->getRole(), xoctConf::getConfig(xoctConf::F_ROLE_OWNER_PREFIX)) === 0);
 	}
 
 

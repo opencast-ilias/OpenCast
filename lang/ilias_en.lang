@@ -42,8 +42,7 @@ config_role_anonymous#:#Anonymous
 config_role_external_application_member#:#External Application Member
 config_role_ext_application#:#External Application
 config_role_federation_member#:#Federation-Member
-config_role_ivt_email_prefix#:#Prefix for owner role (email is attached)
-config_role_ivt_external_prefix#:#Prefix for owner role (external account is attached)
+config_role_owner_prefix#:#Prefix for owner role (mapping is attached)
 config_role_organisation_prefix#:#Prefix for organization roles (domain of mapping is attached)
 config_role_producer#:#Producer
 config_role_user_prefix#:#Prefix for user roles (mapping is attached)
@@ -92,11 +91,10 @@ config_activate_cache_info#:#Improves the loading time for event lists by storin
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in Opencast after uploading an event.
 config_workflow_unpublish_info#:#ID of the workflow which will be executed in Opencast before deleting an event. Requires API version 1.1.0.
-config_user_mapping_info#:#Userfield in ILIAS which will be used to identify the user in Opencast.
+config_user_mapping_info#:#Userfield in ILIAS which will be used to identify the user in Opencast.<br><b>Warning: depending on the ILIAS configuration, users may be able to change their own email address. It is strongly recommended not to use email as mapping in that case.</b>
 config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
 config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
-config_role_ivt_external_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}
-config_role_ivt_email_prefix_info#:#ROLE_OWNER_EMAIL_&#123IDENTIFIER}
+config_role_owner_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}
 config_identifier_to_uppercase#:#User mapping in uppercase
 config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.

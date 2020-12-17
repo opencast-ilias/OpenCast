@@ -539,6 +539,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_USER_MAPPING . '_info'));
 		$te->setOptions(array(
 			xoctUser::MAP_EXT_ID => 'External-ID',
+			xoctUser::MAP_LOGIN => 'Login',
 			xoctUser::MAP_EMAIL => 'E-Mail',
 		));
 		$this->addItem($te);

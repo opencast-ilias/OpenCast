@@ -27,8 +27,7 @@ class xoctConf extends ActiveRecord {
 	const F_GROUP_PRODUCERS = 'group_producers';
 	const F_STD_ROLES = 'std_roles';
 	const F_ROLE_USER_PREFIX = 'role_user_prefix';
-	const F_ROLE_OWNER_EXTERNAL_PREFIX = 'role_ivt_external_prefix';
-	const F_ROLE_OWNER_EMAIL_PREFIX = 'role_ivt_email_prefix';
+	const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
 	const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
 	const F_LICENSE_INFO = 'license_info';
 	const F_LICENSES = 'licenses';
@@ -94,8 +93,7 @@ class xoctConf extends ActiveRecord {
 	 */
 	public static $roles = array(
 		self::F_ROLE_USER_PREFIX,
-		self::F_ROLE_OWNER_EXTERNAL_PREFIX,
-		self::F_ROLE_OWNER_EMAIL_PREFIX,
+        self::F_ROLE_OWNER_PREFIX
 	);
 	/**
 	 * @var array
@@ -144,7 +142,7 @@ class xoctConf extends ActiveRecord {
 		xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
 		// USER
-		xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_EMAIL);
+		xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_LOGIN);
 
 		// EVENT REQUEST LEVEL
 		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {

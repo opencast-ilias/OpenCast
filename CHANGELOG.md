@@ -9,6 +9,7 @@
 - Feature: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
+- Feature: additional option 'Login' for user mapping
 - Fix: internal player showed two streams but no quality selector on a single stream with multiple qualities
 - Fix: omit error when emptying trash with old Opencast object via cron job
 - Fix: show preview image in paella player

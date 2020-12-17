@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctUser
  *
@@ -12,6 +14,13 @@ class xoctUser {
 
 	const MAP_EMAIL = 1;
 	const MAP_EXT_ID = 2;
+	const MAP_LOGIN = 3;
+
+	protected static $user_mapping_field_titles = [
+	    self::MAP_EMAIL => 'email',
+	    self::MAP_EXT_ID => 'ext_account',
+	    self::MAP_LOGIN => 'login',
+    ];
 	/**
 	 * @var int
 	 */
@@ -40,10 +49,13 @@ class xoctUser {
 	 * @var string
 	 */
 	protected $email = '';
+    /**
+     * @var string
+     */
+	protected $login = '';
 	/**
 	 * @var int
 	 */
-
 	protected $status;
 	/**
 	 * @var xoctUser[]
@@ -54,37 +66,23 @@ class xoctUser {
 	/**
 	 * @return mixed
 	 */
-	public static function getOwnerRolePrefix() {
-		switch (self::getUserMapping()) {
-			case self::MAP_EXT_ID:
-				return xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);
-				break;
-			case self::MAP_EMAIL:
-				return xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
-				break;
-		}
+	public static function getOwnerRolePrefix()
+    {
+        return xoctConf::getConfig(xoctConf::F_ROLE_OWNER_PREFIX);
 	}
 
-
-	/**
-	 * @param $role
-	 *
-	 * @return int
-	 */
-	public static function lookupUserIdForOwnerRole($role) {
+    /**
+     * @param $role
+     * @return int
+     * @throws xoctException
+     * @throws DICException
+     */
+    public static function lookupUserIdForOwnerRole($role) {
 		if (!$role) {
 			return NULL;
 		}
-		switch (self::getUserMapping()) {
-			case self::MAP_EXT_ID:
-				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX));
-				$field = 'ext_account';
-				break;
-			case self::MAP_EMAIL:
-				$regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX));
-				$field = 'email';
-				break;
-		}
+        $regex = str_replace('{IDENTIFIER}', '(.*)', xoctConf::getConfig(xoctConf::F_ROLE_OWNER_PREFIX));
+		$field = self::$user_mapping_field_titles[self::getUserMapping()];
 
 		preg_match("/" . $regex . "/uism", $role, $matches);
 
@@ -95,13 +93,12 @@ class xoctUser {
 		return $data->usr_id;
 	}
 
-
-	/**
-	 * @param ilObjUser|integer $ilUser
-	 *
-	 * @return xoctUser
-	 */
-	public static function getInstance($ilUser) {
+    /**
+     * @param ilObjUser|integer $ilUser
+     * @return xoctUser
+     * @throws xoctException
+     */
+    public static function getInstance($ilUser) {
 		$key = (is_numeric($ilUser)) ? $ilUser : $ilUser->getId();
 		if (!isset(self::$instances[$key])) {
 			self::$instances[$key] = new self($key);
@@ -110,10 +107,10 @@ class xoctUser {
 		return self::$instances[$key];
 	}
 
-
-	/**
-	 * @param int $ilias_user_id
-	 */
+    /**
+     * @param int $ilias_user_id
+     * @throws xoctException
+     */
 	protected function __construct($ilias_user_id = 6) {
 		$user = new ilObjUser($ilias_user_id);
 		$this->setIliasUserId($ilias_user_id);
@@ -121,6 +118,7 @@ class xoctUser {
 		$this->setFirstName($user->getFirstname());
 		$this->setLastName($user->getLastname());
 		$this->setEmail($user->getEmail());
+		$this->setLogin($user->getLogin());
 		switch (self::getUserMapping()) {
 			case self::MAP_EXT_ID:
 				$this->setIdentifier($this->getExtId());
@@ -128,6 +126,9 @@ class xoctUser {
 			case self::MAP_EMAIL:
 				$this->setIdentifier($this->getEmail());
 				break;
+            case self::MAP_LOGIN:
+                $this->setIdentifier($this->getLogin());
+                break;
 		}
 	}
 
@@ -219,6 +220,21 @@ class xoctUser {
 		$this->email = $email;
 	}
 
+    /**
+     * @return string
+     */
+    public function getLogin() : string
+    {
+        return $this->login;
+    }
+
+    /**
+     * @param string $login
+     */
+    public function setLogin(string $login) : void
+    {
+        $this->login = $login;
+    }
 
 	/**
 	 * @return string
@@ -235,11 +251,14 @@ class xoctUser {
 		$this->last_name = $last_name;
 	}
 
-
-	/**
-	 * @return int
-	 */
+    /**
+     * @return int
+     * @throws xoctException
+     */
 	public static function getUserMapping() {
+	    if (!in_array(self::$user_mapping, array_keys(self::$user_mapping_field_titles))) {
+	        throw new xoctException('invalid user mapping type, id = ' . self::$user_mapping);
+        }
 		return self::$user_mapping;
 	}
 
@@ -257,10 +276,6 @@ class xoctUser {
 	 * @throws xoctException
 	 */
 	public function getIdentifier() {
-		if (!$this->identifier) {
-			//			throw new xoctException(xoctException::NO_USER_MAPPING);
-		}
-
 		return xoctConf::getConfig(xoctConf::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper($this->identifier) : $this->identifier;
 	}
 
@@ -274,10 +289,10 @@ class xoctUser {
 		return $string;
 	}
 
-
-	/**
-	 * @return string
-	 */
+    /**
+     * @return string
+     * @throws xoctException
+     */
 	public function getUserRoleName() {
 		return $this->getIdentifier() ?
 			str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), xoctConf::getConfig(xoctConf::F_ROLE_USER_PREFIX))
@@ -294,17 +309,7 @@ class xoctUser {
 			return null;
 		}
 
-		switch (self::getUserMapping()) {
-			case self::MAP_EXT_ID:
-				$prefix = xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EXTERNAL_PREFIX);
-				break;
-			default:
-				$prefix = xoctConf::getConfig(xoctConf::F_ROLE_OWNER_EMAIL_PREFIX);
-				break;
-		}
-		if (!$prefix) {
-			//			throw new xoctException(xoctException::NO_USER_MAPPING);
-		}
+        $prefix = xoctConf::getConfig(xoctConf::F_ROLE_OWNER_PREFIX);
 
 		return str_replace('{IDENTIFIER}', $this->modify($this->getIdentifier()), $prefix);
 	}
