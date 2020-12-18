@@ -54,6 +54,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 		try {
 			$series = $xoctOpenCast->getSeries();
 		} catch (xoctException $e) {
+		    xoctLog::getInstance()->write($e->getMessage());
 			if (ilContext::hasHTML()) {
 				ilUtil::sendInfo($e->getMessage(), true);
 			}
