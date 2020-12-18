@@ -82,6 +82,7 @@ class xoctPlayerGUI extends xoctGUI
             $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
         }
 
+        setcookie('lastProfile', null, -1);
         echo $tpl->get();
         exit();
     }
