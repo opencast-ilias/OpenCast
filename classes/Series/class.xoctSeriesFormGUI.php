@@ -110,16 +110,19 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$existing_channel = new ilRadioGroupInputGUI($this->txt(self::F_CHANNEL_TYPE), self::F_CHANNEL_TYPE);
 			{
 				$existing = new ilRadioOption($this->txt('existing_channel_yes'), self::EXISTING_YES);
-				{
-					$existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
-					$existing_series = array();
-					foreach (xoctSeries::getAllForUser($xoctUser->getUserRoleName()) as $serie) {
-						$existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
-					}
-					array_multisort($existing_series);
-					$existing_identifier->setOptions($existing_series);
-					$existing->addSubItem($existing_identifier);
-				}
+
+                $existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
+                $existing_series = array();
+                $user_series = xoctSeries::getAllForUser($xoctUser->getUserRoleName());
+                foreach ($user_series as $serie) {
+                    $existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
+                }
+                array_multisort($existing_series);
+                $existing_identifier->setOptions($existing_series);
+                if (empty($existing_series)) {
+                    $existing->setDisabled(true);
+                }
+                $existing->addSubItem($existing_identifier);
 				$existing_channel->addOption($existing);
 
 				$new = new ilRadioOption($this->txt('existing_channel_no'), self::EXISTING_NO);
