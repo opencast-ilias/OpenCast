@@ -15,6 +15,7 @@
 - Fix: omit error when emptying trash with old Opencast object via cron job
 - Fix: show preview image in paella player
 - Fix: fixed user filter in 'change owner' and 'grant access' views (was case sensitive)
+- Fix: fixed time format for reports table (plugin configuration)
 
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
