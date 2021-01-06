@@ -58,11 +58,6 @@ var xoctGroupParticipant = {
             self.removeUser(id);
         });
 
-
-        $.expr[':'].Contains = function (a, i, m) {
-            return $(a).text().toUpperCase()
-                    .indexOf(m[3].toUpperCase()) >= 0;
-        };
         $.expr[':'].contains = function (a, i, m) {
             return $(a).text().toUpperCase()
                     .indexOf(m[3].toUpperCase()) >= 0;

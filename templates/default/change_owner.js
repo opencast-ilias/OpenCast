@@ -46,21 +46,26 @@ var xoctChangeOwner = {
 			self.setOwner($(this).parent().data('invitation-id'));
 		});
 
-        this.filter_container.keyup(function () {
-            self.filter($(this).val());
-            if (self.filtering && !$('#xoct_filter').length) {
-                self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
-            } else if (!self.filtering) {
-                $('#xoct_filter').remove();
-            }
-        });
+		$.expr[':'].contains = function (a, i, m) {
+			return $(a).text().toUpperCase()
+			.indexOf(m[3].toUpperCase()) >= 0;
+		};
+
+			this.filter_container.keyup(function () {
+					self.filter($(this).val());
+					if (self.filtering && !$('#xoct_filter').length) {
+							self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
+					} else if (!self.filtering) {
+							$('#xoct_filter').remove();
+					}
+			});
 
 
-        $(document).on('click', '#xoct_filter', function () {
-            self.filter_container.val('');
-            self.filter('');
-            $(this).remove();
-        });
+			$(document).on('click', '#xoct_filter', function () {
+					self.filter_container.val('');
+					self.filter('');
+					$(this).remove();
+			});
 
 	},
 	clear: function () {
