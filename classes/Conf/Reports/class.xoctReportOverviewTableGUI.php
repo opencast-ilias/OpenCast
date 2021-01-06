@@ -63,10 +63,10 @@ class xoctReportOverviewTableGUI extends TableGUI {
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
         if ($ilDate = $filter_values['date_from']) {
-            $filter_date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
+            $filter_date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
         if ($ilDate = $filter_values['date_to']) {
-            $filter_date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d h:i:s');
+            $filter_date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
 
         if ($filter_date_from && $filter_date_to) {
@@ -135,7 +135,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
         $this->tpl->setVariable('SENDER', $row['sender']);
 	    $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-	    $this->tpl->setVariable('DATE', date('d.m.Y h:i:s', strtotime($row['created_at'])));
+	    $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime($row['created_at'])));
     }
 
 }
