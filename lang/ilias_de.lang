@@ -252,7 +252,7 @@ groups_new_button#:#Erstellen
 groups_new_placeholder#:#Name der neuen Gruppe
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#Vor- oder Nachname
-groups_participants_header#:#Teilnehmer
+groups_participants_header#:#Mitglieder
 group_alert_delete_group#:#Möchten Sie die Gruppe wirklich löschen? Vorhandene Mitglieder werden freigeben.
 group_alert_no_title#:#Kein Gruppenname angegeben
 group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?

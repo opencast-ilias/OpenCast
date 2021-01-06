@@ -255,7 +255,7 @@ groups_new_button#:#Create
 groups_new_placeholder#:#Group-Name
 groups_participants_filter#:#Filter
 groups_participants_filter_placeholder#:#First- or Lastname
-groups_participants_header#:#Participants
+groups_participants_header#:#Members
 group_alert_delete_group#:#Do you really want to delete the Group? Assigned Participants will be released.
 group_alert_no_title#:#Please provide a Group-Name
 group_delete_participant#:#Do you really want to delete this Membership?
