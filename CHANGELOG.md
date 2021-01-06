@@ -14,6 +14,7 @@
 - Fix: internal player showed two streams but no quality selector on a single stream with multiple qualities
 - Fix: omit error when emptying trash with old Opencast object via cron job
 - Fix: show preview image in paella player
+- Fix: fixed user filter in 'change owner' and 'grant access' views (was case sensitive)
 
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
