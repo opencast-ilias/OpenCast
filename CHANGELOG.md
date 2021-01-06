@@ -7,6 +7,7 @@
 - Improvement: check and filter not-transmitting streams for multi-live-streams
 - Improvement: avoid showing 'interrupted' message for delayed live streams
 - Improvement: prevent player from loading last used profile (=layout)
+- Improvement/fix: new series - disable "choose existing series" if none available
 - Feature: show column for unprotected link only if such link is present (and restricted to edit_videos permission)
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
