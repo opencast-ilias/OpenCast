@@ -162,8 +162,13 @@ class xoctOpenCast extends ActiveRecord {
 	 * @return ilObjOpenCast
 	 */
 	public function getILIASObject() {
-		return new ilObjOpenCast(array_shift(ilObjOpenCast::_getAllReferences($this->getObjId())));
-	}
+	    static $object;
+	    if (is_null($object)) {
+            $references = ilObjOpenCast::_getAllReferences($this->getObjId());
+            $object = new ilObjOpenCast(array_shift($references));
+        }
+        return $object;
+    }
 
 
 	/**
