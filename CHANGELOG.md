@@ -1,6 +1,7 @@
 # Change Log
 
 ## [3.5.0]
+- Improvement: Paella Player v6.4.5 (fixed some minor issues)
 - Improvement: better performance by ommiting some unnecessary requests
 - Improvement: allow upload of .m4v files
 - Improvement: added available playback rates 1.75 and 2.0
