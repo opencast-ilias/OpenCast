@@ -523,6 +523,9 @@ video::-webkit-media-controls-panel {
 .dimmed-element {
   filter: blur(4px);
 }
+.playerContainer_controls_playback_playbackBar_canvas {
+  pointer-events: none;
+}
 /* TODO: Extract this CSS to editor plugins */
 .editorTrackItem.mainTrackTrim {
   background-image: url(../images/main_track_bkg.png);
