@@ -118,6 +118,10 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @var EventRepository
      */
     protected $event_repository;
+    /**
+     * @var SeriesRepository
+     */
+    protected $series_repository;
 
 
     /**
@@ -143,6 +147,7 @@ class EventFormGUI extends ilPropertyFormGUI {
     ) {
 		parent::__construct();
 		$this->event_repository = new EventRepository(self::dic()->dic());
+		$this->series_repository = new SeriesRepository();
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
@@ -402,31 +407,17 @@ class EventFormGUI extends ilPropertyFormGUI {
 			self::F_END          => $end,
 		);
 
-		// // workflow parameters
-		// if (!$this->is_new && $this->object->isScheduled()) {
-        //     $parameters = is_null($this->xoctOpenCast) ?
-        //         xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm() :
-        //         xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId(
-        //             $this->xoctOpenCast->getObjId(),
-        //             ilObjOpenCastAccess::hasPermission('edit_videos')
-        //         );
-        //     $workflow_parameters = $this->object->getWorkflowParameters();
-        //     array_walk($parameters, function (&$a, $b) use ($workflow_parameters) {
-		//        $a = $workflow_parameters[$b];
-        //     });
-		//     $array = array_merge($array, $parameters);
-        // }
-
 		$this->setValuesByArray($array, true);
 	}
-
 
     /**
      * @return bool
      * @throws DICException
      * @throws ilTimeZoneException
+     * @throws xoctException
      */
-	public function fillObject() {
+	public function fillObject() : bool
+    {
 	    $check_input = $this->checkInput();
 	    $check_date = $this->checkDates();
 		if (!$check_input || !$check_date) {
@@ -436,7 +427,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         if (is_null($this->xoctOpenCast)) {
             $series_id = $this->getInput(self::F_SERIES);
             if ($series_id == self::OPT_OWN_SERIES) {
-                $series_id = (new SeriesRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()));
+                $series_id = (new SeriesRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()))->getIdentifier();
             }
         } else {
             $series_id = $this->xoctOpenCast->getSeriesIdentifier();
@@ -499,7 +490,8 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @return bool
      * @throws DICException
      */
-    protected function checkDates() {
+    protected function checkDates() : bool
+    {
         $date_and_location_disabled = xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
         if (($this->object->isScheduled() && !$date_and_location_disabled) || $this->schedule) {
             if ($this->getInput(self::F_MULTIPLE)) {
@@ -536,7 +528,8 @@ class EventFormGUI extends ilPropertyFormGUI {
      *
      * @return string
      */
-	protected function txt($key) {
+	protected function txt($key) : string
+    {
 		return $this->parent_gui->txt($key);
 	}
 
@@ -547,7 +540,8 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @return string
      * @throws DICException
      */
-	protected function infoTxt($key) {
+	protected function infoTxt($key) : string
+    {
 		return self::plugin()->translate($key . '_info', 'event');
 	}
 
@@ -559,7 +553,8 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @throws ilTimeZoneException
      * @throws xoctException
      */
-	public function saveObject() {
+	public function saveObject() : bool
+    {
 		if (!$this->fillObject()) {
 			return false;
 		}
@@ -588,7 +583,8 @@ class EventFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @return bool|string
 	 */
-	protected function buildRRule() {
+	protected function buildRRule()
+    {
 		if ($this->getInput(self::F_MULTIPLE)) {
 			$start_time = $this->getInput(self::F_MULTIPLE_START_TIME);
 			$byhour = floor($start_time / 3600);
@@ -605,7 +601,8 @@ class EventFormGUI extends ilPropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initButtons() {
+	protected function initButtons()
+    {
 		switch (true) {
 			case  $this->is_new AND !$this->view AND !$this->schedule:
 				$this->setTitle($this->txt('create'));
@@ -632,7 +629,8 @@ class EventFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @return xoctEvent
 	 */
-	public function getObject() {
+	public function getObject() : xoctEvent
+    {
 		return $this->object;
 	}
 
@@ -640,19 +638,18 @@ class EventFormGUI extends ilPropertyFormGUI {
 	/**
 	 * @param xoctEvent $object
 	 */
-	public function setObject($object) {
+	public function setObject(xoctEvent $object)
+    {
 		$this->object = $object;
 	}
 
-
     /**
-     * @param ilException $e
-     *
+     * @param xoctException $e
      * @return bool
-     * @throws DICException
-     * @throws ilException
+     * @throws xoctException
      */
-	protected function checkAndShowConflictMessage(xoctException $e) {
+	protected function checkAndShowConflictMessage(xoctException $e) : bool
+    {
 		if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
 			$conflicts = json_decode(substr($e->getMessage(), 10), true);
 			$message = $this->txt('msg_scheduling_conflict') . '<br>';
@@ -670,24 +667,23 @@ class EventFormGUI extends ilPropertyFormGUI {
 
     /**
      * @return array
-     * @throws DICException
      * @throws xoctException
      */
     protected function getSeriesOptions() : array
     {
-        $own_series_title = 'Eigene Serie von ' . $this->user->getLogin();
-        $own_series_exists = false;
+        $xoct_user = xoctUser::getInstance(self::dic()->user());
+        // fetch early, because acls will be refreshed
+        $own_series = $this->series_repository->getOwnSeries($xoct_user);
         $series_options = [];
-        foreach (xoctSeries::getAllForUser(xoctUser::getInstance(self::dic()->user())->getUserRoleName()) as $serie) {
-            if ($serie->getTitle() === $own_series_title) {
-                $own_series_exists = true;
-            }
-            $series_options[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
+        foreach (xoctSeries::getAllForUser($xoct_user->getUserRoleName()) as $series) {
+            $series_options[$series->getIdentifier()] = $series->getTitle() . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
         }
 
         natcasesort($series_options);
-        if (!$own_series_exists) {
-            $series_options = [self::OPT_OWN_SERIES => $own_series_title] + $series_options;
+        if (is_null($own_series)) {
+            $series_options =
+                [self::OPT_OWN_SERIES => $this->series_repository->getOwnSeriesTitle($xoct_user)]
+                + $series_options;
         }
 
         return $series_options;

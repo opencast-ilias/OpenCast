@@ -19,30 +19,54 @@ use ilObjUser;
 class SeriesRepository
 {
 
+    const OWN_SERIES_PREFIX = 'Eigene Serie von ';
+
     /**
      * @param xoctUser $xoct_user
      *
-     * @return string
+     * @return xoctSeries
      * @throws xoctException
      */
-    public function getOrCreateOwnSeries(xoctUser $xoct_user) : string
+    public function getOrCreateOwnSeries(xoctUser $xoct_user) : xoctSeries
     {
-        $series_title = 'Eigene Serie von ' . ilObjUser::_lookupLogin($xoct_user->getIliasUserId());
+        $xoctSeries = $this->getOwnSeries($xoct_user);
+        if (is_null($xoctSeries)) {
+            $xoctSeries = new xoctSeries();
+            $xoctSeries->setTitle($this->getOwnSeriesTitle($xoct_user));
+            $std_acls = new xoctAclStandardSets();
+            $xoctSeries->setAccessPolicies($std_acls->getAcls());
+            $xoctSeries->addProducer($xoct_user, true);
+            $xoctSeries->create();
+        }
+        return $xoctSeries;
+    }
+
+    /**
+     * @param xoctUser $xoct_user
+     * @return xoctSeries|null
+     * @throws xoctException
+     */
+    public function getOwnSeries(xoctUser $xoct_user) /*: ?xoctSeries*/
+    {
         $existing = xoctRequest::root()->series()->parameter(
             'filter',
-            'title:' . $series_title
+            'title:' . $this->getOwnSeriesTitle($xoct_user)
         )->get();
         $existing = json_decode($existing, true);
         if (empty($existing)) {
-            $series = new xoctSeries();
-            $series->setTitle($series_title);
-            $std_acls = new xoctAclStandardSets();
-            $series->setAccessPolicies($std_acls->getAcls());
-            $series->addProducer($xoct_user, true);
-            $series->create();
-            return $series->getIdentifier();
+            return null;
         }
-        return $existing[0]['identifier'];
+        $xoctSeries = xoctSeries::find($existing[0]['identifier']);
+        $xoctSeries->addProducer($xoct_user);
+        return $xoctSeries;
     }
 
+    /**
+     * @param xoctUser $xoct_user
+     * @return string
+     */
+    public function getOwnSeriesTitle(xoctUser $xoct_user) : string
+    {
+        return self::OWN_SERIES_PREFIX . $xoct_user->getLogin();
+    }
 }
