@@ -237,7 +237,6 @@ class xoctEvent extends APIObject {
 			case 'created':
 			case 'start_time':
 				return $this->getDefaultDateTimeObject($value);
-				break;
 			case 'metadata':
 				$metadata = new Metadata();
 				$metadata->loadFromArray($value);
@@ -1294,7 +1293,7 @@ class xoctEvent extends APIObject {
             $startDate->setValue($start->format('Y-m-d'));
 
             $startTime = $this->getMetadata()->getField('startTime');
-            $startTime->setValue($start->format('H:i'));
+            $startTime->setValue($start->format('H:i:s.v\Z'));
 //        }
 	}
 
