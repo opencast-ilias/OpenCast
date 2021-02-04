@@ -18,6 +18,9 @@ xoctPaellaPlayer = {
     event_start_buffer: 60 * 10,
 
     init: function(data, config) {
+        // workaround for paella issue https://github.com/polimediaupv/paella/issues/661
+        paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/';
+
         this.data = data;
         this.config = config;
         if (this.config.is_live_stream === true) {
