@@ -26,12 +26,6 @@ As ILIAS administrator go to "Administration"->"Plugins" and install/activate th
 ### Configuration
 After a fresh installation, the plugin configuration will already contain a basic configuration. A few things will have to be adjusted to make the plugin work though. Have a look at the [configuration manual](./doc/CONFIGURATION.md).
 
-### Workaround for internal Paella Player
-If you're using the plugin-internal Paella Player, you will have to implement a small workaround for a bug in the current version of Paella Player. Start in your ILIAS root directory:
-```bash
-ln -s Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/resources/ .
-```
-
 ### Installation Live Chat
 This is only required if the plugin is configured to show live events and if you wish to display a live chat during these events.
 
