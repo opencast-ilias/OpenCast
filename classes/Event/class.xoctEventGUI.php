@@ -517,7 +517,7 @@ class xoctEventGUI extends xoctGUI {
 		$base = str_replace('/api', '', $base);
 
 		$return_link =  ILIAS_HTTP_PATH . '/'
-			. self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
+			. self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, '', false, false);
 
 		$studio_link = $base . '/studio'
 			. '?upload.seriesId=' . $xoctSeries
