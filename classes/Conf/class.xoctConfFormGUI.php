@@ -326,6 +326,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::METADATA_EXCEPT_DATE_PLACE), xoctConf::METADATA_EXCEPT_DATE_PLACE);
 		$ri->addOption($ro);
 		$this->addItem($ri);
+
+		// MAKE PRESENTER FIELD MANDATORY
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTER_MANDATORY), xoctConf::F_PRESENTER_MANDATORY);
+		$cb->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTER_MANDATORY . '_info'));
+		$this->addItem($cb);
 	}
 
 
