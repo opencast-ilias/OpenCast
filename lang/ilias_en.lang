@@ -131,8 +131,8 @@ config_video_portal_title#:#Title of external Video Portal
 config_video_portal_link#:#Link to external Video Portal
 config_video_portal_link_info#:#Will be displayed in the settings and info tab of a series. &#123series_id} can be used as a placeholder. E.g.: https://myopencast-tube.com/cast/channels/&#123series_id}
 config_permission_templates#:#Permission Templates
-config_presenter_mandatory#:#Presenter name mandatory
-config_presenter_mandatory_info#:# Makes mandatory write the presenter name for an event upload
+config_presenter_mandatory#:#"Presenter" mandatory
+config_presenter_mandatory_info#:#Makes field "Presenter" mandatory for an event upload
 config_upload_chunk_size#:#Upload chunk size (MB)
 config_upload_chunk_size_info#:#The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
 config_btn_load_parameters#:#Load Parameters via API
