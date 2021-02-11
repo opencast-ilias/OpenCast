@@ -13,11 +13,13 @@
 - Feature: config for presigning urls (possible performance boost)
 - Feature: config for synchronous loading of table (possible performance boost)
 - Feature: additional option 'Login' for user mapping
+- Feature: config for making "Presenter" field mandatory (thanks mliradelc!)
 - Fix: internal player showed two streams but no quality selector on a single stream with multiple qualities
 - Fix: omit error when emptying trash with old Opencast object via cron job
 - Fix: show preview image in paella player
-- Fix: fixed user filter in 'change owner' and 'grant access' views (was case sensitive)
+- Fix: fixed user filter in 'change owner' and 'grant access' views (was case-sensitive)
 - Fix: fixed time format for reports table (plugin configuration)
+- Fix: fixed Opencast Studio return link (thanks LukasKalbertodt!)
 
 ## [3.4.2]
 - Fix: upload error (wrong acl format)
