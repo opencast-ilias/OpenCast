@@ -276,9 +276,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 		$this->addItem($te);
 
 		$te = new ilTextInputGUI($this->txt(self::F_PRESENTERS), self::F_PRESENTERS);
-		if (xoctConf::getConfig(xoctConf::F_PRESENTER_MANDATORY) || $this->schedule){
-			$te->setRequired(true);
-		}
+        $te->setRequired(xoctConf::getConfig(xoctConf::F_PRESENTER_MANDATORY) || $this->schedule);
 		$this->addItem($te);
 
 		// show location and start date for scheduled events only if configured
