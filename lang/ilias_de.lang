@@ -130,6 +130,8 @@ config_video_portal_title#:#Bezeichung des externen Videoportals
 config_video_portal_link#:#Link zu externem Videoportal
 config_video_portal_link_info#:#Wird in den Einstellungen und im Infotab einer Serie angezeigt. Als Platzhalter kann &#123series_id} verwendet werden. Bsp: https://myopencast-tube.com/cast/channels/&#123series_id}
 config_permission_templates#:#Berechtigungsvorlagen
+config_presenter_mandatory#:#Name des Präsentators ist Pflichtfeld
+config_presenter_mandatory_info#:# Macht das Schreiben des Präsentatornamens für einen Event-Upload Pflicht.
 config_upload_chunk_size#:#Upload-Chunk-Größe (MB)
 config_upload_chunk_size_info#:#Der Video-Upload erfolgt stückweise, wobei ein Stück die hier angegebene Größe hat. Das Erhöhen dieser Größe kann die Upload-Geschwindigkeit verbessern, wobei allerdings auf das Upload-Limit geachtet werden sollte. Standard: 20MB
 config_btn_load_parameters#:#Parameter via API Laden
