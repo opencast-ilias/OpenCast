@@ -25,7 +25,7 @@ class xoctReport extends ActiveRecord {
      * @throws ilException
      */
     public function create($omit_send_mail = false) {
-        $this->setCreatedAt(date('Y-m-d h:i:s',time()));
+        $this->setCreatedAt(date('Y-m-d H:i:s',time()));
         parent::create();
 
         if (!$omit_send_mail) {
