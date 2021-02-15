@@ -537,6 +537,28 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	public function opencaststudio(){
+
+		// add user to ilias producers
+		$xoctUser = xoctUser::getInstance(self::dic()->user());
+		try {
+			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+			$sleep = $ilias_producers->addMember($xoctUser);
+		} catch (xoctException $e) {
+			$sleep = false;
+		}
+
+		// add user to series producers
+		/** @var xoctSeries $xoctSeries */
+		$xoctSeries = xoctSeries::find($this->xoctOpenCast->getSeriesIdentifier());
+		if ($xoctSeries->addProducer($xoctUser)) {
+			$sleep = true;
+		}
+
+		if ($sleep) {
+			sleep(3);
+		}
+
+		// redirect to oc studio
 		$xoctSeries =  $this->xoctOpenCast->getSeriesIdentifier();
 		$base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
 		$base = str_replace('/api', '', $base);
