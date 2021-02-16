@@ -231,7 +231,7 @@ class xoctUser {
     /**
      * @param string $login
      */
-    public function setLogin(string $login) : void
+    public function setLogin(string $login) /*: void*/
     {
         $this->login = $login;
     }

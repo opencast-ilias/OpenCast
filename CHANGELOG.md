@@ -2,6 +2,7 @@
 
 ## [3.5.1]
 - Fix: small code change for InteractiveVideo plugin
+- Fix: removed php 7.1 syntax
 
 ## [3.5.0]
 - Improvement: Paella Player v6.5.0 (fixed some minor issues)
