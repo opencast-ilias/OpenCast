@@ -25,7 +25,7 @@ xoctPaellaPlayer = {
         this.config = config;
         if (this.config.is_live_stream === true) {
             this.hasWorkingStream().then(function(stream_available) {
-                if (stream_available === 'true') {
+                if (stream_available) {
                     xoctPaellaPlayer.loadPlayer();
                     xoctPaellaPlayer.checkStreamStatus();
                 } else {
@@ -102,7 +102,8 @@ xoctPaellaPlayer = {
     },
 
     isStreamWorking: async function(url) {
-        return (await $.get(xoctPaellaPlayer.config.check_script_hls + "?url=" + url) === 'true');
+        let working = (await $.get(xoctPaellaPlayer.config.check_script_hls + "?url=" + url) === 'true');
+        return working;
     },
 
     /**
