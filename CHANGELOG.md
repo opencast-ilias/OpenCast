@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.5.1]
+- Fix: small code change for InteractiveVideo plugin
+
 ## [3.5.0]
 - Improvement: Paella Player v6.5.0 (fixed some minor issues)
 - Improvement: better performance by ommiting some unnecessary requests

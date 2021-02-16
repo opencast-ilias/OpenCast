@@ -214,7 +214,8 @@ class PublicationSelector
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
             return new DownloadDto(
                 $pub->getId(),
-                $label
+                $label,
+                xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
             );
         }, $download_publications, array_keys($download_publications));
     }
