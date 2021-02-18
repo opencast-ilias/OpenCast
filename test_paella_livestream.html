@@ -16,14 +16,16 @@
         <script type="text/javascript" src="javascript/paella_player.js"></script>
     -->
 
-	<link rel="stylesheet" href="node_modules/paellaplayer/build/player/resources/bootstrap/css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
+	<link rel="stylesheet" href="./node_modules/paellaplayer/build/player/resources/bootstrap/css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
 </head>
-<body id="body" onload="paella.lazyLoad('playerContainer',{
+<body id="body" onload="
+paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'node_modules/paellaplayer/build/player/';
+paella.lazyLoad('playerContainer',{
 		data: {
 			streams:[{
 				content: 'presenter',
-				sources: {hls: [{src:'https://STREAM_URL',mimetype:'application/x-mpegURL',isLiveStream:true}]}}],
-				metadata:{title:'test dual'}},
+				sources: {hls: [{src:'https://multiplatform-f.akamaihd.net/i/multi/april11/sintel/sintel-hd_,512x288_450_b,640x360_700_b,768x432_1000_b,1024x576_1400_m,.mp4.csmil/master.m3u8',mimetype:'application/x-mpegURL',isLiveStream:true}]}}],
+				metadata:{title:'test live'}},
 		configUrl: '/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json'
     });">
 <div id="playerContainer" style="display:block;width:100%">
