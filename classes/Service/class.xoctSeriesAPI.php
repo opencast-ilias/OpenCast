@@ -91,8 +91,12 @@ class xoctSeriesAPI {
 			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
 			$xoctPermissionTemplate = xoctPermissionTemplate::find($additional_data['permission_template_id']);
 			$xoctPermissionTemplate->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
-		}
-		$series->setAccessPolicies($series_acls);
+		} elseif ($default_template = xoctPermissionTemplate::where(array('is_default' => 1))->first()) {
+            /** @var xoctPermissionTemplate $default_template */
+            $default_template->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
+        }
+
+        $series->setAccessPolicies($series_acls);
 
 		if ($series->getIdentifier()) {
 			$series->update();

@@ -2,6 +2,7 @@
 
 ## [3.5.2]
 - Fix: joining a live event always showed a (wrong) status overlay first 
+- Change: set default permission template when creating series with xoctSeriesAPI
 
 ## [3.5.1]
 - Fix: small code change for InteractiveVideo plugin
