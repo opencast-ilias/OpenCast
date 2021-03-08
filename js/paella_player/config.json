@@ -374,7 +374,8 @@
         "server": "http://localhost/piwik/",
         "site_id": 1,
         "heartbeat": 30,
-        "client_id": "Paella Player"
+        "client_id": "Paella Player",
+        "html_title": false
       },
       "es.teltek.paella.usertracking.xAPISaverPlugin": {
         "enabled": false,
