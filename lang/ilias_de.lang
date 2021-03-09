@@ -495,3 +495,8 @@ parameters_info#:#Hier angegebene Workflow-Parameter werden mit dem Wert 'true' 
 unprotected_link#:#Ungeschützter Link
 msg_link_copied#:#Link kopiert
 tooltip_copy_link#:#Link in die Zwischenablage kopieren
+cat_create_xoct#:#Opencast-Objekt anlegen
+crs_create_xoct#:#Opencast-Objekt anlegen
+fold_create_xoct#:#Opencast-Objekt anlegen
+grp_create_xoct#:#Opencast-Objekt anlegen
+root_create_xoct#:#Opencast-Objekt anlegen 

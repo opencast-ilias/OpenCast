@@ -498,3 +498,8 @@ parameters_info#:#Enter comma-separated workflow parameters which should be set 
 unprotected_link#:#Unprotected Link
 msg_link_copied#:#Link copied
 tooltip_copy_link#:#Copy link to clipboard
+cat_create_xoct#:#Create Opencast object
+crs_create_xoct#:#Create Opencast object
+fold_create_xoct#:#Create Opencast object
+grp_create_xoct#:#Create Opencast object
+root_create_xoct#:#Create Opencast object
