@@ -1,5 +1,10 @@
 # Change Log
 
+## [3.5.3]
+- Feature: paella player version 6.5.2 (thanks to mliradelc)
+- Improvement: add user to producers when opening opencast studio (thanks to rfcmaXi)
+- Fix: fixed some lang vars (thanks to reiferschris)
+
 ## [3.5.2]
 - Fix: joining a live event always showed a (wrong) status overlay first 
 - Change: set default permission template when creating series with xoctSeriesAPI
