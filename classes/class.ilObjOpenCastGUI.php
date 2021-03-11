@@ -103,7 +103,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 case 'xoctseriesgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctSeriesGUI($xoctOpenCast);
+                    $xoctSeriesGUI = new xoctSeriesGUI($this->object, $xoctOpenCast);
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -161,7 +161,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 
 	protected function redirectSettings() {
-		self::dic()->ctrl()->redirect(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT);
+		self::dic()->ctrl()->redirectByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT);
 	}
 
 
@@ -198,7 +198,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		self::dic()->tabs()->addTab(self::TAB_INFO, self::plugin()->translate('tab_info'), self::dic()->ctrl()->getLinkTarget($this, 'infoScreen'));
 
 		if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_SETTINGS)) {
-			self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_series_settings'), self::dic()->ctrl()->getLinkTarget(new xoctSeriesGUI(), xoctSeriesGUI::CMD_EDIT_GENERAL));
+			self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_series_settings'), self::dic()->ctrl()->getLinkTargetByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT_GENERAL));
 		}
 
 		if ($xoctOpenCast->getPermissionPerClip() && ilObjOpenCastAccess::hasPermission('read')) {
@@ -366,11 +366,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
         }
 
 		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
-			self::dic()->mainTemplate()->setTitle($xoctOpenCast->getSeries()->getTitle());
-			self::dic()->mainTemplate()->setDescription($xoctOpenCast->getSeries()->getDescription());
+			self::dic()->mainTemplate()->setTitle($this->object->getTitle());
+			self::dic()->mainTemplate()->setDescription($this->object->getDescription());
 			if (self::dic()->access()->checkAccess('read', '', $_GET['ref_id'])) {
-				self::dic()->history()->addItem($_GET['ref_id'], self::dic()->ctrl()->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $xoctOpenCast->getSeries()
-					->getTitle());
+				self::dic()->history()->addItem($_GET['ref_id'], self::dic()->ctrl()->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $this->object->getTitle());
 			}
 			require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
 			$list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpenCastPlugin::PLUGIN_ID);
@@ -385,8 +384,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 		self::dic()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
 		self::dic()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
-
-		$this->object->updateObjectFromSeries();
 
 		return $xoctOpenCast;
 	}

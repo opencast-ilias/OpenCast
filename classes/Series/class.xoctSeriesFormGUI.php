@@ -299,8 +299,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	public function fillForm() {
 		$array = [
 			self::F_CHANNEL_TYPE             => self::EXISTING_NO,
-			self::F_TITLE                    => $this->series->getTitle(),
-			self::F_DESCRIPTION              => $this->series->getDescription(),
+			self::F_TITLE                    => $this->parent_gui->getObject()->getTitle(),
+			self::F_DESCRIPTION              => $this->parent_gui->getObject()->getDescription(),
 			self::F_INTRODUCTION_TEXT        => $this->cast->getIntroductionText(),
 			self::F_LICENSE                  => $this->series->getLicense(),
 			self::F_USE_ANNOTATIONS          => $this->cast->getUseAnnotations(),

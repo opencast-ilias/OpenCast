@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.5.4]
+- Fix: settings form was filled out with old values after changing title or description
+- Change/Improvement: ILIAS object's title and description are synchronized with Opencast series only when opening the settings (this saves requests and boosts performance). Additionally, when saving the settings, all objects linked to the same series are updated (this increases the loading time for saving the settings but prevents inconsistent data).
+
 ## [3.5.3]
 - Feature: paella player version 6.5.2 (thanks to mliradelc)
 - Improvement: add user to producers when opening opencast studio (thanks to rfcmaXi)

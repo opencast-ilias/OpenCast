@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctSeriesGUI
  *
@@ -24,17 +27,23 @@ class xoctSeriesGUI extends xoctGUI {
 	 * @var xoctOpenCast
 	 */
 	protected $xoctOpenCast;
+    /**
+     * @var ilObjOpenCast
+     */
+	protected $object;
 
-	/**
-	 * @param xoctOpenCast $xoctOpenCast
-	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = null) {
+    /**
+     * @param ilObjOpenCast $object
+     * @param xoctOpenCast  $xoctOpenCast
+     */
+	public function __construct(ilObjOpenCast $object, xoctOpenCast $xoctOpenCast = null) {
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
 			$this->xoctOpenCast = new xoctOpenCast ();
 		}
-	}
+        $this->object = $object;
+    }
 
 
 	/**
@@ -83,7 +92,8 @@ class xoctSeriesGUI extends xoctGUI {
 	 * @throws Exception
 	 */
 	protected function editGeneral() {
-		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+        $this->object->updateObjectFromSeries();
+        if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
 		}
 		self::dic()->tabs()->activateSubTab(self::SUBTAB_GENERAL);
@@ -101,17 +111,19 @@ class xoctSeriesGUI extends xoctGUI {
 		$this->updateGeneral();
 	}
 
-
-	/**
-	 * @throws xoctException
-	 */
+    /**
+     * @throws DICException
+     * @throws arException
+     * @throws ilException
+     * @throws xoctException
+     */
 	protected function updateGeneral() {
 		$xoctSeriesFormGUI = new xoctSeriesFormGUI($this, $this->xoctOpenCast);
 		if ($xoctSeriesFormGUI->saveObject()) {
-			$obj = new ilObjOpenCast($_GET['ref_id']);
-			$obj->setTitle($this->xoctOpenCast->getSeries()->getTitle());
-			$obj->setDescription($this->xoctOpenCast->getSeries()->getDescription());
-			$obj->update();
+			$this->getObject()->setTitle($this->xoctOpenCast->getSeries()->getTitle());
+            $this->getObject()->setDescription($this->xoctOpenCast->getSeries()->getDescription());
+            $this->getObject()->update();
+            $this->xoctOpenCast->updateAllDuplicates();
 			ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
 			self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
 		}
@@ -121,7 +133,7 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	protected function editWorkflowParameters() {
 		xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
@@ -136,7 +148,7 @@ class xoctSeriesGUI extends xoctGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	protected function updateWorkflowParameters() {
 		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $param_id => $value) {
@@ -165,6 +177,10 @@ class xoctSeriesGUI extends xoctGUI {
 		return $this->xoctOpenCast->getObjId();
 	}
 
+	public function getObject() : ilObjOpenCast
+    {
+        return $this->object;
+    }
 	/**
 	 *
 	 */

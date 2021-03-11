@@ -109,19 +109,19 @@ class xoctOpenCast extends ActiveRecord {
 
 
     /**
-     * @return Int[]|bool
-     * @throws Exception
+     * @return Int[]
+     * @throws ilException
      */
-	public function getDuplicatesOnSystem()
+	public function getDuplicatesOnSystem() : array
 	{
 		if (!$this->getObjId() || !$this->getSeriesIdentifier())
 		{
-			return false;
+			return [];
 		}
 
 		$duplicates_ar = self::where(array( 'series_identifier' => $this->getSeriesIdentifier() ))->where(array( 'obj_id' => 0 ), '!=');
 		if ($duplicates_ar->count() < 2) {
-			return false;
+			return [];
 		}
 
 		$duplicates_ids = array();
@@ -129,11 +129,11 @@ class xoctOpenCast extends ActiveRecord {
 		foreach ($duplicates_ar->get() as $oc) {
 			/** @var xoctOpenCast $oc */
 			if ($oc->getObjId() != $this->getObjId()) {
-				$query = "SELECT deleted, ref_id FROM object_reference" . " WHERE obj_id = " . self::dic()->database()->quote($oc->getObjId(), "integer");
+				$query = "SELECT ref_id FROM object_reference" . " WHERE deleted is null and obj_id = " . self::dic()->database()->quote($oc->getObjId(), "integer");
 				$set = self::dic()->database()->query($query);
 				$rec = self::dic()->database()->fetchAssoc($set);
 
-				if (!$rec['deleted'] && $rec['ref_id']) {
+				if ($rec['ref_id']) {
 					$duplicates_ids[] = $rec['ref_id'];
 				}
 			}
@@ -143,7 +143,7 @@ class xoctOpenCast extends ActiveRecord {
 			return $duplicates_ids;
 		}
 
-		return false;
+		return [];
 	}
 
     /**
@@ -486,6 +486,19 @@ class xoctOpenCast extends ActiveRecord {
         }
 
         $this->getSeries()->update();
+    }
+
+    /**
+     * @throws xoctException|ilException
+     */
+    public function updateAllDuplicates()
+    {
+        foreach ($this->getDuplicatesOnSystem() as $ref_id) {
+            $object = new ilObjOpencast($ref_id);
+            $object->setTitle($this->getSeries()->getTitle());
+            $object->setDescription($this->getSeries()->getDescription());
+            $object->update();
+        }
     }
 
 }

@@ -107,25 +107,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	}
 
 
-	/**
-	 * @param bool $get_exceptions
-	 * @return xoctSeries
-	 * @throws Exception
-	 */
-	protected function getSeries($get_exceptions = false) {
-		$xoctSeries = new xoctSeries();
-		try {
-			$xoctOpenCast = $this->getOpenCast($get_exceptions);
-			if ($xoctOpenCast instanceof xoctOpenCast) {
-				$xoctSeries = $xoctOpenCast->getSeries();
-			}
-		} catch (xoctException $e) {
-			if ($get_exceptions) {
-				throw $e;
-			}
-		}
-
-		return $xoctSeries;
+	protected function getObject() {
+		return new ilObjOpenCast($this->ref_id);
 	}
 
 
@@ -150,26 +133,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	/**
-	 * @return string
-	 * @throws xoctException
-	 */
-	public function getTitle() {
-		$title = $this->getSeries()->getTitle();
-		return $title ? $title : parent::getTitle();
-	}
-
-
-	/**
-	 * @return string
-	 * @throws xoctException
-	 */
-	function getDescription() {
-		$description = $this->getSeries()->getDescription();
-		return $description ? $description : parent::getDescription();
-	}
-
-
-	/**
 	 * Get item properties
 	 *
 	 * @return    array        array of property arrays:
@@ -185,7 +148,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 			if (!$xoctOpenCast instanceof xoctOpenCast) {
 				return $props;
 			}
-			$xoctOpenCast->getSeries();
 
 			if (!$xoctOpenCast->isOnline()) {
 				$props[] = array(
