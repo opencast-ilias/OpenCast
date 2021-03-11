@@ -2,6 +2,7 @@
 
 ## [3.5.4]
 - Fix: settings form was filled out with old values after changing title or description
+- Fix: removed unnecessary signing of download urls
 - Change/Improvement: ILIAS object's title and description are synchronized with Opencast series only when opening the settings (this saves requests and boosts performance). Additionally, when saving the settings, all objects linked to the same series are updated (this increases the loading time for saving the settings but prevents inconsistent data).
 
 ## [3.5.3]
