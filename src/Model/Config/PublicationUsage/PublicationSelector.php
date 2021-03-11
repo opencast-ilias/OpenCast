@@ -190,10 +190,11 @@ class PublicationSelector
     }
 
     /**
+     * @param bool $with_urls
      * @return DownloadDto[]
      * @throws xoctException
      */
-    public function getDownloadDtos() : array {
+    public function getDownloadDtos(bool $with_urls = true) : array {
         $download_publications = $this->getDownloadPublications();
         usort($download_publications, function ($pub1, $pub2) {
             /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
@@ -206,7 +207,7 @@ class PublicationSelector
             }
             return 0;
         });
-        return array_map(function($pub, $i) {
+        return array_map(function($pub, $i) use ($with_urls) {
             /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
             $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' :
                 ($pub instanceof xoctAttachment ? $pub->getFlavor() : 'Download ' . $i);
@@ -215,7 +216,10 @@ class PublicationSelector
             return new DownloadDto(
                 $pub->getId(),
                 $label,
-                xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl()
+                $with_urls ?
+                    (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ?
+                        xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl())
+                    : ''
             );
         }, $download_publications, array_keys($download_publications));
     }

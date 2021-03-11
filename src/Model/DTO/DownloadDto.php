@@ -29,7 +29,7 @@ class DownloadDto
      * @param string $resolution
      * @param string $url
      */
-    public function __construct(string $publication_id, string $resolution, string $url)
+    public function __construct(string $publication_id, string $resolution, string $url = '')
     {
         $this->publication_id = $publication_id;
         $this->resolution = $resolution;

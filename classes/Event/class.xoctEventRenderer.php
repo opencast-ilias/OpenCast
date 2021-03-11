@@ -213,7 +213,7 @@ class xoctEventRenderer {
      * @throws xoctException
      */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
-        $download_dtos = $this->xoctEvent->publications()->getDownloadDtos();
+        $download_dtos = $this->xoctEvent->publications()->getDownloadDtos(false);
 		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
