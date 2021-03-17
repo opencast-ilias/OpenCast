@@ -11,7 +11,6 @@ class xoctCurl {
 	 */
 	public static function init(xoctCurlSettings $xoctCurlSettings) {
 		self::$ip_v4 = $xoctCurlSettings->isIpV4();
-		self::$ssl_version = $xoctCurlSettings->getSslVersion();
 		self::$verify_host = $xoctCurlSettings->isVerifyHost();
 		self::$verify_peer = $xoctCurlSettings->isVerifyHost();
 		self::$username = $xoctCurlSettings->getUsername();
@@ -51,19 +50,11 @@ class xoctCurl {
 
 	protected function execute() {
 		static $ch;
-		$request_start_time = microtime(true);
 		if (!isset($ch)) {
 			$ch = curl_init();
-			// following is needed if opencast's own user management is used
-//			$this->addHeader("X-Requested-Auth: Digest");
-//			$this->addHeader("X-Opencast-Matterhorn-Authorization: true");
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			if (self::$ip_v4) {
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-			}
-
-			if (self::$ssl_version) {
-				curl_setopt($ch, CURLOPT_SSLVERSION, self::$ssl_version);
 			}
 			if ($this->getUsername() AND $this->getPassword()) {
 				curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
@@ -86,15 +77,11 @@ class xoctCurl {
 		if ($this->getRequestContentType()) {
 			$this->addHeader('Content-Type: ' . $this->getRequestContentType());
 		}
-		// following is needed if opencast's own user management is used
-//		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
 		$this->debug($ch);
 		$resp_orig = curl_exec($ch);
-		//		xoctLog::getInstance()->write($this->log_output, xoctLog::DEBUG_LEVEL_3);
 		if ($resp_orig === false) {
 			$this->setResponseError(new xoctCurlError($ch));
-			//			curl_close($ch);
 		}
 		$this->setResponseBody($resp_orig);
 		$this->setResponseMimeType(curl_getinfo($ch, CURLINFO_CONTENT_TYPE));
@@ -144,10 +131,6 @@ class xoctCurl {
 	 * @var array
 	 */
 	protected $post_fields = array();
-	/**
-	 * @var int
-	 */
-	protected static $ssl_version = CURL_SSLVERSION_DEFAULT;
 	/**
 	 * @var bool
 	 */
@@ -227,22 +210,6 @@ class xoctCurl {
 		$xoctCurlError = new xoctCurlError($ch);
 
 		return $xoctCurlError->getMessage();
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public static function getSslVersion() {
-		return self::$ssl_version;
-	}
-
-
-	/**
-	 * @param int $ssl_version
-	 */
-	public static function setSslVersion($ssl_version) {
-		self::$ssl_version = $ssl_version;
 	}
 
 

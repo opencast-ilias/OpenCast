@@ -11,10 +11,6 @@ class xoctCurlSettings {
 	 */
 	protected $ip_v4 = false;
 	/**
-	 * @var int
-	 */
-	protected $ssl_version = CURL_SSLVERSION_DEFAULT;
-	/**
 	 * @var bool
 	 */
 	protected $verify_host = false;
@@ -45,22 +41,6 @@ class xoctCurlSettings {
 	 */
 	public function setIpV4($ip_v4) {
 		$this->ip_v4 = $ip_v4;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getSslVersion() {
-		return $this->ssl_version;
-	}
-
-
-	/**
-	 * @param int $ssl_version
-	 */
-	public function setSslVersion($ssl_version) {
-		$this->ssl_version = $ssl_version;
 	}
 
 
