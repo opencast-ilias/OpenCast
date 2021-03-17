@@ -48,7 +48,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $object;
 	/**
-	 * @var xoctSeriesGUI
+	 * @var xoctSeriesGUI|ilObjOpenCastGUI
 	 */
 	protected $parent_gui;
 	/**

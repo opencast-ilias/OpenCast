@@ -143,6 +143,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	}
 
     /**
+     * @return ilObjOpenCast
+     */
+	public function getObject() : ilObjOpenCast
+    {
+        return $this->object ?: new ilObjOpenCast();
+    }
+
+    /**
      *
      */
 	protected function showMainTemplate()
