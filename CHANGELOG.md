@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.5.5]
+- Fix: error when creating new object
+- Fix: remove ssl default version for curl
+
 ## [3.5.4]
 - Fix: settings form was filled out with old values after changing title or description
 - Fix: removed unnecessary signing of download urls
