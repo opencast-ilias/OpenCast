@@ -221,12 +221,7 @@ class xoctEventGUI extends xoctGUI {
             || !empty($_POST)
             || xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY))
 		{
-			// you're here when exporting or changing selected columns, or if load_table_sync is configured
-			$xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
-			if ($xoctEventTableGUI->hasScheduledEvents()) {
-				self::dic()->mainTemplate()->addOnLoadCode("$('#xoct_report_date_button').removeClass('hidden');");
-			}
-			return $xoctEventTableGUI->getHTML();
+			return $this->getTableGUI();
 		}
 
 		self::dic()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
@@ -352,6 +347,12 @@ class xoctEventGUI extends xoctGUI {
 	 * ajax call
 	 */
 	public function asyncGetTableGUI() {
+        echo $this->getTableGUI();
+        exit();
+	}
+
+    public function getTableGUI()
+    {
         $modals_html = $this->getModalsHTML();
         $xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
         $html = $xoctEventTableGUI->getHTML();
@@ -369,10 +370,8 @@ class xoctEventGUI extends xoctGUI {
                         });
                     </script>";
         }
-        echo $html . $modals_html;
-        exit();
-	}
-
+        return $html . $modals_html;
+    }
 
 	/**
 	 * ajax call

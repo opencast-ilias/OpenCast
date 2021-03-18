@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.5.6]
+- Fix: modals didn't work with config "Load event table synchronously"
+
 ## [3.5.5]
 - Fix: error when creating new object
 - Fix: remove ssl default version for curl
