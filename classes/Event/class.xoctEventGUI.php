@@ -631,21 +631,23 @@ class xoctEventGUI extends xoctGUI {
         $extension = pathinfo($url)['extension'];
         $url = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
 
-        // get filesize
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
-        curl_exec($ch);
-        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-        curl_close($ch);
+
 		if(xoctConf::getConfig(xoctConf::F_EXT_DL_SOURCE)){
 			// Open external source page
 			header('Location: '.$url);
 		} else {
-        // deliver file
-        	header('Content-Description: File Transfer');
+            // get filesize
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_HEADER, TRUE);
+            curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+            curl_exec($ch);
+            $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+            curl_close($ch);
+
+            // deliver file
+            header('Content-Description: File Transfer');
         	header('Content-Type: ' . $publication->getMediatype());
         	header('Content-Disposition: attachment; filename="' . $event->getTitle() . '.' . $extension . '"');
         	header('Content-Length: ' . $size);
