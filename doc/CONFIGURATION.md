@@ -12,7 +12,7 @@ URL of your Opencast installation, followed by /api. E.g.: https://myopencast.co
 ##### API username
 Login of the user which will be used to call the API. 
 
-*Note that the API user must have enough permissions to access all API nodes. Therefore it should have all Roles beginning with 'ROLE_API_'.*
+*Note that the API user must have enough permissions to access all API nodes and to switch user roles. Therefore it should have all roles beginning with 'ROLE_API_', plus the role 'ROLE_SUDO'*
 
 ##### API password
 Password for the above configured API user.
