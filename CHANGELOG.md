@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.5.7]
+- Fix/Improvement: (Live streaming) player now checks individual chunklists before loading, to prevent an error with multi-resolution streams
+
 ## [3.5.6]
 - Fix: modals didn't work with config "Load event table synchronously"
 
