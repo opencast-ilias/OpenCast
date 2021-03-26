@@ -69,6 +69,17 @@ class xoctSeriesAPI {
 			throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
 		}
 
+        $object = new ilObjOpenCast();
+        if (isset($additional_data['owner'])) {
+            $object->setOwner($additional_data['owner']);
+        }
+        $object->setTitle($title);
+        $object->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
+        $object->create();
+        $object->createReference();
+        $object->putInTree($parent_ref_id);
+        $object->setPermissions($parent_ref_id);
+
 		$cast = new xoctOpenCast();
 		$cast->setOnline(isset($additional_data['online']) ? $additional_data['online'] : false);
 		$cast->setAgreementAccepted(true);
@@ -98,43 +109,30 @@ class xoctSeriesAPI {
 
         $series->setAccessPolicies($series_acls);
 
+		// add producers
+        $producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
+        if (isset($additional_data['owner'])) {
+            $producers[] = xoctUser::getInstance($additional_data['owner']);
+        }
+
+        try {
+            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+            $ilias_producers->addMembers($producers);
+        } catch (xoctException $e) {
+        }
+
+        $series->addProducers($producers, true);
+        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($object->getRefId())->getTitle(), true);
+
 		if ($series->getIdentifier()) {
 			$series->update();
 		} else {
 			$series->create();
 		}
+
 		$cast->setSeriesIdentifier($series->getIdentifier());
-
-		$object = new ilObjOpenCast();
-		if (isset($additional_data['owner'])) {
-			$object->setOwner($additional_data['owner']);
-		}
-		$object->setTitle($title);
-		$object->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
-		$object->create();
-		$object->createReference();
-
-		$cast->setObjId($object->getId());
-		$cast->create(true);
-
-		$object->putInTree($parent_ref_id);
-        $object->setPermissions($parent_ref_id);
-
-		// add producers
-		$producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
-		if (isset($additional_data['owner'])) {
-			$producers[] = xoctUser::getInstance($additional_data['owner']);
-		}
-
-		try {
-			$ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-			$ilias_producers->addMembers($producers);
-		} catch (xoctException $e) {
-		}
-
-        $series->addProducers($producers, true);
-        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($object->getRefId())->getTitle(), true);
-        $series->update();
+        $cast->setObjId($object->getId());
+        $cast->create(true);
 
 		//member upload
 		if (isset($additional_data['member_upload'])) {
