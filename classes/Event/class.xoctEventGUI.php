@@ -99,6 +99,13 @@ class xoctEventGUI extends xoctGUI {
         self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
         self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
         self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
+        self::dic()->mainTemplate()->addOnLoadCode(
+            "$(document).on('shown.bs.dropdown', (e) => {
+					$(e.target).children('.dropdown-menu').each((i, el) => {
+						il.Util.fixPosition(el);
+					});
+				});"
+        );	// fix action menu position bug
         self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         switch ($cmd) {
