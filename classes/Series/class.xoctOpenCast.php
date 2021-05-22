@@ -163,11 +163,11 @@ class xoctOpenCast extends ActiveRecord {
 	 */
 	public function getILIASObject() {
 	    static $object;
-	    if (is_null($object)) {
+	    if (is_null($object[$this->getObjId()])) {
             $references = ilObjOpenCast::_getAllReferences($this->getObjId());
-            $object = new ilObjOpenCast(array_shift($references));
+		    $object[$this->getObjId()] = new ilObjOpenCast(array_shift($references));
         }
-        return $object;
+        return $object[$this->getObjId()];
     }
 
 
