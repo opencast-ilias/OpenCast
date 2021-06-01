@@ -3,6 +3,7 @@
 ## [3.5.7]
 - Fix: Prevent race condition when creating series via internal api
 - Fix: action menus crossed the window border
+- Fix: bad caching led to wrong ref ids (internal API)
 - Fix/Improvement: (Live streaming) player now checks individual chunklists before loading, to prevent an error with multi-resolution streams
 - Doc: added ROLE_SUDO to required roles in configuration doc
 
