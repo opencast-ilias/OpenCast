@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.5.8]
+- Improvement: allow to copy and link objects in all possible views (repository "manage" function, repository actions dropdown and copying containers)
+
 ## [3.5.7]
 - Fix: Prevent race condition when creating series via internal api
 - Fix: action menus crossed the window border

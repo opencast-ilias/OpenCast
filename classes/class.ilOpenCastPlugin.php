@@ -88,6 +88,11 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	function getPluginName() {
 		return self::PLUGIN_NAME;
 	}
+
+	public function allowCopy()
+	{
+		return true;
+	}
 }
 
 ?>
