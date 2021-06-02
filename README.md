@@ -11,8 +11,7 @@ Use Opencast in ILIAS LMS with a wide variety of features:
 ## Getting Started
 
 ### Requirements
-* ILIAS 5.4 or ILIAS 6
-* PHP >= 7.0
+* ILIAS 6.x or ILIAS 7.x
 
 ### Installation
 Start at your ILIAS root directory

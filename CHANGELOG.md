@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.6.0]
+- Change: ILIAS 7 compatability
+- Change: dropped ILIAS 5.4 compatability
+
 ## [3.5.8]
 - Improvement: allow to copy and link objects in all possible views (repository "manage" function, repository actions dropdown and copying containers)
 
