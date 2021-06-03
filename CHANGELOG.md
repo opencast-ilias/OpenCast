@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.5.9]
+- Change: ws v7.4.6
+- Change: hosted-git-info v2.8.9
+
 ## [3.5.8]
 - Improvement: allow to copy and link objects in all possible views (repository "manage" function, repository actions dropdown and copying containers)
 
