@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.5.10]
+- Fix: tile view always showed Annotation & Download buttons
+
 ## [3.5.9]
 - Change: ws v7.4.6
 - Change: hosted-git-info v2.8.9
