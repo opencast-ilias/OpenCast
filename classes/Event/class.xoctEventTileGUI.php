@@ -102,8 +102,12 @@ class xoctEventTileGUI {
 
 			$buttons_tpl = self::plugin()->template('default/tpl.event_buttons.html');
 			$event_renderer->insertPlayerLink($buttons_tpl, 'link', 'LINK', 'btn-default');
-			$event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
-			$event_renderer->insertAnnotationLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+            if (!$this->xoctOpenCast->getStreamingOnly()) {
+                $event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+            }
+            if ($this->xoctOpenCast->getUseAnnotations()) {
+                $event_renderer->insertAnnotationLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+            }
 			$tile_tpl->setVariable('EVENT_BUTTONS', $buttons_tpl->get());
 
 			$card = $this->factory->card()->repositoryObject(

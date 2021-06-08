@@ -4,6 +4,13 @@
 - Change: ILIAS 7 compatibility
 - Change: dropped ILIAS 5.4 compatibility
 
+## [3.5.10]
+- Fix: tile view always showed Annotation & Download buttons
+
+## [3.5.9]
+- Change: ws v7.4.6
+- Change: hosted-git-info v2.8.9
+
 ## [3.5.8]
 - Improvement: allow to copy and link objects in all possible views (repository "manage" function, repository actions dropdown and copying containers)
 
