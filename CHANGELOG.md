@@ -2,7 +2,6 @@
 
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
-- Change: dropped ILIAS 5.4 compatibility
 
 ## [3.5.10]
 - Fix: tile view always showed Annotation & Download buttons
