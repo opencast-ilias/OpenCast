@@ -71,6 +71,16 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             }
         }
 
+        if (count($presenters) > 0) {
+            $streams[] = [
+                "type" => xoctMedia::MEDIA_TYPE_VIDEO,
+                "content" => self::ROLE_MASTER,
+                "sources" => [
+                    "mp4" => array_values($presenters)
+                ],
+            ];
+        }
+        
         if (count($presentations) > 0) {
             $streams[] = [
                 "type" => xoctMedia::MEDIA_TYPE_VIDEO,
@@ -81,15 +91,6 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             ];
         }
 
-        if (count($presenters) > 0) {
-            $streams[] = [
-                "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                "content" => self::ROLE_MASTER,
-                "sources" => [
-                    "mp4" => array_values($presenters)
-                ],
-            ];
-        }
         return array($duration, $streams);
     }
 
