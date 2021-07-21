@@ -3,6 +3,9 @@
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
 
+## [3.5.11]
+- Fix: add presenter stream before presentation to avoid missing audio in paella player
+
 ## [3.5.10]
 - Fix: tile view always showed Annotation & Download buttons
 
