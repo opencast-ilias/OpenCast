@@ -3,6 +3,7 @@
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
 - Feature: internal series api - allow additional producers when creating series
+- Feature: internal event api - allow setting workflow parameters when creating event
 
 ## [3.5.11]
 - Fix: add presenter stream before presentation to avoid missing audio in paella player

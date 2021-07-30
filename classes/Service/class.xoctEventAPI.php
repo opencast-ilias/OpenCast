@@ -32,6 +32,7 @@ class xoctEventAPI {
      *
      *  description => text
      *  presenters => text
+     *  workflow_parameters => array(text => int)
      *
      * @param String $series_id
      * @param String $title
@@ -53,6 +54,11 @@ class xoctEventAPI {
 		$event->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
 		$event->setPresenter(isset($additional_data['presenters']) ? $additional_data['presenters'] : '');
 		$event->addDefaultWorkflowParameters();
+		if (is_array($additional_data['workflow_parameters'])) {
+            foreach ($additional_data['workflow_parameters'] as $param_id => $value) {
+                $event->setWorkflowParameter($param_id, $value);
+		    }
+        }
 
 		$std_acls = new xoctAclStandardSets();
 		$event->setAcl($std_acls->getAcls());
