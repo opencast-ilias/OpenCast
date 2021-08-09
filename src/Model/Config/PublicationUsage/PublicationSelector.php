@@ -342,9 +342,13 @@ class PublicationSelector
             if ($ref_id > 0 && xoctConf::getConfig(xoctConf::F_ANNOTATION_TOKEN_SEC)) {
                 $xoctUser = xoctUser::getInstance(self::dic()->user());
                 // Get Media URL
-                $media_object = $annotation_publication instanceof xoctPublication ? $annotation_publication->getMedia() : [$annotation_publication];
-                $media_object = array_shift($media_object);
-                $media_url = $media_object->getUrl();
+                $media_objects = $annotation_publication instanceof xoctPublication ? $annotation_publication->getMedia() : [$annotation_publication];
+                //TODO: Get all urls for all mediatypes and compress them to send by URL
+                foreach ($media_objects as $media_object) {
+                    if ($media_object->getMediatype() == "application/x-mpegURL"){
+                        $media_url = $media_object->getUrl();
+                    }
+                }
 
                 if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
                     //get duration and calculate expire date
