@@ -51,6 +51,7 @@ class xoctSeriesAPI {
 	 *  permission_per_clip => boolean
 	 *  permission_allow_set_own => boolean
 	 *  member_upload => boolean
+	 *  producers => int[]
 	 *
 	 *
 	 * @param       $parent_ref_id
@@ -111,8 +112,15 @@ class xoctSeriesAPI {
 
 		// add producers
         $producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
+
         if (isset($additional_data['owner'])) {
             $producers[] = xoctUser::getInstance($additional_data['owner']);
+        }
+
+        if (is_array($additional_data['producers'])) {
+            foreach ($additional_data['producers'] as $producer) {
+                $producers[] = xoctUser::getInstance($producer);
+            }
         }
 
         try {
