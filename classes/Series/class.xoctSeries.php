@@ -1,6 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\Model\API\APIObject;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * Class xoctSeries
@@ -340,7 +341,7 @@ class xoctSeries extends APIObject {
 	 * @return xoctSeries[]
 	 */
 	public static function getAllForUser($user_string) {
-		if ($existing = xoctCacheFactory::getInstance()->get('series-' . $user_string)) {
+		if ($existing = CacheFactory::getInstance()->get('series-' . $user_string)) {
 			return $existing;
 		}
 		$return = array();
@@ -358,7 +359,7 @@ class xoctSeries extends APIObject {
 				continue;
 			}
 		}
-		xoctCacheFactory::getInstance()->set('series-' . $user_string, $return, 60);
+		CacheFactory::getInstance()->set('series-' . $user_string, $return, 60);
 
 		return $return;
 	}

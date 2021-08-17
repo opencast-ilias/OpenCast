@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * Class xoctEventGUI
@@ -980,8 +981,7 @@ class xoctEventGUI extends xoctGUI {
 	 *
 	 */
 	protected function clearCache() {
-		xoctCacheFactory::getInstance()->flush();
-		$this->xoctOpenCast->getSeriesIdentifier();
+		CacheFactory::getInstance()->flush();
 		self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 	}
 

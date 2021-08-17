@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.7.0]
+- Feature: Caching via ILIAS Database (configurable in Plugin configuration: Settings -> Advanced)
+
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
 - Feature: internal series api - allow additional producers when creating series

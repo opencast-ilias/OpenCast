@@ -7,9 +7,9 @@ use ilStr;
 use ReflectionClass;
 use ReflectionException;
 use stdClass;
-use xoctCacheFactory;
 use xoctException;
 use xoctLog;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * Class Object
@@ -19,6 +19,8 @@ use xoctLog;
  */
 abstract class APIObject
 {
+
+    const CACHE_TTL = 60 * 60 * 24;
 
     /**
      * @var array
@@ -42,7 +44,7 @@ abstract class APIObject
         if (self::$cache[$key] instanceof $class_name) {
             return self::$cache[$key];
         }
-        $existing = xoctCacheFactory::getInstance()->get($key);
+        $existing = CacheFactory::getInstance()->get($key);
 
         if ($existing) {
             xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -71,7 +73,7 @@ abstract class APIObject
         if (self::$cache[$key] instanceof $class_name) {
             return self::$cache[$key];
         }
-        $existing = xoctCacheFactory::getInstance()->get($key);
+        $existing = CacheFactory::getInstance()->get($key);
 
         if ($existing) {
             xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
@@ -100,7 +102,7 @@ abstract class APIObject
         $key = $class_name . '-' . $identifier;
         self::$cache[$key] = null;
         xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-        xoctCacheFactory::getInstance()->delete($key);
+        CacheFactory::getInstance()->delete($key);
     }
 
 
@@ -114,7 +116,7 @@ abstract class APIObject
         $key = $class_name . '-' . $identifier;
         self::$cache[$key] = $object;
         xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
-        xoctCacheFactory::getInstance()->set($key, $object);
+        CacheFactory::getInstance()->set($key, $object, self::CACHE_TTL);
     }
 
 

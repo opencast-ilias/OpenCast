@@ -1,7 +1,14 @@
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
-config_activate_cache#:#Cache aktivieren
+config_activate_cache#:#Caching
+config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
+config_activate_cache_0#:#Cache deaktivieren
+config_activate_cache_0_info#:#
+config_activate_cache_1#:#ILIAS-Global-Cache
+config_activate_cache_1_info#:#Der im ILIAS-Setup definierte Global-Cache-Typ wird verwendet.
+config_activate_cache_2#:#Datenbank-Cache
+config_activate_cache_2_info#:#Daten werden in der ILIAS-Datenbank zwischengespeichert.
 config_annotation_token_security#:#Anmerkungs-Token-Sicherheit aktivieren
 config_annotation_token_security_info#:#Fügt die Kursreferenz und einen Sicherheitshash zum Annotationslink hinzugefügt.
 config_api_base#:#API-Basis-URL
@@ -85,7 +92,6 @@ config_curl_password_info#:#Passwort zum oben angegebenen Account.
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
 config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
 config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
-config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in Opencast angewendet wird.
 config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0.

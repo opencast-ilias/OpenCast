@@ -4,6 +4,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Group\Group;
+use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * User Interface class for example repository object.
@@ -45,8 +47,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	public $object;
 
+    private function cleanUpDBCache()
+    {
+        if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE) == xoctConf::CACHE_DATABASE) {
+            $bm = microtime(true);
+            DBCacheService::cleanup(self::dic()->databaseCore());
+            self::dic()->logger()->root()->info('cache cleanup done in ' . round((microtime(true) - $bm) * 1000) . 'ms');
+        }
+    }
 
-	protected function afterConstructor() {
+    protected function afterConstructor() {
 	}
 
 
@@ -140,7 +150,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 $this->showMainTemplate();
             }
 		}
-	}
+
+        $this->cleanUpDBCache();
+    }
 
     /**
      * @return ilObjOpenCast

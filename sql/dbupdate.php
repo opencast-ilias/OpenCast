@@ -2,6 +2,7 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR;
 
 \srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage::updateDB();
 xoctSystemAccount::updateDB();
@@ -278,4 +279,8 @@ $role_owner_prefix = xoctConf::getConfig($is_mapping_email ? 'role_ivt_email_pre
 if ($role_owner_prefix) {
     xoctConf::set(xoctConf::F_ROLE_OWNER_PREFIX, $role_owner_prefix);
 }
+?>
+<#30>
+<?php
+\srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR::updateDB();
 ?>

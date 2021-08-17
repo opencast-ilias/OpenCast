@@ -1,12 +1,20 @@
 <?php
 
+namespace srag\Plugins\Opencast\Cache;
+
+use ilGlobalCache;
+use ilOpenCastPlugin;
+use ilGlobalCacheService;
+use xoctConf;
+use Exception;
+use RuntimeException;
+use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+
 /**
- * Class xoctCache
- *
- * @author  Fabian Schmid <fs@studer-raimann.ch>
+ * @author Theodor Truffer <theo@fluxlabs.ch>
  * @version 1.0.0
  */
-class xoctCache extends ilGlobalCache {
+class Cache extends ilGlobalCache {
 
 	const COMP_PREFIX = ilOpenCastPlugin::PLUGIN_ID;
 	/**
@@ -22,16 +30,16 @@ class xoctCache extends ilGlobalCache {
 
 
 	/**
-	 * @return xoctCache
+	 * @return Cache
 	 */
 	public static function getInstance($component) {
 		$service_type = self::getSettings()->getService();
-		$xoctCache = new self($service_type);
+		$cache = new self($service_type);
 
-		$xoctCache->setActive(false);
+		$cache->setActive(false);
 		self::setOverrideActive(false);
 
-		return $xoctCache;
+		return $cache;
 	}
 
 
@@ -60,14 +68,22 @@ class xoctCache extends ilGlobalCache {
 			$this->setComponent(ilOpenCastPlugin::PLUGIN_NAME);
 		}
 
-		if ($this->isOpenCastCacheEnabled()) {
-			$serviceName = self::lookupServiceClassName($this->getServiceType());
-			$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
-			$ilGlobalCacheService->setServiceType($this->getServiceType());
-		} else {
-			$serviceName = self::lookupServiceClassName(self::TYPE_STATIC);
-			$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
-			$ilGlobalCacheService->setServiceType(self::TYPE_STATIC);
+		switch ($this->getCacheType()) {
+			case xoctConf::CACHE_STANDARD:
+				$serviceName = self::lookupServiceClassName($this->getServiceType());
+				$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
+				$ilGlobalCacheService->setServiceType($this->getServiceType());
+				break;
+			case xoctConf::CACHE_DATABASE:
+				$ilGlobalCacheService = new DBCacheService(self::$unique_service_id, $this->getComponent());
+				$ilGlobalCacheService->setServiceType(DBCacheService::TYPE_DB);
+				break;
+			case xoctConf::CACHE_DISABLED:
+			default:
+				$serviceName = self::lookupServiceClassName(self::TYPE_STATIC);
+				$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
+				$ilGlobalCacheService->setServiceType(self::TYPE_STATIC);
+				break;
 		}
 
 		$this->global_cache = $ilGlobalCacheService;
@@ -78,14 +94,14 @@ class xoctCache extends ilGlobalCache {
 	/**
 	 * Checks if live voting is able to use the global cache.
 	 *
-	 * @return bool
+	 * @return int
 	 */
-	private function isOpenCastCacheEnabled() {
+	private function getCacheType() {
 		try {
-			return (int)xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE);
-		} catch (Exception $exceptione) //catch exception while dbupdate is running. (xoctConf is not ready at that time).
+			return (int) xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE);
+		} catch (Exception $exception) //catch exception while dbupdate is running. (xoctConf is not ready at that time).
 		{
-			return false;
+			return xoctConf::CACHE_DISABLED;
 		}
 	}
 
@@ -103,6 +119,8 @@ class xoctCache extends ilGlobalCache {
 				return 'ilMemcache';
 			case self::TYPE_XCACHE:
 				return 'ilXcache';
+			case DBCacheService::TYPE_DB:
+				return 'DBCacheService';
 			case self::TYPE_STATIC:
 			default:
 				return 'ilStaticCache';

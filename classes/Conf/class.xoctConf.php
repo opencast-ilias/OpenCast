@@ -23,6 +23,9 @@ class xoctConf extends ActiveRecord {
 	const F_API_VERSION = 'api_version';
 	const F_API_BASE = 'api_base';
 	const F_ACTIVATE_CACHE = 'activate_cache';
+	const CACHE_DISABLED = 0;
+	const CACHE_STANDARD = 1;
+	const CACHE_DATABASE = 2;
 	const F_USER_MAPPING = 'user_mapping';
 	const F_GROUP_PRODUCERS = 'group_producers';
 	const F_STD_ROLES = 'std_roles';
@@ -89,7 +92,7 @@ class xoctConf extends ActiveRecord {
 	const F_COMMON_IDP = 'common_idp';
 	const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
 
-	/**
+    /**
 	 * @var array
 	 */
 	public static $roles = array(

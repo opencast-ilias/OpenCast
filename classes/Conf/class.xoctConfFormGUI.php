@@ -528,9 +528,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	}
 
 
-	/**
-	 *
-	 */
 	protected function initAdvancedSection() {
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('advanced'));
@@ -549,8 +546,19 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
+		$cb = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_info'));
+		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DISABLED),
+			xoctConf::CACHE_DISABLED);
+		$cb->addOption($opt);
+		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_STANDARD),
+			xoctConf::CACHE_STANDARD);
+		$opt->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_STANDARD . '_info', '', []));
+		$cb->addOption($opt);
+		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DATABASE),
+			xoctConf::CACHE_DATABASE);
+		$opt->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DATABASE . '_info'));
+		$cb->addOption($opt);
 		$this->addItem($cb);
 
 		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);

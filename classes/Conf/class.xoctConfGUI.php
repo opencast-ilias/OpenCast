@@ -1,4 +1,7 @@
 <?php
+
+use srag\DIC\OpenCast\Exception\DICException;
+
 /**
  * Class xoctConfGUI
  *
@@ -8,14 +11,8 @@
  */
 class xoctConfGUI extends xoctGUI {
 
-
-	/**
-	 * @param $key
-	 *
-	 * @return string
-	 */
-	public function txt($key) {
-		return self::plugin()->translate('config_' . $key);
+	public function txt(string $key, string $module = "", array $placeholders = [], bool $plugin = true, string $lang = "", string $default = "MISSING %s") {
+		return self::plugin()->translate('config_' . $key, $module, $placeholders, $plugin, $lang, $default);
 	}
 
 

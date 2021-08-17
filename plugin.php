@@ -1,6 +1,6 @@
 <?php
 $id = 'xoct';
-$version = '3.6.0';
+$version = '3.6.1';
 $ilias_min_version = '5.4.0';
 $ilias_max_version = '7.999';
 $responsible = 'Theodor Truffer';

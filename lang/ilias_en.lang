@@ -2,6 +2,13 @@ admin_export#:#Export Settings
 admin_import#:#Import Settings
 common_actions#:#Actions
 config_activate_cache#:#Activate cache
+config_activate_cache_info#:#Improves the loading time by storing Opencast data locally. Can lead to temporarily corrupt metadata.
+config_activate_cache_0#:#Disable Cache
+config_activate_cache_0_info#:#
+config_activate_cache_1#:#ILIAS Global Cache
+config_activate_cache_1_info#:#Use the global cache type defined in the ILIAS setup.
+config_activate_cache_2#:#Database Cache
+config_activate_cache_2_info#:#Data will be cached in the ILIAS database.
 config_annotation_token_security#:#Enable Annotation token security
 config_annotation_token_security_info#:#Adds the course reference and a security hash to the annotation link
 config_api_base#:#API base URL
@@ -87,7 +94,6 @@ config_curl_debug_level_info#:#Level of detail for log entries.
 config_use_streaming#:#Use Streaming URLs
 config_streaming_url_info#:#Wowza URL for adaptive streaming. E.g.: https://wowza.myopencast.com:8090/opencast-engage
 config_use_streaming_info#:#If active all mp4 files will be replaced by streaming urls
-config_activate_cache_info#:#Improves the loading time for event lists by storing events locally. Can lead to temporarily corrupt metadata.
 config_use_modals_info#:#When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
 config_workflow_info#:#ID of the workflow which will be executed in Opencast after uploading an event.
 config_workflow_unpublish_info#:#ID of the workflow which will be executed in Opencast before deleting an event. Requires API version 1.1.0.
