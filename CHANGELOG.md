@@ -2,6 +2,7 @@
 
 ## [3.7.0]
 - Feature: Caching via ILIAS Database (configurable in Plugin configuration: Settings -> Advanced)
+- Fix: live streams didn't work when streaming server redirected
 
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
