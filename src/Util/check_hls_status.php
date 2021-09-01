@@ -11,12 +11,21 @@ function fetch(string $url) : array
     curl_setopt($ch,  CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $headers = substr($response, 0, $header_size);
+    $body = substr($response, $header_size);
+    $effective_url = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
     curl_close($ch);
     return [
-        'body' => $response,
-        'httpCode' => $httpCode
+        'body' => $body,
+        'httpCode' => $httpCode,
+        'headers' => $headers,
+        'effective_url' => $effective_url
     ];
 }
 
@@ -32,8 +41,9 @@ function parsePlaylist(string $m3u8) : array
 }
 
 $url = urldecode(filter_input(INPUT_GET, 'url'));
-$base_url = substr($url, 0, strrpos($url, '/') + 1);
 $response = fetch($url);
+$url = $response['effective_url'] ?? $url;
+$base_url = substr($url, 0, strrpos($url, '/') + 1);
 // check playlist
 if (($response['httpCode'] !== 200) || (strpos($response['body'], 'EXT-X-STREAM-INF') === false)) {
     echo 'false';
@@ -43,7 +53,7 @@ if (($response['httpCode'] !== 200) || (strpos($response['body'], 'EXT-X-STREAM-
 // check chunklists in m3u8 playlist (only one has to be accessible)
 foreach (parsePlaylist($response['body']) as $chunklist_url) {
     $url = (strpos($chunklist_url, 'http') === 0) ? $chunklist_url : ($base_url . $chunklist_url);
-    $response = fetch($base_url . $chunklist_url);
+    $response = fetch($url);
     if ($response['httpCode'] === 200) {
         echo 'true';
         exit;
