@@ -26,7 +26,7 @@ const argv = yargs
 		default: 3000
 	})
 	.option('ip', {
-		description: 'IP address which the chat server listens to',
+		description: 'IP address which the chat server listens to - will be used as host address (if != 0.0.0.0)',
 		type: 'string',
 		default: '0.0.0.0'
 	})
