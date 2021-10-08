@@ -3,6 +3,9 @@
 ## [3.7.0]
 - Feature: Caching via ILIAS Database (configurable in Plugin configuration: Settings -> Advanced)
 - Fix: live streams didn't work when streaming server redirected
+- Change: added warning to owner role prefix (thanks to reiferschris)
+- Change: bumped path-parse version to 1.0.7
+- Fix: Fixed HLS stream when "Annotation T Sec" is enabled (thanks to mliradelc)
 
 ## [3.6.0]
 - Change: ILIAS 7 compatibility
