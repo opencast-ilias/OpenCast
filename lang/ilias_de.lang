@@ -98,7 +98,7 @@ config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eine
 config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in Opencast verwendet werden soll. <br><b>Achtung: Die Email-Adresse kann je nach ILIAS-Konfiguration durch den Benutzer selbst geändert werden. In diesem Fall sollte Email-Adresse auf keinen Fall als Mapping verwendet werden.</b>
 config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden vom Plugin in der hier angegebenen Opencast-Gruppe eingeschrieben, um dadurch Zugriff auf Opencast zu erhalten.
 config_role_user_prefix_info#:#Benutzereigene Rolle in Opencast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in Opencast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
-config_role_owner_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}
+config_role_owner_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}. NICHT den gleichen Wert wie für Benutzerrolle wählen.
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
 config_no_metadata#:#Ohne Metadaten
 config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.

@@ -100,7 +100,7 @@ config_workflow_unpublish_info#:#ID of the workflow which will be executed in Op
 config_user_mapping_info#:#Userfield in ILIAS which will be used to identify the user in Opencast.<br><b>Warning: depending on the ILIAS configuration, users may be able to change their own email address. It is strongly recommended not to use email as mapping in that case.</b>
 config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
 config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
-config_role_owner_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}
+config_role_owner_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}. DO NOT use the same value as for the user specific role.
 config_identifier_to_uppercase#:#User mapping in uppercase
 config_no_metadata#:#Without Metadata
 config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
