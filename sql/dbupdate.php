@@ -283,3 +283,8 @@ if ($role_owner_prefix) {
 <?php
 \srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR::updateDB();
 ?>
+<#31>
+<?php
+\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
+\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
+?>

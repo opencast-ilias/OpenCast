@@ -2,16 +2,18 @@
 
 namespace srag\Plugins\Opencast\Model\Metadata\Config;
 
-class MDFieldConfigRepository
+interface MDFieldConfigRepository
 {
 
     /**
      * @return MDFieldConfigAR[]
      */
-    public function getAll() : array
-    {
-        return MDFieldConfigAR::get();
-    }
+    public function getAll() : array;
+
+    /**
+     * @return array
+     */
+    public function getArray() : array;
 
 
 }

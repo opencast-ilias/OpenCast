@@ -505,4 +505,13 @@ cat_create_xoct#:#Opencast-Objekt anlegen
 crs_create_xoct#:#Opencast-Objekt anlegen
 fold_create_xoct#:#Opencast-Objekt anlegen
 grp_create_xoct#:#Opencast-Objekt anlegen
-root_create_xoct#:#Opencast-Objekt anlegen 
+root_create_xoct#:#Opencast-Objekt anlegen
+field_id#:#ID
+btn_add_new_metadata_field#:#Neues Metadaten-Feld hinzufügen
+md_field_id#:#ID
+md_visible_for_roles#:#Sichbar für Rollen
+md_required#:#Verpflichtend
+md_read_only#:#Nicht editierbar
+md_prefill#:#Vorausgefüllt mit
+md_actions#:#Aktionen
+md_title#:#Titel

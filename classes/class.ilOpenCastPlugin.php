@@ -1,5 +1,7 @@
 <?php
 
+use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 
@@ -14,6 +16,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
  *
  */
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
+
+	const PLUGIN_CLASS_NAME = self::class;
+
+	use DataTableUITrait;
+	use DICTrait;
 
 	const PLUGIN_ID = 'xoct';
 	const PLUGIN_NAME = 'OpenCast';
@@ -92,6 +99,11 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	{
 		return true;
 	}
-}
 
-?>
+	public function updateLanguages($a_lang_keys = null)
+	{
+		parent::updateLanguages($a_lang_keys);
+		self::dataTableUI()->installLanguages(self::plugin());
+	}
+
+}

@@ -5,10 +5,8 @@ namespace srag\Plugins\Opencast\Model\Metadata\Config;
 use ActiveRecord;
 use xoctException;
 
-class MDFieldConfigAR extends ActiveRecord
+abstract class MDFieldConfigAR extends ActiveRecord
 {
-    const TABLE_NAME = 'xoct_md_field';
-
     /**
      * @var int
      *
@@ -18,7 +16,7 @@ class MDFieldConfigAR extends ActiveRecord
      * @con_is_primary   true
      * @con_sequence     true
      */
-    private $id;
+    protected $id;
     /**
      * @var string
      *
@@ -27,7 +25,7 @@ class MDFieldConfigAR extends ActiveRecord
      * @con_length       128
      * @con_is_notnull   true
      */
-    private $field_id;
+    protected $field_id;
     /**
      * @var string
      *
@@ -36,7 +34,7 @@ class MDFieldConfigAR extends ActiveRecord
      * @con_length       256
      * @con_is_notnull   true
      */
-    private $title;
+    protected $title;
     /**
      * @var int[]
      *
@@ -45,25 +43,25 @@ class MDFieldConfigAR extends ActiveRecord
      * @con_length       512
      * @con_is_notnull   true
      */
-    private $visible_for_roles;
+    protected $visible_for_roles;
     /**
      * @var bool
      *
      * @con_has_field    true
-     * @con_fieldtype    int
+     * @con_fieldtype    integer
      * @con_length       1
      * @con_is_notnull   true
      */
-    private $required;
+    protected $required;
     /**
      * @var bool
      *
      * @con_has_field    true
-     * @con_fieldtype    int
+     * @con_fieldtype    integer
      * @con_length       1
      * @con_is_notnull   true
      */
-    private $read_only;
+    protected $read_only;
     /**
      * @var MDPrefillOption
      *
@@ -72,7 +70,7 @@ class MDFieldConfigAR extends ActiveRecord
      * @con_length       128
      * @con_is_notnull   true
      */
-    private $prefill;
+    protected $prefill;
 
     public function sleep($field_name)
     {
@@ -207,11 +205,5 @@ class MDFieldConfigAR extends ActiveRecord
     public function setPrefill(MDPrefillOption $prefill)
     {
         $this->prefill = $prefill;
-    }
-
-
-    public function getConnectorContainerName()
-    {
-        return self::TABLE_NAME;
     }
 }

@@ -509,3 +509,11 @@ crs_create_xoct#:#Create Opencast object
 fold_create_xoct#:#Create Opencast object
 grp_create_xoct#:#Create Opencast object
 root_create_xoct#:#Create Opencast object
+btn_add_new_metadata_field#:#Add new Metadata Field
+md_field_id#:#ID
+md_visible_for_roles#:#Visible for Roles
+md_required#:#Required
+md_read_only#:#Read-Only
+md_prefill#:#Prefilled with
+md_actions#:#Actions
+md_title#:#Title
