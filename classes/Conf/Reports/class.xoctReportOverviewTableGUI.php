@@ -47,7 +47,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
-	protected function initColumns() {
+	protected function initColumns() : void {
         $this->addColumn('', '', '', true);
 	    $this->addColumn(self::dic()->language()->txt('message'));
 	    $this->addColumn(self::plugin()->translate('sender'), 'sender');
@@ -58,7 +58,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 * @throws Exception
 	 */
-	protected function initData() {
+	protected function initData() : void {
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
@@ -96,7 +96,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initFilterFields() {
+	protected function initFilterFields() : void {
         $this->filter_fields = [
         	"sender" => [
         	    PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
@@ -114,7 +114,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initId() {
+	protected function initId() : void {
         $this->setId('xoct_reports');
     }
 
@@ -122,14 +122,14 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initTitle() {
+	protected function initTitle() : void {
     }
 
 
 	/**
 	 * @param array $row
 	 */
-	protected function fillRow($row) {
+	protected function fillRow($row) : void {
 	    $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);

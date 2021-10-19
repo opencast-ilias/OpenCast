@@ -41,7 +41,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 			self::dic()->toolbar()->addButtonInstance($b);
 		}
 		$xoctPublicationUsageTableGUI = new xoctPublicationUsageTableGUI($this, self::CMD_STANDARD);
-		self::dic()->mainTemplate()->setContent($xoctPublicationUsageTableGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPublicationUsageTableGUI->getHTML());
 	}
 
 
@@ -62,7 +62,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		$sel->setOptions($options);
 
 		$form->addItem($sel);
-		self::dic()->mainTemplate()->setContent($form->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($form->getHTML());
 	}
 
 
@@ -78,7 +78,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		$xoctPublicationUsage->setTitle($this->txt('type_' . $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]));
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $xoctPublicationUsage);
 		$xoctPublicationUsageFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
 	}
 
 
@@ -92,7 +92,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 			ilUtil::sendSuccess(self::plugin()->translate('publication_usage_msg_success'), true);
 			self::dic()->ctrl()->redirect($this);
 		}
-		self::dic()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
 	}
 
 
@@ -102,7 +102,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 	protected function edit() {
 		$xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $this->repository->getUsage($_GET[self::IDENTIFIER]));
 		$xoctPublicationUsageFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
 	}
 
 
@@ -120,7 +120,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('publication_usage_msg_success'), true);
 			self::dic()->ctrl()->redirect($this);
 		}
-		self::dic()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPublicationUsageFormGUI->getHTML());
 	}
 
 
@@ -149,7 +149,7 @@ class xoctPublicationUsageGUI extends xoctGUI {
 		$confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
 		$confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE);
 
-		self::dic()->mainTemplate()->setContent($confirm->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($confirm->getHTML());
 	}
 
 

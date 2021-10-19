@@ -30,7 +30,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		}
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		xoctWaiterGUI::loadLib();
-		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
+		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
 	}
 
     /**

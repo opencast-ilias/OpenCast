@@ -86,7 +86,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			if (xoct::isIlias6()) {
 			    self::dic()->ui()->mainTemplate()->loadStandardTemplate();
             } else {
-                self::dic()->mainTemplate()->getStandardTemplate();
+                self::dic()->ui()->mainTemplate()->getStandardTemplate();
             }
 
 			switch ($next_class) {
@@ -169,9 +169,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	protected function showMainTemplate()
     {
         if (xoct::isIlias6()) {
-            self::dic()->mainTemplate()->printToStdout();
+            self::dic()->ui()->mainTemplate()->printToStdout();
         } else {
-            self::dic()->mainTemplate()->show();
+            self::dic()->ui()->mainTemplate()->show();
         }
     }
 
@@ -300,7 +300,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		if ($return = $creation_form->saveObject()) {
 			$this->saveObject($return[0], $return[1], $creation_form->getInput(xoctSeriesFormGUI::F_CHANNEL_TYPE));
 		} else {
-			self::dic()->mainTemplate()->setContent($creation_form->getHTML());
+			self::dic()->ui()->mainTemplate()->setContent($creation_form->getHTML());
 		}
 	}
 
@@ -387,8 +387,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
         }
 
 		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
-			self::dic()->mainTemplate()->setTitle($this->object->getTitle());
-			self::dic()->mainTemplate()->setDescription($this->object->getDescription());
+			self::dic()->ui()->mainTemplate()->setTitle($this->object->getTitle());
+			self::dic()->ui()->mainTemplate()->setDescription($this->object->getDescription());
 			if (self::dic()->access()->checkAccess('read', '', $_GET['ref_id'])) {
 				self::dic()->history()->addItem($_GET['ref_id'], self::dic()->ctrl()->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $this->object->getTitle());
 			}
@@ -398,13 +398,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			 * @var $list_gui ilObjOpenCastListGUI
 			 */
 			if (!$xoctOpenCast->isOnline()) {
-				self::dic()->mainTemplate()->setAlertProperties($list_gui->getAlertProperties());
+				self::dic()->ui()->mainTemplate()->setAlertProperties($list_gui->getAlertProperties());
 			}
 		} else {
-			self::dic()->mainTemplate()->setTitle(self::plugin()->translate('series_create'));
+			self::dic()->ui()->mainTemplate()->setTitle(self::plugin()->translate('series_create'));
 		}
-		self::dic()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
-		self::dic()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
+		self::dic()->ui()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
+		self::dic()->ui()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
 
 		return $xoctOpenCast;
 	}
@@ -431,7 +431,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$info->addSection(self::plugin()->translate('info_linked_items'));
 			$i = 1;
 			foreach ($refs as $ref) {
-				$parent = self::dic()->tree()->getParentId($ref);
+				$parent = self::dic()->repositoryTree()->getParentId($ref);
 				$info->addProperty(($i) . '. '
 					. self::plugin()->translate('info_linked_item'), ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)), ilLink::_getStaticLink($parent));
 				$i ++;
@@ -532,7 +532,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$deps_html = "<br/><br/>" . $tab->getHTML();
 		}
 
-		self::dic()->mainTemplate()->setContent($cgui->getHTML() . $deps_html);
+		self::dic()->ui()->mainTemplate()->setContent($cgui->getHTML() . $deps_html);
 
 		return true;
 	}
@@ -562,7 +562,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			$items = array();
 			foreach ($all_refs as $mref_id) {
 				// not the already selected reference, no refs from trash
-				if ($mref_id != $a_ref_id && !self::dic()->tree()->isDeleted($mref_id)) {
+				if ($mref_id != $a_ref_id && !self::dic()->repositoryTree()->isDeleted($mref_id)) {
 					if (self::dic()->access()->checkAccess("read", "", $mref_id)) {
 						$may_delete = false;
 						if (self::dic()->access()->checkAccess("delete", "", $mref_id)) {
@@ -654,7 +654,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$result = array();
 		foreach ($ref_ids as $ref_id) {
 			$path = "";
-			$path_full = self::dic()->tree()->getPathFull($ref_id);
+			$path_full = self::dic()->repositoryTree()->getPathFull($ref_id);
 			foreach ($path_full as $idx => $data) {
 				if ($idx) {
 					$path .= " &raquo; ";

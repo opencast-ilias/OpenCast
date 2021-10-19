@@ -298,7 +298,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		foreach ($roles as $role) {
 			$getter_method = "getDefault{$role}Role";
 			$role_id = $crs_or_grp_obj->$getter_method();
-			$participants = self::dic()->rbacreview()->assignedUsers($role_id);
+			$participants = self::dic()->rbac()->review()->assignedUsers($role_id);
 			$setter_method = "set{$role}s";
 			self::$setter_method($participants);
 		}
@@ -320,9 +320,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
-		$active_operations = self::dic()->rbacreview()->getActiveOperationsOfRole($ref_id, $parent_obj->$fetch_role_method());
+		$active_operations = self::dic()->rbac()->review()->getActiveOperationsOfRole($ref_id, $parent_obj->$fetch_role_method());
 		foreach ($active_operations as $op_id) {
-			$operation = self::dic()->rbacreview()->getOperation($op_id);
+			$operation = self::dic()->rbac()->review()->getOperation($op_id);
 			if ($operation['operation'] ==  $prefix.$action) {
 				return true;
 			}
@@ -347,7 +347,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				if (self::isActionAllowedForRole(self::PERMISSION_EDIT_VIDEOS, $role, $ref_id)) {
 					$getter_method = "getDefault{$role}Role";
 					$role_id = $crs_or_grp_obj->$getter_method();
-					foreach (self::dic()->rbacreview()->assignedUsers($role_id) as $participant_id) {
+					foreach (self::dic()->rbac()->review()->assignedUsers($role_id) as $participant_id) {
 						$producers[] = xoctUser::getInstance($participant_id);
 					}
 				}
@@ -366,8 +366,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	public static function activateMemberUpload($ref_id) {
 		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
-		$ops_id_upload = self::dic()->rbacreview()->_getOperationIdByName('rep_robj_xoct_perm_upload');
-		$ops_ids = self::dic()->rbacreview()->getActiveOperationsOfRole($ref_id, $member_role_id);
+		$ops_id_upload = self::dic()->rbac()->review()->_getOperationIdByName('rep_robj_xoct_perm_upload');
+		$ops_ids = self::dic()->rbac()->review()->getActiveOperationsOfRole($ref_id, $member_role_id);
 		$ops_ids[] = $ops_id_upload;
 		self::dic()->rbacadmin()->grantPermission($member_role_id, $ops_ids, $ref_id);
 	}
@@ -377,7 +377,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return int
 	 */
 	public static function getParentId($get_ref_id = false, $ref_id = false) {
-		foreach (self::dic()->tree()->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
+		foreach (self::dic()->repositoryTree()->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
 			if ($node['type'] == 'crs' || $node['type'] == 'grp') {
 				$id = $node[$get_ref_id ? 'child' : 'obj_id'];
 			}

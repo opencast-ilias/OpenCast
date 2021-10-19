@@ -75,7 +75,7 @@ class FileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$ilPropertyFormGUI->setId($ilPropertyFormGUI->getId() ? $ilPropertyFormGUI->getId() : md5(rand(1, 99)));
 		$this->setFormId($ilPropertyFormGUI->getId());
 		$this->setCmd($cmd);
-		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/plupload-2.1.8/js/plupload.full.min.js');
+		self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/plupload-2.1.8/js/plupload.full.min.js');
 
 		if ($chunk_size = xoctConf::getConfig(xoctConf::F_UPLOAD_CHUNK_SIZE)) {
 		    $this->setChunkSize($chunk_size . 'M');
@@ -105,7 +105,7 @@ class FileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
      *
      */
 	protected function initJS() {
-		self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader_v2.min.js');
+		self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/uploader_v2.min.js');
 		$pl = ilOpenCastPlugin::getInstance();
 		$settings = new stdClass();
 		$settings->lng = new stdClass();
@@ -124,7 +124,7 @@ class FileUploadInputGUI extends ilSubEnabledFormPropertyGUI {
 		$settings->mime_types = implode(',', $this->getMimeTypes());
 		$settings->mime_types_array = $this->getMimeTypes();
 
-		self::dic()->mainTemplate()->addOnLoadCode('xoctFileuploaderSettings.initFromJSON(\'' . json_encode($settings) . '\');');
+		self::dic()->ui()->mainTemplate()->addOnLoadCode('xoctFileuploaderSettings.initFromJSON(\'' . json_encode($settings) . '\');');
 	}
 
 

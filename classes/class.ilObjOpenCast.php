@@ -135,7 +135,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 				$crs_or_grp_object[$ref_id] = false;
 				return $crs_or_grp_object[$ref_id];
 			}
-			$ref_id = self::dic()->tree()->getParentId($ref_id);
+			$ref_id = self::dic()->repositoryTree()->getParentId($ref_id);
 		}
 
 		$crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
@@ -148,13 +148,13 @@ class ilObjOpenCast extends ilObjectPlugin {
     public static function _getCourseOrGroupRole() {
 		$crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
 
-		if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
+		if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';
         }
-        if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
+        if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursmitglied' : 'Gruppenmitglied';
         }
-        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
+        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
 			return 'Kurstutor';
         }
 

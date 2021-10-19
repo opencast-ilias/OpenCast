@@ -149,7 +149,7 @@ class xoctScaMigration {
 				continue;
 			}
 
-			$parent_id = self::dic()->tree()->getParentId($rec['ref_id']);
+			$parent_id = self::dic()->repositoryTree()->getParentId($rec['ref_id']);
 			if (!$parent_id) {
 				$this->log->write("WARNING: no parent id found for ref_id {$rec['ref_id']}");
 				$this->log->write("skip and proceed with next object");
@@ -215,7 +215,7 @@ class xoctScaMigration {
 			$roles = ($parent_obj instanceof ilObjCourse) ? $parent_obj->getDefaultCourseRoles() : $parent_obj->getDefaultGroupRoles();
 
 			foreach ($roles as $role_id) {
-				$role_ops = self::dic()->rbacreview()->getRoleOperationsOnObject($role_id, $rec['ref_id']);
+				$role_ops = self::dic()->rbac()->review()->getRoleOperationsOnObject($role_id, $rec['ref_id']);
 
 				// if the role has write permissions, the new permissions 'edit_videos' and 'upload' are also granted
 				if (in_array($this->ops_id_write, $role_ops)) {

@@ -26,8 +26,8 @@ class xoctWaiterGUI {
 	 */
 	public static function loadLib() {
 		if (!self::$init) {
-			self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
-			self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
+			self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
+			self::dic()->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
 			self::$init = true;
 		}
 	}
@@ -40,7 +40,7 @@ class xoctWaiterGUI {
 		self::loadLib();
 		if (!self::$init_js) {
 			$code = 'xoctWaiter.init(\'' . $type . '\');';
-			self::dic()->mainTemplate()->addOnLoadCode($code);
+			self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
 			self::$init_js = true;
 		}
 	}
@@ -51,7 +51,7 @@ class xoctWaiterGUI {
 	 */
 	public static function addListener($dom_selector_string) {
 		$code = 'xoctWaiter.addListener("' . $dom_selector_string . '");';
-		self::dic()->mainTemplate()->addOnLoadCode($code);
+		self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
 	}
 
 
@@ -60,14 +60,14 @@ class xoctWaiterGUI {
 	 */
 	public static function addLinkOverlay($dom_selector_string) {
 		$code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
-		self::dic()->mainTemplate()->addOnLoadCode($code);
+		self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
 	}
 
 
 	public static function show() {
 		self::initJS();
 		$code = 'xoctWaiter.show();';
-		self::dic()->mainTemplate()->addOnLoadCode($code);
+		self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
 	}
 }
 

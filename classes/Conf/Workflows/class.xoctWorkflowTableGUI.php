@@ -61,7 +61,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @throws DICException
      */
-    protected function initColumns()
+    protected function initColumns() : void
     {
         $this->addColumn(self::dic()->language()->txt('id'));
         $this->addColumn(self::dic()->language()->txt('title'));
@@ -160,7 +160,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initData()
+    protected function initData() : void
     {
         $this->setData($this->workflow_repository->getAllWorkflows());
     }
@@ -169,7 +169,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initFilterFields()
+    protected function initFilterFields() : void
     {
         // TODO: Implement initFilterFields() method.
     }
@@ -178,7 +178,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initId()
+    protected function initId() : void
     {
         // TODO: Implement initId() method.
     }
@@ -188,7 +188,7 @@ class xoctWorkflowTableGUI extends TableGUI
      * @inheritDoc
      * @throws DICException
      */
-    protected function initTitle()
+    protected function initTitle() : void
     {
         $this->setTitle(self::plugin()->translate('table_title', self::LANG_MODULE));
     }

@@ -32,8 +32,8 @@ class xoctIVTGroupGUI extends xoctGUI {
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		//		xoctGroup::installDB();
 		xoctWaiterGUI::loadLib();
-		self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.css'));
-		self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.js'));
+		self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.css'));
+		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.js'));
 	}
 
 
@@ -86,7 +86,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 		)));
 
-		self::dic()->mainTemplate()->setContent($temp->get());
+		self::dic()->ui()->mainTemplate()->setContent($temp->get());
 	}
 
 

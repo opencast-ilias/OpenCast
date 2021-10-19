@@ -23,8 +23,8 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $_GET["plugin_id"]);
 		self::dic()->ctrl()->setParameterByClass("ilobjcomponentsettingsgui", "pname", $_GET["pname"]);
 
-		self::dic()->mainTemplate()->setTitle(self::dic()->language()->txt("cmps_plugin") . ": " . $_GET["pname"]);
-		self::dic()->mainTemplate()->setDescription("");
+		self::dic()->ui()->mainTemplate()->setTitle(self::dic()->language()->txt("cmps_plugin") . ": " . $_GET["pname"]);
+		self::dic()->ui()->mainTemplate()->setDescription("");
 
 		self::dic()->tabs()->clearTargets();
 

@@ -24,7 +24,7 @@ class xoctReportingModalGUI extends ilModalGUI {
         $this->parent_gui = $parent_gui;
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
 		$send_button->setCaption('send');

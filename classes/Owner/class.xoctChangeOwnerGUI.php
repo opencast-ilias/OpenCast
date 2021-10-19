@@ -33,8 +33,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
 
         self::dic()->tabs()->setBackTarget(self::plugin()->getPluginObject()->txt('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
-        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.css'));
-        self::dic()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.js'));
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.css'));
+        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.js'));
         self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
@@ -62,7 +62,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
             'none_available' => self::plugin()->getPluginObject()->txt('invitations_none_available'),
             'only_one_owner' => self::plugin()->getPluginObject()->txt('owner_only_one_owner')
         )));
-        self::dic()->mainTemplate()->setContent($temp->get());
+        self::dic()->ui()->mainTemplate()->setContent($temp->get());
     }
 
 

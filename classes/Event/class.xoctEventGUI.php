@@ -98,16 +98,16 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function performCommand($cmd) {
         self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
-        self::dic()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
-        self::dic()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
-        self::dic()->mainTemplate()->addOnLoadCode(
+        self::dic()->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css');
+        self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js');	// init waiter
+        self::dic()->ui()->mainTemplate()->addOnLoadCode(
             "$(document).on('shown.bs.dropdown', (e) => {
 					$(e.target).children('.dropdown-menu').each((i, el) => {
 						il.Util.fixPosition(el);
 					});
 				});"
         );	// fix action menu position bug
-        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         switch ($cmd) {
 			case self::CMD_STANDARD:
@@ -125,8 +125,8 @@ class xoctEventGUI extends xoctGUI {
 	protected function prepareContent() {
 		xoctWaiterGUI::initJS();
 		xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
-        self::dic()->mainTemplate()->addJavascript("./src/UI/templates/js/Modal/modal.js");
-        self::dic()->mainTemplate()->addOnLoadCode('xoctEvent.init(\'' . json_encode([
+        self::dic()->ui()->mainTemplate()->addJavascript("./src/UI/templates/js/Modal/modal.js");
+        self::dic()->ui()->mainTemplate()->addOnLoadCode('xoctEvent.init(\'' . json_encode([
                 'msg_link_copied' => self::plugin()->translate('msg_link_copied'),
                 'tooltip_copy_link' => self::plugin()->translate('tooltip_copy_link')
             ]) . '\');');
@@ -215,7 +215,7 @@ class xoctEventGUI extends xoctGUI {
 					' for user with id ' . self::dic()->user()->getId());
 		}
 
-		self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $html);
+		self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $html);
 	}
 
 	/**
@@ -232,7 +232,7 @@ class xoctEventGUI extends xoctGUI {
 			return $this->getTableGUI();
 		}
 
-		self::dic()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
+		self::dic()->ui()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
 		$this->loadAjaxCodeForList();	// load table asynchronously
 		return '<div id="xoct_table_placeholder"></div>';
 	}
@@ -328,8 +328,8 @@ class xoctEventGUI extends xoctGUI {
 				        $activate_filter_commmand
 				    }
 				});";
-		self::dic()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
-		self::dic()->mainTemplate()->addOnLoadCode($ajax);
+		self::dic()->ui()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
+		self::dic()->ui()->mainTemplate()->addOnLoadCode($ajax);
 	}
 
 	/**
@@ -348,8 +348,8 @@ class xoctEventGUI extends xoctGUI {
 				        $('div#xoct_tiles_placeholder').replaceWith($(data));
 				    }
 				});";
-		self::dic()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
-		self::dic()->mainTemplate()->addOnLoadCode($ajax);}
+		self::dic()->ui()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
+		self::dic()->ui()->mainTemplate()->addOnLoadCode($ajax);}
 
 	/**
 	 * ajax call
@@ -453,7 +453,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -472,7 +472,7 @@ class xoctEventGUI extends xoctGUI {
 			self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 		}
 		$xoctEventFormGUI->setValuesByPost();
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -494,7 +494,7 @@ class xoctEventGUI extends xoctGUI {
 		}
 		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 		$xoctEventFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -513,7 +513,7 @@ class xoctEventGUI extends xoctGUI {
 			self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 		}
 		$xoctEventFormGUI->setValuesByPost();
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
     /**
@@ -536,7 +536,7 @@ class xoctEventGUI extends xoctGUI {
 
 		$xoctEventFormGUI = new EventFormGUI($this, $xoctEvent, $this->xoctOpenCast);
 		$xoctEventFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -750,7 +750,7 @@ class xoctEventGUI extends xoctGUI {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 		}
-		self::dic()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
 	}
 
 
@@ -887,7 +887,7 @@ class xoctEventGUI extends xoctGUI {
 		$ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
 		$ilConfirmationGUI->setConfirm($this->txt($action_text), self::CMD_DELETE);
 		$ilConfirmationGUI->addItem(self::IDENTIFIER, $xoctEvent->getIdentifier(), $xoctEvent->getTitle());
-		self::dic()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
 	}
 
 
@@ -954,7 +954,7 @@ class xoctEventGUI extends xoctGUI {
 
 		$self->setOptions($ids);
 		$form->addItem($self);
-		self::dic()->mainTemplate()->setContent($form->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($form->getHTML());
 	}
 
 
@@ -973,7 +973,7 @@ class xoctEventGUI extends xoctGUI {
 		$html .= 'Series after update: ' . $event->getSeriesIdentifier() . '<br>';
 		$event = new xoctEvent($_POST['import_identifier']);
 		$html .= 'Series after new read: ' . $event->getSeriesIdentifier() . '<br>';
-		self::dic()->mainTemplate()->setContent($html);
+		self::dic()->ui()->mainTemplate()->setContent($html);
 	}
 
 

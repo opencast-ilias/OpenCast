@@ -39,11 +39,11 @@ class xoctPermissionTemplateGUI extends xoctGUI {
             case self::SUBTAB_GENERAL:
                 $xoctVideoPortalSettingsFormGUI = new xoctVideoPortalSettingsFormGUI($this);
                 $xoctVideoPortalSettingsFormGUI->fillForm();
-                self::dic()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
+                self::dic()->ui()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
                 break;
             case self::SUBTAB_PERMISSION_TEMPLATES:
                 $xoctPermissionTemplateTableGUI = new xoctPermissionTemplateTableGUI($this);
-                self::dic()->mainTemplate()->setContent($xoctPermissionTemplateTableGUI->getHTML());
+                self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateTableGUI->getHTML());
                 break;
         }
 	}
@@ -54,7 +54,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 */
 	protected function add() {
 		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new xoctPermissionTemplate());
-		self::dic()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
 
 
@@ -68,7 +68,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
 			self::dic()->ctrl()->redirect($this);
 		}
-		self::dic()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
 
 
@@ -78,7 +78,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	protected function edit() {
 		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,xoctPermissionTemplate::find($_GET[self::IDENTIFIER]));
 		$xoctPermissionTemplateFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
 
     /**
@@ -91,7 +91,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
             ilUtil::sendSuccess($this->txt('msg_success'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         }
-        self::dic()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
+        self::dic()->ui()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
     }
 
 
@@ -105,7 +105,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
 			self::dic()->ctrl()->redirect($this);
 		}
-		self::dic()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
 
     protected function setSubTabs() {
@@ -141,7 +141,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 		$ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
 		$ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);
 		$ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
-		self::dic()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
 	}
 
 

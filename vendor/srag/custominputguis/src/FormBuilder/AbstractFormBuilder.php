@@ -6,7 +6,6 @@ use Closure;
 use Exception;
 use ilFormPropertyDispatchGUI;
 use ILIAS\UI\Component\Input\Container\Form\Form;
-use ILIAS\UI\Component\Input\Field\DependantGroupProviding;
 use ILIAS\UI\Component\Input\Field\OptionalGroup;
 use ILIAS\UI\Component\Input\Field\Radio as RadioInterface;
 use ILIAS\UI\Component\Input\Field\Section;
@@ -23,8 +22,6 @@ use Throwable;
  * Class AbstractFormBuilder
  *
  * @package      srag\CustomInputGUIs\OpenCast\FormBuilder
- *
- * @author       studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  *
  * @ilCtrl_Calls srag\CustomInputGUIs\OpenCast\FormBuilder\AbstractFormBuilder: ilFormPropertyDispatchGUI
  */
@@ -53,7 +50,7 @@ abstract class AbstractFormBuilder implements FormBuilder
      *
      * @param object $parent
      */
-    public function __construct(/*object*/ $parent)
+    public function __construct(object $parent)
     {
         $this->parent = $parent;
     }
@@ -62,7 +59,7 @@ abstract class AbstractFormBuilder implements FormBuilder
     /**
      *
      */
-    public function executeCommand()/* : void*/
+    public function executeCommand() : void
     {
         $next_class = self::dic()->ctrl()->getNextClass($this);
 
@@ -148,6 +145,8 @@ abstract class AbstractFormBuilder implements FormBuilder
      */
     protected function buildForm() : Form
     {
+        self::dic()->language()->loadLanguageModule("form");
+
         $form = self::dic()->ui()->factory()->input()->container()->form()->standard($this->getAction(), [
             "form" => self::dic()->ui()->factory()->input()->field()->section($this->getFields(), $this->getTitle())
         ]);
@@ -225,7 +224,7 @@ abstract class AbstractFormBuilder implements FormBuilder
     /**
      * @param Form $form
      */
-    protected function setDataToForm(Form $form)/* : void*/
+    protected function setDataToForm(Form $form) : void
     {
         $this->setDataToFormGroup($form->getInputs()["form"], $this->getData());
     }
@@ -234,7 +233,7 @@ abstract class AbstractFormBuilder implements FormBuilder
     /**
      * @param array $data
      */
-    protected abstract function storeData(array $data)/* : void*/;
+    protected abstract function storeData(array $data) : void;
 
 
     /**
@@ -252,7 +251,7 @@ abstract class AbstractFormBuilder implements FormBuilder
      * @param Group $group
      * @param array $data
      */
-    private function setDataToFormGroup(Group $group, array $data)/* : void*/
+    private function setDataToFormGroup(Group $group, array $data) : void
     {
         $inputs = $group->getInputs();
 
@@ -280,35 +279,9 @@ abstract class AbstractFormBuilder implements FormBuilder
                                     }
                                 }
                             }
-                            Closure::bind(function (array $inputs2)/* : void*/ {
+                            Closure::bind(function (array $inputs2) : void {
                                 $this->inputs = $inputs2;
                             }, $field, Group::class)($inputs2);
-                        }
-                        continue;
-                    }
-                    if ($field instanceof DependantGroupProviding && !empty($field->getDependantGroup())) {
-                        $inputs2 = $field->getDependantGroup()->getInputs();
-                        if (!empty($inputs2)) {
-                            if (isset($data[$key]["value"])) {
-                                try {
-                                    $inputs[$key] = $field = $field->withValue($data[$key]["value"]);
-                                } catch (Throwable $ex) {
-
-                                }
-                            }
-                            $data2 = (isset($data[$key]["group_values"]) ? $data[$key]["group_values"] : $data[$key])["dependant_group"];
-                            foreach ($inputs2 as $key2 => $field2) {
-                                if (isset($data2[$key2])) {
-                                    try {
-                                        $inputs2[$key2] = $field2 = $field2->withValue($data2[$key2]);
-                                    } catch (Throwable $ex) {
-
-                                    }
-                                }
-                            }
-                            Closure::bind(function (array $inputs2)/* : void*/ {
-                                $this->inputs = $inputs2;
-                            }, $field->getDependantGroup(), Group::class)($inputs2);
                         }
                         continue;
                     }
@@ -336,12 +309,12 @@ abstract class AbstractFormBuilder implements FormBuilder
                                             }
                                         }
                                     }
-                                    Closure::bind(function (array $inputs3)/* : void*/ {
+                                    Closure::bind(function (array $inputs3) : void {
                                         $this->inputs = $inputs3;
                                     }, $field2, Group::class)($inputs3);
                                 }
                             }
-                            Closure::bind(function (array $inputs2)/* : void*/ {
+                            Closure::bind(function (array $inputs2) : void {
                                 $this->inputs = $inputs2;
                             }, $field, Group::class)($inputs2);
                         }
@@ -367,7 +340,7 @@ abstract class AbstractFormBuilder implements FormBuilder
                                 }
                             }
                         }
-                        Closure::bind(function (array $data, string $key, array $inputs2)/* : void*/ {
+                        Closure::bind(function (array $data, string $key, array $inputs2) : void {
                             $this->dependant_fields[$data[$key]["value"]] = $inputs2;
                         }, $field, Radio::class)($data, $key, $inputs2);
                         continue;
@@ -385,7 +358,7 @@ abstract class AbstractFormBuilder implements FormBuilder
                 }
             }
 
-            Closure::bind(function (array $inputs)/* : void*/ {
+            Closure::bind(function (array $inputs) : void {
                 $this->inputs = $inputs;
             }, $group, Group::class)($inputs);
         }

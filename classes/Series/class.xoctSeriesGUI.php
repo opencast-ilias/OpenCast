@@ -102,7 +102,7 @@ class xoctSeriesGUI extends xoctGUI {
 
 		$xoctSeriesFormGUI = new xoctSeriesFormGUI($this, $this->xoctOpenCast);
 		$xoctSeriesFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 
@@ -130,7 +130,7 @@ class xoctSeriesGUI extends xoctGUI {
 			self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
 		}
 		$xoctSeriesFormGUI->setValuesByPost();
-		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 
@@ -145,7 +145,7 @@ class xoctSeriesGUI extends xoctGUI {
 		self::dic()->tabs()->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
 		$xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS);
-		self::dic()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
 	}
 
 

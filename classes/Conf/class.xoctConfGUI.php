@@ -25,7 +25,7 @@ class xoctConfGUI extends xoctGUI {
 		self::dic()->tabs()->setSubTabActive($subtab_active);
 		$xoctConfFormGUI = new xoctConfFormGUI($this, $subtab_active);
 		$xoctConfFormGUI->fillForm();
-		self::dic()->mainTemplate()->setContent($xoctConfFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctConfFormGUI->getHTML());
 	}
 
 
@@ -41,7 +41,7 @@ class xoctConfGUI extends xoctGUI {
 			ilUtil::sendSuccess($this->txt('msg_success'), true);
 			self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
 		}
-		self::dic()->mainTemplate()->setContent($xoctConfFormGUI->getHTML());
+		self::dic()->ui()->mainTemplate()->setContent($xoctConfFormGUI->getHTML());
 	}
 
 

@@ -15,7 +15,7 @@ class xoctReportOverviewGUI extends xoctGUI {
     protected function index() {
         ilUtil::sendInfo(self::plugin()->translate('msg_reports_table'));
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
-        self::dic()->mainTemplate()->setContent($xoctReportOverviewTableGUI->getHTML());
+        self::dic()->ui()->mainTemplate()->setContent($xoctReportOverviewTableGUI->getHTML());
     }
 
     /**
@@ -90,7 +90,7 @@ class xoctReportOverviewGUI extends xoctGUI {
         }
         $ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);
         $ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
-        self::dic()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+        self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
     }
 
 }
