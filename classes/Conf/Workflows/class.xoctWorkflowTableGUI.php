@@ -5,8 +5,8 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Config\Workflow\Workflow;
-use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -84,7 +84,7 @@ class xoctWorkflowTableGUI extends TableGUI
      * @inheritDoc
      *
      * @param     $column
-     * @param     $row Workflow
+     * @param     $row WorkflowAR
      * @param int $format
      *
      * @return string

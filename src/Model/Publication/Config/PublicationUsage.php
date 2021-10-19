@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Config\PublicationUsage;
+namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
 

@@ -13,7 +13,7 @@ use ilSelectInputGUI;
 use ilTemplate;
 use ilTemplateException;
 use ilTextAreaInputGUI;
-use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use xoctConf;
 
 /**

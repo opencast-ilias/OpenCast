@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Config\Workflow;
+namespace srag\Plugins\Opencast\Model\Workflow;
 
 use ActiveRecord;
 
@@ -11,7 +11,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class Workflow extends ActiveRecord
+class WorkflowAR extends ActiveRecord
 {
 
     const TABLE_NAME = 'xoct_workflow';

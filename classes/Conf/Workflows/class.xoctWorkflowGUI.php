@@ -3,8 +3,8 @@
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Config\Workflow\Workflow;
-use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
 /**
  * Class xoctWorkflowGUI
@@ -59,12 +59,12 @@ class xoctWorkflowGUI extends xoctGUI
 
 
     /**
-     * @param Workflow $workflow
+     * @param WorkflowAR $workflow
      *
      * @return Standard
      * @throws DICException
      */
-    protected function getForm(Workflow $workflow = null) : Standard
+    protected function getForm(WorkflowAR $workflow = null) : Standard
     {
         $id = $this->factory->input()->field()->text(self::dic()->language()->txt('id'))->withRequired(true);
         $title = $this->factory->input()->field()->text(self::dic()->language()->txt('title'))->withRequired(true);
@@ -121,7 +121,7 @@ class xoctWorkflowGUI extends xoctGUI
     protected function edit()
     {
         $workflow_id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
-        self::output()->output($this->getForm(Workflow::find($workflow_id)));
+        self::output()->output($this->getForm(WorkflowAR::find($workflow_id)));
     }
 
 
@@ -132,7 +132,7 @@ class xoctWorkflowGUI extends xoctGUI
     protected function update()
     {
         $id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
-        $form = $this->getForm(Workflow::find($id))->withRequest(self::dic()->http()->request());
+        $form = $this->getForm(WorkflowAR::find($id))->withRequest(self::dic()->http()->request());
         if ($data = $form->getData()) {
             $this->workflow_repository->store($data[0]['id'], $data[0]['title'], $data[0]['parameters'], $id);
             ilUtil::sendSuccess(self::plugin()->translate('msg_workflow_updated'), true);

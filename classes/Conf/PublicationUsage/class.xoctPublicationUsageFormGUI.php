@@ -1,6 +1,6 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 
 /**
  * Class xoctPublicationUsageFormGUI

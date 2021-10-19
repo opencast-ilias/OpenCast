@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Config\Workflow;
+namespace srag\Plugins\Opencast\Model\Workflow;
 
 /**
  * Class WorkflowRepository
@@ -17,15 +17,15 @@ class WorkflowRepository
      */
     public function anyWorkflowExists() : bool
     {
-        return (Workflow::count() > 0);
+        return (WorkflowAR::count() > 0);
     }
 
     /**
-     * @return Workflow[]
+     * @return WorkflowAR[]
      */
     public function getAllWorkflows() : array
     {
-        return Workflow::get();
+        return WorkflowAR::get();
     }
 
 
@@ -37,7 +37,7 @@ class WorkflowRepository
      */
     public function getAllWorkflowsAsArray($key = null, $values = null) : array
     {
-        return Workflow::getArray($key, $values);
+        return WorkflowAR::getArray($key, $values);
     }
 
     /**
@@ -48,8 +48,8 @@ class WorkflowRepository
      */
     public function store(string $workflow_id, string $title, string $parameters, int $id = 0)
     {
-        /** @var Workflow $workflow */
-        $workflow = new Workflow($id == 0 ? null : $id);
+        /** @var WorkflowAR $workflow */
+        $workflow = new WorkflowAR($id == 0 ? null : $id);
         $workflow->setWorkflowId($workflow_id);
         $workflow->setTitle($title);
         $workflow->setParameters($parameters);
@@ -64,7 +64,7 @@ class WorkflowRepository
      */
     public function exists(string $workflow_id) : bool
     {
-        return Workflow::where(['workflow_id' => $workflow_id])->hasSets();
+        return WorkflowAR::where(['workflow_id' => $workflow_id])->hasSets();
     }
 
 
@@ -73,7 +73,7 @@ class WorkflowRepository
      */
     public function delete($id)
     {
-        $workflow = Workflow::find($id);
+        $workflow = WorkflowAR::find($id);
         if (!is_null($workflow)) {
             $workflow->delete();
         }
@@ -81,19 +81,19 @@ class WorkflowRepository
 
     /**
      * @param string $workflow_id
-     * @return Workflow|null
+     * @return WorkflowAR|null
      */
     public function getByWorkflowId(string $workflow_id)
     {
-        return Workflow::where(['workflow_id' => $workflow_id])->first();
+        return WorkflowAR::where(['workflow_id' => $workflow_id])->first();
     }
 
     /**
      * @param int $id
-     * @return Workflow|null
+     * @return WorkflowAR|null
      */
     public function getById(int $id)
     {
-        return Workflow::where(['id' => $id])->first();
+        return WorkflowAR::where(['id' => $id])->first();
     }
 }

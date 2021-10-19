@@ -1,7 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 
 /**
  * Class xoctConf

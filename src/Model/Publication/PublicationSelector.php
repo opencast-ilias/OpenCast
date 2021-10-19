@@ -1,27 +1,23 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Config\PublicationUsage;
+namespace srag\Plugins\Opencast\Model\Publication;
 
 use ilObjOpenCastAccess;
-use ilObjOpenCastGUI;
 use ilOpenCastPlugin;
-use ilRepositoryGUI;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\DTO\DownloadDto;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use stdClass;
 use xoctAttachment;
 use xoctConf;
 use xoctEvent;
-use xoctEventGUI;
 use xoctException;
 use xoctMedia;
-use xoctPlayerGUI;
 use xoctPublication;
-use xoctPublicationUsageFormGUI;
 use xoctRequest;
 use xoctSecureLink;
 use xoctUser;
-use xoctPublicationMetadata;
-use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 
 /**
  * Class PublicationSelector

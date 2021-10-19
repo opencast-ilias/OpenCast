@@ -5,9 +5,9 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationSelector;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSelector;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 
 /**
  * Class xoctEvent
