@@ -39,6 +39,6 @@ class MDCatalogue
             throw new xoctException(xoctException::INTERNAL_ERROR,
                 'could not find metadata field with id ' . $id);
         }
-        return $field[0];
+        return array_values($field)[0];
     }
 }

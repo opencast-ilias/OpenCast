@@ -8,10 +8,12 @@ class MDPrefillOption
 {
     const T_COURSE_TITLE = 'crs_title';
     const T_USERNAME_OF_CREATOR = 'username_creator';
+    const T_NONE = 'none';
 
-    private static $allowed_values = [
+    public static $allowed_values = [
         self::T_COURSE_TITLE,
-        self::T_USERNAME_OF_CREATOR
+        self::T_USERNAME_OF_CREATOR,
+        self::T_NONE
     ];
 
     /**
@@ -25,21 +27,26 @@ class MDPrefillOption
      */
     public function __construct(string $value)
     {
-        if (!in_array($value, self::$allowed_values)) {
+        if (!in_array($value, self::$allowed_values) && strlen($value)) {
             throw new xoctException(xoctException::INTERNAL_ERROR,
                 $value . " is not an allowed value for MDPrefillOption");
         }
-        $this->value = $value;
+        $this->value = $value ?? self::T_NONE;
     }
 
-    public function course_title() : self
+    public static function course_title() : self
     {
         return new self(self::T_COURSE_TITLE);
     }
 
-    public function username_of_creator() : self
+    public static function username_of_creator() : self
     {
         return new self(self::T_USERNAME_OF_CREATOR);
+    }
+
+    public static function none() : self
+    {
+        return new self(self::T_NONE);
     }
 
     /**

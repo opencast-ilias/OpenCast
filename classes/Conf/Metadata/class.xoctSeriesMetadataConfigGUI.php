@@ -1,6 +1,8 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
 
 /**
@@ -12,5 +14,10 @@ class xoctSeriesMetadataConfigGUI extends xoctMetadataConfigGUI
     {
         $repository = new MDFieldConfigSeriesRepository();
         parent::__construct($repository, new MDConfigTableBuilder($this, $repository));
+    }
+
+    protected function getMetadataCatalogue(): MDCatalogue
+    {
+        return MDCatalogueFactory::series();
     }
 }

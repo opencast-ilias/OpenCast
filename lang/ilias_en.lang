@@ -398,6 +398,7 @@ tab_migration#:#Migration
 tab_video_portal#:#Video Portal
 tab_reports#:#Reports
 tab_workflow_params#:#Workflow Parameters
+tab_metadata#:#Metadata
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events

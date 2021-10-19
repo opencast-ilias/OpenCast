@@ -395,6 +395,7 @@ tab_migration#:#Migration
 tab_video_portal#:#Videoportal
 tab_reports#:#Verfasste Meldungen
 tab_workflow_params#:#Workflow Parameter
+tab_metadata#:#Metadaten
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
 subtab_series#:#Serien

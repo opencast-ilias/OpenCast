@@ -36,7 +36,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
      */
     protected $title;
     /**
-     * @var int[]
+     * @var string[]
      *
      * @con_has_field    true
      * @con_fieldtype    text
@@ -77,6 +77,8 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return $this->prefill->getValue();
+            case 'visible_for_roles':
+                return serialize($this->visible_for_roles);
             default:
                 return null;
         }
@@ -90,6 +92,8 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return new MDPrefillOption($field_value);
+            case 'visible_for_roles':
+                return unserialize($field_value);
             default:
                 return null;
         }
@@ -144,7 +148,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
     }
 
     /**
-     * @return int[]
+     * @return string[]
      */
     public function getVisibleForRoles(): array
     {
@@ -152,7 +156,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
     }
 
     /**
-     * @param int[] $visible_for_roles
+     * @param string[] $visible_for_roles
      */
     public function setVisibleForRoles(array $visible_for_roles)
     {

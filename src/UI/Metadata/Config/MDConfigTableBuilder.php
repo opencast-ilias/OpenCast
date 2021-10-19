@@ -38,7 +38,7 @@ class MDConfigTableBuilder extends AbstractTableBuilder
         $columnFactory = self::dataTableUI()->column();
         return (new \srag\DataTableUI\OpenCast\Implementation\Table('md_config_table',
             self::dic()->ctrl()->getLinkTarget($this->parent),
-            "",
+            self::plugin()->translate('table_title_md_'),
             [
                 $columnFactory->column('field_id', self::plugin()->translate('md_field_id'))
                     ->withSelectable(false)->withSortable(false),
