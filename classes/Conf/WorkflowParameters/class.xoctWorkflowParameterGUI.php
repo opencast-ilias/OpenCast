@@ -1,5 +1,8 @@
 <?php
 
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+
 /**
  * Class xoctWorkflowParameterGUI
  *
@@ -99,7 +102,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 */
 	protected function loadWorkflowParameters() {
 		try {
-			$params = xoctWorkflowParameterRepository::getInstance()->loadParametersFromAPI();
+			$params = WorkflowParameterRepository::getInstance()->loadParametersFromAPI();
 			if (!count($params)) {
 				ilUtil::sendFailure(self::plugin()->translate('msg_no_params_found'), true);
 				self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
@@ -109,7 +112,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 			$ilConfirmationGUI->setCancel(self::dic()->language()->txt('cancel'), self::CMD_SHOW_TABLE);
 			$ilConfirmationGUI->setConfirm(self::dic()->language()->txt('confirm'), self::CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED);
 			$ilConfirmationGUI->setHeaderText(self::plugin()->translate('msg_load_workflow_params'));
-			/** @var xoctWorkflowParameter $param */
+			/** @var WorkflowParameter $param */
 			foreach ($params as $param) {
 				$ilConfirmationGUI->addItem('workflow_params[' . $param->getId() . '][title]', $param->getTitle(), $param->getTitle());
 				$ilConfirmationGUI->addHiddenItem('workflow_params[' . $param->getId() . '][type]', $param->getType());
@@ -126,7 +129,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function loadWorkflowParametersConfirmed() {
-		$existing_ids = xoctWorkflowParameter::getArray(null, 'id');
+		$existing_ids = WorkflowParameter::getArray(null, 'id');
 		$delivered_params = filter_input(INPUT_POST, 'workflow_params', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
 		$delivered_ids = array_keys($delivered_params);
 		$to_delete_ids = array_diff($existing_ids, $delivered_ids);
@@ -135,7 +138,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 		// create new and update existing
 		foreach ($delivered_params as $param_id => $parameter) {
-			$xoctWorkflowParameter = xoctWorkflowParameterRepository::getInstance()->createOrUpdate($param_id, $parameter['title'], $parameter['type']);
+			$xoctWorkflowParameter = WorkflowParameterRepository::getInstance()->createOrUpdate($param_id, $parameter['title'], $parameter['type']);
 			if (in_array($param_id, $to_create_ids)) {
 				$to_create[] = $xoctWorkflowParameter;
 			}
@@ -143,15 +146,15 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 		// delete not delivered
 		foreach ($to_delete_ids as $id_to_delete) {
-			xoctWorkflowParameter::find($id_to_delete)->delete();
+			WorkflowParameter::find($id_to_delete)->delete();
 		}
 
 		// create/delete the series settings
 		if (count($to_delete_ids)) {
-			xoctSeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($to_delete_ids);
+			SeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($to_delete_ids);
 		}
 		if (count($to_create_ids)) {
-			xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($to_create);
+			SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($to_create);
 		}
 
 		ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
@@ -238,8 +241,8 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $id => $value) {
 			$default_value_admin = $value['default_value_admin'];
 			$default_value_member = $value['default_value_member'];
-			if (in_array($default_value_member, xoctWorkflowParameter::$possible_values) && in_array($default_value_admin, xoctWorkflowParameter::$possible_values)) {
-				xoctWorkflowParameter::find($id)->setDefaultValueAdmin($default_value_admin)->setDefaultValueMember($default_value_member)->update();
+			if (in_array($default_value_member, WorkflowParameter::$possible_values) && in_array($default_value_admin, WorkflowParameter::$possible_values)) {
+				WorkflowParameter::find($id)->setDefaultValueAdmin($default_value_admin)->setDefaultValueMember($default_value_member)->update();
 			}
 		}
 		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
@@ -251,7 +254,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function overwriteSeriesParameters() {
-		xoctWorkflowParameterRepository::getInstance()->overwriteSeriesParameter();
+		WorkflowParameterRepository::getInstance()->overwriteSeriesParameter();
 		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
 		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_FORM);
 	}
@@ -260,7 +263,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function confirmDelete() {
-		xoctWorkflowParameterRepository::getInstance()->deleteById($_POST['param_id']);
+		WorkflowParameterRepository::getInstance()->deleteById($_POST['param_id']);
 		ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
 		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
 	}
@@ -274,7 +277,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 		$ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
 		$ilConfirmationGUI->setConfirm(self::dic()->language()->txt('confirm'), self::CMD_CONFIRM);
 		$ilConfirmationGUI->setCancel(self::dic()->language()->txt('cancel'), self::CMD_SHOW_TABLE);
-		$ilConfirmationGUI->addItem('param_id', $_GET['param_id'], xoctWorkflowParameter::find($_GET['param_id'])->getTitle());
+		$ilConfirmationGUI->addItem('param_id', $_GET['param_id'], WorkflowParameter::find($_GET['param_id'])->getTitle());
 		$ilConfirmationGUI->setHeaderText(self::plugin()->translate('msg_confirm_delete_param'));
 		self::dic()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
 	}

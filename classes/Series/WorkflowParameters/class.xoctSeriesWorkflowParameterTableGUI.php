@@ -1,6 +1,9 @@
 <?php
 
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 
 /**
  * Class xoctSeriesWorkflowParameterTableGUI
@@ -86,13 +89,13 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI {
 		$this->tpl->setVariable("TYPE", $row["type"]);
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_member]');
-		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
+		$ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['value_member']);
 		$this->tpl->setVariable("VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_admin]');
-		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
+		$ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['value_admin']);
 		$this->tpl->setVariable("VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
@@ -104,7 +107,7 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI {
 	 *
 	 */
 	protected function initData() {
-		$this->setData(xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id')->where(['obj_id' => $this->parent_obj->getObjId()])->getArray());
+		$this->setData(SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id')->where(['obj_id' => $this->parent_obj->getObjId()])->getArray());
 	}
 
 

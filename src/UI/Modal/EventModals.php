@@ -72,14 +72,13 @@ class EventModals
 
     public function initRepublish()
     {
-        $workflow_repository = new WorkflowRepository();
-        if ($workflow_repository->anyWorkflowExists()) {
+        if ($this->workflow_repository->anyWorkflowExists()) {
             $form = new ilPropertyFormGUI();
             $form->setFormAction($this->dic->ctrl()->getFormAction($this->parent_gui, "republish"));
             $form->setId(uniqid('form'));
 
             $select = new ilSelectInputGUI($this->plugin->txt('workflow'), 'workflow_id');
-            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('id', 'title'));
+            $select->setOptions($this->workflow_repository->getAllWorkflowsAsArray('id', 'title'));
             $form->addItem($select);
 
             $hidden = new ilHiddenInputGUI('republish_event_id');

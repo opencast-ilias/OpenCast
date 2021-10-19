@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
 /**
  * Class xoctConf
@@ -194,7 +195,7 @@ class xoctConf extends ActiveRecord {
         }
 
         /**
-         * @var $xoctWorkflowParameter xoctWorkflowParameter
+         * @var $xoctWorkflowParameter WorkflowParameter
          */
         $xoct_workflow_parameter = $domxml->getElementsByTagName('xoct_workflow_parameter');
 
@@ -203,13 +204,13 @@ class xoctConf extends ActiveRecord {
             if (!$id) {
                 continue;
             }
-            $xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
+            $xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($id);
             $xoctWorkflowParameter->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
             $xoctWorkflowParameter->setType($node->getElementsByTagName('type')->item(0)->nodeValue);
             $xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
             $xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
 
-            if (!xoctWorkflowParameter::where(array( 'id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
+            if (!WorkflowParameter::where(array( 'id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
                 $xoctWorkflowParameter->create();
             } else {
                 $xoctWorkflowParameter->update();
@@ -276,9 +277,9 @@ class xoctConf extends ActiveRecord {
         // xoctWorkflowParameters
         $xml_xoctWorkflowParameters = $config->appendChild(new DOMElement('xoct_workflow_parameters'));
         /**
-         * @var $xoctWorkflowParameter xoctWorkflowParameter
+         * @var $xoctWorkflowParameter WorkflowParameter
          */
-        foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+        foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
             $xml_xoctPU = $xml_xoctWorkflowParameters->appendChild(new DOMElement('xoct_workflow_parameter'));
             $xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getId()));
             $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getTitle()));

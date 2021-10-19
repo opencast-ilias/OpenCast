@@ -5,9 +5,10 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
-use srag\Plugins\Opencast\Model\Publication\Config\PublicationSelector;
+use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
  * Class xoctEvent
@@ -183,12 +184,12 @@ class xoctEvent extends APIObject {
 	 * @param bool $as_admin
 	 */
 	public function setWorkflowParametersForObjId(array $parameters, int $obj_id, bool $as_admin = true) {
-		$parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
+		$parameters_in_form = SeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
 		$not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
 		foreach ($not_set_in_form as $id) {
 			$parameters[$id] = 0;
 		}
-		$automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
+		$automatically_set = SeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
 		$this->setWorkflowParameters(array_merge($automatically_set, $parameters));
 	}
 
@@ -198,12 +199,12 @@ class xoctEvent extends APIObject {
      */
     public function setGeneralWorkflowParameters(array $parameters)
     {
-        $parameters_in_form = xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm();
+        $parameters_in_form = SeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm();
         $not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
         foreach ($not_set_in_form as $id) {
             $parameters[$id] = 0;
         }
-        $automatically_set = xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralAutomaticallySetParameters();
+        $automatically_set = SeriesWorkflowParameterRepository::getInstance()->getGeneralAutomaticallySetParameters();
         $this->setWorkflowParameters(array_merge($automatically_set, $parameters));
     }
 
@@ -647,15 +648,15 @@ class xoctEvent extends APIObject {
 	 * @param bool $as_admin
 	 */
 	public function addDefaultWorkflowParameters($as_admin = true) {
-		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
+		/** @var WorkflowParameter $xoctWorkflowParameter */
+		foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
 			$default_value = $as_admin ? $xoctWorkflowParameter->getDefaultValueAdmin() : $xoctWorkflowParameter->getDefaultValueMember();
 
 			switch ($default_value) {
-				case xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE:
+				case WorkflowParameter::VALUE_ALWAYS_ACTIVE:
 					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 1;
 					break;
-				case xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE:
+				case WorkflowParameter::VALUE_ALWAYS_INACTIVE:
 					$this->workflow_parameters[$xoctWorkflowParameter->getId()] = 0;
 					break;
 				default:

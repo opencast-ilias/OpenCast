@@ -1,6 +1,8 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
  * Class xoctSeriesGUI
@@ -136,7 +138,7 @@ class xoctSeriesGUI extends xoctGUI {
 	 * @throws DICException
 	 */
 	protected function editWorkflowParameters() {
-		xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
+		SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
 		if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
 			ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
 		}
@@ -154,8 +156,8 @@ class xoctSeriesGUI extends xoctGUI {
 		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $param_id => $value) {
 			$value_admin = $value['value_admin'];
 			$value_member = $value['value_member'];
-			if (in_array($value_member, xoctWorkflowParameter::$possible_values) && in_array($value_admin, xoctWorkflowParameter::$possible_values)) {
-				xoctSeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setValueAdmin($value_admin)->setValueMember($value_member)->update();
+			if (in_array($value_member, WorkflowParameter::$possible_values) && in_array($value_admin, WorkflowParameter::$possible_values)) {
+				SeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setValueAdmin($value_admin)->setValueMember($value_member)->update();
 			}
 		}
 		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);

@@ -1,19 +1,24 @@
 <?php
 
+namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
+
+use ActiveRecord;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+
 /**
  * Class xoctSeriesWorkflowParameter
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctSeriesWorkflowParameter extends ActiveRecord {
+class SeriesWorkflowParameter extends ActiveRecord {
 
 	const TABLE_NAME = 'xoct_series_param';
 
-	const VALUE_IGNORE = xoctWorkflowParameter::VALUE_IGNORE;
-	const VALUE_ALWAYS_ACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE;
-	const VALUE_ALWAYS_INACTIVE = xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE;
-	const VALUE_SHOW_IN_FORM = xoctWorkflowParameter::VALUE_SHOW_IN_FORM;
-	const VALUE_SHOW_IN_FORM_PRESET = xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET;
+	const VALUE_IGNORE = WorkflowParameter::VALUE_IGNORE;
+	const VALUE_ALWAYS_ACTIVE = WorkflowParameter::VALUE_ALWAYS_ACTIVE;
+	const VALUE_ALWAYS_INACTIVE = WorkflowParameter::VALUE_ALWAYS_INACTIVE;
+	const VALUE_SHOW_IN_FORM = WorkflowParameter::VALUE_SHOW_IN_FORM;
+	const VALUE_SHOW_IN_FORM_PRESET = WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET;
 
 	/**
 	 * @return string

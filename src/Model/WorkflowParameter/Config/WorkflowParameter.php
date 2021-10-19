@@ -1,11 +1,15 @@
 <?php
 
+namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
+
+use ActiveRecord;
+
 /**
  * Class xoctWorkflowParameter
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowParameter extends ActiveRecord {
+class WorkflowParameter extends ActiveRecord {
 
 	const TABLE_NAME = 'xoct_workflow_param';
 
@@ -156,7 +160,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	/**
 	 * @param integer $default_value_member
 	 *
-	 * @return xoctWorkflowParameter
+	 * @return WorkflowParameter
 	 */
 	public function setDefaultValueMember($default_value_member) {
 		$this->default_value_member = $default_value_member;
@@ -175,7 +179,7 @@ class xoctWorkflowParameter extends ActiveRecord {
 	/**
 	 * @param int $default_value_admin
 	 *
-	 * @return xoctWorkflowParameter
+	 * @return WorkflowParameter
 	 */
 	public function setDefaultValueAdmin($default_value_admin) {
 		$this->default_value_admin = $default_value_admin;

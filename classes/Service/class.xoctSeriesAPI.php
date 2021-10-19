@@ -147,7 +147,7 @@ class xoctSeriesAPI {
 			ilObjOpenCastAccess::activateMemberUpload($object->getRefId());
 		}
 
-		xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($object->getId());
+		SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($object->getId());
 
 		return $cast;
 	}

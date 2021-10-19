@@ -1,6 +1,8 @@
 <?php
 
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 
 /**
  * Class xoctWorkflowParameterTableGUI
@@ -70,7 +72,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 	 *
 	 */
 	protected function initData() {
-		$this->setData(xoctWorkflowParameter::getArray());
+		$this->setData(WorkflowParameter::getArray());
 	}
 
 
@@ -108,13 +110,13 @@ class xoctWorkflowParameterTableGUI extends TableGUI {
 		$this->tpl->setVariable("TYPE", $row["type"]);
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_member]');
-		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
+		$ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['default_value_member']);
 		$this->tpl->setVariable("DEFAULT_VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
 		$ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_admin]');
-		$ilSelectInputGUI->setOptions(xoctWorkflowParameterRepository::getSelectionOptions());
+		$ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
 		$ilSelectInputGUI->setValue($row['default_value_admin']);
 		$this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 

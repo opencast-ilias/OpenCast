@@ -27,6 +27,7 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoct;
 use xoctConf;
 use xoctEvent;
@@ -34,7 +35,6 @@ use xoctEventGUI;
 use xoctException;
 use xoctOpenCast;
 use xoctSeries;
-use xoctSeriesWorkflowParameterRepository;
 use xoctUploadFile;
 use xoctUser;
 
@@ -371,8 +371,8 @@ class EventFormGUI extends ilPropertyFormGUI {
 		// if ($this->is_new || $this->object->isScheduled()) {
 		if ($this->is_new) {
 		    $form_items = is_null($this->xoctOpenCast) ?
-                xoctSeriesWorkflowParameterRepository::getInstance()->getGeneralFormItems() :
-                xoctSeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId(
+                SeriesWorkflowParameterRepository::getInstance()->getGeneralFormItems() :
+                SeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId(
                     $this->xoctOpenCast->getObjId(),
                     ilObjOpenCastAccess::hasPermission('edit_videos')
                 );

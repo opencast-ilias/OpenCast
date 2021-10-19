@@ -1,11 +1,25 @@
 <?php
+
+namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
+
+use DOMDocument;
+use ilException;
+use ilOpenCastPlugin;
+use ilUtil;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use xoctConf;
+use xoctConfGUI;
+use xoctException;
+use xoctRequest;
+use xoctWorkflowParameterGUI;
+
 /**
  * Class xoctWorkflowParameterRepository
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowParameterRepository {
+class WorkflowParameterRepository {
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
@@ -53,7 +67,7 @@ class xoctWorkflowParameterRepository {
 
 		try {
 			return $this->parseConfigurationPanelHTML($response['configuration_panel']);
-		} catch (Exception $e) {
+		} catch (ilException $e) {
 			ilUtil::sendFailure(self::plugin()->translate('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
 			self::dic()->ctrl()->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
 		}
@@ -75,8 +89,8 @@ class xoctWorkflowParameterRepository {
 		$workflow_parameters = [];
 		/** @var DOMElement $input */
 		foreach ($inputs as $input) {
-			/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-			$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($input->getAttribute('id'));
+			/** @var WorkflowParameter $xoctWorkflowParameter */
+			$xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($input->getAttribute('id'));
 			if (!$xoctWorkflowParameter->getTitle()) {
 				$name = $input->getAttribute('name');
 				/** @var DOMElement $label */
@@ -89,7 +103,7 @@ class xoctWorkflowParameterRepository {
 			}
 			if (!$xoctWorkflowParameter->getType()) {
 //				$xoctWorkflowParameter->setType($input->getAttribute('type'));  // for now, only checkbox is supported
-				$xoctWorkflowParameter->setType(xoctWorkflowParameter::TYPE_CHECKBOX);
+				$xoctWorkflowParameter->setType(WorkflowParameter::TYPE_CHECKBOX);
 			}
 			$workflow_parameters[] = $xoctWorkflowParameter;
 		}
@@ -105,9 +119,9 @@ class xoctWorkflowParameterRepository {
 			$ids = [$ids];
 		}
 		foreach ($ids as $id) {
-			xoctWorkflowParameter::find($id)->delete();
+			WorkflowParameter::find($id)->delete();
 		}
-		xoctSeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($ids);
+		SeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($ids);
 	}
 
 
@@ -119,14 +133,14 @@ class xoctWorkflowParameterRepository {
 	 * @param int $default_value_member
 	 * @param int $default_value_admin
 	 *
-	 * @return xoctWorkflowParameter
+	 * @return WorkflowParameter
 	 */
 	public function createOrUpdate($id, $title, $type, $default_value_member = 0, $default_value_admin = 0) {
-		if (!xoctWorkflowParameter::where(array('id' => $id))->hasSets()) {
+		if (!WorkflowParameter::where(array('id' => $id))->hasSets()) {
 			$is_new = true;
 		}
-		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-		$xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($id);
+		/** @var WorkflowParameter $xoctWorkflowParameter */
+		$xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($id);
 		$xoctWorkflowParameter->setTitle($title);
 		$xoctWorkflowParameter->setType($type);
 		$xoctWorkflowParameter->setDefaultValueMember($default_value_member);
@@ -134,7 +148,7 @@ class xoctWorkflowParameterRepository {
 		$xoctWorkflowParameter->store();
 
 		if ($is_new) {
-			xoctSeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($xoctWorkflowParameter);
+			SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($xoctWorkflowParameter);
 		}
 
 		return $xoctWorkflowParameter;
@@ -145,9 +159,9 @@ class xoctWorkflowParameterRepository {
 	 *
 	 */
 	public function overwriteSeriesParameter() {
-		/** @var xoctWorkflowParameter $xoctWorkflowParameter */
-		foreach (xoctWorkflowParameter::get() as $xoctWorkflowParameter) {
-			$sql = 'UPDATE ' . xoctSeriesWorkflowParameter::TABLE_NAME .
+		/** @var WorkflowParameter $xoctWorkflowParameter */
+		foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
+			$sql = 'UPDATE ' . SeriesWorkflowParameter::TABLE_NAME .
 				' SET value_member = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueMember(), 'integer') . ', ' .
 				' value_admin = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueAdmin(), 'integer') .
 				' WHERE param_id = ' . self::dic()->database()->quote($xoctWorkflowParameter->getId(), 'text');
@@ -162,7 +176,7 @@ class xoctWorkflowParameterRepository {
 	 */
 	public static function getSelectionOptions() {
 		$options = [];
-		foreach (xoctWorkflowParameter::$possible_values as $value) {
+		foreach (WorkflowParameter::$possible_values as $value) {
 			$options[$value] = self::plugin()->translate('workflow_parameter_value_' . $value, 'config');
 		}
 		return $options;

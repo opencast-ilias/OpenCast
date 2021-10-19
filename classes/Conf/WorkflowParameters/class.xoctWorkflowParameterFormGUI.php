@@ -1,5 +1,7 @@
 <?php
 use \srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 
 /**
  * Class xoctWorkflowParameterFormGUI
@@ -19,7 +21,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
 
 	/**
-	 * @var xoctWorkflowParameter
+	 * @var WorkflowParameter
 	 */
 	protected $xoctWorkflowParameter;
 
@@ -30,7 +32,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @param $parent
 	 */
 	public function __construct($parent, $param_id = '') {
-		$this->xoctWorkflowParameter = xoctWorkflowParameter::findOrGetInstance($param_id);
+		$this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
 		parent::__construct($parent);
 	}
 
@@ -76,7 +78,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getType(),
 				self::PROPERTY_OPTIONS => [
-					xoctWorkflowParameter::TYPE_CHECKBOX => 'Checkbox'
+					WorkflowParameter::TYPE_CHECKBOX => 'Checkbox'
 				]
 			],
 			self::F_DEFAULT_VALUE_MEMBER => [
@@ -84,14 +86,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
-				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions()
+				self::PROPERTY_OPTIONS => WorkflowParameterRepository::getSelectionOptions()
 			],
 			self::F_DEFAULT_VALUE_ADMIN => [
 				self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_ADMIN),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),
-				self::PROPERTY_OPTIONS => xoctWorkflowParameterRepository::getSelectionOptions()
+				self::PROPERTY_OPTIONS => WorkflowParameterRepository::getSelectionOptions()
 			],
 
 		];
@@ -121,7 +123,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 			return false;
 		}
 
-		xoctWorkflowParameterRepository::getInstance()->createOrUpdate(
+		WorkflowParameterRepository::getInstance()->createOrUpdate(
 			$this->getInput(self::F_ID),
 			$this->getInput(self::F_TITLE),
 			$this->getInput(self::F_TYPE),

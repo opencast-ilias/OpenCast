@@ -1,13 +1,20 @@
 <?php
 
+namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
+
+use ilCheckboxInputGUI;
+use ilFormPropertyGUI;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
+use xoctConf;
+use xoctOpenCast;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctSeriesWorkflowParameterRepository {
+class SeriesWorkflowParameterRepository {
 
 	/**
 	 * @var self
@@ -34,10 +41,10 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $obj_id
 	 * @param $param_id
 	 *
-	 * @return xoctSeriesWorkflowParameter
+	 * @return SeriesWorkflowParameter
 	 */
 	public static function getByObjAndParamId($obj_id, $param_id) {
-		return xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id, 'param_id' => $param_id])->first();
+		return SeriesWorkflowParameter::where(['obj_id' => $obj_id, 'param_id' => $param_id])->first();
 	}
 
 
@@ -48,15 +55,15 @@ class xoctSeriesWorkflowParameterRepository {
 		if (!is_array($param_ids)) {
 			$param_ids = [$param_ids];
 		}
-		/** @var xoctSeriesWorkflowParameter $series_parameter */
-		foreach (xoctSeriesWorkflowParameter::where([ 'param_id' => $param_ids ], [ 'param_id' => 'IN' ])->get() as $series_parameter) {
+		/** @var SeriesWorkflowParameter $series_parameter */
+		foreach (SeriesWorkflowParameter::where([ 'param_id' => $param_ids ], [ 'param_id' => 'IN' ])->get() as $series_parameter) {
 			$series_parameter->delete();
 		}
 	}
 
 
 	/**
-	 * @param $params xoctWorkflowParameter[]|xoctWorkflowParameter
+	 * @param $params WorkflowParameter[]|WorkflowParameter
 	 */
 	public function createParamsForAllObjects($params) {
 		if (!is_array($params)) {
@@ -65,7 +72,7 @@ class xoctSeriesWorkflowParameterRepository {
 		$all_obj_ids = xoctOpenCast::getArray(null, 'obj_id');
 		foreach ($all_obj_ids as $obj_id) {
 			foreach ($params as $param) {
-				(new xoctSeriesWorkflowParameter())
+				(new SeriesWorkflowParameter())
 					->setObjId($obj_id)
 					->setParamId($param->getId())
 					->setValueMember($param->getDefaultValueMember())
@@ -82,7 +89,7 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $value_admin
 	 */
 	public function updateById($id, $value_member, $value_admin) {
-		xoctSeriesWorkflowParameter::find($id)
+		SeriesWorkflowParameter::find($id)
 			->setValueMember($value_member)
 			->setValueAdmin($value_admin)
 			->update();
@@ -98,14 +105,14 @@ class xoctSeriesWorkflowParameterRepository {
 	public function getParametersInFormForObjId($obj_id, $as_admin) {
 		$parameter = [];
 		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
-			/** @var xoctSeriesWorkflowParameter $input */
-			foreach (xoctSeriesWorkflowParameter::innerjoin(xoctWorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
+			/** @var SeriesWorkflowParameter $input */
+			foreach (SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id', [ 'title' ])->where([
 				'obj_id' => $obj_id,
-				($as_admin ? 'value_admin' : 'value_member') => [xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM, xoctSeriesWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]			])->get() as $input) {
+				($as_admin ? 'value_admin' : 'value_member') => [SeriesWorkflowParameter::VALUE_SHOW_IN_FORM, SeriesWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]			])->get() as $input) {
                 if ($as_admin) {
-                    $preset = ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                    $preset = ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 } else {
-                    $preset = ($input->getDefaultValueMember() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+                    $preset = ($input->getDefaultValueMember() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 }
 				$parameter[$input->getParamId()] = [
 				    'title' => $input->xoct_workflow_param_title ?: $input->getParamId(),
@@ -113,14 +120,14 @@ class xoctSeriesWorkflowParameterRepository {
                 ];
 			}
 		} else {
-			/** @var xoctWorkflowParameter $input */
-			foreach (xoctWorkflowParameter::where([
-				($as_admin ? 'default_value_admin' : 'default_value_member') => [xoctWorkflowParameter::VALUE_SHOW_IN_FORM, xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
+			/** @var WorkflowParameter $input */
+			foreach (WorkflowParameter::where([
+				($as_admin ? 'default_value_admin' : 'default_value_member') => [WorkflowParameter::VALUE_SHOW_IN_FORM, WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
 			])->get() as $input) {
 			    if ($as_admin) {
-			        $preset = ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+			        $preset = ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 } else {
-			        $preset = ($input->getDefaultValueMember() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
+			        $preset = ($input->getDefaultValueMember() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 }
 				$parameter[$input->getId()] = [
 				    'title' => $input->getTitle() ?: $input->getId(),
@@ -137,13 +144,13 @@ class xoctSeriesWorkflowParameterRepository {
 	public function getGeneralParametersInForm() : array
     {
 		$parameter = [];
-        /** @var xoctWorkflowParameter $input */
-        foreach (xoctWorkflowParameter::where([
-            'default_value_admin' => [xoctWorkflowParameter::VALUE_SHOW_IN_FORM, xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
+        /** @var WorkflowParameter $input */
+        foreach (WorkflowParameter::where([
+            'default_value_admin' => [WorkflowParameter::VALUE_SHOW_IN_FORM, WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
         ])->get() as $input) {
             $parameter[$input->getId()] = [
                 'title' => $input->getTitle() ?: $input->getId(),
-                'preset' => ($input->getDefaultValueAdmin() === xoctWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
+                'preset' => ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
             ];
         }
 		return $parameter;
@@ -178,28 +185,28 @@ class xoctSeriesWorkflowParameterRepository {
 	public function getAutomaticallySetParametersForObjId($obj_id, $as_admin = true) {
 		$parameters = [];
 		if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
-			/** @var xoctSeriesWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctSeriesWorkflowParameter::where([
+			/** @var SeriesWorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (SeriesWorkflowParameter::where([
 				'obj_id' => $obj_id,
-				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_ALWAYS_ACTIVE
+				($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_ACTIVE
 			])->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getParamId()] = 1;
 			}
-			/** @var xoctSeriesWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctSeriesWorkflowParameter::where([
+			/** @var SeriesWorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (SeriesWorkflowParameter::where([
 				'obj_id' => $obj_id,
-				($as_admin ? 'value_admin' : 'value_member') => xoctSeriesWorkflowParameter::VALUE_ALWAYS_INACTIVE
+				($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_INACTIVE
 			])->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getParamId()] = 0;
 			}
 		} else {
-			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE ])
+			/** @var WorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (WorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_ACTIVE ])
 				         ->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
 			}
-			/** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-			foreach (xoctWorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE ])
+			/** @var WorkflowParameter $xoctSeriesWorkflowParameter */
+			foreach (WorkflowParameter::where([ ($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_INACTIVE ])
 				         ->get() as $xoctSeriesWorkflowParameter) {
 				$parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
 			}
@@ -214,13 +221,13 @@ class xoctSeriesWorkflowParameterRepository {
     public function getGeneralAutomaticallySetParameters()
     {
         $parameters = [];
-        /** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-        foreach (xoctWorkflowParameter::where(['default_value_admin' => xoctWorkflowParameter::VALUE_ALWAYS_ACTIVE ])
+        /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
+        foreach (WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_ACTIVE ])
             ->get() as $xoctSeriesWorkflowParameter) {
             $parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
         }
-        /** @var xoctWorkflowParameter $xoctSeriesWorkflowParameter */
-        foreach (xoctWorkflowParameter::where(['default_value_admin' => xoctWorkflowParameter::VALUE_ALWAYS_INACTIVE ])
+        /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
+        foreach (WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_INACTIVE ])
             ->get() as $xoctSeriesWorkflowParameter) {
             $parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
         }
@@ -232,14 +239,14 @@ class xoctSeriesWorkflowParameterRepository {
 	 * @param $obj_id
 	 */
 	public function syncAvailableParameters($obj_id) {
-		/** @var xoctWorkflowParameter[] $workflow_parameters */
-		$workflow_parameters = xoctWorkflowParameter::get();
-		$series_parameters = xoctSeriesWorkflowParameter::where(['obj_id' => $obj_id])->getArray('param_id');
+		/** @var WorkflowParameter[] $workflow_parameters */
+		$workflow_parameters = WorkflowParameter::get();
+		$series_parameters = SeriesWorkflowParameter::where(['obj_id' => $obj_id])->getArray('param_id');
 
 		// create missing
 		foreach ($workflow_parameters as $workflow_parameter) {
 			if (!isset($series_parameters[$workflow_parameter->getId()])) {
-				(new xoctSeriesWorkflowParameter())
+				(new SeriesWorkflowParameter())
 					->setObjId($obj_id)
 					->setParamId($workflow_parameter->getId())
 					->setValueAdmin($workflow_parameter->getDefaultValueAdmin())
@@ -252,7 +259,7 @@ class xoctSeriesWorkflowParameterRepository {
 
 		// delete not existing
 		foreach ($series_parameters as $id => $series_parameter) {
-			xoctSeriesWorkflowParameter::find($id)->delete();
+			SeriesWorkflowParameter::find($id)->delete();
 		}
 	}
 

@@ -6,6 +6,7 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
  * User Interface class for example repository object.
@@ -358,7 +359,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$newObj->setDescription($series->getDescription());
 		$newObj->update();
 
-        xoctSeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($newObj->getId());
+        SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($newObj->getId());
 
         parent::afterSave($newObj);
 	}
