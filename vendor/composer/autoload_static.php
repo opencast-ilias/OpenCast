@@ -41,6 +41,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     );
 
     public static $classMap = array (
+        'ACLEntry' => __DIR__ . '/../..' . '/classes/Series/Acl/class.ACLEntry.php',
         'Metadata' => __DIR__ . '/../..' . '/src/Model/API/Metadata/Metadata.php',
         'MetadataField' => __DIR__ . '/../..' . '/src/Model/API/Metadata/Metadata.php',
         'ilInteractiveVideoTimePicker' => __DIR__ . '/../..' . '/classes/Util/class.ilInteractiveVideoTimePicker.php',
@@ -203,6 +204,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\Model\\MessageAR' => __DIR__ . '/../..' . '/src/Chat/Model/MessageAR.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => __DIR__ . '/../..' . '/src/Chat/Model/Token.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => __DIR__ . '/../..' . '/src/Chat/Model/TokenAR.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/API/ACL/ACL.php',
         'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => __DIR__ . '/../..' . '/src/Model/API/APIObject.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Agent\\Agent' => __DIR__ . '/../..' . '/src/Model/API/Agent/Agent.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => __DIR__ . '/../..' . '/src/Model/API/Event/EventRepository.php',
@@ -213,6 +215,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowInstanceCollection' => __DIR__ . '/../..' . '/src/Model/API/WorkflowInstance/WorkflowInstanceCollection.php',
         'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowOperation' => __DIR__ . '/../..' . '/src/Model/API/WorkflowInstance/WorkflowOperation.php',
         'srag\\Plugins\\Opencast\\Model\\DTO\\DownloadDto' => __DIR__ . '/../..' . '/src/Model/DTO/DownloadDto.php',
+        'srag\\Plugins\\Opencast\\Model\\Metadata\\Builder\\FormItemBuilder' => __DIR__ . '/../..' . '/src/Model/Metadata/Builder/FormItemBuilder.php',
+        'srag\\Plugins\\Opencast\\Model\\Metadata\\Builder\\MDPrefiller' => __DIR__ . '/../..' . '/src/Model/Metadata/Builder/MDPrefiller.php',
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\Event\\MDFieldConfigEventAR' => __DIR__ . '/../..' . '/src/Model/Metadata/Config/Event/MDFieldConfigEventAR.php',
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\Event\\MDFieldConfigEventRepository' => __DIR__ . '/../..' . '/src/Model/Metadata/Config/Event/MDFieldConfigEventRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\MDFieldConfigAR' => __DIR__ . '/../..' . '/src/Model/Metadata/Config/MDFieldConfigAR.php',
@@ -224,6 +228,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDCatalogueFactory' => __DIR__ . '/../..' . '/src/Model/Metadata/Definition/MDCatalogueFactory.php',
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDDataType' => __DIR__ . '/../..' . '/src/Model/Metadata/Definition/MDDataType.php',
         'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDFieldDefinition' => __DIR__ . '/../..' . '/src/Model/Metadata/Definition/MDFieldDefinition.php',
+        'srag\\Plugins\\Opencast\\Model\\Metadata\\HasMetadata' => __DIR__ . '/../..' . '/src/Model/Metadata/HasMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsage' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsage.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageDefault' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageDefault.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageRepository.php',
@@ -251,7 +256,6 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => __DIR__ . '/../..' . '/src/Util/Transformator/ACLtoXML.php',
         'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => __DIR__ . '/../..' . '/src/Util/Transformator/MetadataToXML.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
-        'xoctAcl' => __DIR__ . '/../..' . '/classes/Series/Acl/class.xoctAcl.php',
         'xoctAclStandardSets' => __DIR__ . '/../..' . '/classes/Series/Acl/class.xoctAclStandardSets.php',
         'xoctAttachment' => __DIR__ . '/../..' . '/classes/Event/Publication/class.xoctAttachment.php',
         'xoctBase' => __DIR__ . '/../..' . '/classes/Request/class.xoctBase.php',

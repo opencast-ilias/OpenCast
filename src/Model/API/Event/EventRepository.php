@@ -5,14 +5,20 @@ namespace srag\Plugins\Opencast\Model\API\Event;
 use ILIAS\DI\Container;
 use ilUtil;
 use Metadata;
+use phpDocumentor\Reflection\Types\Callable_;
 use ReflectionException;
+use srag\Plugins\Opencast\Cache\Cache;
+use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
+use stdClass;
 use xoct;
+use ACLEntry;
 use xoctConf;
 use xoctEvent;
 use xoctException;
+use xoctPublication;
 use xoctRequest;
 use xoctRequestSettings;
 use xoctUploadFile;
@@ -37,16 +43,110 @@ class EventRepository
      * @var Container
      */
     protected $dic;
+    /**
+     * @var Cache
+     */
+    protected $cache;
+
+
+    public function __construct(Container $dic, Cache $cache)
+    {
+        $this->dic = $dic;
+        $this->cache = $cache;
+    }
+
+    public function find(string $identifier) : xoctEvent
+    {
+        return $this->cache->get('event-' . $identifier)
+            ?? $this->fetch($identifier);
+    }
+
+    private function fetch(string $identifier) : xoctEvent
+    {
+        $data = json_decode(xoctRequest::root()->events($identifier)->get());
+        $event = $this->buildEventFromStdClass($data, $identifier);
+        return $event;
+    }
 
 
     /**
-     * EventRepository constructor.
-     *
-     * @param Container $dic
+     * @param $data
+     * @param string $identifier
+     * @return xoctEvent
+     * @throws xoctException
      */
-    public function __construct(Container $dic)
+    private function buildEventFromStdClass(stdClass $data, string $identifier): xoctEvent
     {
-        $this->dic = $dic;
+        $event = new xoctEvent();
+        $event->setPublicationStatus($data->publication_status);
+        $event->setProcessingState($data->status);
+        $event->setHasPreviews($data->has_previews);
+
+        if (isset($data->metadata)) {
+            $event->setMetadata(Metadata::fromResponse($data->metadata));
+        } else {
+            $event->setMetadataReference(function () use ($identifier) {
+                return $this->fetchMetadata($identifier);
+            });
+        }
+
+        if (isset($data->acl)) {
+            $event->setAcl(ACL::fromResponse($data->acl));
+        } else {
+            $event->setAclReference(function () use ($identifier) {
+                return $this->fetchAcl($identifier);
+            });
+        }
+
+        if (isset($data->publications)) {
+            $event->publications()->loadFromArray($data->publications);
+        } else {
+            $event->publications()->setReference(function () use ($identifier) {
+                return $this->fetchPublications($identifier);
+            });
+        }
+        return $event;
+    }
+
+
+    /**
+     * @throws xoctException
+     */
+    private function fetchMetadata(string $identifier) : Metadata
+    {
+        $data = json_decode(xoctRequest::root()->events($identifier)->metadata()->get()) ?? [];
+        foreach ($data as $d) {
+            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
+                $metadata = new Metadata();
+                $metadata->loadFromStdClass($d);
+                break;
+            }
+        }
+        if (!isset($metadata)) {
+            throw new xoctException(xoctException::INTERNAL_ERROR,
+                'Metadata for event could not be loaded: ' . $identifier);
+        }
+        return $metadata;
+    }
+
+
+    private function fetchAcl(string $identifier) : ACL
+    {
+        $data = json_decode(xoctRequest::root()->events($identifier)->acl()->get());
+        return ACL::fromResponse($data);
+    }
+
+
+    private function fetchPublications(string $identifier) : array
+    {
+        $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());
+        $publications = [];
+        foreach ($data as $d) {
+            $p = new xoctPublication();
+            $p->loadFromStdClass($d);
+            $publications[] = $p;
+        }
+        return $publications;
     }
 
 
@@ -70,11 +170,12 @@ class EventRepository
         } else {
             $data['metadata'] = json_encode([$event->getMetadata()->__toStdClass()]);
             $data['processing'] = json_encode($event->getProcessing());
-            $data['acl'] = json_encode($event->getAcl());
+            $data['acl'] = json_encode($event->getAcl()->getEntries());
             $data['presentation'] = $presenter->getCURLFile();
             json_decode(xoctRequest::root()->events()->post($data))->identifier;
         }
     }
+
 
 
     /**
@@ -137,7 +238,6 @@ class EventRepository
         return $upload_file;
     }
 
-
     /**
      * format workflow parameters to send it to the workflow rest api endpoint
      *
@@ -154,8 +254,6 @@ class EventRepository
         return $return;
     }
 
-
-
     /**
      * @param array  $filter
      * @param string $for_user
@@ -170,7 +268,7 @@ class EventRepository
      */
     public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
         /**
-         * @var $xoctEvent xoctEvent
+         * @var $event xoctEvent
          */
         $request = xoctRequest::root()->events();
         if ($filter) {
@@ -216,17 +314,18 @@ class EventRepository
         $return = array();
 
         foreach ($data as $d) {
-            $xoctEvent = xoctEvent::findOrLoadFromStdClass($d->identifier, $d);
-            if (!in_array($xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_OFFLINE])) {
-                xoctEvent::removeFromCache($xoctEvent->getIdentifier());
+            $event = $this->buildEventFromStdClass($d, $d->identifier);
+            $md = $event->getMetadata();
+            $acl = $event->getAcl();
+            $pub = $event->publications()->getPublications();
+            if (!in_array($event->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_OFFLINE])) {
+                xoctEvent::removeFromCache($event->getIdentifier());
             }
-            $return[] = $as_object ? $xoctEvent : $xoctEvent->getArrayForTable();
+            $return[] = $as_object ? $event : $event->getArrayForTable();
         }
 
         return $return;
     }
-
-
     /**
      * @return string
      * @throws xoctException

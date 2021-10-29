@@ -1,13 +1,14 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
-use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
@@ -67,9 +68,13 @@ class xoctEvent extends APIObject {
 	 */
 	protected $xoctEventAdditions = null;
     /**
-     * @var PublicationUsageRepository
+     * @var closure
      */
-    protected $publication_usage_repository;
+    private $metadata_reference;
+    /**
+     * @var Closure
+     */
+    private $acl_reference;
 
     /**
 	 * @param $identifier
@@ -112,7 +117,6 @@ class xoctEvent extends APIObject {
 	 * @param string $identifier
 	 */
 	public function __construct($identifier = '') {
-	    $this->publication_usage_repository = new PublicationUsageRepository();
 		if ($identifier) {
 			$this->setIdentifier($identifier);
 			$this->read();
@@ -210,6 +214,16 @@ class xoctEvent extends APIObject {
         $this->setWorkflowParameters(array_merge($automatically_set, $parameters));
     }
 
+    public function setAclReference(Closure $acl_reference)
+    {
+        $this->acl_reference = $acl_reference;
+    }
+
+    public function setMetadataReference(Closure $metadata_reference)
+    {
+        $this->metadata_reference = $metadata_reference;
+    }
+
 
     /**
 	 * @param $key
@@ -246,14 +260,12 @@ class xoctEvent extends APIObject {
 
 				return $metadata;
 			case 'acl':
-				$acls = array();
+				$acl_entries = [];
 				foreach ($value as $acl_array) {
-					$acl = new xoctAcl();
-					$acl->loadFromStdClass($acl_array);
-					$acls[] = $acl;
+					$acl_entries[] = ACLEntry::fromArray((array) $acl_array);
 				}
 
-				return $acls;
+				return new ACL($acl_entries);
 			case 'publications':
 			    $publications = new PublicationSelector($this);
 			    $publications->loadFromArray($value);
@@ -270,7 +282,7 @@ class xoctEvent extends APIObject {
      * @param $fieldname
      * @param $value
      *
-     * @return array|DateTime|int|Metadata|mixed|xoctAcl[]|xoctPublication[]
+     * @return array|DateTime|int|Metadata|mixed|ACLEntry[]|xoctPublication[]
      * @throws ReflectionException
      */
     protected function sleep($fieldname, $value)
@@ -285,7 +297,7 @@ class xoctEvent extends APIObject {
                 /** @var $value Metadata */
                 return $value->__toArray();
             case 'acl':
-                /** @var $value xoctAcl[] */
+                /** @var $value ACLEntry[] */
                 $acls = array();
                 foreach ($value as $acl) {
                     $acls[] = $acl->__toArray();
@@ -320,7 +332,7 @@ class xoctEvent extends APIObject {
      */
 	public function isOwner(xoctUser $xoctUser) {
 		$xoctAcl = $this->getOwnerAcl();
-		if (!$xoctAcl instanceof xoctAcl) {
+		if (!$xoctAcl instanceof ACLEntry) {
 			return false;
 		}
 		if ($xoctAcl->getRole() == $xoctUser->getOwnerRoleName()) {
@@ -350,7 +362,7 @@ class xoctEvent extends APIObject {
 
         $data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
         $data['processing'] = json_encode($this->getProcessing());
-        $data['acl'] = json_encode($this->getAcl());
+        $data['acl'] = json_encode($this->getAcl()->getEntries());
         $data['scheduling'] = json_encode($this->getScheduling()->__toStdClass());
 
         //		for ($x = 0; $x < 50; $x ++) { // Use this to upload 50 Clips at once, for testing
@@ -393,11 +405,11 @@ class xoctEvent extends APIObject {
 	 */
 	public function updateAcls() {
 		$xoctAclStandardSets = new xoctAclStandardSets();
-		foreach ($xoctAclStandardSets->getAcls() as $acl) {
-			$this->addAcl($acl);
+		foreach ($xoctAclStandardSets->getAcl()->getEntries() as $acl_entry) {
+			$this->getAcl()->add($acl_entry);
 		}
 
-		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array('acl' => json_encode($this->getAcl()) ));
+		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array('acl' => json_encode($this->getAcl()->getEntries()) ));
 		self::removeFromCache($this->getIdentifier());
 	}
 
@@ -415,18 +427,18 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @return null|xoctAcl
+	 * @return null|ACLEntry
 	 */
 	public function getOwnerAcl() {
 		static $owner_acl;
 		if (isset($owner_acl[$this->getIdentifier()])) {
 			return $owner_acl[$this->getIdentifier()];
 		}
-		foreach ($this->getAcl() as $acl) {
-			if (strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
-				$owner_acl[$this->getIdentifier()] = $acl;
+		foreach ($this->getAcl()->getEntries() as $acl_entry) {
+			if (strpos($acl_entry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
+				$owner_acl[$this->getIdentifier()] = $acl_entry;
 
-				return $acl;
+				return $acl_entry;
 			}
 		}
 		$owner_acl[$this->getIdentifier()] = null;
@@ -440,7 +452,7 @@ class xoctEvent extends APIObject {
 	 */
 	public function getOwner() {
 		$acl = $this->getOwnerAcl();
-		if ($acl instanceof xoctAcl) {
+		if ($acl instanceof ACLEntry) {
 			$usr_id = xoctUser::lookupUserIdForOwnerRole($acl->getRole());
 			if ($usr_id) {
 				return xoctUser::getInstance(new ilObjUser($usr_id));
@@ -464,14 +476,14 @@ class xoctEvent extends APIObject {
 		}
 
 		$this->removeAllOwnerAcls();
-		$acl = new xoctAcl();
-		$acl->setAction(xoctAcl::READ);
+		$acl = new ACLEntry();
+		$acl->setAction(ACLEntry::READ);
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
 		$this->addAcl($acl);
 
-		$acl = new xoctAcl();
-		$acl->setAction(xoctAcl::WRITE);
+		$acl = new ACLEntry();
+		$acl->setAction(ACLEntry::WRITE);
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
 		$this->addAcl($acl);
@@ -492,13 +504,14 @@ class xoctEvent extends APIObject {
 	 */
 	public function removeAllOwnerAcls() {
 		$standard_roles = xoctConf::getConfig(xoctConf::F_STD_ROLES);
-		foreach ($this->getAcl() as $i => $acl) {
+        $ACLEntries = $this->getAcl()->getEntries();
+        foreach ($ACLEntries as $i => $acl) {
 			if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
 				&& !in_array($acl->getRole(), $standard_roles)) {
-				unset($this->acl[$i]);
+				unset($ACLEntries[$i]);
 			}
 		}
-		sort($this->acl);
+		$this->acl->setEntries($ACLEntries);
 	}
 
     /**
@@ -534,7 +547,7 @@ class xoctEvent extends APIObject {
 		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->acl()->get());
 		$acls = array();
 		foreach ($data as $d) {
-			$p = new xoctAcl();
+			$p = new ACLEntry();
 			$p->loadFromStdClass($d);
 			$acls[] = $p;
 		}
@@ -740,9 +753,9 @@ class xoctEvent extends APIObject {
 	 */
 	protected $metadata = null;
 	/**
-	 * @var xoctAcl[]
+	 * @var ACL
 	 */
-	protected $acl = array();
+	protected $acl;
 	/**
 	 * @var Scheduling
 	 */
@@ -1107,7 +1120,8 @@ class xoctEvent extends APIObject {
 	 */
 	public function getMetadata() {
 		if (!$this->metadata) {
-			$this->loadMetadata();
+            $reference = $this->metadata_reference;
+			$this->metadata = $reference();
 		}
 		return $this->metadata;
 	}
@@ -1122,34 +1136,39 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @return xoctAcl[]
+	 * @return ACL
 	 */
-	public function getAcl() {
-		return array_values($this->acl);
+	public function getAcl() : ACL
+    {
+        if (!$this->acl) {
+            $reference = $this->acl_reference;
+            $this->acl = $reference();
+        }
+		return $this->acl;
 	}
 
 
 	/**
-	 * @param xoctAcl[] $acl
+	 * @param ACL $acl
 	 */
-	public function setAcl($acl) {
+	public function setAcl(ACL $acl) {
 		$this->acl = $acl;
 	}
 
 
 	/**
-	 * @param xoctAcl $acl
+	 * @param ACLEntry $acl_entry
 	 *
 	 * @return bool
 	 */
-	public function addAcl(xoctAcl $acl) {
-		foreach ($this->getAcl() as $existingAcl) {
-			if ($acl->getRole() == $existingAcl->getRole() && $acl->getAction() == $existingAcl->getAction()) {
+	public function addAcl(ACLEntry $acl_entry) {
+		foreach ($this->getAcl()->getEntries() as $existing_entry) {
+			if ($acl_entry->getRole() == $existing_entry->getRole() && $acl_entry->getAction() == $existing_entry->getAction()) {
 				return false;
 			}
 		}
 
-		$this->acl[] = $acl;
+		$this->getAcl()->add($acl_entry);
 
 		return true;
 	}
@@ -1406,12 +1425,7 @@ class xoctEvent extends APIObject {
 	 * @return bool
 	 */
 	public function isLiveEvent() {
-		$usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_LIVE_EVENT);
-		if (!$usage) {
-			return false;
-		}
-		$publication = $this->publications()->getPublicationMetadataForUsage($usage);
-		return !empty($publication);
+		return !is_null($this->publications()->getLivePublication());
 	}
 
 	/**

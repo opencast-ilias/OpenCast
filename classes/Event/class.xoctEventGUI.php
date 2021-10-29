@@ -55,6 +55,10 @@ class xoctEventGUI extends xoctGUI {
      * @var EventModals
      */
     protected $modals;
+    /**
+     * @var EventRepository
+     */
+    protected $event_repository;
 
     /**
      * @param ilObjOpenCastGUI $parent_gui
@@ -63,6 +67,7 @@ class xoctEventGUI extends xoctGUI {
 	public function __construct(ilObjOpenCastGUI $parent_gui, xoctOpenCast $xoctOpenCast) {
 		$this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
         $this->parent_gui = $parent_gui;
+        $this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
     }
 
 
@@ -465,7 +470,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
+		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcl());
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_created'), true);
@@ -506,7 +511,7 @@ class xoctEventGUI extends xoctGUI {
 		$xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->xoctOpenCast, true);
 
 		$xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
+		$xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcl());
 
 		if ($xoctEventFormGUI->saveObject()) {
 			ilUtil::sendSuccess($this->txt('msg_scheduled'), true);
@@ -525,7 +530,7 @@ class xoctEventGUI extends xoctGUI {
 		/**
 		 * @var xoctEvent $xoctEvent
 		 */
-		$xoctEvent = xoctEvent::find($_GET[self::IDENTIFIER]);
+		$xoctEvent = $this->event_repository->find($_GET[self::IDENTIFIER]);
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
 
 		// check access
@@ -809,7 +814,7 @@ class xoctEventGUI extends xoctGUI {
 	 */
 	protected function clearAllClips() {
 		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
+		$a_data = (new EventRepository(self::dic()->dic(), CacheFactory::getInstance()))->getFiltered($filter);
 		/**
 		 * @var $xoctEvent      xoctEvent
 		 * @var $xoctInvitation xoctInvitation
@@ -833,30 +838,6 @@ class xoctEventGUI extends xoctGUI {
 			$xoctGroup->delete();
 		}
 
-		$this->cancel();
-	}
-
-
-	/**
-	 *
-	 */
-	protected function resetPermissions() {
-		$filter = array( 'series' => $this->xoctOpenCast->getSeriesIdentifier() );
-		$a_data = (new EventRepository(self::dic()->dic()))->getFiltered($filter);
-		/**
-		 * @var $xoctEvent      xoctEvent
-		 * @var $xoctInvitation xoctInvitation
-		 * @var $xoctGroup      xoctIVTGroup
-		 */
-		$errors = 'Folgende Clips konnten nicht upgedatet werden: ';
-		foreach ($a_data as $i => $d) {
-			$xoctEvent = xoctEvent::find($d['identifier']);
-			try {
-				$xoctEvent->update();
-			} catch (xoctException $e) {
-				$errors .= $xoctEvent->getTitle() . '; ';
-			}
-		}
 		$this->cancel();
 	}
 
@@ -955,25 +936,6 @@ class xoctEventGUI extends xoctGUI {
 		$self->setOptions($ids);
 		$form->addItem($self);
 		self::dic()->ui()->mainTemplate()->setContent($form->getHTML());
-	}
-
-
-	/**
-	 *
-	 */
-	protected function import() {
-		/**
-		 * @var $event xoctEvent
-		 */
-		$event = xoctEvent::find($_POST['import_identifier']);
-		$html = 'Series before set: ' . $event->getSeriesIdentifier() . '<br>';
-		$event->setSeriesIdentifier($this->xoctOpenCast->getSeriesIdentifier());
-		$html .= 'Series after set: ' . $event->getSeriesIdentifier() . '<br>';
-		$event->updateSeries();
-		$html .= 'Series after update: ' . $event->getSeriesIdentifier() . '<br>';
-		$event = new xoctEvent($_POST['import_identifier']);
-		$html .= 'Series after new read: ' . $event->getSeriesIdentifier() . '<br>';
-		self::dic()->ui()->mainTemplate()->setContent($html);
 	}
 
 

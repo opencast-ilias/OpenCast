@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ACLEntry' => $baseDir . '/classes/Series/Acl/class.ACLEntry.php',
     'Metadata' => $baseDir . '/src/Model/API/Metadata/Metadata.php',
     'MetadataField' => $baseDir . '/src/Model/API/Metadata/Metadata.php',
     'ilInteractiveVideoTimePicker' => $baseDir . '/classes/Util/class.ilInteractiveVideoTimePicker.php',
@@ -168,6 +169,7 @@ return array(
     'srag\\Plugins\\Opencast\\Chat\\Model\\MessageAR' => $baseDir . '/src/Chat/Model/MessageAR.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => $baseDir . '/src/Chat/Model/Token.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => $baseDir . '/src/Chat/Model/TokenAR.php',
+    'srag\\Plugins\\Opencast\\Model\\API\\ACL\\ACL' => $baseDir . '/src/Model/API/ACL/ACL.php',
     'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => $baseDir . '/src/Model/API/APIObject.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Agent\\Agent' => $baseDir . '/src/Model/API/Agent/Agent.php',
     'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => $baseDir . '/src/Model/API/Event/EventRepository.php',
@@ -178,6 +180,8 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowInstanceCollection' => $baseDir . '/src/Model/API/WorkflowInstance/WorkflowInstanceCollection.php',
     'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowOperation' => $baseDir . '/src/Model/API/WorkflowInstance/WorkflowOperation.php',
     'srag\\Plugins\\Opencast\\Model\\DTO\\DownloadDto' => $baseDir . '/src/Model/DTO/DownloadDto.php',
+    'srag\\Plugins\\Opencast\\Model\\Metadata\\Builder\\FormItemBuilder' => $baseDir . '/src/Model/Metadata/Builder/FormItemBuilder.php',
+    'srag\\Plugins\\Opencast\\Model\\Metadata\\Builder\\MDPrefiller' => $baseDir . '/src/Model/Metadata/Builder/MDPrefiller.php',
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\Event\\MDFieldConfigEventAR' => $baseDir . '/src/Model/Metadata/Config/Event/MDFieldConfigEventAR.php',
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\Event\\MDFieldConfigEventRepository' => $baseDir . '/src/Model/Metadata/Config/Event/MDFieldConfigEventRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Config\\MDFieldConfigAR' => $baseDir . '/src/Model/Metadata/Config/MDFieldConfigAR.php',
@@ -189,6 +193,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDCatalogueFactory' => $baseDir . '/src/Model/Metadata/Definition/MDCatalogueFactory.php',
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDDataType' => $baseDir . '/src/Model/Metadata/Definition/MDDataType.php',
     'srag\\Plugins\\Opencast\\Model\\Metadata\\Definition\\MDFieldDefinition' => $baseDir . '/src/Model/Metadata/Definition/MDFieldDefinition.php',
+    'srag\\Plugins\\Opencast\\Model\\Metadata\\HasMetadata' => $baseDir . '/src/Model/Metadata/HasMetadata.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsage' => $baseDir . '/src/Model/Publication/Config/PublicationUsage.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageDefault' => $baseDir . '/src/Model/Publication/Config/PublicationUsageDefault.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => $baseDir . '/src/Model/Publication/Config/PublicationUsageRepository.php',
@@ -216,7 +221,6 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => $baseDir . '/src/Util/Transformator/ACLtoXML.php',
     'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => $baseDir . '/src/Util/Transformator/MetadataToXML.php',
     'xoct' => $baseDir . '/classes/class.xoct.php',
-    'xoctAcl' => $baseDir . '/classes/Series/Acl/class.xoctAcl.php',
     'xoctAclStandardSets' => $baseDir . '/classes/Series/Acl/class.xoctAclStandardSets.php',
     'xoctAttachment' => $baseDir . '/classes/Event/Publication/class.xoctAttachment.php',
     'xoctBase' => $baseDir . '/classes/Request/class.xoctBase.php',

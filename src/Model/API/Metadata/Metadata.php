@@ -138,6 +138,26 @@ class Metadata extends APIObject
         //		}
     }
 
+    /**
+     * @param array $data
+     * @return static
+     * @throws xoctException
+     */
+    public static function fromResponse(array $data) : self
+    {
+        foreach ($data as $d) {
+            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
+                $metadata = new Metadata();
+                $metadata->loadFromStdClass($d);
+                break;
+            }
+        }
+        if (!isset($metadata)) {
+            throw new xoctException(xoctException::INTERNAL_ERROR,
+                'Metadata for event could not be loaded');
+        }
+        return $metadata;
+    }
 
     /**
      * @param array $array

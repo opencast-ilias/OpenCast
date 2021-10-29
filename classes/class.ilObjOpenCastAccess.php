@@ -274,7 +274,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
 		}
 
-		if ($xoctEvent->getOwnerAcl() instanceof xoctAcl && in_array($xoctEvent->getOwnerAcl()->getRole(), $role_names)) {
+		if ($xoctEvent->getOwnerAcl() instanceof ACLEntry && in_array($xoctEvent->getOwnerAcl()->getRole(), $role_names)) {
 			return true; // same group as owner
 		}
 

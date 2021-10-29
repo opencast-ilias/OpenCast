@@ -44,7 +44,7 @@ class xoctSeries extends APIObject {
             $data = json_decode(xoctRequest::root()->series($this->getIdentifier())->acl()->get());
             $acls = array();
             foreach ($data as $d) {
-                $p = new xoctAcl();
+                $p = new ACLEntry();
                 $p->loadFromStdClass($d);
                 $acls[] = $p;
             }
@@ -114,25 +114,25 @@ class xoctSeries extends APIObject {
 		$already_has_write = false;
 		foreach ($this->getAccessPolicies() as $acl) {
 			if ($acl->getRole() == $xoctUser) {
-				if ($acl->getAction() == xoctAcl::READ) {
+				if ($acl->getAction() == ACLEntry::READ) {
 					$already_has_read = true;
-				} else if ($acl->getAction() == xoctAcl::WRITE) {
+				} else if ($acl->getAction() == ACLEntry::WRITE) {
 					$already_has_write = true;
 				}
 			}
 		}
 
 		if (!$already_has_read) {
-			$new_read_acl = new xoctAcl();
-			$new_read_acl->setAction(xoctAcl::READ);
+			$new_read_acl = new ACLEntry();
+			$new_read_acl->setAction(ACLEntry::READ);
 			$new_read_acl->setAllow(true);
 			$new_read_acl->setRole($xoctUser);
 			$this->addAccessPolicy($new_read_acl);
 		}
 
 		if (!$already_has_write) {
-			$new_write_acl = new xoctAcl();
-			$new_write_acl->setAction(xoctAcl::WRITE);
+			$new_write_acl = new ACLEntry();
+			$new_write_acl->setAction(ACLEntry::WRITE);
 			$new_write_acl->setAllow(true);
 			$new_write_acl->setRole($xoctUser);
 			$this->addAccessPolicy($new_write_acl);
@@ -386,7 +386,7 @@ class xoctSeries extends APIObject {
 	 */
 	public $creator;
 	/**
-	 * @var xoctAcl[]
+	 * @var ACLEntry[]
 	 */
 	public $access_policies = array();
 	/**
@@ -508,7 +508,7 @@ class xoctSeries extends APIObject {
 
 
 	/**
-	 * @return xoctAcl[]
+	 * @return ACLEntry[]
 	 */
 	public function getAccessPolicies() {
 		return $this->access_policies;
@@ -516,7 +516,7 @@ class xoctSeries extends APIObject {
 
 
 	/**
-	 * @param xoctAcl[] $access_policies
+	 * @param ACLEntry[] $access_policies
 	 */
 	public function setAccessPolicies($access_policies) {
 		$this->access_policies = $access_policies;
@@ -524,9 +524,9 @@ class xoctSeries extends APIObject {
 
 
 	/**
-	 * @param xoctAcl $access_policy
+	 * @param ACLEntry $access_policy
 	 */
-	public function addAccessPolicy(xoctAcl $access_policy) {
+	public function addAccessPolicy(ACLEntry $access_policy) {
 		$this->access_policies[] = $access_policy;
 	}
 

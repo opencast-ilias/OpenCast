@@ -2,6 +2,7 @@
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
@@ -54,7 +55,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true) {
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->event_repository = new EventRepository(self::dic()->dic());
+		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
 		$this->parent_obj = $a_parent_obj;
 		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);

@@ -175,7 +175,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 		/** @var xoctPermissionTemplate $perm_tpl */
 		foreach (self::get() as $perm_tpl) {
 			$acl = $acls_formatted[$perm_tpl->getRole()];
-			if ($acl && (isset($acl[xoctAcl::READ]) == (bool)$perm_tpl->getRead()) && (isset($acl[xoctAcl::WRITE]) == (bool)$perm_tpl->getWrite())) {
+			if ($acl && (isset($acl[ACLEntry::READ]) == (bool)$perm_tpl->getRead()) && (isset($acl[ACLEntry::WRITE]) == (bool)$perm_tpl->getWrite())) {
 				foreach (explode(',', $perm_tpl->getAdditionalAclActions()) as $action) {
 					if (!$acl[trim($action)]) {
 						continue 2;
@@ -205,7 +205,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 * @param array $acls
 	 */
 	public function removeFromAcls(array &$acls) {
-		/** @var xoctAcl $existing_acl */
+		/** @var ACLEntry $existing_acl */
 		foreach ($acls as $key => $existing_acl) {
 			if ($existing_acl->getRole() == $this->getRole()) {
 				unset($acls[$key]);
@@ -224,11 +224,11 @@ class xoctPermissionTemplate extends ActiveRecord {
 		$acls = array();
 
 		if ($this->getRead()) {
-			$acls[] = $this->constructAclForAction(xoctAcl::READ);
+			$acls[] = $this->constructAclForAction(ACLEntry::READ);
 		}
 
 		if ($this->getWrite()) {
-			$acls[] = $this->constructAclForAction(xoctAcl::WRITE);
+			$acls[] = $this->constructAclForAction(ACLEntry::WRITE);
 		}
 
 		foreach (array_filter(explode(',', $this->getAdditionalAclActions())) as $additional_action) {
@@ -254,10 +254,10 @@ class xoctPermissionTemplate extends ActiveRecord {
 	/**
 	 * @param $action
 	 *
-	 * @return xoctAcl
+	 * @return ACLEntry
 	 */
 	protected function constructAclForAction($action) {
-		$acl = new xoctAcl();
+		$acl = new ACLEntry();
 		$acl->setRole($this->getRole());
 		$acl->setAction($action);
 		$acl->setAllow(true);

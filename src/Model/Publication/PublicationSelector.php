@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Publication;
 
+use Closure;
 use ilObjOpenCastAccess;
 use ilOpenCastPlugin;
 use srag\DIC\OpenCast\DICTrait;
@@ -15,7 +16,6 @@ use xoctEvent;
 use xoctException;
 use xoctMedia;
 use xoctPublication;
-use xoctRequest;
 use xoctSecureLink;
 use xoctUser;
 
@@ -50,7 +50,7 @@ class PublicationSelector
     /**
      * @var xoctPublication[]
      */
-    protected $publications = [];
+    protected $publications;
     /**
      * @var PublicationUsageRepository
      */
@@ -91,6 +91,10 @@ class PublicationSelector
      * @var string
      */
     protected $unprotected_link;
+    /**
+     * @var Closure
+     */
+    private $reference;
 
     /**
      * PublicationSelector constructor.
@@ -123,25 +127,6 @@ class PublicationSelector
         }
 
         $this->publications = $publications;
-        $this->loaded = true;
-    }
-
-
-    /**
-     * @throws xoctException
-     */
-    protected function loadPublications()
-    {
-        $data = json_decode(xoctRequest::root()->events($this->event->getIdentifier())->publications()->get());
-
-        $publications = array();
-        foreach ($data as $d) {
-            $p = new xoctPublication();
-            $p->loadFromStdClass($d);
-            $publications[] = $p;
-        }
-        $this->publications = $publications;
-        $this->loaded = true;
     }
 
 
@@ -311,6 +296,14 @@ class PublicationSelector
         return $this->getFirstPublicationMetadataForUsage(
             $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_ANNOTATE)
         );
+    }
+
+    public function getLivePublication()
+    {
+        $livePublicationUsage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_LIVE_EVENT);
+        return $livePublicationUsage ? $this->getFirstPublicationMetadataForUsage(
+            $livePublicationUsage
+        ) : null;
     }
 
     /**
@@ -519,14 +512,14 @@ class PublicationSelector
 
     /**
      * @param $xoctPublicationUsage
-     * @return mixed|xoctPublication
+     * @return xoctAttachment|xoctMedia|xoctPublication|null
      * @throws xoctException
      */
     public function getFirstPublicationMetadataForUsage($xoctPublicationUsage)
     {
         $metadata = $this->getPublicationMetadataForUsage($xoctPublicationUsage);
 
-        return count($metadata) ? array_shift($metadata) : new xoctPublication();
+        return count($metadata) ? array_shift($metadata) : null;
     }
 
 
@@ -576,13 +569,18 @@ class PublicationSelector
 
     /**
      * @return xoctPublication[]
-     * @throws xoctException
      */
     public function getPublications() : array
     {
-        if (!$this->loaded) {
-            $this->loadPublications();
+        if (is_null($this->publications)) {
+            $reference = $this->reference;
+            $this->publications = $reference();
         }
         return $this->publications;
+    }
+
+    public function setReference(Closure $reference)
+    {
+        $this->reference = $reference;
     }
 }

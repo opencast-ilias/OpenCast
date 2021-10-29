@@ -97,7 +97,7 @@ class xoctSeriesAPI {
 		$series->setLicense(isset($additional_data['license']) ? $additional_data['license'] : '');
 
 		$std_acls = new xoctAclStandardSets();
-		$series_acls = $std_acls->getAcls();
+		$series_acls = $std_acls->getAcl();
 		if (isset($additional_data['permission_template_id'])) {
 			xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
 			/** @var xoctPermissionTemplate $xoctPermissionTemplate */

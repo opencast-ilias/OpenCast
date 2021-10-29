@@ -34,7 +34,7 @@ class SeriesRepository
             $xoctSeries = new xoctSeries();
             $xoctSeries->setTitle($this->getOwnSeriesTitle($xoct_user));
             $std_acls = new xoctAclStandardSets();
-            $xoctSeries->setAccessPolicies($std_acls->getAcls());
+            $xoctSeries->setAccessPolicies($std_acls->getAcl());
             $xoctSeries->addProducer($xoct_user, true);
             $xoctSeries->create();
         }

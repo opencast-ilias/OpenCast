@@ -294,7 +294,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
 			$xoctAclStandardSets = new xoctAclStandardSets();
-			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
+			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcl());
 		}
 
 		if ($return = $creation_form->saveObject()) {

@@ -3,7 +3,8 @@
 namespace srag\Plugins\Opencast\Util\Transformator;
 
 use ilXmlWriter;
-use xoctAcl;
+use ACLEntry;
+use srag\Plugins\Opencast\Model\API\ACL\ACL;
 
 /**
  * Class ACLtoXML
@@ -15,19 +16,17 @@ use xoctAcl;
 class ACLtoXML
 {
     /**
-     * @var xoctAcl[]
+     * @var ACL
      */
-    protected $acls;
+    protected $acl;
 
 
     /**
      * ACLtoXML constructor.
-     *
-     * @param xoctAcl[] $acls
      */
-    public function __construct(array $acls)
+    public function __construct(ACL $acl)
     {
-        $this->acls = $acls;
+        $this->acl = $acl;
     }
 
 
@@ -45,7 +44,7 @@ class ACLtoXML
             'xmlns' => 'urn:oasis:names:tc:xacml:2.0:policy:schema:os'
         ]);
 
-        foreach ($this->acls as $acl) {
+        foreach ($this->acl->getEntries() as $acl) {
             if ($acl->isAllow()) {
                 $xml_writer->xmlStartTag('Rule', [
                     'RuleId' => 'user_' . $acl->getAction() . '_permit',

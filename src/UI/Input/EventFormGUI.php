@@ -24,6 +24,7 @@ use ReflectionException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Series\SeriesRepository;
@@ -146,7 +147,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         $cmd_url_upload_chunks = null
     ) {
 		parent::__construct();
-		$this->event_repository = new EventRepository(self::dic()->dic());
+		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
 		$this->series_repository = new SeriesRepository();
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 
 /**
@@ -61,7 +62,7 @@ class xoctEventAPI {
         }
 
 		$std_acls = new xoctAclStandardSets();
-		$event->setAcl($std_acls->getAcls());
+		$event->setAcl($std_acls->getAcl());
 
 		$event->schedule('', true);
 		return $event;
@@ -137,7 +138,7 @@ class xoctEventAPI {
      */
     public function filter(array $filter){
         global $DIC;
-        return (new EventRepository($DIC))->getFiltered($filter);
+        return (new EventRepository($DIC, CacheFactory::getInstance()))->getFiltered($filter);
     }
 
 }

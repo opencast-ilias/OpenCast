@@ -4,6 +4,7 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 
 /**
@@ -63,7 +64,7 @@ class xoctEventTileGUI {
 	public function __construct($parent_gui, $xoctOpenCast) {
 		$this->parent_gui = $parent_gui;
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->event_repository = new EventRepository(self::dic()->dic());
+		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
 		$this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;

@@ -7,7 +7,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctAcl extends APIObject {
+class ACLEntry extends APIObject {
 
 	const ADMIN = 'ROLE_ADMIN';
 	const USER = 'ROLE_ADMIN';
@@ -15,27 +15,36 @@ class xoctAcl extends APIObject {
 	const READ = 'read';
 
 
-	/**
-	 * @return bool
-	 */
-	public function isIVTAcl() {
-        return (strpos($this->getRole(), xoctConf::getConfig(xoctConf::F_ROLE_OWNER_PREFIX)) === 0);
-	}
-
-
-	/**
+    /**
+     * @var string
+     */
+    public $role;
+    /**
+     * @var string
+     */
+    public $action;
+    /**
 	 * @var bool
 	 */
 	public $allow = false;
-	/**
-	 * @var string
-	 */
-	public $action;
-	/**
-	 * @var string
-	 */
-	public $role;
 
+    /**
+     * @param string $role
+     * @param string $action
+     * @param bool $allow
+     */
+    public function __construct(string $role, string $action, bool $allow)
+    {
+        $this->role = $role;
+        $this->action = $action;
+        $this->allow = $allow;
+    }
+
+
+    public static function fromArray(array $data) : self
+    {
+        return new self($data['role'], $data['action'], $data['allow']);
+    }
 
 	/**
 	 * @return boolean

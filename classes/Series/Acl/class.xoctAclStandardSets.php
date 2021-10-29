@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\API\ACL\ACL;
+
 /**
  * Class xoctAclStandardSets
  *
@@ -8,69 +11,43 @@
 class xoctAclStandardSets {
 
 	/**
-	 * @var array
+	 * @var ACL
 	 */
-	protected $acls = array();
+	protected $acl;
 
 
 	/**
 	 * xoctAclStandardSets constructor.
-	 * @param xoctUser|null $user
-	 * @param xoctUser|null $ivt_owner
+	 * @param array $role_names
 	 */
-	public function __construct($role_names = array()) {
-		$acls = array();
+	public function __construct(array $role_names = []) {
+		$entries = [];
 		// standard roles
 		foreach (xoctConf::getConfig(xoctConf::F_STD_ROLES) as $std_role) {
 			if (!$std_role) {
 				continue;
 			}
-
-			$acl = new xoctAcl();
-			$acl->setRole($std_role);
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::READ);
-			$acls[] = $acl;
-
-			$acl = new xoctAcl();
-			$acl->setRole($std_role);
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::WRITE);
-			$acls[] = $acl;
+			$entries[] = new ACLEntry($std_role, ACLEntry::READ, true);
+			$entries[] = new ACLEntry($std_role, ACLEntry::WRITE, true);
 		}
 
 		// User Specific
 		foreach ($role_names as $role) {
-			$acl = new xoctAcl();
-			$acl->setRole($role);
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::WRITE);
-			$acls[] = $acl;
-
-			$acl = new xoctAcl();
-			$acl->setRole($role);
-			$acl->setAllow(true);
-			$acl->setAction(xoctAcl::READ);
-			$acls[] = $acl;
+			$entries[] = new ACLEntry($role, ACLEntry::WRITE, true);
+			$entries[] = new ACLEntry($role, ACLEntry::READ, true);
 		}
 
-		$this->setAcls($acls);
+		$this->setAcl(new ACL($entries));
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getAcls() {
-		return $this->acls;
+	public function getAcl() : ACL {
+		return $this->acl;
 	}
 
 
-	/**
-	 * @param array $acls
-	 */
-	public function setAcls($acls) {
-		$this->acls = $acls;
+	public function setAcl(ACL $acl) {
+		$this->acl = $acl;
 	}
 }
 
