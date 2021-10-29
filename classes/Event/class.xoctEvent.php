@@ -153,7 +153,9 @@ class xoctEvent extends APIObject {
 			$this->initAdditions();
 		}
 
-        $this->loadMetadata();
+        if (!$this->metadata) {
+            $this->loadMetadata();
+        }
 
         // if no_metadata option is set, the metadata below will already be initialized
         if (EventRepository::$no_metadata) {
