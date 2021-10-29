@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.7.2]
+- Fix/Improvement: prevent multiple loading of metadata, improving page component performance
+
 ## [3.7.1]
 - Fix: fixed player bug by using paella player v6.5.5
 
