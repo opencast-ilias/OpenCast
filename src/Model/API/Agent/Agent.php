@@ -45,6 +45,7 @@ class Agent extends APIObject
     {
         $data = json_decode(xoctRequest::root()->agents()->get());
 
+        $return = [];
         foreach ($data as $d) {
             $xoctAgent = self::findOrLoadFromStdClass($d->agent_id, $d);
             $return[] = $xoctAgent;
