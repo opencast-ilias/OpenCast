@@ -21,4 +21,9 @@ class xoctEventMetadataConfigGUI extends xoctMetadataConfigGUI
     {
         return MDCatalogueFactory::event();
     }
+
+    protected function getTableTitle(): string
+    {
+        return self::plugin()->translate('md_table_events');
+    }
 }

@@ -510,11 +510,13 @@ root_create_xoct#:#Opencast-Objekt anlegen
 field_id#:#ID
 btn_add_new_metadata_field#:#Neues Metadaten-Feld hinzufügen
 md_field_id#:#ID
-md_visible_for_roles#:#Sichbar für Rollen
+md_visible_for_permissions#:#Sichbar für Rollen
 md_required#:#Verpflichtend
 md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
 md_actions#:#Aktionen
 md_title#:#Titel
+md_table_events#:#Event-Metadaten
+md_table_series#:#Serien-Metadaten
 action_update#:#Bearbeiten
 action_delete#:#Löschen

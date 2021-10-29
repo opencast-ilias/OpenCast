@@ -4,7 +4,7 @@ use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
@@ -87,7 +87,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             );
         }
         self::output()->output(
-            $this->table_builder->render()
+            $this->table_builder->withTitle($this->getTableTitle())->render()
         );
     }
 
@@ -123,7 +123,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      */
     protected function store()
     {
-        $field_id = filter_input(INPUT_POST, 'field_id', FILTER_SANITIZE_STRING);
+        $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id);
         $request = self::dic()->http()->request();
         $data = $form->withRequest($request)->getData();
@@ -148,16 +148,16 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function getAvailableMetadataFields(): array
     {
-        $already_configured = array_map(function (MDFieldConfigEventAR $md_config) {
+        $already_configured = array_map(function (MDFieldConfigAR $md_config) {
             return $md_config->getFieldId();
         }, $this->repository->getAll());
-        $available_total = array_map(function(MDFieldDefinition $md_field_def) {
+        $available_total = array_map(function (MDFieldDefinition $md_field_def) {
             return $md_field_def->getId();
         }, $this->getMetadataCatalogue()->getFieldDefinitions());
         return array_diff($available_total, $already_configured);
     }
 
-    abstract protected function getMetadataCatalogue() : MDCatalogue;
+    abstract protected function getMetadataCatalogue(): MDCatalogue;
 
     /**
      * @param string $field_id
@@ -168,6 +168,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      */
     protected function buildForm(string $field_id): Standard
     {
+        self::dic()->ctrl()->setParameter($this, 'field_id', $field_id);
         $md_field_def = $this->getMetadataCatalogue()->getFieldById($field_id);
         $md_field_config = $this->repository->findByFieldId($field_id);
         return $this->ui_factory->input()->container()->form()->standard(
@@ -180,11 +181,11 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 'title' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title'))
                     ->withRequired(true)
                     ->withValue($md_field_config ? $md_field_config->getTitle() : ''),
-                'visible_for_roles' => $this->ui_factory->input()->field()->multiSelect(
-                    self::plugin()->translate('md_visible_for_roles'),
+                'visible_for_permissions' => $this->ui_factory->input()->field()->multiSelect(
+                    self::plugin()->translate('md_visible_for_permissions'),
                     ['write' => 'Write', 'read' => 'read', 'edit_videos' => 'Edit Videos'] // TODO: roles
                 )->withRequired(true)
-                ->withValue($md_field_config ? $md_field_config->getVisibleForRoles() : []),
+                    ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : []),
                 'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
                     ->withDisabled($md_field_def->isRequired() || $md_field_def->isReadOnly())
                     ->withValue($md_field_def->isRequired() || ($md_field_config && $md_field_config->isRequired())),
@@ -199,7 +200,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         );
     }
 
-    protected function getPrefillOptions() : array
+    protected function getPrefillOptions(): array
     {
         $options = [];
         foreach (MDPrefillOption::$allowed_values as $allowed_value) {
@@ -208,7 +209,13 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         return $options;
     }
 
-    protected function create() {}
+    protected function create()
+    {
+    }
 
-    protected function update() {}
+    protected function update()
+    {
+    }
+
+    abstract protected function getTableTitle() : string;
 }

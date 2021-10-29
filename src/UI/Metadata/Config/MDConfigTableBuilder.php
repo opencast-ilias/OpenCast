@@ -18,6 +18,10 @@ class MDConfigTableBuilder extends AbstractTableBuilder
      * @var MDFieldConfigRepository
      */
     private $repository;
+    /**
+     * @var string
+     */
+    private $title;
 
     /**
      * @param $parent xoctEventMetadataConfigGUI|xoctSeriesMetadataConfigGUI
@@ -29,6 +33,13 @@ class MDConfigTableBuilder extends AbstractTableBuilder
         $this->repository = $repository;
     }
 
+    public function withTitle(string $title) : self
+    {
+        $clone = clone $this;
+        $clone->title = $title;
+        return $clone;
+    }
+
 
     /**
      * @inheritDoc
@@ -38,13 +49,13 @@ class MDConfigTableBuilder extends AbstractTableBuilder
         $columnFactory = self::dataTableUI()->column();
         return (new \srag\DataTableUI\OpenCast\Implementation\Table('md_config_table',
             self::dic()->ctrl()->getLinkTarget($this->parent),
-            self::plugin()->translate('table_title_md_'),
+            $this->title ?? '',
             [
                 $columnFactory->column('field_id', self::plugin()->translate('md_field_id'))
                     ->withSelectable(false)->withSortable(false),
                 $columnFactory->column('title', self::plugin()->translate('md_title'))
                     ->withSelectable(false)->withSortable(false),
-                $columnFactory->column('visible_for_roles', self::plugin()->translate('md_visible_for_roles'))
+                $columnFactory->column('visible_for_permissions', self::plugin()->translate('md_visible_for_permissions'))
                     ->withSelectable(false)->withSortable(false),
                 $columnFactory->column('required', self::plugin()->translate('md_required'))
                     ->withFormatter($columnFactory->formatter()->check())

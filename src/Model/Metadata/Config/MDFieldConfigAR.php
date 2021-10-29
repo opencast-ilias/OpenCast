@@ -44,7 +44,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
      * @con_length       512
      * @con_is_notnull   true
      */
-    protected $visible_for_roles;
+    protected $visible_for_permissions;
     /**
      * @var bool
      *
@@ -78,8 +78,8 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return $this->prefill->getValue();
-            case 'visible_for_roles':
-                return serialize($this->visible_for_roles);
+            case 'visible_for_permissions':
+                return serialize($this->visible_for_permissions);
             default:
                 return null;
         }
@@ -93,7 +93,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return new MDPrefillOption($field_value);
-            case 'visible_for_roles':
+            case 'visible_for_permissions':
                 return unserialize($field_value);
             default:
                 return null;
@@ -151,17 +151,17 @@ abstract class MDFieldConfigAR extends ActiveRecord
     /**
      * @return string[]
      */
-    public function getVisibleForRoles(): array
+    public function getVisibleForPermissions(): array
     {
-        return $this->visible_for_roles;
+        return $this->visible_for_permissions;
     }
 
     /**
-     * @param string[] $visible_for_roles
+     * @param string[] $visible_for_permissions
      */
-    public function setVisibleForRoles(array $visible_for_roles)
+    public function setVisibleForPermissions(array $visible_for_permissions)
     {
-        $this->visible_for_roles = $visible_for_roles;
+        $this->visible_for_permissions = $visible_for_permissions;
     }
 
     /**

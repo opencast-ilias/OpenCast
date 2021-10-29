@@ -36,14 +36,14 @@ class MDConfigDataFetcher extends AbstractDataFetcher
     {
         $data = array_map(function (array $set) {
             $set['actions'] = [
-                self::dic()->ui()->factory()->link()->standard(self::plugin()->translate('update'), $this->updateUrl)
+                self::dic()->ui()->factory()->link()->standard(self::plugin()->translate('action_update'), $this->updateUrl)
             ];
             if (!$set['required']) {
                 $set['actions'][] =
-                    self::dic()->ui()->factory()->link()->standard(self::plugin()->translate('delete'), $this->deleteUrl);
+                    self::dic()->ui()->factory()->link()->standard(self::plugin()->translate('action_delete'), $this->deleteUrl);
             }
             $set['prefill'] = $set['prefill']->getValue();
-            $set['visible_for_roles'] = implode(', ', $set['visible_for_roles']);
+            $set['visible_for_permissions'] = implode(', ', $set['visible_for_permissions']);
             return self::dataTableUI()->data()->row()->property($set['field_id'], (object) $set);
         }, $this->repository->getArray());
         return self::dataTableUI()->data()->data($data, count($data));

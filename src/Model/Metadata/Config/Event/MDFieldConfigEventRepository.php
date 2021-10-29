@@ -35,7 +35,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         }
         $ar->setFieldId($data['field_id']);
         $ar->setTitle($data['title']);
-        $ar->setVisibleForRoles($data['visible_for_roles']);
+        $ar->setVisibleForPermissions($data['visible_for_permissions']);
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);
         $ar->setRequired($data['required']);

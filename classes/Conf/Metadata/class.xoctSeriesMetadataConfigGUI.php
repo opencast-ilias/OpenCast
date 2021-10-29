@@ -20,4 +20,9 @@ class xoctSeriesMetadataConfigGUI extends xoctMetadataConfigGUI
     {
         return MDCatalogueFactory::series();
     }
+
+    protected function getTableTitle(): string
+    {
+        return self::plugin()->translate('md_table_series');
+    }
 }
