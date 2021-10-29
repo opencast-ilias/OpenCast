@@ -22,12 +22,12 @@ class MDPrefillOption
     private $value;
 
     /**
-     * @param string $value
+     * @param string|null $value
      * @throws xoctException
      */
-    public function __construct(string $value)
+    public function __construct(?string $value)
     {
-        if (!in_array($value, self::$allowed_values) && strlen($value)) {
+        if ($value && !in_array($value, self::$allowed_values)) {
             throw new xoctException(xoctException::INTERNAL_ERROR,
                 $value . " is not an allowed value for MDPrefillOption");
         }

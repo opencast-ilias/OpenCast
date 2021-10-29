@@ -518,3 +518,5 @@ md_read_only#:#Read-Only
 md_prefill#:#Prefilled with
 md_actions#:#Actions
 md_title#:#Title
+action_update#:#Update
+action_delete#:#Delete

@@ -59,7 +59,7 @@ class MDConfigTableBuilder extends AbstractTableBuilder
                     ->withSelectable(false)->withSortable(false)
             ],
             new MDConfigDataFetcher($this->repository,
-                self::dic()->ctrl()->getLinkTarget($this->parent, xoctGUI::CMD_UPDATE),
+                self::dic()->ctrl()->getLinkTarget($this->parent, xoctGUI::CMD_EDIT),
                 self::dic()->ctrl()->getLinkTarget($this->parent, xoctGUI::CMD_DELETE))
         ))->withPlugin(self::plugin());
     }

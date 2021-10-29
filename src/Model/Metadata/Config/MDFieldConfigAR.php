@@ -22,6 +22,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
      *
      * @con_has_field    true
      * @con_fieldtype    text
+     * @con_is_unique    true
      * @con_length       128
      * @con_is_notnull   true
      */

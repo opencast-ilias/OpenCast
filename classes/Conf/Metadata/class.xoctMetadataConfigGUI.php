@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
+    const CMD_STORE = 'store';
 
     /**
      * @var MDFieldConfigRepository
@@ -25,9 +26,9 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected static $available_commands = [
         self::CMD_STANDARD,
-        self::CMD_UPDATE,
+        self::CMD_EDIT,
         self::CMD_ADD,
-        self::CMD_CREATE,
+        self::CMD_STORE,
         self::CMD_DELETE,
         self::CMD_CONFIRM
     ];
@@ -65,6 +66,10 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->$cmd();
     }
 
+    /**
+     * @throws DICException
+     * @throws ilTemplateException
+     */
     protected function index()
     {
         $items = [];
@@ -73,6 +78,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             $items[] = $this->ui_factory->link()->standard($field_id,
                 self::dic()->ctrl()->getLinkTarget($this, self::CMD_ADD));
         }
+        self::dic()->ctrl()->clearParameters($this);
         if (count($items)) {
             self::dic()->toolbar()->addComponent(
                 self::dic()->ui()->factory()->dropdown()->standard(
@@ -94,13 +100,30 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     protected function add()
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
-        $form = $this->buildForm($field_id, self::CMD_CREATE);
+        $form = $this->buildForm($field_id);
         self::output()->output($this->renderer->render($form));
     }
 
-    protected function create()
+    /**
+     * @throws xoctException
+     * @throws ilTemplateException
+     * @throws DICException
+     */
+    protected function edit()
     {
-        $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
+        $field_id = filter_input(INPUT_GET, 'row_id_md_config_table', FILTER_SANITIZE_STRING);
+        $form = $this->buildForm($field_id);
+        self::output()->output($this->renderer->render($form));
+    }
+
+    /**
+     * @throws xoctException
+     * @throws ilTemplateException
+     * @throws DICException
+     */
+    protected function store()
+    {
+        $field_id = filter_input(INPUT_POST, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id);
         $request = self::dic()->http()->request();
         $data = $form->withRequest($request)->getData();
@@ -108,19 +131,9 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             self::output()->output($this->renderer->render($form));
             return;
         }
-        $this->repository->createFromArray($data);
+        $this->repository->storeFromArray($data);
         ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-    }
-
-    protected function edit()
-    {
-        // TODO: Implement edit() method.
-    }
-
-    protected function update()
-    {
-        // TODO: Implement update() method.
     }
 
     protected function confirmDelete()
@@ -153,35 +166,37 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      * @throws DICException
      * @throws xoctException
      */
-    protected function buildForm(string $field_id, string $cmd = ''): Standard
+    protected function buildForm(string $field_id): Standard
     {
-        self::dic()->ctrl()->saveParameter($this, 'field_id');
-        $md_field = $this->getMetadataCatalogue()->getFieldById($field_id);
-        $form = $this->ui_factory->input()->container()->form()->standard(
-            self::dic()->ctrl()->getFormAction($this, $cmd),
+        $md_field_def = $this->getMetadataCatalogue()->getFieldById($field_id);
+        $md_field_config = $this->repository->findByFieldId($field_id);
+        return $this->ui_factory->input()->container()->form()->standard(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_STORE),
             [
                 'field_id' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_field_id'))
                     ->withDisabled(true)
                     ->withValue($field_id)
                     ->withRequired(true),
                 'title' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title'))
-                    ->withRequired(true),
+                    ->withRequired(true)
+                    ->withValue($md_field_config ? $md_field_config->getTitle() : ''),
                 'visible_for_roles' => $this->ui_factory->input()->field()->multiSelect(
                     self::plugin()->translate('md_visible_for_roles'),
                     ['write' => 'Write', 'read' => 'read', 'edit_videos' => 'Edit Videos'] // TODO: roles
-                )->withRequired(true),
+                )->withRequired(true)
+                ->withValue($md_field_config ? $md_field_config->getVisibleForRoles() : []),
                 'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
-                    ->withDisabled($md_field->isRequired() || $md_field->isReadOnly())
-                    ->withValue($md_field->isRequired()),
+                    ->withDisabled($md_field_def->isRequired() || $md_field_def->isReadOnly())
+                    ->withValue($md_field_def->isRequired() || ($md_field_config && $md_field_config->isRequired())),
                 'read_only' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_read_only'))
-                    ->withDisabled($md_field->isReadOnly())
-                    ->withValue($md_field->isReadOnly()),
+                    ->withDisabled($md_field_def->isReadOnly())
+                    ->withValue($md_field_def->isReadOnly() || ($md_field_config && $md_field_config->isReadOnly())),
                 'prefill' => $this->ui_factory->input()->field()->select(self::plugin()->translate('md_prefill'),
                     $this->getPrefillOptions())
-                    ->withDisabled($md_field->isReadOnly()),
+                    ->withDisabled($md_field_def->isReadOnly())
+                    ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : null),
             ]
         );
-        return $form;
     }
 
     protected function getPrefillOptions() : array
@@ -192,4 +207,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         }
         return $options;
     }
+
+    protected function create() {}
+
+    protected function update() {}
 }

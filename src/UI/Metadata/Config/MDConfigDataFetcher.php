@@ -44,7 +44,7 @@ class MDConfigDataFetcher extends AbstractDataFetcher
             }
             $set['prefill'] = $set['prefill']->getValue();
             $set['visible_for_roles'] = implode(', ', $set['visible_for_roles']);
-            return self::dataTableUI()->data()->row()->property($set['id'], (object) $set);
+            return self::dataTableUI()->data()->row()->property($set['field_id'], (object) $set);
         }, $this->repository->getArray());
         return self::dataTableUI()->data()->data($data, count($data));
     }

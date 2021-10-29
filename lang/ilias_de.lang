@@ -516,3 +516,5 @@ md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
 md_actions#:#Aktionen
 md_title#:#Titel
+action_update#:#Bearbeiten
+action_delete#:#Löschen
