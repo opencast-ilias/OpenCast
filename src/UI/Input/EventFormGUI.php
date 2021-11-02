@@ -147,7 +147,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         $cmd_url_upload_chunks = null
     ) {
 		parent::__construct();
-		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
+		$this->event_repository = new EventRepository(CacheFactory::getInstance());
 		$this->series_repository = new SeriesRepository();
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
@@ -573,7 +573,7 @@ class EventFormGUI extends ilPropertyFormGUI {
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
-                $this->event_repository->upload($this->object);
+                $this->event_repository->upload($this->object, self::dic()->user());
 			}
 		}
 

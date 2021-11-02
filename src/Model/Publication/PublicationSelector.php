@@ -5,6 +5,7 @@ namespace srag\Plugins\Opencast\Model\Publication;
 use Closure;
 use ilObjOpenCastAccess;
 use ilOpenCastPlugin;
+use Opis\Closure\SerializableClosure;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
@@ -92,9 +93,14 @@ class PublicationSelector
      */
     protected $unprotected_link;
     /**
-     * @var Closure
+     * @var SerializableClosure
      */
     private $reference;
+    private static $thumbnail_publication_usages = [
+        PublicationUsage::USAGE_THUMBNAIL,
+        PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
+        PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
+    ];
 
     /**
      * PublicationSelector constructor.
@@ -382,42 +388,24 @@ class PublicationSelector
      */
     public function getThumbnailUrl()
     {
-        if (in_array(
-            $this->event->getProcessingState(),
-            [xoctEvent::STATE_SCHEDULED, xoctEvent::STATE_SCHEDULED_OFFLINE, xoctEvent::STATE_RECORDING]
-        )
-        ) {
-            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
-
-            return $this->thumbnail_url;
+        switch ($this->event->getProcessingState()) {
+            case xoctEvent::STATE_SCHEDULED:
+            case xoctEvent::STATE_SCHEDULED_OFFLINE:
+            case xoctEvent::STATE_RECORDING:
+                $this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
+                return $this->thumbnail_url;
+            case xoctEvent::STATE_LIVE_SCHEDULED:
+            case xoctEvent::STATE_LIVE_OFFLINE:
+                $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
+                return $this->thumbnail_url;
+            case xoctEvent::STATE_LIVE_RUNNING:
+                $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
+                return $this->thumbnail_url;
         }
 
-        if (in_array(
-            $this->event->getProcessingState(),
-            [xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_OFFLINE]
-        )
-        ) {
-            $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
-
-            return $this->thumbnail_url;
-        }
-
-        if ($this->event->getProcessingState() == xoctEvent::STATE_LIVE_RUNNING) {
-            $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
-
-            return $this->thumbnail_url;
-        }
-
-        $possible_publications = array(
-            PublicationUsage::USAGE_THUMBNAIL,
-            PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
-            PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
-        );
-
-        $i = 0;
-        while (!$this->thumbnail_url && $i < count($possible_publications)) {
+        foreach (self::$thumbnail_publication_usages as $usage) {
             $xoctPublication = $this->getFirstPublicationMetadataForUsage(
-                $this->publication_usage_repository->getUsage($possible_publications[$i])
+                $this->publication_usage_repository->getUsage($usage)
             );
             if (is_null($xoctPublication)) {
                 continue;
@@ -428,8 +416,9 @@ class PublicationSelector
             } else {
                 $this->thumbnail_url = $url;
             }
-            $i++;
+            break;
         }
+
         if (!$this->thumbnail_url) {
             $this->thumbnail_url = self::NO_PREVIEW;
         }
@@ -573,13 +562,13 @@ class PublicationSelector
     public function getPublications() : array
     {
         if (is_null($this->publications)) {
-            $reference = $this->reference;
+            $reference = $this->reference->getClosure();
             $this->publications = $reference();
         }
         return $this->publications;
     }
 
-    public function setReference(Closure $reference)
+    public function setReference(SerializableClosure $reference)
     {
         $this->reference = $reference;
     }

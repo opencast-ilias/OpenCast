@@ -102,8 +102,6 @@ config_group_producers_info#:#Users with the permission "Edit Videos" will be as
 config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
 config_role_owner_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}. DO NOT use the same value as for the user specific role.
 config_identifier_to_uppercase#:#User mapping in uppercase
-config_no_metadata#:#Without Metadata
-config_no_metadata_info#:#The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
 config_internal_player#:#Internal video player
 config_internal_player_info#:#When active, the plugin will use an own video player instead of redirecting to Opencast.
 config_streaming#:#Streaming

@@ -55,7 +55,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 	 */
 	public function __construct(xoctEventGUI $a_parent_obj, $a_parent_cmd, xoctOpenCast $xoctOpenCast, $load_data = true) {
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
+		$this->event_repository = new EventRepository(CacheFactory::getInstance());
 		$this->parent_obj = $a_parent_obj;
 		$a_val = static::getGeneratedPrefix($xoctOpenCast);
 		$this->setPrefix($a_val);
@@ -122,7 +122,7 @@ class xoctEventTableGUI extends ilTable2GUI {
 		 * @var $event        xoctEvent
 		 * @var $xoctUser  xoctUser
 		 */
-		$event = $a_set['object'] ? $a_set['object'] : xoctEvent::find($a_set['identifier']);
+		$event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
 		$renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
 
 		$renderer->insertThumbnail($this->tpl, null);
@@ -262,11 +262,11 @@ class xoctEventTableGUI extends ilTable2GUI {
 
 
 	/**
-	 * @param xoctEvent $xoctEvent
+	 * @param xoctEvent $event
 	 * @throws DICException
 	 */
-	protected function addActionMenu(xoctEvent $xoctEvent) {
-		$renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
+	protected function addActionMenu(xoctEvent $event) {
+		$renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
 		$actions = $renderer->getActions();
 		if (empty($actions)) {
 			return;
@@ -379,9 +379,9 @@ class xoctEventTableGUI extends ilTable2GUI {
 		return function ($array)
 		{
 			$xoctUser = xoctUser::getInstance(self::dic()->user());
-			$xoctEvent = $array['object'] instanceof xoctEvent ? $array['object'] : xoctEvent::find($array['identifier']);
+			$event = $array['object'] instanceof xoctEvent ? $array['object'] : $this->event_repository->find($array['identifier']);
 
-			return ilObjOpenCastAccess::hasReadAccessOnEvent($xoctEvent, $xoctUser, $this->xoctOpenCast);
+			return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->xoctOpenCast);
 		};
 	}
 

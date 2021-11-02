@@ -418,15 +418,6 @@ class MetadataField extends APIObject
 
         return $stdClass;
     }
-
-
-    /**
-     * @return string
-     */
-    public function __toXML() : string
-    {
-
-    }
 }
 
 ?>

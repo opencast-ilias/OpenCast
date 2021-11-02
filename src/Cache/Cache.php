@@ -9,6 +9,7 @@ use xoctConf;
 use Exception;
 use RuntimeException;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use xoctLog;
 
 /**
  * @author Theodor Truffer <theo@fluxlabs.ch>
@@ -162,6 +163,7 @@ class Cache extends ilGlobalCache {
 			return false;
 		}
 
+		xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
 		return parent::delete($key);
 	}
 
@@ -221,9 +223,11 @@ class Cache extends ilGlobalCache {
 		$unserialized_return = $this->global_cache->unserialize($this->global_cache->get($key));
 
 		if ($unserialized_return) {
+			xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
 			return $unserialized_return;
 		}
 
+		xoctLog::getInstance()->write('CACHE: cache not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
 		return NULL;
 	}
 }

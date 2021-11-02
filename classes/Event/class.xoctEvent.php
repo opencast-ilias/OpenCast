@@ -1,5 +1,6 @@
 <?php
 
+use Opis\Closure\SerializableClosure;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\APIObject;
@@ -68,13 +69,34 @@ class xoctEvent extends APIObject {
 	 */
 	protected $xoctEventAdditions = null;
     /**
-     * @var closure
+     * @var SerializableClosure
      */
     private $metadata_reference;
     /**
-     * @var Closure
+     * @var SerializableClosure
      */
     private $acl_reference;
+    /**
+     * @var string
+     */
+    private $status;
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
 
     /**
 	 * @param $identifier
@@ -112,18 +134,6 @@ class xoctEvent extends APIObject {
 		);
 	}
 
-
-	/**
-	 * @param string $identifier
-	 */
-	public function __construct($identifier = '') {
-		if ($identifier) {
-			$this->setIdentifier($identifier);
-			$this->read();
-		}
-	}
-
-
 	/**
 	 *
 	 */
@@ -154,17 +164,9 @@ class xoctEvent extends APIObject {
 		//     $this->loadWorkflows();
         // }
 
-		if (!$this->getXoctEventAdditions()) {
-			$this->initAdditions();
-		}
 
         if (!$this->metadata) {
             $this->loadMetadata();
-        }
-
-        // if no_metadata option is set, the metadata below will already be initialized
-        if (EventRepository::$no_metadata) {
-            return;
         }
 
         if (!$this->getSeriesIdentifier()) {
@@ -214,12 +216,12 @@ class xoctEvent extends APIObject {
         $this->setWorkflowParameters(array_merge($automatically_set, $parameters));
     }
 
-    public function setAclReference(Closure $acl_reference)
+    public function setAclReference(SerializableClosure $acl_reference)
     {
         $this->acl_reference = $acl_reference;
     }
 
-    public function setMetadataReference(Closure $metadata_reference)
+    public function setMetadataReference(SerializableClosure $metadata_reference)
     {
         $this->metadata_reference = $metadata_reference;
     }
@@ -480,13 +482,13 @@ class xoctEvent extends APIObject {
 		$acl->setAction(ACLEntry::READ);
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
-		$this->addAcl($acl);
+		$this->getAcl()->add($acl);
 
 		$acl = new ACLEntry();
 		$acl->setAction(ACLEntry::WRITE);
 		$acl->setAllow(true);
 		$acl->setRole($xoctUser->getOwnerRoleName());
-		$this->addAcl($acl);
+		$this->getAcl()->add($acl);
 	}
 
 
@@ -559,7 +561,7 @@ class xoctEvent extends APIObject {
 	 *
 	 */
 	public function loadMetadata() {
-		if ($this->getIdentifier() && !EventRepository::$no_metadata) {
+		if ($this->getIdentifier()) {
 			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
 			if (is_array($data)) {
 				foreach ($data as $d) {
@@ -855,7 +857,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getIdentifier() {
-		return $this->identifier;
+		return $this->getMetadata()->getField('identifier')->getValue();
 	}
 
 
@@ -863,7 +865,7 @@ class xoctEvent extends APIObject {
 	 * @param string $identifier
 	 */
 	public function setIdentifier($identifier) {
-		$this->identifier = $identifier;
+		$this->getMetadata()->getField('identifier')->setValue($identifier);
 	}
 
 
@@ -935,7 +937,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getDescription() {
-		return $this->description;
+		return $this->getMetadata()->getField('description')->getValue();
 	}
 
 
@@ -943,7 +945,7 @@ class xoctEvent extends APIObject {
 	 * @param string $description
 	 */
 	public function setDescription($description) {
-		$this->description = $description;
+		$this->getMetadata()->getField('description')->setValue($description);
 	}
 
 
@@ -1001,7 +1003,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getLocation() {
-		return $this->location;
+		return $this->getMetadata()->getField('location')->getValue();
 	}
 
 
@@ -1009,7 +1011,7 @@ class xoctEvent extends APIObject {
 	 * @param string $location
 	 */
 	public function setLocation($location) {
-		$this->location = $location;
+		$this->getMetadata()->getField('location')->setValue($location);
 	}
 
 
@@ -1017,7 +1019,7 @@ class xoctEvent extends APIObject {
 	 * @return String
 	 */
 	public function getPresenter() {
-		return $this->presenter;
+		return $this->getMetadata()->getField('presenter')->getValue();
 	}
 
 
@@ -1025,13 +1027,8 @@ class xoctEvent extends APIObject {
 	 * @param String $presenter
 	 */
 	public function setPresenter($presenter) {
-		$this->presenter = $presenter;
+		$this->getMetadata()->getField('presenter')->setValue($presenter);
 	}
-
-	public function setPresenters($presenter) {
-		$this->setPresenter($presenter);
-	}
-
 
 	/**
 	 * @return array
@@ -1062,32 +1059,17 @@ class xoctEvent extends APIObject {
 	/**
 	 * @param String $processing_state
 	 */
-	public function setProcessingState($processing_state) {
+	private function setProcessingState($processing_state) {
 		$this->processing_state = $processing_state;
 	}
 
-
-	/**
-	 * @return DateTime
-	 */
-	public function getStartTime() {
-		return $this->start_time;
-	}
-
-
-	/**
-	 * @param DateTime $start_time
-	 */
-	public function setStartTime($start_time) {
-		$this->start_time = $start_time;
-	}
 
 
 	/**
 	 * @return array
 	 */
 	public function getSubjects() {
-		return $this->subjects;
+		return $this->getMetadata()->getField('subjects')->getValue();
 	}
 
 
@@ -1095,7 +1077,7 @@ class xoctEvent extends APIObject {
 	 * @param array $subjects
 	 */
 	public function setSubjects($subjects) {
-		$this->subjects = $subjects;
+		$this->getMetadata()->getField('subjects')->setValue($subjects);
 	}
 
 
@@ -1103,7 +1085,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getTitle() {
-		return $this->title;
+		return $this->getMetadata()->getField('title')->getValue();
 	}
 
 
@@ -1111,7 +1093,7 @@ class xoctEvent extends APIObject {
 	 * @param string $title
 	 */
 	public function setTitle($title) {
-		$this->title = $title;
+		$this->getMetadata()->getField('title')->setValue($title);
 	}
 
 
@@ -1120,7 +1102,7 @@ class xoctEvent extends APIObject {
 	 */
 	public function getMetadata() {
 		if (!$this->metadata) {
-            $reference = $this->metadata_reference;
+            $reference = $this->metadata_reference->getClosure();
 			$this->metadata = $reference();
 		}
 		return $this->metadata;
@@ -1141,7 +1123,7 @@ class xoctEvent extends APIObject {
 	public function getAcl() : ACL
     {
         if (!$this->acl) {
-            $reference = $this->acl_reference;
+            $reference = $this->acl_reference->getClosure();
             $this->acl = $reference();
         }
 		return $this->acl;
@@ -1153,24 +1135,6 @@ class xoctEvent extends APIObject {
 	 */
 	public function setAcl(ACL $acl) {
 		$this->acl = $acl;
-	}
-
-
-	/**
-	 * @param ACLEntry $acl_entry
-	 *
-	 * @return bool
-	 */
-	public function addAcl(ACLEntry $acl_entry) {
-		foreach ($this->getAcl()->getEntries() as $existing_entry) {
-			if ($acl_entry->getRole() == $existing_entry->getRole() && $acl_entry->getAction() == $existing_entry->getAction()) {
-				return false;
-			}
-		}
-
-		$this->getAcl()->add($acl_entry);
-
-		return true;
 	}
 
 
@@ -1380,8 +1344,6 @@ class xoctEvent extends APIObject {
 	 * @return xoctEventAdditions
 	 */
 	public function getXoctEventAdditions() {
-		$this->initAdditions();
-
 		return $this->xoctEventAdditions;
 	}
 
@@ -1391,22 +1353,6 @@ class xoctEvent extends APIObject {
 	 */
 	public function setXoctEventAdditions(xoctEventAdditions $xoctEventAdditions) {
 		$this->xoctEventAdditions = $xoctEventAdditions;
-	}
-
-
-	/**
-	 *
-	 */
-	protected function initAdditions() {
-		if ($this->xoctEventAdditions instanceof xoctEventAdditions) {
-			return;
-		}
-		$xoctEventAdditions = xoctEventAdditions::find($this->getIdentifier());
-		if (!$xoctEventAdditions instanceof xoctEventAdditions) {
-			$xoctEventAdditions = new xoctEventAdditions();
-			$xoctEventAdditions->setId($this->getIdentifier());
-		}
-		$this->setXoctEventAdditions($xoctEventAdditions);
 	}
 
 
@@ -1427,15 +1373,6 @@ class xoctEvent extends APIObject {
 	public function isLiveEvent() {
 		return !is_null($this->publications()->getLivePublication());
 	}
-
-	/**
-	 * @throws xoctException
-	 */
-	protected function setCurrentUserAsPublisher() {
-		$publisher = $this->getMetadata()->getField('publisher');
-		$publisher->setValue(xoctUser::getInstance(self::dic()->user())->getIdentifier());
-	}
-
 
     /**
      * @return PublicationSelector

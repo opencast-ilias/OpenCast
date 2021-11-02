@@ -231,32 +231,32 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function hasReadAccessOnEvent(xoctEvent $xoctEvent, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
+	public static function hasReadAccessOnEvent(xoctEvent $event, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
 		// edit_videos and write access see all videos
 		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
 			return true;
 		}
 
 		// owner can see failed videos
-		if ($xoctEvent->getProcessingState() == $xoctEvent::STATE_FAILED) {
-			if ($xoctEvent->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
+		if ($event->getProcessingState() == $event::STATE_FAILED) {
+			if ($event->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
 				return true;
 			}
 			return false;
 		}
 
 		// don't show offline and failed videos
-		if (!$xoctEvent->getXoctEventAdditions()->getIsOnline()) {
+		if (!$event->getXoctEventAdditions()->getIsOnline()) {
 			return false;
 		}
 
 		// if owner, show video
-		if ($xoctEvent->isOwner($xoctUser)) {
+		if ($event->isOwner($xoctUser)) {
 			return true;
 		}
 
 		// if not owner or edit_videos, don't show proceeding videos
-		if (!(in_array($xoctEvent->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_RUNNING]))) {
+		if (!(in_array($event->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_RUNNING]))) {
 			return false;
 		}
 
@@ -267,18 +267,17 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 		// with ivt mode: show videos of ivt group and invitations (own videos already checked)
 		$role_names = array();
-		$xoctEvent->afterObjectLoad();
 
-		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($xoctEvent->getSeriesIdentifier(), $xoctUser);
+		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($event->getSeriesIdentifier(), $xoctUser);
 		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
 			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
 		}
 
-		if ($xoctEvent->getOwnerAcl() instanceof ACLEntry && in_array($xoctEvent->getOwnerAcl()->getRole(), $role_names)) {
+		if ($event->getOwnerAcl() instanceof ACLEntry && in_array($event->getOwnerAcl()->getRole(), $role_names)) {
 			return true; // same group as owner
 		}
 
-		$invitations = xoctInvitation::getAllInvitationsOfUser($xoctEvent->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn());
+		$invitations = xoctInvitation::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn());
 		if (!empty($invitations)) {
 			return true; //has invitations
 		}

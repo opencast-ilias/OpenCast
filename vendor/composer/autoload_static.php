@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
 {
+    public static $files = array (
+        '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         's' => 
         array (
@@ -14,6 +18,10 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'srag\\DataTableUI\\OpenCast\\' => 26,
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
+        ),
+        'O' => 
+        array (
+            'Opis\\Closure\\' => 13,
         ),
     );
 
@@ -38,12 +46,26 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
+        'Opis\\Closure\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/opis/closure/src',
+        ),
     );
 
     public static $classMap = array (
         'ACLEntry' => __DIR__ . '/../..' . '/classes/Series/Acl/class.ACLEntry.php',
         'Metadata' => __DIR__ . '/../..' . '/src/Model/API/Metadata/Metadata.php',
         'MetadataField' => __DIR__ . '/../..' . '/src/Model/API/Metadata/Metadata.php',
+        'Opis\\Closure\\Analyzer' => __DIR__ . '/..' . '/opis/closure/src/Analyzer.php',
+        'Opis\\Closure\\ClosureContext' => __DIR__ . '/..' . '/opis/closure/src/ClosureContext.php',
+        'Opis\\Closure\\ClosureScope' => __DIR__ . '/..' . '/opis/closure/src/ClosureScope.php',
+        'Opis\\Closure\\ClosureStream' => __DIR__ . '/..' . '/opis/closure/src/ClosureStream.php',
+        'Opis\\Closure\\ISecurityProvider' => __DIR__ . '/..' . '/opis/closure/src/ISecurityProvider.php',
+        'Opis\\Closure\\ReflectionClosure' => __DIR__ . '/..' . '/opis/closure/src/ReflectionClosure.php',
+        'Opis\\Closure\\SecurityException' => __DIR__ . '/..' . '/opis/closure/src/SecurityException.php',
+        'Opis\\Closure\\SecurityProvider' => __DIR__ . '/..' . '/opis/closure/src/SecurityProvider.php',
+        'Opis\\Closure\\SelfReference' => __DIR__ . '/..' . '/opis/closure/src/SelfReference.php',
+        'Opis\\Closure\\SerializableClosure' => __DIR__ . '/..' . '/opis/closure/src/SerializableClosure.php',
         'ilInteractiveVideoTimePicker' => __DIR__ . '/../..' . '/classes/Util/class.ilInteractiveVideoTimePicker.php',
         'ilObjOpenCast' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCast.php',
         'ilObjOpenCastAccess' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastAccess.php',
@@ -205,10 +227,13 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => __DIR__ . '/../..' . '/src/Chat/Model/Token.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => __DIR__ . '/../..' . '/src/Chat/Model/TokenAR.php',
         'srag\\Plugins\\Opencast\\Model\\API\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/API/ACL/ACL.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\ACL\\ACLRepository' => __DIR__ . '/../..' . '/src/Model/API/ACL/ACLRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => __DIR__ . '/../..' . '/src/Model/API/APIObject.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Agent\\Agent' => __DIR__ . '/../..' . '/src/Model/API/Agent/Agent.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Event\\EventRepository' => __DIR__ . '/../..' . '/src/Model/API/Event/EventRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Group\\Group' => __DIR__ . '/../..' . '/src/Model/API/Group/Group.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\Metadata\\MetadataRepository' => __DIR__ . '/../..' . '/src/Model/API/Metadata/MetadataRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\API\\Publication\\PublicationRepository' => __DIR__ . '/../..' . '/src/Model/API/Publication/PublicationRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/API/Scheduling/Scheduling.php',
         'srag\\Plugins\\Opencast\\Model\\API\\Series\\SeriesRepository' => __DIR__ . '/../..' . '/src/Model/API/Series/SeriesRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\WorkflowInstance\\WorkflowInstance' => __DIR__ . '/../..' . '/src/Model/API/WorkflowInstance/WorkflowInstance.php',

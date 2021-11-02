@@ -11,4 +11,5 @@ return array(
     'srag\\DataTableUI\\OpenCast\\' => array($vendorDir . '/srag/datatable/src'),
     'srag\\DIC\\OpenCast\\' => array($vendorDir . '/srag/dic/src'),
     'srag\\CustomInputGUIs\\OpenCast\\' => array($vendorDir . '/srag/custominputguis/src'),
+    'Opis\\Closure\\' => array($vendorDir . '/opis/closure/src'),
 );

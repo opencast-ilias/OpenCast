@@ -138,7 +138,7 @@ class xoctEventAPI {
      */
     public function filter(array $filter){
         global $DIC;
-        return (new EventRepository($DIC, CacheFactory::getInstance()))->getFiltered($filter);
+        return (new EventRepository(CacheFactory::getInstance()))->getFiltered($filter);
     }
 
 }

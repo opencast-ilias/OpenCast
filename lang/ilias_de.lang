@@ -100,8 +100,6 @@ config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden v
 config_role_user_prefix_info#:#Benutzereigene Rolle in Opencast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in Opencast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
 config_role_owner_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}. NICHT den gleichen Wert wie für Benutzerrolle wählen.
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
-config_no_metadata#:#Ohne Metadaten
-config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an Opencast weiterzuleiten.
 config_use_streaming#:#Benutze Streaming URLs

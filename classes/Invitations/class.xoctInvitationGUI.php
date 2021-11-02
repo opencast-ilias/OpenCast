@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 
 /**
  * Class xoctInvitationGUI
@@ -14,22 +15,27 @@ class xoctInvitationGUI extends xoctGUI {
     /**
      * @var xoctEvent
      */
-    protected $xoctEvent;
+    protected $event;
     /**
      * @var xoctOpenCast
      */
     protected $xoctOpenCast;
+    /**
+     * @var EventRepository
+     */
+    private $event_repository;
 
-	/**
+    /**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+	public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventRepository $event_repository) {
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
 			$this->xoctOpenCast = new xoctOpenCast();
 		}
-		$this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
+        $this->event_repository = $event_repository;
+		$this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
 		self::dic()->tabs()->clearTargets();
 
 
@@ -48,13 +54,13 @@ class xoctInvitationGUI extends xoctGUI {
      */
 	protected function index() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->xoctOpenCast)) {
 			ilUtil::sendFailure('Access denied', true);
 			self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
 		}
 		$temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.invitations.html', false, false);
-		$temp->setVariable('PREVIEW', $this->xoctEvent->publications()->getThumbnailUrl());
-		$temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
+		$temp->setVariable('PREVIEW', $this->event->publications()->getThumbnailUrl());
+		$temp->setVariable('VIDEO_TITLE', $this->event->getTitle());
         $temp->setVariable('L_FILTER', self::plugin()->translate('groups_participants_filter'));
         $temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));
         $temp->setVariable('HEADER_INVITAIONS', self::plugin()->translate('invitations_header'));
@@ -91,7 +97,7 @@ class xoctInvitationGUI extends xoctGUI {
 		foreach ($course_members_user_ids as $user_id) {
 			$xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
 		}
-		$active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->xoctEvent, $this->xoctOpenCast->getPermissionAllowSetOwn());
+		$active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->event, $this->xoctOpenCast->getPermissionAllowSetOwn());
 		$invited_user_ids = array();
 		foreach ($active_invitations as $inv) {
 			$invited_user_ids[] = $inv->getUserId();
@@ -101,7 +107,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
 		$invited_users = array();
 		$available_users = array();
-		$owner = $this->xoctEvent->getOwner();
+		$owner = $this->event->getOwner();
 		foreach ($available_user_ids as $user_id) {
 			if ($user_id == self::dic()->user()->getId()) {
 				continue;
@@ -149,7 +155,7 @@ class xoctInvitationGUI extends xoctGUI {
 
 	protected function create() {
 		$obj = xoctInvitation::where(array(
-			'event_identifier' => $this->xoctEvent->getIdentifier(),
+			'event_identifier' => $this->event->getIdentifier(),
 			'user_id' => $_POST['id'],
 		))->first();
 		$new = false;
@@ -157,7 +163,7 @@ class xoctInvitationGUI extends xoctGUI {
 			$obj = new xoctInvitation();
 			$new = true;
 		}
-		$obj->setEventIdentifier($this->xoctEvent->getIdentifier());
+		$obj->setEventIdentifier($this->event->getIdentifier());
 		$obj->setUserId($_POST['id']);
 		$obj->setOwnerId(self::dic()->user()->getId());
 		if ($new) {
@@ -177,7 +183,7 @@ class xoctInvitationGUI extends xoctGUI {
         $objects = [];
         foreach ($_POST['ids'] as $id) {
             $obj = xoctInvitation::where(array(
-                'event_identifier' => $this->xoctEvent->getIdentifier(),
+                'event_identifier' => $this->event->getIdentifier(),
                 'user_id' => $id,
             ))->first();
             $new = false;
@@ -185,7 +191,7 @@ class xoctInvitationGUI extends xoctGUI {
                 $obj = new xoctInvitation();
                 $new = true;
             }
-            $obj->setEventIdentifier($this->xoctEvent->getIdentifier());
+            $obj->setEventIdentifier($this->event->getIdentifier());
             $obj->setUserId($id);
             $obj->setOwnerId(self::dic()->user()->getId());
             if ($new) {
@@ -213,7 +219,7 @@ class xoctInvitationGUI extends xoctGUI {
 
 	protected function delete() {
 		$obj = xoctInvitation::where(array(
-			'event_identifier' => $this->xoctEvent->getIdentifier(),
+			'event_identifier' => $this->event->getIdentifier(),
 			'user_id' => $_POST['id'],
 		))->first();
 		if ($obj instanceof xoctInvitation) {

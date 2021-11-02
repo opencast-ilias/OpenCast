@@ -64,7 +64,7 @@ class xoctEventTileGUI {
 	public function __construct($parent_gui, $xoctOpenCast) {
 		$this->parent_gui = $parent_gui;
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->event_repository = new EventRepository(self::dic()->dic(), CacheFactory::getInstance());
+		$this->event_repository = new EventRepository(CacheFactory::getInstance());
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
 		$this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
@@ -88,13 +88,13 @@ class xoctEventTileGUI {
 		$from = $this->page * $this->limit;
 		$to = ($this->page + 1) * $this->limit;
 		for ($i = $from; $i < $to && isset($this->events[$i]); $i++) {
-			$xoctEvent = $this->events[$i];
-			$event_renderer = new xoctEventRenderer($xoctEvent, $this->xoctOpenCast);
+			$event = $this->events[$i];
+			$event_renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
 
 			$dropdown = $this->factory->dropdown()->standard($event_renderer->getActions());
 
 			$image = $this->factory->image()->standard(
-				$xoctEvent->publications()->getThumbnailUrl(),
+				$event->publications()->getThumbnailUrl(),
 				"Thumbnail");
 
 			$tile_tpl = self::plugin()->template('default/tpl.event_tile.html');
@@ -142,35 +142,36 @@ class xoctEventTileGUI {
 	 */
 	protected function parseData() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$xoctEvents = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()]);
-		foreach ($xoctEvents as $key => $xoctEvent) {
-		    $event = $xoctEvent['object'] instanceof xoctEvent ? $xoctEvent['object'] : xoctEvent::find($xoctEvent['identifier']);
+		$events = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()]);
+		foreach ($events as $key => $event) {
+		    $event = $event['object'] instanceof xoctEvent ? $event['object']
+                : $this->event_repository->find($event['identifier']);
 			if (!ilObjOpenCastAccess::hasReadAccessOnEvent(
                 $event,
                 $xoctUser,
                 $this->xoctOpenCast)
             ) {
-				unset($xoctEvents[$key]);
+				unset($events[$key]);
 			} elseif ($event->isScheduled()) {
 				$this->has_scheduled_events = true;
 			}
 		}
-        $xoctEvents = $this->sortData($xoctEvents);
-        $xoctEvents = array_map(function(array $element) {
+        $events = $this->sortData($events);
+        $events = array_map(function(array $element) {
             return $element['object'] instanceof xoctEvent ? $element['object'] : xoctEvent::find($element['identifier']);
-        }, $xoctEvents);
+        }, $events);
 
-        $this->events = array_values($xoctEvents);
+        $this->events = array_values($events);
 	}
 
 
 
     /**
-     * @param xoctEvent[] $xoctEvents
+     * @param xoctEvent[] $events
      *
      * @return mixed
      */
-    protected function sortData(array $xoctEvents)
+    protected function sortData(array $events)
     {
         $tab_prop = new ilTablePropertiesStorage();
 
@@ -187,13 +188,13 @@ class xoctEventTileGUI {
                 break;
         }
 
-        $xoctEvents = ilUtil::sortArray(
-            $xoctEvents,
+        $events = ilUtil::sortArray(
+            $events,
             $order,
             $direction
         );
 
-        return $xoctEvents;
+        return $events;
     }
 
     /**

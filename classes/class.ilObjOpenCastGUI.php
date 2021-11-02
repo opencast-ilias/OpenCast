@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -100,14 +101,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 case 'xoctinvitationgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast);
+                    $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast,
+                        new EventRepository(CacheFactory::getInstance()));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
                 case 'xoctchangeownergui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast);
+                    $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast,
+                        new EventRepository(CacheFactory::getInstance()));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -121,7 +124,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 case 'xocteventgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast);
+                    $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast,
+                        new EventRepository(CacheFactory::getInstance()));
                     self::dic()->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
                     break;

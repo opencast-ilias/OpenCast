@@ -3,24 +3,25 @@
 namespace srag\Plugins\Opencast\Model\API\Event;
 
 use ILIAS\DI\Container;
-use ilUtil;
+use ilObjUser;
 use Metadata;
-use phpDocumentor\Reflection\Types\Callable_;
+use Opis\Closure\SerializableClosure;
 use ReflectionException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
+use srag\Plugins\Opencast\Model\API\ACL\ACLRepository;
+use srag\Plugins\Opencast\Model\API\Metadata\MetadataRepository;
+use srag\Plugins\Opencast\Model\API\Publication\PublicationRepository;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use stdClass;
 use xoct;
-use ACLEntry;
 use xoctConf;
 use xoctEvent;
+use xoctEventAdditions;
 use xoctException;
-use xoctPublication;
 use xoctRequest;
-use xoctRequestSettings;
 use xoctUploadFile;
 use xoctUser;
 
@@ -40,37 +41,50 @@ class EventRepository
     public static $no_metadata = false;
 
     /**
-     * @var Container
-     */
-    protected $dic;
-    /**
      * @var Cache
      */
     protected $cache;
+    /**
+     * @var MetadataRepository
+     */
+    protected $md_repository;
+    /**
+     * @var ACLRepository
+     */
+    protected $acl_repository;
+    /**
+     * @var PublicationRepository
+     */
+    protected $publication_repository;
 
 
-    public function __construct(Container $dic, Cache $cache)
+    public function __construct(Cache                  $cache,
+                                ?MetadataRepository    $md_repository = null,
+                                ?ACLRepository         $acl_repository = null,
+                                ?PublicationRepository $publication_repository = null)
     {
-        $this->dic = $dic;
         $this->cache = $cache;
+        $this->md_repository = $md_repository ?? new MetadataRepository($cache);
+        $this->acl_repository = $acl_repository ?? new ACLRepository($cache);
+        $this->publication_repository = $publication_repository ?? new PublicationRepository($cache);
     }
 
-    public function find(string $identifier) : xoctEvent
+    public function find(string $identifier): xoctEvent
     {
         return $this->cache->get('event-' . $identifier)
             ?? $this->fetch($identifier);
     }
 
-    private function fetch(string $identifier) : xoctEvent
+    private function fetch(string $identifier): xoctEvent
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->get());
         $event = $this->buildEventFromStdClass($data, $identifier);
+        $this->cache->set('event-' . $event->getIdentifier(), $event);
         return $event;
     }
 
-
     /**
-     * @param $data
+     * @param stdClass $data
      * @param string $identifier
      * @return xoctEvent
      * @throws xoctException
@@ -79,89 +93,52 @@ class EventRepository
     {
         $event = new xoctEvent();
         $event->setPublicationStatus($data->publication_status);
-        $event->setProcessingState($data->status);
+        $event->setStatus($data->status);
         $event->setHasPreviews($data->has_previews);
+        $event->setXoctEventAdditions(xoctEventAdditions::findOrGetInstance($identifier));
 
         if (isset($data->metadata)) {
             $event->setMetadata(Metadata::fromResponse($data->metadata));
         } else {
-            $event->setMetadataReference(function () use ($identifier) {
-                return $this->fetchMetadata($identifier);
-            });
+            // lazy loading
+            $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
+                return $this->md_repository->find($identifier);
+            }));
         }
 
         if (isset($data->acl)) {
             $event->setAcl(ACL::fromResponse($data->acl));
         } else {
-            $event->setAclReference(function () use ($identifier) {
-                return $this->fetchAcl($identifier);
-            });
+            // lazy loading
+            $event->setAclReference(new SerializableClosure(function () use ($identifier) {
+                return $this->acl_repository->find($identifier);
+            }));
         }
 
         if (isset($data->publications)) {
             $event->publications()->loadFromArray($data->publications);
         } else {
-            $event->publications()->setReference(function () use ($identifier) {
-                return $this->fetchPublications($identifier);
-            });
+            // lazy loading
+            $event->publications()->setReference(new SerializableClosure(function () use ($identifier) {
+                return $this->publication_repository->find($identifier);
+            }));
         }
         return $event;
     }
 
 
     /**
-     * @throws xoctException
-     */
-    private function fetchMetadata(string $identifier) : Metadata
-    {
-        $data = json_decode(xoctRequest::root()->events($identifier)->metadata()->get()) ?? [];
-        foreach ($data as $d) {
-            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
-                $metadata = new Metadata();
-                $metadata->loadFromStdClass($d);
-                break;
-            }
-        }
-        if (!isset($metadata)) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                'Metadata for event could not be loaded: ' . $identifier);
-        }
-        return $metadata;
-    }
-
-
-    private function fetchAcl(string $identifier) : ACL
-    {
-        $data = json_decode(xoctRequest::root()->events($identifier)->acl()->get());
-        return ACL::fromResponse($data);
-    }
-
-
-    private function fetchPublications(string $identifier) : array
-    {
-        $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());
-        $publications = [];
-        foreach ($data as $d) {
-            $p = new xoctPublication();
-            $p->loadFromStdClass($d);
-            $publications[] = $p;
-        }
-        return $publications;
-    }
-
-
-    /**
      * @param xoctEvent $event
-     *
+     * @param ilObjUser $owner
      * @throws ReflectionException
      * @throws xoctException
      */
-    public function upload(xoctEvent $event)
+    public function upload(xoctEvent $event, ilObjUser $owner)
     {
         $data = array();
 
         $event->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
-        $event->setOwner(xoctUser::getInstance($this->dic->user()));
+        $event->setOwner(xoctUser::getInstance($owner));
         $event->updateMetadataFromFields(false);
 
         $presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
@@ -177,9 +154,8 @@ class EventRepository
     }
 
 
-
     /**
-     * @param xoctEvent      $event
+     * @param xoctEvent $event
      * @param xoctUploadFile $presentation
      *
      * @throws xoctException
@@ -225,7 +201,7 @@ class EventRepository
      *
      * @return xoctUploadFile
      */
-    private function getACLFile(xoctEvent $event) : xoctUploadFile
+    private function getACLFile(xoctEvent $event): xoctUploadFile
     {
         $plupload = new Plupload();
         $tmp_name = uniqid('tmp');
@@ -245,7 +221,7 @@ class EventRepository
      *
      * @return array
      */
-    private function formatWorkflowParameters(array $workflow_parameters) : array
+    private function formatWorkflowParameters(array $workflow_parameters): array
     {
         $return = [];
         foreach ($workflow_parameters as $workflow_parameter => $value) {
@@ -255,18 +231,19 @@ class EventRepository
     }
 
     /**
-     * @param array  $filter
+     * @param array $filter
      * @param string $for_user
-     * @param array  $roles
-     * @param int    $offset
-     * @param int    $limit
+     * @param array $roles
+     * @param int $offset
+     * @param int $limit
      * @param string $sort
-     * @param bool   $as_object
+     * @param bool $as_object
      *
      * @return xoctEvent[] | array
      * @throws xoctException
      */
-    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false) {
+    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false)
+    {
         /**
          * @var $event xoctEvent
          */
@@ -288,7 +265,7 @@ class EventRepository
             $request->parameter('sort', $sort);
         }
 
-        if (self::$load_md_separate || self::$no_metadata) {
+        if (self::$load_md_separate) {
             $request->parameter('withmetadata', false);
         } else {
             $request->parameter('withmetadata', true);
@@ -302,7 +279,7 @@ class EventRepository
             $request->parameter('withpublications', true);
         }
 
-        if (xoct::isApiVersionGreaterThan('v1.1.0')){
+        if (xoct::isApiVersionGreaterThan('v1.1.0')) {
             $request->parameter('withscheduling', true);
         }
 
@@ -315,9 +292,6 @@ class EventRepository
 
         foreach ($data as $d) {
             $event = $this->buildEventFromStdClass($d, $d->identifier);
-            $md = $event->getMetadata();
-            $acl = $event->getAcl();
-            $pub = $event->publications()->getPublications();
             if (!in_array($event->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_OFFLINE])) {
                 xoctEvent::removeFromCache($event->getIdentifier());
             }
@@ -326,11 +300,12 @@ class EventRepository
 
         return $return;
     }
+
     /**
      * @return string
      * @throws xoctException
      */
-    private function getIngestNodeURL() : string
+    private function getIngestNodeURL(): string
     {
         $nodes = json_decode(xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(), true);
         if (!is_array($nodes)

@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+
 /**
  * Class xoctChangeOwnerGUI
  *
@@ -17,17 +19,22 @@ class xoctChangeOwnerGUI extends xoctGUI {
      * @var xoctOpenCast
      */
     protected $xoctOpenCast;
+    /**
+     * @var EventRepository
+     */
+    private $event_repository;
 
     /**
      * @param xoctOpenCast $xoctOpenCast
      */
-    public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+    public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventRepository $event_repository) {
         if ($xoctOpenCast instanceof xoctOpenCast) {
             $this->xoctOpenCast = $xoctOpenCast;
         } else {
             $this->xoctOpenCast = new xoctOpenCast();
         }
-        $this->xoctEvent = xoctEvent::find($_GET[xoctEventGUI::IDENTIFIER]);
+        $this->event_repository = $event_repository;
+        $this->xoctEvent = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         self::dic()->tabs()->clearTargets();
 
 

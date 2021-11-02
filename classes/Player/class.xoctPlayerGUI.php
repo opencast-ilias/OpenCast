@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
+use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 
@@ -30,14 +31,20 @@ class xoctPlayerGUI extends xoctGUI
      * @var PublicationUsageRepository
      */
     protected $publication_usage_repository;
+    /**
+     * @var EventRepository
+     */
+    private $event_repository;
 
 
     /**
-     * @param xoctOpenCast $xoctOpenCast
+     * @param EventRepository $event_repository
+     * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
      */
-    public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
+    public function __construct(EventRepository $event_repository, xoctOpenCast $xoctOpenCast = NULL) {
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
+        $this->event_repository = $event_repository;
     }
 
     /**
@@ -46,15 +53,15 @@ class xoctPlayerGUI extends xoctGUI
      * @throws ilTemplateException
      */
     public function streamVideo() {
-        $xoctEvent = xoctEvent::find(filter_input(INPUT_GET, self::IDENTIFIER));
-        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$xoctEvent->isLiveEvent()) {
+        $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
+        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
-            header('Location: ' . $xoctEvent->publications()->getPlayerLink());
+            header('Location: ' . $event->publications()->getPlayerLink());
             exit;
         }
 
         try {
-            $data = PlayerDataBuilderFactory::getInstance()->getBuilder($xoctEvent)->buildStreamingData();
+            $data = PlayerDataBuilderFactory::getInstance()->getBuilder($event)->buildStreamingData();
         } catch (xoctException $e) {
             xoctLog::getInstance()->logError($e->getCode(), $e->getMessage());
             xoctLog::getInstance()->logStack($e->getTraceAsString());
@@ -63,21 +70,21 @@ class xoctPlayerGUI extends xoctGUI
         }
 
         $tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", true, true);
-        $tpl->setVariable("TITLE", $xoctEvent->getTitle());
+        $tpl->setVariable("TITLE", $event->getTitle());
         $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory()
             . "/node_modules/paellaplayer/build/player");
         $tpl->setVariable("DATA", json_encode($data));
-        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($xoctEvent)));
+        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
-        if ($xoctEvent->isLiveEvent()) {
+        if ($event->isLiveEvent()) {
             $tpl->setVariable('LIVE_WAITING_TEXT', self::plugin()->translate('live_waiting_text', 'event',
-                [date('H:i', $xoctEvent->getScheduling()->getStart()->getTimestamp())]));
+                [date('H:i', $event->getScheduling()->getStart()->getTimestamp())]));
             $tpl->setVariable('LIVE_INTERRUPTED_TEXT', self::plugin()->translate('live_interrupted_text', 'event'));
             $tpl->setVariable('LIVE_OVER_TEXT', self::plugin()->translate('live_over_text', 'event'));
         }
 
         if ($this->isChatVisible()) {
-            $this->initChat($xoctEvent, $tpl);
+            $this->initChat($event, $tpl);
         } else {
             $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
         }
@@ -114,19 +121,19 @@ class xoctPlayerGUI extends xoctGUI
     }
 
     /**
-     * @param xoctEvent  $xoctEvent
+     * @param xoctEvent  $event
      * @param ilTemplate $tpl
      * @throws DICException
      * @throws arException
      * @throws ilTemplateException
      */
-    protected function initChat(xoctEvent $xoctEvent, ilTemplate $tpl)
+    protected function initChat(xoctEvent $event, ilTemplate $tpl)
     {
-        $ChatroomAR = ChatroomAR::findBy($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
-        if ($xoctEvent->isLiveEvent()) {
+        $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->xoctOpenCast->getObjId());
+        if ($event->isLiveEvent()) {
             $tpl->setVariable("STYLE_SHEET_LOCATION",
                 ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
-            $ChatroomAR = ChatroomAR::findOrCreate($xoctEvent->getIdentifier(), $this->xoctOpenCast->getObjId());
+            $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->xoctOpenCast->getObjId());
             $public_name = self::dic()->user()->hasPublicProfile() ?
                 self::dic()->user()->getFirstname() . " " . self::dic()->user()->getLastname()
                 : self::dic()->user()->getLogin();

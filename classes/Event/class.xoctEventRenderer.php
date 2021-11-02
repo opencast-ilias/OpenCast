@@ -395,7 +395,7 @@ class xoctEventRenderer {
 	 * @return String
 	 */
 	public function getPresenterHTML() {
-		return $this->xoctEvent->getPresenter();
+		return $this->xoctEvent->getPresenter() ?: '&nbsp';
 	}
 
 	/**
