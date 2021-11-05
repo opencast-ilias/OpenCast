@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.7.3]
+- Change: use paella player tag 6.5.5 instead of develop branch
+
 ## [3.7.2]
 - Fix/Improvement: prevent multiple loading of metadata, improving page component performance
 
