@@ -158,7 +158,7 @@ class xoctEventTileGUI {
 		}
         $events = $this->sortData($events);
         $events = array_map(function(array $element) {
-            return $element['object'] instanceof xoctEvent ? $element['object'] : xoctEvent::find($element['identifier']);
+            return $element['object'] instanceof xoctEvent ? $element['object'] : $this->event_repository->find($element['identifier']);
         }, $events);
 
         $this->events = array_values($events);

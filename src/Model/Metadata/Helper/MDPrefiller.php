@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Metadata\Builder;
+namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 

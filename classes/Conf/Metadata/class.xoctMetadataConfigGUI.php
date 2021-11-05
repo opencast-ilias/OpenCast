@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
 
@@ -40,17 +41,24 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      * @var Renderer
      */
     protected $renderer;
+    /**
+     * @var MDCatalogueFactory
+     */
+    protected $md_catalogue_factory;
 
     /**
      * @param MDFieldConfigRepository $repository
      * @param MDConfigTableBuilder $table_builder
      */
-    public function __construct(MDFieldConfigRepository $repository, MDConfigTableBuilder $table_builder)
+    public function __construct(MDFieldConfigRepository $repository,
+                                MDConfigTableBuilder $table_builder,
+                                MDCatalogueFactory $md_catalogue_factory)
     {
         $this->repository = $repository;
         $this->table_builder = $table_builder;
         $this->ui_factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
+        $this->md_catalogue_factory = $md_catalogue_factory;
     }
 
 

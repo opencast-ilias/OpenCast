@@ -1,6 +1,10 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\APIObject;
+namespace srag\Plugins\Opencast\Model\API\Metadata;
+
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
+use stdClass;
+use xoctException;
 
 /**
  * Class xoctMetadata
@@ -8,21 +12,8 @@ use srag\Plugins\Opencast\Model\API\APIObject;
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class Metadata extends APIObject
+class Metadata
 {
-
-    /**
-     * @param $flavor
-     *
-     * @return Metadata
-     */
-    public static function getSet(string $flavor) : Metadata
-    {
-        $obj = new self();
-        $obj->setFlavor($flavor);
-
-        return $obj;
-    }
 
 
     const FLAVOR_DUBLINCORE_SERIES = "dublincore/series";
@@ -37,33 +28,49 @@ class Metadata extends APIObject
     const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
 
     /**
-     * @var string
+     * @var MDCatalogue
      */
-    protected $label = '';
+    protected $md_catalogue;
     /**
      * @var string
      */
-    protected $flavor = '';
+    protected $title;
+    /**
+     * @var string
+     */
+    protected $flavor;
     /**
      * @var MetadataField[]
      */
-    protected $fields = array();
+    protected $fields = [];
+
+    /**
+     * @param MDCatalogue $md_catalogue
+     * @param string $title
+     * @param string $flavor
+     */
+    public function __construct(MDCatalogue $md_catalogue, string $title, string $flavor)
+    {
+        $this->md_catalogue = $md_catalogue;
+        $this->title = $title;
+        $this->flavor = $flavor;
+    }
 
 
     /**
-     * @param $field_name
+     * @param string $field_name
      *
      * @return MetadataField
+     * @throws xoctException
      */
-    public function getField(string $field_name) : MetadataField
+    public function getField(string $field_name): MetadataField
     {
         foreach ($this->getFields() as $field) {
             if ($field->getId() == $field_name) {
                 return $field;
             }
         }
-        $field = new MetadataField();
-        $field->setId($field_name);
+        $field = new MetadataField($field_name, $this->md_catalogue->getFieldById($field_name)->getType());
         $this->addField($field);
 
         return $field;
@@ -71,31 +78,11 @@ class Metadata extends APIObject
 
 
     /**
-     * @param MetadataField $xoctMetadataField
-     *
-     * @return bool
-     */
-    public function addOrReplaceField(MetadataField $xoctMetadataField) : bool
-    {
-        foreach ($this->getFields() as $k => $f) {
-            if ($f->getId() == $xoctMetadataField->getId()) {
-                $this->fields[$k] = $xoctMetadataField;
-            }
-
-            return true;
-        }
-        $this->addField($xoctMetadataField);
-
-        return false;
-    }
-
-
-    /**
      * @param $field_name
      *
      * @return bool
      */
-    public function removeField(string $field_name) : bool
+    public function removeField(string $field_name): bool
     {
         foreach ($this->getFields() as $i => $field) {
             if ($field->getId() == $field_name) {
@@ -110,78 +97,12 @@ class Metadata extends APIObject
     }
 
 
-    public function read()
-    {
-    }
-
-
-    public function update()
-    {
-    }
-
-
-    public function create()
-    {
-    }
-
-
-    public function delete()
-    {
-    }
-
-
-    protected function afterObjectLoad()
-    {
-        //		$arr = $this->getFields();
-        //		foreach ($arr as $a) {
-        //
-        //		}
-    }
-
     /**
-     * @param array $data
-     * @return static
-     * @throws xoctException
+     * @param MetadataField $metadataField
      */
-    public static function fromResponse(array $data) : self
+    public function addField(MetadataField $metadataField)
     {
-        foreach ($data as $d) {
-            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
-                $metadata = new Metadata();
-                $metadata->loadFromStdClass($d);
-                break;
-            }
-        }
-        if (!isset($metadata)) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                'Metadata for event could not be loaded');
-        }
-        return $metadata;
-    }
-
-    /**
-     * @param array $array
-     */
-    public function loadFromArray(array $array)
-    {
-        parent::loadFromArray($array);
-        $fields = array();
-        foreach ($this->getFields() as $f) {
-            $field = new MetadataField();
-            $field->loadFromStdClass($f);
-            $fields[] = $field;
-        }
-        sort($fields);
-        $this->setFields($fields);
-    }
-
-
-    /**
-     * @param MetadataField $xoctMetadataField
-     */
-    public function addField(MetadataField $xoctMetadataField)
-    {
-        $this->fields[] = $xoctMetadataField;
+        $this->fields[] = $metadataField;
         sort($this->fields);
     }
 
@@ -207,18 +128,18 @@ class Metadata extends APIObject
     /**
      * @return string
      */
-    public function getLabel()
+    public function getTitle()
     {
-        return $this->label;
+        return $this->title;
     }
 
 
     /**
-     * @param string $label
+     * @param string $title
      */
-    public function setLabel($label)
+    public function setTitle($title)
     {
-        $this->label = $label;
+        $this->title = $title;
     }
 
 
@@ -239,185 +160,4 @@ class Metadata extends APIObject
         $this->fields = $fields;
     }
 }
-
-/**
- * @author Fabian Schmid <fs@studer-raimann.ch>
- */
-class MetadataField extends APIObject
-{
-
-    /**
-     * @var string
-     */
-    protected $id = '';
-    /**
-     * @var string
-     */
-    protected $read_only = false;
-    /**
-     * @var string
-     */
-    protected $value = '';
-    /**
-     * @var string
-     */
-    protected $label = '';
-    /**
-     * @var string
-     */
-    protected $type = '';
-    /**
-     * @var bool
-     */
-    protected $required = false;
-    /**
-     * @var array
-     */
-    protected $collection = array();
-
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-
-    /**
-     * @param string $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getReadOnly()
-    {
-        return $this->read_only;
-    }
-
-
-    /**
-     * @param string $read_only
-     */
-    public function setReadOnly($read_only)
-    {
-        $this->read_only = $read_only;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-
-    /**
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-
-    /**
-     * @return boolean
-     */
-    public function isRequired()
-    {
-        return $this->required;
-    }
-
-
-    /**
-     * @param boolean $required
-     */
-    public function setRequired($required)
-    {
-        $this->required = $required;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function getCollection()
-    {
-        return $this->collection;
-    }
-
-
-    /**
-     * @param array $collection
-     */
-    public function setCollection($collection)
-    {
-        $this->collection = $collection;
-    }
-
-
-    /**
-     * @return stdClass
-     */
-    public function __toStdClass() : stdClass
-    {
-        $stdClass = new stdClass();
-        $stdClass->id = $this->getId();
-
-        $value = $this->getValue();
-        if (is_string($value)) {
-            $value = $this->fixPercentCharacter($value);
-        }
-        $stdClass->value = $value;
-
-        return $stdClass;
-    }
-}
-
 ?>

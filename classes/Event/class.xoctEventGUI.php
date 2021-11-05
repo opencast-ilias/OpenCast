@@ -384,7 +384,8 @@ class xoctEventGUI extends xoctGUI
     public function getTableGUI()
     {
         $modals_html = $this->getModalsHTML();
-        $xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast);
+        $xoctEventTableGUI = new xoctEventTableGUI($this,
+            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository);
         $html = $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
@@ -446,7 +447,8 @@ class xoctEventGUI extends xoctGUI
      */
     protected function applyFilter()
     {
-        $xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, false);
+        $xoctEventTableGUI = new xoctEventTableGUI($this,
+            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository, false);
         $xoctEventTableGUI->resetOffset(true);
         $xoctEventTableGUI->writeFilterToSession();
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -459,7 +461,8 @@ class xoctEventGUI extends xoctGUI
     protected function resetFilter()
     {
         //		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
-        $xoctEventTableGUI = new xoctEventTableGUI($this, self::CMD_STANDARD, $this->xoctOpenCast, false);
+        $xoctEventTableGUI = new xoctEventTableGUI($this,
+            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository, false);
         $xoctEventTableGUI->resetOffset();
         $xoctEventTableGUI->resetFilter();
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -925,7 +928,7 @@ class xoctEventGUI extends xoctGUI
                 }
             }
         } else {
-            $event->delete();
+            $this->event_repository->delete($event->getIdentifier());
             ilUtil::sendSuccess($this->txt('msg_deleted'), true);
         }
         $this->cancel();

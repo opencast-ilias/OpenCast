@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Metadata\Builder;
+namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory;

@@ -1,6 +1,9 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
+use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 
 /**
  * @ilCtrl_IsCalledBy xoctMetadataConfigRouterGUI : xoctMainGUI
@@ -21,13 +24,19 @@ class xoctMetadataConfigRouterGUI
         switch ($nextClass) {
             case strtolower(xoctSeriesMetadataConfigGUI::class):
                 $this->setSubTabs(self::SUBTAB_SERIES);
-                $gui = new xoctSeriesMetadataConfigGUI();
+                $gui = new xoctSeriesMetadataConfigGUI(
+                    new MDFieldConfigSeriesRepository(),
+                    new MDCatalogueFactory()
+                );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;
             case strtolower(xoctEventMetadataConfigGUI::class):
             default:
                 $this->setSubTabs(self::SUBTAB_EVENTS);
-                $gui = new xoctEventMetadataConfigGUI();
+                $gui = new xoctEventMetadataConfigGUI(
+                    new MDFieldConfigEventRepository(),
+                    new MDCatalogueFactory()
+                );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;
         }

@@ -2,16 +2,17 @@
 
 namespace srag\Plugins\Opencast\Model\API\Event;
 
-use ILIAS\DI\Container;
 use ilObjUser;
-use Metadata;
 use Opis\Closure\SerializableClosure;
 use ReflectionException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\ACL\ACLRepository;
+use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\API\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\API\Publication\PublicationRepository;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
@@ -21,6 +22,7 @@ use xoctConf;
 use xoctEvent;
 use xoctEventAdditions;
 use xoctException;
+use xoctInvitation;
 use xoctRequest;
 use xoctUploadFile;
 use xoctUser;
@@ -45,6 +47,10 @@ class EventRepository
      */
     protected $cache;
     /**
+     * @var MDParser
+     */
+    protected $md_parser;
+    /**
      * @var MetadataRepository
      */
     protected $md_repository;
@@ -59,12 +65,13 @@ class EventRepository
 
 
     public function __construct(Cache                  $cache,
-                                ?MetadataRepository    $md_repository = null,
+                                MetadataDIC            $metadataDIC,
                                 ?ACLRepository         $acl_repository = null,
                                 ?PublicationRepository $publication_repository = null)
     {
         $this->cache = $cache;
-        $this->md_repository = $md_repository ?? new MetadataRepository($cache);
+        $this->md_parser = $metadataDIC->metadataParser();
+        $this->md_repository = $metadataDIC->metadataRepository();
         $this->acl_repository = $acl_repository ?? new ACLRepository($cache);
         $this->publication_repository = $publication_repository ?? new PublicationRepository($cache);
     }
@@ -83,6 +90,15 @@ class EventRepository
         return $event;
     }
 
+    public function delete(string $identifier) : bool
+    {
+        xoctRequest::root()->events($identifier)->delete();
+        foreach (xoctInvitation::where(array('event_identifier' => $identifier))->get() as $invitation) {
+            $invitation->delete();
+        }
+        return true;
+    }
+
     /**
      * @param stdClass $data
      * @param string $identifier
@@ -98,7 +114,7 @@ class EventRepository
         $event->setXoctEventAdditions(xoctEventAdditions::findOrGetInstance($identifier));
 
         if (isset($data->metadata)) {
-            $event->setMetadata(Metadata::fromResponse($data->metadata));
+            $event->setMetadata($this->md_parser->parseAPIResponseEvent($data->metadata));
         } else {
             // lazy loading
             $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
@@ -137,7 +153,7 @@ class EventRepository
     {
         $data = array();
 
-        $event->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
+        $event->setMetadata(new Metadata());
         $event->setOwner(xoctUser::getInstance($owner));
         $event->updateMetadataFromFields(false);
 
@@ -265,9 +281,7 @@ class EventRepository
             $request->parameter('sort', $sort);
         }
 
-        if (self::$load_md_separate) {
-            $request->parameter('withmetadata', false);
-        } else {
+        if (!self::$load_md_separate) {
             $request->parameter('withmetadata', true);
         }
 

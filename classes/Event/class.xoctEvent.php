@@ -4,7 +4,7 @@ use Opis\Closure\SerializableClosure;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\APIObject;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
@@ -97,23 +97,6 @@ class xoctEvent extends APIObject {
         $this->status = $status;
     }
 
-
-    /**
-	 * @param $identifier
-	 *
-	 * @return xoctEvent
-	 */
-	public static function find(string $identifier) {
-		/**
-		 * @var $xoctEvent xoctEvent
-		 */
-		$xoctEvent = parent::find($identifier);
-		$xoctEvent->afterObjectLoad();
-
-		return $xoctEvent;
-	}
-
-
 	/**
 	 * @return array
 	 */
@@ -137,49 +120,12 @@ class xoctEvent extends APIObject {
 	/**
 	 *
 	 */
-	public function read() {
-		if (!$this->isLoaded()) {
-			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->get());
-			$this->loadFromStdClass($data);
-		}
-		$this->afterObjectLoad();
-	}
-
-
-	/**
-	 *
-	 */
 	public function afterObjectLoad() {
-		if (!$this->getAcl()) {
-			$this->loadAcl();
-		}
-
-		$this->initProcessingState();
 
 		if (($this->isScheduled() || $this->isLiveEvent()) && (!$this->scheduling || $this->scheduling instanceof stdClass)) {
 			$this->loadScheduling();
 		}
 
-		// if ($this->isScheduled() && !$this->workflows) {
-		//     $this->loadWorkflows();
-        // }
-
-
-        if (!$this->metadata) {
-            $this->loadMetadata();
-        }
-
-        if (!$this->getSeriesIdentifier()) {
-			$this->setSeriesIdentifier($this->getMetadata()->getField('isPartOf')->getValue());
-		}
-
-		if ($this->getOwner()) {
-			$this->setOwnerUsername($this->getOwner()->getNamePresentation());
-		} elseif ($owner = $this->getMetadata()->getField('rightsHolder')->getValue()) {
-			$this->setOwnerUsername($owner);
-		}
-
-		$this->setSource($this->getMetadata()->getField('source')->getValue());
 	}
 
 
@@ -226,24 +172,6 @@ class xoctEvent extends APIObject {
         $this->metadata_reference = $metadata_reference;
     }
 
-
-    /**
-	 * @param $key
-	 *
-	 * @return string
-	 */
-	protected function mapKey($key) {
-		switch ($key) {
-			case 'is_part_of':
-				return 'series_identifier';
-			case 'rightsHolder':
-			case 'rights':
-				return 'owner_username';
-			default:
-				return $key;
-		}
-	}
-
     /**
      * @param $fieldname
      * @param $value
@@ -256,11 +184,6 @@ class xoctEvent extends APIObject {
 			case 'created':
 			case 'start_time':
 				return $this->getDefaultDateTimeObject($value);
-			case 'metadata':
-				$metadata = new Metadata();
-				$metadata->loadFromArray($value);
-
-				return $metadata;
 			case 'acl':
 				$acl_entries = [];
 				foreach ($value as $acl_array) {
@@ -294,7 +217,6 @@ class xoctEvent extends APIObject {
             case 'start_time':
                 /** @var $value DateTime */
                 return $value instanceof DateTime ? $value->getTimestamp() : 0;
-                break;
             case 'metadata':
                 /** @var $value Metadata */
                 return $value->__toArray();
@@ -352,7 +274,7 @@ class xoctEvent extends APIObject {
 
         $data = array();
 
-        $this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
+        $this->setMetadata(new Metadata());
         $this->updateMetadataFromFields(true);
         $this->updateSchedulingFromFields();
 
@@ -520,18 +442,6 @@ class xoctEvent extends APIObject {
      * @return bool
      * @throws xoctException
      */
-	public function delete() {
-		xoctRequest::root()->events($this->getIdentifier())->delete();
-		foreach (xoctInvitation::where(array('event_identifier' => $this->getIdentifier()))->get() as $invitation) {
-			$invitation->delete();
-		}
-		return true;
-	}
-
-    /**
-     * @return bool
-     * @throws xoctException
-     */
     public function unpublish() {
         $workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH);
         xoctRequest::root()->workflows()->post(array(
@@ -540,42 +450,6 @@ class xoctEvent extends APIObject {
         ));
         self::removeFromCache($this->getIdentifier());
         return true;
-	}
-
-	/**
-	 *
-	 */
-	protected function loadAcl() {
-		$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->acl()->get());
-		$acls = array();
-		foreach ($data as $d) {
-			$p = new ACLEntry();
-			$p->loadFromStdClass($d);
-			$acls[] = $p;
-		}
-		$this->setAcl($acls);
-	}
-
-
-	/**
-	 *
-	 */
-	public function loadMetadata() {
-		if ($this->getIdentifier()) {
-			$data = json_decode(xoctRequest::root()->events($this->getIdentifier())->metadata()->get());
-			if (is_array($data)) {
-				foreach ($data as $d) {
-					if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
-						$xoctMetadata = new Metadata();
-						$xoctMetadata->loadFromStdClass($d);
-						$this->setMetadata($xoctMetadata);
-					}
-				}
-			}
-		}
-		if (!$this->metadata) {
-			$this->setMetadata(Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_EPISODES));
-		}
 	}
 
 
@@ -683,45 +557,9 @@ class xoctEvent extends APIObject {
 	}
 
 	/**
-	 * @var string
-	 */
-	protected $identifier = '';
-	/**
-	 * @var int
-	 */
-	protected $archive_version;
-	/**
-	 * @var DateTime
-	 */
-	protected $created;
-	/**
-	 * @var string
-	 */
-	protected $creator;
-	/**
-	 * @var array
-	 */
-	protected $contributors;
-	/**
-	 * @var string
-	 */
-	protected $description;
-	/**
-	 * @var int
-	 */
-	protected $duration;
-	/**
 	 * @var bool
 	 */
 	protected $has_previews;
-	/**
-	 * @var string
-	 */
-	protected $location;
-	/**
-	 * @var string
-	 */
-	protected $presenter;
 	/**
 	 * @var array
 	 */
@@ -731,29 +569,9 @@ class xoctEvent extends APIObject {
 	 */
 	protected $processing_state;
 	/**
-	 * @var DateTime
-	 */
-	protected $start_time;
-	/**
-	 * @var DateTime
-	 */
-	protected $start;
-	/**
-	 * @var DateTime
-	 */
-	protected $end;
-	/**
-	 * @var array
-	 */
-	protected $subjects;
-	/**
-	 * @var string
-	 */
-	protected $title;
-	/**
 	 * @var Metadata
 	 */
-	protected $metadata = null;
+	protected $metadata;
 	/**
 	 * @var ACL
 	 */
@@ -761,49 +579,48 @@ class xoctEvent extends APIObject {
 	/**
 	 * @var Scheduling
 	 */
-	protected $scheduling = null;
+	protected $scheduling;
     /**
      * @var WorkflowInstanceCollection
      */
 	protected $workflows;
-	/**
-	 * @var string
-	 */
-	protected $series_identifier = '';
     /**
      * @var string
      */
 	protected $series;
-	/**
-	 * @var string
-	 */
-	protected $owner_username = '';
-	/**
-	 * @var string
-	 */
-	protected $source = '';
 	/**
 	 * @var array
 	 */
 	protected $workflow_parameters = [];
 
 
-	/**
-	 * @return DateTime
-	 */
 	public function getStart() {
-		return ($this->start instanceof DateTime) ? $this->start : $this->getDefaultDateTimeObject($this->start);
+		return $this->getMetadata()->getField('startDate')->getValue();
 	}
 
 
-	/**
+    public function setStart($start) {
+        $this->getMetadata()->getField('startDate')->setValue($start);
+    }
+
+
+    /**
 	 * this should only be called on scheduled events
 	 *
 	 * @return DateTime
 	 */
 	public function getEnd() {
-		return $this->end;
+        return $this->getMetadata()->getField('end')->getValue();
 	}
+
+
+    /**
+     * @param $end
+     * @throws ilTimeZoneException
+     */
+    public function setEnd($end) {
+        $this->getMetadata()->getField('end')->setValue($end);
+    }
 
 
     /**
@@ -823,36 +640,6 @@ class xoctEvent extends APIObject {
         $this->series = $series;
     }
 
-
-    /**
-     * @param $end
-     * @throws ilTimeZoneException
-     */
-	public function setEnd($end) {
-        $date_time_zone = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
-        if ($end instanceof DateTime) {
-            $end->setTimezone($date_time_zone);
-            $this->end = $end;
-        } else {
-            $this->end = new DateTime($end, $date_time_zone);;
-        }
-	}
-
-
-    /**
-     * @param $start
-     * @throws ilTimeZoneException
-     */
-	public function setStart($start) {
-	    $date_time_zone = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
-        if ($start instanceof DateTime) {
-            $start->setTimezone($date_time_zone);
-            $this->start = $start;
-        } else {
-            $this->start = new DateTime($start, $date_time_zone);
-        }
-	}
-
 	/**
 	 * @return string
 	 */
@@ -870,50 +657,38 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @return int
-	 */
-	public function getArchiveVersion() {
-		return $this->archive_version;
-	}
-
-
-	/**
-	 * @param int $archive_version
-	 */
-	public function setArchiveVersion($archive_version) {
-		$this->archive_version = $archive_version;
-	}
-
-
-	/**
 	 * @return DateTime
 	 */
-	public function getCreated() {
-		return ($this->created instanceof DateTime) ? $this->created : $this->getDefaultDateTimeObject($this->created);
+	public function getCreated()
+    {
+		return $this->getMetadata()->getField('created')->getValue();
 	}
 
 
 	/**
 	 * @param DateTime $created
 	 */
-	public function setCreated($created) {
-		$this->created = $created;
+	public function setCreated(DateTime $created)
+    {
+		$this->getMetadata()->getField('created')->setValue($created);
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getCreator() {
-		return $this->creator;
+	public function getCreator()
+    {
+		return $this->getMetadata()->getField('creator')->getValue();
 	}
 
 
 	/**
 	 * @param string $creator
 	 */
-	public function setCreator($creator) {
-		$this->creator = $creator;
+	public function setCreator(string $creator)
+    {
+		$this->getMetadata()->getField('creator')->setValue($creator);
 	}
 
 
@@ -921,15 +696,15 @@ class xoctEvent extends APIObject {
 	 * @return array
 	 */
 	public function getContributors() {
-		return $this->contributors;
+        return $this->getMetadata()->getField('contributors')->getValue();
 	}
 
 
 	/**
 	 * @param array $contributors
 	 */
-	public function setContributors($contributors) {
-		$this->contributors = $contributors;
+	public function setContributors(array $contributors) {
+        $this->getMetadata()->getField('contributors')->setValue($contributors);
 	}
 
 
@@ -950,14 +725,24 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @return int
+	 * @return string
 	 */
-	public function getDuration() {
-		return $this->duration;
+	public function getDuration()
+    {
+		return $this->getMetadata()->getField('duration')->getValue();
 	}
 
 
-	/**
+    /**
+     * @param string $duration
+     */
+    public function setDuration(string $duration)
+    {
+        $this->getMetadata()->getField('description')->setValue($duration);
+    }
+
+
+    /**
 	 *
 	 */
 	public function getDurationArrayForInput() {
@@ -973,13 +758,6 @@ class xoctEvent extends APIObject {
 			'mm' => $minutes % 60,
 			'ss' => $seconds % 60
 		);
-	}
-
-	/**
-	 * @param int $duration
-	 */
-	public function setDuration($duration) {
-		$this->duration = $duration;
 	}
 
 
@@ -1019,7 +797,7 @@ class xoctEvent extends APIObject {
 	 * @return String
 	 */
 	public function getPresenter() {
-		return $this->getMetadata()->getField('presenter')->getValue();
+		return $this->getMetadata()->getField('creator')->getValue();
 	}
 
 
@@ -1027,7 +805,7 @@ class xoctEvent extends APIObject {
 	 * @param String $presenter
 	 */
 	public function setPresenter($presenter) {
-		$this->getMetadata()->getField('presenter')->setValue($presenter);
+		$this->getMetadata()->getField('creator')->setValue([$presenter]);
 	}
 
 	/**
@@ -1179,15 +957,15 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getSeriesIdentifier() {
-		return $this->series_identifier;
+		return $this->getMetadata()->getField('isPartOf')->getValue();
 	}
 
 
 	/**
 	 * @param string $series_identifier
 	 */
-	public function setSeriesIdentifier($series_identifier) {
-		$this->series_identifier = $series_identifier;
+	public function setSeriesIdentifier(string $series_identifier) {
+		$this->getMetadata()->getField('isPartOf')->setValue($series_identifier);
 	}
 
 
@@ -1195,37 +973,29 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getOwnerUsername() {
-		if ($this->owner_username) {
-			return $this->owner_username;
-		} elseif ($this->getOwner()) {
+		if ($this->getOwner()) {
 			return $this->getOwner()->getNamePresentation();
 		} else {
-			return '&nbsp';
+			return $this->getMetadata()->getField('rightsHolder')->getValue() ?: '&nbsp';
 		}
-	}
-
-
-	/**
-	 * @param string $owner_username
-	 */
-	public function setOwnerUsername($owner_username) {
-		$this->owner_username = $owner_username;
 	}
 
 
 	/**
 	 * @return string
 	 */
-	public function getSource() {
-		return $this->source;
+	public function getSource()
+    {
+		return $this->getMetadata()->getField('source')->getValue();
 	}
 
 
 	/**
 	 * @param string $source
 	 */
-	public function setSource($source) {
-		$this->source = $source;
+	public function setSource(string $source)
+    {
+		$this->getMetadata()->getField('source')->setValue($source);
 	}
 
 

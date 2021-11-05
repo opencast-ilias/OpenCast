@@ -15,9 +15,18 @@ class xoctEventAPI {
 	 * @var self
 	 */
 	protected static $instance;
+    /**
+     * @var EventRepository
+     */
+    private $event_repository;
+
+    public function __construct()
+    {
+        $this->event_repository = new EventRepository(CacheFactory::getInstance());
+    }
 
 
-	/**
+    /**
 	 * @return xoctEventAPI
 	 */
 	public static function getInstance() {
@@ -26,6 +35,7 @@ class xoctEventAPI {
 		}
 		return self::$instance;
 	}
+
 
 
     /**
@@ -124,8 +134,7 @@ class xoctEventAPI {
      * @throws xoctException
      */
 	public function delete($event_id) {
-		$event = new xoctEvent($event_id);
-		$event->delete();
+		$this->event_repository->delete($event_id);
 		return true;
 	}
 

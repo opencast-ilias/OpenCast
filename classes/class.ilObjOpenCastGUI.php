@@ -7,6 +7,7 @@ use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
@@ -102,7 +103,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance()));
+                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -110,7 +111,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance()));
+                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -125,7 +126,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance()));
+                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
                     self::dic()->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
                     break;
@@ -151,6 +152,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 			}
 		} catch (xoctException $e) {
 			ilUtil::sendFailure($e->getMessage());
+            self::dic()->logger()->root()->error($e->getMessage());
+            self::dic()->logger()->root()->error($e->getTraceAsString());
             if (!$this->creation_mode) {
                 $this->showMainTemplate();
             }

@@ -11,15 +11,14 @@ use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
 class xoctEventMetadataConfigGUI extends xoctMetadataConfigGUI
 {
 
-    public function __construct()
+    public function __construct(MDFieldConfigEventRepository $repository, MDCatalogueFactory $md_catalogue_factory)
     {
-        $repository = new MDFieldConfigEventRepository();
-        parent::__construct($repository, new MDConfigTableBuilder($this, $repository));
+        parent::__construct($repository, new MDConfigTableBuilder($this, $repository), $md_catalogue_factory);
     }
 
     protected function getMetadataCatalogue() : MDCatalogue
     {
-        return MDCatalogueFactory::event();
+        return $this->md_catalogue_factory->event();
     }
 
     protected function getTableTitle(): string

@@ -6,7 +6,7 @@ use xoctEvent;
 use xoctException;
 use xoctAttachment;
 use xoctConf;
-use Metadata;
+use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 use DateTime;
 use DateTimeZone;
 use xoctSecureLink;

@@ -1,7 +1,8 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\API\APIObject;
+use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 
 /**
  * Class xoctSeries
@@ -44,9 +45,7 @@ class xoctSeries extends APIObject {
             $data = json_decode(xoctRequest::root()->series($this->getIdentifier())->acl()->get());
             $acls = array();
             foreach ($data as $d) {
-                $p = new ACLEntry();
-                $p->loadFromStdClass($d);
-                $acls[] = $p;
+                $acls[] = ACLEntry::fromArray((array) $d);
             }
             $this->setAccessPolicies($acls);
         }
@@ -61,8 +60,7 @@ class xoctSeries extends APIObject {
 			$data = json_decode(xoctRequest::root()->series($this->getIdentifier())->metadata()->get());
 			foreach ($data as $d) {
 				if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_SERIES) {
-					$xoctMetadata = new Metadata();
-					$xoctMetadata->loadFromStdClass($d);
+                    Metadata::load($d);
 					$this->setMetadata($xoctMetadata);
 				}
 			}
@@ -210,8 +208,8 @@ class xoctSeries extends APIObject {
      * @throws xoctException
      */
     public function create() {
-		$metadata = Metadata::getSet(Metadata::FLAVOR_DUBLINCORE_SERIES);
-		$metadata->setLabel('Opencast Series DublinCore');
+		$metadata = new Metadata();
+		$metadata->setTitle('Opencast Series DublinCore');
 		$this->setMetadata($metadata);
 		$this->updateMetadataFromFields();
 		$this->getMetadata()->removeField('identifier'); // the identifier metadata lead to double creation of series on cast

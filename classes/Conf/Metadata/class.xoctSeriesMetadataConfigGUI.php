@@ -10,15 +10,14 @@ use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
  */
 class xoctSeriesMetadataConfigGUI extends xoctMetadataConfigGUI
 {
-    public function __construct()
+    public function __construct(MDFieldConfigSeriesRepository $repository, MDCatalogueFactory $md_catalogue_factory)
     {
-        $repository = new MDFieldConfigSeriesRepository();
-        parent::__construct($repository, new MDConfigTableBuilder($this, $repository));
+        parent::__construct($repository, new MDConfigTableBuilder($this, $repository), $md_catalogue_factory);
     }
 
     protected function getMetadataCatalogue(): MDCatalogue
     {
-        return MDCatalogueFactory::series();
+        return $this->md_catalogue_factory->series();
     }
 
     protected function getTableTitle(): string

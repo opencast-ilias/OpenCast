@@ -4,47 +4,47 @@ namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
 class MDCatalogueFactory
 {
-    public static function event(): MDCatalogue
+    public function event(): MDCatalogue
     {
         static $catalogue;
         if (!$catalogue) {
             $catalogue = new MDCatalogue([
-                new MDFieldDefinition('title', MDDataType::text(), false, true),
-                new MDFieldDefinition('subjects', MDDataType::text_array(), false, false),
-                new MDFieldDefinition('description', MDDataType::text_long(), false, false),
-                new MDFieldDefinition('language', MDDataType::text(), false, false),
-                new MDFieldDefinition('rightsHolder', MDDataType::text(), false, false),
-                new MDFieldDefinition('license', MDDataType::text(), false, false),
-                new MDFieldDefinition('isPartOf', MDDataType::text(), true, false),
-                new MDFieldDefinition('creator', MDDataType::text_array(), true, false),
-                new MDFieldDefinition('startDate', MDDataType::date(), false, false),
-                new MDFieldDefinition('duration', MDDataType::text(), false, false),
-                new MDFieldDefinition('location', MDDataType::text(), false, false),
-                new MDFieldDefinition('source', MDDataType::text(), false, false),
-                new MDFieldDefinition('created', MDDataType::date(), true, false),
-                new MDFieldDefinition('publisher', MDDataType::text(), true, false),
-                new MDFieldDefinition('identifier', MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_TITLE, MDDataType::text(), false, true),
+                new MDFieldDefinition(MDFieldDefinition::F_SUBJECTS, MDDataType::text_array(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_DESCRIPTION, MDDataType::text_long(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_LANGUAGE, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_RIGHTS_HOLDER, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_LICENSE, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_IS_PART_OF, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATOR, MDDataType::text_array(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_START_DATE, MDDataType::date(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_DURATION, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_LOCATION, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_SOURCE, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATED, MDDataType::date(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
             ]);
         }
         return $catalogue;
     }
 
-    public static function series(): MDCatalogue
+    public function series(): MDCatalogue
     {
         static $catalogue;
         if (!$catalogue) {
             return new MDCatalogue([
-                new MDFieldDefinition('title', MDDataType::text(), false, true),
-                new MDFieldDefinition('subjects', MDDataType::text_array(), false, false),
-                new MDFieldDefinition('description', MDDataType::text_long(), false, false),
-                new MDFieldDefinition('language', MDDataType::text(), false, false),
-                new MDFieldDefinition('rightsHolder', MDDataType::text(), false, false),
-                new MDFieldDefinition('license', MDDataType::text(), false, false),
-                new MDFieldDefinition('created_by', MDDataType::text(), true, false),
-                new MDFieldDefinition('creator', MDDataType::text_array(), true, false),
-                new MDFieldDefinition('contributor', MDDataType::text_array(), false, false),
-                new MDFieldDefinition('publisher', MDDataType::text(), true, false),
-                new MDFieldDefinition('identifier', MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_TITLE, MDDataType::text(), false, true),
+                new MDFieldDefinition(MDFieldDefinition::F_SUBJECTS, MDDataType::text_array(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_DESCRIPTION, MDDataType::text_long(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_LANGUAGE, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_RIGHTS_HOLDER, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_LICENSE, MDDataType::text(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATED_BY, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATOR, MDDataType::text_array(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CONTRIBUTOR, MDDataType::text_array(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
             ]);
         }
         return $catalogue;

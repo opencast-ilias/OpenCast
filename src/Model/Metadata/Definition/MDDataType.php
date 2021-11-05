@@ -2,6 +2,9 @@
 
 namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
+use DateTime;
+use xoctException;
+
 class MDDataType
 {
     const TYPE_TEXT = 'text';
@@ -9,6 +12,13 @@ class MDDataType
     const TYPE_DATE = 'date';
     const TYPE_TEXT_ARRAY = 'text_array';
     const TYPE_TIME = 'time';
+    private static $types = [
+        self::TYPE_TEXT,
+        self::TYPE_TEXT_LONG,
+        self::TYPE_TEXT_ARRAY,
+        self::TYPE_DATE,
+        self::TYPE_TIME
+    ];
 
     /**
      * @var string
@@ -17,9 +27,14 @@ class MDDataType
 
     /**
      * @param string $title
+     * @throws xoctException
      */
-    private function __construct(string $title)
+    public function __construct(string $title)
     {
+        if (!in_array($title, self::$types)) {
+            throw new xoctException(xoctException::INTERNAL_ERROR,
+                "{$title} is not a valid MDDataType");
+        }
         $this->title = $title;
     }
 
@@ -54,6 +69,26 @@ class MDDataType
     public function getTitle(): string
     {
         return $this->title;
+    }
+
+    /**
+     * @throws xoctException
+     */
+    public function isValidValue($value) : bool
+    {
+        switch ($this->getTitle()) {
+            case self::TYPE_TEXT:
+            case self::TYPE_TEXT_LONG:
+                return is_string($value);
+            case self::TYPE_TIME:
+            case self::TYPE_DATE:
+                return ($value instanceof DateTime);
+            case self::TYPE_TEXT_ARRAY:
+                return is_array($value);
+            default:
+                throw new xoctException(xoctException::INTERNAL_ERROR,
+                    "invalid MDDataType: " . get_class($value));
+        }
     }
 
 }
