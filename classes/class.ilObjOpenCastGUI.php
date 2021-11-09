@@ -103,7 +103,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
+                        new EventRepository(CacheFactory::getInstance(),
+                            new MetadataDIC(CacheFactory::getInstance(),
+                            self::dic()->dic())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -111,7 +113,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
+                        new EventRepository(CacheFactory::getInstance(),
+                            new MetadataDIC(CacheFactory::getInstance(),
+                            self::dic()->dic())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -125,8 +129,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 case 'xocteventgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
+                    $metadataDIC = new MetadataDIC(CacheFactory::getInstance(), self::dic()->dic());
                     $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(), new MetadataDIC(CacheFactory::getInstance())));
+                        new EventRepository(CacheFactory::getInstance(), $metadataDIC),
+                        $metadataDIC,
+                        self::dic()->dic());
                     self::dic()->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
                     break;

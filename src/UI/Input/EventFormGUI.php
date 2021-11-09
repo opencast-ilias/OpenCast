@@ -84,7 +84,7 @@ class EventFormGUI extends ilPropertyFormGUI {
     const F_SERIES = 'series';
     const OPT_OWN_SERIES = 'own_series';
     /**
-	 * @var  xoctEvent
+	 * @var xoctEvent|null
 	 */
 	protected $object;
 	/**
@@ -127,12 +127,13 @@ class EventFormGUI extends ilPropertyFormGUI {
 
     /**
      * @param              $parent_gui
-     * @param xoctEvent    $object
-     * @param xoctOpenCast $xoctOpenCast
-     * @param bool         $schedule
+     * @param EventRepository $event_repository
+     * @param string|null $event_identifier
+     * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
+     * @param bool $schedule
      *
-     * @param null         $form_action
-     * @param null         $cmd_url_upload_chunks
+     * @param string|null $form_action
+     * @param string|null $cmd_url_upload_chunks
      *
      * @throws DICException
      * @throws ilDateTimeException
@@ -140,19 +141,20 @@ class EventFormGUI extends ilPropertyFormGUI {
      */
 	public function __construct(
 	    $parent_gui,
-        xoctEvent $object,
-        xoctOpenCast $xoctOpenCast = null,
-        $schedule = false,
-        $form_action = null,
-        $cmd_url_upload_chunks = null
+        EventRepository $event_repository,
+        ?string $event_identifier = null,
+        ?xoctOpenCast $xoctOpenCast = null,
+        bool $schedule = false,
+        ?string $form_action = null,
+        ?string $cmd_url_upload_chunks = null
     ) {
 		parent::__construct();
-		$this->event_repository = new EventRepository(CacheFactory::getInstance());
+		$this->event_repository = $event_repository;
 		$this->series_repository = new SeriesRepository();
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
-        $this->object = $object;
+        $this->object = $event_identifier ?? $event_repository->find($event_identifier);
         $this->xoctOpenCast = $xoctOpenCast;
         $this->parent_gui = $parent_gui;
         $this->is_new = ($this->object->getIdentifier() == '');

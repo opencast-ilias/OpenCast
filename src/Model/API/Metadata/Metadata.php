@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\API\Metadata;
 
+use JsonSerializable;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use stdClass;
 use xoctException;
@@ -12,7 +13,7 @@ use xoctException;
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class Metadata
+class Metadata implements JsonSerializable
 {
 
 
@@ -158,6 +159,17 @@ class Metadata
     public function setFields($fields)
     {
         $this->fields = $fields;
+    }
+
+    public function jsonSerialize()
+    {
+        $std_class = new stdClass();
+        $std_class->label = $this->getTitle();
+        $std_class->flavor = $this->getFlavor();
+        $std_class->fields = array_map(function (MetadataField $field) {
+            return $field->jsonSerialize();
+        }, $this->getFields());
+        return $std_class;
     }
 }
 ?>

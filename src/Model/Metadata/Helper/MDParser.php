@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use ilTimeZone;
@@ -12,8 +13,6 @@ use srag\Plugins\Opencast\Model\API\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
-use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
-use stdClass;
 use xoctException;
 
 class MDParser
@@ -21,16 +20,16 @@ class MDParser
     /**
      * @var MDCatalogueFactory
      */
-    private $md_catalogue_factory;
+    private $catalogueFactory;
     /**
      * @var MetadataFactory
      */
-    private $metadata_factory;
+    private $metadataFactory;
 
-    public function __construct(MetadataDIC $metadataDIC)
+    public function __construct(MDCatalogueFactory $catalogueFactory, MetadataFactory $metadataFactory)
     {
-        $this->md_catalogue_factory = $metadataDIC->catalogueFactory();
-        $this->metadata_factory = $metadataDIC->metadataFactory();
+        $this->catalogueFactory = $catalogueFactory;
+        $this->metadataFactory = $metadataFactory;
     }
 
 
@@ -50,8 +49,8 @@ class MDParser
                 'Metadata for event could not be loaded.');
         }
 
-        $catalogue = $this->md_catalogue_factory->event();
-        $metadata = $this->metadata_factory->eventMetadata();
+        $catalogue = $this->catalogueFactory->event();
+        $metadata = $this->metadataFactory->event();
         foreach ($catalogue->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition->getId() == MDFieldDefinition::F_START_DATE) {
                 // start can be in one or two fields, but we'll always store them in one field
@@ -67,7 +66,7 @@ class MDParser
                 $field = $fields[$key];
             }
             $metadata->addField((new MetadataField($field->id, $fieldDefinition->getType()
-            ))->withValue($this->formatMDValue($field->value, $fieldDefinition->getType())));
+            ))->withValue($this->formatMDValueFromAPIResponse($field->value, $fieldDefinition->getType())));
         }
         return $metadata;
     }
@@ -83,18 +82,54 @@ class MDParser
      * @return DateTime|mixed
      * @throws Exception
      */
-    private function formatMDValue($value, MDDataType $dataType)
+    private function formatMDValueFromAPIResponse($value, MDDataType $dataType)
     {
         switch ($dataType->getTitle()) {
-            case MDDataType::TYPE_DATE:
+            case MDDataType::TYPE_DATETIME:
                 $tz = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
                 // TODO: time zone offset wrong..
-                return new DateTime($value, $tz);
+                return new DateTimeImmutable($value, $tz);
+            case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
-            case MDDataType::TYPE_TEXT_ARRAY:
             default:
                 return $value;
         }
+    }
+
+    private function formatMDValueFromForm($value, MDDataType $dataType)
+    {
+
+    }
+
+    /**
+     * @param array $data
+     * @return Metadata
+     * @throws xoctException
+     */
+    public function parseFormDataEvent(array $data) : Metadata
+    {
+        $metadata = $this->metadataFactory->event();
+        $catalogue = $this->catalogueFactory->event();
+        foreach ($data as $id => $value) {
+            $definition = $catalogue->getFieldById($id);
+            if ($id == MDFieldDefinition::F_START_DATE) {
+                // start date must be split up into startDate and startTime for the OC api
+                $field = new MetadataField($id, MDDataType::date());
+                /** @var DateTimeImmutable $value */
+                $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()))
+                    ->withValue($value);
+                $metadata->addField($time_field);
+            } else {
+                $field = new MetadataField($id, $definition->getType());
+            }
+
+            if ($definition->getType()->getTitle() === MDDataType::TYPE_TEXT_ARRAY) {
+                /** @var string $value */
+                $value = explode(',', $value);
+            }
+            $metadata->addField($field->withValue($value));
+        }
+        return $metadata;
     }
 }

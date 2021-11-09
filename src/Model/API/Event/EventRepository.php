@@ -36,6 +36,7 @@ use xoctUser;
  */
 class EventRepository
 {
+    const CACHE_PREFIX = 'event-';
 
     public static $load_md_separate = true;
     public static $load_acl_separate = false;
@@ -70,15 +71,15 @@ class EventRepository
                                 ?PublicationRepository $publication_repository = null)
     {
         $this->cache = $cache;
-        $this->md_parser = $metadataDIC->metadataParser();
-        $this->md_repository = $metadataDIC->metadataRepository();
+        $this->md_parser = $metadataDIC->parser();
+        $this->md_repository = $metadataDIC->repository();
         $this->acl_repository = $acl_repository ?? new ACLRepository($cache);
         $this->publication_repository = $publication_repository ?? new PublicationRepository($cache);
     }
 
     public function find(string $identifier): xoctEvent
     {
-        return $this->cache->get('event-' . $identifier)
+        return $this->cache->get(self::CACHE_PREFIX . $identifier)
             ?? $this->fetch($identifier);
     }
 
@@ -86,7 +87,7 @@ class EventRepository
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->get());
         $event = $this->buildEventFromStdClass($data, $identifier);
-        $this->cache->set('event-' . $event->getIdentifier(), $event);
+        $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
         return $event;
     }
 
@@ -341,5 +342,14 @@ class EventRepository
             throw new xoctException(xoctException::API_CALL_STATUS_500, 'no available ingest nodes found');
         }
         return array_rand(array_flip($available_hosts));
+    }
+
+    public function updateMetadata(string $identifier, Metadata $metadata) : void
+    {
+        $metadata->removeField('identifier');
+        $metadata->removeField('isPartOf');
+        $metadata->removeField('createdBy');
+        xoctRequest::root()->events($identifier)->post(['metadata' => json_encode([$metadata->jsonSerialize()])]);
+        $this->cache->delete(self::CACHE_PREFIX . $identifier);
     }
 }

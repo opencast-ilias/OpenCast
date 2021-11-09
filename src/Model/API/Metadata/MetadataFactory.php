@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Model\API\Metadata;
 
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
-use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 
 class MetadataFactory
 {
@@ -13,26 +12,26 @@ class MetadataFactory
     /**
      * @var MDCatalogueFactory
      */
-    private $md_catalogue_factory;
+    private $catalogueFactory;
 
-    public function __construct(MetadataDIC $metadataDIC)
+    public function __construct(MDCatalogueFactory $catalogueFactory)
     {
-        $this->md_catalogue_factory = $metadataDIC->catalogueFactory();
+        $this->catalogueFactory = $catalogueFactory;
     }
 
-    public function eventMetadata() : Metadata
+    public function event() : Metadata
     {
         return new Metadata(
-            $this->md_catalogue_factory->event(),
+            $this->catalogueFactory->event(),
             self::MD_TITLE_EVENT,
         Metadata::FLAVOR_DUBLINCORE_EPISODES
         );
     }
 
-    public function seriesMetadata() : Metadata
+    public function series() : Metadata
     {
         return new Metadata(
-            $this->md_catalogue_factory->series(),
+            $this->catalogueFactory->series(),
             self::MD_TITLE_SERIS,
         Metadata::FLAVOR_DUBLINCORE_SERIES
         );

@@ -2,13 +2,14 @@
 
 namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
-use DateTime;
+use DateTimeImmutable;
 use xoctException;
 
 class MDDataType
 {
     const TYPE_TEXT = 'text';
     const TYPE_TEXT_LONG = 'text_long';
+    const TYPE_DATETIME = 'datetime';
     const TYPE_DATE = 'date';
     const TYPE_TEXT_ARRAY = 'text_array';
     const TYPE_TIME = 'time';
@@ -16,6 +17,7 @@ class MDDataType
         self::TYPE_TEXT,
         self::TYPE_TEXT_LONG,
         self::TYPE_TEXT_ARRAY,
+        self::TYPE_DATETIME,
         self::TYPE_DATE,
         self::TYPE_TIME
     ];
@@ -53,7 +55,12 @@ class MDDataType
         return new self(self::TYPE_TEXT_LONG);
     }
 
-    public static function date(): self
+    public static function datetime(): self
+    {
+        return new self(self::TYPE_DATETIME);
+    }
+
+    public static function date() : self
     {
         return new self(self::TYPE_DATE);
     }
@@ -81,8 +88,9 @@ class MDDataType
             case self::TYPE_TEXT_LONG:
                 return is_string($value);
             case self::TYPE_TIME:
+            case self::TYPE_DATETIME:
             case self::TYPE_DATE:
-                return ($value instanceof DateTime);
+                return ($value instanceof DateTimeImmutable);
             case self::TYPE_TEXT_ARRAY:
                 return is_array($value);
             default:

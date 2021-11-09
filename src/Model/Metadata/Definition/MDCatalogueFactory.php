@@ -17,12 +17,12 @@ class MDCatalogueFactory
                 new MDFieldDefinition(MDFieldDefinition::F_LICENSE, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_IS_PART_OF, MDDataType::text(), true, false),
                 new MDFieldDefinition(MDFieldDefinition::F_CREATOR, MDDataType::text_array(), true, false),
-                new MDFieldDefinition(MDFieldDefinition::F_START_DATE, MDDataType::date(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_START_DATE, MDDataType::datetime(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_DURATION, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_LOCATION, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_SOURCE, MDDataType::text(), false, false),
-                new MDFieldDefinition(MDFieldDefinition::F_CREATED, MDDataType::date(), true, false),
-                new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATED, MDDataType::datetime(), false, false),
+                new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
             ]);
         }
