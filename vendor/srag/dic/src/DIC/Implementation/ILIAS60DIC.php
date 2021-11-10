@@ -23,6 +23,7 @@ use ilFavouritesDBRepository;
 use ilGlobalTemplateInterface;
 use ilHelpGUI;
 use ILIAS;
+use ILIAS\Data\Factory as DataFactory;
 use ILIAS\DI\BackgroundTaskServices;
 use ILIAS\DI\Container;
 use ILIAS\DI\HTTPServices;
@@ -71,11 +72,15 @@ use srag\DIC\OpenCast\DIC\AbstractDIC;
  * Class ILIAS60DIC
  *
  * @package srag\DIC\OpenCast\DIC\Implementation
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 final class ILIAS60DIC extends AbstractDIC
 {
+
+    /**
+     * @var ilMMItemRepository|null
+     */
+    protected $main_menu_item = null;
+
 
     /**
      * @inheritDoc
@@ -215,9 +220,27 @@ final class ILIAS60DIC extends AbstractDIC
     /**
      * @inheritDoc
      */
+    public function data() : DataFactory
+    {
+        return new DataFactory();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     public function databaseCore() : ilDBInterface
     {
         return $this->dic->database();
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function &dic() : Container
+    {
+        return $this->dic;
     }
 
 
@@ -406,7 +429,11 @@ final class ILIAS60DIC extends AbstractDIC
      */
     public function mainMenuItem() : ilMMItemRepository
     {
-        return new ilMMItemRepository();
+        if ($this->main_menu_item === null) {
+            $this->main_menu_item = new ilMMItemRepository();
+        }
+
+        return $this->main_menu_item;
     }
 
 
@@ -660,14 +687,5 @@ final class ILIAS60DIC extends AbstractDIC
     public function user() : ilObjUser
     {
         return $this->dic->user();
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function &dic() : Container
-    {
-        return $this->dic;
     }
 }

@@ -10,8 +10,6 @@ use srag\DIC\OpenCast\DICTrait;
  * Class TabsInputGUITab
  *
  * @package srag\CustomInputGUIs\OpenCast\TabsInputGUI
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 class TabsInputGUITab
 {
@@ -60,7 +58,7 @@ class TabsInputGUITab
     /**
      *
      */
-    public function __clone()/*:void*/
+    public function __clone()
     {
         if ($this->inputs_generated !== null) {
             $this->inputs_generated = array_map(function (ilFormPropertyGUI $input) : ilFormPropertyGUI {
@@ -73,7 +71,7 @@ class TabsInputGUITab
     /**
      * @param ilFormPropertyGUI $input
      */
-    public function addInput(ilFormPropertyGUI $input)/*: void*/
+    public function addInput(ilFormPropertyGUI $input)/* : void*/
     {
         $this->inputs[] = $input;
         $this->inputs_generated = null;
