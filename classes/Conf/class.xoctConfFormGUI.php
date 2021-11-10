@@ -425,6 +425,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$cb->addSubItem($te);
+
+		// Terms of Use
+		$terms = new ilCheckboxInputGUI($this->parent_gui->txt("accept_terms"), xoctConf::F_ACCEPT_TERMS);
+		$terms->setInfo($this->parent_gui->txt("accept_terms_info"));
+		$this->addItem($terms);
 	}
 
 

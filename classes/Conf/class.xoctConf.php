@@ -92,6 +92,7 @@ class xoctConf extends ActiveRecord {
 	const F_COMMON_IDP = 'common_idp';
 	const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
 
+    const F_ACCEPT_TERMS = "accept_terms";
     /**
 	 * @var array
 	 */

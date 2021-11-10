@@ -1,6 +1,8 @@
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
+config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
+config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.
 config_activate_cache#:#Caching
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_activate_cache_0#:#Cache deaktivieren
