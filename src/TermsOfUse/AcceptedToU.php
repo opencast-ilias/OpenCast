@@ -7,13 +7,13 @@ use ActiveRecord;
 /**
  * class AcceptedToU
  * Holds the information which user has accepted the terms of use for which OpenCast instance
- *
  * @author fluxlabs <connect@fluxlabs.ch>
  * @author Sophie Pfister <sophie@fluxlabs.ch>
- *
  */
 class AcceptedToU extends ActiveRecord
 {
+    const TABLE_NAME = "xoct_accepted_tou";
+
     /**
      * PrimaryKey ID
      * @var int
@@ -93,6 +93,11 @@ class AcceptedToU extends ActiveRecord
     public function resetAccepted()
     {
         $this->tou_accepted = false;
+    }
+
+    public function getConnectorContainerName()
+    {
+        return self::TABLE_NAME;
     }
 
     public function sleep($field_name)

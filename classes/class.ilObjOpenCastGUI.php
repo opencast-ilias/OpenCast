@@ -6,6 +6,7 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * User Interface class for example repository object.
@@ -31,6 +32,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     const TAB_SETTINGS = 'settings';
     const TAB_INFO = 'info_short';
     const TAB_GROUPS = 'groups';
+    const TAB_EULA = "eula";
+
     /**
      * @var ilObjOpenCast
      */
@@ -241,9 +244,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 ), "perm"));
         }
 
-       self::dic()->tabs()->addTab("eula", "Nutzungsbedingungen",
-            self::dic()->ctrl()->getLinkTarget($this, "showEula"));
-
+        // ToDo: Why does this access check not work?
+        if(ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
+            self::dic()->tabs()->addTab(self::TAB_EULA, self::plugin()->translate("eula"),
+                self::dic()->ctrl()->getLinkTarget($this, "showEula"));
+        }
         return true;
     }
 
@@ -303,6 +308,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     {
         $creation_form = $this->initCreateForm($this->getType(), true);
 
+        if (boolval($_POST[xoctSeriesFormGUI::F_ACCEPT_EULA])) {
+            ToUManager::setToUAccepted(self::dic()->user()->getId());
+        }
+
         if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
             $xoctAclStandardSets = new xoctAclStandardSets();
             $creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcls());
@@ -310,9 +319,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         if ($return = $creation_form->saveObject()) {
             $this->saveObject($return[0], $return[1], $creation_form->getInput(xoctSeriesFormGUI::F_CHANNEL_TYPE));
+
         } else {
             self::dic()->mainTemplate()->setContent($creation_form->getHTML());
         }
+
     }
 
     /**

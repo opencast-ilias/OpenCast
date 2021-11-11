@@ -248,7 +248,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($crs_member_upload);
 		}
 
-		if ($this->is_new) {
+		if ($this->is_new && !xoctConf::getConfig(xoctConf::F_ACCEPT_TERMS)) {
 			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
 			$accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
 			$accept_eula->setRequired(true);
