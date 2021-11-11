@@ -284,3 +284,8 @@ if ($role_owner_prefix) {
 <?php
 \srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR::updateDB();
 ?>
+<#31>
+<?php
+\srag\Plugins\Opencast\TermsOfUse\AcceptedToU::installDB();
+?>
+

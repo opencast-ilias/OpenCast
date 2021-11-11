@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\API\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctConf
@@ -91,7 +92,6 @@ class xoctConf extends ActiveRecord {
 	const F_INGEST_UPLOAD = 'ingest_upload';
 	const F_COMMON_IDP = 'common_idp';
 	const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
-
     const F_ACCEPT_TERMS = "accept_terms";
     /**
 	 * @var array
@@ -357,7 +357,19 @@ class xoctConf extends ActiveRecord {
 	 * @param $value
 	 */
 	public static function set($name, $value) {
-		$obj = new self($name);
+        $obj = new self($name);
+
+        /*
+         * If the terms of use have been updated,
+         * reset the list of users who have accepted them
+         */
+        if ($name == self::F_EULA) {
+            $old = $obj->getValue($name);
+            if ($old != $value) {
+                // ToDo: get instance_id and add as parameter
+                ToUManager::resetForInstance();
+            }
+        }
 		$obj->setValue(json_encode($value));
 
 		if (self::where(array( 'name' => $name ))->hasSets()) {
@@ -365,6 +377,7 @@ class xoctConf extends ActiveRecord {
 		} else {
 			$obj->create();
 		}
+
 	}
 
 
