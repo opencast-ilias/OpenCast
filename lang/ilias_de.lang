@@ -125,6 +125,8 @@ config_report_date_email#:#Email
 config_report_date_email_info#:#Adresse, an welche die Meldung der Anpassung geschickt wird.
 config_report_date_text#:#Info-Text
 config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
+config_reset_button#:#Nutzungsbedingungen aktualisieren.
+config_reset_button_info#:#Fordere die User auf, die neuen Nutzungsbedingungen zu akzeptieren.
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung

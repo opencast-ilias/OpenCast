@@ -37,7 +37,6 @@ use xoctSeries;
 use xoctSeriesWorkflowParameterRepository;
 use xoctUploadFile;
 use xoctUser;
-use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use ilCheckboxInputGUI;
 
 /**
@@ -565,9 +564,6 @@ class EventFormGUI extends ilPropertyFormGUI
      */
     public function saveObject() : bool
     {
-        if (boolval($_POST[self::F_ACCEPT_EULA])) {
-            ToUManager::setToUAccepted(self::dic()->user()->getId());
-        }
         if (!$this->fillObject()) {
             return false;
         }

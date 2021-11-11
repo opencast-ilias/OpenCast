@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctEventGUI
@@ -491,6 +492,9 @@ class xoctEventGUI extends xoctGUI
         $xoctEventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcls());
 
         if ($xoctEventFormGUI->saveObject()) {
+            if (boolval($_POST[EventFormGUI::F_ACCEPT_EULA])) {
+                ToUManager::setToUAccepted(self::dic()->user()->getId());
+            }
             ilUtil::sendSuccess($this->txt('msg_created'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         }
