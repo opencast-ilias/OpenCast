@@ -365,19 +365,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRows(5);
 		$this->addItem($te);
 
-		// ToDo: Determine id of this OpenCast instance
-		$oc_instance = 0;
-		self::dic()->ctrl()->setParameterByClass(ilObjOpenCastGUI::class , "oc_instance", $oc_instance);
-		$reset_button = new ilCustomInputGUI();
-		$reset_button->setTitle('');
-		$reset_button->setHtml(
-			"<button class='btn btn-default' id='xoct_reset_ToU' onclick='XoctConf.reset_ToU()' href='".$this->ctrl->getLinkTargetByClass(array('ilAdministrationGUI', 'ilObjOpenCastGUI'), 'resetToU', '', true)."'>" .
-			$this->parent_gui->txt("reset_button") .
-			"</button>".
-			"<span id='reset_ToU_status' style='margin-left: 5px'></span>");
-		// ToDo: Wie funktioniert dieser Knopf in ViMP?
-		$reset_button->setInfo($this->parent_gui->txt("reset_button_info"));
-		$this->addItem($reset_button);
+		// Reset?
+		$reset = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_RESET), xoctConf::F_RESET);
+		$reset->setInfo($this->parent_gui->txt(xoctConf::F_RESET . "_info"));
+		$this->addItem($reset);
 
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));

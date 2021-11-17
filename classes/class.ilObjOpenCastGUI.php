@@ -693,14 +693,4 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return $result;
     }
 
-    protected function resetToU() {
-        self::dic()->logger()->root()->info("got here");
-        try {
-            $oc_instance = $_GET["oc_instance"];
-            ToUManager::resetForInstance($oc_instance);
-            echo "OK";
-        } catch (Exception $e) {
-            echo "not OK";
-        }
-    }
 }

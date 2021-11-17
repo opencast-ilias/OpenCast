@@ -93,6 +93,8 @@ class xoctConf extends ActiveRecord
     const F_COMMON_IDP = 'common_idp';
     const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
     const F_ACCEPT_TERMS = "accept_terms";
+    const F_RESET = "reset_terms";
+
     /**
      * @var array
      */
@@ -361,15 +363,14 @@ class xoctConf extends ActiveRecord
          * If the terms of use have been updated,
          * reset the list of users who have accepted them
          */
-        if ($name == self::F_EULA) {
-            $old = $obj->getValue($name);
-            if ($old != $value) {
-                // ToDo: get instance_id and add as parameter
-                ToUManager::resetForInstance();
+        if ($name == self::F_RESET) {
+            // ToDo: get instance_id and add as parameter
+            ToUManager::resetForInstance();
+            $obj->setValue("");
             }
+        else {
+            $obj->setValue(json_encode($value));
         }
-        $obj->setValue(json_encode($value));
-
         if (self::where(array('name' => $name))->hasSets()) {
             $obj->update();
         } else {

@@ -82,6 +82,8 @@ config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be va
 config_sign_thumbnail_links_with_ip#:#Sign for client IP
 config_request_comb_lv#:#Request combination level
 config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality but may affect the performance.
+config_reset_terms#:#Updated Terms of Use
+config_reset_terms_info#:#Request users to (re-)accept the terms of use. This option should only be activated if the term's content has changed.
 config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
@@ -124,8 +126,6 @@ config_report_date_email#:#Email
 config_report_date_email_info#:#Address to which the report will be sent.
 config_report_date_text#:#Info Text
 config_report_date_text_info#:#ext which will be display as an info in the reporting form.
-config_reset_button#:#Update Terms of Use
-config_reset_button_info#:#Request users to accept the new terms of use.
 config_scheduled_metadata_editable#:#Metadata of scheduled events editable
 config_scheduled_metadata_editable_0#:#No
 config_scheduled_metadata_editable_1#:#Yes, with effective changes to event date and location
