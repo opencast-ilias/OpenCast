@@ -167,6 +167,7 @@ config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This 
 config_ingest_upload#:#Upload via Ingest Nodes
 config_ingest_upload_info#:#If enabled, the upload will be executed via ingest nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 eula#:#Terms of Use
+event_accept_eula#:#Terms of Use
 event_add_new#:#Upload Event
 event_annotate#:#Annotate
 event_auto_publish#:#Auto publish

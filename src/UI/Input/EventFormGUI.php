@@ -38,6 +38,7 @@ use xoctSeriesWorkflowParameterRepository;
 use xoctUploadFile;
 use xoctUser;
 use ilCheckboxInputGUI;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctEventFormGUI

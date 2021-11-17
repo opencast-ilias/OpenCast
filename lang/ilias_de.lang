@@ -169,6 +169,7 @@ config_ingest_upload#:#Upload via Ingest-Nodes
 config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
 eula#:#Nutzungsbedingungen
+event_accept_eula#:#Nutzungsbedingungen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
