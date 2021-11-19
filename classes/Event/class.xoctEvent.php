@@ -366,6 +366,7 @@ class xoctEvent extends APIObject {
 	public function update() {
 		// Metadata
 		$this->updateMetadataFromFields($this->isScheduled());
+		$this->getMetadata()->setFlavor(Metadata::FLAVOR_DUBLINCORE_EPISODES);
 		$this->getMetadata()->removeField('identifier');
 		$this->getMetadata()->removeField('isPartOf');
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
