@@ -24,6 +24,7 @@ class MDCatalogueFactory
                 new MDFieldDefinition(MDFieldDefinition::F_CREATED, MDDataType::datetime(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CONTRIBUTOR, MDDataType::text_array(), false, false),
             ]);
         }
         return $catalogue;

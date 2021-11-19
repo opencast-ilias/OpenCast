@@ -1,13 +1,11 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\APIObject;
-
 /**
  * Class xoctAcl
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class ACLEntry extends APIObject {
+class ACLEntry implements JsonSerializable {
 
 	const ADMIN = 'ROLE_ADMIN';
 	const USER = 'ROLE_ADMIN';
@@ -92,4 +90,13 @@ class ACLEntry extends APIObject {
 	public function setRole($role) {
 		$this->role = $role;
 	}
+
+    public function jsonSerialize()
+    {
+        return [
+            'role' => $this->getRole(),
+            'action' => $this->getAction(),
+            'allow' => $this->isAllow()
+        ];
+    }
 }

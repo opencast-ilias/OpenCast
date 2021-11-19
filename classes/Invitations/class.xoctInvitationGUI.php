@@ -1,7 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 
 /**
  * Class xoctInvitationGUI
@@ -21,14 +21,14 @@ class xoctInvitationGUI extends xoctGUI {
      */
     protected $xoctOpenCast;
     /**
-     * @var EventRepository
+     * @var EventAPIRepository
      */
     private $event_repository;
 
     /**
 	 * @param xoctOpenCast $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventRepository $event_repository) {
+	public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventAPIRepository $event_repository) {
 		if ($xoctOpenCast instanceof xoctOpenCast) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {

@@ -3,7 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -103,7 +103,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(),
+                        new EventAPIRepository(CacheFactory::getInstance(),
                             new MetadataDIC(CacheFactory::getInstance(),
                             self::dic()->dic())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
@@ -113,7 +113,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(),
+                        new EventAPIRepository(CacheFactory::getInstance(),
                             new MetadataDIC(CacheFactory::getInstance(),
                             self::dic()->dic())));
                     self::dic()->ctrl()->forwardCommand($xoctSeriesGUI);
@@ -131,7 +131,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $this->setTabs();
                     $metadataDIC = new MetadataDIC(CacheFactory::getInstance(), self::dic()->dic());
                     $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast,
-                        new EventRepository(CacheFactory::getInstance(), $metadataDIC),
+                        new EventAPIRepository(CacheFactory::getInstance(), $metadataDIC),
                         $metadataDIC,
                         self::dic()->dic());
                     self::dic()->ctrl()->forwardCommand($xoctEventGUI);

@@ -2,7 +2,7 @@
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 
 /**
  * Class xoctEventAPI
@@ -16,13 +16,13 @@ class xoctEventAPI {
 	 */
 	protected static $instance;
     /**
-     * @var EventRepository
+     * @var EventAPIRepository
      */
     private $event_repository;
 
     public function __construct()
     {
-        $this->event_repository = new EventRepository(CacheFactory::getInstance());
+        $this->event_repository = new EventAPIRepository(CacheFactory::getInstance());
     }
 
 
@@ -147,7 +147,7 @@ class xoctEventAPI {
      */
     public function filter(array $filter){
         global $DIC;
-        return (new EventRepository(CacheFactory::getInstance()))->getFiltered($filter);
+        return (new EventAPIRepository(CacheFactory::getInstance()))->getFiltered($filter);
     }
 
 }

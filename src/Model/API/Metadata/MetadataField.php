@@ -60,14 +60,14 @@ class MetadataField implements JsonSerializable
      */
     public function getValue()
     {
-        return $this->value;
+        return strip_tags($this->value);
     }
 
     /**
-     * @return mixed|string|void
+     * @return array|string
      * formats the value for the Opencast API
      */
-    private function getValueSerializable()
+    private function getValueFormatted()
     {
         switch ($this->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
@@ -131,7 +131,7 @@ class MetadataField implements JsonSerializable
         $stdClass = new stdClass();
         $stdClass->id = $this->getId();
 
-        $value = $this->getValueSerializable();
+        $value = $this->getValueFormatted();
         if (is_string($value)) {
             $value = $this->fixPercentCharacter($value);
         }

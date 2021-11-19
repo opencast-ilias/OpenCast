@@ -26,8 +26,8 @@ use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Agent\Agent;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
-use srag\Plugins\Opencast\Model\API\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\API\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoct;
 use xoctConf;
@@ -116,18 +116,18 @@ class EventFormGUI extends ilPropertyFormGUI {
      */
     protected $form_action;
     /**
-     * @var EventRepository
+     * @var EventAPIRepository
      */
     protected $event_repository;
     /**
-     * @var SeriesRepository
+     * @var SeriesAPIRepository
      */
     protected $series_repository;
 
 
     /**
      * @param              $parent_gui
-     * @param EventRepository $event_repository
+     * @param EventAPIRepository $event_repository
      * @param string|null $event_identifier
      * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
      * @param bool $schedule
@@ -140,8 +140,8 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @throws xoctException
      */
 	public function __construct(
-	    $parent_gui,
-        EventRepository $event_repository,
+        $parent_gui,
+        EventAPIRepository $event_repository,
         ?string $event_identifier = null,
         ?xoctOpenCast $xoctOpenCast = null,
         bool $schedule = false,
@@ -150,7 +150,7 @@ class EventFormGUI extends ilPropertyFormGUI {
     ) {
 		parent::__construct();
 		$this->event_repository = $event_repository;
-		$this->series_repository = new SeriesRepository();
+		$this->series_repository = new SeriesAPIRepository();
 		$this->cmd_url_upload_chunks = $cmd_url_upload_chunks ?? self::dic()->ctrl()->getLinkTarget($parent_gui, self::PARENT_CMD_UPLOAD_CHUNKS);
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
@@ -429,7 +429,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         if (is_null($this->xoctOpenCast)) {
             $series_id = $this->getInput(self::F_SERIES);
             if ($series_id == self::OPT_OWN_SERIES) {
-                $series_id = (new SeriesRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()))->getIdentifier();
+                $series_id = (new SeriesAPIRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()))->getIdentifier();
             }
         } else {
             $series_id = $this->xoctOpenCast->getSeriesIdentifier();

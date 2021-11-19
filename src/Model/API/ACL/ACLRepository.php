@@ -5,9 +5,8 @@ namespace srag\Plugins\Opencast\Model\API\ACL;
 use srag\Plugins\Opencast\Cache\Cache;
 use xoctRequest;
 
-class ACLRepository
+class AclApiRepository
 {
-
 
     /**
      * @var Cache

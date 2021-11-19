@@ -16,7 +16,7 @@ use ilObjUser;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class SeriesRepository
+class SeriesAPIRepository
 {
 
     const OWN_SERIES_PREFIX = 'Eigene Serie von ';

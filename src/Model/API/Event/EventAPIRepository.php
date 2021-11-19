@@ -7,10 +7,10 @@ use Opis\Closure\SerializableClosure;
 use ReflectionException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
-use srag\Plugins\Opencast\Model\API\ACL\ACLRepository;
+use srag\Plugins\Opencast\Model\API\ACL\AclApiRepository;
 use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataRepository;
-use srag\Plugins\Opencast\Model\API\Publication\PublicationRepository;
+use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
+use srag\Plugins\Opencast\Model\API\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 use srag\Plugins\Opencast\UI\Input\Plupload;
@@ -34,7 +34,7 @@ use xoctUser;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class EventRepository
+class EventAPIRepository
 {
     const CACHE_PREFIX = 'event-';
 
@@ -52,29 +52,29 @@ class EventRepository
      */
     protected $md_parser;
     /**
-     * @var MetadataRepository
+     * @var MetadataAPIRepository
      */
     protected $md_repository;
     /**
-     * @var ACLRepository
+     * @var AclApiRepository
      */
     protected $acl_repository;
     /**
-     * @var PublicationRepository
+     * @var PublicationAPIRepository
      */
     protected $publication_repository;
 
 
-    public function __construct(Cache                  $cache,
-                                MetadataDIC            $metadataDIC,
-                                ?ACLRepository         $acl_repository = null,
-                                ?PublicationRepository $publication_repository = null)
+    public function __construct(Cache                     $cache,
+                                MetadataDIC               $metadataDIC,
+                                ?AclApiRepository         $acl_repository = null,
+                                ?PublicationAPIRepository $publication_repository = null)
     {
         $this->cache = $cache;
         $this->md_parser = $metadataDIC->parser();
         $this->md_repository = $metadataDIC->repository();
-        $this->acl_repository = $acl_repository ?? new ACLRepository($cache);
-        $this->publication_repository = $publication_repository ?? new PublicationRepository($cache);
+        $this->acl_repository = $acl_repository ?? new AclApiRepository($cache);
+        $this->publication_repository = $publication_repository ?? new PublicationAPIRepository($cache);
     }
 
     public function find(string $identifier): xoctEvent
@@ -349,7 +349,10 @@ class EventRepository
         $metadata->removeField('identifier');
         $metadata->removeField('isPartOf');
         $metadata->removeField('createdBy');
-        xoctRequest::root()->events($identifier)->post(['metadata' => json_encode([$metadata->jsonSerialize()])]);
+        $data = [
+            'metadata' => json_encode([$metadata->jsonSerialize()]),
+        ];
+        xoctRequest::root()->events($identifier)->post($data);
         $this->cache->delete(self::CACHE_PREFIX . $identifier);
     }
 }

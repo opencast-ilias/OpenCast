@@ -3,12 +3,11 @@
 namespace srag\Plugins\Opencast\Model\API\Metadata;
 
 use srag\Plugins\Opencast\Cache\Cache;
-use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use xoctException;
 use xoctRequest;
 
-class MetadataRepository
+class MetadataAPIRepository
 {
 
     /**

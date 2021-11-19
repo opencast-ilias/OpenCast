@@ -3,8 +3,9 @@
 namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use DateTime;
+use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
-use ILIAS\UI\Factory;
+use ILIAS\UI\Factory as UIFactory;
 use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
@@ -17,7 +18,7 @@ class FormItemBuilder
 {
 
     /**
-     * @var Factory
+     * @var UIFactory
      */
     protected $ui_factory;
     /**
@@ -32,16 +33,22 @@ class FormItemBuilder
      * @var MDFieldConfigRepository
      */
     private $md_conf_repository;
+    /**
+     * @var RefineryFactory
+     */
+    private $refinery_factory;
 
     public function __construct(MDCatalogue             $md_catalogue,
                                 MDFieldConfigRepository $repository,
                                 MDPrefiller             $prefiller,
-                                Factory                 $ui_factory)
+                                UIFactory               $ui_factory,
+                                RefineryFactory         $refinery_factory)
     {
         $this->ui_factory = $ui_factory;
         $this->md_catalogue = $md_catalogue;
         $this->prefiller = $prefiller;
         $this->md_conf_repository = $repository;
+        $this->refinery_factory = $refinery_factory;
     }
 
     /**
@@ -78,8 +85,13 @@ class FormItemBuilder
     {
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
-            case MDDataType::TYPE_TEXT_ARRAY:
                 $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle());
+                break;
+            case MDDataType::TYPE_TEXT_ARRAY:
+                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle())
+                    ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function(string $value) {
+                        return explode(',', $value);
+                    }));
                 break;
             case MDDataType::TYPE_TEXT_LONG:
                 $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle());
@@ -105,6 +117,8 @@ class FormItemBuilder
             case MDDataType::TYPE_DATETIME:
                 /** @var $value DateTime */
                 return $value->format('Y-m-d H:i:s');
+            case MDDataType::TYPE_TEXT_ARRAY:
+                return implode(',', $value);
             default:
                 return $value;
         }

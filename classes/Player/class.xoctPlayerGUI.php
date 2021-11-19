@@ -6,7 +6,7 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 
@@ -32,16 +32,16 @@ class xoctPlayerGUI extends xoctGUI
      */
     protected $publication_usage_repository;
     /**
-     * @var EventRepository
+     * @var EventAPIRepository
      */
     private $event_repository;
 
 
     /**
-     * @param EventRepository $event_repository
+     * @param EventAPIRepository $event_repository
      * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
      */
-    public function __construct(EventRepository $event_repository, xoctOpenCast $xoctOpenCast = NULL) {
+    public function __construct(EventAPIRepository $event_repository, xoctOpenCast $xoctOpenCast = NULL) {
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
         $this->event_repository = $event_repository;

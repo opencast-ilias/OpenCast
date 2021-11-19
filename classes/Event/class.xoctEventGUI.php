@@ -6,7 +6,7 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\API\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
@@ -61,7 +61,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected $modals;
     /**
-     * @var EventRepository
+     * @var EventAPIRepository
      */
     protected $event_repository;
     /**
@@ -81,11 +81,11 @@ class xoctEventGUI extends xoctGUI
      * @param ilObjOpenCastGUI $parent_gui
      * @param xoctOpenCast $xoctOpenCast
      */
-    public function __construct(ilObjOpenCastGUI $parent_gui,
-                                xoctOpenCast     $xoctOpenCast,
-                                EventRepository  $event_repository,
-                                MetadataDIC $metadataDIC,
-                                Container $dic)
+    public function __construct(ilObjOpenCastGUI   $parent_gui,
+                                xoctOpenCast       $xoctOpenCast,
+                                EventAPIRepository $event_repository,
+                                MetadataDIC        $metadataDIC,
+                                Container          $dic)
     {
         $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
         $this->parent_gui = $parent_gui;
@@ -815,8 +815,7 @@ class xoctEventGUI extends xoctGUI
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
         }
 
-        $this->event_repository->updateMetadata($event->getIdentifier(),
-            $this->metadataDIC->parser()->parseFormDataEvent($data));
+        $this->event_repository->updateMetadata($event->getIdentifier(), $this->metadataDIC->parser()->parseFormDataEvent($data));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
@@ -879,7 +878,7 @@ class xoctEventGUI extends xoctGUI
     protected function clearAllClips()
     {
         $filter = array('series' => $this->xoctOpenCast->getSeriesIdentifier());
-        $a_data = (new EventRepository(CacheFactory::getInstance()))->getFiltered($filter);
+        $a_data = (new EventAPIRepository(CacheFactory::getInstance()))->getFiltered($filter);
         /**
          * @var $event      xoctEvent
          * @var $xoctInvitation xoctInvitation

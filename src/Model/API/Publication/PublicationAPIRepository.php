@@ -7,7 +7,7 @@ use xoctException;
 use xoctPublication;
 use xoctRequest;
 
-class PublicationRepository
+class PublicationAPIRepository
 {
 
 

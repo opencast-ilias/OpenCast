@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
@@ -152,19 +152,19 @@ class xoctConf extends ActiveRecord {
 		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
 			default:
 			case xoctConf::SEP_EVERYTHING:
-				EventRepository::$load_acl_separate = true;
-                EventRepository::$load_pub_separate = true;
-                EventRepository::$load_md_separate = true;
+				EventAPIRepository::$load_acl_separate = true;
+                EventAPIRepository::$load_pub_separate = true;
+                EventAPIRepository::$load_md_separate = true;
 				break;
 			case xoctConf::SEP_EV_ACL_MD:
-                EventRepository::$load_acl_separate = false;
-				EventRepository::$load_pub_separate = true;
-				EventRepository::$load_md_separate = false;
+                EventAPIRepository::$load_acl_separate = false;
+				EventAPIRepository::$load_pub_separate = true;
+				EventAPIRepository::$load_md_separate = false;
 				break;
 			case xoctConf::SEP_EV_ACL_MD_PUB:
-				EventRepository::$load_acl_separate = false;
-				EventRepository::$load_pub_separate = false;
-				EventRepository::$load_md_separate = false;
+				EventAPIRepository::$load_acl_separate = false;
+				EventAPIRepository::$load_pub_separate = false;
+				EventAPIRepository::$load_md_separate = false;
 				break;
 		}
 	}

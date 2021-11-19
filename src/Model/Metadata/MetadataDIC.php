@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Metadata;
 use ILIAS\DI\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\API\Metadata\MetadataFactory;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataRepository;
+use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
@@ -33,7 +33,7 @@ class MetadataDIC
      */
     private $metadataFactory;
     /**
-     * @var MetadataRepository
+     * @var MetadataAPIRepository
      */
     private $metadataRepository;
     /**
@@ -84,10 +84,10 @@ class MetadataDIC
         return $this->metadataFactory;
     }
 
-    public function repository() : MetadataRepository
+    public function repository() : MetadataAPIRepository
     {
         if (is_null($this->metadataRepository)) {
-            $this->metadataRepository = new MetadataRepository($this->cache, $this->parser());
+            $this->metadataRepository = new MetadataAPIRepository($this->cache, $this->parser());
         }
         return $this->metadataRepository;
     }
@@ -130,7 +130,8 @@ class MetadataDIC
             $this->eventFormBuilder = new FormItemBuilder($this->catalogueFactory()->event(),
                 $this->confRepositoryEvent(),
                 $this->prefiller(),
-                $this->dic->ui()->factory());
+                $this->dic->ui()->factory(),
+                $this->dic->refinery());
         }
         return $this->eventFormBuilder;
     }
@@ -141,7 +142,8 @@ class MetadataDIC
             $this->seriesFormBuilder = new FormItemBuilder($this->catalogueFactory()->series(),
                 $this->confRepositorySeries(),
                 $this->prefiller(),
-                $this->dic->ui()->factory());
+                $this->dic->ui()->factory(),
+                $this->dic->refinery());
         }
         return $this->seriesFormBuilder;
     }

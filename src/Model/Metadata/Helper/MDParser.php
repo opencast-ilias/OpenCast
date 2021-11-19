@@ -123,11 +123,6 @@ class MDParser
             } else {
                 $field = new MetadataField($id, $definition->getType());
             }
-
-            if ($definition->getType()->getTitle() === MDDataType::TYPE_TEXT_ARRAY) {
-                /** @var string $value */
-                $value = explode(',', $value);
-            }
             $metadata->addField($field->withValue($value));
         }
         return $metadata;
