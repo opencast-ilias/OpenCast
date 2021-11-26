@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 
 /**
  * User Interface class for example repository object.
@@ -133,6 +134,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                     $xoctEventGUI = new xoctEventGUI($this, $xoctOpenCast,
                         new EventAPIRepository(CacheFactory::getInstance(), $metadataDIC),
                         $metadataDIC,
+                        new WorkflowParameterParser(),
                         self::dic()->dic());
                     self::dic()->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();

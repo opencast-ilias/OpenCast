@@ -3,8 +3,9 @@
 namespace srag\Plugins\Opencast\Model\API\ACL;
 
 use ACLEntry;
+use JsonSerializable;
 
-class ACL
+class ACL implements JsonSerializable
 {
     /**
      * @var ACLEntry[]
@@ -52,4 +53,8 @@ class ACL
     }
 
 
+    public function jsonSerialize()
+    {
+        return $this->getEntries();
+    }
 }

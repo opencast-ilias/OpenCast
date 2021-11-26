@@ -72,7 +72,7 @@ class EventFormGUI extends ilPropertyFormGUI {
     const F_END = 'end';
     const F_LOCATION = 'location';
     const F_SOURCE = 'source';
-    const F_WORKFLOW_PARAMETER = 'workflow_parameter';
+    const F_WORKFLOW_PARAMETER = 'wp';
     const F_ONLINE = 'online';
     const F_MULTIPLE = 'multiple';
     const F_MULTIPLE_START = 'multiple_start';

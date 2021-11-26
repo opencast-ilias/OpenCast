@@ -5,11 +5,13 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\API\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\API\WorkflowInstance\WorkflowInstanceCollection;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
@@ -295,60 +297,6 @@ class xoctEvent extends APIObject {
 
         $this->setIdentifier(is_array($return) ? $return[0]->identifier : $return->identifier);
     }
-
-
-    /**
-	 *
-	 */
-	public function update() {
-		// Metadata
-		$this->updateMetadataFromFields($this->isScheduled());
-		$this->getMetadata()->setFlavor(Metadata::FLAVOR_DUBLINCORE_EPISODES);
-		$this->getMetadata()->removeField('identifier');
-		$this->getMetadata()->removeField('isPartOf');
-		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
-
-		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-
-		if ($this->isScheduled()) {
-			$this->updateSchedulingFromFields();
-			if ($this->getScheduling()->hasChanged()) {
-                $data['scheduling'] = json_encode( $this->getScheduling()->__toStdClass());
-            }
-            $data['processing'] = json_encode($this->getProcessing());
-		}
-
-		// All Data
-		xoctRequest::root()->events($this->getIdentifier())->post($data);
-		$this->updateAcls();
-		self::removeFromCache($this->getIdentifier());
-	}
-
-
-	/**
-	 *
-	 */
-	public function updateAcls() {
-		$xoctAclStandardSets = new xoctAclStandardSets();
-		foreach ($xoctAclStandardSets->getAcl()->getEntries() as $acl_entry) {
-			$this->getAcl()->add($acl_entry);
-		}
-
-		xoctRequest::root()->events($this->getIdentifier())->acl()->put(array('acl' => json_encode($this->getAcl()->getEntries()) ));
-		self::removeFromCache($this->getIdentifier());
-	}
-
-
-	/**
-	 *
-	 */
-	public function updateSeries() {
-		$this->updateMetadataFromFields(false);
-		$this->getMetadata()->getField('isPartOf')->setValue($this->getSeriesIdentifier());
-		$data['metadata'] = json_encode(array( $this->getMetadata()->__toStdClass() ));
-		xoctRequest::root()->events($this->getIdentifier())->post($data);
-		self::removeFromCache($this->getIdentifier());
-	}
 
 
 	/**
@@ -1097,17 +1045,16 @@ class xoctEvent extends APIObject {
 
 
 	/**
-	 * @return stdClass
+	 * @return Processing
 	 */
 	public function getProcessing() {
-		$processing = new stdClass();
-		$processing->workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
-		$processing->configuration = new stdClass();
+		$workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW);
+		$configuration = new stdClass();
 		foreach ($this->workflow_parameters as $workflow_parameter => $value) {
-			$processing->configuration->$workflow_parameter = ($value ? 'true' : 'false');
+			$configuration->$workflow_parameter = ($value ? 'true' : 'false');
 		}
 
-		return $processing;
+		return new Processing($workflow, $configuration);
 	}
 
 

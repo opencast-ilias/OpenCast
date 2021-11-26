@@ -72,7 +72,7 @@ class EventAPIRepository
     {
         $this->cache = $cache;
         $this->md_parser = $metadataDIC->parser();
-        $this->md_repository = $metadataDIC->repository();
+        $this->md_repository = $metadataDIC->apiRepository();
         $this->acl_repository = $acl_repository ?? new AclApiRepository($cache);
         $this->publication_repository = $publication_repository ?? new PublicationAPIRepository($cache);
     }
@@ -145,40 +145,25 @@ class EventAPIRepository
 
 
     /**
-     * @param xoctEvent $event
-     * @param ilObjUser $owner
-     * @throws ReflectionException
      * @throws xoctException
      */
-    public function upload(xoctEvent $event, ilObjUser $owner)
+    public function upload(UploadEventRequest $uploadEventRequest): void
     {
-        $data = array();
-
-        $event->setMetadata(new Metadata());
-        $event->setOwner(xoctUser::getInstance($owner));
-        $event->updateMetadataFromFields(false);
-
-        $presenter = xoctUploadFile::getInstanceFromFileArray('file_presenter');
         if (xoctConf::getConfig(xoctConf::F_INGEST_UPLOAD)) {
-            $this->ingest($event, $presenter);
+            $this->ingest($uploadEventRequest);
         } else {
-            $data['metadata'] = json_encode([$event->getMetadata()->__toStdClass()]);
-            $data['processing'] = json_encode($event->getProcessing());
-            $data['acl'] = json_encode($event->getAcl()->getEntries());
-            $data['presentation'] = $presenter->getCURLFile();
-            json_decode(xoctRequest::root()->events()->post($data))->identifier;
+            json_decode(xoctRequest::root()->events()
+                ->post($uploadEventRequest->getPayload()->jsonSerialize()));
         }
     }
 
 
     /**
-     * @param xoctEvent $event
-     * @param xoctUploadFile $presentation
-     *
      * @throws xoctException
      */
-    private function ingest(xoctEvent $event, xoctUploadFile $presentation)
+    private function ingest(UploadEventRequest $uploadEventRequest) : string
     {
+        $payload = $uploadEventRequest->getPayload();
         $ingest_node_url = $this->getIngestNodeURL();
 
         // create media package
@@ -186,7 +171,7 @@ class EventAPIRepository
 
         // Metadata
         $media_package = xoctRequest::root()->ingest()->addDCCatalog()->post([
-            'dublinCore' => (new MetadataToXML($event->getMetadata()))->getXML(),
+            'dublinCore' => (new MetadataToXML($payload->getMetadata()))->getXML(),
             'mediaPackage' => $media_package,
             'flavor' => 'dublincore/episode'
         ], [], '', $ingest_node_url);
@@ -195,34 +180,30 @@ class EventAPIRepository
         $media_package = xoctRequest::root()->ingest()->addAttachment()->postFiles([
             'mediaPackage' => $media_package,
             'flavor' => 'security/xacml+episode'
-        ], [$this->getACLFile($event)], [], '', $ingest_node_url);
+        ], [$this->buildACLUploadFile($payload->getAcl())], [], '', $ingest_node_url);
 
         // track
         $media_package = xoctRequest::root()->ingest()->addTrack()->postFiles([
             'mediaPackage' => $media_package,
             'flavor' => 'presentation/source'
-        ], [$presentation], [], '', $ingest_node_url);
+        ], [$payload->getPresentation()], [], '', $ingest_node_url);
 
         // ingest
         $post_params = [
             'mediaPackage' => $media_package,
-            'workflowDefinitionId' => xoctConf::getConfig(xoctConf::F_WORKFLOW)
+            'workflowDefinitionId' => $payload->getProcessing()->getWorkflow()
         ];
-        $post_params = array_merge($post_params, $this->formatWorkflowParameters($event->getWorkflowParameters()));
-        xoctRequest::root()->ingest()->ingest()->post($post_params, [], '', $ingest_node_url);
+        $post_params = array_merge($post_params, $payload->getProcessing()->getConfiguration());
+        $response = xoctRequest::root()->ingest()->ingest()->post($post_params, [], '', $ingest_node_url);
+        return json_decode($response)->identifier;
     }
 
 
-    /**
-     * @param xoctEvent $event
-     *
-     * @return xoctUploadFile
-     */
-    private function getACLFile(xoctEvent $event): xoctUploadFile
+    private function buildACLUploadFile(ACL $acl): xoctUploadFile
     {
         $plupload = new Plupload();
         $tmp_name = uniqid('tmp');
-        file_put_contents($plupload->getTargetDir() . '/' . $tmp_name, (new ACLtoXML($event->getAcl()))->getXML());
+        file_put_contents($plupload->getTargetDir() . '/' . $tmp_name, (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(filesize($plupload->getTargetDir() . '/' . $tmp_name));
         $upload_file->setPostVar('attachment');
@@ -231,21 +212,6 @@ class EventAPIRepository
         return $upload_file;
     }
 
-    /**
-     * format workflow parameters to send it to the workflow rest api endpoint
-     *
-     * @param array $workflow_parameters
-     *
-     * @return array
-     */
-    private function formatWorkflowParameters(array $workflow_parameters): array
-    {
-        $return = [];
-        foreach ($workflow_parameters as $workflow_parameter => $value) {
-            $return[$workflow_parameter] = $value ? 'true' : 'false';
-        }
-        return $return;
-    }
 
     /**
      * @param array $filter
@@ -344,15 +310,16 @@ class EventAPIRepository
         return array_rand(array_flip($available_hosts));
     }
 
-    public function updateMetadata(string $identifier, Metadata $metadata) : void
+    public function update(UpdateEventRequest $updateEventRequest) : void
     {
-        $metadata->removeField('identifier');
-        $metadata->removeField('isPartOf');
-        $metadata->removeField('createdBy');
-        $data = [
-            'metadata' => json_encode([$metadata->jsonSerialize()]),
-        ];
-        xoctRequest::root()->events($identifier)->post($data);
-        $this->cache->delete(self::CACHE_PREFIX . $identifier);
+        xoctRequest::root()->events($updateEventRequest->getIdentifier())
+            ->post($updateEventRequest->getPayload()->jsonSerialize());
+        $this->cache->delete(self::CACHE_PREFIX . $updateEventRequest->getIdentifier());
+    }
+
+    public function schedule(ScheduleEventRequest $scheduleEventRequest) : string
+    {
+        $response = json_decode(xoctRequest::root()->events()->post($scheduleEventRequest->getPayload()->jsonSerialize()));
+        return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 }

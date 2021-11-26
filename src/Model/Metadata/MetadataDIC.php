@@ -9,9 +9,13 @@ use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
-use srag\Plugins\Opencast\Model\Metadata\Helper\FormItemBuilder;
+use srag\Plugins\Opencast\Model\Metadata\Helper\FormBuilder;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
+use xoctEventFormGUI;
 
 class MetadataDIC
 {
@@ -45,11 +49,11 @@ class MetadataDIC
      */
     private $MDPrefiller;
     /**
-     * @var FormItemBuilder
+     * @var MDFormItemBuilder
      */
     private $eventFormBuilder;
     /**
-     * @var FormItemBuilder
+     * @var MDFormItemBuilder
      */
     private $seriesFormBuilder;
     /**
@@ -60,6 +64,10 @@ class MetadataDIC
      * @var MDFieldConfigSeriesRepository
      */
     private $confRepositorySeries;
+    /**
+     * @var FormBuilder
+     */
+    private $formBuilder;
 
     public function __construct(Cache $cache, Container $dic)
     {
@@ -84,7 +92,7 @@ class MetadataDIC
         return $this->metadataFactory;
     }
 
-    public function repository() : MetadataAPIRepository
+    public function apiRepository() : MetadataAPIRepository
     {
         if (is_null($this->metadataRepository)) {
             $this->metadataRepository = new MetadataAPIRepository($this->cache, $this->parser());
@@ -124,10 +132,27 @@ class MetadataDIC
         return $this->confRepositorySeries;
     }
 
-    public function formBuilderEvent() : FormItemBuilder
+    public function formBuilderEvent() : FormBuilder
+    {
+        if (is_null($this->formBuilder)) {
+            // TODO: is this the correct place to init uploadstorageservice and xoctEventFormGUI?
+            $upload_storage_service = new UploadStorageService($this->dic->filesystem()->temp(), $this->dic->upload());
+            $this->formBuilder = new FormBuilder(
+                $this->dic->ui()->factory(),
+                $this->dic->refinery(),
+                $this->formItemBuilder(),
+                new SeriesWorkflowParameterRepository($this->dic->ui()->factory()),
+                new xoctEventFormGUI($upload_storage_service),
+                $upload_storage_service
+            );
+        }
+        return $this->formBuilder;
+    }
+
+    public function formItemBuilder() : MDFormItemBuilder
     {
         if (is_null($this->eventFormBuilder)) {
-            $this->eventFormBuilder = new FormItemBuilder($this->catalogueFactory()->event(),
+            $this->eventFormBuilder = new MDFormItemBuilder($this->catalogueFactory()->event(),
                 $this->confRepositoryEvent(),
                 $this->prefiller(),
                 $this->dic->ui()->factory(),
@@ -136,10 +161,10 @@ class MetadataDIC
         return $this->eventFormBuilder;
     }
 
-    public function formBuilderSeries() : FormItemBuilder
+    public function formBuilderSeries() : MDFormItemBuilder
     {
         if (is_null($this->seriesFormBuilder)) {
-            $this->seriesFormBuilder = new FormItemBuilder($this->catalogueFactory()->series(),
+            $this->seriesFormBuilder = new MDFormItemBuilder($this->catalogueFactory()->series(),
                 $this->confRepositorySeries(),
                 $this->prefiller(),
                 $this->dic->ui()->factory(),

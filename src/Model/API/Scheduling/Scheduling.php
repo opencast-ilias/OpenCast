@@ -8,6 +8,7 @@ use DateTimeZone;
 use Exception;
 use ilTimeZone;
 use ilTimeZoneException;
+use JsonSerializable;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
 use xoctException;
@@ -18,7 +19,7 @@ use xoctRequest;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class Scheduling extends APIObject
+class Scheduling extends APIObject implements JsonSerializable
 {
 
     /**
@@ -282,5 +283,10 @@ class Scheduling extends APIObject
     public function hasChanged() : bool
     {
         return (bool) $this->has_changed;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->__toStdClass();
     }
 }

@@ -14,8 +14,10 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use xoctException;
 
-class FormItemBuilder
+class MDFormItemBuilder
 {
+
+    const LABEL_PREFIX = 'md_';
 
     /**
      * @var UIFactory
@@ -60,7 +62,7 @@ class FormItemBuilder
         $form_elements = [];
         $md_field_configs = $this->md_conf_repository->getAll();
         array_walk($md_field_configs, function(MDFieldConfigAR $fieldConfigAR) use ($existingMetadata, &$form_elements, $prefill) {
-            $key = $fieldConfigAR->getFieldId();
+            $key = $this->prefixPostVar($fieldConfigAR->getFieldId());
             $md_definition = $this->md_catalogue->getFieldById($fieldConfigAR->getFieldId());
             if (is_null($existingMetadata) && $md_definition->isReadOnly()) {
                 // read only fields in creation forms don't make sense
@@ -122,5 +124,10 @@ class FormItemBuilder
             default:
                 return $value;
         }
+    }
+
+    public function prefixPostVar(string $label) : string
+    {
+        return self::LABEL_PREFIX . $label;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\UI\Input\Plupload;
+use ILIAS\Data\DataSize;
 
 /**
  * Class xoctUploadFile
@@ -11,19 +11,16 @@ use srag\Plugins\Opencast\UI\Input\Plupload;
 class xoctUploadFile {
 
 	/**
-	 * @param $name
+	 * @param $fileinfo array{path: string, size: DataSize, name: string, mimeType: string}
 	 *
 	 * @return xoctUploadFile
 	 */
-	public static function getInstanceFromFileArray($name) {
-		$file = $_POST[$name];
-
+	public static function getInstanceFromFileArray(array $fileinfo) {
 		$inst = new self();
-		$inst->setTitle($file['name']);
-		$inst->setTmpName($file['tmp_name']);
-		$inst->setFileSize($file['size']);
-		$inst->setPostVar($name);
-
+		$inst->setTitle($fileinfo['name']);
+		$inst->setPath($fileinfo['path']);
+		$inst->setFileSize($fileinfo['size']->getSize());
+		$inst->setMimeType($fileinfo['mimeType']);
 		return $inst;
 	}
 
@@ -32,8 +29,8 @@ class xoctUploadFile {
 	 * @return CURLFile
 	 */
 	public function getCURLFile() {
-		$plupload = new Plupload();
-		$CURLFile = new CURLFile($plupload->getTargetDir() . '/' . $this->getTmpName());
+		// opencast doesn't like mimetype and name for some reason
+		$CURLFile = new CURLFile($this->getPath());
 
 		return $CURLFile;
 	}
@@ -42,7 +39,7 @@ class xoctUploadFile {
 	/**
 	 * @var string
 	 */
-	protected $tmp_name = '';
+	protected $path;
 	/**
 	 * @var string
 	 */
@@ -60,20 +57,20 @@ class xoctUploadFile {
 	 */
 	protected $mime_type = '';
 
-
 	/**
 	 * @return string
 	 */
-	public function getTmpName() {
-		return $this->tmp_name;
+	public function getPath(): string
+	{
+		return $this->path;
 	}
 
-
 	/**
-	 * @param string $tmp_name
+	 * @param string $path
 	 */
-	public function setTmpName($tmp_name) {
-		$this->tmp_name = $tmp_name;
+	public function setPath(string $path): void
+	{
+		$this->path = $path;
 	}
 
 

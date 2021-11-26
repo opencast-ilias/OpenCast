@@ -97,11 +97,6 @@ class MDParser
         }
     }
 
-    private function formatMDValueFromForm($value, MDDataType $dataType)
-    {
-
-    }
-
     /**
      * @param array $data
      * @return Metadata
@@ -111,7 +106,9 @@ class MDParser
     {
         $metadata = $this->metadataFactory->event();
         $catalogue = $this->catalogueFactory->event();
-        foreach ($data as $id => $value) {
+        foreach (array_filter($data, function($key) {return strpos($key, 'md_') === 0;}, ARRAY_FILTER_USE_KEY)
+                 as $id => $value) {
+            $id = substr($id, 3);
             $definition = $catalogue->getFieldById($id);
             if ($id == MDFieldDefinition::F_START_DATE) {
                 // start date must be split up into startDate and startTime for the OC api

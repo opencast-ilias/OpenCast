@@ -4,6 +4,8 @@ namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
 
 use ilCheckboxInputGUI;
 use ilFormPropertyGUI;
+use ILIAS\UI\Component\Input\Field\Input;
+use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use xoctConf;
@@ -24,8 +26,22 @@ class SeriesWorkflowParameterRepository {
 	 * @var array
 	 */
 	protected $parameters;
+    /**
+     * @var Factory
+     */
+    private $ui_factory;
 
-	/**
+    /**
+     * @param Factory $ui_factory
+     */
+    public function __construct(Factory $ui_factory)
+    {
+        $this->ui_factory = $ui_factory;
+    }
+
+
+    /**
+     * @deprecated use constructor
 	 * @return self
 	 */
 	public static function getInstance() {
@@ -157,19 +173,14 @@ class SeriesWorkflowParameterRepository {
 	}
 
 	/**
-	 * @param      $obj_id
-	 *
-	 * @param bool $as_admin
-	 *
-	 * @return ilFormPropertyGUI[]
+	 * @return Input[]
 	 */
-	public function getFormItemsForObjId($obj_id, $as_admin) : array {
+	public function getFormItemsForObjId(int $obj_id, bool $as_admin) : array {
 		$items = [];
 		foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
-			$cb = new ilCheckboxInputGUI($data['title'], EventFormGUI::F_WORKFLOW_PARAMETER . '['
-				. $id . ']');
-			$cb->setChecked($data['preset']);
-			$items[] = $cb;
+            $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
+            $post_var = EventFormGUI::F_WORKFLOW_PARAMETER . '_' . $id;
+			$items[$post_var] = $cb;
 		}
 		return $items;
 	}
@@ -265,16 +276,15 @@ class SeriesWorkflowParameterRepository {
 
 
     /**
-     * @return array
+     * @return Input[]
      */
     public function getGeneralFormItems() : array
     {
         $items = [];
         foreach ($this->getGeneralParametersInForm() as $id => $data) {
-            $cb = new ilCheckboxInputGUI($data['title'], EventFormGUI::F_WORKFLOW_PARAMETER . '['
-                . $id . ']');
-            $cb->setChecked($data['preset']);
-            $items[] = $cb;
+            $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
+            $post_var = EventFormGUI::F_WORKFLOW_PARAMETER . '_' . $id;
+            $items[$post_var] = $cb;
         }
         return $items;
     }
