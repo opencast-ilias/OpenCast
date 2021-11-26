@@ -132,12 +132,12 @@ class xoctEventGUI extends xoctGUI
                 $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository, $this->xoctOpenCast);
                 self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
                 break;
-            case strtolower(xoctEventFormGUI::class):
+            case strtolower(xoctFileUploadHandler::class):
                 if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $xoctEventFormGUI = new xoctEventFormGUI(
+                $xoctEventFormGUI = new xoctFileUploadHandler(
                     new UploadStorageService(
                         self::dic()->filesystem()->temp(),
                         self::dic()->upload())

@@ -786,7 +786,7 @@ class xoctEvent extends APIObject {
 	/**
 	 * @param String $processing_state
 	 */
-	private function setProcessingState($processing_state) {
+	public function setProcessingState($processing_state) {
 		$this->processing_state = $processing_state;
 	}
 

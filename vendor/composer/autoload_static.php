@@ -311,7 +311,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctEvent' => __DIR__ . '/../..' . '/classes/Event/class.xoctEvent.php',
         'xoctEventAPI' => __DIR__ . '/../..' . '/classes/Service/class.xoctEventAPI.php',
         'xoctEventAdditions' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventAdditions.php',
-        'xoctEventFormGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventFormGUI.php',
+        'xoctEventFormGUI' => __DIR__ . '/../..',
         'xoctEventGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventGUI.php',
         'xoctEventMetadataConfigGUI' => __DIR__ . '/../..' . '/classes/Conf/Metadata/class.xoctEventMetadataConfigGUI.php',
         'xoctEventRenderer' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventRenderer.php',

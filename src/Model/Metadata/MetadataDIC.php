@@ -15,7 +15,7 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
-use xoctEventFormGUI;
+use xoctFileUploadHandler;
 
 class MetadataDIC
 {
@@ -142,7 +142,7 @@ class MetadataDIC
                 $this->dic->refinery(),
                 $this->formItemBuilder(),
                 new SeriesWorkflowParameterRepository($this->dic->ui()->factory()),
-                new xoctEventFormGUI($upload_storage_service),
+                new xoctFileUploadHandler($upload_storage_service),
                 $upload_storage_service
             );
         }

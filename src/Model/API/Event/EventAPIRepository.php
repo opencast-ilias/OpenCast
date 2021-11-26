@@ -110,6 +110,7 @@ class EventAPIRepository
     {
         $event = new xoctEvent();
         $event->setPublicationStatus($data->publication_status);
+        $event->setProcessingState($data->processing_state);
         $event->setStatus($data->status);
         $event->setHasPreviews($data->has_previews);
         $event->setXoctEventAdditions(xoctEventAdditions::findOrGetInstance($identifier));

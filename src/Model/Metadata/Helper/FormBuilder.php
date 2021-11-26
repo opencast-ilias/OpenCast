@@ -8,7 +8,7 @@ use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
-use xoctEventFormGUI;
+use xoctFileUploadHandler;
 use xoctException;
 
 class FormBuilder
