@@ -229,14 +229,6 @@ class xoctEventGUI extends xoctGUI
             self::dic()->toolbar()->addButtonInstance($b);
         }
 
-        // add "clear clips" button (devmode)
-        if (self::dic()->user()->getId() == 6 && ilObjOpenCast::DEV) {
-            $b = ilLinkButton::getInstance();
-            $b->setCaption('rep_robj_xoct_event_clear_clips_develop');
-            $b->setUrl(self::dic()->ctrl()->getLinkTarget($this, 'clearAllClips'));
-            self::dic()->toolbar()->addButtonInstance($b);
-        }
-
         // add "report date change" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
             $b = ilButton::getInstance();
@@ -924,40 +916,6 @@ class xoctEventGUI extends xoctGUI
         }
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-    }
-
-
-    /**
-     *
-     */
-    protected function clearAllClips()
-    {
-        $filter = array('series' => $this->xoctOpenCast->getSeriesIdentifier());
-        $a_data = (new EventAPIRepository(CacheFactory::getInstance()))->getFiltered($filter);
-        /**
-         * @var $event      xoctEvent
-         * @var $xoctInvitation xoctInvitation
-         * @var $xoctGroup      xoctIVTGroup
-         */
-        foreach ($a_data as $i => $d) {
-            $event = $this->event_repository->find($d['identifier']);
-            $event->setTitle('Clip ' . $i);
-            $event->setDescription('Subtitle ' . $i);
-            $event->setPresenter('Presenter ' . $i);
-            $event->setLocation('Station ' . $i);
-            $event->setCreated(new DateTime());
-            $event->removeOwner();
-            $event->removeAllOwnerAcls();
-            $event->update();
-            foreach (xoctInvitation::where(array('event_identifier' => $event->getIdentifier()))->get() as $xoctInvitation) {
-                $xoctInvitation->delete();
-            }
-        }
-        foreach (xoctIVTGroup::where(array('serie_id' => $this->xoctOpenCast->getObjId()))->get() as $xoctGroup) {
-            $xoctGroup->delete();
-        }
-
-        $this->cancel();
     }
 
 

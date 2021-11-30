@@ -38,10 +38,6 @@ class xoctEvent extends APIObject {
 	const STATE_LIVE_RUNNING = 'LIVE_RUNNING';
 	const STATE_LIVE_OFFLINE = 'LIVE_OFFLINE';
 
-	const PRESENTER_SEP = ';';
-	const TZ_EUROPE_ZURICH = 'Europe/Zurich';
-	const TZ_UTC = 'UTC';
-
 	/**
 	 * @var array
 	 *
@@ -130,40 +126,6 @@ class xoctEvent extends APIObject {
 
 	}
 
-
-	/**
-	 * sets workflow parameters while adding the parameters with status "set automatically" automatically
-	 *
-	 * @param      $parameters array Workflow parameters to be set. Note that the parameters with value "set automatically" will be set automatically,
-	 *                         so it suffices to pass the additional ones
-	 * @param      $obj_id
-	 * @param bool $as_admin
-	 */
-	public function setWorkflowParametersForObjId(array $parameters, int $obj_id, bool $as_admin = true) {
-		$parameters_in_form = SeriesWorkflowParameterRepository::getInstance()->getParametersInFormForObjId($obj_id, $as_admin);
-		$not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
-		foreach ($not_set_in_form as $id) {
-			$parameters[$id] = 0;
-		}
-		$automatically_set = SeriesWorkflowParameterRepository::getInstance()->getAutomaticallySetParametersForObjId($obj_id, $as_admin);
-		$this->setWorkflowParameters(array_merge($automatically_set, $parameters));
-	}
-
-
-    /**
-     * @param array $parameters
-     */
-    public function setGeneralWorkflowParameters(array $parameters)
-    {
-        $parameters_in_form = SeriesWorkflowParameterRepository::getInstance()->getGeneralParametersInForm();
-        $not_set_in_form = array_diff(array_keys($parameters_in_form), array_keys($parameters));
-        foreach ($not_set_in_form as $id) {
-            $parameters[$id] = 0;
-        }
-        $automatically_set = SeriesWorkflowParameterRepository::getInstance()->getGeneralAutomaticallySetParameters();
-        $this->setWorkflowParameters(array_merge($automatically_set, $parameters));
-    }
-
     public function setAclReference(SerializableClosure $acl_reference)
     {
         $this->acl_reference = $acl_reference;
@@ -172,67 +134,6 @@ class xoctEvent extends APIObject {
     public function setMetadataReference(SerializableClosure $metadata_reference)
     {
         $this->metadata_reference = $metadata_reference;
-    }
-
-    /**
-     * @param $fieldname
-     * @param $value
-     *
-     * @return array|DateTime|mixed|string|Metadata
-     * @throws xoctException
-     */
-	protected function wakeup($fieldname, $value) {
-		switch ($fieldname) {
-			case 'created':
-			case 'start_time':
-				return $this->getDefaultDateTimeObject($value);
-			case 'acl':
-				$acl_entries = [];
-				foreach ($value as $acl_array) {
-					$acl_entries[] = ACLEntry::fromArray((array) $acl_array);
-				}
-
-				return new ACL($acl_entries);
-			case 'publications':
-			    $publications = new PublicationSelector($this);
-			    $publications->loadFromArray($value);
-				return $publications;
-			case 'presenter':
-				return is_array($value) ? implode(self::PRESENTER_SEP, $value) : $value;
-			default:
-				return $value;
-		}
-	}
-
-
-    /**
-     * @param $fieldname
-     * @param $value
-     *
-     * @return array|DateTime|int|Metadata|mixed|ACLEntry[]|xoctPublication[]
-     * @throws ReflectionException
-     */
-    protected function sleep($fieldname, $value)
-    {
-        switch ($fieldname) {
-            case 'created':
-            case 'start_time':
-                /** @var $value DateTime */
-                return $value instanceof DateTime ? $value->getTimestamp() : 0;
-            case 'metadata':
-                /** @var $value Metadata */
-                return $value->__toArray();
-            case 'acl':
-                /** @var $value ACLEntry[] */
-                $acls = array();
-                foreach ($value as $acl) {
-                    $acls[] = $acl->__toArray();
-                }
-
-                return $acls;
-            default:
-                return $value;
-        }
     }
 
 
@@ -947,67 +848,6 @@ class xoctEvent extends APIObject {
 		$this->getMetadata()->getField('source')->setValue($source);
 	}
 
-
-	/**
-	 * @return array
-	 */
-	public function getWorkflowParameters() {
-		return $this->workflow_parameters;
-	}
-
-
-	/**
-	 * @param array $workflow_parameters
-	 */
-	public function setWorkflowParameters($workflow_parameters) {
-		$this->workflow_parameters = $workflow_parameters;
-	}
-
-	public function setWorkflowParameter(string $parameter_id, $value)
-    {
-        $this->workflow_parameters[$parameter_id] = $value;
-    }
-
-
-	/**
-	 *
-	 */
-	public function updateMetadataFromFields($scheduled) {
-		$title = $this->getMetadata()->getField('title');
-		$title->setValue($this->getTitle());
-
-		$description = $this->getMetadata()->getField('description');
-		$description->setValue($this->getDescription());
-
-
-		$subjects = $this->getMetadata()->getField('subjects');
-		$subjects->setValue(array());
-
-		$is_part_of = $this->getMetadata()->getField('isPartOf');
-		$is_part_of->setValue($this->getSeriesIdentifier());
-
-
-		$source = $this->getMetadata()->getField('source');
-		$source->setValue($this->getSource());
-
-		$presenter = $this->getMetadata()->getField('creator');
-		$presenter->setValue(explode(self::PRESENTER_SEP, $this->getPresenter()));
-
-//		if (!$scheduled) {
-            $location = $this->getMetadata()->getField('location');
-            $location->setValue($this->getLocation());
-
-            $start = $this->getStart()->setTimezone(new DateTimeZone(self::TZ_UTC));
-
-            $startDate = $this->getMetadata()->getField('startDate');
-            $startDate->setValue($start->format('Y-m-d'));
-
-            $startTime = $this->getMetadata()->getField('startTime');
-            $startTime->setValue($start->format('H:i:s.v\Z'));
-//        }
-	}
-
-
 	/**
 	 *
 	 */
@@ -1017,31 +857,6 @@ class xoctEvent extends APIObject {
 		$this->getScheduling()->setStart($this->getStart());
 		$this->getScheduling()->setAgentId($this->getLocation());
 	}
-
-
-	/**
-	 * @param null $input
-	 * @return DateTime
-	 */
-	public function getDefaultDateTimeObject($input = null) {
-		if ($input instanceof DateTime) {
-			$input = $input->format(DATE_ATOM);
-		}
-		if (!$input) {
-			$input = 'now';
-		}
-		try {
-			$timezone = new DateTimeZone(self::dic()->iliasIni()->readVariable('server', 'timezone'));
-		} catch (Exception $e) {
-			$timezone = null;
-		}
-
-		$datetime = is_int($input) ? new DateTime(date('Y-m-d H:i:s', $input)) : new DateTime($input);
-		$datetime->setTimezone($timezone);
-		return $datetime;
-	}
-
-
 
 
 	/**
@@ -1056,7 +871,6 @@ class xoctEvent extends APIObject {
 
 		return new Processing($workflow, $configuration);
 	}
-
 
 	/**
 	 * @return xoctEventAdditions

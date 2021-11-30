@@ -10,6 +10,10 @@ use ILIAS\Filesystem\Filesystem;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\FileUpload;
 use ILIAS\FileUpload\Location;
+use srag\Plugins\Opencast\Model\API\ACL\ACL;
+use srag\Plugins\Opencast\UI\Input\Plupload;
+use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
+use xoctUploadFile;
 
 class UploadStorageService
 {
@@ -70,6 +74,19 @@ class UploadStorageService
             'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath())
         ];
+    }
+
+    public function buildACLUploadFile(ACL $acl): xoctUploadFile
+    {
+        $tmp_name = uniqid('tmp');
+        $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
+        $upload_file = new xoctUploadFile();
+        $upload_file->setFileSize($this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)
+            ->getSize());
+        $upload_file->setPostVar('attachment');
+        $upload_file->setTitle('attachment');
+        $upload_file->setPath(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $this->idToDirPath($tmp_name));
+        return $upload_file;
     }
 
     private function idToDirPath(string $identifier) : string

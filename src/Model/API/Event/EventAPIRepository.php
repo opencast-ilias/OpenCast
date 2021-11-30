@@ -2,13 +2,10 @@
 
 namespace srag\Plugins\Opencast\Model\API\Event;
 
-use ilObjUser;
 use Opis\Closure\SerializableClosure;
-use ReflectionException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\API\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\ACL\AclApiRepository;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\API\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
@@ -25,7 +22,6 @@ use xoctException;
 use xoctInvitation;
 use xoctRequest;
 use xoctUploadFile;
-use xoctUser;
 
 /**
  * Class EventRepository
@@ -41,7 +37,6 @@ class EventAPIRepository
     public static $load_md_separate = true;
     public static $load_acl_separate = false;
     public static $load_pub_separate = true;
-    public static $no_metadata = false;
 
     /**
      * @var Cache
@@ -162,7 +157,7 @@ class EventAPIRepository
     /**
      * @throws xoctException
      */
-    private function ingest(UploadEventRequest $uploadEventRequest) : string
+    private function ingest(UploadEventRequest $uploadEventRequest) : void
     {
         $payload = $uploadEventRequest->getPayload();
         $ingest_node_url = $this->getIngestNodeURL();
@@ -196,7 +191,6 @@ class EventAPIRepository
         ];
         $post_params = array_merge($post_params, $payload->getProcessing()->getConfiguration());
         $response = xoctRequest::root()->ingest()->ingest()->post($post_params, [], '', $ingest_node_url);
-        return json_decode($response)->identifier;
     }
 
 

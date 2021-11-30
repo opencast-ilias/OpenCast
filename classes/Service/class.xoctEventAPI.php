@@ -56,6 +56,7 @@ class xoctEventAPI {
      * @throws ilTimeZoneException
      */
 	public function create($series_id, $title, $start, $end, $location, $additional_data = array()) {
+        // TODO: use new api repository
 		$event = new xoctEvent();
 		$event->setSeriesIdentifier($series_id);
 		$event->setTitle($title);
