@@ -16,6 +16,11 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         return MDFieldConfigEventAR::get();
     }
 
+    public function getAllEditable(): array
+    {
+        return MDFieldConfigEventAR::where(['read_only' => false])->get();
+    }
+
     public function getArray() : array
     {
         return MDFieldConfigEventAR::getArray();

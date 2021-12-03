@@ -16,6 +16,11 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         return MDFieldConfigSeriesAR::get();
     }
 
+    public function getAllEditable(): array
+    {
+        return MDFieldConfigSeriesAR::where(['read_only' => false])->get();
+    }
+
     public function getArray() : array
     {
         return MDFieldConfigSeriesAR::getArray();

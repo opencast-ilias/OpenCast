@@ -9,6 +9,7 @@ use xoctRequest;
 
 class MetadataAPIRepository
 {
+    const CACHE_PREFIX = 'event-md-';
 
     /**
      * @var Cache

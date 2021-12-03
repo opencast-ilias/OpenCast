@@ -56,15 +56,10 @@ class xoctEventTileGUI {
      */
 	protected $event_repository;
 
-	/**
-	 * xoctEventTileGUI constructor.
-	 * @param $parent_gui xoctEventGUI
-	 * @param $xoctOpenCast xoctOpenCast
-	 */
-	public function __construct($parent_gui, $xoctOpenCast) {
+	public function __construct(xoctEventGUI $parent_gui, xoctOpenCast $xoctOpenCast, EventAPIRepository $eventRepository) {
 		$this->parent_gui = $parent_gui;
 		$this->xoctOpenCast = $xoctOpenCast;
-		$this->event_repository = new EventAPIRepository(CacheFactory::getInstance());
+		$this->event_repository = $eventRepository;
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
 		$this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;

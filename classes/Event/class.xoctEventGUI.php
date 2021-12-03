@@ -4,9 +4,10 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
-use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
+use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\API\Event\ScheduleEventRequest;
+use srag\Plugins\Opencast\Model\API\Event\ScheduleEventRequestPayload;
 use srag\Plugins\Opencast\Model\API\Event\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\API\Event\UpdateEventRequestPayload;
 use srag\Plugins\Opencast\Model\API\Event\UploadEventRequest;
@@ -16,13 +17,13 @@ use srag\Plugins\Opencast\Model\API\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\API\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
-use srag\Plugins\Opencast\Model\Metadata\MetadataDIC;
+use srag\Plugins\Opencast\UI\FormBuilderEvent;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
-use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
 /**
@@ -41,7 +42,6 @@ class xoctEventGUI extends xoctGUI
     const CMD_CLEAR_CACHE = 'clearCache';
     const CMD_EDIT_OWNER = 'editOwner';
     const CMD_UPDATE_OWNER = 'updateOwner';
-    const CMD_UPLOAD_CHUNKS = EventFormGUI::PARENT_CMD_UPLOAD_CHUNKS;
     const CMD_SET_ONLINE = 'setOnline';
     const CMD_SET_OFFLINE = 'setOffline';
     const CMD_CUT = 'cut';
@@ -49,14 +49,13 @@ class xoctEventGUI extends xoctGUI
     const CMD_REPORT_DATE = 'reportDate';
     const CMD_REPORT_QUALITY = 'reportQuality';
     const CMD_SCHEDULE = 'schedule';
-    const CMD_CREATE_SCHEDULED = 'createScheduled';
     const CMD_SWITCH_TO_LIST = 'switchToList';
     const CMD_SWITCH_TO_TILES = 'switchToTiles';
-    const CMD_SHOW_CHAT_HISTORY = 'showChatHistory';
     const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
     const CMD_REPUBLISH = 'republish';
     const CMD_OPENCAST_STUDIO = 'opencaststudio';
     const CMD_DOWNLOAD = 'download';
+    const CMD_CREATE_SCHEDULED = 'createScheduled';
     /**
      * @var ilObjOpenCastGUI
      */
@@ -75,10 +74,6 @@ class xoctEventGUI extends xoctGUI
      */
     protected $event_repository;
     /**
-     * @var MetadataDIC
-     */
-    private $metadataDIC;
-    /**
      * @var Factory
      */
     private $ui_factory;
@@ -90,6 +85,14 @@ class xoctEventGUI extends xoctGUI
      * @var WorkflowParameterParser
      */
     private $workflowParameterParser;
+    /**
+     * @var FormBuilderEvent
+     */
+    private $formBuilder;
+    /**
+     * @var MDParser
+     */
+    private $MDParser;
 
     /**
      * @param ilObjOpenCastGUI $parent_gui
@@ -98,17 +101,19 @@ class xoctEventGUI extends xoctGUI
     public function __construct(ilObjOpenCastGUI        $parent_gui,
                                 xoctOpenCast            $xoctOpenCast,
                                 EventAPIRepository      $event_repository,
-                                MetadataDIC             $metadataDIC,
+                                FormBuilderEvent        $formBuilder,
+                                MDParser                $MDParser,
                                 WorkflowParameterParser $workflowParameterParser,
                                 Container               $dic)
     {
         $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
-        $this->metadataDIC = $metadataDIC;
         $this->ui_factory = $dic->ui()->factory();
         $this->ui_renderer = $dic->ui()->renderer();
         $this->workflowParameterParser = $workflowParameterParser;
+        $this->formBuilder = $formBuilder;
+        $this->MDParser = $MDParser;
     }
 
 
@@ -462,7 +467,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function getTilesGUI(): string
     {
-        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast);
+        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast, $this->event_repository);
         $html = $this->getModalsHTML();
         $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
@@ -518,9 +523,9 @@ class xoctEventGUI extends xoctGUI
         if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
-        $form = $this->metadataDIC->formBuilderEvent()->buildUploadForm(
+        $form = $this->formBuilder->buildUploadForm(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
-            $this->getObjId(),
+            $this->xoctOpenCast->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
@@ -532,52 +537,41 @@ class xoctEventGUI extends xoctGUI
      */
     protected function create()
     {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        $aclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ?
-            array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-
-        // >>>>>>>>>>>>>>>>>>>>>>>>
-        $form = $this->metadataDIC->formBuilderEvent()->buildUploadForm(
-            self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
-            $this->getObjId(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
-        )->withRequest(self::dic()->http()->request());
-        $data = $form->getData();
-
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
             ilUtil::sendFailure($this->txt('msg_no_access'), true);
             $this->cancel();
         }
+
+        // >>>>>>>>>>>>>>>>>>>>>>>>
+        $form = $this->formBuilder->buildUploadForm(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
+            $this->xoctOpenCast->getObjId(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        )->withRequest(self::dic()->http()->request());
+        $data = $form->getData();
 
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
 
-        // todo: refactor
-        $metadata = $this->metadataDIC->parser()->parseFormDataEvent($data);
-        $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
+        // not sure if this is supposed to be in the form builder
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        $aclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ?
+            array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
+
+        $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->xoctOpenCast->getSeriesIdentifier()));
 
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
-            $metadata,
+            $data['metadata'],
             $aclStandardSets->getAcl(),
             new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
-                $this->workflowParameterParser->configurationFromFormData($data)),
+                $data['workflow_configuration']),
             xoctUploadFile::getInstanceFromFileArray($data['file'])
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-    }
-
-
-    /**
-     *
-     */
-    protected function uploadChunks()
-    {
-        $plupload = new Plupload();
-        $plupload->handleUpload();
     }
 
 
@@ -589,9 +583,12 @@ class xoctEventGUI extends xoctGUI
         if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
-        $xoctEventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->event_repository, $this->xoctOpenCast, true);
-        $xoctEventFormGUI->fillForm();
-        self::dic()->ui()->mainTemplate()->setContent($xoctEventFormGUI->getHTML());
+        $form = $this->formBuilder->buildScheduleForm(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
+            $this->xoctOpenCast->getObjId(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        );
+        self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
 
 
@@ -600,18 +597,42 @@ class xoctEventGUI extends xoctGUI
      */
     protected function createScheduled()
     {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        $eventFormGUI = new EventFormGUI($this, new xoctEvent(), $this->event_repository, $this->xoctOpenCast, true);
-
-        $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-        $eventFormGUI->getObject()->setAcl($xoctAclStandardSets->getAcl());
-
-        if ($eventFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->txt('msg_scheduled'), true);
-            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+            ilUtil::sendFailure($this->txt('msg_no_access'), true);
+            $this->cancel();
         }
-        $eventFormGUI->setValuesByPost();
-        self::dic()->ui()->mainTemplate()->setContent($eventFormGUI->getHTML());
+
+        if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+            ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
+        }
+        $form = $this->formBuilder->buildScheduleForm(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
+            $this->xoctOpenCast->getObjId(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        )->withRequest(self::dic()->http()->request());
+        $data = $form->getData();
+
+        if (!$data) {
+            self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+            return;
+        }
+
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
+
+        $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
+            ->withValue($this->xoctOpenCast->getSeriesIdentifier()));
+
+        $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
+            $data['metadata'],
+            $xoctAclStandardSets->getAcl(),
+            $data['scheduling'],
+            new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
+                $data['workflow_configuration'])
+        )));
+        ilUtil::sendSuccess($this->txt('msg_success'), true);
+        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
 
     /**
@@ -634,9 +655,9 @@ class xoctEventGUI extends xoctGUI
         }
 
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
-        $form = $this->ui_factory->input()->container()->form()->standard(
+        $form = $this->formBuilder->buildUpdateForm(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
-            $this->metadataDIC->formItemBuilder()->buildFormElements(true, $event->getMetadata())
+            $event->getMetadata()
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
@@ -844,9 +865,9 @@ class xoctEventGUI extends xoctGUI
     {
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER, FILTER_SANITIZE_STRING));
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
-        $form = $this->ui_factory->input()->container()->form()->standard(
+        $form = $this->formBuilder->buildUpdateForm(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
-            $this->metadataDIC->formItemBuilder()->buildFormElements(false, $event->getMetadata())
+            $event->getMetadata()
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
 
@@ -861,7 +882,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
-            $this->metadataDIC->parser()->parseFormDataEvent($data)
+            $this->MDParser->parseFormDataEvent($data)
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -924,9 +945,6 @@ class xoctEventGUI extends xoctGUI
      */
     protected function confirmDelete()
     {
-        /**
-         * @var xoctEvent $event
-         */
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $event, $xoctUser)) {
@@ -978,45 +996,6 @@ class xoctEventGUI extends xoctGUI
             ilUtil::sendSuccess($this->txt('msg_deleted'), true);
         }
         $this->cancel();
-    }
-
-
-    /**
-     *
-     */
-    protected function view()
-    {
-        $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
-        echo '<pre>' . print_r($event, 1) . '</pre>';
-        exit;
-    }
-
-
-    /**
-     *
-     */
-    protected function search()
-    {
-        /**
-         * @var $event xoctEvent
-         */
-        $form = new ilPropertyFormGUI();
-        $form->setFormAction(self::dic()->ctrl()->getFormAction($this));
-        $form->addCommandButton('import', 'Import');
-        $self = new ilSelectInputGUI('import_identifier', 'import_identifier');
-
-        $request = xoctRequest::root()->events()->parameter('limit', 1000);
-        $data = json_decode($request->get());
-        $ids = array();
-        foreach ($data as $d) {
-            $event = $this->event_repository->find($d->identifier);
-            $ids[$event->getIdentifier()] = $event->getTitle() . ' (...' . substr($event->getIdentifier(), -4, 4) . ')';
-        }
-        array_multisort($ids);
-
-        $self->setOptions($ids);
-        $form->addItem($self);
-        self::dic()->ui()->mainTemplate()->setContent($form->getHTML());
     }
 
 
@@ -1119,8 +1098,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function getDateReportMessage($message)
     {
-        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
-            true);
+        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID);
         $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $mail_body =
@@ -1144,7 +1122,7 @@ class xoctEventGUI extends xoctGUI
      * @return string
      * @throws DICException
      */
-    public function txt($key)
+    public function txt($key): string
     {
         return self::plugin()->translate('event_' . $key);
     }
@@ -1179,7 +1157,6 @@ class xoctEventGUI extends xoctGUI
 
     /**
      * @return string
-     * @throws ilTemplateException
      */
     protected function getIntroTextHTML()
     {
@@ -1190,19 +1167,5 @@ class xoctEventGUI extends xoctGUI
             $intro_text = $intro->get();
         }
         return $intro_text;
-    }
-
-    /**
-     *
-     */
-    protected function showChatHistory()
-    {
-        $event_id = filter_input(INPUT_GET, 'event_id');
-        $chatroom = ChatroomAR::findBy($event_id, $this->getObjId());
-        if ($chatroom) {
-            $ChatHistoryGUI = new ChatHistoryGUI($chatroom->getId());
-            echo $ChatHistoryGUI->render();
-            exit;
-        }
     }
 }

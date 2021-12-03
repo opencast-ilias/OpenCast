@@ -3,112 +3,62 @@
 
 namespace srag\Plugins\Opencast\Model\API\Scheduling;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
-use Exception;
-use ilTimeZone;
-use ilTimeZoneException;
 use JsonSerializable;
-use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
-use xoctException;
-use xoctRequest;
 
 /**
  * Class xoctScheduling
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class Scheduling extends APIObject implements JsonSerializable
+class Scheduling implements JsonSerializable
 {
 
     /**
-     * @var
-     */
-    protected $event_id;
-    /**
-     * @var
+     * @var string
      */
     protected $agent_id;
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
     protected $start;
     /**
-     * @var DateTime
+     * @var ?DateTimeImmutable
      */
     protected $end;
     /**
-     * @var int
+     * @var ?int
      */
     protected $duration;
     /**
-     * @var
+     * @var string[]
      */
     protected $inputs = array('default');
     /**
-     * @var String
+     * @var ?RRule
      */
     protected $rrule;
-    /**
-     * @var bool
-     */
-    protected $has_changed = false;
 
-
-    /**
-     * @param string   $event_id
-     * @param stdClass $stdClass
-     *
-     * @throws xoctException
-     */
-    public function __construct(string $event_id = '', stdClass $stdClass = null)
+    public function __construct(string             $agent_id,
+                                DateTimeImmutable  $start,
+                                ?DateTimeImmutable $end = null,
+                                ?int               $duration = null,
+                                ?RRule             $rrule = null)
     {
-        if ($event_id) {
-            $this->setEventId($event_id);
-            $this->read($stdClass);
-        }
-    }
-
-
-    /**
-     * @param stdClass $data
-     *
-     * @throws xoctException
-     */
-    protected function read(stdClass $data = null)
-    {
-        if ($data === null) {
-            $data = json_decode(xoctRequest::root()->events($this->getEventId())->scheduling()->get()) ?: new stdClass();
-        }
-        $this->loadFromStdClass($data);
-    }
-
-
-    /**
-     * @param $fieldname
-     * @param $value
-     *
-     * @return mixed
-     * @throws ilTimeZoneException
-     * @throws Exception
-     */
-    protected function wakeup($fieldname, $value)
-    {
-        switch ($fieldname) {
-            case 'start':
-            case 'end':
-                return new DateTime($value, new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier()));
-            default:
-                return $value;
-        }
+        $this->agent_id = $agent_id;
+        $this->start = $start;
+        $this->end = $end;
+        $this->duration = $duration;
+        $this->rrule = $rrule;
     }
 
 
     /**
      * @return stdClass
      */
-    public function __toStdClass() : stdClass
+    public function __toStdClass(): stdClass
     {
         $this->getStart()->setTimezone(new DateTimeZone('GMT'));
         $this->getEnd()->setTimezone(new DateTimeZone('GMT'));
@@ -125,21 +75,17 @@ class Scheduling extends APIObject implements JsonSerializable
         }
 
         if ($this->getRrule()) {
-            $stdClass->rrule = $this->rrule;
+            $stdClass->rrule = $this->rrule->getValue();
 
             if ($this->getDuration()) {
-                $stdClass->duration = (string) $this->getDuration();
+                $stdClass->duration = (string)$this->getDuration();
             }
         }
 
         return $stdClass;
     }
 
-
-    /**
-     * @return int
-     */
-    public function getDuration()
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
@@ -148,141 +94,61 @@ class Scheduling extends APIObject implements JsonSerializable
     /**
      * @param int $duration
      */
-    public function setDuration($duration)
+    public function setDuration(int $duration): void
     {
-        //	    if ($this->duration != $duration) {
-        //	        $this->has_changed = true;
-        //        }
         $this->duration = $duration;
     }
 
 
-    /**
-     * @return mixed
-     */
-    public function getEventId()
-    {
-        return $this->event_id;
-    }
-
-
-    /**
-     * @param string $event_id
-     */
-    public function setEventId(string $event_id)
-    {
-        $this->event_id = $event_id;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getAgentId()
+    public function getAgentId(): string
     {
         return $this->agent_id;
     }
 
 
-    /**
-     * @param mixed $agent_id
-     */
-    public function setAgentId($agent_id)
+    public function setAgentId(string $agent_id): void
     {
-        if ($this->agent_id != $agent_id) {
-            $this->has_changed = true;
-        }
         $this->agent_id = $agent_id;
     }
 
-
-    /**
-     * @return DateTime
-     */
-    public function getStart()
+    public function getStart(): DateTimeImmutable
     {
         return $this->start;
     }
 
-
-    /**
-     * @param DateTime $start
-     */
-    public function setStart(DateTime $start)
+    public function setStart(DateTimeImmutable $start): void
     {
-        if ($this->start != $start) {
-            $this->has_changed = true;
-        }
         $this->start = $start;
     }
 
-
-    /**
-     * @return DateTime
-     */
-    public function getEnd()
+    public function getEnd(): ?DateTimeImmutable
     {
         return $this->end;
     }
 
-
-    /**
-     * @param DateTime $end
-     */
-    public function setEnd(DateTime $end)
+    public function setEnd(DateTimeImmutable $end): void
     {
-        if ($this->end != $end) {
-            $this->has_changed = true;
-        }
         $this->end = $end;
     }
 
-
-    /**
-     * @return array
-     */
-    public function getInputs() : array
+    public function getInputs(): array
     {
         return $this->inputs;
     }
 
-
-    /**
-     * @param array $inputs
-     */
-    public function setInputs(array $inputs)
+    public function setInputs(array $inputs): void
     {
-        if ($this->inputs != $inputs) {
-            $this->has_changed = true;
-        }
         $this->inputs = $inputs;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getRrule()
+    public function getRrule(): ?RRule
     {
         return $this->rrule;
     }
 
-
-    /**
-     * @param String $rrule
-     */
-    public function setRRule(String $rrule)
+    public function setRRule(RRule $rrule): void
     {
         $this->rrule = $rrule;
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function hasChanged() : bool
-    {
-        return (bool) $this->has_changed;
     }
 
     public function jsonSerialize()

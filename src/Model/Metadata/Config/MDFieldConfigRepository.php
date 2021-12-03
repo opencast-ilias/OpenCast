@@ -9,6 +9,10 @@ interface MDFieldConfigRepository
      * @return MDFieldConfigAR[]
      */
     public function getAll() : array;
+    /**
+     * @return MDFieldConfigAR[]
+     */
+    public function getAllEditable() : array;
 
     /**
      * @return array

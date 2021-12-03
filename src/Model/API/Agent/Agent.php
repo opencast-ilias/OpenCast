@@ -3,144 +3,90 @@
 
 namespace srag\Plugins\Opencast\Model\API\Agent;
 
-use srag\Plugins\Opencast\Model\API\APIObject;
-use xoctException;
-use xoctRequest;
+use DateTimeImmutable;
 
 /**
  * Class xoctAgent
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class Agent extends APIObject
+class Agent
 {
 
     /**
      * @var string
      */
-    protected $agent_id;
+    private $agent_id;
     /**
-     * @var array
+     * @var string[]
      */
-    protected $inputs = array();
+    private $inputs;
     /**
-     * @var
+     * @var DateTimeImmutable
      */
-    protected $update;
+    private $update;
     /**
      * @var string
      */
-    protected $url = '';
+    private $url;
     /**
-     * @var
+     * @var string
      */
-    protected $status;
-
-
-    /**
-     * @return array
-     * @throws xoctException
-     */
-    public static function getAllAgents()
-    {
-        $data = json_decode(xoctRequest::root()->agents()->get());
-
-        $return = [];
-        foreach ($data as $d) {
-            $xoctAgent = self::findOrLoadFromStdClass($d->agent_id, $d);
-            $return[] = $xoctAgent;
-        }
-
-        return $return;
-    }
-
+    private $status;
 
     /**
-     * @return mixed
+     * @param string $agent_id
+     * @param string[] $inputs
+     * @param DateTimeImmutable $update
+     * @param string $url
+     * @param string $status
      */
-    public function getAgentId()
-    {
-        return $this->agent_id;
-    }
-
-
-    /**
-     * @param mixed $agent_id
-     */
-    public function setAgentId($agent_id)
+    public function __construct(string $agent_id, string $status, array $inputs, DateTimeImmutable $update, string $url)
     {
         $this->agent_id = $agent_id;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function getInputs()
-    {
-        return $this->inputs;
-    }
-
-
-    /**
-     * @param array $inputs
-     */
-    public function setInputs($inputs)
-    {
+        $this->status = $status;
         $this->inputs = $inputs;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getUpdate()
-    {
-        return $this->update;
-    }
-
-
-    /**
-     * @param mixed $update
-     */
-    public function setUpdate($update)
-    {
         $this->update = $update;
+        $this->url = $url;
     }
-
 
     /**
      * @return string
      */
-    public function getUrl() : string
+    public function getAgentId(): string
+    {
+        return $this->agent_id;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getInputs(): array
+    {
+        return $this->inputs;
+    }
+
+    /**
+     * @return DateTimeImmutable
+     */
+    public function getUpdate(): DateTimeImmutable
+    {
+        return $this->update;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-
     /**
-     * @param string $url
+     * @return string
      */
-    public function setUrl(string $url)
-    {
-        $this->url = $url;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
-    }
-
-
-    /**
-     * @param mixed $status
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
     }
 }
