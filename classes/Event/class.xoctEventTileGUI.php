@@ -6,6 +6,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 
 /**
  * Class xoctEventTileGUI
@@ -32,7 +33,7 @@ class xoctEventTileGUI {
 	 */
 	protected $has_scheduled_events = false;
 	/**
-	 * @var xoctEvent[]
+	 * @var Event[]
 	 */
 	protected $events;
 	/**
@@ -139,7 +140,7 @@ class xoctEventTileGUI {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
 		$events = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()]);
 		foreach ($events as $key => $event) {
-		    $event = $event['object'] instanceof xoctEvent ? $event['object']
+		    $event = $event['object'] instanceof Event ? $event['object']
                 : $this->event_repository->find($event['identifier']);
 			if (!ilObjOpenCastAccess::hasReadAccessOnEvent(
                 $event,
@@ -153,7 +154,7 @@ class xoctEventTileGUI {
 		}
         $events = $this->sortData($events);
         $events = array_map(function(array $element) {
-            return $element['object'] instanceof xoctEvent ? $element['object'] : $this->event_repository->find($element['identifier']);
+            return $element['object'] instanceof Event ? $element['object'] : $this->event_repository->find($element['identifier']);
         }, $events);
 
         $this->events = array_values($events);
@@ -162,7 +163,7 @@ class xoctEventTileGUI {
 
 
     /**
-     * @param xoctEvent[] $events
+     * @param Event[] $events
      *
      * @return mixed
      */

@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Event\Event;
+
 /**
  * Class xoctInvitation
  *
@@ -109,13 +111,13 @@ class xoctInvitation extends ActiveRecord {
 
 
 	/**
-	 * @param xoctEvent $xoctEvent
+	 * @param Event $xoctEvent
 	 * @param bool      $grant_access_rights
 	 * @param bool      $count
 	 *
 	 * @return mixed
 	 */
-	public static function getActiveInvitationsForEvent(xoctEvent $xoctEvent, $grant_access_rights = false, $count = false) {
+	public static function getActiveInvitationsForEvent(Event $xoctEvent, $grant_access_rights = false, $count = false) {
 		$all_invitations = self::where(array(
 			'event_identifier' => $xoctEvent->getIdentifier(),
 		))->get();

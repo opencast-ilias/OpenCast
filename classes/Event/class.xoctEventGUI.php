@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\Event\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\UpdateEventRequestPayload;
 use srag\Plugins\Opencast\Model\Event\UploadEventRequest;
 use srag\Plugins\Opencast\Model\Event\UploadEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
@@ -1144,11 +1145,11 @@ class xoctEventGUI extends xoctGUI
     }
 
     /**
-     * @param xoctEvent $event
+     * @param Event $event
      * @param $message
      * @return string
      */
-    protected function getQualityReportMessage(xoctEvent $event, $message)
+    protected function getQualityReportMessage(Event $event, $message)
     {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
             true);

@@ -8,12 +8,12 @@ use ilOpenCastPlugin;
 use Opis\Closure\SerializableClosure;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use stdClass;
 use xoctAttachment;
 use xoctConf;
-use xoctEvent;
 use xoctException;
 use xoctMedia;
 use xoctPublication;
@@ -45,7 +45,7 @@ class PublicationSelector
      */
     protected $loaded = false;
     /**
-     * @var xoctEvent
+     * @var Event
      */
     protected $event;
     /**
@@ -105,9 +105,9 @@ class PublicationSelector
     /**
      * PublicationSelector constructor.
      *
-     * @param xoctEvent $event
+     * @param Event $event
      */
-    public function __construct(xoctEvent $event)
+    public function __construct(Event $event)
     {
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
@@ -389,16 +389,16 @@ class PublicationSelector
     public function getThumbnailUrl()
     {
         switch ($this->event->getProcessingState()) {
-            case xoctEvent::STATE_SCHEDULED:
-            case xoctEvent::STATE_SCHEDULED_OFFLINE:
-            case xoctEvent::STATE_RECORDING:
+            case Event::STATE_SCHEDULED:
+            case Event::STATE_SCHEDULED_OFFLINE:
+            case Event::STATE_RECORDING:
                 $this->thumbnail_url = self::THUMBNAIL_SCHEDULED;
                 return $this->thumbnail_url;
-            case xoctEvent::STATE_LIVE_SCHEDULED:
-            case xoctEvent::STATE_LIVE_OFFLINE:
+            case Event::STATE_LIVE_SCHEDULED:
+            case Event::STATE_LIVE_OFFLINE:
                 $this->thumbnail_url = self::THUMBNAIL_SCHEDULED_LIVE;
                 return $this->thumbnail_url;
-            case xoctEvent::STATE_LIVE_RUNNING:
+            case Event::STATE_LIVE_RUNNING:
                 $this->thumbnail_url = self::THUMBNAIL_LIVE_RUNNING;
                 return $this->thumbnail_url;
         }

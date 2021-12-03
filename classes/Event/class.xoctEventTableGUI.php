@@ -3,6 +3,7 @@
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 
@@ -128,7 +129,7 @@ class xoctEventTableGUI extends ilTable2GUI
     public function fillRow($a_set)
     {
         /**
-         * @var $event        xoctEvent
+         * @var $event        Event
          * @var $xoctUser  xoctUser
          */
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
@@ -273,10 +274,10 @@ class xoctEventTableGUI extends ilTable2GUI
 
 
     /**
-     * @param xoctEvent $event
+     * @param Event $event
      * @throws DICException
      */
-    protected function addActionMenu(xoctEvent $event)
+    protected function addActionMenu(Event $event)
     {
         $renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
         $actions = $renderer->getActions();
@@ -337,7 +338,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $a_data = array_filter($a_data, $this->filterArray());
 
         foreach ($a_data as $row) {
-            /** @var $object xoctEvent */
+            /** @var $object Event */
             $object = $row['object'];
             if ($object->isScheduled()) {
                 $this->has_scheduled_events = true;
@@ -393,7 +394,7 @@ class xoctEventTableGUI extends ilTable2GUI
     {
         return function ($array) {
             $xoctUser = xoctUser::getInstance(self::dic()->user());
-            $event = $array['object'] instanceof xoctEvent ? $array['object'] : $this->event_repository->find($array['identifier']);
+            $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find($array['identifier']);
 
             return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->xoctOpenCast);
         };

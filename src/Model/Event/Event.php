@@ -1,5 +1,10 @@
 <?php
 
+namespace srag\Plugins\Opencast\Model\Event;
+
+use ACLEntry;
+use DateTimeImmutable;
+use ilObjUser;
 use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -9,13 +14,18 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
+use xoctConf;
+use xoctEventAdditions;
+use xoctException;
+use xoctRequest;
+use xoctUser;
 
 /**
  * Class xoctEvent
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctEvent
+class Event
 {
 
     const STATE_SUCCEEDED = 'SUCCEEDED';
@@ -38,19 +48,19 @@ class xoctEvent
      * used for colouring
      */
     public static $state_mapping = array(
-        xoctEvent::STATE_SUCCEEDED => 'success',
-        xoctEvent::STATE_INSTANTIATED => 'info',
-        xoctEvent::STATE_ENCODING => 'info',
-        xoctEvent::STATE_RECORDING => 'info',
-        xoctEvent::STATE_NOT_PUBLISHED => 'info',
-        xoctEvent::STATE_READY_FOR_CUTTING => 'info',
-        xoctEvent::STATE_SCHEDULED => 'scheduled',
-        xoctEvent::STATE_SCHEDULED_OFFLINE => 'scheduled',
-        xoctEvent::STATE_FAILED => 'danger',
-        xoctEvent::STATE_OFFLINE => 'info',
-        xoctEvent::STATE_LIVE_SCHEDULED => 'scheduled',
-        xoctEvent::STATE_LIVE_RUNNING => 'info',
-        xoctEvent::STATE_LIVE_OFFLINE => 'info',
+        Event::STATE_SUCCEEDED => 'success',
+        Event::STATE_INSTANTIATED => 'info',
+        Event::STATE_ENCODING => 'info',
+        Event::STATE_RECORDING => 'info',
+        Event::STATE_NOT_PUBLISHED => 'info',
+        Event::STATE_READY_FOR_CUTTING => 'info',
+        Event::STATE_SCHEDULED => 'scheduled',
+        Event::STATE_SCHEDULED_OFFLINE => 'scheduled',
+        Event::STATE_FAILED => 'danger',
+        Event::STATE_OFFLINE => 'info',
+        Event::STATE_LIVE_SCHEDULED => 'scheduled',
+        Event::STATE_LIVE_RUNNING => 'info',
+        Event::STATE_LIVE_OFFLINE => 'info',
     );
     /**
      * @var PublicationSelector

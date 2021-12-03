@@ -1,11 +1,11 @@
 <?php
 
 use ILIAS\UI\Component\Component;
-use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
@@ -22,7 +22,7 @@ class xoctEventRenderer {
 	const LANG_MODULE = 'event';
 
 	/**
-	 * @var xoctEvent
+	 * @var Event
 	 */
 	protected $xoctEvent;
 	/**
@@ -44,7 +44,7 @@ class xoctEventRenderer {
 
 	/**
 	 * xoctEventRenderer constructor.
-	 * @param $xoctEvent xoctEvent
+	 * @param $xoctEvent Event
 	 * @param null $xoctOpenCast
 	 */
 	public function __construct($xoctEvent, $xoctOpenCast = null) {
@@ -214,7 +214,7 @@ class xoctEventRenderer {
      */
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
         $download_dtos = $this->xoctEvent->publications()->getDownloadDtos(false);
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
+		if (($this->xoctEvent->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
 			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
@@ -275,7 +275,7 @@ class xoctEventRenderer {
      * @throws xoctException
      */
 	public function getAnnotationLinkHTML($button_type = 'btn_info') {
-		if (($this->xoctEvent->getProcessingState() == xoctEvent::STATE_SUCCEEDED)
+		if (($this->xoctEvent->getProcessingState() == Event::STATE_SUCCEEDED)
             && ($this->xoctEvent->publications()->getAnnotationPublication()))
 		{
             self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->xoctEvent->getIdentifier());
@@ -355,19 +355,19 @@ class xoctEventRenderer {
 		if (!$this->isEventAccessible()) {
 		    $processing_state = $this->xoctEvent->getProcessingState();
 			$state_tpl = self::plugin()->template('default/tpl.event_state.html');
-			$state_tpl->setVariable('STATE_CSS', xoctEvent::$state_mapping[$processing_state]);
+			$state_tpl->setVariable('STATE_CSS', Event::$state_mapping[$processing_state]);
 
 			$suffix = '';
 			if ($this->xoctEvent->isOwner(xoctUser::getInstance(self::dic()->user()))
 				&& in_array($processing_state, array(
-					xoctEvent::STATE_FAILED,
-					xoctEvent::STATE_ENCODING
+					Event::STATE_FAILED,
+					Event::STATE_ENCODING
 				))) {
 				$suffix = '_owner';
 			}
 
 			$placeholders = [];
-			if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+			if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
                 $placeholders[] = date(
                     'd.m.Y, H:i',
                     $this->xoctEvent->getScheduling()->getStart()->getTimestamp() - (((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
@@ -489,15 +489,15 @@ class xoctEventRenderer {
     protected function isEventAccessible() {
 	    $processing_state = $this->xoctEvent->getProcessingState();
 
-	    if ($processing_state == xoctEvent::STATE_SUCCEEDED) {
+	    if ($processing_state == Event::STATE_SUCCEEDED) {
 	        return true;
         }
 
 	    if ($this->xoctEvent->isLiveEvent()) {
-	        if ($processing_state == xoctEvent::STATE_LIVE_RUNNING) {
+	        if ($processing_state == Event::STATE_LIVE_RUNNING) {
 	            return true;
             }
-	        if ($processing_state == xoctEvent::STATE_LIVE_SCHEDULED) {
+	        if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
 	            $start = $this->xoctEvent->getScheduling()->getStart()->getTimestamp();
                 $accessible_before_start = ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
                 $accessible_from = $start - $accessible_before_start;
@@ -516,16 +516,16 @@ class xoctEventRenderer {
     public function getActions() : array
     {
         if (!in_array($this->xoctEvent->getProcessingState(), array(
-            xoctEvent::STATE_SUCCEEDED,
-            xoctEvent::STATE_NOT_PUBLISHED,
-            xoctEvent::STATE_READY_FOR_CUTTING,
-            xoctEvent::STATE_OFFLINE,
-            xoctEvent::STATE_FAILED,
-            xoctEvent::STATE_SCHEDULED,
-            xoctEvent::STATE_SCHEDULED_OFFLINE,
-            xoctEvent::STATE_LIVE_RUNNING,
-            xoctEvent::STATE_LIVE_SCHEDULED,
-            xoctEvent::STATE_LIVE_OFFLINE,
+            Event::STATE_SUCCEEDED,
+            Event::STATE_NOT_PUBLISHED,
+            Event::STATE_READY_FOR_CUTTING,
+            Event::STATE_OFFLINE,
+            Event::STATE_FAILED,
+            Event::STATE_SCHEDULED,
+            Event::STATE_SCHEDULED_OFFLINE,
+            Event::STATE_LIVE_RUNNING,
+            Event::STATE_LIVE_SCHEDULED,
+            Event::STATE_LIVE_OFFLINE,
         ))) {
             return [];
         }

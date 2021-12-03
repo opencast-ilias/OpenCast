@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Event\Event;
+
 /**
  * Class xoctEventAdditions
  *
@@ -34,7 +36,7 @@ class xoctEventAdditions extends ActiveRecord {
 		if (!self::where(array( 'id' => $this->getId() ))->hasSets()) {
 			$this->create();
 		} else {
-			xoctEvent::removeFromCache($this->getId());
+			Event::removeFromCache($this->getId());
 			parent::update();
 		}
 	}
@@ -44,7 +46,7 @@ class xoctEventAdditions extends ActiveRecord {
 		if (!$this->getId()) {
 			return false;
 		}
-		xoctEvent::removeFromCache($this->getId());
+		Event::removeFromCache($this->getId());
 		parent::create();
 	}
 

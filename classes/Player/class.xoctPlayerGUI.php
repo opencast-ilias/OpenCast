@@ -7,6 +7,7 @@ use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 
@@ -94,7 +95,7 @@ class xoctPlayerGUI extends xoctGUI
         exit();
     }
 
-    protected function buildJSConfig(xoctEvent $event) : stdClass
+    protected function buildJSConfig(Event $event) : stdClass
     {
         $js_config = new stdClass();
         $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config"
@@ -121,13 +122,13 @@ class xoctPlayerGUI extends xoctGUI
     }
 
     /**
-     * @param xoctEvent  $event
+     * @param Event  $event
      * @param ilTemplate $tpl
      * @throws DICException
      * @throws arException
      * @throws ilTemplateException
      */
-    protected function initChat(xoctEvent $event, ilTemplate $tpl)
+    protected function initChat(Event $event, ilTemplate $tpl)
     {
         $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->xoctOpenCast->getObjId());
         if ($event->isLiveEvent()) {

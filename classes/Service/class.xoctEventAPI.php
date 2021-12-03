@@ -3,6 +3,7 @@
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 
 /**
  * Class xoctEventAPI
@@ -52,12 +53,12 @@ class xoctEventAPI {
      * @param String $location
      * @param array  $additional_data
      *
-     * @return xoctEvent
+     * @return Event
      * @throws ilTimeZoneException
      */
 	public function create($series_id, $title, $start, $end, $location, $additional_data = array()) {
         // TODO: use new api repository
-		$event = new xoctEvent();
+		$event = new Event();
 		$event->setSeriesIdentifier($series_id);
 		$event->setTitle($title);
 		$event->setStart($start instanceof DateTime ? $start : new DateTime($start));
@@ -83,10 +84,10 @@ class xoctEventAPI {
 	/**
 	 * @param $event_id
 	 *
-	 * @return xoctEvent
+	 * @return Event
 	 */
 	public function read($event_id) {
-		$event = new xoctEvent($event_id);
+		$event = new Event($event_id);
 		return $event;
 	}
 
@@ -104,10 +105,10 @@ class xoctEventAPI {
 	 * @param String $event_id
 	 * @param array $data
 	 *
-	 * @return xoctEvent
+	 * @return Event
 	 */
 	public function update($event_id, $data) {
-		$event = new xoctEvent($event_id);
+		$event = new Event($event_id);
 
 		// field 'online' is stored in ILIAS, not in Opencast
 		if (isset($data['online'])) {

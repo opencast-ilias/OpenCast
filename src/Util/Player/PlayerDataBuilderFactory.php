@@ -2,8 +2,8 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Traits\Singleton;
-use xoctEvent;
 use xoctConf;
 
 /**
@@ -15,7 +15,7 @@ class PlayerDataBuilderFactory
 {
     use Singleton;
 
-    public function getBuilder(xoctEvent $event) : PlayerDataBuilder
+    public function getBuilder(Event $event) : PlayerDataBuilder
     {
         if ($event->isLiveEvent()) {
             return new LivePlayerDataBuilder($event);

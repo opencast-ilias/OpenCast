@@ -15,7 +15,6 @@ use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
 use stdClass;
 use xoct;
 use xoctConf;
-use xoctEvent;
 use xoctEventAdditions;
 use xoctException;
 use xoctInvitation;
@@ -89,13 +88,13 @@ class EventAPIRepository
         $this->scheduling_repository = $scheduling_repository;
     }
 
-    public function find(string $identifier): xoctEvent
+    public function find(string $identifier): Event
     {
         return $this->cache->get(self::CACHE_PREFIX . $identifier)
             ?? $this->fetch($identifier);
     }
 
-    private function fetch(string $identifier): xoctEvent
+    private function fetch(string $identifier): Event
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->get());
         $event = $this->buildEventFromStdClass($data, $identifier);
@@ -115,12 +114,12 @@ class EventAPIRepository
     /**
      * @param stdClass $data
      * @param string $identifier
-     * @return xoctEvent
+     * @return Event
      * @throws xoctException
      */
-    private function buildEventFromStdClass(stdClass $data, string $identifier): xoctEvent
+    private function buildEventFromStdClass(stdClass $data, string $identifier): Event
     {
-        $event = new xoctEvent();
+        $event = new Event();
         $event->setPublicationStatus($data->publication_status);
         $event->setProcessingState($data->processing_state);
         $event->setStatus($data->status);
@@ -189,13 +188,13 @@ class EventAPIRepository
      * @param string $sort
      * @param bool $as_object
      *
-     * @return xoctEvent[] | array
+     * @return Event[] | array
      * @throws xoctException
      */
     public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false)
     {
         /**
-         * @var $event xoctEvent
+         * @var $event Event
          */
         $request = xoctRequest::root()->events();
         if ($filter) {
@@ -240,7 +239,7 @@ class EventAPIRepository
 
         foreach ($data as $d) {
             $event = $this->buildEventFromStdClass($d, $d->identifier);
-            if (!in_array($event->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_OFFLINE])) {
+            if (!in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
                 $this->cache->delete(self::CACHE_PREFIX . $event->getIdentifier());
             }
             $return[] = $as_object ? $event : $event->getArrayForTable();

@@ -2,6 +2,7 @@
 
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 
 /**
  * Class xoctInvitationGUI
@@ -13,7 +14,7 @@ use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 class xoctInvitationGUI extends xoctGUI {
 
     /**
-     * @var xoctEvent
+     * @var Event
      */
     protected $event;
     /**

@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Event\Event;
+
 /**
  * Access/Condition checking for OpenCast object
  *
@@ -130,14 +132,14 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 	/**
 	 * @param                   $cmd
-	 * @param xoctEvent|NULL    $xoctEvent
+	 * @param Event|NULL    $xoctEvent
 	 * @param xoctUser|NULL     $xoctUser
 	 * @param xoctOpenCast|NULL $xoctOpenCast
 	 * @param null              $ref_id
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function checkAction($cmd, xoctEvent $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) : bool
+	public static function checkAction($cmd, Event $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) : bool
 	{
 		if ($xoctUser === NULL) {
 			$xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -151,7 +153,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_EDIT_OWNER:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
 					&& $xoctOpenCast->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
@@ -159,28 +161,28 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id) && $xoctOpenCast->getPermissionPerClip())
 					|| ($xoctEvent->isOwner($xoctUser)
 						&& $xoctOpenCast->getPermissionAllowSetOwn()
-						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-						&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED);
+						&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
+						&& $xoctEvent->getProcessingState() != Event::STATE_FAILED);
 			case self::ACTION_CUT:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
 					&& $xoctEvent->hasPreviews()
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
+					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED;
 			case self::ACTION_DELETE_EVENT:
 				return
 					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING;
+					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING;
 			case self::ACTION_EDIT_EVENT:
 				return
 					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED
+					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED
 					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
 			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_ENCODING
-					&& $xoctEvent->getProcessingState() != xoctEvent::STATE_FAILED;
+					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
+					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED;
 			case self::ACTION_ADD_EVENT:
 				return
 					self::hasPermission(self::PERMISSION_UPLOAD)
@@ -231,7 +233,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function hasReadAccessOnEvent(xoctEvent $event, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
+	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
 		// edit_videos and write access see all videos
 		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
 			return true;
@@ -256,7 +258,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// if not owner or edit_videos, don't show proceeding videos
-		if (!(in_array($event->getProcessingState(), [xoctEvent::STATE_SUCCEEDED, xoctEvent::STATE_LIVE_SCHEDULED, xoctEvent::STATE_LIVE_RUNNING]))) {
+		if (!(in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_LIVE_SCHEDULED, Event::STATE_LIVE_RUNNING]))) {
 			return false;
 		}
 

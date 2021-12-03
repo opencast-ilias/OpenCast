@@ -27,11 +27,11 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoct;
 use xoctConf;
-use xoctEvent;
 use xoctEventGUI;
 use xoctException;
 use xoctOpenCast;
@@ -84,7 +84,7 @@ class EventFormGUI extends ilPropertyFormGUI {
     const F_SERIES = 'series';
     const OPT_OWN_SERIES = 'own_series';
     /**
-	 * @var xoctEvent|null
+	 * @var Event|null
 	 */
 	protected $object;
 	/**
@@ -629,18 +629,18 @@ class EventFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * @return xoctEvent
+	 * @return Event
 	 */
-	public function getObject() : xoctEvent
+	public function getObject() : Event
     {
 		return $this->object;
 	}
 
 
 	/**
-	 * @param xoctEvent $object
+	 * @param Event $object
 	 */
-	public function setObject(xoctEvent $object)
+	public function setObject(Event $object)
     {
 		$this->object = $object;
 	}
