@@ -2,7 +2,7 @@
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\API\APIObject;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 
 /**
  * Class xoctSeries

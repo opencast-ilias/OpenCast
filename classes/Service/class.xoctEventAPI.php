@@ -2,7 +2,7 @@
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 
 /**
  * Class xoctEventAPI
@@ -65,7 +65,8 @@ class xoctEventAPI {
 		$event->setLocation($location);
 		$event->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
 		$event->setPresenter(isset($additional_data['presenters']) ? $additional_data['presenters'] : '');
-		$event->addDefaultWorkflowParameters();
+        // see WorkflowParameterRepository::getDefaultWorkflowParameters
+//		$event->addDefaultWorkflowParameters();
 		if (is_array($additional_data['workflow_parameters'])) {
             foreach ($additional_data['workflow_parameters'] as $param_id => $value) {
                 $event->setWorkflowParameter($param_id, $value);

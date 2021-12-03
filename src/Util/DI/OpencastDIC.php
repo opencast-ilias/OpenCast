@@ -7,14 +7,15 @@ use ILIAS\UI\Component\Input\Field\UploadHandler;
 use Pimple\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\API\ACL\AclApiRepository;
-use srag\Plugins\Opencast\Model\API\Agent\AgentApiRepository;
-use srag\Plugins\Opencast\Model\API\Agent\AgentParser;
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataFactory;
-use srag\Plugins\Opencast\Model\API\Publication\PublicationAPIRepository;
-use srag\Plugins\Opencast\Model\API\Scheduling\SchedulingParser;
+use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
+use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
+use srag\Plugins\Opencast\Model\Agent\AgentParser;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
+use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
+use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
+use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
+use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
@@ -55,7 +56,9 @@ class OpencastDIC
                 $c['md_repository'],
                 $c['ingest_service'],
                 $c['acl_repository'],
-                $c['publication_repository']);
+                $c['publication_repository'],
+                $c['scheduling_parser'],
+                $c['scheduling_repository']);
         });
         $this->container['acl_repository'] = $this->container->factory(function ($c) {
             return new AclApiRepository($c['cache']);
@@ -78,7 +81,7 @@ class OpencastDIC
         $this->container['agent_repository'] = $this->container->factory(function ($c) {
             return new AgentApiRepository($c['agent_parser']);
         });
-        $this->container['agent_parser'] = $this->container->factory(function($c) {
+        $this->container['agent_parser'] = $this->container->factory(function ($c) {
             return new AgentParser();
         });
         $this->container['md_repository'] = $this->container->factory(function ($c) {
@@ -132,8 +135,11 @@ class OpencastDIC
         $this->container['workflow_parameter_parser'] = $this->container->factory(function ($c) {
             return new WorkflowParameterParser();
         });
-        $this->container['scheduling_parser'] = $this->container->factory(function($c) {
+        $this->container['scheduling_parser'] = $this->container->factory(function ($c) {
             return new SchedulingParser();
+        });
+        $this->container['scheduling_repository'] = $this->container->factory(function($c) {
+            return new SchedulingApiRepository($c['scheduling_parser']);
         });
         $this->container['form_builder_event'] = $this->container->factory(function ($c) {
             return new FormBuilderEvent($this->dic->ui()->factory(),

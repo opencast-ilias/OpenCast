@@ -6,7 +6,7 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 

@@ -181,4 +181,28 @@ class WorkflowParameterRepository {
 		}
 		return $options;
 	}
+
+    /**
+     * @param bool $as_admin
+     */
+    public function getDefaultWorkflowParameters($as_admin = true) : array
+    {
+        $workflow_parameters = [];
+        /** @var WorkflowParameter $xoctWorkflowParameter */
+        foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
+            $default_value = $as_admin ? $xoctWorkflowParameter->getDefaultValueAdmin() : $xoctWorkflowParameter->getDefaultValueMember();
+
+            switch ($default_value) {
+                case WorkflowParameter::VALUE_ALWAYS_ACTIVE:
+                    $workflow_parameters[$xoctWorkflowParameter->getId()] = 1;
+                    break;
+                case WorkflowParameter::VALUE_ALWAYS_INACTIVE:
+                    $workflow_parameters[$xoctWorkflowParameter->getId()] = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $workflow_parameters;
+    }
 }

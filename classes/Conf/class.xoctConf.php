@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 

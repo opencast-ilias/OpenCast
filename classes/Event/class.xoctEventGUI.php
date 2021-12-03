@@ -5,16 +5,16 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
-use srag\Plugins\Opencast\Model\API\Event\ScheduleEventRequest;
-use srag\Plugins\Opencast\Model\API\Event\ScheduleEventRequestPayload;
-use srag\Plugins\Opencast\Model\API\Event\UpdateEventRequest;
-use srag\Plugins\Opencast\Model\API\Event\UpdateEventRequestPayload;
-use srag\Plugins\Opencast\Model\API\Event\UploadEventRequest;
-use srag\Plugins\Opencast\Model\API\Event\UploadEventRequestPayload;
-use srag\Plugins\Opencast\Model\API\Group\Group;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataField;
-use srag\Plugins\Opencast\Model\API\Scheduling\Processing;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\ScheduleEventRequest;
+use srag\Plugins\Opencast\Model\Event\ScheduleEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\UpdateEventRequest;
+use srag\Plugins\Opencast\Model\Event\UpdateEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\UploadEventRequest;
+use srag\Plugins\Opencast\Model\Event\UploadEventRequestPayload;
+use srag\Plugins\Opencast\Model\Group\Group;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
+use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\FormBuilderEvent;
@@ -56,6 +56,8 @@ class xoctEventGUI extends xoctGUI
     const CMD_OPENCAST_STUDIO = 'opencaststudio';
     const CMD_DOWNLOAD = 'download';
     const CMD_CREATE_SCHEDULED = 'createScheduled';
+    const CMD_EDIT_SCHEDULED = 'editScheduled';
+    const CMD_UPDATE_SCHEDULED = 'updateScheduled';
     /**
      * @var ilObjOpenCastGUI
      */
@@ -623,16 +625,44 @@ class xoctEventGUI extends xoctGUI
         $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->xoctOpenCast->getSeriesIdentifier()));
 
-        $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
-            $data['metadata'],
-            $xoctAclStandardSets->getAcl(),
-            $data['scheduling'],
-            new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
-                $data['workflow_configuration'])
-        )));
+        try {
+            $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
+                $data['metadata'],
+                $xoctAclStandardSets->getAcl(),
+                $data['scheduling'],
+                new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
+                    $data['workflow_configuration'])
+            )));
+        } catch (xoctException $e) {
+            $this->checkAndShowConflictMessage($e);
+            self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+            return;
+        }
+
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+    }
+
+    /**
+     * @param xoctException $e
+     * @return bool
+     * @throws xoctException
+     */
+    private function checkAndShowConflictMessage(xoctException $e): bool
+    {
+        if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
+            $conflicts = json_decode(substr($e->getMessage(), 10), true);
+            $message = $this->txt('msg_scheduling_conflict') . '<br>';
+            foreach ($conflicts as $conflict) {
+                $message .= '<br>' . $conflict['title'] . '<br>' . date('Y.m.d H:i:s', strtotime($conflict['start'])) . ' - '
+                    . date('Y.m.d H:i:s', strtotime($conflict['end'])) . '<br>';
+            }
+            ilUtil::sendFailure($message);
+
+            return false;
+        }
+        throw $e;
     }
 
     /**
@@ -642,9 +672,6 @@ class xoctEventGUI extends xoctGUI
      */
     protected function edit()
     {
-        /**
-         * @var xoctEvent $event
-         */
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
         $xoctUser = xoctUser::getInstance(self::dic()->user());
 
@@ -658,6 +685,26 @@ class xoctEventGUI extends xoctGUI
         $form = $this->formBuilder->buildUpdateForm(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
             $event->getMetadata()
+        );
+        self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+    }
+
+    protected function editScheduled() : void
+    {
+        $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+
+        // check access
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $event, $xoctUser)) {
+            ilUtil::sendFailure($this->txt('msg_no_access'), true);
+            $this->cancel();
+        }
+
+        self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
+        $form = $this->formBuilder->buildUpdateScheduledForm(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
+            $event->getMetadata(),
+            $event->getScheduling()
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
@@ -882,7 +929,40 @@ class xoctEventGUI extends xoctGUI
         }
 
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
-            $this->MDParser->parseFormDataEvent($data)
+            $data['metadata']
+        )));
+        ilUtil::sendSuccess($this->txt('msg_success'), true);
+        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+    }
+    /**
+     *
+     * @throws xoctException|DICException
+     */
+    protected function updateScheduled()
+    {
+        $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER, FILTER_SANITIZE_STRING));
+        self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
+        // TODO: metadata/scheduling should not be necessary here
+        $form = $this->formBuilder->buildUpdateScheduledForm(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
+            $event->getMetadata(),
+            $event->getScheduling()
+        )->withRequest(self::dic()->http()->request());
+        $data = $form->getData();
+
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $event, $xoctUser)) {
+            ilUtil::sendFailure($this->txt('msg_no_access'), true);
+            $this->cancel();
+        }
+
+        if (!$data) {
+            self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+            return;
+        }
+
+        $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
+            $data['metadata']
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);

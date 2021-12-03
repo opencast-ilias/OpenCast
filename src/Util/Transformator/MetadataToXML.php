@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Util\Transformator;
 
 use ilDateTime;
 use ilXmlWriter;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use DateTimeZone;
 use Exception;
 

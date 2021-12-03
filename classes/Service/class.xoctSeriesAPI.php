@@ -1,6 +1,6 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Model\API\Group\Group;
+use srag\Plugins\Opencast\Model\Group\Group;
 
 /**
  * Class xoctSeriesAPI

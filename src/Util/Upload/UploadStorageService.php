@@ -10,7 +10,7 @@ use ILIAS\Filesystem\Filesystem;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\FileUpload;
 use ILIAS\FileUpload\Location;
-use srag\Plugins\Opencast\Model\API\ACL\ACL;
+use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use xoctUploadFile;

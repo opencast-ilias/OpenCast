@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Util\Transformator;
 
 use ilXmlWriter;
 use ACLEntry;
-use srag\Plugins\Opencast\Model\API\ACL\ACL;
+use srag\Plugins\Opencast\Model\ACL\ACL;
 
 /**
  * Class ACLtoXML

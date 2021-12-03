@@ -8,7 +8,7 @@ use xoctConf;
 use xoctSecureLink;
 use xoctEvent;
 use xoctAttachment;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use DateTime;
 use DateTimeZone;
 

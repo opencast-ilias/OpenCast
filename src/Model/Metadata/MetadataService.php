@@ -3,8 +3,8 @@
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use Pimple\Container;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataAPIRepository;
-use srag\Plugins\Opencast\Model\API\Metadata\MetadataFactory;
+use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
+use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;

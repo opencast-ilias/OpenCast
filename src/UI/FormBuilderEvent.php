@@ -4,12 +4,12 @@ namespace srag\Plugins\Opencast\UI;
 
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Container\Form\Form;
-use ILIAS\UI\Component\Input\Container\Form\Standard as StandardForm;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\API\Scheduling\SchedulingParser;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
@@ -109,16 +109,20 @@ class FormBuilderEvent
         }));
     }
 
-    public function buildUpdateForm(string $form_action, Metadata $metadata): StandardForm
+    public function buildUpdateForm(string $form_action, Metadata $metadata): Form
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $this->form_item_builder->edit($metadata)
-        );
+        )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
+            $metadata = $this->MDParser->parseFormDataEvent($vs);
+            return ['metadata' => $metadata];
+        }));
     }
 
     public function buildScheduleForm(string $form_action, int $obj_id = 0, bool $as_admin = false): Form
     {
+        // TODO: contraints for date
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $this->form_item_builder->schedule()
@@ -129,9 +133,29 @@ class FormBuilderEvent
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $metadata = $this->MDParser->parseFormDataEvent($vs);
             $workflow_parameter = $this->workflowParameterParser->configurationFromFormData($vs);
-            $scheduling = $this->schedulingParser->parseFormData($vs);
+            $scheduling = $this->schedulingParser->parseCreateFormData($vs);
             return ['metadata' => $metadata, 'workflow_configuration' => $workflow_parameter, 'scheduling' => $scheduling];
         }));
+    }
+
+    public function buildUpdateScheduledForm(string $form_action, Metadata $metadata, Scheduling $scheduling)
+    {
+        $section = $this->ui_factory->input()->field()->section(
+            $this->form_item_builder->editScheduled($metadata, $scheduling)
+            + $this->buildEditSchedulingInputs($scheduling), "Update Scheduled")
+            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
+                $metadata = $this->MDParser->parseFormDataEvent($vs);
+                $scheduling = $this->schedulingParser->parseUpdateFormData($vs);
+                return ['metadata' => $metadata, 'scheduling' => $scheduling];
+            }))->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
+                /** @var Scheduling $scheduling */
+                $scheduling = $vs['scheduling'];
+                return $scheduling->getStart()->getTimestamp() < $scheduling->getEnd()->getTimestamp();
+            }, 'Start must be before End'));
+        return $this->ui_factory->input()->container()->form()->standard(
+            $form_action,
+            [$section]
+        );
     }
 
     private function buildSchedulingInput(): Input
@@ -161,6 +185,19 @@ class FormBuilderEvent
             'repeat' => $group_repeat
         ], 'Repeat Event')->withRequired(true)->withValue('no_repeat');
 
+    }
+
+    /**
+     * @return array
+     */
+    private function buildEditSchedulingInputs(Scheduling $scheduling): array
+    {
+        return [
+            'start_date_time' => $this->ui_factory->input()->field()->dateTime('Start')->withUseTime(true)
+                ->withRequired(true)->withValue($scheduling->getStart()->format('Y-m-d H:i:s')),
+            'end_date_time' => $this->ui_factory->input()->field()->dateTime('End')->withUseTime(true)
+                ->withRequired(true)->withValue($scheduling->getEnd()->format('Y-m-d H:i:s')),
+        ];
     }
 
 }

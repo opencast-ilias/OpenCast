@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\ACL\ACL;
+use srag\Plugins\Opencast\Model\ACL\ACL;
 
 /**
  * Class xoctAclStandardSets

@@ -627,7 +627,8 @@ class xoctEventRenderer {
                 'event_edit_date'  : 'event_edit';
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate($lang_var),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_EDIT)
+                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class,
+                    $this->xoctEvent->isScheduled() ? xoctEventGUI::CMD_EDIT_SCHEDULED : xoctEventGUI::CMD_EDIT)
             );
         }
 

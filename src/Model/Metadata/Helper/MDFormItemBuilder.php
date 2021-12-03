@@ -6,10 +6,10 @@ use DateTime;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
-use srag\Plugins\Opencast\Model\API\Agent\Agent;
-use srag\Plugins\Opencast\Model\API\Agent\AgentApiRepository;
-use srag\Plugins\Opencast\Model\API\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\API\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\Agent\Agent;
+use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
@@ -77,6 +77,7 @@ class MDFormItemBuilder
 
     public function edit(Metadata $existing_metadata): array
     {
+        // TODO: config 'metadata editable'
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
         array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
@@ -106,7 +107,20 @@ class MDFormItemBuilder
 
     public function editScheduled(Metadata $existing_metadata, Scheduling $existing_scheduling): array
     {
-
+        $form_elements = [];
+        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
+            // start date is part of scheduling and location has a special input field
+            return !in_array($fieldConfigAR->getFieldId(),
+                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]);
+        });
+        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
+            $key = $this->prefixPostVar($md_field_config->getFieldId());
+            $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
+                $existing_metadata->getField($md_field_config->getFieldId())->getValue());
+        });
+        $form_elements[$this->prefixPostVar(MDFieldDefinition::F_LOCATION)] =
+            $this->buildSchedulingLocationInput()->withValue($existing_scheduling->getAgentId());
+        return $form_elements;
     }
 
     /**
@@ -139,7 +153,7 @@ class MDFormItemBuilder
         $field = $field
             ->withRequired($fieldConfigAR->isRequired())
             ->withDisabled($fieldConfigAR->isReadOnly());
-        return $value ? $field->withValue($value) : $field;
+        return $value ? $field->withValue($this->formatValue($value, $md_definition)) : $field;
     }
 
     private function buildSchedulingLocationInput(): Input

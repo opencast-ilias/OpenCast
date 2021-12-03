@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Util\Upload;
 
-use srag\Plugins\Opencast\Model\API\Event\UploadEventRequest;
+use srag\Plugins\Opencast\Model\Event\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use xoctException;
 use xoctRequest;

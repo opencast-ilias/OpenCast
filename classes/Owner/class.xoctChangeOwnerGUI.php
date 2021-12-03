@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\API\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 
 /**
  * Class xoctChangeOwnerGUI
@@ -141,6 +141,31 @@ class xoctChangeOwnerGUI extends xoctGUI {
         $this->xoctEvent->setOwner(xoctUser::getInstance($user_id));
         $this->xoctEvent->updateAcls();
     }
+//    /**
+//     * @param xoctUser $xoctUser
+//     *
+//     * @throws xoctException
+//     */
+//    public function setOwner($xoctUser) {
+//        $this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
+//
+//        if (!$xoctUser->getOwnerRoleName()) {
+//            return;
+//        }
+//
+//        $this->removeAllOwnerAcls();
+//        $acl = new ACLEntry();
+//        $acl->setAction(ACLEntry::READ);
+//        $acl->setAllow(true);
+//        $acl->setRole($xoctUser->getOwnerRoleName());
+//        $this->getAcl()->add($acl);
+//
+//        $acl = new ACLEntry();
+//        $acl->setAction(ACLEntry::WRITE);
+//        $acl->setAllow(true);
+//        $acl->setRole($xoctUser->getOwnerRoleName());
+//        $this->getAcl()->add($acl);
+//    }
 
     /**
      * async function
@@ -149,6 +174,31 @@ class xoctChangeOwnerGUI extends xoctGUI {
         $this->xoctEvent->removeOwner();
         $this->xoctEvent->updateAcls();
     }
+
+
+//    /**
+//     *
+//     */
+//    public function removeOwner() {
+//        $this->removeAllOwnerAcls();
+//        $this->getMetadata()->getField('rightsHolder')->setValue('');
+//    }
+//
+//
+//    /**
+//     *
+//     */
+//    public function removeAllOwnerAcls() {
+//        $standard_roles = xoctConf::getConfig(xoctConf::F_STD_ROLES);
+//        $ACLEntries = $this->getAcl()->getEntries();
+//        foreach ($ACLEntries as $i => $acl) {
+//            if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
+//                && !in_array($acl->getRole(), $standard_roles)) {
+//                unset($ACLEntries[$i]);
+//            }
+//        }
+//        $this->acl->setEntries($ACLEntries);
+//    }
 
 
     /**
