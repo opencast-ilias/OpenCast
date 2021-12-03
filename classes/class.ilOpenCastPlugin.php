@@ -2,6 +2,7 @@
 
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 
@@ -24,9 +25,9 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 
 	const PLUGIN_ID = 'xoct';
 	const PLUGIN_NAME = 'OpenCast';
-	/**
-	 * @var ilDB
-	 */
+    /**
+     * @var ilDBInterface
+     */
 	protected $db;
 
 
@@ -36,8 +37,8 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	public function __construct() {
 		parent::__construct();
 
-		global $ilDB;
-		$this->db = $ilDB;
+		global $DIC;
+		$this->db = $DIC->database();
 	}
 
 	/**
@@ -58,7 +59,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 		$this->db->dropTable(xoctIVTGroupParticipant::TABLE_NAME, false);
 		$this->db->dropTable(xoctIVTGroup::TABLE_NAME, false);
 		$this->db->dropTable(xoctOpenCast::TABLE_NAME, false);
-		$this->db->dropTable(xoctEventAdditions::TABLE_NAME, false);
+		$this->db->dropTable(EventAdditionsAR::TABLE_NAME, false);
 		$this->db->dropTable(xoctPermissionTemplate::TABLE_NAME, false);
 		$this->db->dropTable(PublicationUsage::TABLE_NAME, false);
 		$this->db->dropTable(xoctConf::TABLE_NAME, false);
@@ -80,7 +81,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 */
 	public static function getInstance() {
 		if (!isset(self::$cache)) {
-			//require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/sql/dbupdate.php');
 			self::$cache = new self();
 		}
 

@@ -175,36 +175,6 @@ class xoctSeries extends APIObject {
     }
 
     /**
-     * @param $organizer
-     * @param bool $omit_update
-     */
-    public function removeOrganizer($organizer, $omit_update = false) {
-        $organizers_array = array_map('trim', $this->getOrganizers());
-        if (in_array($organizer, $organizers_array)) {
-            unset($organizers_array[array_search($organizer, $organizers_array)]);
-            $this->setOrganizers($organizers_array);
-        }
-        if (!$omit_update) {
-            $this->update();
-        }
-    }
-
-    /**
-     * @param $contributor
-     * @param bool $omit_update
-     */
-    public function removeContributor($contributor, $omit_update = false) {
-        $contributors_array = array_map('trim', $this->getContributors());
-        if (!in_array($contributor, $contributors_array)) {
-            unset($contributors_array[array_search($contributor, $contributors_array)]);
-            $this->setContributors($contributors_array);
-        }
-        if (!$omit_update) {
-            $this->update();
-        }
-    }
-
-    /**
      * @throws xoctException
      */
     public function create() {
@@ -415,10 +385,6 @@ class xoctSeries extends APIObject {
 	 * @var Metadata
 	 */
 	protected $metadata = array();
-	/**
-	 * @var xoctProperties
-	 */
-	protected $properties = NULL;
 	/**
 	 * @var int
 	 */

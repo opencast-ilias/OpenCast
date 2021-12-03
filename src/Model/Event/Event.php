@@ -15,15 +15,12 @@ use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
 use xoctConf;
-use xoctEventAdditions;
 use xoctException;
 use xoctRequest;
 use xoctUser;
 
 /**
- * Class xoctEvent
- *
- * @author Fabian Schmid <fs@studer-raimann.ch>
+ * Opencast Event Object
  */
 class Event
 {
@@ -67,7 +64,7 @@ class Event
      */
     protected $publications;
     /**
-     * @var xoctEventAdditions
+     * @var EventAdditionsAR
      */
     protected $xoctEventAdditions = null;
     /**
@@ -489,12 +486,12 @@ class Event
         }
     }
 
-    public function getXoctEventAdditions(): xoctEventAdditions
+    public function getXoctEventAdditions(): EventAdditionsAR
     {
         return $this->xoctEventAdditions;
     }
 
-    public function setXoctEventAdditions(xoctEventAdditions $xoctEventAdditions): void
+    public function setXoctEventAdditions(EventAdditionsAR $xoctEventAdditions): void
     {
         $this->xoctEventAdditions = $xoctEventAdditions;
     }

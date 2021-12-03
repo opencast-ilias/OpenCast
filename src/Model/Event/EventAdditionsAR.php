@@ -1,13 +1,13 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Event\Event;
+namespace srag\Plugins\Opencast\Model\Event;
+
+use ActiveRecord;
 
 /**
- * Class xoctEventAdditions
- *
- * @author Fabian Schmid <fs@studer-raimann.ch>
+ * Metadata of an Event that is stored only in ILIAS
  */
-class xoctEventAdditions extends ActiveRecord {
+class EventAdditionsAR extends ActiveRecord {
 
 	const TABLE_NAME = 'xoct_event_additions';
 

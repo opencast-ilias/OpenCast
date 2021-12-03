@@ -15,7 +15,6 @@ use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
 use stdClass;
 use xoct;
 use xoctConf;
-use xoctEventAdditions;
 use xoctException;
 use xoctInvitation;
 use xoctRequest;
@@ -124,7 +123,7 @@ class EventAPIRepository
         $event->setProcessingState($data->processing_state);
         $event->setStatus($data->status);
         $event->setHasPreviews($data->has_previews);
-        $event->setXoctEventAdditions(xoctEventAdditions::findOrGetInstance($identifier));
+        $event->setXoctEventAdditions(EventAdditionsAR::findOrGetInstance($identifier));
 
         if (isset($data->metadata)) {
             $event->setMetadata($this->md_parser->parseAPIResponseEvent($data->metadata));

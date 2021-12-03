@@ -16,7 +16,7 @@ xoctInvitation::updateDB();
 ?>
 <#3>
 <?php
-xoctEventAdditions::updateDB();
+srag\Plugins\Opencast\Model\Event\EventAdditionsAR::updateDB();
 ?>
 <#4>
 <?php
