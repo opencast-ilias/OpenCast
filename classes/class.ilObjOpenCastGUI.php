@@ -144,8 +144,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                         $xoctOpenCast,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->form_builder_event(),
-                        $this->opencast_dic->metadata()->parser(),
-                        $this->opencast_dic->workflow_parameter_parser(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();

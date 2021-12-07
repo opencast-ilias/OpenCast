@@ -520,3 +520,5 @@ md_table_events#:#Event Metadata
 md_table_series#:#Series Metadata
 action_update#:#Update
 action_delete#:#Delete
+yes#:#Yes
+no#:#No

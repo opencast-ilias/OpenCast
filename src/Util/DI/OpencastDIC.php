@@ -4,6 +4,7 @@ namespace srag\Plugins\Opencast\Util\DI;
 
 use ILIAS\DI\Container as DIC;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
+use ilOpenCastPlugin;
 use Pimple\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -126,7 +127,8 @@ class OpencastDIC
                 $c['md_conf_repository_series'],
                 $c['md_prefiller'],
                 $this->dic->ui()->factory(),
-                $this->dic->refinery()
+                $this->dic->refinery(),
+                $c['agent_repository']
             );
         });
         $this->container['workflow_parameter_conf_repository'] = $this->container->factory(function ($c) {
@@ -150,15 +152,13 @@ class OpencastDIC
                 $c['upload_handler'],
                 $c['md_parser'],
                 $c['workflow_parameter_parser'],
-                $c['scheduling_parser']
+                $c['scheduling_parser'],
+                $c['plugin']
             );
         });
-//        $this->container['form_builder_series'] = $this->container->factory(function ($c) {
-//            return new FormBuilderSeries($this->dic->ui()->factory(),
-//                $this->dic->refinery(),
-//                $c['md_form_item_builder_series'],
-//            );
-//        });
+        $this->container['plugin'] = $this->container->factory(function($c) {
+            return ilOpenCastPlugin::getInstance();
+        });
     }
 
     public function event_repository(): EventAPIRepository

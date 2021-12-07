@@ -6,13 +6,13 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
-use srag\Plugins\Opencast\Model\Event\ScheduleEventRequest;
-use srag\Plugins\Opencast\Model\Event\ScheduleEventRequestPayload;
-use srag\Plugins\Opencast\Model\Event\UpdateEventRequest;
-use srag\Plugins\Opencast\Model\Event\UpdateEventRequestPayload;
-use srag\Plugins\Opencast\Model\Event\UploadEventRequest;
-use srag\Plugins\Opencast\Model\Event\UploadEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequestPayload;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
@@ -22,8 +22,6 @@ use srag\Plugins\Opencast\UI\FormBuilderEvent;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
-use srag\Plugins\Opencast\UI\Input\EventFormGUI;
-use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
@@ -77,46 +75,25 @@ class xoctEventGUI extends xoctGUI
      */
     protected $event_repository;
     /**
-     * @var Factory
-     */
-    private $ui_factory;
-    /**
      * @var Renderer
      */
     private $ui_renderer;
     /**
-     * @var WorkflowParameterParser
-     */
-    private $workflowParameterParser;
-    /**
      * @var FormBuilderEvent
      */
     private $formBuilder;
-    /**
-     * @var MDParser
-     */
-    private $MDParser;
 
-    /**
-     * @param ilObjOpenCastGUI $parent_gui
-     * @param xoctOpenCast $xoctOpenCast
-     */
     public function __construct(ilObjOpenCastGUI        $parent_gui,
                                 xoctOpenCast            $xoctOpenCast,
                                 EventAPIRepository      $event_repository,
                                 FormBuilderEvent        $formBuilder,
-                                MDParser                $MDParser,
-                                WorkflowParameterParser $workflowParameterParser,
                                 Container               $dic)
     {
-        $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
+        $this->xoctOpenCast = $xoctOpenCast;
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
-        $this->ui_factory = $dic->ui()->factory();
         $this->ui_renderer = $dic->ui()->renderer();
-        $this->workflowParameterParser = $workflowParameterParser;
         $this->formBuilder = $formBuilder;
-        $this->MDParser = $MDParser;
     }
 
 
@@ -145,12 +122,12 @@ class xoctEventGUI extends xoctGUI
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $xoctEventFormGUI = new xoctFileUploadHandler(
+                $fileUploadHandler = new xoctFileUploadHandler(
                     new UploadStorageService(
                         self::dic()->filesystem()->temp(),
                         self::dic()->upload())
                 );
-                self::dic()->ctrl()->forwardCommand($xoctEventFormGUI);
+                self::dic()->ctrl()->forwardCommand($fileUploadHandler);
                 break;
             default:
                 $cmd = self::dic()->ctrl()->getCmd(self::CMD_STANDARD);
@@ -526,7 +503,7 @@ class xoctEventGUI extends xoctGUI
         if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
-        $form = $this->formBuilder->buildUploadForm(
+        $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
             $this->xoctOpenCast->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
@@ -546,7 +523,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // >>>>>>>>>>>>>>>>>>>>>>>>
-        $form = $this->formBuilder->buildUploadForm(
+        $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
             $this->xoctOpenCast->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
@@ -558,6 +535,7 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
+        $data = $data[0];
         // not sure if this is supposed to be in the form builder
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         $aclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ?
@@ -586,7 +564,7 @@ class xoctEventGUI extends xoctGUI
         if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
-        $form = $this->formBuilder->buildScheduleForm(
+        $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
             $this->xoctOpenCast->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
@@ -608,7 +586,7 @@ class xoctEventGUI extends xoctGUI
         if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
-        $form = $this->formBuilder->buildScheduleForm(
+        $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
             $this->xoctOpenCast->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
@@ -619,6 +597,7 @@ class xoctEventGUI extends xoctGUI
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
+        $data = $data[0];
 
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
@@ -683,7 +662,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
-        $form = $this->formBuilder->buildUpdateForm(
+        $form = $this->formBuilder->update(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
             $event->getMetadata()
         );
@@ -702,7 +681,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
-        $form = $this->formBuilder->buildUpdateScheduledForm(
+        $form = $this->formBuilder->update_scheduled(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
             $event->getScheduling()
@@ -913,7 +892,7 @@ class xoctEventGUI extends xoctGUI
     {
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER, FILTER_SANITIZE_STRING));
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
-        $form = $this->formBuilder->buildUpdateForm(
+        $form = $this->formBuilder->update(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
             $event->getMetadata()
         )->withRequest(self::dic()->http()->request());
@@ -928,6 +907,7 @@ class xoctEventGUI extends xoctGUI
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
         }
+        $data = $data[0];
 
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
             $data['metadata']
@@ -944,7 +924,7 @@ class xoctEventGUI extends xoctGUI
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER, FILTER_SANITIZE_STRING));
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
         // TODO: metadata/scheduling should not be necessary here
-        $form = $this->formBuilder->buildUpdateScheduledForm(
+        $form = $this->formBuilder->update_scheduled(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
             $event->getScheduling()
@@ -961,6 +941,7 @@ class xoctEventGUI extends xoctGUI
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
+        $data = $data[0];
 
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
             $data['metadata']

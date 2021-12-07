@@ -518,3 +518,5 @@ md_table_events#:#Event-Metadaten
 md_table_series#:#Serien-Metadaten
 action_update#:#Bearbeiten
 action_delete#:#Löschen
+yes#:#Ja
+no#:#Nein

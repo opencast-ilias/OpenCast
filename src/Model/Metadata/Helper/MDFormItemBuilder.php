@@ -16,6 +16,7 @@ use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use xoctConf;
 use xoctException;
 
 class MDFormItemBuilder
@@ -77,7 +78,6 @@ class MDFormItemBuilder
 
     public function edit(Metadata $existing_metadata): array
     {
-        // TODO: config 'metadata editable'
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
         array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
@@ -108,6 +108,9 @@ class MDFormItemBuilder
     public function editScheduled(Metadata $existing_metadata, Scheduling $existing_scheduling): array
     {
         $form_elements = [];
+        if (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::NO_METADATA) {
+            return $form_elements;
+        }
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
             return !in_array($fieldConfigAR->getFieldId(),
