@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+
 /**
  * Class xoctUserSettings
  *
@@ -39,8 +41,8 @@ class xoctUserSettings {
 	public static function getViewTypeForUser($user_id, $ref_id) {
 		/** @var xoctUserSetting $xoctUserSetting */
 		$xoctUserSetting = xoctUserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_VIEW_TYPE])->first();
-		/** @var xoctOpenCast $xoctOpenCast */
-		$xoctOpenCast = xoctOpenCast::find(ilObjOpenCast::_lookupObjectId($ref_id));
+		/** @var ObjectSettings $xoctOpenCast */
+		$xoctOpenCast = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
 		if (!$xoctOpenCast->isViewChangeable() || !$xoctUserSetting) {
 			return $xoctOpenCast->getDefaultView();
 		}

@@ -1,6 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Access/Condition checking for OpenCast object
@@ -107,11 +108,10 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 */
 	static function checkOnline($a_id) {
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
 		/**
-		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctOpenCast ObjectSettings
 		 */
-		$xoctOpenCast = xoctOpenCast::findOrGetInstance($a_id);
+		$xoctOpenCast = ObjectSettings::findOrGetInstance($a_id);
 
 		return (bool)$xoctOpenCast->isOnline();
 	}
@@ -134,12 +134,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @param                   $cmd
 	 * @param Event|NULL    $xoctEvent
 	 * @param xoctUser|NULL     $xoctUser
-	 * @param xoctOpenCast|NULL $xoctOpenCast
+	 * @param ObjectSettings|NULL $xoctOpenCast
 	 * @param null              $ref_id
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function checkAction($cmd, Event $xoctEvent = NULL, xoctUser $xoctUser = NULL, xoctOpenCast $xoctOpenCast = NULL, $ref_id = NULL) : bool
+	public static function checkAction($cmd, Event $xoctEvent = NULL, xoctUser $xoctUser = NULL, ObjectSettings $xoctOpenCast = NULL, $ref_id = NULL) : bool
 	{
 		if ($xoctUser === NULL) {
 			$xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -233,7 +233,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, xoctOpenCast $xoctOpenCast) {
+	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, ObjectSettings $xoctOpenCast) {
 		// edit_videos and write access see all videos
 		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
 			return true;

@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 
@@ -25,7 +26,7 @@ class xoctPlayerGUI extends xoctGUI
     const ROLE_MASTER = "presenter";
     const ROLE_SLAVE = "presentation";
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
     protected $xoctOpenCast;
     /**
@@ -40,11 +41,11 @@ class xoctPlayerGUI extends xoctGUI
 
     /**
      * @param EventAPIRepository $event_repository
-     * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings|null $xoctOpenCast $xoctOpenCast
      */
-    public function __construct(EventAPIRepository $event_repository, xoctOpenCast $xoctOpenCast = NULL) {
+    public function __construct(EventAPIRepository $event_repository, ObjectSettings $xoctOpenCast = NULL) {
         $this->publication_usage_repository = new PublicationUsageRepository();
-        $this->xoctOpenCast = $xoctOpenCast instanceof xoctOpenCast ? $xoctOpenCast : new xoctOpenCast();
+        $this->xoctOpenCast = $xoctOpenCast instanceof ObjectSettings ? $xoctOpenCast : new ObjectSettings();
         $this->event_repository = $event_repository;
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
@@ -26,7 +27,7 @@ class xoctSeriesGUI extends xoctGUI {
 	const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
 
 	/**
-	 * @var xoctOpenCast
+	 * @var ObjectSettings
 	 */
 	protected $xoctOpenCast;
     /**
@@ -36,13 +37,13 @@ class xoctSeriesGUI extends xoctGUI {
 
     /**
      * @param ilObjOpenCast $object
-     * @param xoctOpenCast  $xoctOpenCast
+     * @param ObjectSettings  $xoctOpenCast
      */
-	public function __construct(ilObjOpenCast $object, xoctOpenCast $xoctOpenCast = null) {
-		if ($xoctOpenCast instanceof xoctOpenCast) {
+	public function __construct(ilObjOpenCast $object, ObjectSettings $xoctOpenCast = null) {
+		if ($xoctOpenCast instanceof ObjectSettings) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
-			$this->xoctOpenCast = new xoctOpenCast ();
+			$this->xoctOpenCast = new ObjectSettings ();
 		}
         $this->object = $object;
     }

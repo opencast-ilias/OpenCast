@@ -1,5 +1,6 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 
@@ -56,7 +57,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 */
 	protected $external = true;
 	/**
-	 * @var xoctOpenCast
+	 * @var ObjectSettings
 	 */
 	protected $cast;
 	/**
@@ -67,7 +68,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 	/**
 	 * @param              $parent_gui
-	 * @param xoctOpenCast $cast
+	 * @param ObjectSettings $cast
 	 * @param bool $view
 	 * @param bool $infopage
 	 * @param bool $external
@@ -75,7 +76,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	 * @throws arException
 	 * @throws xoctException
 	 */
-	public function __construct($parent_gui, xoctOpenCast $cast, $view = false, $infopage = false, $external = true) {
+	public function __construct($parent_gui, ObjectSettings $cast) {
 		parent::__construct();
 		$this->cast = $cast;
 		$this->series = $cast->getSeries();
@@ -83,16 +84,9 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		self::dic()->ctrl()->saveParameter($parent_gui, xoctSeriesGUI::SERIES_ID);
 		self::dic()->ctrl()->saveParameter($parent_gui, 'new_type');
 		$this->is_new = ($this->series->getIdentifier() == '');
-		$this->view = $view;
-		$this->infopage = $infopage;
-		$this->external = $external;
 		xoctWaiterGUI::loadLib();
 		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/existing_channel.js'));
-		if ($view) {
-			$this->initView();
-		} else {
-			$this->initForm();
-		}
+        $this->initForm();
 	}
 
 

@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+
 /**
  * ListGUI implementation for OpenCast object plugin. This one
  * handles the presentation in container items (categories, courses, ...)
@@ -114,14 +116,14 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 	/**
 	 * @param bool $get_exceoptions
-	 * @return ActiveRecord|xoctOpenCast
+	 * @return ActiveRecord|ObjectSettings
 	 * @throws xoctException
 	 */
 	protected function getOpenCast($get_exceoptions = false) {
-		$xoctOpenCast = new xoctOpenCast();
+		$xoctOpenCast = new ObjectSettings();
 		try {
 			xoctConf::setApiSettings();
-			$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+			$xoctOpenCast = ObjectSettings::find($this->obj_id);
 		} catch (xoctException $e) {
 			if ($get_exceoptions) {
 				throw $e;
@@ -145,7 +147,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		$props = parent::getCustomProperties(array());
 		try {
 			$xoctOpenCast = $this->getOpenCast(true);
-			if (!$xoctOpenCast instanceof xoctOpenCast) {
+			if (!$xoctOpenCast instanceof ObjectSettings) {
 				return $props;
 			}
 

@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Class xoctIVTGroupGUI
@@ -21,13 +22,13 @@ class xoctIVTGroupGUI extends xoctGUI {
     ];
 
 	/**
-	 * @param xoctOpenCast $xoctOpenCast
+	 * @param ObjectSettings $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL) {
-		if ($xoctOpenCast instanceof xoctOpenCast) {
+	public function __construct(ObjectSettings $xoctOpenCast = NULL) {
+		if ($xoctOpenCast instanceof ObjectSettings) {
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else {
-			$this->xoctOpenCast = new xoctOpenCast ();
+			$this->xoctOpenCast = new ObjectSettings ();
 		}
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		//		xoctGroup::installDB();

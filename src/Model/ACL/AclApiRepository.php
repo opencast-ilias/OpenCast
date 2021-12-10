@@ -7,6 +7,7 @@ use xoctRequest;
 
 class AclApiRepository
 {
+    const CACHE_PREFIX = 'event-acl-';
 
     /**
      * @var Cache
@@ -20,7 +21,7 @@ class AclApiRepository
 
     public function find(string $identifier) : ACL
     {
-        return $this->cache->get('event-acl-' . $identifier)
+        return $this->cache->get(self::CACHE_PREFIX . $identifier)
             ?? $this->fetch($identifier);
     }
 
@@ -28,7 +29,7 @@ class AclApiRepository
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->acl()->get());
         $acl = ACL::fromResponse($data);
-        $this->cache->set('event-acl-' . $identifier, $acl);
+        $this->cache->set(self::CACHE_PREFIX . $identifier, $acl);
         return $acl;
     }
 }

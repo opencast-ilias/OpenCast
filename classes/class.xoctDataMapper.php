@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+
 /**
  * Class xoctDataMapper
  *
@@ -8,10 +10,10 @@
 class xoctDataMapper {
 
 	/**
-	 * @param xoctOpenCast $xoctOpenCast
+	 * @param ObjectSettings $xoctOpenCast
 	 * @return bool
 	 */
-	public static function xoctOpenCastupdated(xoctOpenCast $xoctOpenCast) {
+	public static function xoctOpenCastupdated(ObjectSettings $xoctOpenCast) {
 		if ($xoctOpenCast->getObjId()) {
 			/**
 			 * @var $ilObjOpenCast ilObjOpenCast

@@ -1,6 +1,12 @@
 <?php
 
+use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequestPayload;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Class xoctChangeOwnerGUI
@@ -12,32 +18,28 @@ use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 class xoctChangeOwnerGUI extends xoctGUI {
 
     /**
-     * @var xoctEvent
+     * @var Event
      */
-    protected $xoctEvent;
+    protected $event;
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
     protected $xoctOpenCast;
+    /**
+     * @var ACLUtils
+     */
+    private $ACLUtils;
     /**
      * @var EventAPIRepository
      */
     private $event_repository;
 
-    /**
-     * @param xoctOpenCast $xoctOpenCast
-     */
-    public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventAPIRepository $event_repository) {
-        if ($xoctOpenCast instanceof xoctOpenCast) {
-            $this->xoctOpenCast = $xoctOpenCast;
-        } else {
-            $this->xoctOpenCast = new xoctOpenCast();
-        }
+    public function __construct(ObjectSettings $xoctOpenCast, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
+        $this->xoctOpenCast = $xoctOpenCast;
+        $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
+        $this->ACLUtils = $ACLUtils;
         $this->event_repository = $event_repository;
-        $this->xoctEvent = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         self::dic()->tabs()->clearTargets();
-
-
         self::dic()->tabs()->setBackTarget(self::plugin()->getPluginObject()->txt('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
         self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.css'));
@@ -47,19 +49,19 @@ class xoctChangeOwnerGUI extends xoctGUI {
 
 
     /**
-     * @throws \srag\DIC\OpenCast\Exception\DICException
+     * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
     protected function index() {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->xoctEvent, $xoctUser, $this->xoctOpenCast)) {
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->xoctOpenCast)) {
             ilUtil::sendFailure('Access denied', true);
             self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
         }
         $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.change_owner.html', false, false);
-        $temp->setVariable('PREVIEW', $this->xoctEvent->publications()->getThumbnailUrl());
-        $temp->setVariable('VIDEO_TITLE', $this->xoctEvent->getTitle());
+        $temp->setVariable('PREVIEW', $this->event->publications()->getThumbnailUrl());
+        $temp->setVariable('VIDEO_TITLE', $this->event->getTitle());
         $temp->setVariable('L_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter'));
         $temp->setVariable('PH_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter_placeholder'));
         $temp->setVariable('HEADER_OWNER', self::plugin()->getPluginObject()->txt('current_owner_header'));
@@ -94,10 +96,10 @@ class xoctChangeOwnerGUI extends xoctGUI {
      *
      */
     public function getAll() {
-        $owner = $this->xoctEvent->getOwner();
+        $owner = $this->ACLUtils->getOwner($this->event);
         $owner_data = $owner ? ['id' => $owner->getIliasUserId(), 'name' => $owner->getNamePresentation()] : [];
 
-        $available_user_ids = self::getCourseMembers();
+        $available_user_ids = $this->getCourseMembers();
         $available_users = [];
         foreach ($available_user_ids as $user_id) {
             if ($owner && $user_id == $owner->getIliasUserId()) {
@@ -121,10 +123,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
     }
 
 
-    /**
-     * @return array
-     */
-    protected function getCourseMembers() {
+    protected function getCourseMembers() : array
+    {
         $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
         $p = $parent->getMembersObject();
 
@@ -138,67 +138,24 @@ class xoctChangeOwnerGUI extends xoctGUI {
      */
     protected function setOwner() {
         $user_id = $_GET['user_id'];
-        $this->xoctEvent->setOwner(xoctUser::getInstance($user_id));
-        $this->xoctEvent->updateAcls();
+        $this->event = $this->ACLUtils->setOwner(xoctUser::getInstance($user_id), $this->event);
+        $this->event_repository->updateACL(new UpdateEventACLRequest(
+            $this->event->getIdentifier(),
+            new UpdateEventACLRequestPayload($this->event->getAcl())
+        ));
     }
-//    /**
-//     * @param xoctUser $xoctUser
-//     *
-//     * @throws xoctException
-//     */
-//    public function setOwner($xoctUser) {
-//        $this->getMetadata()->getField('rightsHolder')->setValue($xoctUser->getNamePresentation());
-//
-//        if (!$xoctUser->getOwnerRoleName()) {
-//            return;
-//        }
-//
-//        $this->removeAllOwnerAcls();
-//        $acl = new ACLEntry();
-//        $acl->setAction(ACLEntry::READ);
-//        $acl->setAllow(true);
-//        $acl->setRole($xoctUser->getOwnerRoleName());
-//        $this->getAcl()->add($acl);
-//
-//        $acl = new ACLEntry();
-//        $acl->setAction(ACLEntry::WRITE);
-//        $acl->setAllow(true);
-//        $acl->setRole($xoctUser->getOwnerRoleName());
-//        $this->getAcl()->add($acl);
-//    }
 
     /**
      * async function
      */
     protected function removeOwner() {
-        $this->xoctEvent->removeOwner();
-        $this->xoctEvent->updateAcls();
+        $this->event = $this->ACLUtils->removeOwner($this->event);
+        $this->event_repository->updateACL(new UpdateEventACLRequest(
+            $this->event->getIdentifier(),
+            new UpdateEventACLRequestPayload($this->event->getAcl())
+        ));
     }
 
-
-//    /**
-//     *
-//     */
-//    public function removeOwner() {
-//        $this->removeAllOwnerAcls();
-//        $this->getMetadata()->getField('rightsHolder')->setValue('');
-//    }
-//
-//
-//    /**
-//     *
-//     */
-//    public function removeAllOwnerAcls() {
-//        $standard_roles = xoctConf::getConfig(xoctConf::F_STD_ROLES);
-//        $ACLEntries = $this->getAcl()->getEntries();
-//        foreach ($ACLEntries as $i => $acl) {
-//            if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
-//                && !in_array($acl->getRole(), $standard_roles)) {
-//                unset($ACLEntries[$i]);
-//            }
-//        }
-//        $this->acl->setEntries($ACLEntries);
-//    }
 
 
     /**

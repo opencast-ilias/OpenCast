@@ -3,6 +3,7 @@
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 
@@ -58,7 +59,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 		$this->db->dropTable(xoctInvitation::TABLE_NAME, false);
 		$this->db->dropTable(xoctIVTGroupParticipant::TABLE_NAME, false);
 		$this->db->dropTable(xoctIVTGroup::TABLE_NAME, false);
-		$this->db->dropTable(xoctOpenCast::TABLE_NAME, false);
+		$this->db->dropTable(ObjectSettings::TABLE_NAME, false);
 		$this->db->dropTable(EventAdditionsAR::TABLE_NAME, false);
 		$this->db->dropTable(xoctPermissionTemplate::TABLE_NAME, false);
 		$this->db->dropTable(PublicationUsage::TABLE_NAME, false);

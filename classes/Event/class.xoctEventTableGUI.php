@@ -4,6 +4,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 
@@ -27,7 +28,7 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected $filter = array();
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
     protected $xoctOpenCast;
     /**
@@ -52,12 +53,12 @@ class xoctEventTableGUI extends ilTable2GUI
      *
      * @param xoctEventGUI $a_parent_obj
      * @param string $a_parent_cmd
-     * @param xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings $xoctOpenCast
      * @param               $load_data bool
      */
     public function __construct(xoctEventGUI       $a_parent_obj,
                                 string             $a_parent_cmd,
-                                xoctOpenCast       $xoctOpenCast,
+                                ObjectSettings     $xoctOpenCast,
                                 EventAPIRepository $event_repository,
                                 bool               $load_data = true)
     {
@@ -86,20 +87,20 @@ class xoctEventTableGUI extends ilTable2GUI
 
 
     /**
-     * @param xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings $xoctOpenCast
      */
-    public static function setDefaultRowValue(xoctOpenCast $xoctOpenCast)
+    public static function setDefaultRowValue(ObjectSettings $xoctOpenCast)
     {
         $_GET[self::getGeneratedPrefix($xoctOpenCast) . '_trows'] = 20;
     }
 
 
     /**
-     * @param xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings $xoctOpenCast
      *
      * @return string
      */
-    public static function getGeneratedPrefix(xoctOpenCast $xoctOpenCast)
+    public static function getGeneratedPrefix(ObjectSettings $xoctOpenCast)
     {
         return self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
     }

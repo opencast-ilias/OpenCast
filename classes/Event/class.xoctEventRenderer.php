@@ -6,6 +6,7 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
@@ -26,7 +27,7 @@ class xoctEventRenderer {
 	 */
 	protected $xoctEvent;
 	/**
-	 * @var null | xoctOpenCast
+	 * @var null | ObjectSettings
 	 */
 	protected $xoctOpenCast;
 	/**
@@ -215,7 +216,7 @@ class xoctEventRenderer {
 	public function getDownloadLinkHTML($button_type = 'btn_info') {
         $download_dtos = $this->xoctEvent->publications()->getDownloadDtos(false);
 		if (($this->xoctEvent->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
-			if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getStreamingOnly()) {
+			if ($this->xoctOpenCast instanceof ObjectSettings && $this->xoctOpenCast->getStreamingOnly()) {
 				return '';
 			}
             $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
@@ -470,7 +471,7 @@ class xoctEventRenderer {
 		$owner_tpl = self::plugin()->template('default/tpl.event_owner.html');
 		$owner_tpl->setVariable('OWNER', $this->xoctEvent->getOwnerUsername());
 
-		if ($this->xoctOpenCast instanceof xoctOpenCast && $this->xoctOpenCast->getPermissionPerClip()) {
+		if ($this->xoctOpenCast instanceof ObjectSettings && $this->xoctOpenCast->getPermissionPerClip()) {
 			$owner_tpl->setCurrentBlock('invitations');
 			$in = xoctInvitation::getActiveInvitationsForEvent($this->xoctEvent, $this->xoctOpenCast, true);
 			if ($in > 0) {

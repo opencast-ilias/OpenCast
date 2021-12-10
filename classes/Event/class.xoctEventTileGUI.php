@@ -7,6 +7,7 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Class xoctEventTileGUI
@@ -25,7 +26,7 @@ class xoctEventTileGUI {
 	 */
 	protected $parent_gui;
 	/**
-	 * @var xoctOpenCast
+	 * @var ObjectSettings
 	 */
 	protected $xoctOpenCast;
 	/**
@@ -57,7 +58,7 @@ class xoctEventTileGUI {
      */
 	protected $event_repository;
 
-	public function __construct(xoctEventGUI $parent_gui, xoctOpenCast $xoctOpenCast, EventAPIRepository $eventRepository) {
+	public function __construct(xoctEventGUI $parent_gui, ObjectSettings $xoctOpenCast, EventAPIRepository $eventRepository) {
 		$this->parent_gui = $parent_gui;
 		$this->xoctOpenCast = $xoctOpenCast;
 		$this->event_repository = $eventRepository;

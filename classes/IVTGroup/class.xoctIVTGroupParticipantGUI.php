@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+
 /**
  * Class xoctIVTGroupParticipantGUI
  *
@@ -17,16 +20,16 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
     ];
 
 	/**
-	 * @param xoctOpenCast $xoctOpenCast
+	 * @param ObjectSettings $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = null)
+	public function __construct(ObjectSettings $xoctOpenCast = null)
 	{
-		if ($xoctOpenCast instanceof xoctOpenCast)
+		if ($xoctOpenCast instanceof ObjectSettings)
 		{
 			$this->xoctOpenCast = $xoctOpenCast;
 		} else
 		{
-			$this->xoctOpenCast = new xoctOpenCast ();
+			$this->xoctOpenCast = new ObjectSettings ();
 		}
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		xoctWaiterGUI::loadLib();

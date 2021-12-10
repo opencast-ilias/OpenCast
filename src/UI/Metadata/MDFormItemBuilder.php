@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Model\Metadata\Helper;
+namespace srag\Plugins\Opencast\UI\Metadata;
 
 use DateTime;
 use ILIAS\Refinery\Factory as RefineryFactory;
@@ -8,6 +8,7 @@ use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -64,7 +65,7 @@ class MDFormItemBuilder
         $this->agent_repository = $agent_repository;
     }
 
-    public function upload(): array
+    public function event_upload(): array
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
@@ -76,7 +77,7 @@ class MDFormItemBuilder
         return $form_elements;
     }
 
-    public function edit(Metadata $existing_metadata): array
+    public function event_edit(Metadata $existing_metadata): array
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
@@ -88,7 +89,7 @@ class MDFormItemBuilder
         return $form_elements;
     }
 
-    public function schedule(): array
+    public function event_schedule(): array
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -105,7 +106,7 @@ class MDFormItemBuilder
         return $form_elements;
     }
 
-    public function editScheduled(Metadata $existing_metadata, Scheduling $existing_scheduling): array
+    public function event_edit_scheduled(Metadata $existing_metadata, Scheduling $existing_scheduling): array
     {
         $form_elements = [];
         if (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::NO_METADATA) {
@@ -124,6 +125,16 @@ class MDFormItemBuilder
         $form_elements[$this->prefixPostVar(MDFieldDefinition::F_LOCATION)] =
             $this->buildSchedulingLocationInput()->withValue($existing_scheduling->getAgentId());
         return $form_elements;
+    }
+
+    public function series_create(): array
+    {
+
+    }
+
+    public function series_edit(Metadata $existing_metadata): array
+    {
+
     }
 
     /**
@@ -163,7 +174,7 @@ class MDFormItemBuilder
     {
         $options = [];
         $agents = $this->agent_repository->findAll();
-        array_walk($agents, function(Agent $agent) use (&$options) {
+        array_walk($agents, function (Agent $agent) use (&$options) {
             $options[$agent->getAgentId()] = $agent->getAgentId();
         });
         // todo: label

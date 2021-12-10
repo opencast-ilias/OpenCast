@@ -7,13 +7,14 @@ use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
 use stdClass;
 use xoct;
@@ -99,9 +100,7 @@ class EventAPIRepository
     private function fetch(string $identifier): Event
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->get());
-        $event = $this->buildEventFromStdClass($data, $identifier);
-        $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
-        return $event;
+        return $this->buildEventFromStdClass($data, $identifier);
     }
 
     public function delete(string $identifier): bool
@@ -163,6 +162,9 @@ class EventAPIRepository
                     return $this->scheduling_repository->find($identifier);
                 }));
             }
+        }
+        if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
+            $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
         }
         return $event;
     }
@@ -241,9 +243,6 @@ class EventAPIRepository
 
         foreach ($data as $d) {
             $event = $this->buildEventFromStdClass($d, $d->identifier);
-            if (!in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
-                $this->cache->delete(self::CACHE_PREFIX . $event->getIdentifier());
-            }
             $return[] = $as_object ? $event : $event->getArrayForTable();
         }
 
@@ -263,5 +262,14 @@ class EventAPIRepository
     {
         $response = json_decode(xoctRequest::root()->events()->post($scheduleEventRequest->getPayload()->jsonSerialize()));
         return is_array($response) ? $response[0]->identifier : $response->identifier;
+    }
+
+    public function updateACL(UpdateEventACLRequest $updateEventACLRequest) : void
+    {
+        xoctRequest::root()->events($updateEventACLRequest->getIdentifier())
+            ->acl()->post($updateEventACLRequest->getPayload()->jsonSerialize());
+        // todo: caching is not good
+        $this->cache->delete(self::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
+        $this->cache->delete(AclApiRepository::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
     }
 }

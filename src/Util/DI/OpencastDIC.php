@@ -9,9 +9,12 @@ use Pimple\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
@@ -21,9 +24,7 @@ use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventReposito
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\UI\FormBuilderEvent;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDFormItemBuilder;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
+use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
@@ -63,6 +64,9 @@ class OpencastDIC
         });
         $this->container['acl_repository'] = $this->container->factory(function ($c) {
             return new AclApiRepository($c['cache']);
+        });
+        $this->container['acl_utils'] = $this->container->factory(function ($c) {
+            return new ACLUtils();
         });
         $this->container['cache'] = $this->container->factory(function ($c) {
             return CacheFactory::getInstance();
@@ -214,6 +218,11 @@ class OpencastDIC
     public function metadata(): MetadataService
     {
         return new MetadataService($this->container);
+    }
+
+    public function acl_utils() : ACLUtils
+    {
+        return $this->container['acl_utils'];
     }
 
 }

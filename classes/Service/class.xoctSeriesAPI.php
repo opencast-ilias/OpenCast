@@ -1,6 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Group\Group;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Class xoctSeriesAPI
@@ -58,7 +59,7 @@ class xoctSeriesAPI {
 	 * @param       $title
 	 * @param array $additional_data
 	 *
-	 * @return xoctOpenCast
+	 * @return ObjectSettings
 	 * @throws xoctInternalApiException
 	 */
 	public function create($parent_ref_id, $title, $additional_data = array()) {
@@ -81,7 +82,7 @@ class xoctSeriesAPI {
         $object->putInTree($parent_ref_id);
         $object->setPermissions($parent_ref_id);
 
-		$cast = new xoctOpenCast();
+		$cast = new ObjectSettings();
 		$cast->setOnline(isset($additional_data['online']) ? $additional_data['online'] : false);
 		$cast->setAgreementAccepted(true);
 		$cast->setIntroductionText(isset($additional_data['introduction_text']) ? $additional_data['introduction_text'] : '');
@@ -156,11 +157,11 @@ class xoctSeriesAPI {
 	/**
 	 * @param $ref_id
 	 *
-	 * @return xoctOpenCast
+	 * @return ObjectSettings
 	 */
 	public function read($ref_id) {
-		/** @var xoctOpenCast $cast */
-		$cast = xoctOpenCast::find(ilObjOpenCast::_lookupObjectId($ref_id));
+		/** @var ObjectSettings $cast */
+		$cast = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
 		return $cast;
 	}
 
@@ -172,7 +173,7 @@ class xoctSeriesAPI {
 	public function delete($ref_id, $delete_opencast_series) {
 		$object = new ilObjOpenCast($ref_id);
 		if ($delete_opencast_series) {
-			xoctOpenCast::find($object->getId())->getSeries()->delete();
+			ObjectSettings::find($object->getId())->getSeries()->delete();
 		}
 		$object->delete();
 	}
@@ -196,12 +197,12 @@ class xoctSeriesAPI {
 	 * @param $ref_id
 	 * @param $data
 	 *
-	 * @return xoctOpenCast
+	 * @return ObjectSettings
 	 */
 	public function update($ref_id, $data) {
 		$object = new ilObjOpenCast($ref_id);
-		/** @var xoctOpenCast $cast */
-		$cast = xoctOpenCast::where(array('obj_id' => $object->getId()))->first();
+		/** @var ObjectSettings $cast */
+		$cast = ObjectSettings::where(array('obj_id' => $object->getId()))->first();
 		$series = $cast->getSeries();
 
 		$update_ilias_data = $update_opencast_data = false;

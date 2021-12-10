@@ -54,14 +54,16 @@ class Cache extends ilGlobalCache {
 	//		throw new ilException('xoctCache::getInstance() should not be called. Please call xoctCache::getCacheInstance() instead.');
 	//	}
 
-	public function init() {
+	public function init() : void
+	{
 		$this->initCachingService();
 		$this->setActive(true);
 		self::setOverrideActive(true);
 	}
 
 
-	protected function initCachingService() {
+	protected function initCachingService() : void
+	{
 		/**
 		 * @var $ilGlobalCacheService ilGlobalCacheService
 		 */
@@ -206,6 +208,7 @@ class Cache extends ilGlobalCache {
 		}
 
 		$return = $this->global_cache->set($key, $this->global_cache->serialize($value), $ttl);
+		xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
 
 		return $return;
 	}

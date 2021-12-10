@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Metadata\MetadataService;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
@@ -116,16 +117,22 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                 case 'xoctinvitationgui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctInvitationGUI($xoctOpenCast,
-                        $this->opencast_dic->event_repository());
+                    $xoctSeriesGUI = new xoctInvitationGUI(
+                        $xoctOpenCast,
+                        $this->opencast_dic->event_repository(),
+                        $this->opencast_dic->acl_utils()
+                    );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
                 case 'xoctchangeownergui':
                     $xoctOpenCast = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctChangeOwnerGUI($xoctOpenCast,
-                        $this->opencast_dic->event_repository());
+                    $xoctSeriesGUI = new xoctChangeOwnerGUI(
+                        $xoctOpenCast,
+                        $this->opencast_dic->event_repository(),
+                        $this->opencast_dic->acl_utils()
+                    );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -233,10 +240,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
      */
 	protected function setTabs() {
 		/**
-		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctOpenCast ObjectSettings
 		 */
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
-		if (!$xoctOpenCast instanceof xoctOpenCast) {
+		$xoctOpenCast = ObjectSettings::find($this->obj_id);
+		if (!$xoctOpenCast instanceof ObjectSettings) {
 			return false;
 		}
 
@@ -295,7 +302,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
      * @throws xoctException
      */
 	public function initCreateForm($type, $from_post = false) {
-		$creation_form = new xoctSeriesFormGUI($this, new xoctOpenCast());
+		$creation_form = new xoctSeriesFormGUI($this, new ObjectSettings());
 		if ($from_post) {
 			$creation_form->setValuesByPost();
 		} else {
@@ -338,7 +345,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
      */
 	public function afterSave(ilObject $newObj) {
 		/**
-		 * @var $cast xoctOpenCast
+		 * @var $cast ObjectSettings
 		 */
 		// set object id for xoctOpenCast object
 		$args = func_get_args();
@@ -347,7 +354,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
         $is_memberupload_enabled = $additional_args[1];
         $channel_type = $additional_args[2];
 		$cast->setObjId($newObj->getId());
-		if (xoctOpenCast::where(array( 'obj_id' => $newObj->getId() ))->hasSets()) {
+		if (ObjectSettings::where(array( 'obj_id' => $newObj->getId() ))->hasSets()) {
 			$cast->update();
 		} else {
 			$cast->create();
@@ -393,7 +400,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
     /**
      * @param bool $render_locator
      *
-     * @return xoctOpenCast
+     * @return ObjectSettings
      * @throws DICException
      * @throws xoctException
      */
@@ -403,15 +410,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		}
 
 		/**
-		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctOpenCast ObjectSettings
 		 * @var $xoctSeries   xoctSeries
 		 */
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		$xoctOpenCast = ObjectSettings::find($this->obj_id);
 		if ($this->ilias_dic->ctrl()->isAsynch()) {
 		    return $xoctOpenCast;
         }
 
-		if ($xoctOpenCast instanceof xoctOpenCast && $this->object) {
+		if ($xoctOpenCast instanceof ObjectSettings && $this->object) {
 			$this->ilias_dic->ui()->mainTemplate()->setTitle($this->object->getTitle());
 			$this->ilias_dic->ui()->mainTemplate()->setDescription($this->object->getDescription());
 			if ($this->ilias_dic->access()->checkAccess('read', '', $_GET['ref_id'])) {
@@ -441,8 +448,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	 */
 	function infoScreen() {
 		/**
-		 * @var $xoctOpenCast xoctOpenCast
-		 * @var $item         xoctOpenCast
+		 * @var $xoctOpenCast ObjectSettings
+		 * @var $item         ObjectSettings
 		 * @var $tree         ilTree
 		 */
 		$this->ilias_dic->tabs()->setTabActive("info_short");
@@ -452,7 +459,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
 		$info = new ilInfoScreenGUI($this);
 		$info->enablePrivateNotes();
-		$xoctOpenCast = xoctOpenCast::find($this->obj_id);
+		$xoctOpenCast = ObjectSettings::find($this->obj_id);
 		if ($refs = $xoctOpenCast->getDuplicatesOnSystem()) {
 			$info->addSection(self::plugin()->translate('info_linked_items'));
 			$i = 1;
@@ -578,8 +585,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	{
 		// process
 
-		/** @var xoctOpenCast $xoctOpenCast */
-		$xoctOpenCast = xoctOpenCast::find($a_obj_id);
+		/** @var ObjectSettings $xoctOpenCast */
+		$xoctOpenCast = ObjectSettings::find($a_obj_id);
 		if ($all_refs = $xoctOpenCast->getDuplicatesOnSystem()) {
 			$this->ilias_dic->language()->loadLanguageModule("rep");
 

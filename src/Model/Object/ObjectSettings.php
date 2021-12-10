@@ -1,12 +1,26 @@
 <?php
+
+namespace srag\Plugins\Opencast\Model\Object;
+
+use ActiveRecord;
+use ilException;
+use ilObjOpenCast;
+use ilOpenCastPlugin;
 use srag\DIC\OpenCast\DICTrait;
+use xoctConf;
+use xoctDataMapper;
+use xoctException;
+use xoctIVTGroup;
+use xoctSeries;
+use xoctUserSettings;
+
 /**
  * Class xoctOpenCast
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0
  */
-class xoctOpenCast extends ActiveRecord {
+class ObjectSettings extends ActiveRecord {
 
 	use DICTrait;
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
@@ -28,8 +42,8 @@ class xoctOpenCast extends ActiveRecord {
 	 * @return int
 	 */
 	public static function lookupObjId($series_identifier) {
-		$xoctOpenCast = xoctOpenCast::where(array( 'series_identifier' => $series_identifier ))->last();
-		if ($xoctOpenCast instanceof xoctOpenCast) {
+		$xoctOpenCast = ObjectSettings::where(array( 'series_identifier' => $series_identifier ))->last();
+		if ($xoctOpenCast instanceof ObjectSettings) {
 			return $xoctOpenCast->getObjId();
 		}
 
@@ -43,8 +57,8 @@ class xoctOpenCast extends ActiveRecord {
 	 * @return int
 	 */
 	public static function lookupSeriesIdentifier($obj_id) {
-		$xoctOpenCast = xoctOpenCast::where(array( 'obj_id' => $obj_id ))->last();
-		if ($xoctOpenCast instanceof xoctOpenCast) {
+		$xoctOpenCast = ObjectSettings::where(array( 'obj_id' => $obj_id ))->last();
+		if ($xoctOpenCast instanceof ObjectSettings) {
 			return $xoctOpenCast->getSeriesIdentifier();
 		}
 
@@ -127,7 +141,7 @@ class xoctOpenCast extends ActiveRecord {
 		$duplicates_ids = array();
 		// check if duplicates are actually deleted
 		foreach ($duplicates_ar->get() as $oc) {
-			/** @var xoctOpenCast $oc */
+			/** @var ObjectSettings $oc */
 			if ($oc->getObjId() != $this->getObjId()) {
 				$query = "SELECT ref_id FROM object_reference" . " WHERE deleted is null and obj_id = " . self::dic()->database()->quote($oc->getObjId(), "integer");
 				$set = self::dic()->database()->query($query);

@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+
 /**
  * Class ilObjOpenCast
  *
@@ -42,9 +44,9 @@ class ilObjOpenCast extends ilObjectPlugin {
 	{
 		xoctConf::setApiSettings();
 		/**
-		 * @var $xoctOpenCast xoctOpenCast
+		 * @var $xoctOpenCast ObjectSettings
 		 */
-		$xoctOpenCast = xoctOpenCast::find($this->getId());
+		$xoctOpenCast = ObjectSettings::find($this->getId());
 		if (self::dic()->ctrl()->isAsynch()) {
 			// don't update title/description on async calls
 			return;
@@ -74,7 +76,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doDelete() {
-		xoctOpenCast::find($this->getId())->delete();
+		ObjectSettings::find($this->getId())->delete();
 	}
 
 
@@ -88,13 +90,12 @@ class ilObjOpenCast extends ilObjectPlugin {
 	protected function doCloneObject($new_obj, $a_target_id, $a_copy_id = NULL) {
 		xoctConf::setApiSettings();
 		/**
-		 * @var $xoctOpenCastNew xoctOpenCast
-		 * @var $xoctOpenCastOld xoctOpenCast
+		 * @var $xoctOpenCastNew ObjectSettings
+		 * @var $xoctOpenCastOld ObjectSettings
 		 */
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-		$xoctOpenCastNew = new xoctOpenCast();
+		$xoctOpenCastNew = new ObjectSettings();
 		$xoctOpenCastNew->setObjId($new_obj->getId());
-		$xoctOpenCastOld = xoctOpenCast::find($this->getId());
+		$xoctOpenCastOld = ObjectSettings::find($this->getId());
 
 		$xoctOpenCastNew->setSeriesIdentifier($xoctOpenCastOld->getSeriesIdentifier());
 		$xoctOpenCastNew->setIntroductionText($xoctOpenCastOld->getIntroductionText());

@@ -2,11 +2,11 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
+use srag\Plugins\Opencast\Model\Event\Event;
 use xoctMedia;
 use xoctException;
 use xoctConf;
 use xoctSecureLink;
-use xoctEvent;
 use xoctAttachment;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use DateTime;
@@ -115,15 +115,15 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param xoctEvent $xoctEvent
+     * @param Event $event
      *
      * @return array
      * @throws xoctException
      */
-    protected function buildSegments(xoctEvent $xoctEvent) : array
+    protected function buildSegments(Event $event) : array
     {
         $frameList = [];
-        $segments = $xoctEvent->publications()->getSegmentPublications();
+        $segments = $event->publications()->getSegmentPublications();
         if (count($segments) > 0) {
             $segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
                 if (!isset($segments[$segment->getRef()])) {

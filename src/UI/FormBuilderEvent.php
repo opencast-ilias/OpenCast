@@ -10,8 +10,8 @@ use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
 use ilMimeTypeUtil;
 use ilPlugin;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
@@ -155,7 +155,7 @@ class FormBuilderEvent
         // todo: series selector if obj is 0
         $section = $this->ui_factory->input()->field()->section(
             ['file' => $file_input]
-            + $this->form_item_builder->upload()
+            + $this->form_item_builder->event_upload()
             + ($obj_id == 0 ?
                 $this->workflowParameterRepository->getGeneralFormItems()
                 : $this->workflowParameterRepository->getFormItemsForObjId($obj_id, $as_admin)),
@@ -174,7 +174,7 @@ class FormBuilderEvent
     public function update(string $form_action, Metadata $metadata): Form
     {
         $section = $this->ui_factory->input()->field()->section(
-            $this->form_item_builder->edit($metadata),
+            $this->form_item_builder->event_edit($metadata),
             $this->plugin->txt('event_edit')
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $metadata = $this->MDParser->parseFormDataEvent($vs);
@@ -189,7 +189,7 @@ class FormBuilderEvent
     public function schedule(string $form_action, int $obj_id = 0, bool $as_admin = false): Form
     {
         $section = $this->ui_factory->input()->field()->section(
-            $this->form_item_builder->schedule()
+            $this->form_item_builder->event_schedule()
             + ['scheduling' => $this->buildSchedulingInput()]
             + ($obj_id == 0 ?
                 $this->workflowParameterRepository->getGeneralFormItems()
@@ -212,7 +212,7 @@ class FormBuilderEvent
     {
         $allow_edit_scheduling = (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA);
         $section = $this->ui_factory->input()->field()->section(
-            $this->form_item_builder->editScheduled($metadata, $scheduling)
+            $this->form_item_builder->event_edit_scheduled($metadata, $scheduling)
             + ($allow_edit_scheduling ? $this->buildEditSchedulingInputs($scheduling) : []), $this->plugin->txt('event_edit'))
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) use ($allow_edit_scheduling) {
                 $parsed['metadata'] = $this->MDParser->parseFormDataEvent($vs);

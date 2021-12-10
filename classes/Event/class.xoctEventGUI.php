@@ -1,27 +1,25 @@
 <?php
 
 use ILIAS\DI\Container;
-use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
-use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequestPayload;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequestPayload;
 use srag\Plugins\Opencast\Model\Group\Group;
-use srag\Plugins\Opencast\Model\Metadata\MetadataField;
-use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
-use srag\Plugins\Opencast\UI\FormBuilderEvent;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
+use srag\Plugins\Opencast\UI\FormBuilderEvent;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
@@ -63,7 +61,7 @@ class xoctEventGUI extends xoctGUI
     private $parent_gui;
 
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
     protected $xoctOpenCast;
     /**
@@ -83,11 +81,11 @@ class xoctEventGUI extends xoctGUI
      */
     private $formBuilder;
 
-    public function __construct(ilObjOpenCastGUI        $parent_gui,
-                                xoctOpenCast            $xoctOpenCast,
-                                EventAPIRepository      $event_repository,
-                                FormBuilderEvent        $formBuilder,
-                                Container               $dic)
+    public function __construct(ilObjOpenCastGUI   $parent_gui,
+                                ObjectSettings     $xoctOpenCast,
+                                EventAPIRepository $event_repository,
+                                FormBuilderEvent   $formBuilder,
+                                Container          $dic)
     {
         $this->xoctOpenCast = $xoctOpenCast;
         $this->parent_gui = $parent_gui;

@@ -1,8 +1,10 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * Class xoctInvitationGUI
@@ -18,34 +20,35 @@ class xoctInvitationGUI extends xoctGUI {
      */
     protected $event;
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
     protected $xoctOpenCast;
     /**
      * @var EventAPIRepository
      */
     private $event_repository;
+    /**
+     * @var ACLUtils
+     */
+    private $ACLUtils;
 
     /**
-	 * @param xoctOpenCast $xoctOpenCast
+	 * @param ObjectSettings $xoctOpenCast
 	 */
-	public function __construct(xoctOpenCast $xoctOpenCast = NULL, EventAPIRepository $event_repository) {
-		if ($xoctOpenCast instanceof xoctOpenCast) {
-			$this->xoctOpenCast = $xoctOpenCast;
-		} else {
-			$this->xoctOpenCast = new xoctOpenCast();
-		}
+	public function __construct(ObjectSettings $xoctOpenCast, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
+        $this->xoctOpenCast = $xoctOpenCast;
         $this->event_repository = $event_repository;
 		$this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
-		self::dic()->tabs()->clearTargets();
+        $this->ACLUtils = $ACLUtils;
+        self::dic()->tabs()->clearTargets();
 
 
-		self::dic()->tabs()->setBackTarget(self::plugin()->translate('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
-		xoctWaiterGUI::loadLib();
-		self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.css'));
-		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.js'));
-		self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
-	}
+        self::dic()->tabs()->setBackTarget(self::plugin()->translate('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
+        xoctWaiterGUI::loadLib();
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.css'));
+        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.js'));
+        self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
+    }
 
 
     /**
@@ -108,7 +111,7 @@ class xoctInvitationGUI extends xoctGUI {
 		$available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
 		$invited_users = array();
 		$available_users = array();
-		$owner = $this->event->getOwner();
+		$owner = $this->ACLUtils->getOwner($this->event);
 		foreach ($available_user_ids as $user_id) {
 			if ($user_id == self::dic()->user()->getId()) {
 				continue;
