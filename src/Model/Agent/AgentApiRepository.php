@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Agent;
 use Exception;
 use xoctRequest;
 
-class AgentApiRepository
+class AgentApiRepository implements AgentRepository
 {
     /**
      * @var AgentParser
@@ -20,10 +20,6 @@ class AgentApiRepository
         $this->agentParser = $agentParser;
     }
 
-    /**
-     * @return Agent[]
-     * @throws Exception
-     */
     public function findAll() : array
     {
         $data = json_decode(xoctRequest::root()->agents()->get());

@@ -23,7 +23,7 @@ class SchedulingParser
                 $start = new DateTimeImmutable($scheduling_data['start_date'] . ' ' . $scheduling_data['start_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date'] . ' ' . $scheduling_data['end_time']);
                 $duration = $end->getTimestamp() - $start->getTimestamp();
-                return new Scheduling($form_data['md_' . MDFieldDefinition::F_LOCATION],
+                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
                     $start,
                     $end,
                     $duration,
@@ -31,7 +31,7 @@ class SchedulingParser
             case 'no_repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date_time']);
-                return new Scheduling($form_data['md_' . MDFieldDefinition::F_LOCATION], $start, $end);
+                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end);
         }
         throw new xoctException(xoctException::INTERNAL_ERROR, $type . ' is not a valid scheduling type');
     }
@@ -39,7 +39,7 @@ class SchedulingParser
     public function parseUpdateFormData(array $form_data) : Scheduling
     {
         // for some reason unknown to me, the start/end are already DateTimeImmutables here...
-        return new Scheduling($form_data['md_' . MDFieldDefinition::F_LOCATION],
+        return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
             $form_data['start_date_time'],
             $form_data['end_date_time']);
     }

@@ -522,3 +522,10 @@ action_update#:#Update
 action_delete#:#Delete
 yes#:#Yes
 no#:#No
+monday#:#Monday
+tuesday#:#Tuesday
+wednesday#:#Wednesday
+thursday#:#Thursday
+friday#:#Friday
+saturday#:#Saturday
+sunday#:#Sunday

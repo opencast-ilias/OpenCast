@@ -9,6 +9,7 @@ use Pimple\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
+use srag\Plugins\Opencast\Model\ACL\AclRepository;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
@@ -18,16 +19,23 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
+use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
+use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
+use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\FormBuilderEvent;
+use srag\Plugins\Opencast\UI\FormBuilderSeries;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
+use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 use xoctFileUploadHandler;
@@ -122,7 +130,8 @@ class OpencastDIC
                 $c['md_prefiller'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
-                $c['agent_repository']
+                $c['md_parser'],
+                $c['plugin']
             );
         });
         $this->container['md_form_item_builder_series'] = $this->container->factory(function ($c) {
@@ -132,11 +141,18 @@ class OpencastDIC
                 $c['md_prefiller'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
-                $c['agent_repository']
+                $c['md_parser'],
+                $c['plugin']
             );
         });
+        $this->container['workflow_repository'] = $this->container->factory(function ($c) {
+           return new WorkflowDBRepository();
+        });
         $this->container['workflow_parameter_conf_repository'] = $this->container->factory(function ($c) {
-            return new SeriesWorkflowParameterRepository($this->dic->ui()->factory());
+            return new SeriesWorkflowParameterRepository(
+                $this->dic->ui()->factory(),
+                $this->dic->refinery(),
+                $c['workflow_parameter_parser']);
         });
         $this->container['workflow_parameter_parser'] = $this->container->factory(function ($c) {
             return new WorkflowParameterParser();
@@ -144,8 +160,17 @@ class OpencastDIC
         $this->container['scheduling_parser'] = $this->container->factory(function ($c) {
             return new SchedulingParser();
         });
-        $this->container['scheduling_repository'] = $this->container->factory(function($c) {
+        $this->container['scheduling_repository'] = $this->container->factory(function ($c) {
             return new SchedulingApiRepository($c['scheduling_parser']);
+        });
+        $this->container['scheduling_form_item_builder'] = $this->container->factory(function ($c) {
+            return new SchedulingFormItemBuilder(
+                $this->dic->ui()->factory(),
+                $this->dic->refinery(),
+                $c['scheduling_parser'],
+                $c['plugin'],
+                $c['agent_repository']
+            );
         });
         $this->container['form_builder_event'] = $this->container->factory(function ($c) {
             return new FormBuilderEvent($this->dic->ui()->factory(),
@@ -154,15 +179,30 @@ class OpencastDIC
                 $c['workflow_parameter_conf_repository'],
                 $c['upload_storage_service'],
                 $c['upload_handler'],
-                $c['md_parser'],
-                $c['workflow_parameter_parser'],
-                $c['scheduling_parser'],
-                $c['plugin']
+                $c['plugin'],
+                $c['scheduling_form_item_builder']
             );
         });
-        $this->container['plugin'] = $this->container->factory(function($c) {
+        $this->container['form_builder_series'] = $this->container->factory(function ($c) {
+            return new FormBuilderSeries($this->dic->ui()->factory(),
+                $this->dic->refinery(),
+                $c['md_parser'],
+                $c['md_form_item_builder_series'],
+                $c['plugin'],
+                $this->dic
+            );
+        });
+        $this->container['plugin'] = $this->container->factory(function ($c) {
             return ilOpenCastPlugin::getInstance();
         });
+        $this->container['series_repository'] = $this->container->factory(function ($c) {
+            return new SeriesAPIRepository($c['cache']);
+        });
+    }
+
+    public function series_repository() : SeriesRepository
+    {
+        return $this->container['series_repository'];
     }
 
     public function event_repository(): EventAPIRepository
@@ -175,7 +215,7 @@ class OpencastDIC
         return $this->container['cache'];
     }
 
-    public function acl_repository(): AclApiRepository
+    public function acl_repository(): AclRepository
     {
         return $this->container['acl_repository'];
     }
@@ -185,7 +225,7 @@ class OpencastDIC
         return $this->container['ingest_service'];
     }
 
-    public function publication_repository(): PublicationAPIRepository
+    public function publication_repository(): PublicationRepository
     {
         return $this->container['publication_repository'];
     }
@@ -205,6 +245,11 @@ class OpencastDIC
         return $this->container['form_builder_event'];
     }
 
+    public function form_builder_series(): FormBuilderSeries
+    {
+        return $this->container['form_builder_series'];
+    }
+
     public function workflow_parameter_conf_repository(): SeriesWorkflowParameterRepository
     {
         return $this->container['workflow_parameter_conf_repository'];
@@ -220,9 +265,14 @@ class OpencastDIC
         return new MetadataService($this->container);
     }
 
-    public function acl_utils() : ACLUtils
+    public function acl_utils(): ACLUtils
     {
         return $this->container['acl_utils'];
+    }
+
+    public function workflow_repository() : WorkflowRepository
+    {
+        return $this->container['workflow_repository'];
     }
 
 }

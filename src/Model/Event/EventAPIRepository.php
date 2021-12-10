@@ -6,15 +6,19 @@ use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
+use srag\Plugins\Opencast\Model\ACL\AclRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
+use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
+use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
+use srag\Plugins\Opencast\Model\Scheduling\SchedulingRepository;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
 use stdClass;
 use xoct;
@@ -30,7 +34,7 @@ use xoctRequest;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class EventAPIRepository
+class EventAPIRepository implements EventRepository
 {
     const CACHE_PREFIX = 'event-';
 
@@ -47,11 +51,11 @@ class EventAPIRepository
      */
     private $md_parser;
     /**
-     * @var MetadataAPIRepository
+     * @var MetadataRepository
      */
     private $md_repository;
     /**
-     * @var AclApiRepository
+     * @var AclRepository
      */
     private $acl_repository;
     /**
@@ -67,19 +71,19 @@ class EventAPIRepository
      */
     private $scheduling_parser;
     /**
-     * @var SchedulingApiRepository
+     * @var SchedulingRepository
      */
     private $scheduling_repository;
 
 
-    public function __construct(Cache                    $cache,
-                                MDParser                 $md_parser,
-                                MetadataAPIRepository    $md_repository,
-                                OpencastIngestService    $ingestService,
-                                AclApiRepository         $acl_repository,
-                                PublicationAPIRepository $publication_repository,
-                                SchedulingParser         $scheduling_parser,
-                                SchedulingApiRepository  $scheduling_repository)
+    public function __construct(Cache                 $cache,
+                                MDParser              $md_parser,
+                                MetadataRepository    $md_repository,
+                                OpencastIngestService $ingestService,
+                                AclRepository         $acl_repository,
+                                PublicationRepository $publication_repository,
+                                SchedulingParser      $scheduling_parser,
+                                SchedulingRepository  $scheduling_repository)
     {
         $this->cache = $cache;
         $this->md_parser = $md_parser;
@@ -264,7 +268,7 @@ class EventAPIRepository
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 
-    public function updateACL(UpdateEventACLRequest $updateEventACLRequest) : void
+    public function updateACL(UpdateEventACLRequest $updateEventACLRequest): void
     {
         xoctRequest::root()->events($updateEventACLRequest->getIdentifier())
             ->acl()->post($updateEventACLRequest->getPayload()->jsonSerialize());

@@ -151,6 +151,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->form_builder_event(),
+                        $this->opencast_dic->workflow_repository(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
@@ -296,12 +297,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
      * @param string     $type
      * @param bool|false $from_post
      *
-     * @return xoctSeriesFormGUI
      * @throws DICException
      * @throws arException
      * @throws xoctException
      */
 	public function initCreateForm($type, $from_post = false) {
+        return new \srag\Plugins\Opencast\UI\LegacyFormWrapper(
+            $this->ilias_dic->ui()->renderer()->render(
+                $this->opencast_dic->form_builder_series()->create(
+                    $this->ilias_dic->ctrl()->getFormAction($this, 'save')
+                )
+            )
+        );
 		$creation_form = new xoctSeriesFormGUI($this, new ObjectSettings());
 		if ($from_post) {
 			$creation_form->setValuesByPost();

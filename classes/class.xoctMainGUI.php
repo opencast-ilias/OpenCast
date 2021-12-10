@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 /**
@@ -47,6 +48,7 @@ class xoctMainGUI extends xoctGUI {
 		self::dic()->tabs()->addTab(self::TAB_EXPORT, self::plugin()->translate('tab_' . self::TAB_EXPORT), self::dic()->ctrl()->getLinkTarget(new xoctConfExportGUI()));
 		self::dic()->tabs()->addTab(self::TAB_REPORTS, self::plugin()->translate('tab_' . self::TAB_REPORTS), self::dic()->ctrl()->getLinkTarget(new xoctReportOverviewGUI()));
 
+		$opencast_dic = new OpencastDIC(self::dic()->dic());
 		switch ($nextClass) {
 			case strtolower(xoctPublicationUsageGUI::class):
 				self::dic()->tabs()->activateTab(self::TAB_PUBLICATION_USAGE);
@@ -70,7 +72,7 @@ class xoctMainGUI extends xoctGUI {
 				break;
 			case strtolower(xoctWorkflowGUI::class):
 				self::dic()->tabs()->activateTab(self::TAB_WORKFLOWS);
-				$xoctWorkflowGUI = new xoctWorkflowGUI();
+				$xoctWorkflowGUI = new xoctWorkflowGUI($opencast_dic->workflow_repository());
 				self::dic()->ctrl()->forwardCommand($xoctWorkflowGUI);
 				break;
 			case strtolower(xoctWorkflowParameterGUI::class):

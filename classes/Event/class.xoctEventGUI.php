@@ -5,7 +5,7 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\Event;
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
@@ -69,7 +69,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected $modals;
     /**
-     * @var EventAPIRepository
+     * @var EventRepository
      */
     protected $event_repository;
     /**
@@ -80,11 +80,16 @@ class xoctEventGUI extends xoctGUI
      * @var FormBuilderEvent
      */
     private $formBuilder;
+    /**
+     * @var WorkflowRepository
+     */
+    private $workflowRepository;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
                                 ObjectSettings     $objectSettings,
-                                EventAPIRepository $event_repository,
+                                EventRepository $event_repository,
                                 FormBuilderEvent   $formBuilder,
+                                WorkflowRepository $workflowRepository,
                                 Container          $dic)
     {
         $this->objectSettings = $objectSettings;
@@ -92,6 +97,7 @@ class xoctEventGUI extends xoctGUI
         $this->event_repository = $event_repository;
         $this->ui_renderer = $dic->ui()->renderer();
         $this->formBuilder = $formBuilder;
+        $this->workflowRepository = $workflowRepository;
     }
 
 
@@ -532,21 +538,21 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
-        $data = $data[0];
         // not sure if this is supposed to be in the form builder
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         $aclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ?
             array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 
-        $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
+        $metadata = $data['metadata']['object'];
+        $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
 
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
-            $data['metadata'],
+            $metadata,
             $aclStandardSets->getAcl(),
             new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
-                $data['workflow_configuration']),
-            xoctUploadFile::getInstanceFromFileArray($data['file'])
+                $data['workflow_configuration']['object']),
+            xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -594,21 +600,21 @@ class xoctEventGUI extends xoctGUI
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
-        $data = $data[0];
 
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 
-        $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
+        $metadata = $data['metadata']['object'];
+        $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
 
         try {
             $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
-                $data['metadata'],
+                $metadata,
                 $xoctAclStandardSets->getAcl(),
-                $data['scheduling'],
+                $data['scheduling']['object'],
                 new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
-                    $data['workflow_configuration'])
+                    $data['workflow_configuration']['object'])
             )));
         } catch (xoctException $e) {
             $this->checkAndShowConflictMessage($e);
@@ -938,10 +944,12 @@ class xoctEventGUI extends xoctGUI
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
-        $data = $data[0];
 
+        $scheduling = $data['scheduling']['object'] ?? null;
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
-            $data['metadata']
+            $data['metadata']['object'],
+            null,
+            $scheduling
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -960,7 +968,7 @@ class xoctEventGUI extends xoctGUI
         ) {
             $workflow_id = strip_tags($post_body['workflow_id']);
             $event_id = strip_tags($post_body['republish_event_id']);
-            $workflow = (new WorkflowRepository())->getById($workflow_id);
+            $workflow = $this->workflowRepository->getById($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event_repository->find($event_id))
                 || is_null($workflow)) {
                 ilUtil::sendFailure($this->txt('msg_no_access'), true);
@@ -1204,7 +1212,7 @@ class xoctEventGUI extends xoctGUI
     public function getModals(): EventModals
     {
         if (is_null($this->modals)) {
-            $modals = new EventModals($this, self::plugin()->getPluginObject(), self::dic()->dic(), new WorkflowRepository());
+            $modals = new EventModals($this, self::plugin()->getPluginObject(), self::dic()->dic(), $this->workflowRepository);
             $modals->initRepublish();
             $modals->initReportDate();
             $modals->initReportQuality();

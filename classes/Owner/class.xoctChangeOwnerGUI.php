@@ -3,7 +3,7 @@
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequestPayload;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -15,7 +15,8 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  *
  * @ilCtrl_IsCalledBy xoctChangeOwnerGUI: ilObjOpenCastGUI
  */
-class xoctChangeOwnerGUI extends xoctGUI {
+class xoctChangeOwnerGUI extends xoctGUI
+{
 
     /**
      * @var Event
@@ -30,11 +31,12 @@ class xoctChangeOwnerGUI extends xoctGUI {
      */
     private $ACLUtils;
     /**
-     * @var EventAPIRepository
+     * @var EventRepository
      */
     private $event_repository;
 
-    public function __construct(ObjectSettings $objectSettings, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
+    public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
+    {
         $this->objectSettings = $objectSettings;
         $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
@@ -53,7 +55,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
      * @throws ilTemplateException
      * @throws xoctException
      */
-    protected function index() {
+    protected function index()
+    {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
             ilUtil::sendFailure('Access denied', true);
@@ -78,7 +81,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
     /**
      * @param $data
      */
-    protected function outJson($data) {
+    protected function outJson($data)
+    {
         header('Content-type: application/json');
         echo json_encode($data);
         exit;
@@ -88,14 +92,16 @@ class xoctChangeOwnerGUI extends xoctGUI {
     /**
      *
      */
-    protected function add() {
+    protected function add()
+    {
     }
 
 
     /**
      *
      */
-    public function getAll() {
+    public function getAll()
+    {
         $owner = $this->ACLUtils->getOwner($this->event);
         $owner_data = $owner ? ['id' => $owner->getIliasUserId(), 'name' => $owner->getNamePresentation()] : [];
 
@@ -112,18 +118,18 @@ class xoctChangeOwnerGUI extends xoctGUI {
             $available_users[] = $user;
         }
 
-	    usort($available_users, ['xoctGUI', 'compareStdClassByName']);
+        usort($available_users, ['xoctGUI', 'compareStdClassByName']);
 
-	    $arr = array(
+        $arr = array(
             'owner' => $owner_data,
             'available' => $available_users,
         );
 
-	    $this->outJson($arr);
+        $this->outJson($arr);
     }
 
 
-    protected function getCourseMembers() : array
+    protected function getCourseMembers(): array
     {
         $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
         $p = $parent->getMembersObject();
@@ -136,7 +142,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
      *
      * @throws xoctException
      */
-    protected function setOwner() {
+    protected function setOwner()
+    {
         $user_id = $_GET['user_id'];
         $this->event = $this->ACLUtils->setOwner(xoctUser::getInstance($user_id), $this->event);
         $this->event_repository->updateACL(new UpdateEventACLRequest(
@@ -148,7 +155,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
     /**
      * async function
      */
-    protected function removeOwner() {
+    protected function removeOwner()
+    {
         $this->event = $this->ACLUtils->removeOwner($this->event);
         $this->event_repository->updateACL(new UpdateEventACLRequest(
             $this->event->getIdentifier(),
@@ -157,38 +165,42 @@ class xoctChangeOwnerGUI extends xoctGUI {
     }
 
 
-
     /**
      *
      */
-    protected function create() {
+    protected function create()
+    {
     }
 
 
     /**
      *
      */
-    protected function edit() {
+    protected function edit()
+    {
     }
 
 
     /**
      *
      */
-    protected function update() {
+    protected function update()
+    {
     }
 
 
     /**
      *
      */
-    protected function confirmDelete() {
+    protected function confirmDelete()
+    {
     }
 
 
     /**
      *
      */
-    protected function delete() {
+    protected function delete()
+    {
     }
 }

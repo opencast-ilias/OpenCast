@@ -2,31 +2,57 @@
 
 namespace srag\Plugins\Opencast\Model\Series;
 
+use ilException;
+use srag\Plugins\Opencast\Cache\Cache;
 use xoctAclStandardSets;
 use xoctException;
 use xoctRequest;
 use xoctSeries;
 use xoctUser;
-use ilObjUser;
 
-/**
- * Class SeriesRepository
- *
- * @package srag\Plugins\Opencast\Model\API\Series
- *
- * @author  Theodor Truffer <tt@studer-raimann.ch>
- */
-class SeriesAPIRepository
+class SeriesAPIRepository implements SeriesRepository
 {
 
     const OWN_SERIES_PREFIX = 'Eigene Serie von ';
+    /**
+     * @var Cache
+     */
+    private $cache;
 
     /**
-     * @param xoctUser $xoct_user
-     *
-     * @return xoctSeries
-     * @throws xoctException
+     * @param Cache $cache
      */
+    public function __construct(Cache $cache)
+    {
+        $this->cache = $cache;
+    }
+
+
+    public function getAllForUser($user_string) : array
+    {
+        if ($existing = $this->cache->get('series-' . $user_string)) {
+            return $existing;
+        }
+        $return = array();
+        try {
+            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string )));
+        } catch (ilException $e) {
+            return [];
+        }
+        foreach ($data as $d) {
+            $obj = new xoctSeries();
+            try {
+                $obj->loadFromStdClass($d);
+                $return[] = $obj;
+            } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
+                continue;
+            }
+        }
+        $this->cache->set('series-' . $user_string, $return, 60);
+
+        return $return;
+    }
+
     public function getOrCreateOwnSeries(xoctUser $xoct_user) : xoctSeries
     {
         $xoctSeries = $this->getOwnSeries($xoct_user);
@@ -41,11 +67,6 @@ class SeriesAPIRepository
         return $xoctSeries;
     }
 
-    /**
-     * @param xoctUser $xoct_user
-     * @return xoctSeries|null
-     * @throws xoctException
-     */
     public function getOwnSeries(xoctUser $xoct_user) /*: ?xoctSeries*/
     {
         $existing = xoctRequest::root()->series()->parameter(
@@ -61,10 +82,6 @@ class SeriesAPIRepository
         return $xoctSeries;
     }
 
-    /**
-     * @param xoctUser $xoct_user
-     * @return string
-     */
     public function getOwnSeriesTitle(xoctUser $xoct_user) : string
     {
         return self::OWN_SERIES_PREFIX . $xoct_user->getLogin();

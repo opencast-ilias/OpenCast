@@ -6,8 +6,11 @@ use DateTime;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
+use ILIAS\UI\Implementation\Component\Input\Field\Section;
+use ilPlugin;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
@@ -49,23 +52,33 @@ class MDFormItemBuilder
      * @var AgentApiRepository
      */
     private $agent_repository;
+    /**
+     * @var MDParser
+     */
+    private $MDParser;
+    /**
+     * @var ilPlugin
+     */
+    private $plugin;
 
     public function __construct(MDCatalogue             $md_catalogue,
                                 MDFieldConfigRepository $repository,
                                 MDPrefiller             $prefiller,
                                 UIFactory               $ui_factory,
                                 RefineryFactory         $refinery_factory,
-                                AgentApiRepository      $agent_repository)
+                                MDParser                $MDParser,
+                                ilPlugin                $plugin)
     {
         $this->ui_factory = $ui_factory;
         $this->md_catalogue = $md_catalogue;
         $this->prefiller = $prefiller;
         $this->md_conf_repository = $repository;
         $this->refinery_factory = $refinery_factory;
-        $this->agent_repository = $agent_repository;
+        $this->MDParser = $MDParser;
+        $this->plugin = $plugin;
     }
 
-    public function event_upload(): array
+    public function event_upload(): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
@@ -74,10 +87,11 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
-        return $form_elements;
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+            ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_edit(Metadata $existing_metadata): array
+    public function event_edit(Metadata $existing_metadata): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
@@ -86,10 +100,11 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
-        return $form_elements;
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+            ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_schedule(): array
+    public function event_schedule(): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -102,16 +117,13 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
-        $form_elements[$this->prefixPostVar(MDFieldDefinition::F_LOCATION)] = $this->buildSchedulingLocationInput();
-        return $form_elements;
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+            ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_edit_scheduled(Metadata $existing_metadata, Scheduling $existing_scheduling): array
+    public function event_edit_scheduled(Metadata $existing_metadata): Input
     {
         $form_elements = [];
-        if (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::NO_METADATA) {
-            return $form_elements;
-        }
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
             return !in_array($fieldConfigAR->getFieldId(),
@@ -122,14 +134,13 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
-        $form_elements[$this->prefixPostVar(MDFieldDefinition::F_LOCATION)] =
-            $this->buildSchedulingLocationInput()->withValue($existing_scheduling->getAgentId());
-        return $form_elements;
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+            ->withAdditionalTransformation($this->buildTransformation());
     }
 
     public function series_create(): array
     {
-
+        return [$this->ui_factory->input()->field()->text('test')];
     }
 
     public function series_edit(Metadata $existing_metadata): array
@@ -170,16 +181,6 @@ class MDFormItemBuilder
         return $value ? $field->withValue($this->formatValue($value, $md_definition)) : $field;
     }
 
-    private function buildSchedulingLocationInput(): Input
-    {
-        $options = [];
-        $agents = $this->agent_repository->findAll();
-        array_walk($agents, function (Agent $agent) use (&$options) {
-            $options[$agent->getAgentId()] = $agent->getAgentId();
-        });
-        // todo: label
-        return $this->ui_factory->input()->field()->select('Location', $options)->withRequired(true);
-    }
 
     private function formatValue($value, MDFieldDefinition $md_definition)
     {
@@ -197,5 +198,16 @@ class MDFormItemBuilder
     public function prefixPostVar(string $label): string
     {
         return self::LABEL_PREFIX . $label;
+    }
+
+    /**
+     * @return \ILIAS\Refinery\Custom\Transformation|\ILIAS\Refinery\Custom\Transformations\Transformation
+     */
+    private function buildTransformation()
+    {
+        return $this->refinery_factory->custom()->transformation(function ($vs) {
+            $vs['object'] = $this->MDParser->parseFormDataEvent($vs);
+            return $vs;
+        });
     }
 }

@@ -6,8 +6,8 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
@@ -34,16 +34,12 @@ class xoctPlayerGUI extends xoctGUI
      */
     protected $publication_usage_repository;
     /**
-     * @var EventAPIRepository
+     * @var EventRepository
      */
     private $event_repository;
 
-
-    /**
-     * @param EventAPIRepository $event_repository
-     * @param ObjectSettings|null $objectSettings
-     */
-    public function __construct(EventAPIRepository $event_repository, ?ObjectSettings $objectSettings = NULL) {
+    public function __construct(EventRepository $event_repository, ?ObjectSettings $objectSettings = NULL)
+    {
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
@@ -54,7 +50,8 @@ class xoctPlayerGUI extends xoctGUI
      * @throws arException
      * @throws ilTemplateException
      */
-    public function streamVideo() {
+    public function streamVideo()
+    {
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
         if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
@@ -96,7 +93,7 @@ class xoctPlayerGUI extends xoctGUI
         exit();
     }
 
-    protected function buildJSConfig(Event $event) : stdClass
+    protected function buildJSConfig(Event $event): stdClass
     {
         $js_config = new stdClass();
         $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config"
@@ -115,7 +112,7 @@ class xoctPlayerGUI extends xoctGUI
     /**
      * @return bool
      */
-    protected function isChatVisible() : bool
+    protected function isChatVisible(): bool
     {
         return !filter_input(INPUT_GET, 'force_no_chat')
             && xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)
@@ -123,7 +120,7 @@ class xoctPlayerGUI extends xoctGUI
     }
 
     /**
-     * @param Event  $event
+     * @param Event $event
      * @param ilTemplate $tpl
      * @throws DICException
      * @throws arException
@@ -158,7 +155,8 @@ class xoctPlayerGUI extends xoctGUI
      * @return string
      * @throws DICException
      */
-    public function txt($key) {
+    public function txt($key)
+    {
         return self::plugin()->translate('event_' . $key);
     }
 

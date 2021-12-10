@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Model\Scheduling;
 
 use xoctRequest;
 
-class SchedulingApiRepository
+class SchedulingApiRepository implements SchedulingRepository
 {
     /**
      * @var SchedulingParser

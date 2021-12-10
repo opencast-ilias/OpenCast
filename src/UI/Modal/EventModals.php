@@ -12,7 +12,6 @@ use ilPropertyFormGUI;
 use ilSelectInputGUI;
 use ilTemplate;
 use ilTemplateException;
-use ilTextAreaInputGUI;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use xoctConf;
 
@@ -52,15 +51,6 @@ class EventModals
      */
     private $plugin;
 
-
-    /**
-     * EventModals constructor.
-     *
-     * @param                    $parent_gui
-     * @param ilOpenCastPlugin   $plugin
-     * @param Container          $dic
-     * @param WorkflowRepository $workflow_repository
-     */
     public function __construct($parent_gui, ilOpenCastPlugin $plugin, Container $dic, WorkflowRepository $workflow_repository)
     {
         $this->parent_gui = $parent_gui;

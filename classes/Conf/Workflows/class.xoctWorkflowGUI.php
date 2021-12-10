@@ -26,12 +26,9 @@ class xoctWorkflowGUI extends xoctGUI
      */
     protected $workflow_repository;
 
-    /**
-     * xoctWorkflowGUI constructor.
-     */
-    public function __construct()
+    public function __construct(WorkflowRepository $workflow_repository)
     {
-        $this->workflow_repository = new WorkflowRepository();
+        $this->workflow_repository = $workflow_repository;
         $this->factory = self::dic()->ui()->factory();
     }
 

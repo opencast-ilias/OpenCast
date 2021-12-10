@@ -23,37 +23,37 @@ class MetadataService
     }
 
 
-    public function catalogueFactory() : MDCatalogueFactory
+    public function catalogueFactory(): MDCatalogueFactory
     {
         return $this->container['md_catalogue_factory'];
     }
 
-    public function metadataFactory() : MetadataFactory
+    public function metadataFactory(): MetadataFactory
     {
         return $this->container['md_factory'];
     }
 
-    public function apiRepository() : MetadataAPIRepository
+    public function apiRepository(): MetadataRepository
     {
         return $this->container['md_repository'];
     }
 
-    public function parser() : MDParser
+    public function parser(): MDParser
     {
         return $this->container['md_parser'];
     }
 
-    public function prefiller() : MDPrefiller
+    public function prefiller(): MDPrefiller
     {
         return $this->container['md_prefiller'];
     }
 
-    public function confRepositoryEvent() : MDFieldConfigEventRepository
+    public function confRepositoryEvent(): MDFieldConfigEventRepository
     {
         return $this->container['md_conf_repository_event'];
     }
 
-    public function confRepositorySeries() : MDFieldConfigSeriesRepository
+    public function confRepositorySeries(): MDFieldConfigSeriesRepository
     {
         return $this->container['md_conf_repository_event'];
     }

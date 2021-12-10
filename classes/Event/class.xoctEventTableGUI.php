@@ -2,8 +2,8 @@
 
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
@@ -44,23 +44,15 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected $has_unprotected_links = false;
     /**
-     * @var EventAPIRepository
+     * @var EventRepository
      */
     protected $event_repository;
 
-    /**
-     * xoctEventTableGUI constructor.
-     *
-     * @param xoctEventGUI $a_parent_obj
-     * @param string $a_parent_cmd
-     * @param ObjectSettings $objectSettings
-     * @param               $load_data bool
-     */
-    public function __construct(xoctEventGUI       $a_parent_obj,
-                                string             $a_parent_cmd,
-                                ObjectSettings     $objectSettings,
-                                EventAPIRepository $event_repository,
-                                bool               $load_data = true)
+    public function __construct(xoctEventGUI    $a_parent_obj,
+                                string          $a_parent_cmd,
+                                ObjectSettings  $objectSettings,
+                                EventRepository $event_repository,
+                                bool            $load_data = true)
     {
         $this->objectSettings = $objectSettings;
         $this->event_repository = $event_repository;

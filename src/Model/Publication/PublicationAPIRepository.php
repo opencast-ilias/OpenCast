@@ -7,7 +7,7 @@ use xoctException;
 use xoctPublication;
 use xoctRequest;
 
-class PublicationAPIRepository
+class PublicationAPIRepository implements PublicationRepository
 {
 
 
@@ -21,21 +21,12 @@ class PublicationAPIRepository
         $this->cache = $cache;
     }
 
-    /**
-     * @param string $identifier
-     * @return xoctPublication[]
-     */
     public function find(string $identifier) : array
     {
         return $this->cache->get('event-pubs-' . $identifier)
             ?? $this->fetch($identifier);
     }
 
-    /**
-     * @param string $identifier
-     * @return xoctPublication[]
-     * @throws xoctException
-     */
     public function fetch(string $identifier): array
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());

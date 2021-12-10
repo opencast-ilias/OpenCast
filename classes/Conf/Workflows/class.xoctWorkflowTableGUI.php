@@ -37,18 +37,9 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected $renderer;
 
-
-    /**
-     * xoctWorkflowTableGUI constructor.
-     *
-     * @param $parent
-     * @param $parent_cmd
-     *
-     * @throws DICException
-     */
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, $parent_cmd, WorkflowRepository $workflow_repository)
     {
-        $this->workflow_repository = new WorkflowRepository();
+        $this->workflow_repository = $workflow_repository;
         $this->factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
         $this->setExternalSorting(true);
