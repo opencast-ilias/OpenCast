@@ -19,17 +19,14 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
         self::CMD_DELETE
     ];
 
-	/**
-	 * @param ObjectSettings $xoctOpenCast
-	 */
-	public function __construct(ObjectSettings $xoctOpenCast = null)
+	public function __construct(?ObjectSettings $objectSettings = null)
 	{
-		if ($xoctOpenCast instanceof ObjectSettings)
+		if ($objectSettings instanceof ObjectSettings)
 		{
-			$this->xoctOpenCast = $xoctOpenCast;
+			$this->objectSettings = $objectSettings;
 		} else
 		{
-			$this->xoctOpenCast = new ObjectSettings ();
+			$this->objectSettings = new ObjectSettings();
 		}
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		xoctWaiterGUI::loadLib();

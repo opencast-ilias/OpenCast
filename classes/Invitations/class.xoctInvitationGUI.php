@@ -22,7 +22,7 @@ class xoctInvitationGUI extends xoctGUI {
     /**
      * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var EventAPIRepository
      */
@@ -32,11 +32,8 @@ class xoctInvitationGUI extends xoctGUI {
      */
     private $ACLUtils;
 
-    /**
-	 * @param ObjectSettings $xoctOpenCast
-	 */
-	public function __construct(ObjectSettings $xoctOpenCast, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
-        $this->xoctOpenCast = $xoctOpenCast;
+	public function __construct(ObjectSettings $objectSettings, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
+        $this->objectSettings = $objectSettings;
         $this->event_repository = $event_repository;
 		$this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
@@ -58,7 +55,7 @@ class xoctInvitationGUI extends xoctGUI {
      */
 	protected function index() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->xoctOpenCast)) {
+		if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
 			ilUtil::sendFailure('Access denied', true);
 			self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
 		}
@@ -101,7 +98,7 @@ class xoctInvitationGUI extends xoctGUI {
 		foreach ($course_members_user_ids as $user_id) {
 			$xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
 		}
-		$active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->event, $this->xoctOpenCast->getPermissionAllowSetOwn());
+		$active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->event, $this->objectSettings->getPermissionAllowSetOwn());
 		$invited_user_ids = array();
 		foreach ($active_invitations as $inv) {
 			$invited_user_ids[] = $inv->getUserId();

@@ -15,10 +15,7 @@ use xoctSeries;
 use xoctUserSettings;
 
 /**
- * Class xoctOpenCast
- *
- * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @version 1.0.0
+ * Class ObjectSettings
  */
 class ObjectSettings extends ActiveRecord {
 
@@ -42,9 +39,9 @@ class ObjectSettings extends ActiveRecord {
 	 * @return int
 	 */
 	public static function lookupObjId($series_identifier) {
-		$xoctOpenCast = ObjectSettings::where(array( 'series_identifier' => $series_identifier ))->last();
-		if ($xoctOpenCast instanceof ObjectSettings) {
-			return $xoctOpenCast->getObjId();
+		$objectSettings = ObjectSettings::where(array( 'series_identifier' => $series_identifier ))->last();
+		if ($objectSettings instanceof ObjectSettings) {
+			return $objectSettings->getObjId();
 		}
 
 		return false;
@@ -57,9 +54,9 @@ class ObjectSettings extends ActiveRecord {
 	 * @return int
 	 */
 	public static function lookupSeriesIdentifier($obj_id) {
-		$xoctOpenCast = ObjectSettings::where(array( 'obj_id' => $obj_id ))->last();
-		if ($xoctOpenCast instanceof ObjectSettings) {
-			return $xoctOpenCast->getSeriesIdentifier();
+		$objetSettings = ObjectSettings::where(array( 'obj_id' => $obj_id ))->last();
+		if ($objetSettings instanceof ObjectSettings) {
+			return $objetSettings->getSeriesIdentifier();
 		}
 
 		return false;
@@ -96,7 +93,7 @@ class ObjectSettings extends ActiveRecord {
 		} else {
 			parent::create();
 			if (!$omit_update_title_and_desc) {
-                xoctDataMapper::xoctOpenCastupdated($this);
+                xoctDataMapper::objectSettingsUpdated($this);
             }
 		}
 	}
@@ -107,7 +104,7 @@ class ObjectSettings extends ActiveRecord {
      */
     public function update() {
 		parent::update();
-		xoctDataMapper::xoctOpenCastupdated($this);
+		xoctDataMapper::objectSettingsUpdated($this);
 	}
 
     /**

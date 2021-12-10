@@ -28,7 +28,7 @@ class xoctEventTileGUI {
 	/**
 	 * @var ObjectSettings
 	 */
-	protected $xoctOpenCast;
+	protected $objectSettings;
 	/**
 	 * @var bool
 	 */
@@ -58,9 +58,9 @@ class xoctEventTileGUI {
      */
 	protected $event_repository;
 
-	public function __construct(xoctEventGUI $parent_gui, ObjectSettings $xoctOpenCast, EventAPIRepository $eventRepository) {
+	public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, EventAPIRepository $eventRepository) {
 		$this->parent_gui = $parent_gui;
-		$this->xoctOpenCast = $xoctOpenCast;
+		$this->objectSettings = $objectSettings;
 		$this->event_repository = $eventRepository;
 		$this->factory = self::dic()->ui()->factory();
 		$this->renderer = self::dic()->ui()->renderer();
@@ -86,7 +86,7 @@ class xoctEventTileGUI {
 		$to = ($this->page + 1) * $this->limit;
 		for ($i = $from; $i < $to && isset($this->events[$i]); $i++) {
 			$event = $this->events[$i];
-			$event_renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
+			$event_renderer = new xoctEventRenderer($event, $this->objectSettings);
 
 			$dropdown = $this->factory->dropdown()->standard($event_renderer->getActions());
 
@@ -100,10 +100,10 @@ class xoctEventTileGUI {
 
 			$buttons_tpl = self::plugin()->template('default/tpl.event_buttons.html');
 			$event_renderer->insertPlayerLink($buttons_tpl, 'link', 'LINK', 'btn-default');
-            if (!$this->xoctOpenCast->getStreamingOnly()) {
+            if (!$this->objectSettings->getStreamingOnly()) {
                 $event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
             }
-            if ($this->xoctOpenCast->getUseAnnotations()) {
+            if ($this->objectSettings->getUseAnnotations()) {
                 $event_renderer->insertAnnotationLink($buttons_tpl, 'link', 'LINK', 'btn-default');
             }
 			$tile_tpl->setVariable('EVENT_BUTTONS', $buttons_tpl->get());
@@ -119,7 +119,7 @@ class xoctEventTileGUI {
 
 			$property_list = [];
 			$property_list[self::dic()->language()->txt('date')] = $event_renderer->getStartHTML();
-			if ($this->xoctOpenCast->getPermissionPerClip()) {
+			if ($this->objectSettings->getPermissionPerClip()) {
 				$property_list[self::dic()->language()->txt('owner')] = $event_renderer->getOwnerHTML();
 			}
 			$sections[] = $this->factory->listing()->descriptive($property_list);
@@ -139,14 +139,14 @@ class xoctEventTileGUI {
 	 */
 	protected function parseData() {
 		$xoctUser = xoctUser::getInstance(self::dic()->user());
-		$events = $this->event_repository->getFiltered(['series' => $this->xoctOpenCast->getSeriesIdentifier()]);
+		$events = $this->event_repository->getFiltered(['series' => $this->objectSettings->getSeriesIdentifier()]);
 		foreach ($events as $key => $event) {
 		    $event = $event['object'] instanceof Event ? $event['object']
                 : $this->event_repository->find($event['identifier']);
 			if (!ilObjOpenCastAccess::hasReadAccessOnEvent(
                 $event,
                 $xoctUser,
-                $this->xoctOpenCast)
+                $this->objectSettings)
             ) {
 				unset($events[$key]);
 			} elseif ($event->isScheduled()) {
@@ -172,9 +172,9 @@ class xoctEventTileGUI {
     {
         $tab_prop = new ilTablePropertiesStorage();
 
-        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'direction')
+        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->objectSettings), self::dic()->user()->getId(), 'direction')
             ?? 'asc';
-        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast), self::dic()->user()->getId(), 'order')
+        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->objectSettings), self::dic()->user()->getId(), 'order')
             ?? 'start';
         switch ($order) {
             case 'start_unix':

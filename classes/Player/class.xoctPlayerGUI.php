@@ -28,7 +28,7 @@ class xoctPlayerGUI extends xoctGUI
     /**
      * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var PublicationUsageRepository
      */
@@ -41,11 +41,11 @@ class xoctPlayerGUI extends xoctGUI
 
     /**
      * @param EventAPIRepository $event_repository
-     * @param ObjectSettings|null $xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings|null $objectSettings
      */
-    public function __construct(EventAPIRepository $event_repository, ObjectSettings $xoctOpenCast = NULL) {
+    public function __construct(EventAPIRepository $event_repository, ?ObjectSettings $objectSettings = NULL) {
         $this->publication_usage_repository = new PublicationUsageRepository();
-        $this->xoctOpenCast = $xoctOpenCast instanceof ObjectSettings ? $xoctOpenCast : new ObjectSettings();
+        $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
     }
 
@@ -119,7 +119,7 @@ class xoctPlayerGUI extends xoctGUI
     {
         return !filter_input(INPUT_GET, 'force_no_chat')
             && xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)
-            && $this->xoctOpenCast->isChatActive();
+            && $this->objectSettings->isChatActive();
     }
 
     /**
@@ -131,11 +131,11 @@ class xoctPlayerGUI extends xoctGUI
      */
     protected function initChat(Event $event, ilTemplate $tpl)
     {
-        $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->xoctOpenCast->getObjId());
+        $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->objectSettings->getObjId());
         if ($event->isLiveEvent()) {
             $tpl->setVariable("STYLE_SHEET_LOCATION",
                 ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
-            $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->xoctOpenCast->getObjId());
+            $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->objectSettings->getObjId());
             $public_name = self::dic()->user()->hasPublicProfile() ?
                 self::dic()->user()->getFirstname() . " " . self::dic()->user()->getLastname()
                 : self::dic()->user()->getLogin();

@@ -2,14 +2,12 @@
 
 namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
 
-use ilCheckboxInputGUI;
-use ilFormPropertyGUI;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use xoctConf;
-use xoctOpenCast;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
@@ -85,7 +83,7 @@ class SeriesWorkflowParameterRepository {
 		if (!is_array($params)) {
 			$params = [$params];
 		}
-		$all_obj_ids = xoctOpenCast::getArray(null, 'obj_id');
+		$all_obj_ids = ObjectSettings::getArray(null, 'obj_id');
 		foreach ($all_obj_ids as $obj_id) {
 			foreach ($params as $param) {
 				(new SeriesWorkflowParameter())

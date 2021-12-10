@@ -120,17 +120,17 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 * @throws xoctException
 	 */
 	protected function getOpenCast($get_exceoptions = false) {
-		$xoctOpenCast = new ObjectSettings();
+		$objectSettings = new ObjectSettings();
 		try {
 			xoctConf::setApiSettings();
-			$xoctOpenCast = ObjectSettings::find($this->obj_id);
+			$objectSettings = ObjectSettings::find($this->obj_id);
 		} catch (xoctException $e) {
 			if ($get_exceoptions) {
 				throw $e;
 			}
 		}
 
-		return $xoctOpenCast;
+		return $objectSettings;
 	}
 
 
@@ -146,12 +146,12 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		$props = parent::getCustomProperties(array());
 		try {
-			$xoctOpenCast = $this->getOpenCast(true);
-			if (!$xoctOpenCast instanceof ObjectSettings) {
+			$objectSettings = $this->getOpenCast(true);
+			if (!$objectSettings instanceof ObjectSettings) {
 				return $props;
 			}
 
-			if (!$xoctOpenCast->isOnline()) {
+			if (!$objectSettings->isOnline()) {
 				$props[] = array(
 					'alert' => true,
 					'newline' => true,

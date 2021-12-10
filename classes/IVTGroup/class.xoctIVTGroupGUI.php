@@ -20,15 +20,16 @@ class xoctIVTGroupGUI extends xoctGUI {
         self::CMD_CREATE,
         self::CMD_DELETE
     ];
+    /**
+     * @var ObjectSettings
+     */
+    private $objectSettings;
 
-	/**
-	 * @param ObjectSettings $xoctOpenCast
-	 */
-	public function __construct(ObjectSettings $xoctOpenCast = NULL) {
-		if ($xoctOpenCast instanceof ObjectSettings) {
-			$this->xoctOpenCast = $xoctOpenCast;
+    public function __construct(?ObjectSettings $objectSettings = NULL) {
+		if ($objectSettings instanceof ObjectSettings) {
+			$this->objectSettings = $objectSettings;
 		} else {
-			$this->xoctOpenCast = new ObjectSettings ();
+			$this->objectSettings = new ObjectSettings ();
 		}
 		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 		//		xoctGroup::installDB();
@@ -73,7 +74,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 		$temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));
 		$temp->setVariable('BUTTON_GROUP_NAME', self::plugin()->translate('groups_new_button'));
 		$temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-		$temp->setVariable('GP_BASE_URL', (self::dic()->ctrl()->getLinkTarget(new xoctIVTGroupParticipantGUI($this->xoctOpenCast), '', '', true)));
+		$temp->setVariable('GP_BASE_URL', (self::dic()->ctrl()->getLinkTarget(new xoctIVTGroupParticipantGUI($this->objectSettings), '', '', true)));
 		$temp->setVariable('GROUP_LANGUAGE', json_encode(array(
 			'no_title' => self::plugin()->translate('group_alert_no_title'),
 			'delete_group' => self::plugin()->translate('group_alert_delete_group'),
@@ -107,7 +108,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 	public function getAll() {
 		$arr = array();
-		foreach (xoctIVTGroup::getAllForId($this->xoctOpenCast->getObjId()) as $group) {
+		foreach (xoctIVTGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
 		    $users = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->getArray(null, 'user_id');
 			$stdClass = $group->__asStdClass();
 			$stdClass->user_count = count($users);
@@ -138,7 +139,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 	protected function create() {
 		$obj = new xoctIVTGroup();
-		$obj->setSerieId($this->xoctOpenCast->getObjId());
+		$obj->setSerieId($this->objectSettings->getObjId());
 		$obj->setTitle($_POST['title']);
 		$obj->create();
 		$json = $obj->__asStdClass();
@@ -166,7 +167,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 		 */
 		$status = false;
 		$xoctIVTGroup = xoctIVTGroup::find($_GET['id']);
-		if ($xoctIVTGroup->getSerieId() == $this->xoctOpenCast->getObjId()) {
+		if ($xoctIVTGroup->getSerieId() == $this->objectSettings->getObjId()) {
 			$xoctIVTGroup->delete();
 			$status = true;
 		}

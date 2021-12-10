@@ -30,7 +30,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var xoctEventGUI
      */
@@ -53,19 +53,19 @@ class xoctEventTableGUI extends ilTable2GUI
      *
      * @param xoctEventGUI $a_parent_obj
      * @param string $a_parent_cmd
-     * @param ObjectSettings $xoctOpenCast
+     * @param ObjectSettings $objectSettings
      * @param               $load_data bool
      */
     public function __construct(xoctEventGUI       $a_parent_obj,
                                 string             $a_parent_cmd,
-                                ObjectSettings     $xoctOpenCast,
+                                ObjectSettings     $objectSettings,
                                 EventAPIRepository $event_repository,
                                 bool               $load_data = true)
     {
-        $this->xoctOpenCast = $xoctOpenCast;
+        $this->objectSettings = $objectSettings;
         $this->event_repository = $event_repository;
         $this->parent_obj = $a_parent_obj;
-        $a_val = static::getGeneratedPrefix($xoctOpenCast);
+        $a_val = static::getGeneratedPrefix($objectSettings);
         $this->setPrefix($a_val);
         $this->setFormName($a_val);
         $this->setId($a_val);
@@ -87,22 +87,22 @@ class xoctEventTableGUI extends ilTable2GUI
 
 
     /**
-     * @param ObjectSettings $xoctOpenCast
+     * @param ObjectSettings $objectSettings
      */
-    public static function setDefaultRowValue(ObjectSettings $xoctOpenCast)
+    public static function setDefaultRowValue(ObjectSettings $objectSettings)
     {
-        $_GET[self::getGeneratedPrefix($xoctOpenCast) . '_trows'] = 20;
+        $_GET[self::getGeneratedPrefix($objectSettings) . '_trows'] = 20;
     }
 
 
     /**
-     * @param ObjectSettings $xoctOpenCast
+     * @param ObjectSettings $objectSettings
      *
      * @return string
      */
-    public static function getGeneratedPrefix(ObjectSettings $xoctOpenCast)
+    public static function getGeneratedPrefix(ObjectSettings $objectSettings)
     {
-        return self::TBL_ID . '_' . substr($xoctOpenCast->getSeriesIdentifier(), 0, 5);
+        return self::TBL_ID . '_' . substr($objectSettings->getSeriesIdentifier(), 0, 5);
     }
 
 
@@ -134,16 +134,16 @@ class xoctEventTableGUI extends ilTable2GUI
          * @var $xoctUser  xoctUser
          */
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
-        $renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
+        $renderer = new xoctEventRenderer($event, $this->objectSettings);
 
         $renderer->insertThumbnail($this->tpl, null);
         $renderer->insertPlayerLink($this->tpl);
 
-        if (!$this->xoctOpenCast->getStreamingOnly()) {
+        if (!$this->objectSettings->getStreamingOnly()) {
             $renderer->insertDownloadLink($this->tpl);
         }
 
-        if ($this->xoctOpenCast->getUseAnnotations()) {
+        if ($this->objectSettings->getUseAnnotations()) {
             $renderer->insertAnnotationLink($this->tpl);
         }
 
@@ -250,7 +250,7 @@ class xoctEventTableGUI extends ilTable2GUI
         if ($owner_visible !== NULL) {
             return $owner_visible;
         }
-        $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->xoctOpenCast->getPermissionPerClip());
+        $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->objectSettings->getPermissionPerClip());
 
         return $owner_visible;
     }
@@ -280,7 +280,7 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected function addActionMenu(Event $event)
     {
-        $renderer = new xoctEventRenderer($event, $this->xoctOpenCast);
+        $renderer = new xoctEventRenderer($event, $this->objectSettings);
         $actions = $renderer->getActions();
         if (empty($actions)) {
             return;
@@ -332,7 +332,7 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected function parseData()
     {
-        $filter = array('series' => $this->xoctOpenCast->getSeriesIdentifier());
+        $filter = array('series' => $this->objectSettings->getSeriesIdentifier());
         $a_data = $this->event_repository->getFiltered($filter, '', []);
 
         $a_data = array_filter($a_data, $this->filterPermissions());
@@ -397,7 +397,7 @@ class xoctEventTableGUI extends ilTable2GUI
             $xoctUser = xoctUser::getInstance(self::dic()->user());
             $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find($array['identifier']);
 
-            return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->xoctOpenCast);
+            return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->objectSettings);
         };
     }
 
@@ -506,11 +506,11 @@ class xoctEventTableGUI extends ilTable2GUI
 
     /**
      * @param $visible
-     * @param $xoctOpenCast
+     * @param $objectSettings
      */
-    public static function setOwnerFieldVisibility($visible, $xoctOpenCast)
+    public static function setOwnerFieldVisibility($visible, $objectSettings)
     {
-        $table_id = self::getGeneratedPrefix($xoctOpenCast);
+        $table_id = self::getGeneratedPrefix($objectSettings);
         $query = self::dic()->database()->query("SELECT * FROM table_properties WHERE table_id = " . self::dic()->database()->quote($table_id, "text") . " AND property = 'selfields'");
         while ($rec = self::dic()->database()->fetchAssoc($query)) {
             $selfields = unserialize($rec['value']);

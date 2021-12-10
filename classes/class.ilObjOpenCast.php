@@ -44,9 +44,9 @@ class ilObjOpenCast extends ilObjectPlugin {
 	{
 		xoctConf::setApiSettings();
 		/**
-		 * @var $xoctOpenCast ObjectSettings
+		 * @var $objectSettings ObjectSettings
 		 */
-		$xoctOpenCast = ObjectSettings::find($this->getId());
+		$objectSettings = ObjectSettings::find($this->getId());
 		if (self::dic()->ctrl()->isAsynch()) {
 			// don't update title/description on async calls
 			return;
@@ -54,7 +54,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 		// catch exception: the series may already be deleted in opencast (404 exception)
 		try {
-			$series = $xoctOpenCast->getSeries();
+			$series = $objectSettings->getSeries();
 		} catch (xoctException $e) {
 		    xoctLog::getInstance()->write($e->getMessage());
 			if (ilContext::hasHTML()) {
@@ -90,23 +90,23 @@ class ilObjOpenCast extends ilObjectPlugin {
 	protected function doCloneObject($new_obj, $a_target_id, $a_copy_id = NULL) {
 		xoctConf::setApiSettings();
 		/**
-		 * @var $xoctOpenCastNew ObjectSettings
-		 * @var $xoctOpenCastOld ObjectSettings
+		 * @var $objectSettingsNew ObjectSettings
+		 * @var $objectSettingsOld ObjectSettings
 		 */
-		$xoctOpenCastNew = new ObjectSettings();
-		$xoctOpenCastNew->setObjId($new_obj->getId());
-		$xoctOpenCastOld = ObjectSettings::find($this->getId());
+		$objectSettingsNew = new ObjectSettings();
+		$objectSettingsNew->setObjId($new_obj->getId());
+		$objectSettingsOld = ObjectSettings::find($this->getId());
 
-		$xoctOpenCastNew->setSeriesIdentifier($xoctOpenCastOld->getSeriesIdentifier());
-		$xoctOpenCastNew->setIntroductionText($xoctOpenCastOld->getIntroductionText());
-		$xoctOpenCastNew->setAgreementAccepted($xoctOpenCastOld->getAgreementAccepted());
-		$xoctOpenCastNew->setOnline(false);
-		$xoctOpenCastNew->setPermissionAllowSetOwn($xoctOpenCastOld->getPermissionAllowSetOwn());
-		$xoctOpenCastNew->setStreamingOnly($xoctOpenCastOld->getStreamingOnly());
-		$xoctOpenCastNew->setUseAnnotations($xoctOpenCastOld->getUseAnnotations());
-		$xoctOpenCastNew->setPermissionPerClip($xoctOpenCastOld->getPermissionPerClip());
+		$objectSettingsNew->setSeriesIdentifier($objectSettingsOld->getSeriesIdentifier());
+		$objectSettingsNew->setIntroductionText($objectSettingsOld->getIntroductionText());
+		$objectSettingsNew->setAgreementAccepted($objectSettingsOld->getAgreementAccepted());
+		$objectSettingsNew->setOnline(false);
+		$objectSettingsNew->setPermissionAllowSetOwn($objectSettingsOld->getPermissionAllowSetOwn());
+		$objectSettingsNew->setStreamingOnly($objectSettingsOld->getStreamingOnly());
+		$objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
+		$objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
 
-		$xoctOpenCastNew->create();
+		$objectSettingsNew->create();
 	}
 
 	public function getParentCourseOrGroup() {

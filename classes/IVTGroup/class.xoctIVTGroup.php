@@ -91,14 +91,14 @@ class xoctIVTGroup extends ActiveRecord {
 	 */
 	protected static function loadGroupIdsForSeriesId($series_identifier) {
 		if (!isset(self::$series_id_to_groups_map[$series_identifier])) {
-			$xoctOpenCast = ObjectSettings::where(array(
+			$objectSettings = ObjectSettings::where(array(
 				'series_identifier' => $series_identifier,
 				'obj_id' => ilObject2::_lookupObjectId($_GET['ref_id']),
 			))->last();
-			if (!$xoctOpenCast instanceof ObjectSettings) {
+			if (!$objectSettings instanceof ObjectSettings) {
 				return array();
 			}
-			$array = self::where(array( 'serie_id' => $xoctOpenCast->getObjId(), ))->getArray(NULL, 'id');
+			$array = self::where(array( 'serie_id' => $objectSettings->getObjId(), ))->getArray(NULL, 'id');
 
 			self::$series_id_to_groups_map[$series_identifier] = $array;
 		}

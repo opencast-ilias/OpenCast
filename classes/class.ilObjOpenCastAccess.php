@@ -109,11 +109,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	static function checkOnline($a_id) {
 		/**
-		 * @var $xoctOpenCast ObjectSettings
+		 * @var $objectSettings ObjectSettings
 		 */
-		$xoctOpenCast = ObjectSettings::findOrGetInstance($a_id);
+		$objectSettings = ObjectSettings::findOrGetInstance($a_id);
 
-		return (bool)$xoctOpenCast->isOnline();
+		return (bool)$objectSettings->isOnline();
 	}
 
 
@@ -134,12 +134,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @param                   $cmd
 	 * @param Event|NULL    $xoctEvent
 	 * @param xoctUser|NULL     $xoctUser
-	 * @param ObjectSettings|NULL $xoctOpenCast
+	 * @param ObjectSettings|NULL $objectSettings
 	 * @param null              $ref_id
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function checkAction($cmd, Event $xoctEvent = NULL, xoctUser $xoctUser = NULL, ObjectSettings $xoctOpenCast = NULL, $ref_id = NULL) : bool
+	public static function checkAction($cmd, Event $xoctEvent = NULL, xoctUser $xoctUser = NULL, ObjectSettings $objectSettings = NULL, $ref_id = NULL) : bool
 	{
 		if ($xoctUser === NULL) {
 			$xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -155,12 +155,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
 					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
-					&& $xoctOpenCast->getPermissionPerClip();
+					&& $objectSettings->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
-					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id) && $xoctOpenCast->getPermissionPerClip())
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id) && $objectSettings->getPermissionPerClip())
 					|| ($xoctEvent->isOwner($xoctUser)
-						&& $xoctOpenCast->getPermissionAllowSetOwn()
+						&& $objectSettings->getPermissionAllowSetOwn()
 						&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 						&& $xoctEvent->getProcessingState() != Event::STATE_FAILED);
 			case self::ACTION_CUT:
@@ -233,7 +233,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @return bool
 	 * @throws xoctException
 	 */
-	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, ObjectSettings $xoctOpenCast) {
+	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, ObjectSettings $objectSettings) {
 		// edit_videos and write access see all videos
 		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
 			return true;
@@ -241,7 +241,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 		// owner can see failed videos
 		if ($event->getProcessingState() == $event::STATE_FAILED) {
-			if ($event->isOwner($xoctUser) && ($xoctOpenCast->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
+			if ($event->isOwner($xoctUser) && ($objectSettings->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
 				return true;
 			}
 			return false;
@@ -263,7 +263,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// no ivt mode: show residual videos
-		if (!$xoctOpenCast->getPermissionPerClip()) {
+		if (!$objectSettings->getPermissionPerClip()) {
 			return true;
 		}
 
@@ -279,7 +279,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true; // same group as owner
 		}
 
-		$invitations = xoctInvitation::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $xoctOpenCast->getPermissionAllowSetOwn());
+		$invitations = xoctInvitation::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $objectSettings->getPermissionAllowSetOwn());
 		if (!empty($invitations)) {
 			return true; //has invitations
 		}

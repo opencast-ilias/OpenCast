@@ -10,17 +10,17 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 class xoctDataMapper {
 
 	/**
-	 * @param ObjectSettings $xoctOpenCast
+	 * @param ObjectSettings $objectSettings
 	 * @return bool
 	 */
-	public static function xoctOpenCastupdated(ObjectSettings $xoctOpenCast) {
-		if ($xoctOpenCast->getObjId()) {
+	public static function objectSettingsUpdated(ObjectSettings $objectSettings) {
+		if ($objectSettings->getObjId()) {
 			/**
 			 * @var $ilObjOpenCast ilObjOpenCast
 			 */
-			$ilObjOpenCast = ilObjectFactory::getInstanceByObjId($xoctOpenCast->getObjId());
-			$ilObjOpenCast->setTitle($xoctOpenCast->getSeries()->getTitle());
-			$ilObjOpenCast->setDescription($xoctOpenCast->getSeries()->getDescription());
+			$ilObjOpenCast = ilObjectFactory::getInstanceByObjId($objectSettings->getObjId());
+			$ilObjOpenCast->setTitle($objectSettings->getSeries()->getTitle());
+			$ilObjOpenCast->setDescription($objectSettings->getSeries()->getDescription());
 			$ilObjOpenCast->update();
 
 			return true;

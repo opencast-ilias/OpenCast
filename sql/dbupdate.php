@@ -7,7 +7,7 @@ use srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR;
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 xoctConf::updateDB();
 xoctIVTGroup::updateDB();
-xoctOpenCast::updateDB();
+\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 ?>
 <#2>
 <?php
@@ -41,7 +41,7 @@ if($offering_admin)
 ?>
 <#5>
 <?php
-xoctOpenCast::updateDB();
+\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 ?>
 <#6>
 <?php
@@ -155,7 +155,7 @@ if (WorkflowParameter::count() === 0) {
 ?>
 <#15>
 <?php
-xoctOpenCast::updateDB();
+\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 xoctUserSetting::updateDB();
 ?>
 <#16>
@@ -171,7 +171,7 @@ xoctUserSetting::updateDB();
 ?>
 <#18>
 <?php
-xoctOpenCast::updateDB();
+\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 ?>
 <#19>
 <?php

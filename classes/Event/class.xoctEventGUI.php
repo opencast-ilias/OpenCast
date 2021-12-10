@@ -63,7 +63,7 @@ class xoctEventGUI extends xoctGUI
     /**
      * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var EventModals
      */
@@ -82,12 +82,12 @@ class xoctEventGUI extends xoctGUI
     private $formBuilder;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
-                                ObjectSettings     $xoctOpenCast,
+                                ObjectSettings     $objectSettings,
                                 EventAPIRepository $event_repository,
                                 FormBuilderEvent   $formBuilder,
                                 Container          $dic)
     {
-        $this->xoctOpenCast = $xoctOpenCast;
+        $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
         $this->ui_renderer = $dic->ui()->renderer();
@@ -108,11 +108,11 @@ class xoctEventGUI extends xoctGUI
             case strtolower(xoctPlayerGUI::class):
                 $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
                 // check access
-                if (!ilObjOpenCastAccess::hasReadAccessOnEvent($event, xoctUser::getInstance(self::dic()->user()), $this->xoctOpenCast)) {
+                if (!ilObjOpenCastAccess::hasReadAccessOnEvent($event, xoctUser::getInstance(self::dic()->user()), $this->objectSettings)) {
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository, $this->xoctOpenCast);
+                $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository, $this->objectSettings);
                 self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
                 break;
             case strtolower(xoctFileUploadHandler::class):
@@ -235,7 +235,7 @@ class xoctEventGUI extends xoctGUI
         ilChangeEvent::_recordReadEvent(
             $this->parent_gui->object->getType(),
             $this->parent_gui->object->getRefId(),
-            $this->xoctOpenCast->getObjId(),
+            $this->objectSettings->getObjId(),
             self::dic()->user()->getId()
         );
 
@@ -263,7 +263,7 @@ class xoctEventGUI extends xoctGUI
     {
         $this->initViewSwitcherHTML('list');
 
-        if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast) . '_xpt'])
+        if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->objectSettings) . '_xpt'])
             || !empty($_POST)
             || xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
             return $this->getTableGUI();
@@ -298,7 +298,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function initViewSwitcherHTML($active)
     {
-        if ($this->xoctOpenCast->isViewChangeable()) {
+        if ($this->objectSettings->isViewChangeable()) {
             $f = self::dic()->ui()->factory();
             $renderer = self::dic()->ui()->renderer();
 
@@ -355,7 +355,7 @@ class xoctEventGUI extends xoctGUI
         $ajax_link = self::dic()->ctrl()->getLinkTarget($this, 'asyncGetTableGUI', "", true);
 
         // hacky stuff to allow asynchronous rendering of tableGUI
-        $table_id = xoctEventTableGUI::getGeneratedPrefix($this->xoctOpenCast);
+        $table_id = xoctEventTableGUI::getGeneratedPrefix($this->objectSettings);
         $user_id = self::dic()->user()->getId();
         $tab_prop = new ilTablePropertiesStorage();
         if ($tab_prop->getProperty($table_id, $user_id, 'filter')) {
@@ -409,7 +409,7 @@ class xoctEventGUI extends xoctGUI
     {
         $modals_html = $this->getModalsHTML();
         $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository);
+            self::CMD_STANDARD, $this->objectSettings, $this->event_repository);
         $html = $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
@@ -445,7 +445,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function getTilesGUI(): string
     {
-        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->xoctOpenCast, $this->event_repository);
+        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->objectSettings, $this->event_repository);
         $html = $this->getModalsHTML();
         $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
@@ -472,7 +472,7 @@ class xoctEventGUI extends xoctGUI
     protected function applyFilter()
     {
         $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository, false);
+            self::CMD_STANDARD, $this->objectSettings, $this->event_repository, false);
         $xoctEventTableGUI->resetOffset(true);
         $xoctEventTableGUI->writeFilterToSession();
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -484,9 +484,8 @@ class xoctEventGUI extends xoctGUI
      */
     protected function resetFilter()
     {
-        //		xoctEventTableGUI::setDefaultRowValue($this->xoctOpenCast);
         $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->xoctOpenCast, $this->event_repository, false);
+            self::CMD_STANDARD, $this->objectSettings, $this->event_repository, false);
         $xoctEventTableGUI->resetOffset();
         $xoctEventTableGUI->resetFilter();
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -498,12 +497,12 @@ class xoctEventGUI extends xoctGUI
      */
     protected function add()
     {
-        if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+        if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
-            $this->xoctOpenCast->getObjId(),
+            $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
@@ -523,7 +522,7 @@ class xoctEventGUI extends xoctGUI
         // >>>>>>>>>>>>>>>>>>>>>>>>
         $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
-            $this->xoctOpenCast->getObjId(),
+            $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
@@ -540,7 +539,7 @@ class xoctEventGUI extends xoctGUI
             array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 
         $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
-            ->withValue($this->xoctOpenCast->getSeriesIdentifier()));
+            ->withValue($this->objectSettings->getSeriesIdentifier()));
 
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
             $data['metadata'],
@@ -559,12 +558,12 @@ class xoctEventGUI extends xoctGUI
      */
     protected function schedule()
     {
-        if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+        if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
-            $this->xoctOpenCast->getObjId(),
+            $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
@@ -581,12 +580,12 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
 
-        if ($this->xoctOpenCast->getDuplicatesOnSystem()) {
+        if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
-            $this->xoctOpenCast->getObjId(),
+            $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
@@ -601,7 +600,7 @@ class xoctEventGUI extends xoctGUI
         $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
 
         $data['metadata']->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
-            ->withValue($this->xoctOpenCast->getSeriesIdentifier()));
+            ->withValue($this->objectSettings->getSeriesIdentifier()));
 
         try {
             $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
@@ -705,7 +704,7 @@ class xoctEventGUI extends xoctGUI
 
         // add user to series producers
         /** @var xoctSeries $xoctSeries */
-        $xoctSeries = xoctSeries::find($this->xoctOpenCast->getSeriesIdentifier());
+        $xoctSeries = xoctSeries::find($this->objectSettings->getSeriesIdentifier());
         if ($xoctSeries->addProducer($xoctUser)) {
             $sleep = true;
         }
@@ -715,7 +714,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // redirect to oc studio
-        $xoctSeries = $this->xoctOpenCast->getSeriesIdentifier();
+        $xoctSeries = $this->objectSettings->getSeriesIdentifier();
         $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
 
@@ -1017,7 +1016,7 @@ class xoctEventGUI extends xoctGUI
             $header_text = $this->txt('unpublish_confirm');
             $action_text = 'unpublish';
         } else {
-            $header_text = $this->xoctOpenCast->getDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
+            $header_text = $this->objectSettings->getDuplicatesOnSystem() ? $this->txt('delete_confirm_w_duplicates') : $this->txt('delete_confirm');
             $action_text = 'delete';
         }
         $ilConfirmationGUI->setHeaderText($header_text);
@@ -1193,7 +1192,7 @@ class xoctEventGUI extends xoctGUI
      */
     public function getObjId()
     {
-        return $this->xoctOpenCast->getObjId();
+        return $this->objectSettings->getObjId();
     }
 
 
@@ -1221,9 +1220,9 @@ class xoctEventGUI extends xoctGUI
     protected function getIntroTextHTML()
     {
         $intro_text = '';
-        if ($this->xoctOpenCast->getIntroductionText()) {
+        if ($this->objectSettings->getIntroductionText()) {
             $intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
-            $intro->setVariable('INTRO', nl2br($this->xoctOpenCast->getIntroductionText()));
+            $intro->setVariable('INTRO', nl2br($this->objectSettings->getIntroductionText()));
             $intro_text = $intro->get();
         }
         return $intro_text;

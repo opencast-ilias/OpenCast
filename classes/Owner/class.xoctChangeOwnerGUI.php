@@ -24,7 +24,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
     /**
      * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var ACLUtils
      */
@@ -34,8 +34,8 @@ class xoctChangeOwnerGUI extends xoctGUI {
      */
     private $event_repository;
 
-    public function __construct(ObjectSettings $xoctOpenCast, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
-        $this->xoctOpenCast = $xoctOpenCast;
+    public function __construct(ObjectSettings $objectSettings, EventAPIRepository $event_repository, ACLUtils $ACLUtils) {
+        $this->objectSettings = $objectSettings;
         $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
         $this->event_repository = $event_repository;
@@ -55,7 +55,7 @@ class xoctChangeOwnerGUI extends xoctGUI {
      */
     protected function index() {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->xoctOpenCast)) {
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
             ilUtil::sendFailure('Access denied', true);
             self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
         }

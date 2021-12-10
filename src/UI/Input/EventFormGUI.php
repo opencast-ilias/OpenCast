@@ -9,7 +9,6 @@ use ilException;
 use ilInteractiveVideoTimePicker;
 use ilObjOpenCast;
 use ilObjOpenCastAccess;
-use ilObjPluginDispatchGUI;
 use ilOpenCastPlugin;
 use ilPropertyFormGUI;
 use ilRadioGroupInputGUI;
@@ -24,17 +23,16 @@ use ReflectionException;
 use srag\DIC\OpenCast\DICTrait;
 use srag\CustomInputGUIs\OpenCast\WeekdayInputGUI\WeekdayInputGUI;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoct;
 use xoctConf;
 use xoctEventGUI;
 use xoctException;
-use xoctOpenCast;
 use xoctSeries;
 use xoctUploadFile;
 use xoctUser;
@@ -104,9 +102,9 @@ class EventFormGUI extends ilPropertyFormGUI {
      */
     protected $is_new;
     /**
-     * @var xoctOpenCast
+     * @var ObjectSettings
      */
-    protected $xoctOpenCast;
+    protected $objectSettings;
     /**
      * @var string|null
      */
@@ -129,7 +127,7 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @param              $parent_gui
      * @param EventAPIRepository $event_repository
      * @param string|null $event_identifier
-     * @param xoctOpenCast|null $xoctOpenCast $xoctOpenCast
+     * @param ObjectSettings|null $objectSettings
      * @param bool $schedule
      *
      * @param string|null $form_action
@@ -140,13 +138,13 @@ class EventFormGUI extends ilPropertyFormGUI {
      * @throws xoctException
      */
 	public function __construct(
-        $parent_gui,
+                           $parent_gui,
         EventAPIRepository $event_repository,
-        ?string $event_identifier = null,
-        ?xoctOpenCast $xoctOpenCast = null,
-        bool $schedule = false,
-        ?string $form_action = null,
-        ?string $cmd_url_upload_chunks = null
+        ?string            $event_identifier = null,
+        ?ObjectSettings    $objectSettings = null,
+        bool               $schedule = false,
+        ?string            $form_action = null,
+        ?string            $cmd_url_upload_chunks = null
     ) {
 		parent::__construct();
 		$this->event_repository = $event_repository;
@@ -155,7 +153,7 @@ class EventFormGUI extends ilPropertyFormGUI {
         self::dic()->ctrl()->saveParameter($parent_gui, self::IDENTIFIER);
         $this->form_action = $form_action ?? self::dic()->ctrl()->getFormAction($parent_gui);
         $this->object = $event_identifier ?? $event_repository->find($event_identifier);
-        $this->xoctOpenCast = $xoctOpenCast;
+        $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
         $this->is_new = ($this->object->getIdentifier() == '');
         $this->schedule = $schedule;
@@ -191,7 +189,7 @@ class EventFormGUI extends ilPropertyFormGUI {
 		$this->setFormAction($this->form_action);
 		$this->initButtons();
 
-		if (is_null($this->xoctOpenCast)) {
+		if (is_null($this->objectSettings)) {
 		    $series_input = new ilSelectInputGUI($this->txt(self::F_SERIES), self::F_SERIES);
 		    $series_input->setOptions($this->getSeriesOptions());
 		    $this->addItem($series_input);
@@ -375,10 +373,10 @@ class EventFormGUI extends ilPropertyFormGUI {
 
 		// if ($this->is_new || $this->object->isScheduled()) {
 		if ($this->is_new) {
-		    $form_items = is_null($this->xoctOpenCast) ?
+		    $form_items = is_null($this->objectSettings) ?
                 SeriesWorkflowParameterRepository::getInstance()->getGeneralFormItems() :
                 SeriesWorkflowParameterRepository::getInstance()->getFormItemsForObjId(
-                    $this->xoctOpenCast->getObjId(),
+                    $this->objectSettings->getObjId(),
                     ilObjOpenCastAccess::hasPermission('edit_videos')
                 );
 			foreach ($form_items as $item) {
@@ -428,13 +426,13 @@ class EventFormGUI extends ilPropertyFormGUI {
 			return false;
 		}
 
-        if (is_null($this->xoctOpenCast)) {
+        if (is_null($this->objectSettings)) {
             $series_id = $this->getInput(self::F_SERIES);
             if ($series_id == self::OPT_OWN_SERIES) {
                 $series_id = (new SeriesAPIRepository())->getOrCreateOwnSeries(xoctUser::getInstance(self::dic()->user()))->getIdentifier();
             }
         } else {
-            $series_id = $this->xoctOpenCast->getSeriesIdentifier();
+            $series_id = $this->objectSettings->getSeriesIdentifier();
         }
         $this->object->setSeriesIdentifier($series_id);
 
@@ -444,9 +442,9 @@ class EventFormGUI extends ilPropertyFormGUI {
 		$this->object->setDescription($this->getInput(self::F_DESCRIPTION));
 		$this->object->setLocation($this->getInput(self::F_LOCATION));
 		$this->object->setPresenter($this->getInput(self::F_PRESENTERS));
-		is_null($this->xoctOpenCast) ?
+		is_null($this->objectSettings) ?
             $this->object->setGeneralWorkflowParameters((array) $this->getInput(self::F_WORKFLOW_PARAMETER)) :
-            $this->object->setWorkflowParametersForObjId((array) $this->getInput(self::F_WORKFLOW_PARAMETER), $this->xoctOpenCast->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos'));
+            $this->object->setWorkflowParametersForObjId((array) $this->getInput(self::F_WORKFLOW_PARAMETER), $this->objectSettings->getObjId(), ilObjOpenCastAccess::hasPermission('edit_videos'));
 
         $date_and_location_disabled = $this->object->isScheduled() && xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::METADATA_EXCEPT_DATE_PLACE;
 
