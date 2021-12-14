@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\ACL;
 use srag\Plugins\Opencast\Cache\Cache;
 use xoctRequest;
 
-class AclApiRepository implements AclRepository
+class ACLApiRepository implements ACLRepository
 {
     const CACHE_PREFIX = 'event-acl-';
 

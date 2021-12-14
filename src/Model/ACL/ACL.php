@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\ACL;
 
-use ACLEntry;
 use JsonSerializable;
 
 class ACL implements JsonSerializable

@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\ACL;
 
-interface AclRepository
+interface ACLRepository
 {
     public function find(string $identifier): ACL;
 

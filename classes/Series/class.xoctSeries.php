@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\ACL\ACL;
+use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 

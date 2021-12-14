@@ -1,5 +1,9 @@
 <?php
 
+namespace srag\Plugins\Opencast\Model\ACL;
+
+use JsonSerializable;
+
 /**
  * Class xoctAcl
  *

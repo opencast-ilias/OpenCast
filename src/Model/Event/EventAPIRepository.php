@@ -5,8 +5,8 @@ namespace srag\Plugins\Opencast\Model\Event;
 use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACL;
-use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
-use srag\Plugins\Opencast\Model\ACL\AclRepository;
+use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
+use srag\Plugins\Opencast\Model\ACL\ACLRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
@@ -55,7 +55,7 @@ class EventAPIRepository implements EventRepository
      */
     private $md_repository;
     /**
-     * @var AclRepository
+     * @var ACLRepository
      */
     private $acl_repository;
     /**
@@ -80,7 +80,7 @@ class EventAPIRepository implements EventRepository
                                 MDParser              $md_parser,
                                 MetadataRepository    $md_repository,
                                 OpencastIngestService $ingestService,
-                                AclRepository         $acl_repository,
+                                ACLRepository         $acl_repository,
                                 PublicationRepository $publication_repository,
                                 SchedulingParser      $scheduling_parser,
                                 SchedulingRepository  $scheduling_repository)
@@ -274,6 +274,6 @@ class EventAPIRepository implements EventRepository
             ->acl()->post($updateEventACLRequest->getPayload()->jsonSerialize());
         // todo: caching is not good
         $this->cache->delete(self::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
-        $this->cache->delete(AclApiRepository::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
+        $this->cache->delete(ACLApiRepository::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
     }
 }

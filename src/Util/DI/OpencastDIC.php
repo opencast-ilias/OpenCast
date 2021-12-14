@@ -8,8 +8,8 @@ use ilOpenCastPlugin;
 use Pimple\Container;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\ACL\AclApiRepository;
-use srag\Plugins\Opencast\Model\ACL\AclRepository;
+use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
+use srag\Plugins\Opencast\Model\ACL\ACLRepository;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
@@ -71,7 +71,7 @@ class OpencastDIC
                 $c['scheduling_repository']);
         });
         $this->container['acl_repository'] = $this->container->factory(function ($c) {
-            return new AclApiRepository($c['cache']);
+            return new ACLApiRepository($c['cache']);
         });
         $this->container['acl_utils'] = $this->container->factory(function ($c) {
             return new ACLUtils();
@@ -216,7 +216,7 @@ class OpencastDIC
         return $this->container['cache'];
     }
 
-    public function acl_repository(): AclRepository
+    public function acl_repository(): ACLRepository
     {
         return $this->container['acl_repository'];
     }

@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\ACL;
 
-use ACLEntry;
 use ilObjUser;
 use srag\Plugins\Opencast\Model\Event\Event;
 use xoctConf;

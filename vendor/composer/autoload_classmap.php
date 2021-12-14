@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ACLEntry' => $baseDir . '/classes/Series/Acl/class.ACLEntry.php',
     'Opis\\Closure\\Analyzer' => $vendorDir . '/opis/closure/src/Analyzer.php',
     'Opis\\Closure\\ClosureContext' => $vendorDir . '/opis/closure/src/ClosureContext.php',
     'Opis\\Closure\\ClosureScope' => $vendorDir . '/opis/closure/src/ClosureScope.php',
@@ -177,9 +176,10 @@ return array(
     'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => $baseDir . '/src/Chat/Model/Token.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => $baseDir . '/src/Chat/Model/TokenAR.php',
     'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => $baseDir . '/src/Model/ACL/ACL.php',
+    'srag\\Plugins\\Opencast\\Model\\ACL\\ACLApiRepository' => $baseDir . '/src/Model/ACL/ACLApiRepository.php',
+    'srag\\Plugins\\Opencast\\Model\\ACL\\ACLEntry' => $baseDir . '/src/Model/ACL/ACLEntry.php',
+    'srag\\Plugins\\Opencast\\Model\\ACL\\ACLRepository' => $baseDir . '/src/Model/ACL/ACLRepository.php',
     'srag\\Plugins\\Opencast\\Model\\ACL\\ACLUtils' => $baseDir . '/src/Model/ACL/ACLUtils.php',
-    'srag\\Plugins\\Opencast\\Model\\ACL\\AclApiRepository' => $baseDir . '/src/Model/ACL/AclApiRepository.php',
-    'srag\\Plugins\\Opencast\\Model\\ACL\\AclRepository' => $baseDir . '/src/Model/ACL/AclRepository.php',
     'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => $baseDir . '/src/Model/API/APIObject.php',
     'srag\\Plugins\\Opencast\\Model\\Agent\\Agent' => $baseDir . '/src/Model/Agent/Agent.php',
     'srag\\Plugins\\Opencast\\Model\\Agent\\AgentApiRepository' => $baseDir . '/src/Model/Agent/AgentApiRepository.php',
@@ -270,7 +270,6 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\Upload\\OpencastIngestService' => $baseDir . '/src/Util/Upload/OpencastIngestService.php',
     'srag\\Plugins\\Opencast\\Util\\Upload\\UploadStorageService' => $baseDir . '/src/Util/Upload/UploadStorageService.php',
     'xoct' => $baseDir . '/classes/class.xoct.php',
-    'xoctAclStandardSets' => $baseDir . '/classes/Series/Acl/class.xoctAclStandardSets.php',
     'xoctAttachment' => $baseDir . '/classes/Event/Publication/class.xoctAttachment.php',
     'xoctBase' => $baseDir . '/classes/Request/class.xoctBase.php',
     'xoctChangeOwnerGUI' => $baseDir . '/classes/Owner/class.xoctChangeOwnerGUI.php',

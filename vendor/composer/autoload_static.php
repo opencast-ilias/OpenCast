@@ -53,7 +53,6 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     );
 
     public static $classMap = array (
-        'ACLEntry' => __DIR__ . '/../..' . '/classes/Series/Acl/class.ACLEntry.php',
         'Opis\\Closure\\Analyzer' => __DIR__ . '/..' . '/opis/closure/src/Analyzer.php',
         'Opis\\Closure\\ClosureContext' => __DIR__ . '/..' . '/opis/closure/src/ClosureContext.php',
         'Opis\\Closure\\ClosureScope' => __DIR__ . '/..' . '/opis/closure/src/ClosureScope.php',
@@ -224,9 +223,10 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => __DIR__ . '/../..' . '/src/Chat/Model/Token.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => __DIR__ . '/../..' . '/src/Chat/Model/TokenAR.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/ACL/ACL.php',
+        'srag\\Plugins\\Opencast\\Model\\ACL\\ACLApiRepository' => __DIR__ . '/../..' . '/src/Model/ACL/ACLApiRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\ACL\\ACLEntry' => __DIR__ . '/../..' . '/src/Model/ACL/ACLEntry.php',
+        'srag\\Plugins\\Opencast\\Model\\ACL\\ACLRepository' => __DIR__ . '/../..' . '/src/Model/ACL/ACLRepository.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACLUtils' => __DIR__ . '/../..' . '/src/Model/ACL/ACLUtils.php',
-        'srag\\Plugins\\Opencast\\Model\\ACL\\AclApiRepository' => __DIR__ . '/../..' . '/src/Model/ACL/AclApiRepository.php',
-        'srag\\Plugins\\Opencast\\Model\\ACL\\AclRepository' => __DIR__ . '/../..' . '/src/Model/ACL/AclRepository.php',
         'srag\\Plugins\\Opencast\\Model\\API\\APIObject' => __DIR__ . '/../..' . '/src/Model/API/APIObject.php',
         'srag\\Plugins\\Opencast\\Model\\Agent\\Agent' => __DIR__ . '/../..' . '/src/Model/Agent/Agent.php',
         'srag\\Plugins\\Opencast\\Model\\Agent\\AgentApiRepository' => __DIR__ . '/../..' . '/src/Model/Agent/AgentApiRepository.php',
@@ -317,7 +317,6 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Util\\Upload\\OpencastIngestService' => __DIR__ . '/../..' . '/src/Util/Upload/OpencastIngestService.php',
         'srag\\Plugins\\Opencast\\Util\\Upload\\UploadStorageService' => __DIR__ . '/../..' . '/src/Util/Upload/UploadStorageService.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
-        'xoctAclStandardSets' => __DIR__ . '/../..' . '/classes/Series/Acl/class.xoctAclStandardSets.php',
         'xoctAttachment' => __DIR__ . '/../..' . '/classes/Event/Publication/class.xoctAttachment.php',
         'xoctBase' => __DIR__ . '/../..' . '/classes/Request/class.xoctBase.php',
         'xoctChangeOwnerGUI' => __DIR__ . '/../..' . '/classes/Owner/class.xoctChangeOwnerGUI.php',

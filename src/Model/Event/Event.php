@@ -2,11 +2,11 @@
 
 namespace srag\Plugins\Opencast\Model\Event;
 
-use ACLEntry;
 use DateTimeImmutable;
 use ilObjUser;
 use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Model\ACL\ACL;
+use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
