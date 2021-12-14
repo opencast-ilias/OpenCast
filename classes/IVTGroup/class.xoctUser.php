@@ -273,9 +273,9 @@ class xoctUser {
 
 	/**
 	 * @return string
-	 * @throws xoctException
 	 */
-	public function getIdentifier() {
+	public function getIdentifier(): string
+    {
 		return xoctConf::getConfig(xoctConf::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper($this->identifier) : $this->identifier;
 	}
 
@@ -302,9 +302,9 @@ class xoctUser {
 
 	/**
 	 * @return string
-	 * @throws xoctException
 	 */
-	public function getOwnerRoleName() {
+	public function getOwnerRoleName(): ?string
+    {
 		if (!$this->getIdentifier()) {
 			return null;
 		}

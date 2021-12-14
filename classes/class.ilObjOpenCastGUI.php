@@ -150,8 +150,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
                         $this, 
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
-                        $this->opencast_dic->form_builder_event(),
+                        $this->opencast_dic->event_form_builder(),
                         $this->opencast_dic->workflow_repository(),
+                        $this->opencast_dic->acl_utils(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
@@ -304,7 +305,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 	public function initCreateForm($type, $from_post = false) {
         return new \srag\Plugins\Opencast\UI\LegacyFormWrapper(
             $this->ilias_dic->ui()->renderer()->render(
-                $this->opencast_dic->form_builder_series()->create(
+                $this->opencast_dic->series_form_builder()->create(
                     $this->ilias_dic->ctrl()->getFormAction($this, 'save')
                 )
             )
@@ -332,8 +333,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI {
 		$creation_form = $this->initCreateForm($this->getType(), true);
 
 		if ($_POST['channel_type'] == xoctSeriesFormGUI::EXISTING_NO) {
-			$xoctAclStandardSets = new xoctAclStandardSets();
-			$creation_form->getSeries()->setAccessPolicies($xoctAclStandardSets->getAcl());
+			$creation_form->getSeries()->setAccessPolicies($this->opencast_dic->acl_utils()->getStandardRolesACL());
 		}
 
 		if ($return = $creation_form->saveObject()) {

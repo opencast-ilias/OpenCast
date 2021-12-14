@@ -114,7 +114,7 @@ class xoctInvitationGUI extends xoctGUI
         $available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
         $invited_users = array();
         $available_users = array();
-        $owner = $this->ACLUtils->getOwner($this->event);
+        $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
         foreach ($available_user_ids as $user_id) {
             if ($user_id == self::dic()->user()->getId()) {
                 continue;

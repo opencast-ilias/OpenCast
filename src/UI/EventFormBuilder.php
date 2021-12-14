@@ -16,7 +16,7 @@ use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 use xoctConf;
 
-class FormBuilderEvent
+class EventFormBuilder
 {
     private static $accepted_video_mimetypes = [
         ilMimeTypeUtil::VIDEO__AVI,
@@ -145,7 +145,7 @@ class FormBuilderEvent
             $form_action,
             [
                 'file' => $file_section,
-                'metadata' => $this->formItemBuilder->event_upload(),
+                'metadata' => $this->formItemBuilder->create(),
                 'workflow_configuration' => ($obj_id == 0 ?
                     $this->workflowParameterRepository->getGeneralFormSection()
                     : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin))]
@@ -156,7 +156,7 @@ class FormBuilderEvent
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            [$this->formItemBuilder->event_edit($metadata)]
+            [$this->formItemBuilder->update($metadata)]
         );
     }
 
@@ -165,7 +165,7 @@ class FormBuilderEvent
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
-                'metadata' => $this->formItemBuilder->event_schedule(),
+                'metadata' => $this->formItemBuilder->schedule(),
                 'scheduling' => $this->schedulingFormItemBuilder->create(),
                 'workflow_configuration' => ($obj_id == 0 ?
                     $this->workflowParameterRepository->getGeneralFormSection()
@@ -176,7 +176,7 @@ class FormBuilderEvent
 
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling) : Form
     {
-        $inputs = ['metadata' => $this->formItemBuilder->event_edit_scheduled($metadata)];
+        $inputs = ['metadata' => $this->formItemBuilder->update_scheduled($metadata)];
         $allow_edit_scheduling = (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA);
         if ($allow_edit_scheduling) {
             $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling);

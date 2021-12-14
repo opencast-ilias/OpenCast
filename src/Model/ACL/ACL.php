@@ -52,6 +52,13 @@ class ACL implements JsonSerializable
         }
     }
 
+    public function merge(ACL $acl) : self
+    {
+        foreach ($acl->getEntries() as $entry) {
+            $this->add($entry);
+        }
+        return $this;
+    }
 
     public function jsonSerialize()
     {

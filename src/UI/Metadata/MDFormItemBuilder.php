@@ -78,33 +78,33 @@ class MDFormItemBuilder
         $this->plugin = $plugin;
     }
 
-    public function event_upload(): Input
+    public function create(): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
-        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements) {
+        array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
-        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_edit(Metadata $existing_metadata): Input
+    public function update(Metadata $existing_metadata): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
-        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
+        array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
-        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_schedule(): Input
+    public function schedule(): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -121,7 +121,7 @@ class MDFormItemBuilder
             ->withAdditionalTransformation($this->buildTransformation());
     }
 
-    public function event_edit_scheduled(Metadata $existing_metadata): Input
+    public function update_scheduled(Metadata $existing_metadata): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -136,16 +136,6 @@ class MDFormItemBuilder
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
             ->withAdditionalTransformation($this->buildTransformation());
-    }
-
-    public function series_create(): array
-    {
-        return [$this->ui_factory->input()->field()->text('test')];
-    }
-
-    public function series_edit(Metadata $existing_metadata): array
-    {
-
     }
 
     /**

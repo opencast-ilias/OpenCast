@@ -4,6 +4,7 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
@@ -19,7 +20,7 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use srag\Plugins\Opencast\UI\FormBuilderEvent;
+use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
@@ -77,19 +78,28 @@ class xoctEventGUI extends xoctGUI
      */
     private $ui_renderer;
     /**
-     * @var FormBuilderEvent
+     * @var EventFormBuilder
      */
     private $formBuilder;
     /**
      * @var WorkflowRepository
      */
     private $workflowRepository;
+    /**
+     * @var ACLUtils
+     */
+    private $ACLUtils;
+    /**
+     * @var Container
+     */
+    private $dic;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
                                 ObjectSettings     $objectSettings,
-                                EventRepository $event_repository,
-                                FormBuilderEvent   $formBuilder,
+                                EventRepository    $event_repository,
+                                EventFormBuilder   $formBuilder,
                                 WorkflowRepository $workflowRepository,
+                                ACLUtils           $ACLUtils,
                                 Container          $dic)
     {
         $this->objectSettings = $objectSettings;
@@ -98,6 +108,8 @@ class xoctEventGUI extends xoctGUI
         $this->ui_renderer = $dic->ui()->renderer();
         $this->formBuilder = $formBuilder;
         $this->workflowRepository = $workflowRepository;
+        $this->ACLUtils = $ACLUtils;
+        $this->dic = $dic;
     }
 
 
@@ -538,18 +550,13 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
-        // not sure if this is supposed to be in the form builder
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        $aclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ?
-            array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-
         $metadata = $data['metadata']['object'];
         $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
 
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
             $metadata,
-            $aclStandardSets->getAcl(),
+            $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance(self::dic()->user())),
             new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
                 $data['workflow_configuration']['object']),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
@@ -602,8 +609,6 @@ class xoctEventGUI extends xoctGUI
         }
 
         $xoctUser = xoctUser::getInstance(self::dic()->user());
-        $xoctAclStandardSets = new xoctAclStandardSets($xoctUser->getOwnerRoleName() ? array($xoctUser->getOwnerRoleName(), $xoctUser->getUserRoleName()) : array());
-
         $metadata = $data['metadata']['object'];
         $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
@@ -611,7 +616,7 @@ class xoctEventGUI extends xoctGUI
         try {
             $this->event_repository->schedule(new ScheduleEventRequest(new ScheduleEventRequestPayload(
                 $metadata,
-                $xoctAclStandardSets->getAcl(),
+                $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->dic->user())),
                 $data['scheduling']['object'],
                 new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
                     $data['workflow_configuration']['object'])
@@ -672,7 +677,7 @@ class xoctEventGUI extends xoctGUI
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
 
-    protected function editScheduled() : void
+    protected function editScheduled(): void
     {
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
         $xoctUser = xoctUser::getInstance(self::dic()->user());
@@ -918,6 +923,7 @@ class xoctEventGUI extends xoctGUI
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
+
     /**
      *
      * @throws xoctException|DICException

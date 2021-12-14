@@ -1,6 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 
@@ -354,9 +355,9 @@ class xoctSeries extends APIObject {
 	 */
 	public $creator;
 	/**
-	 * @var ACLEntry[]
+	 * @var ACL
 	 */
-	public $access_policies = array();
+	public $access_policies;
 	/**
 	 * @var DateTime
 	 */
@@ -471,18 +472,13 @@ class xoctSeries extends APIObject {
 	}
 
 
-	/**
-	 * @return ACLEntry[]
-	 */
-	public function getAccessPolicies() {
+	public function getAccessPolicies() : ACL
+    {
 		return $this->access_policies;
 	}
 
-
-	/**
-	 * @param ACLEntry[] $access_policies
-	 */
-	public function setAccessPolicies($access_policies) {
+	public function setAccessPolicies(ACL $access_policies) : void
+    {
 		$this->access_policies = $access_policies;
 	}
 

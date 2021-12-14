@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Model\Series;
 
 use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
-use xoctAclStandardSets;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use xoctException;
 use xoctRequest;
 use xoctSeries;
@@ -18,13 +18,15 @@ class SeriesAPIRepository implements SeriesRepository
      * @var Cache
      */
     private $cache;
-
     /**
-     * @param Cache $cache
+     * @var ACLUtils
      */
-    public function __construct(Cache $cache)
+    private $ACLUtils;
+
+    public function __construct(Cache $cache, ACLUtils $ACLUtils)
     {
         $this->cache = $cache;
+        $this->ACLUtils = $ACLUtils;
     }
 
 
@@ -59,8 +61,7 @@ class SeriesAPIRepository implements SeriesRepository
         if (is_null($xoctSeries)) {
             $xoctSeries = new xoctSeries();
             $xoctSeries->setTitle($this->getOwnSeriesTitle($xoct_user));
-            $std_acls = new xoctAclStandardSets();
-            $xoctSeries->setAccessPolicies($std_acls->getAcl());
+            $xoctSeries->setAccessPolicies($this->ACLUtils->getStandardRolesACL());
             $xoctSeries->addProducer($xoct_user, true);
             $xoctSeries->create();
         }

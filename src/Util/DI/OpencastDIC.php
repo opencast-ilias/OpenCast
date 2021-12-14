@@ -29,8 +29,8 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use srag\Plugins\Opencast\UI\FormBuilderEvent;
-use srag\Plugins\Opencast\UI\FormBuilderSeries;
+use srag\Plugins\Opencast\UI\EventFormBuilder;
+use srag\Plugins\Opencast\UI\SeriesFormBuilder;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
@@ -172,8 +172,8 @@ class OpencastDIC
                 $c['agent_repository']
             );
         });
-        $this->container['form_builder_event'] = $this->container->factory(function ($c) {
-            return new FormBuilderEvent($this->dic->ui()->factory(),
+        $this->container['event_form_builder'] = $this->container->factory(function ($c) {
+            return new EventFormBuilder($this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_form_item_builder_event'],
                 $c['workflow_parameter_conf_repository'],
@@ -183,11 +183,12 @@ class OpencastDIC
                 $c['scheduling_form_item_builder']
             );
         });
-        $this->container['form_builder_series'] = $this->container->factory(function ($c) {
-            return new FormBuilderSeries($this->dic->ui()->factory(),
+        $this->container['series_form_builder'] = $this->container->factory(function ($c) {
+            return new SeriesFormBuilder($this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
                 $c['md_form_item_builder_series'],
+                $c['publication_repository'],
                 $c['plugin'],
                 $this->dic
             );
@@ -196,7 +197,7 @@ class OpencastDIC
             return ilOpenCastPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
-            return new SeriesAPIRepository($c['cache']);
+            return new SeriesAPIRepository($c['cache'], $c['acl_utils']);
         });
     }
 
@@ -240,14 +241,14 @@ class OpencastDIC
         return $this->container['upload_handler'];
     }
 
-    public function form_builder_event(): FormBuilderEvent
+    public function event_form_builder(): EventFormBuilder
     {
-        return $this->container['form_builder_event'];
+        return $this->container['event_form_builder'];
     }
 
-    public function form_builder_series(): FormBuilderSeries
+    public function series_form_builder(): SeriesFormBuilder
     {
-        return $this->container['form_builder_series'];
+        return $this->container['series_form_builder'];
     }
 
     public function workflow_parameter_conf_repository(): SeriesWorkflowParameterRepository

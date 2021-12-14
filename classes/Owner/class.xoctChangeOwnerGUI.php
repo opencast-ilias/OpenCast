@@ -102,7 +102,7 @@ class xoctChangeOwnerGUI extends xoctGUI
      */
     public function getAll()
     {
-        $owner = $this->ACLUtils->getOwner($this->event);
+        $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
         $owner_data = $owner ? ['id' => $owner->getIliasUserId(), 'name' => $owner->getNamePresentation()] : [];
 
         $available_user_ids = $this->getCourseMembers();
@@ -145,7 +145,9 @@ class xoctChangeOwnerGUI extends xoctGUI
     protected function setOwner()
     {
         $user_id = $_GET['user_id'];
-        $this->event = $this->ACLUtils->setOwner(xoctUser::getInstance($user_id), $this->event);
+        $this->event->setAcl(
+            $this->ACLUtils->changeOwner(
+                $this->event->getAcl(), xoctUser::getInstance($user_id)));
         $this->event_repository->updateACL(new UpdateEventACLRequest(
             $this->event->getIdentifier(),
             new UpdateEventACLRequestPayload($this->event->getAcl())
@@ -157,7 +159,7 @@ class xoctChangeOwnerGUI extends xoctGUI
      */
     protected function removeOwner()
     {
-        $this->event = $this->ACLUtils->removeOwner($this->event);
+        $this->event->setAcl($this->ACLUtils->removeOwnerFromACL($this->event->getAcl()));
         $this->event_repository->updateACL(new UpdateEventACLRequest(
             $this->event->getIdentifier(),
             new UpdateEventACLRequestPayload($this->event->getAcl())
