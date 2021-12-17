@@ -16,7 +16,6 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
-use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingRepository;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;

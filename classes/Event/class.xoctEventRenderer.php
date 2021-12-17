@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class xoctEventRenderer
@@ -45,6 +46,7 @@ class xoctEventRenderer {
 
 	public function __construct(Event $event, ?ObjectSettings $objectSettings = null)
     {
+        $this->opencastDIC = OpencastDIC::getInstance();
 		$this->event = $event;
 		$this->objectSettings = $objectSettings;
 		$this->factory = self::dic()->ui()->factory();

@@ -49,7 +49,7 @@ class xoctSeries extends APIObject {
             foreach ($data as $d) {
                 $acls[] = ACLEntry::fromArray((array) $d);
             }
-            $this->setAccessPolicies($acls);
+            $this->setAccessPolicies(new ACL($acls));
         }
 	}
 

@@ -3,6 +3,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Access/Condition checking for OpenCast object
@@ -150,6 +151,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			$ref_id = $_GET['ref_id'];
 		}
 
+		$opencastDIC = OpencastDIC::getInstance();
+
 		switch ($cmd) {
 			case self::ACTION_EDIT_OWNER:
 				return
@@ -160,7 +163,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_SHARE_EVENT:
 				return
 					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id) && $objectSettings->getPermissionPerClip())
-					|| ($xoctEvent->isOwner($xoctUser)
+					|| ($opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent)
 						&& $objectSettings->getPermissionAllowSetOwn()
 						&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 						&& $xoctEvent->getProcessingState() != Event::STATE_FAILED);
@@ -171,11 +174,15 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED;
 			case self::ACTION_DELETE_EVENT:
 				return
-					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
+						|| (self::hasPermission(self::PERMISSION_UPLOAD)
+							&& $opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent)))
 					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING;
 			case self::ACTION_EDIT_EVENT:
 				return
-					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || (self::hasPermission(self::PERMISSION_UPLOAD) && $xoctEvent->isOwner($xoctUser)))
+					(self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
+						|| (self::hasPermission(self::PERMISSION_UPLOAD)
+							&& $opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent)))
 					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED
 					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
@@ -199,7 +206,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			case self::ACTION_REPORT_QUALITY_PROBLEM:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
-					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL) || self::hasPermission(self::PERMISSION_EDIT_VIDEOS) || $xoctEvent->isOwner($xoctUser));
+					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL)
+						|| self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
+						|| $opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent));
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
 					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
@@ -240,9 +249,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
+		$opencastDIC = OpencastDIC::getInstance();
 		// owner can see failed videos
 		if ($event->getProcessingState() == $event::STATE_FAILED) {
-			if ($event->isOwner($xoctUser) && ($objectSettings->getPermissionPerClip() || self::hasPermission(self::PERMISSION_UPLOAD))) {
+			if ($opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $event)
+				&& ($objectSettings->getPermissionPerClip()
+					|| self::hasPermission(self::PERMISSION_UPLOAD))) {
 				return true;
 			}
 			return false;
@@ -254,7 +266,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		}
 
 		// if owner, show video
-		if ($event->isOwner($xoctUser)) {
+		if ($opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $event)) {
 			return true;
 		}
 
@@ -273,11 +285,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($event->getSeriesIdentifier(), $xoctUser);
 		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
-			$role_names[] = $xoctGroupParticipant->getXoctUser()->getOwnerRoleName();
-		}
-
-		if ($event->getOwnerAcl() instanceof ACLEntry && in_array($event->getOwnerAcl()->getRole(), $role_names)) {
-			return true; // same group as owner
+			if ($opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctGroupParticipant->getXoctUser(), $event)) {
+				return true;
+			}
 		}
 
 		$invitations = xoctInvitation::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $objectSettings->getPermissionAllowSetOwn());

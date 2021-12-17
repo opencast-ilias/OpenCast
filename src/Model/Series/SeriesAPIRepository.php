@@ -30,6 +30,7 @@ class SeriesAPIRepository implements SeriesRepository
     }
 
 
+
     public function getAllForUser($user_string) : array
     {
         if ($existing = $this->cache->get('series-' . $user_string)) {

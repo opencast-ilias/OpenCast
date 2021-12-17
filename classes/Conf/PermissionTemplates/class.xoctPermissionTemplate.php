@@ -5,6 +5,7 @@ use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 
 /**
  * Class xoctPermissionTemplate
+ * TODO: move to /src, add namespace, create repository
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */

@@ -164,21 +164,6 @@ class Event
 
     /**
      * @param xoctUser $xoctUser
-     *
-     * @return bool
-     * @throws xoctException
-     */
-    public function hasWriteAccess(xoctUser $xoctUser)
-    {
-        if ($this->isOwner($xoctUser)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param xoctUser $xoctUser
      * @return bool
      * @throws xoctException
      */

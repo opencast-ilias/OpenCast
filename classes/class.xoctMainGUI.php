@@ -51,7 +51,7 @@ class xoctMainGUI extends xoctGUI
         self::dic()->tabs()->addTab(self::TAB_EXPORT, self::plugin()->translate('tab_' . self::TAB_EXPORT), self::dic()->ctrl()->getLinkTarget(new xoctConfExportGUI()));
         self::dic()->tabs()->addTab(self::TAB_REPORTS, self::plugin()->translate('tab_' . self::TAB_REPORTS), self::dic()->ctrl()->getLinkTarget(new xoctReportOverviewGUI()));
 
-        $opencast_dic = new OpencastDIC(self::dic()->dic());
+        $opencast_dic = OpencastDIC::getInstance();
         switch ($nextClass) {
             case strtolower(xoctPublicationUsageGUI::class):
                 self::dic()->tabs()->activateTab(self::TAB_PUBLICATION_USAGE);

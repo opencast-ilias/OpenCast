@@ -6,6 +6,7 @@ use ILIAS\DI\Container as DIC;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ilOpenCastPlugin;
 use Pimple\Container;
+use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
@@ -18,6 +19,7 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
@@ -29,6 +31,8 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
+use srag\Plugins\Opencast\Traits\Singleton;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
@@ -42,6 +46,8 @@ use xoctFileUploadHandler;
 
 class OpencastDIC
 {
+    use Singleton;
+
     /**
      * @var Container
      */
@@ -51,11 +57,12 @@ class OpencastDIC
      */
     private $dic;
 
-    public function __construct(DIC $dic)
+    private function __construct()
     {
+        global $DIC;
         $this->container = new Container();
+        $this->dic = $DIC;
         $this->init();
-        $this->dic = $dic;
     }
 
     private function init(): void
@@ -84,6 +91,9 @@ class OpencastDIC
         });
         $this->container['publication_repository'] = $this->container->factory(function ($c) {
             return new PublicationAPIRepository($c['cache']);
+        });
+        $this->container['publication_usage_repository'] = $this->container->factory(function ($c) {
+            return new PublicationUsageRepository();
         });
         $this->container['upload_storage_service'] = $this->container->factory(function ($c) {
             return new UploadStorageService($this->dic->filesystem()->temp(), $this->dic->upload());
@@ -186,11 +196,22 @@ class OpencastDIC
         $this->container['series_form_builder'] = $this->container->factory(function ($c) {
             return new SeriesFormBuilder($this->dic->ui()->factory(),
                 $this->dic->refinery(),
-                $c['md_parser'],
                 $c['md_form_item_builder_series'],
-                $c['publication_repository'],
+                $c['object_settings_form_item_builder'],
                 $c['plugin'],
                 $this->dic
+            );
+        });
+        $this->container['object_settings_parser'] = $this->container->factory(function ($c) {
+            return new ObjectSettingsParser();
+        });
+        $this->container['object_settings_form_item_builder'] = $this->container->factory(function ($c) {
+            return new ObjectSettingsFormItemBuilder(
+                $this->dic->ui()->factory(),
+                $this->dic->refinery(),
+                $c['publication_usage_repository'],
+                $c['object_settings_parser'],
+                $c['plugin']
             );
         });
         $this->container['plugin'] = $this->container->factory(function ($c) {

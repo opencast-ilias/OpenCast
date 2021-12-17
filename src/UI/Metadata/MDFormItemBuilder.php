@@ -6,21 +6,17 @@ use DateTime;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
-use ILIAS\UI\Implementation\Component\Input\Field\Section;
 use ilPlugin;
-use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
-use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
-use xoctConf;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use xoctException;
 
 class MDFormItemBuilder

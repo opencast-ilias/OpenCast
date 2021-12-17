@@ -99,4 +99,10 @@ class ACLUtils
     {
         return strpos($ACLEntry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false;
     }
+
+    public function isUserOwnerOfEvent(xoctUser $user, Event $event) : bool
+    {
+        $owner = $this->getOwnerOfEvent($event);
+        return !is_null($owner) && ($owner->getIliasUserId() == $user->getIliasUserId());
+    }
 }

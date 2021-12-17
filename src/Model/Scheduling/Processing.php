@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Scheduling;
 use JsonSerializable;
 use stdClass;
 
-class Processing implements JsonSerializable
+class   Processing implements JsonSerializable
 {
     /**
      * @var string
