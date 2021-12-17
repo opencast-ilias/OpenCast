@@ -6,6 +6,7 @@ use ILIAS\DI\Container as DIC;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ilOpenCastPlugin;
 use Pimple\Container;
+use srag\Plugins\Opencast\Model\ACL\ACLParser;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -28,6 +29,7 @@ use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventReposito
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
+use srag\Plugins\Opencast\Model\Series\SeriesParser;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
@@ -138,6 +140,7 @@ class OpencastDIC
                 $c['md_catalogue_factory']->event(),
                 $c['md_conf_repository_event'],
                 $c['md_prefiller'],
+                $c['md_factory'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
@@ -149,6 +152,7 @@ class OpencastDIC
                 $c['md_catalogue_factory']->series(),
                 $c['md_conf_repository_series'],
                 $c['md_prefiller'],
+                $c['md_factory'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
@@ -156,7 +160,7 @@ class OpencastDIC
             );
         });
         $this->container['workflow_repository'] = $this->container->factory(function ($c) {
-           return new WorkflowDBRepository();
+            return new WorkflowDBRepository();
         });
         $this->container['workflow_parameter_conf_repository'] = $this->container->factory(function ($c) {
             return new SeriesWorkflowParameterRepository(
@@ -218,11 +222,18 @@ class OpencastDIC
             return ilOpenCastPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
-            return new SeriesAPIRepository($c['cache'], $c['acl_utils']);
+            return new SeriesAPIRepository($c['cache'], $c['series_parser'], $c['acl_utils']);
         });
+        $this->container['series_parser'] = $this->container->factory(function ($c) {
+            return new SeriesParser($c['acl_parser'], $c['md_parser']);
+        });
+        $this->container['acl_parser'] = $this->container->factory(function ($c) {
+            return new ACLParser();
+        });
+
     }
 
-    public function series_repository() : SeriesRepository
+    public function series_repository(): SeriesRepository
     {
         return $this->container['series_repository'];
     }
@@ -292,7 +303,7 @@ class OpencastDIC
         return $this->container['acl_utils'];
     }
 
-    public function workflow_repository() : WorkflowRepository
+    public function workflow_repository(): WorkflowRepository
     {
         return $this->container['workflow_repository'];
     }

@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use ilTimeZone;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
@@ -51,6 +52,29 @@ class MDParser
 
         $catalogue = $this->catalogueFactory->event();
         $metadata = $this->metadataFactory->event();
+        return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
+    }
+
+    public function parseAPIResponseSeries(array $response) : Metadata
+    {
+        foreach ($response as $d) {
+            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_SERIES) {
+                $fields = $d->fields;
+                break;
+            }
+        }
+        if (!isset($fields)) {
+            throw new xoctException(xoctException::INTERNAL_ERROR,
+                'Metadata for series could not be loaded.');
+        }
+
+        $catalogue = $this->catalogueFactory->series();
+        $metadata = $this->metadataFactory->series();
+        return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
+    }
+
+    private function parseAPIResponseGeneric(array $fields, Metadata $metadata, MDCatalogue $catalogue) : Metadata
+    {
         foreach ($catalogue->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition->getId() == MDFieldDefinition::F_START_DATE) {
                 // start can be in one or two fields, but we'll always store them in one field
@@ -69,11 +93,6 @@ class MDParser
             ))->withValue($this->formatMDValueFromAPIResponse($field->value, $fieldDefinition->getType())));
         }
         return $metadata;
-    }
-
-    public function parseAPIResponseSeries(array $data) : Metadata
-    {
-
     }
 
     /**
@@ -106,6 +125,18 @@ class MDParser
     {
         $metadata = $this->metadataFactory->event();
         $catalogue = $this->catalogueFactory->event();
+        return $this->parseFormData($data, $metadata, $catalogue);
+    }
+
+    public function parseFormDataSeries(array $data) : Metadata
+    {
+        $metadata = $this->metadataFactory->series();
+        $catalogue = $this->catalogueFactory->series();
+        return $this->parseFormData($data, $metadata, $catalogue);
+    }
+
+    private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue) : Metadata
+    {
         foreach (array_filter($data, function($key) {return strpos($key, 'md_') === 0;}, ARRAY_FILTER_USE_KEY)
                  as $id => $value) {
             $id = substr($id, 3);

@@ -84,9 +84,6 @@ class ObjectSettings extends ActiveRecord {
 	}
 
 
-    /**
-     *
-     */
     public function create($omit_update_title_and_desc = false) {
 		if ($this->getObjId() === 0) {
 			$this->update();

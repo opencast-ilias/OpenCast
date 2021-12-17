@@ -25,7 +25,7 @@ interface EventRepository
     /**
      * @throws xoctException
      */
-    public function upload(UploadEventRequest $uploadEventRequest): void;
+    public function upload(UploadEventRequest $request): void;
 
     /**
      * @param array $filter
@@ -41,9 +41,9 @@ interface EventRepository
      */
     public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false);
 
-    public function update(UpdateEventRequest $updateEventRequest): void;
+    public function update(UpdateEventRequest $request): void;
 
-    public function schedule(ScheduleEventRequest $scheduleEventRequest): string;
+    public function schedule(ScheduleEventRequest $request): string;
 
-    public function updateACL(UpdateEventACLRequest $updateEventACLRequest): void;
+    public function updateACL(UpdateEventACLRequest $request): void;
 }

@@ -3,12 +3,14 @@
 namespace srag\Plugins\Opencast\UI\Metadata;
 
 use DateTime;
+use ILIAS\Refinery\Custom\Transformation;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
@@ -17,6 +19,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use xoctException;
 
 class MDFormItemBuilder
@@ -56,10 +59,15 @@ class MDFormItemBuilder
      * @var ilPlugin
      */
     private $plugin;
+    /**
+     * @var MetadataFactory
+     */
+    private $metadataFactory;
 
     public function __construct(MDCatalogue             $md_catalogue,
                                 MDFieldConfigRepository $repository,
                                 MDPrefiller             $prefiller,
+                                MetadataFactory         $metadataFactory,
                                 UIFactory               $ui_factory,
                                 RefineryFactory         $refinery_factory,
                                 MDParser                $MDParser,
@@ -72,6 +80,7 @@ class MDFormItemBuilder
         $this->refinery_factory = $refinery_factory;
         $this->MDParser = $MDParser;
         $this->plugin = $plugin;
+        $this->metadataFactory = $metadataFactory;
     }
 
     public function create(): Input
@@ -186,13 +195,13 @@ class MDFormItemBuilder
         return self::LABEL_PREFIX . $label;
     }
 
-    /**
-     * @return \ILIAS\Refinery\Custom\Transformation|\ILIAS\Refinery\Custom\Transformations\Transformation
-     */
-    private function buildTransformation()
+    private function buildTransformation() : Transformation
     {
         return $this->refinery_factory->custom()->transformation(function ($vs) {
-            $vs['object'] = $this->MDParser->parseFormDataEvent($vs);
+            // todo: remove this ugly instance check (maybe create subclasses MDEventFormItemBuilder and MDSeriesFormItemBuilder)
+            $vs['object'] = ($this->md_conf_repository instanceof MDFieldConfigEventRepository) ?
+                $this->MDParser->parseFormDataEvent($vs)
+                : $this->MDParser->parseFormDataSeries($vs);
             return $vs;
         });
     }

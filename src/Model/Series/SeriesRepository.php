@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\Model\Series;
 
 
+use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use xoctException;
 use xoctSeries;
 use xoctUser;
@@ -16,12 +17,20 @@ use xoctUser;
  */
 interface SeriesRepository
 {
+    public function find(string $identifier) : xoctSeries;
+
+    public function fetch(string $identifier) : xoctSeries;
+
     /**
-     * @param $user_string
-     *
+     * @param CreateSeriesRequest $request
+     * @return string series identifier
+     */
+    public function create(CreateSeriesRequest $request) : string;
+
+    /**
      * @return xoctSeries[]
      */
-    public function getAllForUser($user_string): array;
+    public function getAllForUser(string $user_string): array;
 
     /**
      * @param xoctUser $xoct_user

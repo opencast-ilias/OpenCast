@@ -4,22 +4,18 @@ namespace srag\Plugins\Opencast\Model\Event;
 
 use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Cache\Cache;
-use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
 use srag\Plugins\Opencast\Model\ACL\ACLRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
-use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
-use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingRepository;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
-use stdClass;
 use xoct;
 use xoctConf;
 use xoctException;
@@ -46,10 +42,6 @@ class EventAPIRepository implements EventRepository
      */
     private $cache;
     /**
-     * @var MDParser
-     */
-    private $md_parser;
-    /**
      * @var MetadataRepository
      */
     private $md_repository;
@@ -66,32 +58,30 @@ class EventAPIRepository implements EventRepository
      */
     private $ingestService;
     /**
-     * @var SchedulingParser
-     */
-    private $scheduling_parser;
-    /**
      * @var SchedulingRepository
      */
     private $scheduling_repository;
+    /**
+     * @var EventParser
+     */
+    private $eventParser;
 
 
     public function __construct(Cache                 $cache,
-                                MDParser              $md_parser,
+                                EventParser           $eventParser,
                                 MetadataRepository    $md_repository,
                                 OpencastIngestService $ingestService,
                                 ACLRepository         $acl_repository,
                                 PublicationRepository $publication_repository,
-                                SchedulingParser      $scheduling_parser,
                                 SchedulingRepository  $scheduling_repository)
     {
         $this->cache = $cache;
-        $this->md_parser = $md_parser;
         $this->md_repository = $md_repository;
         $this->ingestService = $ingestService;
         $this->acl_repository = $acl_repository;
         $this->publication_repository = $publication_repository;
-        $this->scheduling_parser = $scheduling_parser;
         $this->scheduling_repository = $scheduling_repository;
+        $this->eventParser = $eventParser;
     }
 
     public function find(string $identifier): Event
@@ -100,10 +90,15 @@ class EventAPIRepository implements EventRepository
             ?? $this->fetch($identifier);
     }
 
-    private function fetch(string $identifier): Event
+    public function fetch(string $identifier): Event
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->get());
-        return $this->buildEventFromStdClass($data, $identifier);
+        $event = $this->eventParser->parseAPIResponse($data, $identifier);
+        $this->setReferences($event);
+        if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
+            $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
+        }
+        return $event;
     }
 
     public function delete(string $identifier): bool
@@ -115,74 +110,32 @@ class EventAPIRepository implements EventRepository
         return true;
     }
 
-    /**
-     * @param stdClass $data
-     * @param string $identifier
-     * @return Event
-     * @throws xoctException
-     */
-    private function buildEventFromStdClass(stdClass $data, string $identifier): Event
+    private function setReferences(Event $event)
     {
-        $event = new Event();
-        $event->setPublicationStatus($data->publication_status);
-        $event->setProcessingState($data->processing_state);
-        $event->setStatus($data->status);
-        $event->setHasPreviews($data->has_previews);
-        $event->setXoctEventAdditions(EventAdditionsAR::findOrGetInstance($identifier));
-
-        if (isset($data->metadata)) {
-            $event->setMetadata($this->md_parser->parseAPIResponseEvent($data->metadata));
-        } else {
-            // lazy loading
-            $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
-                return $this->md_repository->find($identifier);
-            }));
-        }
-
-        if (isset($data->acl)) {
-            $event->setAcl(ACL::fromResponse($data->acl));
-        } else {
-            // lazy loading
-            $event->setAclReference(new SerializableClosure(function () use ($identifier) {
-                return $this->acl_repository->find($identifier);
-            }));
-        }
-
-        if (isset($data->publications)) {
-            $event->publications()->loadFromArray($data->publications);
-        } else {
-            // lazy loading
-            $event->publications()->setReference(new SerializableClosure(function () use ($identifier) {
-                return $this->publication_repository->find($identifier);
-            }));
-        }
-
-        if ($event->isScheduled()) {
-            if (isset($data->scheduling)) {
-                $event->setScheduling($this->scheduling_parser->parseApiResponse($data->scheduling));
-            } else {
-                $event->setSchedulingReference(new SerializableClosure(function () use ($identifier) {
-                    return $this->scheduling_repository->find($identifier);
-                }));
-            }
-        }
-        if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
-            $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
-        }
-        return $event;
+        $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
+            return $this->md_repository->find($identifier);
+        }));
+        $event->setAclReference(new SerializableClosure(function () use ($identifier) {
+            return $this->acl_repository->find($identifier);
+        }));
+        $event->publications()->setReference(new SerializableClosure(function () use ($identifier) {
+            return $this->publication_repository->find($identifier);
+        }));
+        $event->setSchedulingReference(new SerializableClosure(function () use ($identifier) {
+            return $this->scheduling_repository->find($identifier);
+        }));
     }
 
-
     /**
      * @throws xoctException
      */
-    public function upload(UploadEventRequest $uploadEventRequest): void
+    public function upload(UploadEventRequest $request): void
     {
         if (xoctConf::getConfig(xoctConf::F_INGEST_UPLOAD)) {
-            $this->ingestService->ingest($uploadEventRequest);
+            $this->ingestService->ingest($request);
         } else {
             json_decode(xoctRequest::root()->events()
-                ->post($uploadEventRequest->getPayload()->jsonSerialize()));
+                ->post($request->getPayload()->jsonSerialize()));
         }
     }
 
@@ -252,27 +205,27 @@ class EventAPIRepository implements EventRepository
         return $return;
     }
 
-    public function update(UpdateEventRequest $updateEventRequest): void
+    public function update(UpdateEventRequest $request): void
     {
-        xoctRequest::root()->events($updateEventRequest->getIdentifier())
-            ->post($updateEventRequest->getPayload()->jsonSerialize());
+        xoctRequest::root()->events($request->getIdentifier())
+            ->post($request->getPayload()->jsonSerialize());
         // todo: caching is not good
-        $this->cache->delete(self::CACHE_PREFIX . $updateEventRequest->getIdentifier());
-        $this->cache->delete(MetadataAPIRepository::CACHE_PREFIX . $updateEventRequest->getIdentifier());
+        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete(MetadataAPIRepository::CACHE_PREFIX . $request->getIdentifier());
     }
 
-    public function schedule(ScheduleEventRequest $scheduleEventRequest): string
+    public function schedule(ScheduleEventRequest $request): string
     {
-        $response = json_decode(xoctRequest::root()->events()->post($scheduleEventRequest->getPayload()->jsonSerialize()));
+        $response = json_decode(xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()));
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 
-    public function updateACL(UpdateEventACLRequest $updateEventACLRequest): void
+    public function updateACL(UpdateEventACLRequest $request): void
     {
-        xoctRequest::root()->events($updateEventACLRequest->getIdentifier())
-            ->acl()->post($updateEventACLRequest->getPayload()->jsonSerialize());
+        xoctRequest::root()->events($request->getIdentifier())
+            ->acl()->post($request->getPayload()->jsonSerialize());
         // todo: caching is not good
-        $this->cache->delete(self::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
-        $this->cache->delete(ACLApiRepository::CACHE_PREFIX . $updateEventACLRequest->getIdentifier());
+        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete(ACLApiRepository::CACHE_PREFIX . $request->getIdentifier());
     }
 }

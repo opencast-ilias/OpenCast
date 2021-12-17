@@ -5,6 +5,7 @@ namespace srag\Plugins\Opencast\Model\Series;
 use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use xoctException;
 use xoctRequest;
 use xoctSeries;
@@ -14,6 +15,7 @@ class SeriesAPIRepository implements SeriesRepository
 {
 
     const OWN_SERIES_PREFIX = 'Eigene Serie von ';
+    const CACHE_PREFIX = 'series-';
     /**
      * @var Cache
      */
@@ -22,16 +24,39 @@ class SeriesAPIRepository implements SeriesRepository
      * @var ACLUtils
      */
     private $ACLUtils;
+    /**
+     * @var SeriesParser
+     */
+    private $seriesParser;
 
-    public function __construct(Cache $cache, ACLUtils $ACLUtils)
+    public function __construct(Cache $cache, SeriesParser $seriesParser, ACLUtils $ACLUtils)
     {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
+        $this->seriesParser = $seriesParser;
     }
 
+    public function find(string $identifier) : xoctSeries
+    {
+        return $this->cache->get(self::CACHE_PREFIX . $identifier)
+            ?? $this->fetch($identifier);
+    }
 
+    public function fetch(string $identifier): xoctSeries
+    {
+        $data = json_decode(xoctRequest::root()->series($identifier)->get());
+        $series = $this->seriesParser->parseAPIResponse($data, $identifier);
+        $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
+        return $series;
+    }
 
-    public function getAllForUser($user_string) : array
+    public function create(CreateSeriesRequest $request) : string
+    {
+        $response = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
+        return $response->identifier;
+    }
+
+    public function getAllForUser(string $user_string) : array
     {
         if ($existing = $this->cache->get('series-' . $user_string)) {
             return $existing;

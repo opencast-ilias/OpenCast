@@ -70,7 +70,6 @@ class SeriesFormBuilder
             $form_action,
             [
                 'series_type' => $this->buildSeriesSelectionSection(),
-                'metadata' => $this->formItemBuilder->create(),
                 'settings' => $this->objectSettingsFormItemBuilder->create()
             ]
 
@@ -124,7 +123,7 @@ class SeriesFormBuilder
             self::EXISTING_YES => $this->ui_factory->input()->field()->group([
                 self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID), $existing_series)->withRequired(true)
             ], $this->plugin->txt('yes')),
-            self::EXISTING_NO => $this->ui_factory->input()->field()->group([], $this->plugin->txt('no'))
+            self::EXISTING_NO => $this->ui_factory->input()->field()->group([$this->formItemBuilder->create()], $this->plugin->txt('no'))
         ], 'Existing Series')->withValue(self::EXISTING_NO);
         return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type], $this->plugin->txt(self::F_CHANNEL_TYPE))
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {

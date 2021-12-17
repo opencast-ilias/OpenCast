@@ -5,12 +5,17 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
+use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
@@ -375,10 +380,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
          */
         // set object id for objectSettings object
         $args = func_get_args();
-        $additional_args = $args[1];
+        $additional_args = $args[1][0];
+        /** @var ObjectSettings $settings */
         $settings = $additional_args['settings']['object'];
+        /** @var Metadata $metadata */
         $metadata = $additional_args['metadata']['object'];
+        /** @var string|false $existing_series_id */
         $existing_series_id = $additional_args['existing_identifier'];
+        /** @var bool $is_memberupload_enabled */
         $is_memberupload_enabled = $additional_args['member_upload'];
 
         $settings->setObjId($newObj->getId());
@@ -392,30 +401,36 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
             $ilias_producers->addMembers($producers);
         } catch (xoctException $e) {
+            self::dic()->log()->warning('Could not add producers to group while creating a series, msg: '
+                . $e->getMessage());
         }
-        $series = $settings->getSeries();
-        $series->addProducers($producers, true);
-        // PLOPENCAST-159
-        if ($channel_type == xoctSeriesFormGUI::EXISTING_NO) {
-            $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($_GET['ref_id'])->getTitle(), true);
-            $series->addContributor($this->ilias_dic->user()->getFirstname() . ' ' . $this->ilias_dic->user()->getLastname(), true);
+
+        $acl = $this->opencast_dic->acl_utils()->getStandardRolesACL();
+        foreach ($producers as $producer) {
+            $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
         }
-        $series->update();
+
+        // todo: existing series
+        $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
+            $metadata,
+            $acl
+        )));
 
         if ($settings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('msg_info_multiple_aftersave'), true);
         }
 
+        // todo: continue refactoring here
         // checkbox from creation gui to activate "upload" permission for members
         if ($is_memberupload_enabled) {
             ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
         }
 
-        $newObj->setTitle($series->getTitle());
-        $newObj->setDescription($series->getDescription());
+        $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
+        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue());
         $newObj->update();
 
-        SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($newObj->getId());
+        $this->opencast_dic->workflow_parameter_conf_repository()->syncAvailableParameters($newObj->getId());
 
         parent::afterSave($newObj);
     }
