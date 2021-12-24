@@ -31,6 +31,10 @@ class xoctMedia extends xoctPublicationMetadata {
 	 * @var int
 	 */
 	public $height;
+    /**
+     * @var bool
+     */
+    public $is_master_playlist = true;
 
 
 	/**
@@ -127,4 +131,14 @@ class xoctMedia extends xoctPublicationMetadata {
 	public function setHeight($height) {
 		$this->height = $height;
 	}
+
+    public function isMasterPlaylist(): bool
+    {
+        return $this->is_master_playlist;
+    }
+
+    public function setIsMasterPlaylist(bool $is_master_playlist)/*: void*/
+    {
+        $this->is_master_playlist = $is_master_playlist;
+    }
 }

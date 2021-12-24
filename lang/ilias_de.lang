@@ -90,8 +90,8 @@ config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Aud
 config_curl_username_info#:#Benutzeraccount in Opencast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
 config_curl_password_info#:#Passwort zum oben angegebenen Account.
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
-config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
-config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
+config_streaming_url_info#:#Wowza-URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
+config_use_streaming_info#:#Wenn aktiv, werden die Streaming URLs für Opencast Events vom Plugin eigens generiert, in der Form: [Wowza-URL]/smil:engage-player_[Event-ID]_[presenter|presentation].smil/playlist.m3u8
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in Opencast angewendet wird.
 config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0.
@@ -104,9 +104,9 @@ config_no_metadata#:#Ohne Metadaten
 config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an Opencast weiterzuleiten.
-config_use_streaming#:#Benutze Streaming URLs
+config_use_streaming#:#Selbstgenerierte Streaming-URLs verwenden
 config_streaming#:#Streaming
-config_streaming_url#:#Wowza URL
+config_streaming_url#:#Wowza-URL
 config_general#:#Allgemeines
 config_report_quality#:#"Qualitätsprobleme melden" aktivieren
 config_report_quality_info#:#Aktiviert die Möglichkeit, Qualitätsprobleme von Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
