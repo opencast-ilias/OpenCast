@@ -145,7 +145,7 @@ class EventFormBuilder
             $form_action,
             [
                 'file' => $file_section,
-                'metadata' => $this->formItemBuilder->create(),
+                'metadata' => $this->formItemBuilder->create_section(),
                 'workflow_configuration' => ($obj_id == 0 ?
                     $this->workflowParameterRepository->getGeneralFormSection()
                     : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin))]
@@ -156,7 +156,7 @@ class EventFormBuilder
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            [$this->formItemBuilder->update($metadata)]
+            [$this->formItemBuilder->update_section($metadata)]
         );
     }
 
@@ -165,7 +165,7 @@ class EventFormBuilder
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
-                'metadata' => $this->formItemBuilder->schedule(),
+                'metadata' => $this->formItemBuilder->schedule_section(),
                 'scheduling' => $this->schedulingFormItemBuilder->create(),
                 'workflow_configuration' => ($obj_id == 0 ?
                     $this->workflowParameterRepository->getGeneralFormSection()
@@ -176,7 +176,7 @@ class EventFormBuilder
 
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling) : Form
     {
-        $inputs = ['metadata' => $this->formItemBuilder->update_scheduled($metadata)];
+        $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata)];
         $allow_edit_scheduling = (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA);
         if ($allow_edit_scheduling) {
             $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling);

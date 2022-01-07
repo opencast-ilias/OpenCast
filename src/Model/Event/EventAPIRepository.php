@@ -113,7 +113,7 @@ class EventAPIRepository implements EventRepository
     private function setReferences(Event $event)
     {
         $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
-            return $this->md_repository->find($identifier);
+            return $this->md_repository->findEventMD($identifier);
         }));
         $event->setAclReference(new SerializableClosure(function () use ($identifier) {
             return $this->acl_repository->find($identifier);
@@ -198,7 +198,7 @@ class EventAPIRepository implements EventRepository
         $return = array();
 
         foreach ($data as $d) {
-            $event = $this->buildEventFromStdClass($d, $d->identifier);
+            $event = $this->eventParser->parseAPIResponse($d, $d->identifier);
             $return[] = $as_object ? $event : $event->getArrayForTable();
         }
 

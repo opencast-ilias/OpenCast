@@ -83,7 +83,17 @@ class MDFormItemBuilder
         $this->metadataFactory = $metadataFactory;
     }
 
-    public function create(): Input
+    public function create_section(): Input
+    {
+        return $this->ui_factory->input()->field()->section($this->create_items(), $this->plugin->txt('metadata'))
+            ->withAdditionalTransformation($this->transformation());
+    }
+
+    /**
+     * @return Input[]
+     * @throws xoctException
+     */
+    public function create_items(): array
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
@@ -92,11 +102,10 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
-        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->buildTransformation());
+        return $form_elements;
     }
 
-    public function update(Metadata $existing_metadata): Input
+    public function update_section(Metadata $existing_metadata): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAll();
@@ -106,10 +115,10 @@ class MDFormItemBuilder
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->buildTransformation());
+            ->withAdditionalTransformation($this->transformation());
     }
 
-    public function schedule(): Input
+    public function schedule_section(): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -123,10 +132,10 @@ class MDFormItemBuilder
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
-            ->withAdditionalTransformation($this->buildTransformation());
+            ->withAdditionalTransformation($this->transformation());
     }
 
-    public function update_scheduled(Metadata $existing_metadata): Input
+    public function update_scheduled_section(Metadata $existing_metadata): Input
     {
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
@@ -140,7 +149,7 @@ class MDFormItemBuilder
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
-            ->withAdditionalTransformation($this->buildTransformation());
+            ->withAdditionalTransformation($this->transformation());
     }
 
     /**
@@ -195,7 +204,7 @@ class MDFormItemBuilder
         return self::LABEL_PREFIX . $label;
     }
 
-    private function buildTransformation() : Transformation
+    public function transformation() : Transformation
     {
         return $this->refinery_factory->custom()->transformation(function ($vs) {
             // todo: remove this ugly instance check (maybe create subclasses MDEventFormItemBuilder and MDSeriesFormItemBuilder)
@@ -204,5 +213,10 @@ class MDFormItemBuilder
                 : $this->MDParser->parseFormDataSeries($vs);
             return $vs;
         });
+    }
+
+    public function parser(): MDParser
+    {
+        return $this->MDParser;
     }
 }

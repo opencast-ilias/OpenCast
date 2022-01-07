@@ -84,24 +84,12 @@ class ObjectSettings extends ActiveRecord {
 	}
 
 
-    public function create($omit_update_title_and_desc = false) {
+    public function create() {
 		if ($this->getObjId() === 0) {
 			$this->update();
 		} else {
 			parent::create();
-			if (!$omit_update_title_and_desc) {
-                xoctDataMapper::objectSettingsUpdated($this);
-            }
 		}
-	}
-
-
-    /**
-     *
-     */
-    public function update() {
-		parent::update();
-		xoctDataMapper::objectSettingsUpdated($this);
 	}
 
     /**

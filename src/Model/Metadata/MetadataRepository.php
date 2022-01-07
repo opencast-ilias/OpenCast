@@ -9,12 +9,16 @@ interface MetadataRepository
     /**
      * @throws xoctException
      */
-    public function find(string $identifier): Metadata;
+    public function findEventMD(string $identifier): Metadata;
 
     /**
      * @param string $identifier
      * @return Metadata
      * @throws xoctException
      */
-    public function fetch(string $identifier): Metadata;
+    public function fetchEventMD(string $identifier): Metadata;
+
+    public function findSeriesMD(string $identifier) : Metadata;
+
+    public function fetchSeriesMD(string $identifier) : Metadata;
 }

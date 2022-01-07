@@ -26,17 +26,31 @@ class MetadataAPIRepository implements MetadataRepository
         $this->parser = $parser;
     }
 
-    public function find(string $identifier) : Metadata
+    public function findEventMD(string $identifier) : Metadata
     {
         return $this->cache->get('event-md-' . $identifier)
-            ?? $this->fetch($identifier);
+            ?? $this->fetchEventMD($identifier);
     }
 
-    public function fetch(string $identifier) : Metadata
+    public function fetchEventMD(string $identifier) : Metadata
     {
         $data = json_decode(xoctRequest::root()->events($identifier)->metadata()->get()) ?? [];
         $metadata = $this->parser->parseAPIResponseEvent($data);
         $this->cache->set('event-md-' . $identifier, $metadata);
+        return $metadata;
+    }
+
+    public function findSeriesMD(string $identifier) : Metadata
+    {
+        return $this->cache->get('series-md-' . $identifier)
+            ?? $this->fetchSeriesMD($identifier);
+    }
+
+    public function fetchSeriesMD(string $identifier) : Metadata
+    {
+        $data = json_decode(xoctRequest::root()->series($identifier)->metadata()->get()) ?? [];
+        $metadata = $this->parser->parseAPIResponseSeries($data);
+        $this->cache->set('series-md-' . $identifier, $metadata);
         return $metadata;
     }
 }

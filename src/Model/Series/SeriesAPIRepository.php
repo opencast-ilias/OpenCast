@@ -5,6 +5,7 @@ namespace srag\Plugins\Opencast\Model\Series;
 use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use xoctException;
 use xoctRequest;
@@ -28,12 +29,17 @@ class SeriesAPIRepository implements SeriesRepository
      * @var SeriesParser
      */
     private $seriesParser;
+    /**
+     * @var MetadataRepository
+     */
+    private $metadataRepository;
 
-    public function __construct(Cache $cache, SeriesParser $seriesParser, ACLUtils $ACLUtils)
+    public function __construct(Cache $cache, SeriesParser $seriesParser, ACLUtils $ACLUtils, MetadataRepository $metadataRepository)
     {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
+        $this->metadataRepository = $metadataRepository;
     }
 
     public function find(string $identifier) : xoctSeries
@@ -45,6 +51,7 @@ class SeriesAPIRepository implements SeriesRepository
     public function fetch(string $identifier): xoctSeries
     {
         $data = json_decode(xoctRequest::root()->series($identifier)->get());
+        $data->metadata = $this->metadataRepository->findSeriesMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data, $identifier);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
         return $series;

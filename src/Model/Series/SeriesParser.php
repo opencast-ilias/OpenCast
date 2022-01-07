@@ -36,7 +36,7 @@ class SeriesParser
         $series->setTitle($data->title);
         $series->setTheme($data->theme);
         $series->setAccessPolicies($this->ACLParser->parseAPIResponse($data->acl));
-        $series->setMetadata($this->MDParser->parseAPIResponseSeries($data->metadata));
+        $series->setMetadata($data->metadata);
         return $series;
     }
 }

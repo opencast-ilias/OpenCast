@@ -7,6 +7,7 @@ use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ilOpenCastPlugin;
 use Pimple\Container;
 use srag\Plugins\Opencast\Model\ACL\ACLParser;
+use srag\Plugins\Opencast\Model\Event\EventParser;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -71,13 +72,19 @@ class OpencastDIC
     {
         $this->container['event_repository'] = $this->container->factory(function ($c) {
             return new EventAPIRepository($c['cache'],
-                $c['md_parser'],
+                $c['event_parser'],
                 $c['md_repository'],
                 $c['ingest_service'],
                 $c['acl_repository'],
                 $c['publication_repository'],
-                $c['scheduling_parser'],
                 $c['scheduling_repository']);
+        });
+        $this->container['event_parser'] = $this->container->factory(function ($c) {
+            return new EventParser(
+                $c['md_parser'],
+                $c['acl_parser'],
+                $c['scheduling_parser']
+            ) ;
         });
         $this->container['acl_repository'] = $this->container->factory(function ($c) {
             return new ACLApiRepository($c['cache']);
@@ -222,7 +229,7 @@ class OpencastDIC
             return ilOpenCastPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
-            return new SeriesAPIRepository($c['cache'], $c['series_parser'], $c['acl_utils']);
+            return new SeriesAPIRepository($c['cache'], $c['series_parser'], $c['acl_utils'], $c['md_repository']);
         });
         $this->container['series_parser'] = $this->container->factory(function ($c) {
             return new SeriesParser($c['acl_parser'], $c['md_parser']);

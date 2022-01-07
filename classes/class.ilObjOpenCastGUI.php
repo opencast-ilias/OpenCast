@@ -384,14 +384,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         /** @var ObjectSettings $settings */
         $settings = $additional_args['settings']['object'];
         /** @var Metadata $metadata */
-        $metadata = $additional_args['metadata']['object'];
-        /** @var string|false $existing_series_id */
-        $existing_series_id = $additional_args['existing_identifier'];
+        $metadata = $additional_args['series_type']['metadata'];
+        /** @var string|false $series_id */
+        $series_id = $additional_args['series_type']['channel_id'];
         /** @var bool $is_memberupload_enabled */
         $is_memberupload_enabled = $additional_args['member_upload'];
 
-        $settings->setObjId($newObj->getId());
-        $settings->create();
+
 
         // set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
         $producers = ilObjOpenCastAccess::getProducersForRefID($newObj->getRefId());
@@ -410,11 +409,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
         }
 
-        // todo: existing series
-        $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
-            $metadata,
-            $acl
-        )));
+        if (!$series_id) {
+            $series_id = $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
+                $metadata,
+                $acl
+            )));
+        } else {
+            $metadata = $this->opencast_dic->series_repository()->find($series_id)->getMetadata();
+        }
+
+        $settings->setSeriesIdentifier($series_id);
+        $settings->setObjId($newObj->getId());
+        $settings->create();
 
         if ($settings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('msg_info_multiple_aftersave'), true);

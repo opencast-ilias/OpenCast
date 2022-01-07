@@ -116,6 +116,10 @@ class SeriesFormBuilder
         return $this->plugin->txt('series_' . $lang_var);
     }
 
+    /**
+     * @return Input
+     * @throws xoctException
+     */
     private function buildSeriesSelectionSection(): Input
     {
         $existing_series = $this->getSeriesSelectOptions();
@@ -123,15 +127,17 @@ class SeriesFormBuilder
             self::EXISTING_YES => $this->ui_factory->input()->field()->group([
                 self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID), $existing_series)->withRequired(true)
             ], $this->plugin->txt('yes')),
-            self::EXISTING_NO => $this->ui_factory->input()->field()->group([$this->formItemBuilder->create()], $this->plugin->txt('no'))
+            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items(), $this->plugin->txt('no'))
         ], 'Existing Series')->withValue(self::EXISTING_NO);
         return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type], $this->plugin->txt(self::F_CHANNEL_TYPE))
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
                 if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
-                    $vs[self::F_EXISTING_IDENTIFIER] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
+                    $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
                 } else {
-                    $vs[self::F_EXISTING_IDENTIFIER] = false;
+                    $vs[self::F_CHANNEL_ID] = false;
+                    $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries($vs[self::F_EXISTING_IDENTIFIER][1]);
                 }
+                unset($vs[self::F_EXISTING_IDENTIFIER]);
                 return $vs;
             }));
     }
