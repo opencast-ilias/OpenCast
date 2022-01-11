@@ -363,7 +363,7 @@ class xoctConf extends ActiveRecord
          * If the terms of use have been updated,
          * reset the list of users who have accepted them
          */
-        if ($name == self::F_RESET) {
+        if ($name === self::F_RESET && $value === "1") {
             // ToDo: get instance_id and add as parameter
             ToUManager::resetForInstance();
             $obj->setValue("");
