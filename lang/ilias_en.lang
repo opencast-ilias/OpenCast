@@ -191,6 +191,7 @@ event_edit#:#Edit Metadata
 event_edit_date#:#Edit Metadata and Date
 event_edit_owner#:#Edit Owner
 event_end#:#End
+event_error_alert_accpet_terms_of_use#:#Accept Terms of Use.
 event_file_presenter#:#Video File
 event_file_presenter_w_audio#:#Video/Audio File
 event_identifier#:#ID

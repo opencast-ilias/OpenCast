@@ -220,9 +220,6 @@ class xoctEventGUI extends xoctGUI
                         filter_input(INPUT_GET, 'ref_id')) .
                     ' for user with id ' . self::dic()->user()->getId());
         }
-        self::dic()->mainTemplate()->setRightContent(
-            "<div><table class='table table-striped'><thead><tr><th><h1> Nutzungsbedingungen </h1></th></</tr></thead>" .
-            "<tbody><tr><td>" . xoctConf::getConfig(xoctConf::F_EULA)) . "</td></tr></tbody></table></div>";
         self::dic()->mainTemplate()->setContent($this->getIntroTextHTML() . $html);
 
     }

@@ -498,6 +498,18 @@ class EventFormGUI extends ilPropertyFormGUI
             }
         }
 
+        // Terms of Use
+        if (!ToUManager::hasAcceptedToU($user = self::dic()->user()->getId())) { // Has the user already accepted the terms of use?
+            if (xoctConf::getConfig(xoctConf::F_ACCEPT_TERMS)) {// Does the user have to accept the terms of use?
+                if (boolval($_POST[self::F_ACCEPT_EULA])) { // Has the user accepted the terms of use?
+                    ToUManager::setToUAccepted($user); // Mark as accepted
+                } else {
+                    ilUtil::sendFailure($this->txt("error_alert_accpet_terms_of_use"));
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

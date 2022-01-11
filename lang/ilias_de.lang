@@ -192,6 +192,7 @@ event_edit#:#Metadaten bearbeiten
 event_edit_date#:#Metadaten und Termin bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_end#:#Ende
+event_error_alert_accpet_terms_of_use#:#Akzeptieren Sie die Nutzungsbedingungen.
 event_file_presenter#:#Video-Datei
 event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
