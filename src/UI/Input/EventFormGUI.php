@@ -6,7 +6,6 @@ use ilDateTime;
 use ilDateTimeException;
 use ilDateTimeInputGUI;
 use ilException;
-use ilInteractiveVideoTimePicker;
 use ilObjOpenCast;
 use ilObjOpenCastAccess;
 use ilOpenCastPlugin;
@@ -36,10 +35,11 @@ use xoctException;
 use xoctSeries;
 use xoctUploadFile;
 use xoctUser;
+use ilCheckboxInputGUI;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctEventFormGUI
- *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
 class EventFormGUI extends ilPropertyFormGUI
@@ -80,7 +80,7 @@ class EventFormGUI extends ilPropertyFormGUI
     const F_MULTIPLE_END = 'multiple_end';
     const F_MULTIPLE_END_TIME = 'multiple_end_time';
     const F_MULTIPLE_WEEKDAYS = 'multiple_weekdays';
-
+    const F_ACCEPT_EULA = 'accept_eula';
     const F_SERIES = 'series';
     const OPT_OWN_SERIES = 'own_series';
     /**
@@ -151,7 +151,6 @@ class EventFormGUI extends ilPropertyFormGUI
         $this->initForm();
     }
 
-
     /**
      *
      */
@@ -166,7 +165,6 @@ class EventFormGUI extends ilPropertyFormGUI
             }
         }
     }
-
 
     /**
      * @throws DICException
@@ -192,7 +190,8 @@ class EventFormGUI extends ilPropertyFormGUI
         if ($this->is_new && !$this->schedule) {
             $allow_audio = xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED);
 
-            $te = new FileUploadInputGUI($this, self::PARENT_CMD_CREATE, $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
+            $te = new FileUploadInputGUI($this, self::PARENT_CMD_CREATE,
+                $this->txt(self::F_FILE_PRESENTER . ($allow_audio ? '_w_audio' : '')), self::F_FILE_PRESENTER);
             $te->setUrl($this->cmd_url_upload_chunks);
             $te->setSuffixes($allow_audio ? array(
                 'mov',
@@ -373,8 +372,16 @@ class EventFormGUI extends ilPropertyFormGUI
                 $this->addItem($item);
             }
         }
-    }
 
+        // TODO: migrate to formbuilder
+        // Terms of Use
+        if (boolval(xoctConf::getConfig(xoctConf::F_ACCEPT_TERMS)) && !ToUManager::hasAcceptedToU(self::dic()->user()->getId())) {
+            $accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
+            $accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
+            $accept_eula->setRequired(true);
+            $this->addItem($accept_eula);
+        }
+    }
 
     /**
      *
@@ -475,9 +482,21 @@ class EventFormGUI extends ilPropertyFormGUI
             }
         }
 
+        // TODO: migrate to formbuilder
+        // Terms of Use
+        if (!ToUManager::hasAcceptedToU($user = self::dic()->user()->getId())) { // Has the user already accepted the terms of use?
+            if (xoctConf::getConfig(xoctConf::F_ACCEPT_TERMS)) {// Does the user have to accept the terms of use?
+                if (boolval($_POST[self::F_ACCEPT_EULA])) { // Has the user accepted the terms of use?
+                    ToUManager::setToUAccepted($user); // Mark as accepted
+                } else {
+                    ilUtil::sendFailure($this->txt("error_alert_accpet_terms_of_use"));
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
-
 
     /**
      * @return bool
@@ -515,10 +534,8 @@ class EventFormGUI extends ilPropertyFormGUI
         return true;
     }
 
-
     /**
      * @param $key
-     *
      * @return string
      */
     protected function txt($key): string
@@ -529,7 +546,6 @@ class EventFormGUI extends ilPropertyFormGUI
 
     /**
      * @param $key
-     *
      * @return string
      * @throws DICException
      */
@@ -566,7 +582,7 @@ class EventFormGUI extends ilPropertyFormGUI
                     return $this->checkAndShowConflictMessage($e);
                 }
             } else {
-                $this->event_repository->upload($this->object, self::dic()->user());
+                $this->event_repository->upload($this->object);
             }
         }
 
@@ -627,7 +643,6 @@ class EventFormGUI extends ilPropertyFormGUI
         return $this->object;
     }
 
-
     /**
      * @param Event $object
      */
@@ -657,7 +672,6 @@ class EventFormGUI extends ilPropertyFormGUI
         throw $e;
     }
 
-
     /**
      * @return array
      * @throws xoctException
@@ -669,7 +683,8 @@ class EventFormGUI extends ilPropertyFormGUI
         $own_series = $this->series_repository->getOwnSeries($xoct_user);
         $series_options = [];
         foreach (xoctSeries::getAllForUser($xoct_user->getUserRoleName()) as $series) {
-            $series_options[$series->getIdentifier()] = $series->getTitle() . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
+            $series_options[$series->getIdentifier()] = $series->getTitle() . ' (...' . substr($series->getIdentifier(),
+                    -4, 4) . ')';
         }
 
         natcasesort($series_options);

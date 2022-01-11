@@ -6,15 +6,15 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
 /**
  * Class xoctConf
- *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctConf extends ActiveRecord {
+class xoctConf extends ActiveRecord
+{
 
-	const TABLE_NAME = 'xoct_config';
-	const CONFIG_VERSION = 1;
-	const F_CONFIG_VERSION = 'config_version';
-	const F_USE_MODALS = 'use_modals';
+    const TABLE_NAME = 'xoct_config';
+    const CONFIG_VERSION = 1;
+    const F_CONFIG_VERSION = 'config_version';
+    const F_USE_MODALS = 'use_modals';
     const F_CURL_USERNAME = 'curl_username';
     const F_CURL_PASSWORD = 'curl_password';
     const F_WORKFLOW = 'workflow';
@@ -83,20 +83,22 @@ class xoctConf extends ActiveRecord {
 	const METADATA_EXCEPT_DATE_PLACE = 2;
 	const F_PRESENTER_MANDATORY = 'presenter_mandatory';
 
-	const F_USE_STREAMING = 'use_streaming';
+	const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
     const F_STREAMING_URL = 'streaming_url';
     const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
-	const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
-	const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
-	const F_INGEST_UPLOAD = 'ingest_upload';
-	const F_COMMON_IDP = 'common_idp';
-	const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
+    const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
+    const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
+    const F_INGEST_UPLOAD = 'ingest_upload';
+    const F_COMMON_IDP = 'common_idp';
+    const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
+    const F_ACCEPT_TERMS = "accept_terms";
+    const F_RESET = "reset_terms";
 
     /**
-	 * @var array
-	 */
-	public static $roles = array(
-		self::F_ROLE_USER_PREFIX,
+     * @var array
+     */
+    public static $roles = array(
+        self::F_ROLE_USER_PREFIX,
         self::F_ROLE_OWNER_PREFIX
 	);
 	/**
@@ -172,7 +174,7 @@ class xoctConf extends ActiveRecord {
     /**
      * @param string $xml_file_path
      */
-	public static function importFromXML(string $xml_file_path)
+    public static function importFromXML(string $xml_file_path)
     {
         $domxml = new DOMDocument('1.0', 'UTF-8');
         $domxml->loadXML(file_get_contents($xml_file_path));
@@ -232,7 +234,7 @@ class xoctConf extends ActiveRecord {
             $xoctPublicationUsage->setSearchKey($node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor');
             $xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
-            if (!PublicationUsage::where(array('usage_id' => $xoctPublicationUsage->getUsageId() ))->hasSets()) {
+            if (!PublicationUsage::where(array('usage_id' => $xoctPublicationUsage->getUsageId()))->hasSets()) {
                 $xoctPublicationUsage->create();
             } else {
                 $xoctPublicationUsage->update();
@@ -304,115 +306,123 @@ class xoctConf extends ActiveRecord {
         return $domxml->saveXML();
     }
 
+    /**
+     * @var array
+     */
+    protected static $cache = array();
+    /**
+     * @var array
+     */
+    protected static $cache_loaded = array();
+    /**
+     * @var bool
+     */
+    protected $ar_safe_read = false;
 
-	/**
-	 * @var array
-	 */
-	protected static $cache = array();
-	/**
-	 * @var array
-	 */
-	protected static $cache_loaded = array();
-	/**
-	 * @var bool
-	 */
-	protected $ar_safe_read = false;
+    /**
+     * @return bool
+     */
+    public static function isConfigUpToDate()
+    {
+        return self::getConfig(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
+    }
 
+    public static function load()
+    {
+        $null = parent::get();
+    }
 
-	/**
-	 * @return bool
-	 */
-	public static function isConfigUpToDate() {
-		return self::getConfig(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
-	}
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getConfig($name)
+    {
+        if (!self::$cache_loaded[$name]) {
+            $obj = new self($name);
+            self::$cache[$name] = json_decode($obj->getValue());
+            self::$cache_loaded[$name] = true;
+        }
 
+        return self::$cache[$name];
+    }
 
-	public static function load() {
-		$null = parent::get();
-	}
+    /**
+     * @param $name
+     * @param $value
+     */
+    public static function set($name, $value)
+    {
+        $obj = new self($name);
 
+        /*
+         * If the terms of use have been updated,
+         * reset the list of users who have accepted them
+         */
+        if ($name === self::F_RESET && $value === "1") {
+            // ToDo: get instance_id and add as parameter
+            ToUManager::resetForInstance();
+            $obj->setValue("");
+            }
+        else {
+            $obj->setValue(json_encode($value));
+        }
+        if (self::where(array('name' => $name))->hasSets()) {
+            $obj->update();
+        } else {
+            $obj->create();
+        }
 
-	/**
-	 * @param $name
-	 *
-	 * @return mixed
-	 */
-	public static function getConfig($name) {
-		if (!self::$cache_loaded[$name]) {
-			$obj = new self($name);
-			self::$cache[$name] = json_decode($obj->getValue());
-			self::$cache_loaded[$name] = true;
-		}
+    }
 
-		return self::$cache[$name];
-	}
+    /**
+     * @var string
+     * @db_has_field        true
+     * @db_is_unique        true
+     * @db_is_primary       true
+     * @db_is_notnull       true
+     * @db_fieldtype        text
+     * @db_length           250
+     */
+    protected $name;
 
+    /**
+     * @var string
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           4000
+     */
+    protected $value;
 
-	/**
-	 * @param $name
-	 * @param $value
-	 */
-	public static function set($name, $value) {
-		$obj = new self($name);
-		$obj->setValue(json_encode($value));
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
-		if (self::where(array( 'name' => $name ))->hasSets()) {
-			$obj->update();
-		} else {
-			$obj->create();
-		}
-	}
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
+    /**
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 
-	/**
-	 * @var string
-	 *
-	 * @db_has_field        true
-	 * @db_is_unique        true
-	 * @db_is_primary       true
-	 * @db_is_notnull       true
-	 * @db_fieldtype        text
-	 * @db_length           250
-	 */
-	protected $name;
-	/**
-	 * @var string
-	 *
-	 * @db_has_field        true
-	 * @db_fieldtype        text
-	 * @db_length           4000
-	 */
-	protected $value;
-
-
-	/**
-	 * @param string $name
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setValue($value) {
-		$this->value = $value;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getValue() {
-		return $this->value;
-	}
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 }

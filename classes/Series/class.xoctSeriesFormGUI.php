@@ -242,15 +242,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			$this->addItem($crs_member_upload);
 		}
 
-		if ($this->is_new) {
-			$accept_eula = new ilCheckboxInputGUI($this->txt(self::F_ACCEPT_EULA), self::F_ACCEPT_EULA);
-			$accept_eula->setInfo(xoctConf::getConfig(xoctConf::F_EULA));
-			$accept_eula->setRequired(true);
-			$this->addItem($accept_eula);
-		}
-
-		if (!$this->is_new) {
-		    if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+        if (!$this->is_new) {
+            if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
                 $chat_active = new ilCheckboxInputGUI($this->txt(self::F_CHAT_ACTIVE), self::F_CHAT_ACTIVE);
                 $chat_active->setInfo($this->infoTxt(self::F_CHAT_ACTIVE));
                 $this->addItem($chat_active);

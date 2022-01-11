@@ -232,8 +232,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
 		$this->addItem($cb);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_STREAMING), xoctConf::F_USE_STREAMING);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_STREAMING . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_GENERATED_STREAMING_URLS), xoctConf::F_USE_GENERATED_STREAMING_URLS);
+		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_GENERATED_STREAMING_URLS . '_info'));
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
@@ -365,6 +365,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setRows(5);
 		$this->addItem($te);
 
+		// Reset?
+		$reset = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_RESET), xoctConf::F_RESET);
+		$reset->setInfo($this->parent_gui->txt(xoctConf::F_RESET . "_info"));
+		$this->addItem($reset);
+
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
 		$this->addItem($te);
@@ -425,6 +430,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$cb->addSubItem($te);
+
+		// Terms of Use
+		$terms = new ilCheckboxInputGUI($this->parent_gui->txt("accept_terms"), xoctConf::F_ACCEPT_TERMS);
+		$terms->setInfo($this->parent_gui->txt("accept_terms_info"));
+		$this->addItem($terms);
 	}
 
 

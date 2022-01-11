@@ -17,19 +17,14 @@ use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * User Interface class for example repository object.
- *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
- *
  * @version           1.0.00
- *
  * Integration into control structure:
  * - The GUI class is called by ilRepositoryGUI
  * - GUI classes used by this class are ilPermissionGUI (provides the rbac
  *   screens) and ilInfoScreenGUI (handles the info screen).
- *
  * @ilCtrl_isCalledBy ilObjOpenCastGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI
  * @ilCtrl_Calls      ilObjOpenCastGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI
- *
  */
 class ilObjOpenCastGUI extends ilObjectPluginGUI
 {
@@ -44,6 +39,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     const TAB_SETTINGS = 'settings';
     const TAB_INFO = 'info_short';
     const TAB_GROUPS = 'groups';
+    const TAB_EULA = "eula";
+
     /**
      * @var ilObjOpenCast
      */
@@ -286,13 +283,22 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             ), "perm"));
         }
 
+        // ToDo: Why does this access check not work?
+        if(ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
+            $this->ilias_dic->tabs()->addTab(self::TAB_EULA, self::plugin()->translate("eula"),
+                $this->ilias_dic->ctrl()->getLinkTarget($this, "showEula"));
+        }
         return true;
     }
 
+    private function showEula()
+    {
+        self::dic()->tabs()->activateTab("eula");
+        self::dic()->ui()->mainTemplate()->setContent(xoctConf::getConfig(xoctConf::F_EULA));
+    }
 
     /**
      * @param string $a_new_type
-     *
      * @return array
      * @throws DICException
      * @throws arException
@@ -309,14 +315,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return array(self::CFORM_NEW => $this->initCreateForm($a_new_type));
     }
 
-
     /**
      * @param string $type
      * @param bool|false $from_post
-     *
-     * @throws DICException
-     * @throws arException
-     * @throws xoctException
      */
     public function initCreateForm($type, $from_post = false)
     {
@@ -325,17 +326,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->buildUIForm()
             )
         );
-        $creation_form = new xoctSeriesFormGUI($this, new ObjectSettings());
-        if ($from_post) {
-            $creation_form->setValuesByPost();
-        } else {
-            $creation_form->fillForm();
-            if (ilObjOpenCast::DEV) {
-                $creation_form->fillFormRandomized();
-            }
-        }
-
-        return $creation_form->getAsPropertyFormGui();
     }
 
     private function buildUIForm(): Form
@@ -366,7 +356,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     /**
      * @param ilObject $newObj
-     *
      * @throws DICException
      * @throws xoctException
      */
@@ -616,14 +605,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return true;
     }
 
-
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     *
-     * @param int $a_obj_id
-     * @param int $a_ref_id
+     * @param int    $a_obj_id
+     * @param int    $a_ref_id
      * @param string $a_form_name
-     *
      * @return string
      * @throws Exception
      */

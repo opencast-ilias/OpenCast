@@ -9,10 +9,15 @@ use xoctSecureLink;
 
 /**
  * Class StreamingPlayerDataBuilder
+ *
+ * Used when the plugin config "Build streaming urls statically" is active.
+ * If Opencast serves the streaming urls in its publications, this is not necessary.
+ * But most installations still don't offer that functionality.
+ *
  * @package srag\Plugins\Opencast\Util\Player
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class StreamingPlayerDataBuilder extends StandardPlayerDataBuilder
+class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
 {
 
     protected function buildStreams(array $media) : array

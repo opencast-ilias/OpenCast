@@ -175,7 +175,7 @@ class xoctSeries extends APIObject {
 	/**
 	 * @var int
 	 */
-	protected $theme = 1234;
+	protected $theme;
 
 
 	/**

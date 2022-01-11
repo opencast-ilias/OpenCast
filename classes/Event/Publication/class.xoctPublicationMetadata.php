@@ -21,9 +21,10 @@ class xoctPublicationMetadata extends APIObject {
 	}
 
 	/**
-	 * @return string
+	 * @return string {"presentation"|"presenter"}
 	 */
-	public function getRole() {
+	public function getRole() : string
+    {
 		return strpos($this->getFlavor(), self::ROLE_PRESENTATION) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
 	}
 
@@ -58,18 +59,12 @@ class xoctPublicationMetadata extends APIObject {
 	public $tags;
 
 
-	/**
-	 * @return string
-	 */
-	public function getId() {
+	public function getId() : string {
 		return $this->id;
 	}
 
 
-	/**
-	 * @param string $id
-	 */
-	public function setId($id) {
+	public function setId(string $id) {
 		$this->id = $id;
 	}
 

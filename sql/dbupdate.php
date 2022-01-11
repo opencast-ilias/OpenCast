@@ -289,3 +289,7 @@ if ($role_owner_prefix) {
 \srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
 \srag\Plugins\Opencast\Cache\CacheFactory::getInstance()->flush();
 ?>
+<#32>
+<?php
+\srag\Plugins\Opencast\TermsOfUse\AcceptedToU::updateDB();
+?>

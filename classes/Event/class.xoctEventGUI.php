@@ -24,13 +24,12 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctEventGUI
- *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
- *
- * @ilCtrl_Calls xoctEventGUI: xoctPlayerGUI
+ * @ilCtrl_Calls      xoctEventGUI: xoctPlayerGUI
  * @ilCtrl_IsCalledBy xoctEventGUI: ilObjOpenCastGUI
  */
 class xoctEventGUI extends xoctGUI
@@ -119,7 +118,6 @@ class xoctEventGUI extends xoctGUI
         $this->seriesRepository = $seriesRepository;
     }
 
-
     /**
      * @throws DICException
      * @throws ilCtrlException
@@ -159,7 +157,6 @@ class xoctEventGUI extends xoctGUI
         }
     }
 
-
     /**
      * @param $cmd
      */
@@ -181,11 +178,14 @@ class xoctEventGUI extends xoctGUI
             case self::CMD_STANDARD:
                 $this->prepareContent();
                 break;
+            case "add":
+                ilUtil::sendInfo(xoctConf::getConfig(xoctConf::F_EULA));
+                parent::performCommand($cmd);
+                break;
             default:
         }
         parent::performCommand($cmd);
     }
-
 
     /**
      *
@@ -199,7 +199,6 @@ class xoctEventGUI extends xoctGUI
                 'msg_link_copied' => self::plugin()->translate('msg_link_copied'),
                 'tooltip_copy_link' => self::plugin()->translate('tooltip_copy_link')
             ]) . '\');');
-
 
         // add "add" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
@@ -247,7 +246,6 @@ class xoctEventGUI extends xoctGUI
             self::dic()->toolbar()->addButtonInstance($b);
         }
     }
-
 
     /**
      * asynchronous loading of tableGUI
@@ -490,7 +488,6 @@ class xoctEventGUI extends xoctGUI
         return $html;
     }
 
-
     /**
      *
      */
@@ -557,6 +554,10 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
+        // TODO
+//        if (boolval($data[EventFormGUI::F_ACCEPT_EULA])) {
+//            ToUManager::setToUAccepted(self::dic()->user()->getId());
+//        }
         $metadata = $data['metadata']['object'];
         $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
@@ -768,17 +769,16 @@ class xoctEventGUI extends xoctGUI
         $extension = pathinfo($url)['extension'];
         $url = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
 
-
         if (xoctConf::getConfig(xoctConf::F_EXT_DL_SOURCE)) {
             // Open external source page
             header('Location: ' . $url);
         } else {
             // get filesize
             $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-            curl_setopt($ch, CURLOPT_HEADER, TRUE);
-            curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
             curl_exec($ch);
             $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
             curl_close($ch);
@@ -791,13 +791,10 @@ class xoctEventGUI extends xoctGUI
             readfile($url);
         }
 
-
         exit;
     }
 
-
     /**
-     *
      * @throws xoctException
      */
     public function annotate()
@@ -1046,7 +1043,6 @@ class xoctEventGUI extends xoctGUI
         return $modals_html;
     }
 
-
     /**
      *
      */
@@ -1057,15 +1053,14 @@ class xoctEventGUI extends xoctGUI
             $subject = 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»';
             $report = new xoctReport();
             $report->setType(xoctReport::TYPE_DATE)
-                ->setUserId(self::dic()->user()->getId())
-                ->setSubject($subject)
-                ->setMessage($message)
-                ->create();
+                   ->setUserId(self::dic()->user()->getId())
+                   ->setSubject($subject)
+                   ->setMessage($message)
+                   ->create();
         }
         ilUtil::sendSuccess(self::plugin()->translate('msg_date_report_sent'), true);
         self::dic()->ctrl()->redirect($this);
     }
-
 
     /**
      *
@@ -1140,7 +1135,6 @@ class xoctEventGUI extends xoctGUI
         return $mail_body;
     }
 
-
     /**
      * @param $key
      *
@@ -1160,7 +1154,6 @@ class xoctEventGUI extends xoctGUI
     {
         return $this->objectSettings->getObjId();
     }
-
 
     /**
      * @return EventModals

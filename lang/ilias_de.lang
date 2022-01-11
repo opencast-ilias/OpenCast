@@ -1,6 +1,8 @@
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
+config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
+config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.
 config_activate_cache#:#Caching
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_activate_cache_0#:#Cache deaktivieren
@@ -90,8 +92,8 @@ config_audio_allowed_info#:#Wenn aktiviert, können neben Video-Dateien auch Aud
 config_curl_username_info#:#Benutzeraccount in Opencast, der zur Kommunikation über die API genutzt wird (benötigt genügend Rechte in OC)
 config_curl_password_info#:#Passwort zum oben angegebenen Account.
 config_curl_debug_level_info#:#Detaillierungsgrad der Einträge im Log.
-config_streaming_url_info#:#Wowza URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
-config_use_streaming_info#:#Wenn aktive werden die MP4 Streams aus der API durch passende Streaming URLs ersetzt
+config_streaming_url_info#:#Wowza-URL für adaptive streaming. Bsp: https://wowza.myopencast.com:8090/opencast-engage
+config_use_streaming_info#:#Wenn aktiv, werden die Streaming URLs für Opencast Events vom Plugin eigens generiert, in der Form: [Wowza-URL]/smil:engage-player_[Event-ID]_[presenter|presentation].smil/playlist.m3u8
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in Opencast angewendet wird.
 config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0.
@@ -102,9 +104,9 @@ config_role_owner_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle m
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an Opencast weiterzuleiten.
-config_use_streaming#:#Benutze Streaming URLs
+config_use_streaming#:#Selbstgenerierte Streaming-URLs verwenden
 config_streaming#:#Streaming
-config_streaming_url#:#Wowza URL
+config_streaming_url#:#Wowza-URL
 config_general#:#Allgemeines
 config_report_quality#:#"Qualitätsprobleme melden" aktivieren
 config_report_quality_info#:#Aktiviert die Möglichkeit, Qualitätsprobleme von Aufzeichnungen innerhalb von Opencast-Objekten zu melden.
@@ -121,6 +123,8 @@ config_report_date_email#:#Email
 config_report_date_email_info#:#Adresse, an welche die Meldung der Anpassung geschickt wird.
 config_report_date_text#:#Info-Text
 config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
+config_reset_terms#:#Aktualisierte Nutzungsbedingungen
+config_reset_terms_info#:#Fordere alle User (erneut) auf, die Nutzungsbedingungen zu akzeptieren. Diese Option sollte nur dann gewählt werden, wenn die Nutzungsbedingungen inhaltlich verändert wurden.
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
@@ -162,6 +166,8 @@ config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. D
 config_ingest_upload#:#Upload via Ingest-Nodes
 config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
+eula#:#Nutzungsbedingungen
+event_accept_eula#:#Nutzungsbedingungen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
@@ -184,6 +190,7 @@ event_edit#:#Metadaten bearbeiten
 event_edit_date#:#Metadaten und Termin bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_end#:#Ende
+event_error_alert_accpet_terms_of_use#:#Akzeptieren Sie die Nutzungsbedingungen.
 event_file_presenter#:#Video-Datei
 event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
