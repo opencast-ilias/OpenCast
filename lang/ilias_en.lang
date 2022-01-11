@@ -1,6 +1,8 @@
 admin_export#:#Export Settings
 admin_import#:#Import Settings
 common_actions#:#Actions
+config_accept_terms#:#All users must accept the Terms of Use
+config_accept_terms_info#:#Terms of Use must be accepted when uploading an event for the first time.
 config_activate_cache#:#Activate cache
 config_activate_cache_info#:#Improves the loading time by storing Opencast data locally. Can lead to temporarily corrupt metadata.
 config_activate_cache_0#:#Disable Cache

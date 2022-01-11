@@ -6,6 +6,7 @@ use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
+use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ilMimeTypeUtil;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -18,6 +19,8 @@ use xoctConf;
 
 class EventFormBuilder
 {
+    const F_ACCEPT_EULA = 'accept_eula';
+
     private static $accepted_video_mimetypes = [
         ilMimeTypeUtil::VIDEO__AVI,
         ilMimeTypeUtil::VIDEO__QUICKTIME,
@@ -122,11 +125,12 @@ class EventFormBuilder
 
     /**
      * @param string $form_action
+     * @param bool $with_terms_of_use
      * @param int $obj_id set if the context is a repository object, to use the object level configuration
      * @param bool $as_admin set if the context is a repository object, to use the object level configuration
      * @return Form
      */
-    public function upload(string $form_action, int $obj_id = 0, bool $as_admin = false): Form
+    public function upload(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
         $upload_storage_service = $this->uploadStorageService;
         // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
@@ -141,14 +145,19 @@ class EventFormBuilder
             ['file' => $file_input],
             $this->plugin->txt('file')
         );
+        $inputs = [
+            'file' => $file_section,
+            'metadata' => $this->formItemBuilder->create_section(),
+            'workflow_configuration' => ($obj_id == 0 ?
+                $this->workflowParameterRepository->getGeneralFormSection()
+                : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin)),
+        ];
+        if ($with_terms_of_use) {
+            $inputs[self::F_ACCEPT_EULA] = $this->buildTermsOfUseSection();
+        }
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            [
-                'file' => $file_section,
-                'metadata' => $this->formItemBuilder->create_section(),
-                'workflow_configuration' => ($obj_id == 0 ?
-                    $this->workflowParameterRepository->getGeneralFormSection()
-                    : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin))]
+            $inputs
         );
     }
 
@@ -160,18 +169,21 @@ class EventFormBuilder
         );
     }
 
-    public function schedule(string $form_action, int $obj_id = 0, bool $as_admin = false): Form
+    public function schedule(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
+        $inputs = [
+            'metadata' => $this->formItemBuilder->schedule_section(),
+            'scheduling' => $this->schedulingFormItemBuilder->create(),
+            'workflow_configuration' => ($obj_id == 0 ?
+                $this->workflowParameterRepository->getGeneralFormSection()
+                : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin)),
+        ];
+        if ($with_terms_of_use) {
+            $inputs[self::F_ACCEPT_EULA] = $this->buildTermsOfUseSection();
+        }
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            [
-                'metadata' => $this->formItemBuilder->schedule_section(),
-                'scheduling' => $this->schedulingFormItemBuilder->create(),
-                'workflow_configuration' => ($obj_id == 0 ?
-                    $this->workflowParameterRepository->getGeneralFormSection()
-                    : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin))
-            ]
-        );
+            $inputs);
     }
 
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling) : Form
@@ -188,6 +200,14 @@ class EventFormBuilder
         );
     }
 
+    private function buildTermsOfUseSection() : Input
+    {
+        return $this->ui_factory->input()->field()->section([
+            self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
+                $this->plugin->txt('event_accept_eula'), xoctConf::getConfig(xoctConf::F_EULA))
+            ->withRequired(true)
+        ], $this->plugin->txt('event_accept_eula'));
+    }
 
     private function getMimeTypes(): array
     {

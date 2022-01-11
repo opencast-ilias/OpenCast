@@ -524,6 +524,7 @@ class xoctEventGUI extends xoctGUI
         }
         $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
+            !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
@@ -544,20 +545,30 @@ class xoctEventGUI extends xoctGUI
         // >>>>>>>>>>>>>>>>>>>>>>>>
         $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
+            !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
+
+        if (!ToUManager::hasAcceptedToU(self::dic()->user()->getId())) {
+            $eula_accepted = $data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA];
+            if (!$eula_accepted) {
+                // this is necessary because the 'required'-function of the checkbox doesn't work currently
+                // otherwise, $data would just be null
+                ilUtil::sendFailure(self::plugin()->getPluginObject()->txt('event_error_alert_accpet_terms_of_use'));
+                self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+                return;
+            } else {
+                ToUManager::setToUAccepted(self::dic()->user()->getId());
+            }
+        }
 
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
 
-        // TODO
-//        if (boolval($data[EventFormGUI::F_ACCEPT_EULA])) {
-//            ToUManager::setToUAccepted(self::dic()->user()->getId());
-//        }
         $metadata = $data['metadata']['object'];
         $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));
@@ -584,6 +595,7 @@ class xoctEventGUI extends xoctGUI
         }
         $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
+            !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
@@ -606,10 +618,24 @@ class xoctEventGUI extends xoctGUI
         }
         $form = $this->formBuilder->schedule(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE_SCHEDULED),
+            !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
+
+        if (!ToUManager::hasAcceptedToU(self::dic()->user()->getId())) {
+            $eula_accepted = $data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA];
+            if (!$eula_accepted) {
+                // this is necessary because the 'required'-function of the checkbox doesn't work currently
+                // otherwise, $data would just be null
+                ilUtil::sendFailure(self::plugin()->getPluginObject()->txt('event_error_alert_accpet_terms_of_use'));
+                self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+                return;
+            } else {
+                ToUManager::setToUAccepted(self::dic()->user()->getId());
+            }
+        }
 
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));

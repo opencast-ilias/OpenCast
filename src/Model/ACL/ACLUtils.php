@@ -18,11 +18,9 @@ class ACLUtils
      */
     public function getBaseACLForUser(xoctUser $user) : ACL
     {
-        return new ACL([
-            $this->getStandardRolesACL(),
-            $this->getOwnerRolesACL($user),
-            $this->getUserRolesACL($user)
-        ]);
+        return $this->getOwnerRolesACL($user)
+            ->merge($this->getUserRolesACL($user))
+            ->merge($this->getStandardRolesACL());
     }
 
     public function getStandardRolesACL(): ACL
