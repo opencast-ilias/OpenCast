@@ -13,46 +13,6 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
  */
 class xoctSeries extends APIObject {
 
-    /**
-     * @param $identifier
-     * @return xoctSeries
-     */
-    public static function find(string $identifier)
-    {
-        $series = parent::find($identifier);
-        $series->afterObjectLoad();
-
-        return $series;
-    }
-
-
-    /**
-     * xoctSeries constructor.
-     * @param string $identifier
-     * @throws xoctException
-     */
-	public function __construct($identifier = '') {
-		if ($identifier) {
-			$this->setIdentifier($identifier);
-			$this->read();
-		}
-	}
-
-
-    /**
-     * @throws xoctException
-     */
-    protected function afterObjectLoad() {
-        if (empty($this->access_policies)) {
-            $data = json_decode(xoctRequest::root()->series($this->getIdentifier())->acl()->get());
-            $acls = array();
-            foreach ($data as $d) {
-                $acls[] = ACLEntry::fromArray((array) $d);
-            }
-            $this->setAccessPolicies(new ACL($acls));
-        }
-	}
-
 
     /**
      * @throws xoctException
@@ -79,134 +39,6 @@ class xoctSeries extends APIObject {
 		$this->loadMetadata();
 		$this->updateFieldsFromMetadata();
 	}
-
-    /**
-     * @param xoctUser[] $xoctUsers
-     * @param bool $omit_update
-     * @throws xoctException
-     */
-	public function addProducers(array $xoctUsers, $omit_update = false) {
-		foreach ($xoctUsers as $xoctUser) {
-			$this->addProducer($xoctUser, true);
-		}
-		if (!$omit_update) {
-            $this->update();
-        }
-	}
-
-
-	/**
-	 * @param xoctUser|string $xoctUser
-	 * @param bool $omit_update
-	 *
-	 * @return bool
-	 */
-	public function addProducer($xoctUser, $omit_update = false) {
-		if ($xoctUser instanceof xoctUser) {
-			$xoctUser = $xoctUser->getUserRoleName();
-		}
-
-		if (!$xoctUser) {
-			return false;
-		}
-
-		$already_has_read = false;
-		$already_has_write = false;
-		foreach ($this->getAccessPolicies() as $acl) {
-			if ($acl->getRole() == $xoctUser) {
-				if ($acl->getAction() == ACLEntry::READ) {
-					$already_has_read = true;
-				} else if ($acl->getAction() == ACLEntry::WRITE) {
-					$already_has_write = true;
-				}
-			}
-		}
-
-		if (!$already_has_read) {
-			$new_read_acl = new ACLEntry();
-			$new_read_acl->setAction(ACLEntry::READ);
-			$new_read_acl->setAllow(true);
-			$new_read_acl->setRole($xoctUser);
-			$this->addAccessPolicy($new_read_acl);
-		}
-
-		if (!$already_has_write) {
-			$new_write_acl = new ACLEntry();
-			$new_write_acl->setAction(ACLEntry::WRITE);
-			$new_write_acl->setAllow(true);
-			$new_write_acl->setRole($xoctUser);
-			$this->addAccessPolicy($new_write_acl);
-		}
-
-		if (!$omit_update && (!$already_has_read || !$already_has_write)) {
-			$this->update();
-			return true;
-		}
-
-		return false;
-	}
-
-    /**
-     * @param $organizer
-     * @param bool $omit_update
-     */
-	public function addOrganizer($organizer, $omit_update = false) {
-	    $organizers_array = array_map('trim', $this->getOrganizers());
-	    if (!in_array($organizer, $organizers_array)) {
-	        $organizers_array[] = $organizer;
-	        $this->setOrganizers($organizers_array);
-        }
-        if (!$omit_update) {
-	        $this->update();
-        }
-    }
-
-    /**
-     * @param $contributor
-     * @param bool $omit_update
-     */
-	public function addContributor($contributor, $omit_update = false) {
-	    $contributors_array = array_map('trim', $this->getContributors());
-	    if (!in_array($contributor, $contributors_array)) {
-            $contributors_array[] = $contributor;
-	        $this->setContributors($contributors_array);
-        }
-        if (!$omit_update) {
-	        $this->update();
-        }
-    }
-
-    /**
-     * @throws xoctException
-     */
-    public function create() {
-		$metadata = new Metadata();
-		$metadata->setTitle('Opencast Series DublinCore');
-		$this->setMetadata($metadata);
-		$this->updateMetadataFromFields();
-		$this->getMetadata()->removeField('identifier'); // the identifier metadata lead to double creation of series on cast
-
-		$array['metadata'] = json_encode(array(
-			$this->getMetadata()->__toStdClass(),
-		));
-
-		$acls = array();
-		foreach ($this->getAccessPolicies() as $acl) {
-			$acls[] = $acl->__toStdClass();
-		}
-		$array['acl'] = json_encode($acls);
-		$array['theme'] = $this->getTheme();
-
-		$data = json_decode(xoctRequest::root()->series()->post($array));
-		sleep(1);
-		
-		if ($data->identifier) {
-			$this->setIdentifier($data->identifier);
-		} else {
-			throw new xoctException(xoctException::API_CREATION_FAILED);
-		}
-	}
-
 
     /**
      * @throws xoctException
@@ -285,53 +117,6 @@ class xoctSeries extends APIObject {
      */
     public function delete() {
 		xoctRequest::root()->series($this->identifier)->delete();
-	}
-
-
-    /**
-     * @return xoctSeries[]
-     * @throws xoctException
-     */
-	public static function getAll() {
-		$return = array();
-		$data = json_decode(xoctRequest::root()->series()->get());
-		foreach ($data as $d) {
-			$obj = new self();
-			$obj->loadFromStdClass($d);
-			$return[] = $obj;
-		}
-
-		return $return;
-	}
-
-
-	/**
-	 * @param $user_string
-	 *
-	 * @return xoctSeries[]
-	 */
-	public static function getAllForUser($user_string) {
-		if ($existing = CacheFactory::getInstance()->get('series-' . $user_string)) {
-			return $existing;
-		}
-		$return = array();
-		try {
-            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string )));
-        } catch (Exception $e) {
-		    return [];
-        }
-		foreach ($data as $d) {
-			$obj = new self();
-			try {
-				$obj->loadFromStdClass($d);
-				$return[] = $obj;
-			} catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
-				continue;
-			}
-		}
-		CacheFactory::getInstance()->set('series-' . $user_string, $return, 60);
-
-		return $return;
 	}
 
 
@@ -602,23 +387,6 @@ class xoctSeries extends APIObject {
 	public function setMetadata($metadata) {
 		$this->metadata = $metadata;
 	}
-
-
-//	/**
-//	 * @return xoctProperties
-//	 */
-//	public function getProperties() {
-//		return $this->properties;
-//	}
-//
-//
-//	/**
-//	 * @param xoctProperties $properties
-//	 */
-//	public function setProperties($properties) {
-//		$this->properties = $properties;
-//	}
-
 
 	/**
 	 * @return int

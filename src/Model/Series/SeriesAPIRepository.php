@@ -5,8 +5,12 @@ namespace srag\Plugins\Opencast\Model\Series;
 use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
+use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
 use xoctException;
 use xoctRequest;
 use xoctSeries;
@@ -33,16 +37,25 @@ class SeriesAPIRepository implements SeriesRepository
      * @var MetadataRepository
      */
     private $metadataRepository;
+    /**
+     * @var MetadataFactory
+     */
+    private $metadataFactory;
 
-    public function __construct(Cache $cache, SeriesParser $seriesParser, ACLUtils $ACLUtils, MetadataRepository $metadataRepository)
+    public function __construct(Cache              $cache,
+                                SeriesParser       $seriesParser,
+                                ACLUtils           $ACLUtils,
+                                MetadataRepository $metadataRepository,
+                                MetadataFactory    $metadataFactory)
     {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
         $this->metadataRepository = $metadataRepository;
+        $this->metadataFactory = $metadataFactory;
     }
 
-    public function find(string $identifier) : xoctSeries
+    public function find(string $identifier): xoctSeries
     {
         return $this->cache->get(self::CACHE_PREFIX . $identifier)
             ?? $this->fetch($identifier);
@@ -57,20 +70,31 @@ class SeriesAPIRepository implements SeriesRepository
         return $series;
     }
 
-    public function create(CreateSeriesRequest $request) : string
+    public function create(CreateSeriesRequest $request): string
     {
         $response = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
         return $response->identifier;
     }
 
-    public function getAllForUser(string $user_string) : array
+    /**
+     * @param UpdateSeriesRequest $request
+     * @return void
+     * @throws xoctException
+     */
+    public function update(UpdateSeriesRequest $request): void
+    {
+        xoctRequest::root()->series($request->getIdentifier())->metadata()
+            ->put($request->getPayload()->jsonSerialize());
+    }
+
+    public function getAllForUser(string $user_string): array
     {
         if ($existing = $this->cache->get('series-' . $user_string)) {
             return $existing;
         }
         $return = array();
         try {
-            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string )));
+            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string)));
         } catch (ilException $e) {
             return [];
         }
@@ -88,15 +112,17 @@ class SeriesAPIRepository implements SeriesRepository
         return $return;
     }
 
-    public function getOrCreateOwnSeries(xoctUser $xoct_user) : xoctSeries
+    public function getOrCreateOwnSeries(xoctUser $xoct_user): xoctSeries
     {
         $xoctSeries = $this->getOwnSeries($xoct_user);
         if (is_null($xoctSeries)) {
-            $xoctSeries = new xoctSeries();
-            $xoctSeries->setTitle($this->getOwnSeriesTitle($xoct_user));
-            $xoctSeries->setAccessPolicies($this->ACLUtils->getStandardRolesACL());
-            $xoctSeries->addProducer($xoct_user, true);
-            $xoctSeries->create();
+            $metadata = $this->metadataFactory->series();
+            $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($this->getOwnSeriesTitle($xoct_user));
+            $this->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
+                $metadata,
+                $this->ACLUtils->getStandardRolesACL()->merge(
+                    $this->ACLUtils->getUserRolesACL($xoct_user))
+            )));
         }
         return $xoctSeries;
     }
@@ -111,12 +137,12 @@ class SeriesAPIRepository implements SeriesRepository
         if (empty($existing)) {
             return null;
         }
-        $xoctSeries = xoctSeries::find($existing[0]['identifier']);
+        $xoctSeries = $this->find($existing[0]['identifier']);
         $xoctSeries->addProducer($xoct_user);
         return $xoctSeries;
     }
 
-    public function getOwnSeriesTitle(xoctUser $xoct_user) : string
+    public function getOwnSeriesTitle(xoctUser $xoct_user): string
     {
         return self::OWN_SERIES_PREFIX . $xoct_user->getLogin();
     }

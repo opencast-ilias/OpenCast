@@ -237,6 +237,8 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingRepository' => $baseDir . '/src/Model/Scheduling/SchedulingRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequest' => $baseDir . '/src/Model/Series/Request/CreateSeriesRequest.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequestPayload' => $baseDir . '/src/Model/Series/Request/CreateSeriesRequestPayload.php',
+    'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesRequest' => $baseDir . '/src/Model/Series/Request/UpdateSeriesRequest.php',
+    'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesRequestPayload' => $baseDir . '/src/Model/Series/Request/UpdateSeriesRequestPayload.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\SeriesAPIRepository' => $baseDir . '/src/Model/Series/SeriesAPIRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\SeriesParser' => $baseDir . '/src/Model/Series/SeriesParser.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\SeriesRepository' => $baseDir . '/src/Model/Series/SeriesRepository.php',

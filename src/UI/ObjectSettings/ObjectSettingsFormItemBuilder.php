@@ -6,6 +6,7 @@ use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
@@ -112,6 +113,55 @@ class ObjectSettingsFormItemBuilder
 
         $inputs[self::F_MEMBER_UPLOAD] = $field_factory->checkbox($this->txt(self::F_MEMBER_UPLOAD),
             $this->txt(self::F_MEMBER_UPLOAD . '_info'));
+
+
+        return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
+            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
+                $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
+                if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
+                    $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][0];
+                    unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
+                }
+                return $vs;
+            }));
+    }
+
+    public function update(ObjectSettings $objectSettings)
+    {
+        $field_factory = $this->ui_factory->input()->field();
+        $inputs = [
+            self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE))->withValue($objectSettings->isOnline()),
+            self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue($objectSettings->getIntroductionText()),
+            self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
+                xoctUserSettings::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_LIST),
+                xoctUserSettings::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_TILES),
+            ])->withRequired(true)->withValue($objectSettings->getDefaultView()),
+            self::F_VIEW_CHANGEABLE => $field_factory->checkbox($this->txt(self::F_VIEW_CHANGEABLE),
+                $this->txt(self::F_VIEW_CHANGEABLE . '_info'))->withValue($objectSettings->isViewChangeable())
+        ];
+
+        if (xoctPermissionTemplate::count()) {
+            $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup([
+                $this->getPermissionTemplateRadioInput()
+            ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)),
+                $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'));
+        }
+
+        if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
+            $inputs[self::F_USE_ANNOTATIONS] = $field_factory->checkbox($this->txt(self::F_USE_ANNOTATIONS))->withValue($objectSettings->getUseAnnotations());
+        }
+
+        if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_DOWNLOAD)) {
+            $inputs[self::F_STREAMING_ONLY] = $field_factory->checkbox($this->txt(self::F_STREAMING_ONLY),
+                $this->txt(self::F_STREAMING_ONLY . '_info'))->withValue($objectSettings->getStreamingOnly());
+        }
+
+        $inputs[self::F_PERMISSION_PER_CLIP] = $field_factory->optionalGroup([
+            self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox($this->txt(self::F_PERMISSION_ALLOW_SET_OWN),
+                $this->txt(self::F_PERMISSION_ALLOW_SET_OWN . '_info'))->withValue($objectSettings->getPermissionAllowSetOwn())
+        ],
+            $this->txt(self::F_PERMISSION_PER_CLIP),
+            $this->txt(self::F_PERMISSION_PER_CLIP . '_info'))->withValue($objectSettings->getPermissionPerClip() ? self::F_PERMISSION_ALLOW_SET_OWN : null);
 
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))

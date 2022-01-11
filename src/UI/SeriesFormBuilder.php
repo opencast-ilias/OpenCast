@@ -8,8 +8,10 @@ use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
-use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
+use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use xoctConf;
 use xoctException;
 use xoctSeries;
@@ -47,11 +49,16 @@ class SeriesFormBuilder
      * @var ObjectSettingsFormItemBuilder
      */
     private $objectSettingsFormItemBuilder;
+    /**
+     * @var SeriesRepository
+     */
+    private $seriesRepository;
 
     public function __construct(UIFactory                     $ui_factory,
                                 Refinery                      $refinery,
                                 MDFormItemBuilder             $formItemBuilder,
                                 ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder,
+                                SeriesRepository              $seriesRepository,
                                 ilPlugin                      $plugin,
                                 Container                     $dic)
     {
@@ -61,6 +68,7 @@ class SeriesFormBuilder
         $this->plugin = $plugin;
         $this->dic = $dic;
         $this->objectSettingsFormItemBuilder = $objectSettingsFormItemBuilder;
+        $this->seriesRepository = $seriesRepository;
     }
 
 
@@ -76,6 +84,17 @@ class SeriesFormBuilder
         );
     }
 
+    public function update(string $form_action, ObjectSettings $objectSettings, xoctSeries $series): Standard
+    {
+        return $this->ui_factory->input()->container()->form()->standard(
+            $form_action,
+            [
+                'metadata' => $this->formItemBuilder->update_section($series->getMetadata()),
+                'settings' => $this->objectSettingsFormItemBuilder->update($objectSettings, $series),
+            ]
+        );
+    }
+
     /**
      * @return array
      * @throws xoctException
@@ -84,7 +103,7 @@ class SeriesFormBuilder
     {
         $existing_series = array();
         $xoctUser = xoctUser::getInstance($this->dic->user());
-        $user_series = xoctSeries::getAllForUser($xoctUser->getUserRoleName());
+        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
         foreach ($user_series as $serie) {
             $existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
         }

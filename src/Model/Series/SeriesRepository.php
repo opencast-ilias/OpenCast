@@ -4,6 +4,7 @@ namespace srag\Plugins\Opencast\Model\Series;
 
 
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
 use xoctException;
 use xoctSeries;
 use xoctUser;
@@ -26,6 +27,8 @@ interface SeriesRepository
      * @return string series identifier
      */
     public function create(CreateSeriesRequest $request) : string;
+
+    public function update(UpdateSeriesRequest $request) : void;
 
     /**
      * @return xoctSeries[]

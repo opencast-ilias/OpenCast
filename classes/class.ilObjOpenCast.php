@@ -1,5 +1,7 @@
 <?php
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
@@ -37,35 +39,19 @@ class ilObjOpenCast extends ilObjectPlugin {
 	public function doCreate() {
 	}
 
-	/**
-	 * @throws xoctException
-	 */
-	public function updateObjectFromSeries()
+	public function updateObjectFromSeries(Metadata $metadata)
 	{
 		xoctConf::setApiSettings();
-		/**
-		 * @var $objectSettings ObjectSettings
-		 */
-		$objectSettings = ObjectSettings::find($this->getId());
 		if (self::dic()->ctrl()->isAsynch()) {
 			// don't update title/description on async calls
 			return;
 		}
 
-		// catch exception: the series may already be deleted in opencast (404 exception)
-		try {
-			$series = $objectSettings->getSeries();
-		} catch (xoctException $e) {
-		    xoctLog::getInstance()->write($e->getMessage());
-			if (ilContext::hasHTML()) {
-				ilUtil::sendInfo($e->getMessage(), true);
-			}
-			return;
-		}
-
-		if ($series->getTitle() != $this->getTitle() || $series->getDescription() != $this->getDescription()) {
-			$this->setTitle($series->getTitle());
-			$this->setDescription($series->getDescription());
+		$title = $metadata->getField(MDFieldDefinition::F_TITLE)->getValue();
+		$description = $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue();
+		if ($title != $this->getTitle() || $description != $this->getDescription()) {
+			$this->setTitle($title);
+			$this->setDescription($description);
 			$this->update();
 		}
 	}

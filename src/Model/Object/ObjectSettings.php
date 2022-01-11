@@ -6,7 +6,10 @@ use ActiveRecord;
 use ilException;
 use ilObjOpenCast;
 use ilOpenCastPlugin;
+use phpDocumentor\Reflection\Types\Boolean;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use xoctConf;
 use xoctDataMapper;
 use xoctException;
@@ -60,27 +63,6 @@ class ObjectSettings extends ActiveRecord {
 		}
 
 		return false;
-	}
-
-
-    /**
-     * @return xoctSeries
-     * @throws xoctException
-     */
-	public function getSeries() {
-	    if (!$this->getSeriesIdentifier()) {
-	        return new xoctSeries();
-        }
-        /**
-         * @var $series_array xoctSeries[]
-         */
-        static $series_array;
-        if (!isset($series_array[$this->getSeriesIdentifier()])) {
-            $xoctSeries = xoctSeries::find($this->getSeriesIdentifier()) ?: new xoctSeries();
-            $series_array[$this->getSeriesIdentifier()] = $xoctSeries;
-        }
-
-        return $series_array[$this->getSeriesIdentifier()];
 	}
 
 
@@ -267,205 +249,147 @@ class ObjectSettings extends ActiveRecord {
      */
 	protected $chat_active = true;
 
-
-	/**
-	 * @return int
-	 */
-	public function getObjId() {
+	public function getObjId() : int
+	{
 		return $this->obj_id;
 	}
 
-
-	/**
-	 * @param int $obj_id
-	 */
-	public function setObjId($obj_id) {
+	public function setObjId(int $obj_id) : void
+	{
 		$this->obj_id = $obj_id;
 	}
 
-
-	/**
-	 * @return mixed
-	 */
-	public function getSeriesIdentifier() {
+	public function getSeriesIdentifier() : string
+	{
 		return $this->series_identifier;
 	}
 
-
-	/**
-	 * @param mixed $series_identifier
-	 */
-	public function setSeriesIdentifier($series_identifier) {
+	public function setSeriesIdentifier(string $series_identifier) : void
+	{
 		$this->series_identifier = $series_identifier;
 	}
 
-
-	/**
-	 * @return mixed
-	 */
-	public function getUseAnnotations() {
-		return $this->use_annotations;
+	public function getUseAnnotations() : bool
+	{
+		return (bool) $this->use_annotations;
 	}
 
 
-	/**
-	 * @param mixed $use_annotations
-	 */
-	public function setUseAnnotations($use_annotations) {
+	public function setUseAnnotations(bool $use_annotations) : void
+	{
 		$this->use_annotations = $use_annotations;
 	}
 
 
-	/**
-	 * @return mixed
-	 */
-	public function getStreamingOnly() {
-		return $this->streaming_only;
+	public function getStreamingOnly() : bool
+	{
+		return (bool) $this->streaming_only;
 	}
 
-
-	/**
-	 * @param mixed $streaming_only
-	 */
-	public function setStreamingOnly($streaming_only) {
+	public function setStreamingOnly(bool $streaming_only) : void
+	{
 		$this->streaming_only = $streaming_only;
 	}
 
 
-	/**
-	 * @return mixed
-	 */
-	public function getPermissionPerClip() {
-		return $this->permission_per_clip;
+	public function getPermissionPerClip() : bool
+	{
+		return (bool) $this->permission_per_clip;
 	}
 
 
-	/**
-	 * @param mixed $permission_per_clip
-	 */
-	public function setPermissionPerClip($permission_per_clip) {
+	public function setPermissionPerClip(bool $permission_per_clip) : void
+	{
 		$this->permission_per_clip = $permission_per_clip;
 	}
 
 
-	/**
-	 * @return mixed
-	 */
-	public function getAgreementAccepted() {
-		return $this->agreement_accepted;
+	public function getAgreementAccepted() : bool
+	{
+		return (bool) $this->agreement_accepted;
 	}
 
 
-	/**
-	 * @param mixed $agreement_accepted
-	 */
-	public function setAgreementAccepted($agreement_accepted) {
+	public function setAgreementAccepted(bool $agreement_accepted) : void
+	{
 		$this->agreement_accepted = $agreement_accepted;
 	}
 
-
-	/**
-	 * @return boolean
-	 */
-	public function isOnline() {
-		return $this->obj_online;
+	public function isOnline(): bool {
+		return (bool) $this->obj_online;
 	}
 
 
-	/**
-	 * @param boolean $obj_online
-	 */
-	public function setOnline($obj_online) {
+	public function setOnline(bool $obj_online) : void
+	{
 		$this->obj_online = $obj_online;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getIntroductionText() {
+	public function getIntroductionText() : string
+	{
 		return $this->intro_text;
 	}
 
 
-	/**
-	 * @param string $intro_text
-	 */
-	public function setIntroductionText($intro_text) {
+	public function setIntroductionText(string $intro_text) : void
+	{
 		$this->intro_text = $intro_text;
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public function getPermissionAllowSetOwn() {
-		return ($this->permission_allow_set_own && $this->getPermissionPerClip());
+	public function getPermissionAllowSetOwn() : bool
+	{
+		return (bool) ($this->permission_allow_set_own && $this->getPermissionPerClip());
 	}
 
 
-	/**
-	 * @param mixed $permission_allow_set_own
-	 */
-	public function setPermissionAllowSetOwn($permission_allow_set_own) {
+	public function setPermissionAllowSetOwn(bool $permission_allow_set_own) : void
+	{
 		$this->permission_allow_set_own = $permission_allow_set_own;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getDefaultView() {
+	public function getDefaultView() : int
+	{
 		return $this->default_view;
 	}
 
-	/**
-	 * @param int $default_view
-	 */
-	public function setDefaultView($default_view) {
+	public function setDefaultView(int $default_view) : void
+	{
 		$this->default_view = $default_view;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isViewChangeable() {
-		return $this->view_changeable;
+	public function isViewChangeable() : bool
+	{
+		return (bool) $this->view_changeable;
 	}
 
-	/**
-	 * @param bool $view_changeable
-	 */
-	public function setViewChangeable($view_changeable) {
+	public function setViewChangeable(bool $view_changeable) : void
+	{
 		$this->view_changeable = $view_changeable;
 	}
 
-
-    /**
-     * @param bool $chat_active
-     */
-    public function setChatActive($chat_active)
+    public function setChatActive(bool $chat_active) : void
     {
         $this->chat_active = $chat_active;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function isChatActive()
+    public function isChatActive() : bool
     {
-        return $this->chat_active;
+        return (bool) $this->chat_active;
     }
 
     /**
      * @throws xoctException|ilException
      */
-    public function updateAllDuplicates()
+    public function updateAllDuplicates(Metadata $metadata)
     {
+		$title = $metadata->getField(MDFieldDefinition::F_TITLE)->getValue();
+		$description = $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue();
         foreach ($this->getDuplicatesOnSystem() as $ref_id) {
             $object = new ilObjOpencast($ref_id);
-            $object->setTitle($this->getSeries()->getTitle());
-            $object->setDescription($this->getSeries()->getDescription());
+            $object->setTitle($title);
+            $object->setDescription($description);
             $object->update();
         }
     }

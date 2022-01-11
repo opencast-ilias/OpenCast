@@ -19,6 +19,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
+use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
@@ -93,6 +94,10 @@ class xoctEventGUI extends xoctGUI
      * @var Container
      */
     private $dic;
+    /**
+     * @var SeriesRepository
+     */
+    private $seriesRepository;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
                                 ObjectSettings     $objectSettings,
@@ -100,6 +105,7 @@ class xoctEventGUI extends xoctGUI
                                 EventFormBuilder   $formBuilder,
                                 WorkflowRepository $workflowRepository,
                                 ACLUtils           $ACLUtils,
+                                SeriesRepository   $seriesRepository,
                                 Container          $dic)
     {
         $this->objectSettings = $objectSettings;
@@ -110,6 +116,7 @@ class xoctEventGUI extends xoctGUI
         $this->workflowRepository = $workflowRepository;
         $this->ACLUtils = $ACLUtils;
         $this->dic = $dic;
+        $this->seriesRepository = $seriesRepository;
     }
 
 
@@ -703,37 +710,16 @@ class xoctEventGUI extends xoctGUI
      */
     public function opencaststudio()
     {
-
-        // add user to ilias producers
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        try {
-            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-            $sleep = $ilias_producers->addMember($xoctUser);
-        } catch (xoctException $e) {
-            $sleep = false;
-        }
-
-        // add user to series producers
-        /** @var xoctSeries $xoctSeries */
-        $xoctSeries = xoctSeries::find($this->objectSettings->getSeriesIdentifier());
-        if ($xoctSeries->addProducer($xoctUser)) {
-            $sleep = true;
-        }
-
-        if ($sleep) {
-            sleep(3);
-        }
-
+        $this->addCurrentUserToProducers();
         // redirect to oc studio
-        $xoctSeries = $this->objectSettings->getSeriesIdentifier();
         $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
 
         $return_link = ILIAS_HTTP_PATH . '/'
-            . self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, '', false, false);
+            . self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
 
         $studio_link = $base . '/studio'
-            . '?upload.seriesId=' . $xoctSeries
+            . '?upload.seriesId=' . $this->objectSettings->getSeriesIdentifier()
             . '&return.label=ILIAS'
             . '&return.target=' . urlencode($return_link);
         header('Location:' . $studio_link);
@@ -754,24 +740,7 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
 
-        // add user to ilias producers
-        try {
-            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-            $sleep = $ilias_producers->addMember($xoctUser);
-        } catch (xoctException $e) {
-            $sleep = false;
-        }
-
-        // add user to series producers
-        /** @var xoctSeries $xoctSeries */
-        $xoctSeries = xoctSeries::find($event->getSeriesIdentifier());
-        if ($xoctSeries->addProducer($xoctUser)) {
-            $sleep = true;
-        }
-
-        if ($sleep) {
-            sleep(3);
-        }
+        $this->addCurrentUserToProducers();
 
         // redirect
         $cutting_link = $event->publications()->getCuttingLink();
@@ -838,24 +807,7 @@ class xoctEventGUI extends xoctGUI
 
         // check access
         if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
-            // add user to ilias producers
-            try {
-                $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
-                $sleep = $ilias_producers->addMember($xoctUser);
-            } catch (xoctException $e) {
-                $sleep = false;
-            }
-
-            // add user to series producers
-            /** @var xoctSeries $xoctSeries */
-            $xoctSeries = xoctSeries::find($event->getSeriesIdentifier());
-            if ($xoctSeries->addProducer($xoctUser)) {
-                $sleep = true;
-            }
-
-            if ($sleep) {
-                sleep(3);
-            }
+            $this->addCurrentUserToProducers();
         }
 
 
@@ -1240,5 +1192,29 @@ class xoctEventGUI extends xoctGUI
             $intro_text = $intro->get();
         }
         return $intro_text;
+    }
+
+    protected function addCurrentUserToProducers() : void
+    {
+        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        // add user to ilias producers
+        try {
+            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+            $sleep = $ilias_producers->addMember($xoctUser);
+        } catch (xoctException $e) {
+            $sleep = false;
+        }
+
+        // add user to series producers
+        $xoctSeries = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+        if ($xoctSeries->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
+            $xoctSeries->update();
+            $sleep = true;
+        }
+
+        // race condition fix (opencast takes some time to actually update the ACL)
+        if ($sleep) {
+            sleep(3);
+        }
     }
 }

@@ -5,19 +5,13 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\ACL\ACL;
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
-use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
-use srag\Plugins\Opencast\Cache\CacheFactory;
+use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
-use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
-use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
@@ -152,7 +146,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 case 'xoctseriesgui':
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctSeriesGUI($this->object, $objectSettings);
+                    $xoctSeriesGUI = new xoctSeriesGUI($this->object,
+                        $this->opencast_dic->series_form_builder(),
+                        $this->opencast_dic->series_repository());
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
@@ -166,6 +162,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $this->opencast_dic->event_form_builder(),
                         $this->opencast_dic->workflow_repository(),
                         $this->opencast_dic->acl_utils(),
+                        $this->opencast_dic->series_repository(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
@@ -518,7 +515,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             }
         }
 
-        if ($objectSettings->getVideoPortalLink() && $objectSettings->getSeries()->isPublishedOnVideoPortal()) {
+        if ($objectSettings->getVideoPortalLink()
+            && $this->opencast_dic->series_repository()->find($objectSettings->getSeriesIdentifier())->isPublishedOnVideoPortal()) {
             $info->addSection(self::plugin()->translate('series_links'));
             $info->addProperty(self::plugin()->translate('series_video_portal_link', '', [xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)]), $objectSettings->getVideoPortalLink());
         }

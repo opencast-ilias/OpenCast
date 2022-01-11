@@ -284,6 +284,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingRepository' => __DIR__ . '/../..' . '/src/Model/Scheduling/SchedulingRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequest' => __DIR__ . '/../..' . '/src/Model/Series/Request/CreateSeriesRequest.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequestPayload' => __DIR__ . '/../..' . '/src/Model/Series/Request/CreateSeriesRequestPayload.php',
+        'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesRequest' => __DIR__ . '/../..' . '/src/Model/Series/Request/UpdateSeriesRequest.php',
+        'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesRequestPayload' => __DIR__ . '/../..' . '/src/Model/Series/Request/UpdateSeriesRequestPayload.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\SeriesAPIRepository' => __DIR__ . '/../..' . '/src/Model/Series/SeriesAPIRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\SeriesParser' => __DIR__ . '/../..' . '/src/Model/Series/SeriesParser.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\SeriesRepository' => __DIR__ . '/../..' . '/src/Model/Series/SeriesRepository.php',

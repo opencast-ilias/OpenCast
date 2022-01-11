@@ -229,7 +229,12 @@ class OpencastDIC
             return ilOpenCastPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
-            return new SeriesAPIRepository($c['cache'], $c['series_parser'], $c['acl_utils'], $c['md_repository']);
+            return new SeriesAPIRepository($c['cache'],
+                $c['series_parser'],
+                $c['acl_utils'],
+                $c['md_repository'],
+                $c['md_factory']
+            );
         });
         $this->container['series_parser'] = $this->container->factory(function ($c) {
             return new SeriesParser($c['acl_parser'], $c['md_parser']);
