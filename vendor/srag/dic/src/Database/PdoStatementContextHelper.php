@@ -12,23 +12,12 @@ use srag\DIC\OpenCast\Exception\DICException;
  *
  * @package srag\DIC\OpenCast\Database
  *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
+ *
  * @internal
  */
 final class PdoStatementContextHelper extends ilPDOStatement
 {
-
-    /**
-     * PdoStatementContextHelper constructor
-     *
-     * @throws DICException
-     */
-    public function __construct()
-    {
-        throw new DICException("");
-
-        parent::__construct(self::getPdoStatement($this));
-    }
-
 
     /**
      * @param ilDBStatement $stm
@@ -46,5 +35,18 @@ final class PdoStatementContextHelper extends ilPDOStatement
         }
 
         return $stm->pdo_statement;
+    }
+
+
+    /**
+     * PdoStatementContextHelper constructor
+     *
+     * @throws DICException
+     */
+    public function __construct()
+    {
+        throw new DICException("");
+
+        parent::__construct(self::getPdoStatement($this));
     }
 }

@@ -14,40 +14,16 @@ use Composer\Script\Event;
  * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  *
  * @internal
- *
- * @deprecated
  */
 final class PHP72Backport
 {
 
-    /**
-     * @var string
-     *
-     * @deprecated
-     */
     const REGEXP_EXPRESSION = "[A-Za-z0-9_\":\s\[\]\(\)]+";
-    /**
-     * @var string
-     *
-     * @deprecated
-     */
     const REGEXP_FUNCTION = "function\s*(" . self::REGEXP_NAME . ")?\s*\((" . self::REGEXP_PARAM . ")?(," . self::REGEXP_PARAM . ")*\)(\s*(\/\*)?\s*:\s*\??" . self::REGEXP_NAME . "\s*(\*\/)?)?";
-    /**
-     * @var string
-     *
-     * @deprecated
-     */
     const REGEXP_NAME = "\\\\?[A-Za-z_][A-Za-z0-9_\\\\]*";
-    /**
-     * @var string
-     *
-     * @deprecated
-     */
     const REGEXP_PARAM = "\s*(\/\*)?\s*\??\s*(\*\/)?\s*(" . self::REGEXP_NAME . ")?\s*(\*\/)?\s*&?\s*?\\$" . self::REGEXP_NAME . "(\s*=\s*" . self::REGEXP_EXPRESSION . ")?\s*";
     /**
      * @var array
-     *
-     * @deprecated
      */
     private static $exts
         = [
@@ -56,20 +32,14 @@ final class PHP72Backport
         ];
     /**
      * @var self|null
-     *
-     * @deprecated
      */
     private static $instance = null;
     /**
      * @var string
-     *
-     * @deprecated
      */
     private static $plugin_root = "";
     /**
      * @var Event
-     *
-     * @deprecated
      */
     private $event;
 
@@ -78,8 +48,6 @@ final class PHP72Backport
      * PHP72Backport constructor
      *
      * @param Event $event
-     *
-     * @deprecated
      */
     private function __construct(Event $event)
     {
@@ -91,8 +59,6 @@ final class PHP72Backport
      * @param Event $event
      *
      * @internal
-     *
-     * @deprecated
      */
     public static function PHP72Backport(Event $event)/*: void*/
     {
@@ -108,8 +74,6 @@ final class PHP72Backport
      * @param Event $event
      *
      * @return self
-     *
-     * @deprecated
      */
     private static function getInstance(Event $event) : self
     {
@@ -125,8 +89,6 @@ final class PHP72Backport
      * @param string $code
      *
      * @return string
-     *
-     * @deprecated
      */
     protected function convertPHP72To70(string $code) : string
     {
@@ -147,7 +109,7 @@ final class PHP72Backport
             $function = preg_replace("/([(,]\s*)(object)(\s*\\$" . self::REGEXP_NAME . ")/", '$1/*$2*/$3', $function);
 
             // ?type $param
-            $function = preg_replace("/([(,]\s*)(\?\s*" . self::REGEXP_NAME . ")(\s*&?\s*?\\$" . self::REGEXP_NAME . ")/", '$1/*$2*/$3', $function);
+            $function = preg_replace("/([(,]\s*)(\?\s*" . self::REGEXP_NAME . ")(\s*\\$" . self::REGEXP_NAME . ")/", '$1/*$2*/$3', $function);
 
             return $function;
         }, $code);
@@ -162,12 +124,10 @@ final class PHP72Backport
 
 
     /**
-     * @deprecated
+     *
      */
     private function doPHP72Backport()/*: void*/
     {
-        echo "PHP72Backport is deprecated and will be removed!\n";
-
         $files = [];
 
         $this->getFiles(self::$plugin_root, $files);
@@ -185,8 +145,6 @@ final class PHP72Backport
     /**
      * @param string $folder
      * @param array  $files
-     *
-     * @deprecated
      */
     private function getFiles(string $folder, array &$files = [])/*: void*/
     {

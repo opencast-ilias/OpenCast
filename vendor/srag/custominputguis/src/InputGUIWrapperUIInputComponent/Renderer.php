@@ -4,44 +4,82 @@ namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
 
 use ilHiddenInputGUI;
 use ILIAS\UI\Component\Component;
+use ILIAS\UI\Component\Input\Field\Input as InputInterface;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ILIAS\UI\Implementation\Render\Template;
 use ILIAS\UI\Renderer as RendererInterface;
+use srag\DIC\OpenCast\DICStatic;
 
-/**
- * Class Renderer
- *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
- */
-class Renderer extends AbstractRenderer
-{
-
+if (DICStatic::version()->is6()) {
     /**
-     * @inheritDoc
+     * Class Renderer
+     *
+     * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+     *
+     * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
      */
-    public function render(Component $component, RendererInterface $default_renderer) : string
+    class Renderer extends AbstractRenderer
     {
-        if ($component->getInput() instanceof ilHiddenInputGUI) {
-            return "";
-        }
 
-        $input_tpl = $this->getTemplate("input.html", true, true);
+        /**
+         * @inheritDoc
+         */
+        public function render(Component $component, RendererInterface $default_renderer) : string
+        {
+            if ($component->getInput() instanceof ilHiddenInputGUI) {
+                return "";
+            }
 
-        if (self::version()->is7()) {
-            $html = $this->wrapInFormContext($component, $this->renderInputField($input_tpl, $component, "", $default_renderer));
-        } else {
+            $input_tpl = $this->getTemplate("input.html", true, true);
+
             $html = $this->renderInputFieldWithContext($default_renderer, $input_tpl, $component, null, null);
+
+            return $html;
         }
 
-        return $html;
+
+        /**
+         * @inheritDoc
+         */
+        protected function renderInputField(Template $tpl, Input $input, $id, RendererInterface $default_renderer) : string
+        {
+            return $this->renderInput($tpl, $input);
+        }
     }
-
-
+} else {
     /**
-     * @inheritDoc
+     * Class Renderer
+     *
+     * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+     *
+     * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
      */
-    protected function renderInputField(Template $tpl, Input $input, $id, RendererInterface $default_renderer) : string
+    class Renderer extends AbstractRenderer
     {
-        return $this->renderInput($tpl, $input);
+
+        /**
+         * @inheritDoc
+         */
+        protected function renderNoneGroupInput(InputInterface $input, RendererInterface $default_renderer) : string
+        {
+            if ($input->getInput() instanceof ilHiddenInputGUI) {
+                return "";
+            }
+
+            $input_tpl = $this->getTemplate("input.html", true, true);
+
+            $html = $this->renderInputFieldWithContext($input_tpl, $input, null, null);
+
+            return $html;
+        }
+
+
+        /**
+         * @inheritDoc
+         */
+        protected function renderInputField(Template $tpl, Input $input, $id) : string
+        {
+            return $this->renderInput($tpl, $input);
+        }
     }
 }

@@ -1,7 +1,5 @@
 ### CheckboxInputGUI.php
-
-TODO:
+TODO: 
 
 #### Changes:
-
 - Fix ilCheckboxInputGUI not implements ilTableFilterItem

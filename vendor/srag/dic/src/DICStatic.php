@@ -19,6 +19,8 @@ use srag\DIC\OpenCast\Version\VersionInterface;
  * Class DICStatic
  *
  * @package srag\DIC\OpenCast
+ *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 final class DICStatic implements DICStaticInterface
 {
@@ -39,15 +41,6 @@ final class DICStatic implements DICStaticInterface
      * @var VersionInterface|null
      */
     private static $version = null;
-
-
-    /**
-     * DICStatic constructor
-     */
-    private function __construct()
-    {
-
-    }
 
 
     /**
@@ -143,5 +136,14 @@ final class DICStatic implements DICStaticInterface
         }
 
         return self::$version;
+    }
+
+
+    /**
+     * DICStatic constructor
+     */
+    private function __construct()
+    {
+
     }
 }

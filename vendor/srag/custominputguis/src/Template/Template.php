@@ -8,6 +8,8 @@ use ilTemplate;
  * Class Template
  *
  * @package srag\CustomInputGUIs\OpenCast\Template
+ *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 class Template extends ilTemplate
 {
@@ -46,7 +48,7 @@ class Template extends ilTemplate
      * @param string $key
      * @param mixed  $value
      */
-    public function setVariableEscaped(string $key, $value)/* : void*/
+    public function setVariableEscaped(string $key, $value)/*:void*/
     {
         $this->setVariable($key, htmlspecialchars($value));
     }

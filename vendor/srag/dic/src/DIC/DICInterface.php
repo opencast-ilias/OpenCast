@@ -23,7 +23,6 @@ use ilFavouritesDBRepository;
 use ilGlobalTemplateInterface;
 use ilHelpGUI;
 use ILIAS;
-use ILIAS\Data\Factory as DataFactory;
 use ILIAS\DI\BackgroundTaskServices;
 use ILIAS\DI\Container;
 use ILIAS\DI\HTTPServices;
@@ -74,6 +73,8 @@ use srag\DIC\OpenCast\Exception\DICException;
  * Interface DICInterface
  *
  * @package srag\DIC\OpenCast\DIC
+ *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 interface DICInterface
 {
@@ -189,12 +190,6 @@ interface DICInterface
 
 
     /**
-     * @return DataFactory
-     */
-    public function data() : DataFactory;
-
-
-    /**
      * @return DatabaseInterface
      *
      * @throws DICException DatabaseDetector only supports ilDBPdoInterface!
@@ -206,12 +201,6 @@ interface DICInterface
      * @return ilDBInterface
      */
     public function databaseCore() : ilDBInterface;
-
-
-    /**
-     * @return Container
-     */
-    public function &dic() : Container;
 
 
     /**
@@ -355,8 +344,7 @@ interface DICInterface
      *
      * @deprecated Please use `self::dic()->ui()->mainTemplate()`
      */
-    public function mainTemplate();
-
+    public function mainTemplate();/*: ilGlobalTemplateInterface*/
 
     /**
      * @return ilNewsService
@@ -383,12 +371,6 @@ interface DICInterface
 
 
     /**
-     * @return ilPluginAdmin
-     */
-    public function pluginAdmin() : ilPluginAdmin;
-
-
-    /**
      * @return ilAsqFactory
      *
      * @throws DICException ilAsqFactory not exists in ILIAS 5.4 or below!
@@ -396,6 +378,12 @@ interface DICInterface
      * @since ILIAS 6
      */
     public function question() : ilAsqFactory;
+
+
+    /**
+     * @return ilPluginAdmin
+     */
+    public function pluginAdmin() : ilPluginAdmin;
 
 
     /**
@@ -538,4 +526,10 @@ interface DICInterface
      * @return ilObjUser
      */
     public function user() : ilObjUser;
+
+
+    /**
+     * @return Container
+     */
+    public function &dic() : Container;
 }

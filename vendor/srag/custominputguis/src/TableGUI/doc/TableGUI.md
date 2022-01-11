@@ -1,5 +1,4 @@
 ### TableGUI
 
 ####
-
-- https://github.com/fluxapps/SrAutoMails/blob/main/src/Rule/RulesTableGUI.php
+- https://github.com/studer-raimann/SrAutoMails/blob/master/src/Rule/RulesTableGUI.php

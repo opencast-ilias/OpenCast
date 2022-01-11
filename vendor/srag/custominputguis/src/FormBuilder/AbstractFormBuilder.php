@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use ilFormPropertyDispatchGUI;
 use ILIAS\UI\Component\Input\Container\Form\Form;
+use ILIAS\UI\Component\Input\Field\DependantGroupProviding;
 use ILIAS\UI\Component\Input\Field\OptionalGroup;
 use ILIAS\UI\Component\Input\Field\Radio as RadioInterface;
 use ILIAS\UI\Component\Input\Field\Section;
@@ -22,6 +23,8 @@ use Throwable;
  * Class AbstractFormBuilder
  *
  * @package      srag\CustomInputGUIs\OpenCast\FormBuilder
+ *
+ * @author       studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  *
  * @ilCtrl_Calls srag\CustomInputGUIs\OpenCast\FormBuilder\AbstractFormBuilder: ilFormPropertyDispatchGUI
  */
@@ -145,8 +148,6 @@ abstract class AbstractFormBuilder implements FormBuilder
      */
     protected function buildForm() : Form
     {
-        self::dic()->language()->loadLanguageModule("form");
-
         $form = self::dic()->ui()->factory()->input()->container()->form()->standard($this->getAction(), [
             "form" => self::dic()->ui()->factory()->input()->field()->section($this->getFields(), $this->getTitle())
         ]);
@@ -282,6 +283,32 @@ abstract class AbstractFormBuilder implements FormBuilder
                             Closure::bind(function (array $inputs2)/* : void*/ {
                                 $this->inputs = $inputs2;
                             }, $field, Group::class)($inputs2);
+                        }
+                        continue;
+                    }
+                    if ($field instanceof DependantGroupProviding && !empty($field->getDependantGroup())) {
+                        $inputs2 = $field->getDependantGroup()->getInputs();
+                        if (!empty($inputs2)) {
+                            if (isset($data[$key]["value"])) {
+                                try {
+                                    $inputs[$key] = $field = $field->withValue($data[$key]["value"]);
+                                } catch (Throwable $ex) {
+
+                                }
+                            }
+                            $data2 = (isset($data[$key]["group_values"]) ? $data[$key]["group_values"] : $data[$key])["dependant_group"];
+                            foreach ($inputs2 as $key2 => $field2) {
+                                if (isset($data2[$key2])) {
+                                    try {
+                                        $inputs2[$key2] = $field2 = $field2->withValue($data2[$key2]);
+                                    } catch (Throwable $ex) {
+
+                                    }
+                                }
+                            }
+                            Closure::bind(function (array $inputs2)/* : void*/ {
+                                $this->inputs = $inputs2;
+                            }, $field->getDependantGroup(), Group::class)($inputs2);
                         }
                         continue;
                     }

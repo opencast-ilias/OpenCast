@@ -12,6 +12,8 @@ use srag\DIC\OpenCast\DICTrait;
  * Class AbstractLoaderDetector
  *
  * @package srag\DIC\OpenCast\Loader
+ *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 abstract class AbstractLoaderDetector implements Loader
 {
@@ -38,17 +40,17 @@ abstract class AbstractLoaderDetector implements Loader
     /**
      * @inheritDoc
      */
-    public function getRendererFactoryFor(Component $component) : RendererFactory
+    public function getRendererFor(Component $component, array $contexts) : ComponentRenderer
     {
-        return $this->loader->getRendererFactoryFor($component);
+        return $this->loader->getRendererFor($component, $contexts);
     }
 
 
     /**
      * @inheritDoc
      */
-    public function getRendererFor(Component $component, array $contexts) : ComponentRenderer
+    public function getRendererFactoryFor(Component $component) : RendererFactory
     {
-        return $this->loader->getRendererFor($component, $contexts);
+        return $this->loader->getRendererFactoryFor($component);
     }
 }

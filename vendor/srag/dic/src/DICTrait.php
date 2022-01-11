@@ -12,6 +12,8 @@ use srag\DIC\OpenCast\Version\VersionInterface;
  * Trait DICTrait
  *
  * @package srag\DIC\OpenCast
+ *
+ * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 trait DICTrait
 {

@@ -4,46 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1a4dc0ee01e2d7eb4f30a2e1fdfc51e",
+    "content-hash": "5e03a9e754e2057483263621b79a5768",
     "packages": [
         {
             "name": "srag/custominputguis",
-            "version": "0.43.2",
+            "version": "v0.38.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fluxapps/CustomInputGUIs.git",
-                "reference": "547ac0aaf7056848aac936b965e8847deb1cf415"
+                "url": "https://github.com/studer-raimann/CustomInputGUIs.git",
+                "reference": "76dc3588b2a41f14c62c12a5af57f077c75f7555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fluxapps/CustomInputGUIs/zipball/547ac0aaf7056848aac936b965e8847deb1cf415",
-                "reference": "547ac0aaf7056848aac936b965e8847deb1cf415",
+                "url": "https://api.github.com/repos/studer-raimann/CustomInputGUIs/zipball/76dc3588b2a41f14c62c12a5af57f077c75f7555",
+                "reference": "76dc3588b2a41f14c62c12a5af57f077c75f7555",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2",
+                "php": ">=7.0",
                 "srag/dic": ">=0.1.0"
             },
-            "require-dev": {
-                "srag/generateplugininfoshelper": ">=0.1.0"
-            },
             "type": "library",
-            "extra": {
-                "ilias_plugin": {
-                    "ilias_min_version": "6.0",
-                    "ilias_max_version": "7.999"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "srag\\CustomInputGUIs\\": "src/"
-                },
-                "classmap": [
-                    "src/MultiSelectSearchNewInputGUI/class.ObjectChildrenAjaxAutoCompleteCtrl.php",
-                    "src/MultiSelectSearchNewInputGUI/class.ObjectsAjaxAutoCompleteCtrl.php",
-                    "src/MultiSelectSearchNewInputGUI/class.OrgUnitAjaxAutoCompleteCtrl.php",
-                    "src/MultiSelectSearchNewInputGUI/class.UsersAjaxAutoCompleteCtrl.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -51,14 +36,14 @@
             ],
             "authors": [
                 {
-                    "name": "fluxlabs",
-                    "email": "support@fluxlabs.ch",
-                    "homepage": "https://fluxlabs.ch",
+                    "name": "studer + raimann ag - Team Custom 1",
+                    "email": "support-custom1@studer-raimann.ch",
+                    "homepage": "https://studer-raimann.ch",
                     "role": "Developer"
                 }
             ],
             "description": "Custom Input-GUI's",
-            "homepage": "https://github.com/fluxapps/CustomInputGUIs",
+            "homepage": "https://github.com/studer-raimann/CustomInputGUIs",
             "keywords": [
                 "ILIAS",
                 "PropertyForm",
@@ -66,40 +51,26 @@
                 "input",
                 "table"
             ],
-            "support": {
-                "source": "https://github.com/fluxapps/CustomInputGUIs/tree/v0.43.2"
-            },
-            "time": "2021-08-31T08:50:12+00:00"
+            "time": "2020-08-07T07:15:06+00:00"
         },
         {
             "name": "srag/dic",
-            "version": "0.32.4",
+            "version": "v0.25.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fluxapps/DIC.git",
-                "reference": "92b966978ca7327502a65fc9ede718b2f3126bda"
+                "url": "https://github.com/studer-raimann/DIC.git",
+                "reference": "022cb0b92b003096380055a450597a5dbdbbe831"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fluxapps/DIC/zipball/92b966978ca7327502a65fc9ede718b2f3126bda",
-                "reference": "92b966978ca7327502a65fc9ede718b2f3126bda",
+                "url": "https://api.github.com/repos/studer-raimann/DIC/zipball/022cb0b92b003096380055a450597a5dbdbbe831",
+                "reference": "022cb0b92b003096380055a450597a5dbdbbe831",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0"
             },
-            "require-dev": {
-                "srag/generateplugininfoshelper": ">=0.1.0"
-            },
             "type": "library",
-            "extra": {
-                "ilias_plugin": {
-                    "ilias_min_version": "5.4.0",
-                    "ilias_max_version": "6.999"
-                },
-                "generate_plugin_readme_template": "ILIAS_LIBRARY",
-                "long_description_template": "src/LONG_DESCRIPTION.md"
-            },
             "autoload": {
                 "psr-4": {
                     "srag\\DIC\\": "src/"
@@ -111,50 +82,40 @@
             ],
             "authors": [
                 {
-                    "name": "fluxlabs",
-                    "email": "support@fluxlabs.ch",
-                    "homepage": "https://fluxlabs.ch",
+                    "name": "studer + raimann ag - Team Custom 1",
+                    "email": "support-custom1@studer-raimann.ch",
+                    "homepage": "https://studer-raimann.ch",
                     "role": "Developer"
                 }
             ],
             "description": "Use all ILIAS globals in your class",
-            "homepage": "https://github.com/fluxapps/DIC",
+            "homepage": "https://github.com/studer-raimann/DIC",
             "keywords": [
                 "ILIAS",
                 "dic",
                 "globals",
                 "trait"
             ],
-            "support": {
-                "source": "https://github.com/fluxapps/DIC/tree/v0.32.4"
-            },
-            "time": "2021-06-28T07:03:18+00:00"
+            "time": "2020-06-09T05:30:37+00:00"
         },
         {
             "name": "srag/librariesnamespacechanger",
-            "version": "0.15.0",
+            "version": "v0.10.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fluxapps/LibrariesNamespaceChanger.git",
-                "reference": "37b73f814b319a9a05664df994423c412e2b52f3"
+                "url": "https://github.com/studer-raimann/LibrariesNamespaceChanger.git",
+                "reference": "8356263f5cb8d73ec05afa88712794fb0781711d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fluxapps/LibrariesNamespaceChanger/zipball/37b73f814b319a9a05664df994423c412e2b52f3",
-                "reference": "37b73f814b319a9a05664df994423c412e2b52f3",
+                "url": "https://api.github.com/repos/studer-raimann/LibrariesNamespaceChanger/zipball/8356263f5cb8d73ec05afa88712794fb0781711d",
+                "reference": "8356263f5cb8d73ec05afa88712794fb0781711d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.0"
             },
-            "require-dev": {
-                "srag/generateplugininfoshelper": ">=0.1.0"
-            },
             "type": "library",
-            "extra": {
-                "generate_plugin_readme_template": "SRAG_LIBRARY",
-                "long_description_template": "src/LONG_DESCRIPTION.md"
-            },
             "autoload": {
                 "psr-4": {
                     "srag\\LibrariesNamespaceChanger\\": "src/"
@@ -175,15 +136,10 @@
             "description": "Change namespace of libraries to plugin namespace",
             "homepage": "https://github.com/studer-raimann/LibrariesNamespaceChanger",
             "keywords": [
-                "changer",
-                "libraries",
-                "namespace"
+                "ILIAS",
+                "libraries"
             ],
-            "support": {
-                "issues": "https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_LNAMESPACECHANGER",
-                "source": "https://github.com/fluxapps/LibrariesNamespaceChanger/tree/v0.15.0"
-            },
-            "time": "2021-01-25T06:48:05+00:00"
+            "time": "2020-08-05T12:50:30+00:00"
         }
     ],
     "packages-dev": [],
@@ -196,5 +152,5 @@
         "php": ">=7.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "1.1.0"
 }
