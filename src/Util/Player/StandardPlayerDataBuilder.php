@@ -5,6 +5,7 @@ namespace srag\Plugins\Opencast\Util\Player;
 use xoctMedia;
 use xoctException;
 use xoctConf;
+use xoctPublicationMetadata;
 use xoctSecureLink;
 use xoctEvent;
 use xoctAttachment;
@@ -19,15 +20,25 @@ use DateTimeZone;
  */
 class StandardPlayerDataBuilder extends PlayerDataBuilder
 {
+    private static $mimetype_mapping = [
+        'application/x-mpegURL' => 'hls',
+        'application/dash+xml' => 'dash',
+        'video/mp4' => 'mp4'
+    ];
+
+    private static $role_mapping = [
+        xoctPublicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
+        xoctPublicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
+    ];
+
     /**
      * @return array
      * @throws xoctException
      */
     public function buildStreamingData() : array
     {
-        $media = $this->event->publications()->getPlayerPublications();
-        $media = array_values(array_filter($media, function (xoctMedia $medium) {
-            return strpos($medium->getMediatype(), xoctMedia::MEDIA_TYPE_VIDEO) !== false;
+        $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (xoctMedia $medium) {
+            return in_array($medium->getMediatype(), array_keys(self::$mimetype_mapping));
         }));
 
         if (empty($media)) {
@@ -50,7 +61,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param array $media
+     * @param xoctMedia[] $media
      * @return array
      * @throws xoctException
      */
@@ -58,37 +69,27 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     {
         $duration = 0;
         $streams = [];
-        $presenters = [];
-        $presentations = [];
+        $sources = [
+            xoctPublicationMetadata::ROLE_PRESENTER => [],
+            xoctPublicationMetadata::ROLE_PRESENTATION => []
+        ];
 
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
-            $source = $this->buildSource($medium, $duration);
-            if ($medium->getRole() == xoctMedia::ROLE_PRESENTATION) {
-                $presentations[$medium->getHeight()] = $source;
-            } else {
-                $presenters[$medium->getHeight()] = $source;
+            $source_type = self::$mimetype_mapping[$medium->getMediatype()];
+            if (!is_array($sources[$medium->getRole()][$source_type])) {
+                $sources[$medium->getRole()][$source_type] = [];
             }
+            $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
         }
 
-        if (count($presenters) > 0) {
-            $streams[] = [
-                "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                "content" => self::ROLE_MASTER,
-                "sources" => [
-                    "mp4" => array_values($presenters)
-                ],
-            ];
-        }
-        
-        if (count($presentations) > 0) {
-            $streams[] = [
-                "type" => xoctMedia::MEDIA_TYPE_VIDEO,
-                "content" => self::ROLE_SLAVE,
-                "sources" => [
-                    "mp4" => array_values($presentations)
-                ],
-            ];
+        foreach ($sources as $role => $source) {
+            if (!empty($source)) {
+                $streams[] = [
+                    "content" => self::$role_mapping[$role],
+                    "sources" => $source
+                ];
+            }
         }
 
         return array($duration, $streams);

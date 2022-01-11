@@ -297,7 +297,7 @@ class MetadataField extends APIObject
      */
     public function getValue()
     {
-        return $this->value;
+        return is_string($this->value) ? strip_tags($this->value) : $this->value;
     }
 
 

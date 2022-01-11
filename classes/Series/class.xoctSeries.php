@@ -225,7 +225,9 @@ class xoctSeries extends APIObject {
 			$acls[] = $acl->__toStdClass();
 		}
 		$array['acl'] = json_encode($acls);
-		$array['theme'] = $this->getTheme();
+        if ($this->getTheme()) {
+            $array['theme'] = $this->getTheme();
+        }
 
 		$data = json_decode(xoctRequest::root()->series()->post($array));
 		sleep(1);
@@ -424,7 +426,7 @@ class xoctSeries extends APIObject {
 	/**
 	 * @var int
 	 */
-	protected $theme = 1234;
+	protected $theme;
 
 
 	/**

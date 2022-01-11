@@ -1,10 +1,12 @@
 # Change Log
 
 ## [3.7.3]
-- Change: use paella player tag 6.5.5 instead of develop branch
+- Feature/Improvement: support fetching streaming urls from publications instead of building them half-statically
+- Change/Fix: stop setting 1234 as default theme when creating a series (no theme is set anymore) 
 
 ## [3.7.2]
 - Fix/Improvement: prevent multiple loading of metadata, improving page component performance
+- Change: use paella player tag 6.5.5 instead of develop branch
 
 ## [3.7.1]
 - Fix: fixed player bug by using paella player v6.5.5

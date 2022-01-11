@@ -20,8 +20,8 @@ class PlayerDataBuilderFactory
         if ($event->isLiveEvent()) {
             return new LivePlayerDataBuilder($event);
         }
-        if (xoctConf::getConfig(xoctConf::F_USE_STREAMING)) {
-            return new StreamingPlayerDataBuilder($event);
+        if (xoctConf::getConfig(xoctConf::F_USE_GENERATED_STREAMING_URLS)) {
+            return new SelfGeneratedURLPlayerDataBuilder($event);
         }
         return new StandardPlayerDataBuilder($event);
     }

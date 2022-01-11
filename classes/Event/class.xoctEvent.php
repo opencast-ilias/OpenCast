@@ -366,6 +366,7 @@ class xoctEvent extends APIObject {
 	public function update() {
 		// Metadata
 		$this->updateMetadataFromFields($this->isScheduled());
+		$this->getMetadata()->setFlavor(Metadata::FLAVOR_DUBLINCORE_EPISODES);
 		$this->getMetadata()->removeField('identifier');
 		$this->getMetadata()->removeField('isPartOf');
 		$this->getMetadata()->removeField('createdBy'); // can't be updated at the moment
@@ -921,7 +922,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getDescription() {
-		return $this->description;
+		return strip_tags($this->description);
 	}
 
 
@@ -987,7 +988,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getLocation() {
-		return $this->location;
+		return strip_tags($this->location);
 	}
 
 
@@ -1003,7 +1004,7 @@ class xoctEvent extends APIObject {
 	 * @return String
 	 */
 	public function getPresenter() {
-		return $this->presenter;
+		return strip_tags($this->presenter);
 	}
 
 
@@ -1089,7 +1090,7 @@ class xoctEvent extends APIObject {
 	 * @return string
 	 */
 	public function getTitle() {
-		return $this->title;
+		return strip_tags($this->title);
 	}
 
 
