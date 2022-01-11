@@ -1,5 +1,8 @@
 # Change Log
 
+## [3.7.4]
+- Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series"
+
 ## [3.7.3]
 - Feature/Improvement: support fetching streaming urls from publications instead of building them half-statically
 - Change/Fix: stop setting 1234 as default theme when creating a series (no theme is set anymore) 
