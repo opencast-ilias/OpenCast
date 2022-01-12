@@ -51,15 +51,21 @@ class xoctSeriesGUI extends xoctGUI
      * @var SeriesRepository
      */
     private $seriesRepository;
+    /**
+     * @var SeriesWorkflowParameterRepository
+     */
+    private $seriesWorkflowParameterRepository;
 
-    public function __construct(ilObjOpenCast     $object,
-                                SeriesFormBuilder $seriesFormBuilder,
-                                SeriesRepository  $seriesRepository)
+    public function __construct(ilObjOpenCast                     $object,
+                                SeriesFormBuilder                 $seriesFormBuilder,
+                                SeriesRepository                  $seriesRepository,
+                                SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
         $this->seriesRepository = $seriesRepository;
+        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
     }
 
 
@@ -184,13 +190,14 @@ class xoctSeriesGUI extends xoctGUI
         self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
     }
 
-
     /**
+     * @return void
      * @throws DICException
+     * @throws ilException
      */
     protected function editWorkflowParameters()
     {
-        SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($this->getObjId());
+        $this->seriesWorkflowParameterRepository->syncAvailableParameters($this->getObjId());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
         }
