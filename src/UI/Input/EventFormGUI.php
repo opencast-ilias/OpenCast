@@ -27,12 +27,12 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
+use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoct;
 use xoctConf;
 use xoctEventGUI;
 use xoctException;
-use xoctSeries;
 use xoctUploadFile;
 use xoctUser;
 use ilCheckboxInputGUI;
@@ -682,7 +682,7 @@ class EventFormGUI extends ilPropertyFormGUI
         // fetch early, because acls will be refreshed
         $own_series = $this->series_repository->getOwnSeries($xoct_user);
         $series_options = [];
-        foreach (xoctSeries::getAllForUser($xoct_user->getUserRoleName()) as $series) {
+        foreach (Series::getAllForUser($xoct_user->getUserRoleName()) as $series) {
             $series_options[$series->getIdentifier()] = $series->getTitle() . ' (...' . substr($series->getIdentifier(),
                     -4, 4) . ')';
         }

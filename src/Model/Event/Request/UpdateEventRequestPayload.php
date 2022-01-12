@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 class UpdateEventRequestPayload implements JsonSerializable
 {
     /**
-     * @var Metadata
+     * @var ?Metadata
      */
     protected $metadata;
     /**
@@ -27,7 +27,7 @@ class UpdateEventRequestPayload implements JsonSerializable
      */
     protected $processing;
 
-    public function __construct(Metadata    $metadata,
+    public function __construct(?Metadata   $metadata,
                                 ?ACL        $acl = null,
                                 ?Scheduling $scheduling = null,
                                 ?Processing $processing = null)
@@ -41,9 +41,10 @@ class UpdateEventRequestPayload implements JsonSerializable
 
     public function jsonSerialize()
     {
-        $data = [
-            'metadata' => json_encode([$this->metadata->jsonSerialize()]),
-        ];
+        $data = [];
+        if (!is_null($this->metadata)) {
+            $data['metadata'] = json_encode([$this->metadata->jsonSerialize()]);
+        }
         if (!is_null($this->acl)) {
             $data['acl'] = json_encode($this->acl);
         }

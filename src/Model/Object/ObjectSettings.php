@@ -6,15 +6,12 @@ use ActiveRecord;
 use ilException;
 use ilObjOpenCast;
 use ilOpenCastPlugin;
-use phpDocumentor\Reflection\Types\Boolean;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use xoctConf;
-use xoctDataMapper;
 use xoctException;
 use xoctIVTGroup;
-use xoctSeries;
 use xoctUserSettings;
 
 /**

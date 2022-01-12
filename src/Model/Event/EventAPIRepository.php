@@ -7,7 +7,6 @@ use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
 use srag\Plugins\Opencast\Model\ACL\ACLRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
-use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
@@ -220,7 +219,7 @@ class EventAPIRepository implements EventRepository
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 
-    public function updateACL(UpdateEventACLRequest $request): void
+    public function updateACL(UpdateEventRequest $request): void
     {
         xoctRequest::root()->events($request->getIdentifier())
             ->acl()->post($request->getPayload()->jsonSerialize());

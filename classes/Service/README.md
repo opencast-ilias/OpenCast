@@ -32,7 +32,7 @@ The SeriesAPI always handles both, the ILIAS object and the Opencast series and 
 
 *Response*:
 
-If no exception is thrown, the series was created successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+If no exception is thrown, the series was created successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
@@ -48,7 +48,7 @@ Create a series with a few options in parent directory with reference id 83 and 
 
 *Response*:
 
-An object of type *ObjectSettings*. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+An object of type *ObjectSettings*. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
@@ -74,7 +74,7 @@ An object of type *ObjectSettings*. The *ObjectSettings* object contains metadat
 
 *Response*:
 
-If no exception is thrown, the object was updated successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+If no exception is thrown, the object was updated successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*: 
 

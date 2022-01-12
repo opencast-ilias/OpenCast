@@ -209,6 +209,7 @@ class OpencastDIC
                 $this->dic->refinery(),
                 $c['md_form_item_builder_series'],
                 $c['object_settings_form_item_builder'],
+                $c['series_repository'],
                 $c['plugin'],
                 $this->dic
             );
@@ -237,7 +238,7 @@ class OpencastDIC
             );
         });
         $this->container['series_parser'] = $this->container->factory(function ($c) {
-            return new SeriesParser($c['acl_parser'], $c['md_parser']);
+            return new SeriesParser($c['acl_parser']);
         });
         $this->container['acl_parser'] = $this->container->factory(function ($c) {
             return new ACLParser();

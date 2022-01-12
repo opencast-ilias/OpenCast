@@ -19,6 +19,8 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
@@ -1225,9 +1227,10 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add user to series producers
-        $xoctSeries = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-        if ($xoctSeries->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
-            $xoctSeries->update();
+        $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+        if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
+            $this->seriesRepository->update(new UpdateSeriesRequest($series->getIdentifier(),
+                new UpdateSeriesRequestPayload(null, $series->getAccessPolicies())));
             $sleep = true;
         }
 

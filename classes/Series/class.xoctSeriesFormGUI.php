@@ -3,6 +3,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Series\Series;
 
 /**
  * Class xoctSeriesFormGUI
@@ -45,7 +46,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 	const F_CHAT_ACTIVE = 'chat_active';
 
 	/**
-	 * @var  xoctSeries
+	 * @var  Series
 	 */
 	protected $object;
 	/**
@@ -107,7 +108,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
                 $existing_identifier = new ilSelectInputGUI($this->txt(self::F_EXISTING_IDENTIFIER), self::F_EXISTING_IDENTIFIER);
                 $existing_series = array();
-                $user_series = xoctSeries::getAllForUser($xoctUser->getUserRoleName());
+                $user_series = Series::getAllForUser($xoctUser->getUserRoleName());
                 foreach ($user_series as $serie) {
                     $existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), - 4, 4) . ')';
                 }
@@ -482,13 +483,13 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * @var xoctSeries
+	 * @var Series
 	 */
 	protected $series;
 
 
 	/**
-	 * @return xoctSeries
+	 * @return Series
 	 */
 	public function getSeries() {
 		return $this->series;
@@ -496,7 +497,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 
 	/**
-	 * @param xoctSeries $series
+	 * @param Series $series
 	 */
 	public function setSeries($series) {
 		$this->series = $series;

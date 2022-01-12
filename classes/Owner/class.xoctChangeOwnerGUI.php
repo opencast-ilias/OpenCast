@@ -4,8 +4,8 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
-use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
-use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequestPayload;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequestPayload;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
@@ -148,9 +148,9 @@ class xoctChangeOwnerGUI extends xoctGUI
         $this->event->setAcl(
             $this->ACLUtils->changeOwner(
                 $this->event->getAcl(), xoctUser::getInstance($user_id)));
-        $this->event_repository->updateACL(new UpdateEventACLRequest(
+        $this->event_repository->updateACL(new UpdateEventRequest(
             $this->event->getIdentifier(),
-            new UpdateEventACLRequestPayload($this->event->getAcl())
+            new UpdateEventRequestPayload(null, $this->event->getAcl())
         ));
     }
 
@@ -160,9 +160,9 @@ class xoctChangeOwnerGUI extends xoctGUI
     protected function removeOwner()
     {
         $this->event->setAcl($this->ACLUtils->removeOwnerFromACL($this->event->getAcl()));
-        $this->event_repository->updateACL(new UpdateEventACLRequest(
+        $this->event_repository->updateACL(new UpdateEventRequest(
             $this->event->getIdentifier(),
-            new UpdateEventACLRequestPayload($this->event->getAcl())
+            new UpdateEventRequestPayload(null, $this->event->getAcl())
         ));
     }
 

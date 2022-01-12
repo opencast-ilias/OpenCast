@@ -443,7 +443,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         /**
          * @var $objectSettings ObjectSettings
-         * @var $xoctSeries   xoctSeries
          */
         $objectSettings = ObjectSettings::find($this->obj_id);
         if ($this->ilias_dic->ctrl()->isAsynch()) {

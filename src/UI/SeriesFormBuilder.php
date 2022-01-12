@@ -8,13 +8,14 @@ use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use xoctConf;
 use xoctException;
-use xoctSeries;
 use xoctUser;
 
 class SeriesFormBuilder
@@ -84,7 +85,7 @@ class SeriesFormBuilder
         );
     }
 
-    public function update(string $form_action, ObjectSettings $objectSettings, xoctSeries $series): Standard
+    public function update(string $form_action, ObjectSettings $objectSettings, Series $series): Standard
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
@@ -104,8 +105,8 @@ class SeriesFormBuilder
         $existing_series = array();
         $xoctUser = xoctUser::getInstance($this->dic->user());
         $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
-        foreach ($user_series as $serie) {
-            $existing_series[$serie->getIdentifier()] = $serie->getTitle() . ' (...' . substr($serie->getIdentifier(), -4, 4) . ')';
+        foreach ($user_series as $series) {
+            $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
         }
         array_multisort($existing_series);
         return $existing_series;

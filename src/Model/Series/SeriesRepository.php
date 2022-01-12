@@ -6,7 +6,6 @@ namespace srag\Plugins\Opencast\Model\Series;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
 use xoctException;
-use xoctSeries;
 use xoctUser;
 
 /**
@@ -18,9 +17,9 @@ use xoctUser;
  */
 interface SeriesRepository
 {
-    public function find(string $identifier) : xoctSeries;
+    public function find(string $identifier) : Series;
 
-    public function fetch(string $identifier) : xoctSeries;
+    public function fetch(string $identifier) : Series;
 
     /**
      * @param CreateSeriesRequest $request
@@ -31,21 +30,21 @@ interface SeriesRepository
     public function update(UpdateSeriesRequest $request) : void;
 
     /**
-     * @return xoctSeries[]
+     * @return Series[]
      */
     public function getAllForUser(string $user_string): array;
 
     /**
      * @param xoctUser $xoct_user
      *
-     * @return xoctSeries
+     * @return Series
      * @throws xoctException
      */
-    public function getOrCreateOwnSeries(xoctUser $xoct_user): xoctSeries;
+    public function getOrCreateOwnSeries(xoctUser $xoct_user): Series;
 
     /**
      * @param xoctUser $xoct_user
-     * @return xoctSeries|null
+     * @return Series|null
      * @throws xoctException
      */
     public function getOwnSeries(xoctUser $xoct_user);

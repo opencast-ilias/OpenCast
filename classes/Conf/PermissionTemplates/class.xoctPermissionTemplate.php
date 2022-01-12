@@ -1,6 +1,7 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
+use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 
 /**
@@ -162,25 +163,25 @@ class xoctPermissionTemplate extends ActiveRecord {
 
 
 	/**
-	 * @param array $acls
+	 * @param array $ACL
 	 *
 	 * @return xoctPermissionTemplate|bool
 	 */
-	public static function getTemplateForAcls(array $acls) {
+	public static function getTemplateForAcls(ACL $ACL) {
 		$acls_formatted = array();
-		foreach ($acls as $acl) {
-			if (!isset($acls_formatted[$acl->getRole()])) {
-				$acls_formatted[$acl->getRole()] = array();
+		foreach ($ACL as $entry) {
+			if (!isset($acls_formatted[$entry->getRole()])) {
+				$acls_formatted[$entry->getRole()] = array();
 			}
-			$acls_formatted[$acl->getRole()][$acl->getAction()] = $acl->isAllow();
+			$acls_formatted[$entry->getRole()][$entry->getAction()] = $entry->isAllow();
 		}
 
 		/** @var xoctPermissionTemplate $perm_tpl */
 		foreach (self::get() as $perm_tpl) {
-			$acl = $acls_formatted[$perm_tpl->getRole()];
-			if ($acl && (isset($acl[ACLEntry::READ]) == (bool)$perm_tpl->getRead()) && (isset($acl[ACLEntry::WRITE]) == (bool)$perm_tpl->getWrite())) {
+			$entry = $acls_formatted[$perm_tpl->getRole()];
+			if ($entry && (isset($entry[ACLEntry::READ]) == (bool)$perm_tpl->getRead()) && (isset($entry[ACLEntry::WRITE]) == (bool)$perm_tpl->getWrite())) {
 				foreach (explode(',', $perm_tpl->getAdditionalAclActions()) as $action) {
-					if (!$acl[trim($action)]) {
+					if (!$entry[trim($action)]) {
 						continue 2;
 					}
 				}

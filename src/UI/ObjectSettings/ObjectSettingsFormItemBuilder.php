@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Series\Series;
 use xoctConf;
 use xoctPermissionTemplate;
 use xoctUserSettings;
@@ -126,7 +127,7 @@ class ObjectSettingsFormItemBuilder
             }));
     }
 
-    public function update(ObjectSettings $objectSettings)
+    public function update(ObjectSettings $objectSettings, Series $series) : Input
     {
         $field_factory = $this->ui_factory->input()->field();
         $inputs = [
@@ -142,9 +143,12 @@ class ObjectSettingsFormItemBuilder
 
         if (xoctPermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup([
-                $this->getPermissionTemplateRadioInput()
+                self::F_PUBLISH_ON_VIDEO_PORTAL => $series->isPublishedOnVideoPortal() ?
+                    $this->getPermissionTemplateRadioInput()->withValue($series->getPermissionTemplateId())
+                    : $this->getPermissionTemplateRadioInput()
             ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)),
-                $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'));
+                $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'))
+                ->withValue($series->isPublishedOnVideoPortal() ? self::F_PUBLISH_ON_VIDEO_PORTAL : null);
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {

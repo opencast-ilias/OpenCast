@@ -4,7 +4,6 @@ namespace srag\Plugins\Opencast\Model\Event;
 
 
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
-use srag\Plugins\Opencast\Model\Event\Request\UpdateEventACLRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use xoctException;
@@ -45,5 +44,5 @@ interface EventRepository
 
     public function schedule(ScheduleEventRequest $request): string;
 
-    public function updateACL(UpdateEventACLRequest $request): void;
+    public function updateACL(UpdateEventRequest $request): void;
 }
