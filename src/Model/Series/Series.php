@@ -64,10 +64,7 @@ class Series extends APIObject {
         $this->access_policies = $access_policies;
     }
 
-    /**
-     * @return Metadata
-     */
-    public function getMetadata()
+    public function getMetadata() : Metadata
     {
         return $this->metadata;
     }

@@ -18,10 +18,10 @@ class SeriesParser
     }
 
 
-    public function parseAPIResponse(stdClass $data, string $identifier) : Series
+    public function parseAPIResponse(stdClass $data) : Series
     {
         $series = new Series();
-        $series->setIdentifier($identifier);
+        $series->setIdentifier($data->identifier);
         $series->setAccessPolicies($this->ACLParser->parseAPIResponse($data->acl));
         $series->setMetadata($data->metadata);
         if (is_int($data->theme)) {

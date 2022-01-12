@@ -10,8 +10,10 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequestPayload;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayload;
 use xoctException;
 use xoctRequest;
 use xoctUser;
@@ -65,7 +67,7 @@ class SeriesAPIRepository implements SeriesRepository
     {
         $data = json_decode(xoctRequest::root()->series($identifier)->parameter('withacl', true)->get());
         $data->metadata = $this->metadataRepository->findSeriesMD($identifier);
-        $series = $this->seriesParser->parseAPIResponse($data, $identifier);
+        $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
         return $series;
     }
@@ -77,14 +79,27 @@ class SeriesAPIRepository implements SeriesRepository
     }
 
     /**
-     * @param UpdateSeriesRequest $request
+     * @param UpdateSeriesMetadataRequest $request
      * @return void
      * @throws xoctException
      */
-    public function update(UpdateSeriesRequest $request): void
+    public function updateMetadata(UpdateSeriesMetadataRequest $request): void
     {
-        xoctRequest::root()->series($request->getIdentifier())->metadata()
+        xoctRequest::root()->series($request->getIdentifier())->metadata()->parameter('type', 'dublincore/series')
             ->put($request->getPayload()->jsonSerialize());
+        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+    }
+
+    /**
+     * @param UpdateSeriesACLRequest $request
+     * @return void
+     * @throws xoctException
+     */
+    public function updateACL(UpdateSeriesACLRequest $request): void
+    {
+        xoctRequest::root()->series($request->getIdentifier())->acl()
+            ->put($request->getPayload()->jsonSerialize());
+        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
     public function getAllForUser(string $user_string): array
@@ -94,15 +109,15 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = array();
         try {
-            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->get(array($user_string)));
+            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get(array($user_string)));
         } catch (ilException $e) {
             return [];
         }
         foreach ($data as $d) {
             $obj = new Series();
             try {
-                $obj->loadFromStdClass($d);
-                $return[] = $obj;
+                $d->metadata = $this->metadataRepository->findSeriesMD($d->identifier);
+                $return[] = $this->seriesParser->parseAPIResponse($d);;
             } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
                 continue;
             }
@@ -141,8 +156,8 @@ class SeriesAPIRepository implements SeriesRepository
         $series->getAccessPolicies()->merge(
             $this->ACLUtils->getUserRolesACL($xoct_user)
         );
-        $this->update(new UpdateSeriesRequest($series->getIdentifier(),
-            new UpdateSeriesRequestPayload(null, $series->getAccessPolicies())));
+        $this->updateACL(new UpdateSeriesACLRequest($series->getIdentifier(),
+            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
         return $series;
     }
 

@@ -147,18 +147,17 @@ class xoctPermissionTemplate extends ActiveRecord {
 	}
 
 
-	/**
-	 * @param array $acls
-	 */
-	public static function removeAllTemplatesFromAcls(array &$acls) {
-		if (empty($acls)) {
-			return;
+	public static function removeAllTemplatesFromAcls(ACL $ACL) : ACL
+    {
+		if (empty($ACL->getEntries())) {
+			return $ACL;
 		}
 
 		/** @var xoctPermissionTemplate $perm_tpl */
 		foreach (self::get() as $perm_tpl) {
-			$perm_tpl->removeFromAcls($acls);
+			$ACL = $perm_tpl->removeFromAcls($ACL);
 		}
+        return $ACL;
 	}
 
 
@@ -169,7 +168,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 */
 	public static function getTemplateForAcls(ACL $ACL) {
 		$acls_formatted = array();
-		foreach ($ACL as $entry) {
+		foreach ($ACL->getEntries() as $entry) {
 			if (!isset($acls_formatted[$entry->getRole()])) {
 				$acls_formatted[$entry->getRole()] = array();
 			}
@@ -180,7 +179,7 @@ class xoctPermissionTemplate extends ActiveRecord {
 		foreach (self::get() as $perm_tpl) {
 			$entry = $acls_formatted[$perm_tpl->getRole()];
 			if ($entry && (isset($entry[ACLEntry::READ]) == (bool)$perm_tpl->getRead()) && (isset($entry[ACLEntry::WRITE]) == (bool)$perm_tpl->getWrite())) {
-				foreach (explode(',', $perm_tpl->getAdditionalAclActions()) as $action) {
+				foreach (array_filter(explode(',', $perm_tpl->getAdditionalAclActions())) as $action) {
 					if (!$entry[trim($action)]) {
 						continue 2;
 					}
@@ -193,28 +192,23 @@ class xoctPermissionTemplate extends ActiveRecord {
 		return false;
 	}
 
-
-	/**
-	 * @param array $acls
-	 * @param       $with_download
-	 * @param       $with_annotate
-	 */
-	public function addToAcls(array &$acls, $with_download, $with_annotate) {
-		$this->removeFromAcls($acls);
-		$acls = array_merge($acls, $this->getAcls($with_download, $with_annotate));
+    public function addToAcls(ACL $ACL, bool $with_download, bool $with_annotate) : ACL
+    {
+		$this->removeFromAcls($ACL);
+		return $ACL->merge($this->getAcls($with_download, $with_annotate));
 	}
 
-
-	/**
-	 * @param array $acls
-	 */
-	public function removeFromAcls(array &$acls) {
+	public function removeFromAcls(ACL $ACL) : ACL
+    {
 		/** @var ACLEntry $existing_acl */
-		foreach ($acls as $key => $existing_acl) {
+        $entries = $ACL->getEntries();
+        foreach ($ACL->getEntries() as $key => $existing_acl) {
 			if ($existing_acl->getRole() == $this->getRole()) {
-				unset($acls[$key]);
+				unset($entries[$key]);
 			}
 		}
+        $ACL->setEntries($entries);
+        return $ACL;
 	}
 
 
@@ -224,49 +218,40 @@ class xoctPermissionTemplate extends ActiveRecord {
 	 *
 	 * @return array
 	 */
-	public function getAcls($with_download, $with_annotate) {
-		$acls = array();
+	public function getAcls($with_download, $with_annotate) : ACL
+    {
+		$entries = array();
 
 		if ($this->getRead()) {
-			$acls[] = $this->constructAclForAction(ACLEntry::READ);
+			$entries[] = $this->constructAclForAction(ACLEntry::READ);
 		}
 
 		if ($this->getWrite()) {
-			$acls[] = $this->constructAclForAction(ACLEntry::WRITE);
+			$entries[] = $this->constructAclForAction(ACLEntry::WRITE);
 		}
 
 		foreach (array_filter(explode(',', $this->getAdditionalAclActions())) as $additional_action) {
-			$acls[] = $this->constructAclForAction($additional_action);
+			$entries[] = $this->constructAclForAction($additional_action);
 		}
 
 		if ($with_download && $this->getAdditionalActionsDownload()) {
 			foreach (explode(',', $this->getAdditionalActionsDownload()) as $additional_action) {
-				$acls[] = $this->constructAclForAction($additional_action);
+				$entries[] = $this->constructAclForAction($additional_action);
 			}
 		}
 
 		if ($with_annotate && $this->getAdditionalActionsAnnotate()) {
 			foreach (explode(',', $this->getAdditionalActionsAnnotate()) as $additional_action) {
-				$acls[] = $this->constructAclForAction($additional_action);
+				$entries[] = $this->constructAclForAction($additional_action);
 			}
 		}
 
-		return $acls;
+		return new ACL($entries);
 	}
 
-
-	/**
-	 * @param $action
-	 *
-	 * @return ACLEntry
-	 */
-	protected function constructAclForAction($action) {
-		$acl = new ACLEntry();
-		$acl->setRole($this->getRole());
-		$acl->setAction($action);
-		$acl->setAllow(true);
-
-		return $acl;
+	protected function constructAclForAction($action) : ACLEntry
+    {
+        return new ACLEntry($this->getRole(), $action, true);
 	}
 
 

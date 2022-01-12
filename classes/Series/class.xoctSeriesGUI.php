@@ -1,9 +1,13 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequest;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesRequestPayload;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
+use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
@@ -148,16 +152,34 @@ class xoctSeriesGUI extends xoctGUI
             return;
         }
 
-        $this->seriesRepository->update(new UpdateSeriesRequest($this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesRequestPayload($data['metadata']['object'])));
-
         /** @var ObjectSettings $objectSettings */
         $objectSettings = $data['settings']['object'];
+        $objectSettings->setObjId($this->getObjId());
+        $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
 
-        $this->object->updateObjectFromSeries($data['metadata']['object']);
+        $perm_tpl_id = $data['settings']['permission_template'];
+        $series->setAccessPolicies(xoctPermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
+        if ($perm_tpl_id) {
+            /** @var xoctPermissionTemplate $perm_tpl */
+            $perm_tpl = xoctPermissionTemplate::find($perm_tpl_id);
+            $series->setAccessPolicies($perm_tpl->addToAcls(
+                $series->getAccessPolicies(),
+                !$objectSettings->getStreamingOnly(),
+                $objectSettings->getUseAnnotations()
+            ));
+        }
 
-        $this->objectSettings->updateAllDuplicates($data['metadata']['object']);
+        /** @var Metadata $metadata */
+        $metadata = $data['metadata']['object'];
+        $this->seriesRepository->updateMetadata(new UpdateSeriesMetadataRequest($this->objectSettings->getSeriesIdentifier(),
+            new UpdateSeriesMetadataRequestPayload($metadata)));
+        $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($this->objectSettings->getSeriesIdentifier(),
+            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
+
+        $this->object->updateObjectFromSeries($metadata);
+
+        $this->objectSettings->updateAllDuplicates($metadata);
         ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
     }

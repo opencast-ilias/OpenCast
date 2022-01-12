@@ -2,18 +2,18 @@
 
 namespace srag\Plugins\Opencast\Model\Series\Request;
 
-class UpdateSeriesRequest
+class UpdateSeriesMetadataRequest
 {
     /**
      * @var string
      */
     protected $identifier;
     /**
-     * @var UpdateSeriesRequestPayload
+     * @var UpdateSeriesMetadataRequestPayload
      */
     protected $payload;
 
-    public function __construct(string $identifier, UpdateSeriesRequestPayload $payload)
+    public function __construct(string $identifier, UpdateSeriesMetadataRequestPayload $payload)
     {
         $this->payload = $payload;
         $this->identifier = $identifier;
@@ -28,9 +28,9 @@ class UpdateSeriesRequest
     }
 
     /**
-     * @return UpdateSeriesRequestPayload
+     * @return UpdateSeriesMetadataRequestPayload
      */
-    public function getPayload(): UpdateSeriesRequestPayload
+    public function getPayload(): UpdateSeriesMetadataRequestPayload
     {
         return $this->payload;
     }

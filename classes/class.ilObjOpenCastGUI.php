@@ -375,8 +375,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $series_id = $additional_args['series_type']['channel_id'];
         /** @var bool $is_memberupload_enabled */
         $is_memberupload_enabled = $additional_args['member_upload'];
-
-
+        /** @var int $perm_tpl_id */
+        $perm_tpl_id = $additional_args['settings']['permission_template'];
 
         // set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
         $producers = ilObjOpenCastAccess::getProducersForRefID($newObj->getRefId());
@@ -395,6 +395,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
         }
 
+        if ($perm_tpl_id) {
+            $acl = xoctPermissionTemplate::removeAllTemplatesFromAcls($acl);
+            /** @var xoctPermissionTemplate $perm_tpl */
+            $perm_tpl = xoctPermissionTemplate::find($perm_tpl_id);
+            $acl = $perm_tpl->addToAcls(
+                $acl,
+                !$settings->getStreamingOnly(),
+                $settings->getUseAnnotations()
+            );
+        }
+
+        // TODO: do we need contributor / organizer?
         if (!$series_id) {
             $series_id = $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
                 $metadata,
@@ -412,7 +424,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             ilUtil::sendInfo(self::plugin()->translate('msg_info_multiple_aftersave'), true);
         }
 
-        // todo: continue refactoring here
         // checkbox from creation gui to activate "upload" permission for members
         if ($is_memberupload_enabled) {
             ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
