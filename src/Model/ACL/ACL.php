@@ -61,6 +61,6 @@ class ACL implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->getEntries();
+        return array_values($this->getEntries());
     }
 }

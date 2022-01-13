@@ -141,7 +141,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->showMainTemplate();
                     break;
                 case 'xoctseriesgui':
-                    $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctSeriesGUI($this->object,
                         $this->opencast_dic->series_form_builder(),

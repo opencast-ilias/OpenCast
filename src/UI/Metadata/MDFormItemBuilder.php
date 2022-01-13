@@ -59,15 +59,10 @@ class MDFormItemBuilder
      * @var ilPlugin
      */
     private $plugin;
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
 
     public function __construct(MDCatalogue             $md_catalogue,
                                 MDFieldConfigRepository $repository,
                                 MDPrefiller             $prefiller,
-                                MetadataFactory         $metadataFactory,
                                 UIFactory               $ui_factory,
                                 RefineryFactory         $refinery_factory,
                                 MDParser                $MDParser,
@@ -80,7 +75,6 @@ class MDFormItemBuilder
         $this->refinery_factory = $refinery_factory;
         $this->MDParser = $MDParser;
         $this->plugin = $plugin;
-        $this->metadataFactory = $metadataFactory;
     }
 
     public function create_section(): Input
@@ -131,7 +125,7 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
         });
-        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
     }
 

@@ -159,7 +159,6 @@ class OpencastDIC
                 $c['md_catalogue_factory']->series(),
                 $c['md_conf_repository_series'],
                 $c['md_prefiller'],
-                $c['md_factory'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],

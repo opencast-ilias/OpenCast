@@ -109,8 +109,10 @@ class EventAPIRepository implements EventRepository
         return true;
     }
 
-    private function setReferences(Event $event)
+    private function setReferences(Event $event) : Event
     {
+        // TODO: think about removing lazy loading, and how that would affect performance
+        $identifier = $event->getIdentifier();
         $event->setMetadataReference(new SerializableClosure(function () use ($identifier) {
             return $this->md_repository->findEventMD($identifier);
         }));
@@ -123,6 +125,7 @@ class EventAPIRepository implements EventRepository
         $event->setSchedulingReference(new SerializableClosure(function () use ($identifier) {
             return $this->scheduling_repository->find($identifier);
         }));
+        return $event;
     }
 
     /**
@@ -198,6 +201,7 @@ class EventAPIRepository implements EventRepository
 
         foreach ($data as $d) {
             $event = $this->eventParser->parseAPIResponse($d, $d->identifier);
+            $event = $this->setReferences($event);
             $return[] = $as_object ? $event : $event->getArrayForTable();
         }
 
