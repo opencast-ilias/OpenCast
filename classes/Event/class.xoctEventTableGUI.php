@@ -178,10 +178,12 @@ class xoctEventTableGUI extends ilTable2GUI
                 'selectable' => false,
                 'sort_field' => NULL,
                 'width' => '250px',
+                'lang_var' => 'event_preview'
             ),
             'event_clips' => array(
                 'selectable' => false,
                 'sort_field' => NULL,
+                'lang_var' => 'event_clips'
             ),
         );
 
@@ -197,13 +199,16 @@ class xoctEventTableGUI extends ilTable2GUI
                 'selectable' => true,
                 'sort_field' => 'owner_username',
                 'default' => $this->getOwnerColDefault(),
+                'lang_var' => 'event_owner'
             ),
             'unprotected_link' => array(
                 'selectable' => false,
                 'sort_field' => 'unprotected_link',
+                'lang_var' => 'unprotected_link'
             ),
-            self::plugin()->translate('common_actions') => array(
+            'common_actions' => array(
                 'selectable' => false,
+                'lang_var' => 'common_actions'
             ),
         ];
 
@@ -239,12 +244,13 @@ class xoctEventTableGUI extends ilTable2GUI
     {
         $selected_columns = $this->getSelectedColumns();
 
-        foreach ($this->getAllColums() as $text => $col) {
-            if (!$this->isColumsSelected($text)) {
+        foreach ($this->getAllColums() as $key => $col) {
+            if (!$this->isColumsSelected($key)) {
                 continue;
             }
-            if ($col['selectable'] == false or in_array($text, $selected_columns)) {
-                $this->addColumn($text, $col['sort_field'], $col['width']);
+            if ($col['selectable'] == false or in_array($key, $selected_columns)) {
+                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $key;
+                $this->addColumn($col_title, $col['sort_field'], $col['width']);
             }
         }
     }
@@ -434,10 +440,11 @@ class xoctEventTableGUI extends ilTable2GUI
             return $selectable_columns;
         }
         $selectable_columns = array();
-        foreach ($this->getAllColums() as $text => $col) {
+        foreach ($this->getAllColums() as $key => $col) {
             if ($col['selectable']) {
-                $selectable_columns[$text] = array(
-                    'txt' => $text,
+                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $key;
+                $selectable_columns[$key] = array(
+                    'txt' => $col_title,
                     'default' => isset($col['default']) ? $col['default'] : true,
                 );
             }
