@@ -186,12 +186,15 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                     ->withDisabled(true)
                     ->withValue($field_id)
                     ->withRequired(true),
-                'title' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title'))
+                'title_de' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_de'))
                     ->withRequired(true)
-                    ->withValue($md_field_config ? $md_field_config->getTitle() : ''),
-                'visible_for_permissions' => $this->ui_factory->input()->field()->multiSelect(
+                    ->withValue($md_field_config ? $md_field_config->getTitle('de') : ''),
+                'title_en' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_en'))
+                    ->withRequired(true)
+                    ->withValue($md_field_config ? $md_field_config->getTitle('en') : ''),
+                'visible_for_permissions' => $this->ui_factory->input()->field()->select(
                     self::plugin()->translate('md_visible_for_permissions'),
-                    ['write' => 'Write', 'read' => 'read', 'edit_videos' => 'Edit Videos'] // TODO: roles
+                    ['read' => 'read', 'edit_videos' => 'Edit Videos', 'write' => 'Write'] // TODO: roles
                 )->withRequired(true)
                     ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : []),
                 'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))

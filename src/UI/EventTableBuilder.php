@@ -66,7 +66,8 @@ class EventTableBuilder
             $objectSettings,
             $this->MDFieldConfigEventRepository->getAll(),
             $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
-                $objectSettings)
+                $objectSettings),
+            $this->dic->language()->getLangKey()
         );
     }
 
@@ -100,12 +101,11 @@ class EventTableBuilder
             case MDDataType::text()->getTitle():
             case MDDataType::text_array()->getTitle():
             case MDDataType::text_long()->getTitle():
-                return $input_f->text($mdFieldConfig->getTitle());
+                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
             case MDDataType::date()->getTitle():
             case MDDataType::datetime()->getTitle():
             case MDDataType::time()->getTitle():
-                // todo: from-to
-                return $input_f->text($mdFieldConfig->getTitle());
+                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
         }
     }
 

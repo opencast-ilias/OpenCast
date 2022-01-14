@@ -55,6 +55,6 @@ class MetadataService
 
     public function confRepositorySeries(): MDFieldConfigSeriesRepository
     {
-        return $this->container['md_conf_repository_event'];
+        return $this->container['md_conf_repository_series'];
     }
 }

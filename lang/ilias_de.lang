@@ -520,7 +520,8 @@ md_required#:#Verpflichtend
 md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
 md_actions#:#Aktionen
-md_title#:#Titel
+md_title_de#:#Titel Deutsch
+md_title_en#:#Titel Englisch
 md_table_events#:#Event-Metadaten
 md_table_series#:#Serien-Metadaten
 action_update#:#Bearbeiten

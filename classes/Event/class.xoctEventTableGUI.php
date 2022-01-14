@@ -53,6 +53,10 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var MDFieldConfigEventAR[]
      */
     private $md_fields;
+    /**
+     * @var string
+     */
+    private $lang_key;
 
     /**
      * @param xoctEventGUI $a_parent_obj
@@ -63,14 +67,16 @@ class xoctEventTableGUI extends ilTable2GUI
      * @throws DICException
      * @throws xoctException
      */
-    public function __construct(xoctEventGUI    $a_parent_obj,
-                                string          $a_parent_cmd,
-                                ObjectSettings  $objectSettings,
-                                array           $md_fields,
-                                array           $data)
+    public function __construct(xoctEventGUI   $a_parent_obj,
+                                string         $a_parent_cmd,
+                                ObjectSettings $objectSettings,
+                                array          $md_fields,
+                                array          $data,
+                                string         $lang_key)
     {
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
+        $this->lang_key = $lang_key;
         $this->objectSettings = $objectSettings;
         $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
         $this->setPrefix($a_val);
@@ -188,7 +194,7 @@ class xoctEventTableGUI extends ilTable2GUI
         );
 
         foreach ($this->md_fields as $md_field) {
-            $columns[$md_field->getTitle()] = [
+            $columns[$md_field->getTitle($this->lang_key)] = [
                 'selectable' => true,
                 'sort_field' => $md_field->getFieldId() . '_s'
             ];

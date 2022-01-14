@@ -53,7 +53,9 @@ class MDConfigTableBuilder extends AbstractTableBuilder
             [
                 $columnFactory->column('field_id', self::plugin()->translate('md_field_id'))
                     ->withSelectable(false)->withSortable(false),
-                $columnFactory->column('title', self::plugin()->translate('md_title'))
+                $columnFactory->column('title_de', self::plugin()->translate('md_title_de'))
+                    ->withSelectable(false)->withSortable(false),
+                $columnFactory->column('title_en', self::plugin()->translate('md_title_en'))
                     ->withSelectable(false)->withSortable(false),
                 $columnFactory->column('visible_for_permissions', self::plugin()->translate('md_visible_for_permissions'))
                     ->withSelectable(false)->withSortable(false),

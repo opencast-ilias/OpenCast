@@ -522,7 +522,8 @@ md_required#:#Required
 md_read_only#:#Read-Only
 md_prefill#:#Prefilled with
 md_actions#:#Actions
-md_title#:#Title
+md_title_de#:#Title German
+md_title_en#:#Title English
 md_table_events#:#Event Metadata
 md_table_series#:#Series Metadata
 action_update#:#Update

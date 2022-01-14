@@ -43,7 +43,6 @@ class MDConfigDataFetcher extends AbstractDataFetcher
                     self::dic()->ui()->factory()->link()->standard(self::plugin()->translate('action_delete'), $this->deleteUrl);
             }
             $set['prefill'] = $set['prefill']->getValue();
-            $set['visible_for_permissions'] = implode(', ', $set['visible_for_permissions']);
             return self::dataTableUI()->data()->row()->property($set['field_id'], (object) $set);
         }, $this->repository->getArray());
         return self::dataTableUI()->data()->data($data, count($data));

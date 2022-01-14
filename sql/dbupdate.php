@@ -293,3 +293,76 @@ if ($role_owner_prefix) {
 <?php
 \srag\Plugins\Opencast\TermsOfUse\AcceptedToU::updateDB();
 ?>
+<#33>
+<?php
+global $DIC;
+// preconfigure metadata
+// event
+$DIC->database()->insert('xoct_md_field_event', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'title'],
+    'title_de' => ['text', 'Titel'],
+    'title_en' => ['text', 'Title'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 1],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 1],
+]);
+$DIC->database()->insert('xoct_md_field_event', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'description'],
+    'title_de' => ['text', 'Beschreibung'],
+    'title_en' => ['text', 'Description'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 2],
+]);
+$DIC->database()->insert('xoct_md_field_event', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'location'],
+    'title_de' => ['text', 'Aufnahmestation'],
+    'title_en' => ['text', 'Recording Station'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 3],
+]);
+$DIC->database()->insert('xoct_md_field_event', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'startDate'],
+    'title_de' => ['text', 'Start'],
+    'title_en' => ['text', 'Start'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 4],
+]);
+// series
+$DIC->database()->insert('xoct_md_field_series', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'title'],
+    'title_de' => ['text', 'Titel'],
+    'title_en' => ['text', 'Title'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 1],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 1],
+]);
+$DIC->database()->insert('xoct_md_field_series', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'field_id' => ['text', 'description'],
+    'title_de' => ['text', 'Beschreibung'],
+    'title_en' => ['text', 'Description'],
+    'visible_for_permissions' => ['text', 'read'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 0],
+    'prefill' => ['text', 'none'],
+    'sort' => ['integer', 2],
+]);
+?>

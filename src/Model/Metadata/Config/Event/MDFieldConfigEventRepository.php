@@ -54,7 +54,8 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
             $ar = new MDFieldConfigEventAR();
         }
         $ar->setFieldId($data['field_id']);
-        $ar->setTitle($data['title']);
+        $ar->setTitleDe($data['title_de']);
+        $ar->setTitleEn($data['title_en']);
         $ar->setVisibleForPermissions($data['visible_for_permissions']);
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);

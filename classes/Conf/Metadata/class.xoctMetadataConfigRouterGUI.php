@@ -4,6 +4,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * @ilCtrl_IsCalledBy xoctMetadataConfigRouterGUI : xoctMainGUI
@@ -21,12 +22,13 @@ class xoctMetadataConfigRouterGUI
     {
         $nextClass = self::dic()->ctrl()->getNextClass();
 
+        $opencast_dic = OpencastDIC::getInstance();
         switch ($nextClass) {
             case strtolower(xoctSeriesMetadataConfigGUI::class):
                 $this->setSubTabs(self::SUBTAB_SERIES);
                 $gui = new xoctSeriesMetadataConfigGUI(
-                    new MDFieldConfigSeriesRepository(),
-                    new MDCatalogueFactory()
+                    $opencast_dic->metadata()->confRepositorySeries(),
+                    $opencast_dic->metadata()->catalogueFactory()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;
@@ -34,8 +36,8 @@ class xoctMetadataConfigRouterGUI
             default:
                 $this->setSubTabs(self::SUBTAB_EVENTS);
                 $gui = new xoctEventMetadataConfigGUI(
-                    new MDFieldConfigEventRepository(),
-                    new MDCatalogueFactory()
+                    $opencast_dic->metadata()->confRepositoryEvent(),
+                    $opencast_dic->metadata()->catalogueFactory()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;

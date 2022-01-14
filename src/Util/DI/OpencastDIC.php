@@ -151,7 +151,8 @@ class OpencastDIC
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
-                $c['plugin']
+                $c['plugin'],
+                $this->dic
             );
         });
         $this->container['md_form_item_builder_series'] = $this->container->factory(function ($c) {
@@ -162,7 +163,8 @@ class OpencastDIC
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
-                $c['plugin']
+                $c['plugin'],
+                $this->dic
             );
         });
         $this->container['workflow_repository'] = $this->container->factory(function ($c) {

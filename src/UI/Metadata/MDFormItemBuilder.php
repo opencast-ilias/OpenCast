@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\UI\Metadata;
 
 use DateTime;
+use ILIAS\DI\Container;
 use ILIAS\Refinery\Custom\Transformation;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
@@ -53,6 +54,10 @@ class MDFormItemBuilder
      * @var ilPlugin
      */
     private $plugin;
+    /**
+     * @var Container
+     */
+    private $dic;
 
     public function __construct(MDCatalogue             $md_catalogue,
                                 MDFieldConfigRepository $repository,
@@ -60,7 +65,8 @@ class MDFormItemBuilder
                                 UIFactory               $ui_factory,
                                 RefineryFactory         $refinery_factory,
                                 MDParser                $MDParser,
-                                ilPlugin                $plugin)
+                                ilPlugin                $plugin,
+                                Container               $dic)
     {
         $this->ui_factory = $ui_factory;
         $this->md_catalogue = $md_catalogue;
@@ -69,6 +75,7 @@ class MDFormItemBuilder
         $this->refinery_factory = $refinery_factory;
         $this->MDParser = $MDParser;
         $this->plugin = $plugin;
+        $this->dic = $dic;
     }
 
     public function create_section(): Input
@@ -149,20 +156,20 @@ class MDFormItemBuilder
         $md_definition = $this->md_catalogue->getFieldById($fieldConfigAR->getFieldId());
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
-                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle());
+                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
                 break;
             case MDDataType::TYPE_TEXT_ARRAY:
-                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle())
+                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
                     ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function (string $value) {
                         return explode(',', $value);
                     }));
                 break;
             case MDDataType::TYPE_TEXT_LONG:
-                $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle());
+                $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
                 break;
             case MDDataType::TYPE_TIME:
             case MDDataType::TYPE_DATETIME:
-                $field = $this->ui_factory->input()->field()->dateTime($fieldConfigAR->getTitle())->withUseTime(true);
+                $field = $this->ui_factory->input()->field()->dateTime($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))->withUseTime(true);
                 break;
             default:
                 throw new xoctException(xoctException::INTERNAL_ERROR,
@@ -193,7 +200,7 @@ class MDFormItemBuilder
         return self::LABEL_PREFIX . $label;
     }
 
-    public function transformation() : Transformation
+    public function transformation(): Transformation
     {
         return $this->refinery_factory->custom()->transformation(function ($vs) {
             // todo: remove this ugly instance check (maybe create subclasses MDEventFormItemBuilder and MDSeriesFormItemBuilder)

@@ -35,9 +35,18 @@ abstract class MDFieldConfigAR extends ActiveRecord
      * @con_length       256
      * @con_is_notnull   true
      */
-    protected $title;
+    protected $title_de;
     /**
-     * @var string[]
+     * @var string
+     *
+     * @con_has_field    true
+     * @con_fieldtype    text
+     * @con_length       256
+     * @con_is_notnull   true
+     */
+    protected $title_en;
+    /**
+     * @var string
      *
      * @con_has_field    true
      * @con_fieldtype    text
@@ -72,14 +81,21 @@ abstract class MDFieldConfigAR extends ActiveRecord
      * @con_is_notnull   true
      */
     protected $prefill;
+    /**
+     * @var int
+     *
+     * @con_has_field    true
+     * @con_fieldtype    integer
+     * @con_length       8
+     * @con_is_notnull   true
+     */
+    protected $sort;
 
     public function sleep($field_name)
     {
         switch ($field_name) {
             case 'prefill':
                 return $this->prefill->getValue();
-            case 'visible_for_permissions':
-                return serialize($this->visible_for_permissions);
             default:
                 return null;
         }
@@ -93,8 +109,6 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return new MDPrefillOption($field_value);
-            case 'visible_for_permissions':
-                return unserialize($field_value);
             default:
                 return null;
         }
@@ -132,34 +146,39 @@ abstract class MDFieldConfigAR extends ActiveRecord
         $this->field_id = $field_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle(): string
+    public function getTitle(string $lang_key): string
     {
-        return $this->title;
+        switch ($lang_key) {
+            case 'de':
+                return $this->title_de;
+            case 'en':
+            default:
+                return $this->title_en;
+        }
     }
 
     /**
-     * @param string $title
+     * @param string $title_de
      */
-    public function setTitle(string $title)
+    public function setTitleDe(string $title_de): void
     {
-        $this->title = $title;
+        $this->title_de = $title_de;
     }
 
     /**
-     * @return string[]
+     * @param string $title_en
      */
-    public function getVisibleForPermissions(): array
+    public function setTitleEn(string $title_en): void
+    {
+        $this->title_en = $title_en;
+    }
+
+    public function getVisibleForPermissions(): string
     {
         return $this->visible_for_permissions;
     }
 
-    /**
-     * @param string[] $visible_for_permissions
-     */
-    public function setVisibleForPermissions(array $visible_for_permissions)
+    public function setVisibleForPermissions(string $visible_for_permissions)
     {
         $this->visible_for_permissions = $visible_for_permissions;
     }
@@ -210,5 +229,21 @@ abstract class MDFieldConfigAR extends ActiveRecord
     public function setPrefill(MDPrefillOption $prefill)
     {
         $this->prefill = $prefill;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSort(): int
+    {
+        return $this->sort;
+    }
+
+    /**
+     * @param int $sort
+     */
+    public function setSort(int $sort): void
+    {
+        $this->sort = $sort;
     }
 }
