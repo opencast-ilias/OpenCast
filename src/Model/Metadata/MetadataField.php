@@ -66,8 +66,9 @@ class MetadataField implements JsonSerializable
     /**
      * @return array|string
      * formats the value for the Opencast API
+     * this format is also used for sortation in a table
      */
-    private function getValueFormatted()
+    public function getValueFormatted()
     {
         switch ($this->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
@@ -91,8 +92,25 @@ class MetadataField implements JsonSerializable
 
     public function toString() : string
     {
-        $value_formatted = $this->getValueFormatted();
-        return is_array($value_formatted) ? implode(', ', $value_formatted) : $value_formatted;
+        switch ($this->getType()->getTitle()) {
+            case MDDataType::TYPE_TEXT:
+            case MDDataType::TYPE_TEXT_LONG:
+                return $this->getValue();
+            case MDDataType::TYPE_TEXT_ARRAY:
+                return implode(', ', $this->getValue());
+            case MDDataType::TYPE_DATETIME;
+                /** @var DateTimeImmutable $value */
+                $value = $this->getValue();
+                return $value->format('d.m.Y H:i:s');
+            case MDDataType::TYPE_TIME:
+                /** @var DateTimeImmutable $value */
+                $value = $this->getValue();
+                return $value->format('H:i:s');
+            case MDDataType::TYPE_DATE:
+                /** @var DateTimeImmutable $value */
+                $value = $this->getValue();
+                return $value->format('d.m.Y');
+        }
     }
 
     /**

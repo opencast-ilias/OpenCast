@@ -149,19 +149,19 @@ class xoctEventTableGUI extends ilTable2GUI
                 if ($first) {
                     $this->tpl->setVariable('STATE', $renderer->getStateHTML());
                 }
-                $this->tpl->setVariable('VALUE', $event->getMetadata()->getField($md_field->getFieldId())->toString());
+                $this->tpl->setVariable('VALUE', $a_set[$md_field->getFieldId()]);
                 $first = false;
                 $this->tpl->parseCurrentBlock();
             }
         }
 
         if ($this->isColumsSelected('event_owner')) {
-            $renderer->insertOwner($this->tpl);
+            $renderer->insertOwner($this->tpl, 'generic', 'VALUE');
         }
 
         if ($this->has_unprotected_links
             && ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
-            $renderer->insertUnprotectedLink($this->tpl);
+            $renderer->insertUnprotectedLink($this->tpl, 'generic', 'VALUE');
         }
 
         $this->addActionMenu($event);
@@ -188,7 +188,7 @@ class xoctEventTableGUI extends ilTable2GUI
         foreach ($this->md_fields as $md_field) {
             $columns[$md_field->getTitle()] = [
                 'selectable' => true,
-                'sort_field' => $md_field->getFieldId()
+                'sort_field' => $md_field->getFieldId() . '_s'
             ];
         }
 

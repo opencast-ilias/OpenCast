@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
@@ -147,20 +148,14 @@ class Event
      */
     public function getArrayForTable()
     {
-        return array(
-            'identifier' => $this->getIdentifier(),
-            'title' => $this->getTitle(),
-            'description' => $this->getDescription(),
-            'presenter' => $this->getPresenter(),
-            'location' => $this->getLocation(),
-            'created' => $this->getCreated()->format(DATE_ATOM),
-            'created_unix' => $this->getCreated()->format('U'),
-            'start' => $this->getStart()->format(DATE_ATOM),
-            'start_unix' => $this->getStart()->format('U'),
-            'owner_username' => $this->getOwnerUsername(),
-            'processing_state' => $this->getProcessingState(),
-            'object' => $this,
-        );
+        $array = array_column(array_map(function (MetadataField $mf) {
+            return [$mf->getId(), $mf->toString()];
+        }, $this->getMetadata()->getFields()), 1, 0);
+        $sortable = array_column(array_map(function (MetadataField $mf) {
+            return [$mf->getId() . '_s', $mf->getValueFormatted()];
+        }, $this->getMetadata()->getFields()), 1, 0);
+        $array['object'] = $this;
+        return $array + $sortable;
     }
 
 

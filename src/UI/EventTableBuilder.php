@@ -2,11 +2,12 @@
 
 namespace srag\Plugins\Opencast\UI;
 
-use ILIAS\UI\Component\Input\Container\Filter\Filter;
-use ILIAS\UI\Component\Input\Field\Input;
+use ILIAS\DI\Container;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Container\Filter\Standard;
+use ilObjOpenCastAccess;
 use ilUIService;
+use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
@@ -15,6 +16,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use xoctEventTableGUI;
+use xoctUser;
 
 class EventTableBuilder
 {
@@ -38,18 +40,22 @@ class EventTableBuilder
      * @var EventRepository
      */
     private $eventRepository;
+    /**
+     * @var Container
+     */
+    private $dic;
 
     public function __construct(MDFieldConfigEventRepository $MDFieldConfigEventRepository,
                                 MDCatalogueFactory           $MDCatalogueFactory,
-                                UIFactory                    $ui_factory,
-                                ilUIService                  $ui_service,
-                                EventRepository              $eventRepository)
+                                EventRepository              $eventRepository,
+                                Container                    $dic)
     {
-        $this->ui_factory = $ui_factory;
+        $this->ui_factory = $dic->ui()->factory();
         $this->MDFieldConfigEventRepository = $MDFieldConfigEventRepository;
-        $this->ui_service = $ui_service;
+        $this->ui_service = $dic->uiService();
         $this->MDCatalogue = $MDCatalogueFactory->event();
         $this->eventRepository = $eventRepository;
+        $this->dic = $dic;
     }
 
     public function table($parent_gui, string $parent_cmd, ObjectSettings $objectSettings): xoctEventTableGUI
@@ -59,7 +65,8 @@ class EventTableBuilder
             $parent_cmd,
             $objectSettings,
             $this->MDFieldConfigEventRepository->getAll(),
-            $this->eventRepository->getFiltered($this->filterData() + ['series' => $objectSettings->getSeriesIdentifier()])
+            $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $objectSettings)
         );
     }
 
@@ -100,5 +107,25 @@ class EventTableBuilder
                 // todo: from-to
                 return $input_f->text($mdFieldConfig->getTitle());
         }
+    }
+
+    private function applyFilter(array $events, ObjectSettings $objectSettings): array
+    {
+        $filters = $this->filterData();
+        return array_filter($events, function (array $event) use ($filters, $objectSettings) {
+            $event_object = $event['object'];
+            foreach ($filters as $key => $value) {
+                /** @var Event $event_object */
+                $md_value = $event_object->getMetadata()->getField($key)->toString();
+                if (strpos(strtolower($md_value), strtolower($value)) === false) {
+                    return false;
+                }
+            }
+
+            return ilObjOpenCastAccess::hasReadAccessOnEvent(
+                $event_object,
+                xoctUser::getInstance($this->dic->user()),
+                $objectSettings);
+        });
     }
 }

@@ -207,9 +207,8 @@ class OpencastDIC
             return new EventTableBuilder(
                 $c['md_conf_repository_event'],
                 $c['md_catalogue_factory'],
-                $this->dic->ui()->factory(),
-                $this->dic->uiService(),
-                $c['event_repository']
+                $c['event_repository'],
+                $this->dic
             );
         });
         $this->container['series_form_builder'] = $this->container->factory(function ($c) {
