@@ -117,6 +117,8 @@ class Event
      */
     protected $series;
 
+    // todo: presenter might be a non-metadata field
+
     /**
      * @var bool
      */

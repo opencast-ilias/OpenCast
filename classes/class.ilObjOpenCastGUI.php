@@ -158,6 +158,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->event_form_builder(),
+                        $this->opencast_dic->event_table_builder(),
                         $this->opencast_dic->workflow_repository(),
                         $this->opencast_dic->acl_utils(),
                         $this->opencast_dic->series_repository(),

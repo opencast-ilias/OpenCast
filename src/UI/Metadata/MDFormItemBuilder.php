@@ -8,7 +8,6 @@ use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
-use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
@@ -19,7 +18,6 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use xoctException;
 
 class MDFormItemBuilder
@@ -47,10 +45,6 @@ class MDFormItemBuilder
      * @var RefineryFactory
      */
     private $refinery_factory;
-    /**
-     * @var AgentApiRepository
-     */
-    private $agent_repository;
     /**
      * @var MDParser
      */
@@ -92,6 +86,7 @@ class MDFormItemBuilder
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements) {
+            // TODO: visible for permission!
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $this->prefiller->getPrefillValue($md_field_config->getPrefill()));

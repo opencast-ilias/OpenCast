@@ -5,9 +5,24 @@ namespace srag\Plugins\Opencast\Model\Metadata\Config\Event;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
+use xoctException;
 
 class MDFieldConfigEventRepository implements MDFieldConfigRepository
 {
+    /**
+     * @var MDCatalogueFactory
+     */
+    private $MDCatalogueFactory;
+
+    /**
+     * @param MDCatalogueFactory $MDCatalogueFactory
+     */
+    public function __construct(MDCatalogueFactory $MDCatalogueFactory)
+    {
+        $this->MDCatalogueFactory = $MDCatalogueFactory;
+    }
+
     /**
      * @return MDFieldConfigEventAR[]
      */
@@ -46,5 +61,18 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         $ar->setRequired($data['required']);
         $ar->store();
         return $ar;
+    }
+
+    /**
+     * @return MDFieldConfigEventAR[]
+     * @throws xoctException
+     */
+    function getAllFilterable() : array
+    {
+        $catalogue = $this->MDCatalogueFactory->event();
+        return array_filter($this->getAll(), function (MDFieldConfigEventAR $fieldConfig) use ($catalogue) {
+            return $catalogue->getFieldById($fieldConfig->getFieldId())
+                ->getType()->isFilterable();
+        });
     }
 }

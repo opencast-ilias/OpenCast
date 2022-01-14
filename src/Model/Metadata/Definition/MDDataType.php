@@ -99,4 +99,13 @@ class MDDataType
         }
     }
 
+    public function isFilterable() : bool
+    {
+        return in_array($this->getTitle(), [
+            self::TYPE_TEXT,
+            self::TYPE_TEXT_LONG,
+            self::TYPE_TEXT_ARRAY,
+        ]);
+    }
+
 }

@@ -258,6 +258,7 @@ return array(
     'srag\\Plugins\\Opencast\\TermsOfUse\\ToUManager' => $baseDir . '/src/TermsOfUse/ToUManager.php',
     'srag\\Plugins\\Opencast\\Traits\\Singleton' => $baseDir . '/src/Traits/Singleton.php',
     'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => $baseDir . '/src/UI/EventFormBuilder.php',
+    'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => $baseDir . '/src/UI/EventTableBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => $baseDir . '/src/UI/Input/EventFormGUI.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => $baseDir . '/src/UI/Input/FileUploadInputGUI.php',
     'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => $baseDir . '/src/UI/Input/Plupload.php',

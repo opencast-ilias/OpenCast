@@ -305,6 +305,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\TermsOfUse\\ToUManager' => __DIR__ . '/../..' . '/src/TermsOfUse/ToUManager.php',
         'srag\\Plugins\\Opencast\\Traits\\Singleton' => __DIR__ . '/../..' . '/src/Traits/Singleton.php',
         'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => __DIR__ . '/../..' . '/src/UI/EventFormBuilder.php',
+        'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => __DIR__ . '/../..' . '/src/UI/EventTableBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\EventFormGUI' => __DIR__ . '/../..' . '/src/UI/Input/EventFormGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\FileUploadInputGUI' => __DIR__ . '/../..' . '/src/UI/Input/FileUploadInputGUI.php',
         'srag\\Plugins\\Opencast\\UI\\Input\\Plupload' => __DIR__ . '/../..' . '/src/UI/Input/Plupload.php',

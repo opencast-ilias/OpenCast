@@ -34,6 +34,7 @@ use srag\Plugins\Opencast\Model\Series\SeriesParser;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use srag\Plugins\Opencast\Traits\Singleton;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
@@ -137,7 +138,7 @@ class OpencastDIC
             return new MDPrefiller();
         });
         $this->container['md_conf_repository_event'] = $this->container->factory(function ($c) {
-            return new MDFieldConfigEventRepository();
+            return new MDFieldConfigEventRepository($c['md_catalogue_factory']);
         });
         $this->container['md_conf_repository_series'] = $this->container->factory(function ($c) {
             return new MDFieldConfigSeriesRepository();
@@ -147,7 +148,6 @@ class OpencastDIC
                 $c['md_catalogue_factory']->event(),
                 $c['md_conf_repository_event'],
                 $c['md_prefiller'],
-                $c['md_factory'],
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_parser'],
@@ -201,6 +201,15 @@ class OpencastDIC
                 $c['upload_handler'],
                 $c['plugin'],
                 $c['scheduling_form_item_builder']
+            );
+        });
+        $this->container['event_table_builder'] = $this->container->factory(function($c) {
+            return new EventTableBuilder(
+                $c['md_conf_repository_event'],
+                $c['md_catalogue_factory'],
+                $this->dic->ui()->factory(),
+                $this->dic->uiService(),
+                $c['event_repository']
             );
         });
         $this->container['series_form_builder'] = $this->container->factory(function ($c) {
@@ -288,6 +297,11 @@ class OpencastDIC
     public function event_form_builder(): EventFormBuilder
     {
         return $this->container['event_form_builder'];
+    }
+
+    public function event_table_builder(): EventTableBuilder
+    {
+        return $this->container['event_table_builder'];
     }
 
     public function series_form_builder(): SeriesFormBuilder

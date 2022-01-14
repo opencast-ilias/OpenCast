@@ -4,6 +4,8 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
@@ -47,17 +49,30 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var EventRepository
      */
     protected $event_repository;
+    /**
+     * @var MDFieldConfigEventAR[]
+     */
+    private $md_fields;
 
+    /**
+     * @param xoctEventGUI $a_parent_obj
+     * @param string $a_parent_cmd
+     * @param ObjectSettings $objectSettings
+     * @param array $md_fields
+     * @param array $data
+     * @throws DICException
+     * @throws xoctException
+     */
     public function __construct(xoctEventGUI    $a_parent_obj,
                                 string          $a_parent_cmd,
                                 ObjectSettings  $objectSettings,
-                                EventRepository $event_repository,
-                                bool            $load_data = true)
+                                array           $md_fields,
+                                array           $data)
     {
-        $this->objectSettings = $objectSettings;
-        $this->event_repository = $event_repository;
         $this->parent_obj = $a_parent_obj;
-        $a_val = static::getGeneratedPrefix($objectSettings);
+        $this->md_fields = $md_fields;
+        $this->objectSettings = $objectSettings;
+        $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
         $this->setPrefix($a_val);
         $this->setFormName($a_val);
         $this->setId($a_val);
@@ -65,36 +80,24 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
         $this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
-        $this->initFilters();
-        if ($load_data) {
-            $this->parseData();
-        }
+        $this->setData($data);
         $this->initColumns();
-        $this->setDefaultOrderField('created_unix');
+//        $this->setDefaultOrderField('created_unix');
 
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats(array(self::EXPORT_CSV));
         }
     }
 
-
-    /**
-     * @param ObjectSettings $objectSettings
-     */
-    public static function setDefaultRowValue(ObjectSettings $objectSettings)
+    public static function setDefaultRowValue(int $obj_id)
     {
-        $_GET[self::getGeneratedPrefix($objectSettings) . '_trows'] = 20;
+        $_GET[self::getGeneratedPrefix($obj_id) . '_trows'] = 20;
     }
 
 
-    /**
-     * @param ObjectSettings $objectSettings
-     *
-     * @return string
-     */
-    public static function getGeneratedPrefix(ObjectSettings $objectSettings)
+    public static function getGeneratedPrefix(int $obj_id)
     {
-        return self::TBL_ID . '_' . substr($objectSettings->getSeriesIdentifier(), 0, 5);
+        return self::TBL_ID . '_' . substr($obj_id, 0, 5);
     }
 
 
@@ -139,25 +142,17 @@ class xoctEventTableGUI extends ilTable2GUI
             $renderer->insertAnnotationLink($this->tpl);
         }
 
-        if ($this->isColumsSelected('event_title')) {
-            $renderer->insertTitle($this->tpl);
-            $renderer->insertState($this->tpl);
-        }
-
-        if ($this->isColumsSelected('event_description')) {
-            $renderer->insertDescription($this->tpl);
-        }
-
-        if ($this->isColumsSelected('event_presenter')) {
-            $renderer->insertPresenter($this->tpl);
-        }
-
-        if ($this->isColumsSelected('event_location')) {
-            $renderer->insertLocation($this->tpl);
-        }
-
-        if ($this->isColumsSelected('event_start')) {
-            $renderer->insertStart($this->tpl);
+        $first = true;
+        foreach ($this->md_fields as $md_field) {
+            if ($this->isColumsSelected($md_field->getId())) {
+                $this->tpl->setCurrentBlock('generic' . ($first ? '_w_state' : ''));
+                if ($first) {
+                    $this->tpl->setVariable('STATE', $renderer->getStateHTML());
+                }
+                $this->tpl->setVariable('VALUE', $event->getMetadata()->getField($md_field->getFieldId())->toString());
+                $first = false;
+                $this->tpl->parseCurrentBlock();
+            }
         }
 
         if ($this->isColumsSelected('event_owner')) {
@@ -188,27 +183,16 @@ class xoctEventTableGUI extends ilTable2GUI
                 'selectable' => false,
                 'sort_field' => NULL,
             ),
-            'event_title' => array(
-                'selectable' => false,
-                'sort_field' => 'title',
-            ),
-            'event_description' => array(
+        );
+
+        foreach ($this->md_fields as $md_field) {
+            $columns[$md_field->getTitle()] = [
                 'selectable' => true,
-                'sort_field' => 'description',
-                'default' => false,
-            ),
-            'event_presenter' => array(
-                'selectable' => true,
-                'sort_field' => 'presenter',
-            ),
-            'event_location' => array(
-                'selectable' => true,
-                'sort_field' => 'location',
-            ),
-            'event_start' => array(
-                'selectable' => true,
-                'sort_field' => 'start_unix',
-            ),
+                'sort_field' => $md_field->getFieldId()
+            ];
+        }
+
+        $columns += [
             'event_owner' => array(
                 'selectable' => true,
                 'sort_field' => 'owner_username',
@@ -218,10 +202,10 @@ class xoctEventTableGUI extends ilTable2GUI
                 'selectable' => false,
                 'sort_field' => 'unprotected_link',
             ),
-            'common_actions' => array(
+            self::plugin()->translate('common_actions') => array(
                 'selectable' => false,
             ),
-        );
+        ];
 
         if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
             || !$this->has_unprotected_links
@@ -260,7 +244,7 @@ class xoctEventTableGUI extends ilTable2GUI
                 continue;
             }
             if ($col['selectable'] == false or in_array($text, $selected_columns)) {
-                $this->addColumn(self::plugin()->translate($text), $col['sort_field'], $col['width']);
+                $this->addColumn($text, $col['sort_field'], $col['width']);
             }
         }
     }
@@ -285,39 +269,6 @@ class xoctEventTableGUI extends ilTable2GUI
             self::dic()->ui()->renderer()->renderAsync($dropdown)
         );
     }
-
-
-    protected function initFilters()
-    {
-        // TITLE
-        $te = new ilTextInputGUI($this->parent_obj->txt('title'), 'title');
-        $this->addAndReadFilterItem($te);
-        //
-        //		// DESCRIPTION
-        //		$te = new ilTextInputGUI($this->parent_obj->txt('description'), 'description');
-        //		$this->addAndReadFilterItem($te);
-
-        // PRESENTER
-        $te = new ilTextInputGUI($this->parent_obj->txt('presenter'), 'presenter');
-        $this->addAndReadFilterItem($te);
-
-        // LCOATION
-        $te = new ilTextInputGUI($this->parent_obj->txt('location'), 'location');
-        $this->addAndReadFilterItem($te);
-
-        // OWNER
-        $te = new ilTextInputGUI($this->parent_obj->txt('owner'), 'owner_username');
-        $this->addAndReadFilterItem($te);
-
-        // DATE
-        //		require_once('./Services/Form/classes/class.ilDateDurationInputGUI.php');
-        //		$date = new ilDateDurationInputGUI($this->parent_obj->txt('created'), 'created_unix');
-        //		$date->setStart(new ilDateTime(time() - 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
-        //		$date->setEnd(new ilDateTime(time() + 1 * 365 * 24 * 60 * 60, IL_CAL_UNIX));
-        //		$this->addAndReadFilterItem($date);
-
-    }
-
 
     /**
      * @throws xoctException
@@ -446,7 +397,7 @@ class xoctEventTableGUI extends ilTable2GUI
                 case 'object';
                     continue 2;
             }
-            $a_csv->addColumn(self::plugin()->translate('event_' . $k));
+            $a_csv->addColumn($k);
         }
         $a_csv->addRow();
     }
@@ -486,7 +437,7 @@ class xoctEventTableGUI extends ilTable2GUI
         foreach ($this->getAllColums() as $text => $col) {
             if ($col['selectable']) {
                 $selectable_columns[$text] = array(
-                    'txt' => self::plugin()->translate($text),
+                    'txt' => $text,
                     'default' => isset($col['default']) ? $col['default'] : true,
                 );
             }
@@ -495,14 +446,9 @@ class xoctEventTableGUI extends ilTable2GUI
         return $selectable_columns;
     }
 
-
-    /**
-     * @param $visible
-     * @param $objectSettings
-     */
-    public static function setOwnerFieldVisibility($visible, $objectSettings)
+    public static function setOwnerFieldVisibility($visible, int $obj_id)
     {
-        $table_id = self::getGeneratedPrefix($objectSettings);
+        $table_id = self::getGeneratedPrefix($obj_id);
         $query = self::dic()->database()->query("SELECT * FROM table_properties WHERE table_id = " . self::dic()->database()->quote($table_id, "text") . " AND property = 'selfields'");
         while ($rec = self::dic()->database()->fetchAssoc($query)) {
             $selfields = unserialize($rec['value']);
@@ -528,7 +474,6 @@ class xoctEventTableGUI extends ilTable2GUI
     {
         return $this->has_scheduled_events;
     }
-
 
 }
 

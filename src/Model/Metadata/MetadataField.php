@@ -89,6 +89,12 @@ class MetadataField implements JsonSerializable
         }
     }
 
+    public function toString() : string
+    {
+        $value_formatted = $this->getValueFormatted();
+        return is_array($value_formatted) ? implode(', ', $value_formatted) : $value_formatted;
+    }
+
     /**
      * @param $value T
      * @throws xoctException

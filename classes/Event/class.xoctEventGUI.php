@@ -21,14 +21,13 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
+use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
-use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 
 /**
  * Class xoctEventGUI
@@ -101,11 +100,16 @@ class xoctEventGUI extends xoctGUI
      * @var SeriesRepository
      */
     private $seriesRepository;
+    /**
+     * @var EventTableBuilder
+     */
+    private $eventTableBuilder;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
                                 ObjectSettings     $objectSettings,
                                 EventRepository    $event_repository,
                                 EventFormBuilder   $formBuilder,
+                                EventTableBuilder  $eventTableBuilder,
                                 WorkflowRepository $workflowRepository,
                                 ACLUtils           $ACLUtils,
                                 SeriesRepository   $seriesRepository,
@@ -120,6 +124,7 @@ class xoctEventGUI extends xoctGUI
         $this->ACLUtils = $ACLUtils;
         $this->dic = $dic;
         $this->seriesRepository = $seriesRepository;
+        $this->eventTableBuilder = $eventTableBuilder;
     }
 
     /**
@@ -279,7 +284,10 @@ class xoctEventGUI extends xoctGUI
                     ' for user with id ' . self::dic()->user()->getId());
         }
 
-        self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $html);
+        $filter_html = $this->dic->ui()->renderer()->render(
+            $this->eventTableBuilder->filter(
+                $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)));
+        self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $filter_html . $html);
     }
 
     /**
@@ -290,9 +298,10 @@ class xoctEventGUI extends xoctGUI
     {
         $this->initViewSwitcherHTML('list');
 
-        if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->objectSettings) . '_xpt'])
+        if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->getObjId()) . '_xpt'])
             || !empty($_POST)
             || xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
+            // load table synchronously
             return $this->getTableGUI();
         }
 
@@ -382,7 +391,7 @@ class xoctEventGUI extends xoctGUI
         $ajax_link = self::dic()->ctrl()->getLinkTarget($this, 'asyncGetTableGUI', "", true);
 
         // hacky stuff to allow asynchronous rendering of tableGUI
-        $table_id = xoctEventTableGUI::getGeneratedPrefix($this->objectSettings);
+        $table_id = xoctEventTableGUI::getGeneratedPrefix($this->getObjId());
         $user_id = self::dic()->user()->getId();
         $tab_prop = new ilTablePropertiesStorage();
         if ($tab_prop->getProperty($table_id, $user_id, 'filter')) {
@@ -435,8 +444,7 @@ class xoctEventGUI extends xoctGUI
     public function getTableGUI()
     {
         $modals_html = $this->getModalsHTML();
-        $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->objectSettings, $this->event_repository);
+        $xoctEventTableGUI = $this->eventTableBuilder->table($this, self::CMD_STANDARD, $this->objectSettings);
         $html = $xoctEventTableGUI->getHTML();
         if ($xoctEventTableGUI->hasScheduledEvents()) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
@@ -490,31 +498,6 @@ class xoctEventGUI extends xoctGUI
                     </script>";
         }
         return $html;
-    }
-
-    /**
-     *
-     */
-    protected function applyFilter()
-    {
-        $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->objectSettings, $this->event_repository, false);
-        $xoctEventTableGUI->resetOffset(true);
-        $xoctEventTableGUI->writeFilterToSession();
-        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-    }
-
-
-    /**
-     *
-     */
-    protected function resetFilter()
-    {
-        $xoctEventTableGUI = new xoctEventTableGUI($this,
-            self::CMD_STANDARD, $this->objectSettings, $this->event_repository, false);
-        $xoctEventTableGUI->resetOffset();
-        $xoctEventTableGUI->resetFilter();
-        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
 
 
@@ -1083,10 +1066,10 @@ class xoctEventGUI extends xoctGUI
             $subject = 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»';
             $report = new xoctReport();
             $report->setType(xoctReport::TYPE_DATE)
-                   ->setUserId(self::dic()->user()->getId())
-                   ->setSubject($subject)
-                   ->setMessage($message)
-                   ->create();
+                ->setUserId(self::dic()->user()->getId())
+                ->setSubject($subject)
+                ->setMessage($message)
+                ->create();
         }
         ilUtil::sendSuccess(self::plugin()->translate('msg_date_report_sent'), true);
         self::dic()->ctrl()->redirect($this);
@@ -1217,7 +1200,7 @@ class xoctEventGUI extends xoctGUI
         return $intro_text;
     }
 
-    protected function addCurrentUserToProducers() : void
+    protected function addCurrentUserToProducers(): void
     {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         // add user to ilias producers

@@ -175,9 +175,9 @@ class xoctEventTileGUI
     {
         $tab_prop = new ilTablePropertiesStorage();
 
-        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->objectSettings), self::dic()->user()->getId(), 'direction')
+        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()), self::dic()->user()->getId(), 'direction')
             ?? 'asc';
-        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->objectSettings), self::dic()->user()->getId(), 'order')
+        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()), self::dic()->user()->getId(), 'order')
             ?? 'start';
         switch ($order) {
             case 'start_unix':
