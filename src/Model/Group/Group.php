@@ -149,7 +149,6 @@ class Group extends APIObject
             case 'members':
             case 'roles':
                 return implode(',', $value);
-                break;
             default:
                 return $value;
         }

@@ -33,11 +33,6 @@ class MetadataService
         return $this->container['md_factory'];
     }
 
-    public function apiRepository(): MetadataRepository
-    {
-        return $this->container['md_repository'];
-    }
-
     public function parser(): MDParser
     {
         return $this->container['md_parser'];
