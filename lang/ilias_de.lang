@@ -522,6 +522,9 @@ md_title_de#:#Titel Deutsch
 md_title_en#:#Titel Englisch
 md_table_events#:#Event-Metadaten
 md_table_series#:#Serien-Metadaten
+md_conf_form_edit#:#Metadatenfeld bearbeiten
+md_conf_form_create#:#Metadatenfeld erstellen
+msg_md_config_info#:#Verwaltung der im Plugin verfügbaren Metadaten. Die Reihenfolge kann via Drag & Drop angepasst werden.
 action_update#:#Bearbeiten
 action_delete#:#Löschen
 yes#:#Ja

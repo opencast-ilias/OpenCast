@@ -141,14 +141,13 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     protected function store()
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
-        $form = $this->buildForm($field_id);
-        $request = self::dic()->http()->request();
-        $data = $form->withRequest($request)->getData();
+        $form = $this->buildForm($field_id)->withRequest(self::dic()->http()->request());
+        $data = $form->getData();
         if (is_null($data)) {
-            self::output()->output($this->renderer->render($form));
+            $this->dic->ui()->mainTemplate()->setContent($this->renderer->render($form));
             return;
         }
-        $this->repository->storeFromArray($data);
+        $this->repository->storeFromArray($data['fields']);
         ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
@@ -191,32 +190,35 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         return $this->ui_factory->input()->container()->form()->standard(
             self::dic()->ctrl()->getFormAction($this, self::CMD_STORE),
             [
-                'field_id' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_field_id'))
-                    ->withDisabled(true)
-                    ->withValue($field_id)
-                    ->withRequired(true),
-                'title_de' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_de'))
-                    ->withRequired(true)
-                    ->withValue($md_field_config ? $md_field_config->getTitle('de') : ''),
-                'title_en' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_en'))
-                    ->withRequired(true)
-                    ->withValue($md_field_config ? $md_field_config->getTitle('en') : ''),
-                'visible_for_permissions' => $this->ui_factory->input()->field()->select(
-                    self::plugin()->translate('md_visible_for_permissions'),
-                    ['read' => 'read', 'edit_videos' => 'Edit Videos', 'write' => 'Write'] // TODO: roles
-                )->withRequired(true)
-                    ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : []),
-                'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
-                    ->withDisabled($md_field_def->isRequired() || $md_field_def->isReadOnly())
-                    ->withValue($md_field_def->isRequired() || ($md_field_config && $md_field_config->isRequired())),
-                'read_only' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_read_only'))
-                    ->withDisabled($md_field_def->isReadOnly())
-                    ->withValue($md_field_def->isReadOnly() || ($md_field_config && $md_field_config->isReadOnly())),
-                'prefill' => $this->ui_factory->input()->field()->select(self::plugin()->translate('md_prefill'),
-                    $this->getPrefillOptions())
-                    ->withDisabled($md_field_def->isReadOnly())
-                    ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : null),
-            ]
+                'fields' => $this->ui_factory->input()->field()->section(
+                    ['field_id' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_field_id'))
+                        ->withDisabled(true)
+                        ->withValue($field_id)
+                        ->withRequired(true),
+                        'title_de' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_de'))
+                            ->withRequired(true)
+                            ->withValue($md_field_config ? $md_field_config->getTitle('de') : ''),
+                        'title_en' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_en'))
+                            ->withRequired(true)
+                            ->withValue($md_field_config ? $md_field_config->getTitle('en') : ''),
+                        'visible_for_permissions' => $this->ui_factory->input()->field()->select(
+                            self::plugin()->translate('md_visible_for_permissions'),
+                            ['read' => 'read', 'edit_videos' => 'Edit Videos', 'write' => 'Write'] // TODO: roles
+                        )->withRequired(true)
+                            ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : null),
+                        'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
+                            ->withDisabled($md_field_def->isRequired() || $md_field_def->isReadOnly())
+                            ->withValue($md_field_def->isRequired() || ($md_field_config && $md_field_config->isRequired())),
+                        'read_only' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_read_only'))
+                            ->withDisabled($md_field_def->isReadOnly())
+                            ->withValue($md_field_def->isReadOnly() || ($md_field_config && $md_field_config->isReadOnly())),
+                        'prefill' => $this->ui_factory->input()->field()->select(self::plugin()->translate('md_prefill'),
+                            $this->getPrefillOptions())
+                            ->withRequired(true)
+                            ->withDisabled($md_field_def->isReadOnly())
+                            ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : null)
+                    ], $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
+                )]
         );
     }
 
@@ -239,7 +241,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     abstract protected function getTableTitle(): string;
 
-    protected function reorder() : void
+    protected function reorder(): void
     {
         $ids = $_POST['ids'];
         $sort = 1;

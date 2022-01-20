@@ -876,6 +876,7 @@ class xoctEventGUI extends xoctGUI
 
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+            return;
         }
         $data = $data[0];
 

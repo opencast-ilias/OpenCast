@@ -524,6 +524,9 @@ md_title_de#:#Title German
 md_title_en#:#Title English
 md_table_events#:#Event Metadata
 md_table_series#:#Series Metadata
+md_conf_form_edit#:#Edit Metadata Field
+md_conf_form_create#:#Create Metadata Field
+msg_md_config_info#:#Configuration of available metadata fields. Order can be changed via Drag & Drop.
 action_update#:#Update
 action_delete#:#Delete
 yes#:#Yes
