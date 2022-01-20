@@ -5,6 +5,7 @@ use ILIAS\UI\Factory;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class xoctWorkflowGUI
@@ -40,7 +41,7 @@ class xoctWorkflowGUI extends xoctGUI
     protected function index()
     {
         $this->initToolbar();
-        $table = new xoctWorkflowTableGUI($this, self::CMD_STANDARD);
+        $table = new xoctWorkflowTableGUI($this, self::CMD_STANDARD, $this->workflow_repository);
         self::output()->output($table);
     }
 

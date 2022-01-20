@@ -30,19 +30,14 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 
 	}
 
-
-	/**
-	 *
-	 */
-	protected function initCommands() {
+	protected function initCommands() : void
+    {
 		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
 	}
 
 
-	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
-	 */
-	protected function initFields() {
+	protected function initFields() : void
+    {
 		$this->fields[xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
 			self::PROPERTY_TITLE => self::plugin()->translate(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
 			self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
@@ -61,14 +56,16 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initId() {
+	protected function initId() : void
+    {
 	}
 
 
 	/**
 	 *
 	 */
-	protected function initTitle() {
+	protected function initTitle() : void
+    {
 		$this->setTitle(self::plugin()->translate('settings', 'tab'));
 	}
 
@@ -77,7 +74,8 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 * @param string $key
 	 * @param mixed  $value
 	 */
-	protected function storeValue(string $key, $value) {
+	protected function storeValue(string $key, $value) : void
+    {
 		switch ($key) {
 			case xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
 				xoctConf::set(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
