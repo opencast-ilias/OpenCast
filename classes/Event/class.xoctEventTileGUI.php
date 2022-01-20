@@ -55,19 +55,21 @@ class xoctEventTileGUI
      */
     protected $limit;
     /**
-     * @var EventRepository
+     * @var array
      */
-    protected $event_repository;
+    private $data;
 
-    public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, EventRepository $eventRepository)
+    public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, array $data)
     {
         $this->parent_gui = $parent_gui;
         $this->objectSettings = $objectSettings;
-        $this->event_repository = $eventRepository;
         $this->factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
         $this->page = (int)filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
         $this->limit = xoctUserSettings::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
+        $this->events = array_map(function ($item) {
+            return $item['object'];
+        }, $data);
     }
 
     /**
@@ -78,8 +80,6 @@ class xoctEventTileGUI
      */
     public function getHTML()
     {
-        $this->parseData();
-
         $container_tpl = self::plugin()->template('default/tpl.tile_container.html');
         $container_tpl->setVariable('LIMIT_SELECTOR', $this->getLimitSelectorHTML());
         $container_tpl->setVariable('PAGINATION_TOP', $this->getPaginationHTML());
@@ -134,35 +134,6 @@ class xoctEventTileGUI
             $container_tpl->parseCurrentBlock();
         }
         return $container_tpl->get();
-    }
-
-    /**
-     * @return void
-     * @throws xoctException
-     */
-    protected function parseData()
-    {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        $events = $this->event_repository->getFiltered(['series' => $this->objectSettings->getSeriesIdentifier()]);
-        foreach ($events as $key => $event) {
-            $event = $event['object'] instanceof Event ? $event['object']
-                : $this->event_repository->find($event['identifier']);
-            if (!ilObjOpenCastAccess::hasReadAccessOnEvent(
-                $event,
-                $xoctUser,
-                $this->objectSettings)
-            ) {
-                unset($events[$key]);
-            } elseif ($event->isScheduled()) {
-                $this->has_scheduled_events = true;
-            }
-        }
-        $events = $this->sortData($events);
-        $events = array_map(function (array $element) {
-            return $element['object'] instanceof Event ? $element['object'] : $this->event_repository->find($element['identifier']);
-        }, $events);
-
-        $this->events = array_values($events);
     }
 
 

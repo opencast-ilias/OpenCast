@@ -5,6 +5,7 @@ namespace srag\Plugins\Opencast\UI;
 use ILIAS\DI\Container;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Container\Filter\Standard;
+use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ilObjOpenCastAccess;
 use ilUIService;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -16,6 +17,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use xoctEventTableGUI;
+use xoctEventTileGUI;
 use xoctUser;
 
 class EventTableBuilder
@@ -71,6 +73,13 @@ class EventTableBuilder
         );
     }
 
+    public function tiles($parent_gui, ObjectSettings $objectSettings): xoctEventTileGUI
+    {
+        return new xoctEventTileGUI($parent_gui, $objectSettings,
+            $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $objectSettings));
+    }
+
     public function filter(string $form_action): Standard
     {
         $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable();
@@ -93,7 +102,7 @@ class EventTableBuilder
         return array_filter($this->ui_service->filter()->getData($this->filter('')) ?? []);
     }
 
-    private function mdFieldConfigToFilterItem(MDFieldConfigEventAR $mdFieldConfig): \ILIAS\UI\Implementation\Component\Input\Field\Input
+    private function mdFieldConfigToFilterItem(MDFieldConfigEventAR $mdFieldConfig): Input
     {
         $input_f = $this->ui_factory->input()->field();
         $fieldDefinition = $this->MDCatalogue->getFieldById($mdFieldConfig->getFieldId());

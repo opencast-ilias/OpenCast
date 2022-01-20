@@ -475,7 +475,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function getTilesGUI(): string
     {
-        $xoctEventTileGUI = new xoctEventTileGUI($this, $this->objectSettings, $this->event_repository);
+        $xoctEventTileGUI = $this->eventTableBuilder->tiles($this, $this->objectSettings);
         $html = $this->getModalsHTML();
         $html .= $xoctEventTileGUI->getHTML();
         if ($xoctEventTileGUI->hasScheduledEvents()) {
