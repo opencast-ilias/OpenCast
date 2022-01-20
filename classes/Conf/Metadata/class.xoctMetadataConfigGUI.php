@@ -1,5 +1,6 @@
 <?php
 
+use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Renderer;
@@ -10,20 +11,17 @@ use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
-use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTableBuilder;
+use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
     const CMD_STORE = 'store';
+    const CMD_REORDER = 'reorder';
 
     /**
      * @var MDFieldConfigRepository
      */
     protected $repository;
-    /**
-     * @var MDConfigTableBuilder
-     */
-    protected $table_builder;
 
     protected static $available_commands = [
         self::CMD_STANDARD,
@@ -31,7 +29,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         self::CMD_ADD,
         self::CMD_STORE,
         self::CMD_DELETE,
-        self::CMD_CONFIRM
+        self::CMD_CONFIRM,
+        self::CMD_REORDER
     ];
     /**
      * @var UIFactory
@@ -45,20 +44,26 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      * @var MDCatalogueFactory
      */
     protected $md_catalogue_factory;
-
     /**
-     * @param MDFieldConfigRepository $repository
-     * @param MDConfigTableBuilder $table_builder
+     * @var Container
      */
+    protected $dic;
+    /**
+     * @var ilPlugin
+     */
+    protected $plugin;
+
     public function __construct(MDFieldConfigRepository $repository,
-                                MDConfigTableBuilder $table_builder,
-                                MDCatalogueFactory $md_catalogue_factory)
+                                MDCatalogueFactory      $md_catalogue_factory,
+                                Container               $dic,
+                                ilPlugin                $plugin)
     {
         $this->repository = $repository;
-        $this->table_builder = $table_builder;
         $this->ui_factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
         $this->md_catalogue_factory = $md_catalogue_factory;
+        $this->dic = $dic;
+        $this->plugin = $plugin;
     }
 
 
@@ -94,9 +99,13 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 )->withLabel(self::plugin()->translate('btn_add_new_metadata_field'))
             );
         }
-        self::output()->output(
-            $this->table_builder->withTitle($this->getTableTitle())->render()
-        );
+
+        self::output()->output($this->buildTable());
+    }
+
+    protected function buildTable(): MDConfigTable
+    {
+        return new MDConfigTable($this, $this->getTableTitle(), $this->dic, $this->plugin, $this->repository->getArray());
     }
 
 
@@ -119,7 +128,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      */
     protected function edit()
     {
-        $field_id = filter_input(INPUT_GET, 'row_id_md_config_table', FILTER_SANITIZE_STRING);
+        $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id);
         self::output()->output($this->renderer->render($form));
     }
@@ -228,5 +237,18 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
     }
 
-    abstract protected function getTableTitle() : string;
+    abstract protected function getTableTitle(): string;
+
+    protected function reorder() : void
+    {
+        $ids = $_POST['ids'];
+        $sort = 1;
+        foreach ($ids as $id) {
+            $configAR = $this->repository->findByFieldId($id);
+            $configAR->setSort($sort);
+            $configAR->update();
+            $sort++;
+        }
+        exit;
+    }
 }

@@ -28,17 +28,17 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
      */
     public function getAll() : array
     {
-        return MDFieldConfigEventAR::get();
+        return MDFieldConfigEventAR::orderBy('sort')->get();
     }
 
     public function getAllEditable(): array
     {
-        return MDFieldConfigEventAR::where(['read_only' => false])->get();
+        return MDFieldConfigEventAR::where(['read_only' => false])->orderBy('sort')->get();
     }
 
     public function getArray() : array
     {
-        return MDFieldConfigEventAR::getArray();
+        return MDFieldConfigEventAR::orderBy('sort')->getArray();
     }
 
     public function findByFieldId(string $field_id): ?MDFieldConfigAR

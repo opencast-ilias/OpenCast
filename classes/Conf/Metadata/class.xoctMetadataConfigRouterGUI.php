@@ -20,6 +20,7 @@ class xoctMetadataConfigRouterGUI
 
     public function executeCommand()
     {
+        global $DIC;
         $nextClass = self::dic()->ctrl()->getNextClass();
 
         $opencast_dic = OpencastDIC::getInstance();
@@ -28,7 +29,9 @@ class xoctMetadataConfigRouterGUI
                 $this->setSubTabs(self::SUBTAB_SERIES);
                 $gui = new xoctSeriesMetadataConfigGUI(
                     $opencast_dic->metadata()->confRepositorySeries(),
-                    $opencast_dic->metadata()->catalogueFactory()
+                    $opencast_dic->metadata()->catalogueFactory(),
+                    $DIC,
+                    ilOpenCastPlugin::getInstance()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;
@@ -37,7 +40,9 @@ class xoctMetadataConfigRouterGUI
                 $this->setSubTabs(self::SUBTAB_EVENTS);
                 $gui = new xoctEventMetadataConfigGUI(
                     $opencast_dic->metadata()->confRepositoryEvent(),
-                    $opencast_dic->metadata()->catalogueFactory()
+                    $opencast_dic->metadata()->catalogueFactory(),
+                    $DIC,
+                    ilOpenCastPlugin::getInstance()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;

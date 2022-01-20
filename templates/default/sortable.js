@@ -3,7 +3,6 @@ var xoctSortable = {
 	base_link: '',
 
 	init: function(base_link) {
-		console.log(base_link);
 		xoctSortable.base_link = base_link;
 		$("div.ilTableOuter table tbody").sortable({
 			helper: xoctSortable.fixHelper,
@@ -26,7 +25,6 @@ var xoctSortable = {
 			order.push($(this).val());
 		});
 
-		console.log(order);
 		ajax_url = xoctSortable.base_link + '&cmd=reorder';
 		$.ajax({
 			url: xoctSortable.base_link,
