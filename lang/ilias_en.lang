@@ -82,8 +82,6 @@ config_sign_thumbnail_links#:#Sign Thumbnail Link
 config_sign_thumbnail_links_time#:#Validity in seconds
 config_sign_thumbnail_links_time_info#:#How long the Thumbnail-Link should be valid for (0 uses setting from Opencast).
 config_sign_thumbnail_links_with_ip#:#Sign for client IP
-config_request_comb_lv#:#Request combination level
-config_request_comb_lv_info#:#Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality but may affect the performance.
 config_reset_terms#:#Updated Terms of Use
 config_reset_terms_info#:#Request users to (re-)accept the terms of use. This option should only be activated if the term's content has changed.
 config_groups#:#Opencast Groups

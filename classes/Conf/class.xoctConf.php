@@ -41,11 +41,7 @@ class xoctConf extends ActiveRecord
 	const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
 	const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
 	const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
-	const F_REQUEST_COMBINATION_LEVEL = 'request_comb_lv';
 	const F_EDITOR_LINK = 'editor_link';
-	const SEP_EVERYTHING = 1;
-	const SEP_EV_ACL_MD = 2;
-	const SEP_EV_ACL_MD_PUB = 3;
 	const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
 	const F_PRESIGN_LINKS = 'presign_links';
 	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
@@ -150,26 +146,6 @@ class xoctConf extends ActiveRecord
 
 		// USER
 		xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_LOGIN);
-
-		// EVENT REQUEST LEVEL
-		switch (self::getConfig(self::F_REQUEST_COMBINATION_LEVEL)) {
-			default:
-			case xoctConf::SEP_EVERYTHING:
-				EventAPIRepository::$load_acl_separate = true;
-                EventAPIRepository::$load_pub_separate = true;
-                EventAPIRepository::$load_md_separate = true;
-				break;
-			case xoctConf::SEP_EV_ACL_MD:
-                EventAPIRepository::$load_acl_separate = false;
-				EventAPIRepository::$load_pub_separate = true;
-				EventAPIRepository::$load_md_separate = false;
-				break;
-			case xoctConf::SEP_EV_ACL_MD_PUB:
-				EventAPIRepository::$load_acl_separate = false;
-				EventAPIRepository::$load_pub_separate = false;
-				EventAPIRepository::$load_md_separate = false;
-				break;
-		}
 	}
 
     /**

@@ -582,15 +582,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
-		$cb = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_REQUEST_COMBINATION_LEVEL), xoctConf::F_REQUEST_COMBINATION_LEVEL);
-		$cb->setOptions(array(
-			xoctConf::SEP_EVERYTHING => 'Everything separate',
-			xoctConf::SEP_EV_ACL_MD => 'Event + ACL + MD',
-			xoctConf::SEP_EV_ACL_MD_PUB => 'Event + ACL + MD + PUB',
-		));
-		$cb->setInfo($this->parent_gui->txt(xoctconf::F_REQUEST_COMBINATION_LEVEL . '_info'));
-		$this->addItem($cb);
-
 		$te = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE), xoctConf::F_UPLOAD_CHUNK_SIZE);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
 		$this->addItem($te);

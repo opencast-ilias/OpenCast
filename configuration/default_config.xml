@@ -136,10 +136,6 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[<p>Haben Sie Qualitätsprobleme mit dem Bild oder Ton Ihrer Aufzeichnungen oder Videos? Sie können den Support über das untenstehende Formular kontaktieren.<br /><br />Nennen Sie die betroffenen Videos und die Art der Qualitätsprobleme. Der Support nimmt so bald wie möglich Kontakt mit Ihnen auf.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>request_comb_lv</name>
-      <value><![CDATA[3]]></value>
-    </xoct_conf>
-    <xoct_conf>
       <name>role_anonymous</name>
       <value><![CDATA[ROLE_ANONYMOUS]]></value>
     </xoct_conf>

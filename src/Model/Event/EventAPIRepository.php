@@ -23,10 +23,6 @@ class EventAPIRepository implements EventRepository
 {
     const CACHE_PREFIX = 'event-';
 
-    public static $load_md_separate = true;
-    public static $load_acl_separate = false;
-    public static $load_pub_separate = true;
-
     /**
      * @var Cache
      */
