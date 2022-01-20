@@ -11,20 +11,15 @@ use srag\Plugins\Opencast\Model\Event\EventParser;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Cache\CacheFactory;
-use srag\Plugins\Opencast\Model\ACL\ACLApiRepository;
-use srag\Plugins\Opencast\Model\ACL\ACLRepository;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
-use srag\Plugins\Opencast\Model\Metadata\MetadataAPIRepository;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
-use srag\Plugins\Opencast\Model\Publication\PublicationAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
-use srag\Plugins\Opencast\Model\Scheduling\SchedulingApiRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
@@ -74,21 +69,14 @@ class OpencastDIC
         $this->container['event_repository'] = $this->container->factory(function ($c) {
             return new EventAPIRepository($c['cache'],
                 $c['event_parser'],
-                $c['md_repository'],
-                $c['ingest_service'],
-                $c['acl_repository'],
-                $c['publication_repository'],
-                $c['scheduling_repository']);
+                $c['ingest_service']);
         });
         $this->container['event_parser'] = $this->container->factory(function ($c) {
             return new EventParser(
                 $c['md_parser'],
                 $c['acl_parser'],
                 $c['scheduling_parser']
-            ) ;
-        });
-        $this->container['acl_repository'] = $this->container->factory(function ($c) {
-            return new ACLApiRepository($c['cache']);
+            );
         });
         $this->container['acl_utils'] = $this->container->factory(function ($c) {
             return new ACLUtils();
@@ -98,9 +86,6 @@ class OpencastDIC
         });
         $this->container['ingest_service'] = $this->container->factory(function ($c) {
             return new OpencastIngestService($c['upload_storage_service']);
-        });
-        $this->container['publication_repository'] = $this->container->factory(function ($c) {
-            return new PublicationAPIRepository($c['cache']);
         });
         $this->container['publication_usage_repository'] = $this->container->factory(function ($c) {
             return new PublicationUsageRepository();
@@ -116,11 +101,6 @@ class OpencastDIC
         });
         $this->container['agent_parser'] = $this->container->factory(function ($c) {
             return new AgentParser();
-        });
-        $this->container['md_repository'] = $this->container->factory(function ($c) {
-            return new MetadataAPIRepository(
-                $c['cache'],
-                $c['md_parser']);
         });
         $this->container['md_parser'] = $this->container->factory(function ($c) {
             return new MDParser(
@@ -182,9 +162,6 @@ class OpencastDIC
         $this->container['scheduling_parser'] = $this->container->factory(function ($c) {
             return new SchedulingParser();
         });
-        $this->container['scheduling_repository'] = $this->container->factory(function ($c) {
-            return new SchedulingApiRepository($c['scheduling_parser']);
-        });
         $this->container['scheduling_form_item_builder'] = $this->container->factory(function ($c) {
             return new SchedulingFormItemBuilder(
                 $this->dic->ui()->factory(),
@@ -242,8 +219,8 @@ class OpencastDIC
             return new SeriesAPIRepository($c['cache'],
                 $c['series_parser'],
                 $c['acl_utils'],
-                $c['md_repository'],
-                $c['md_factory']
+                $c['md_factory'],
+                $c['md_parser']
             );
         });
         $this->container['series_parser'] = $this->container->factory(function ($c) {
@@ -268,11 +245,6 @@ class OpencastDIC
     public function cache(): Cache
     {
         return $this->container['cache'];
-    }
-
-    public function acl_repository(): ACLRepository
-    {
-        return $this->container['acl_repository'];
     }
 
     public function ingest_service(): OpencastIngestService

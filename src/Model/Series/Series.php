@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Model\Series;
 
 use srag\Plugins\Opencast\Model\ACL\ACL;
-use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use xoctPermissionTemplate;
 
@@ -12,7 +11,7 @@ use xoctPermissionTemplate;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class Series extends APIObject {
+class Series {
 
 
 	/**

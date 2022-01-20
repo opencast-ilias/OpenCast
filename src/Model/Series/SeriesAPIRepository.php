@@ -6,14 +6,14 @@ use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
-use srag\Plugins\Opencast\Model\Metadata\MetadataRepository;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
-use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayload;
 use xoctException;
 use xoctRequest;
 use xoctUser;
@@ -36,25 +36,25 @@ class SeriesAPIRepository implements SeriesRepository
      */
     private $seriesParser;
     /**
-     * @var MetadataRepository
-     */
-    private $metadataRepository;
-    /**
      * @var MetadataFactory
      */
     private $metadataFactory;
+    /**
+     * @var MDParser
+     */
+    private $MDParser;
 
     public function __construct(Cache              $cache,
                                 SeriesParser       $seriesParser,
                                 ACLUtils           $ACLUtils,
-                                MetadataRepository $metadataRepository,
-                                MetadataFactory    $metadataFactory)
+                                MetadataFactory    $metadataFactory,
+                                MDParser           $MDParser)
     {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
-        $this->metadataRepository = $metadataRepository;
         $this->metadataFactory = $metadataFactory;
+        $this->MDParser = $MDParser;
     }
 
     public function find(string $identifier): Series
@@ -66,10 +66,19 @@ class SeriesAPIRepository implements SeriesRepository
     public function fetch(string $identifier): Series
     {
         $data = json_decode(xoctRequest::root()->series($identifier)->parameter('withacl', true)->get());
-        $data->metadata = $this->metadataRepository->findSeriesMD($identifier);
+        $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
         return $series;
+    }
+
+    /**
+     * @throws xoctException
+     */
+    public function fetchMD(string $identifier): Metadata
+    {
+        $data = json_decode(xoctRequest::root()->series($identifier)->metadata()->get()) ?? [];
+        return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): string
@@ -116,7 +125,7 @@ class SeriesAPIRepository implements SeriesRepository
         foreach ($data as $d) {
             $obj = new Series();
             try {
-                $d->metadata = $this->metadataRepository->findSeriesMD($d->identifier);
+                $d->metadata = $this->fetchMD($d->identifier);
                 $return[] = $this->seriesParser->parseAPIResponse($d);;
             } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
                 continue;
@@ -142,7 +151,7 @@ class SeriesAPIRepository implements SeriesRepository
         return $series;
     }
 
-    public function getOwnSeries(xoctUser $xoct_user) : ?Series
+    public function getOwnSeries(xoctUser $xoct_user): ?Series
     {
         $existing = xoctRequest::root()->series()->parameter(
             'filter',

@@ -69,21 +69,9 @@ class Event
      */
     protected $xoctEventAdditions = null;
     /**
-     * @var SerializableClosure
-     */
-    private $metadata_reference;
-    /**
-     * @var SerializableClosure
-     */
-    private $acl_reference;
-    /**
      * @var string
      */
     private $status;
-    /**
-     * @var SerializableClosure
-     */
-    private $scheduling_reference;
 
     /**
      * @var bool
@@ -373,10 +361,6 @@ class Event
 
     public function getMetadata(): Metadata
     {
-        if (!$this->metadata) {
-            $reference = $this->metadata_reference->getClosure();
-            $this->metadata = $reference();
-        }
         return $this->metadata;
     }
 
@@ -398,10 +382,6 @@ class Event
 
     public function getAcl(): ACL
     {
-        if (!$this->acl) {
-            $reference = $this->acl_reference->getClosure();
-            $this->acl = $reference();
-        }
         return $this->acl;
     }
 
@@ -412,10 +392,6 @@ class Event
 
     public function getScheduling(): ?Scheduling
     {
-        if (!$this->scheduling && $this->scheduling_reference) {
-            $reference = $this->scheduling_reference->getClosure();
-            $this->scheduling = $reference();
-        }
         return $this->scheduling;
     }
 
@@ -432,21 +408,6 @@ class Event
     public function setWorkflows(WorkflowInstanceCollection $workflows): void
     {
         $this->workflows = $workflows;
-    }
-
-    public function setSchedulingReference(SerializableClosure $scheduling_reference)
-    {
-        $this->scheduling_reference = $scheduling_reference;
-    }
-
-    public function setAclReference(SerializableClosure $acl_reference)
-    {
-        $this->acl_reference = $acl_reference;
-    }
-
-    public function setMetadataReference(SerializableClosure $metadata_reference)
-    {
-        $this->metadata_reference = $metadata_reference;
     }
 
     public function getSeriesIdentifier(): string
