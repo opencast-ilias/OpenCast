@@ -5,6 +5,8 @@ require_once('./include/inc.ilias_version.php');
 /**
  * Class xoct
  *
+ * TODO: this is a helper class with all-static methods. I doubt that this is best practice, try and find a better place for this stuff at some point.
+ *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
 class xoct {

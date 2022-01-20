@@ -56,7 +56,7 @@ class MetadataField implements JsonSerializable
     }
 
     /**
-     * @return T
+     * @return T|null
      */
     public function getValue()
     {
@@ -76,17 +76,17 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT_ARRAY:
                 return $this->getValue();
             case MDDataType::TYPE_DATETIME;
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('Y-m-d\TH:i:s\Z');
+                return $value ? $value->format('Y-m-d\TH:i:s\Z') : '';
             case MDDataType::TYPE_TIME:
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('H:i:s\Z');
+                return $value ? $value->format('H:i:s\Z') : '';
             case MDDataType::TYPE_DATE:
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('Y-m-d');
+                return $value ? $value->format('Y-m-d') : '';
         }
     }
 
@@ -99,17 +99,17 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT_ARRAY:
                 return implode(', ', $this->getValue());
             case MDDataType::TYPE_DATETIME;
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('d.m.Y H:i:s');
+                return $value ? $value->format('d.m.Y H:i:s') : '';
             case MDDataType::TYPE_TIME:
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('H:i:s');
+                return $value ? $value->format('H:i:s') : '';
             case MDDataType::TYPE_DATE:
-                /** @var DateTimeImmutable $value */
+                /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value->format('d.m.Y');
+                return $value ? $value->format('d.m.Y') : '';
         }
     }
 

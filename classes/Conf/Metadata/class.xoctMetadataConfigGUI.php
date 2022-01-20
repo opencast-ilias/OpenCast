@@ -216,7 +216,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                             $this->getPrefillOptions())
                             ->withRequired(true)
                             ->withDisabled($md_field_def->isReadOnly())
-                            ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : null)
+                            ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : MDPrefillOption::T_NONE)
                     ], $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
                 )]
         );

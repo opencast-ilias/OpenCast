@@ -115,13 +115,13 @@ class OpencastDIC
             return new MetadataFactory($c['md_catalogue_factory']);
         });
         $this->container['md_prefiller'] = $this->container->factory(function ($c) {
-            return new MDPrefiller();
+            return new MDPrefiller($this->dic);
         });
         $this->container['md_conf_repository_event'] = $this->container->factory(function ($c) {
             return new MDFieldConfigEventRepository($c['md_catalogue_factory']);
         });
         $this->container['md_conf_repository_series'] = $this->container->factory(function ($c) {
-            return new MDFieldConfigSeriesRepository();
+            return new MDFieldConfigSeriesRepository($c['md_catalogue_factory']);
         });
         $this->container['md_form_item_builder_event'] = $this->container->factory(function ($c) {
             return new MDFormItemBuilder(

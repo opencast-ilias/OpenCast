@@ -100,6 +100,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 	}
 
 	/**
+	 * TODO: weird static method - think about where this belongs
+	 *
 	 * @param $ref_id
 	 *
 	 * @return bool|ilObjCourse|ilObjGroup

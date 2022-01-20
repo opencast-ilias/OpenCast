@@ -145,13 +145,13 @@ class MDParser
                 // start date must be split up into startDate and startTime for the OC api
                 $field = new MetadataField($id, MDDataType::date());
                 /** @var DateTimeImmutable $value */
-                $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()))
-                    ->withValue($value);
+                $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));
+                $time_field = $value ? $time_field->withValue($value) : $time_field;
                 $metadata->addField($time_field);
             } else {
                 $field = new MetadataField($id, $definition->getType());
             }
-            $metadata->addField($field->withValue($value));
+            $metadata->addField($value ? $field->withValue($value) : $field);
         }
         return $metadata;
     }

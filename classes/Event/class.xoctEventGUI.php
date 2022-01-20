@@ -305,6 +305,10 @@ class xoctEventGUI extends xoctGUI
             return $this->getTableGUI();
         }
 
+        if (isset($_GET['async'])) {
+            return $this->asyncGetTableGUI();
+        }
+
         self::dic()->ui()->mainTemplate()->addJavascript("./Services/Table/js/ServiceTable.js");
         $this->loadAjaxCodeForList();    // load table asynchronously
         return '<div id="xoct_table_placeholder"></div>';
@@ -321,6 +325,10 @@ class xoctEventGUI extends xoctGUI
 
         if (xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
             return $this->getTilesGUI();
+        }
+
+        if (isset($_GET['async'])) {
+            return $this->asyncGetTilesGUI();
         }
 
         $this->loadAjaxCodeForTiles();    // load tiles asynchronously
@@ -384,19 +392,8 @@ class xoctEventGUI extends xoctGUI
      */
     protected function loadAjaxCodeForList()
     {
-        foreach ($_GET as $para => $value) {
-            self::dic()->ctrl()->setParameter($this, $para, $value);
-        }
-
-        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, 'asyncGetTableGUI', "", true);
-
-        // hacky stuff to allow asynchronous rendering of tableGUI
-        $table_id = xoctEventTableGUI::getGeneratedPrefix($this->getObjId());
-        $user_id = self::dic()->user()->getId();
-        $tab_prop = new ilTablePropertiesStorage();
-        if ($tab_prop->getProperty($table_id, $user_id, 'filter')) {
-            $activate_filter_commmand = "ilShowTableFilter('tfil_$table_id', './ilias.php?baseClass=ilTablePropertiesStorage&table_id=$table_id&cmd=showFilter&user_id=$user_id');";
-        }
+        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, "", true);
+        $ajax_link .= '&async=true';
 
         $ajax = "$.ajax({
 				    url: '{$ajax_link}',
@@ -404,7 +401,6 @@ class xoctEventGUI extends xoctGUI
 				    success: function(data){
 				        xoctWaiter.hide();
 				        $('div#xoct_table_placeholder').replaceWith($(data));
-				        $activate_filter_commmand
 				    }
 				});";
         self::dic()->ui()->mainTemplate()->addOnLoadCode('xoctWaiter.show();');
@@ -416,10 +412,9 @@ class xoctEventGUI extends xoctGUI
      */
     protected function loadAjaxCodeForTiles()
     {
-        foreach ($_GET as $para => $value) {
-            self::dic()->ctrl()->setParameter($this, $para, $value);
-        }
-        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, 'asyncGetTilesGUI', "", true);
+        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, "", true);
+        $ajax_link .= '&async=true';
+
         $ajax = "$.ajax({
 				    url: '{$ajax_link}',
 				    dataType: 'html',
@@ -812,7 +807,6 @@ class xoctEventGUI extends xoctGUI
      */
     public function annotate()
     {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
 
         // check access
@@ -881,7 +875,7 @@ class xoctEventGUI extends xoctGUI
         $data = $data[0];
 
         $this->event_repository->update(new UpdateEventRequest($event->getIdentifier(), new UpdateEventRequestPayload(
-            $data['metadata']
+            $data['object']
         )));
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);

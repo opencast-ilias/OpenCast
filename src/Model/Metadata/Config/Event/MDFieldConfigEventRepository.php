@@ -26,28 +26,41 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
     /**
      * @return MDFieldConfigEventAR[]
      */
-    public function getAll() : array
+    public function getAll(): array
     {
         return MDFieldConfigEventAR::orderBy('sort')->get();
     }
 
-    public function getAllEditable(): array
+    /**
+     * Important: this returns all fields that are defined as read_only by the Opencast Metadata Catalogue - NOT ONLY by the
+     * metadata field configuration in the plugin. This is an important distinction, since fields that are read_only in
+     * the plugin but NOT read_only in Opencast might still be prefilled, e.g. with the course title or current username.
+     *
+     * @return array|MDFieldConfigAR[]
+     * @throws xoctException
+     */
+    public function getAllForForm(): array
     {
-        return MDFieldConfigEventAR::where(['read_only' => false])->orderBy('sort')->get();
+        $MDCatalogue = $this->MDCatalogueFactory->event();
+        return array_filter(MDFieldConfigEventAR::orderBy('sort')->get(),
+            function (MDFieldConfigEventAR $ar) use ($MDCatalogue) {
+                return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
+            });
     }
 
-    public function getArray() : array
+    public function getArray(): array
     {
         return MDFieldConfigEventAR::orderBy('sort')->getArray();
     }
 
     public function findByFieldId(string $field_id): ?MDFieldConfigAR
     {
+        /** @var MDFieldConfigEventAR $ar */
         $ar = MDFieldConfigEventAR::where(['field_id' => $field_id])->first();
         return $ar;
     }
 
-    public function storeFromArray(array $data) : MDFieldConfigAR
+    public function storeFromArray(array $data): MDFieldConfigAR
     {
         $ar = MDFieldConfigEventAR::where(['field_id' => $data['field_id']])->first();
         if (is_null($ar)) {
@@ -60,6 +73,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);
         $ar->setRequired($data['required']);
+        $ar->setSort($this->getNextSort());
         $ar->store();
         return $ar;
     }
@@ -68,12 +82,19 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
      * @return MDFieldConfigEventAR[]
      * @throws xoctException
      */
-    function getAllFilterable() : array
+    function getAllFilterable(): array
     {
         $catalogue = $this->MDCatalogueFactory->event();
         return array_filter($this->getAll(), function (MDFieldConfigEventAR $fieldConfig) use ($catalogue) {
             return $catalogue->getFieldById($fieldConfig->getFieldId())
                 ->getType()->isFilterable();
         });
+    }
+
+    private function getNextSort(): int
+    {
+        /** @var MDFieldConfigEventAR $highest */
+        $highest = MDFieldConfigEventAR::orderBy('sort', 'desc')->first();
+        return $highest ? ($highest->getSort() + 1) : 1;
     }
 }

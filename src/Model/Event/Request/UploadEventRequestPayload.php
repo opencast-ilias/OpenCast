@@ -74,7 +74,7 @@ class UploadEventRequestPayload
     public function jsonSerialize()
     {
         return [
-            'metadata' => json_encode([$this->metadata->jsonSerialize()]),
+            'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()]),
             'acl' => json_encode($this->acl),
             'presentation' => $this->presentation->getCURLFile(),
             'processing' => json_encode($this->processing)

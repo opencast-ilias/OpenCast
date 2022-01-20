@@ -161,6 +161,16 @@ class Metadata implements JsonSerializable
         $this->fields = $fields;
     }
 
+    public function withoutEmptyFields() : self
+    {
+        $clone = clone $this;
+        $clone->fields = array_values(array_filter($clone->fields, function (MetadataField $field) {
+            // no nulls, no empty strings, no empty arrays
+            return (bool) $field->getValue();
+        }));
+        return $clone;
+    }
+
     public function jsonSerialize()
     {
         $std_class = new stdClass();

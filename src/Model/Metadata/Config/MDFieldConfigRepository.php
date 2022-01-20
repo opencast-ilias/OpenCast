@@ -10,9 +10,13 @@ interface MDFieldConfigRepository
      */
     public function getAll() : array;
     /**
-     * @return MDFieldConfigAR[]
+     * Important: this returns all fields that are defined as read_only by the Opencast Metadata Catalogue - NOT ONLY by the
+     * metadata field configuration in the plugin. This is an important distinction, since fields that are read_only in
+     * the plugin but NOT read_only in Opencast might still be prefilled, e.g. with the course title or current username.
+     *
+     * @return array|MDFieldConfigAR[]
      */
-    public function getAllEditable() : array;
+    public function getAllForForm() : array;
 
     /**
      * @return array
