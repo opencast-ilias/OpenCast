@@ -392,7 +392,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function loadAjaxCodeForList()
     {
-        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, "", true);
+        $ajax_link = $this->dic->http()->request()->getRequestTarget();
         $ajax_link .= '&async=true';
 
         $ajax = "$.ajax({
@@ -412,7 +412,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function loadAjaxCodeForTiles()
     {
-        $ajax_link = self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD, "", true);
+        $ajax_link = $this->dic->http()->request()->getRequestTarget();
         $ajax_link .= '&async=true';
 
         $ajax = "$.ajax({

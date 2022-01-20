@@ -67,9 +67,9 @@ class xoctEventTileGUI
         $this->renderer = self::dic()->ui()->renderer();
         $this->page = (int)filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
         $this->limit = xoctUserSettings::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
-        $this->events = array_map(function ($item) {
+        $this->events = array_values(array_map(function ($item) {
             return $item['object'];
-        }, $data);
+        }, $data));
     }
 
     /**
