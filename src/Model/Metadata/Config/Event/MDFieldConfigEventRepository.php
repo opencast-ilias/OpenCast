@@ -97,4 +97,12 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         $highest = MDFieldConfigEventAR::orderBy('sort', 'desc')->first();
         return $highest ? ($highest->getSort() + 1) : 1;
     }
+
+    public function delete($field_id): void
+    {
+        $activeRecord = MDFieldConfigEventAR::where(['field_id' => $field_id])->first();
+        if ($activeRecord) {
+            $activeRecord->delete();
+        }
+    }
 }

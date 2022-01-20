@@ -80,4 +80,12 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         $highest = MDFieldConfigSeriesAR::orderBy('sort', 'desc')->first();
         return $highest ? ($highest->getSort() + 1) : 1;
     }
+
+    public function delete($field_id): void
+    {
+        $activeRecord = MDFieldConfigSeriesAR::where(['field_id' => $field_id])->first();
+        if ($activeRecord) {
+            $activeRecord->delete();
+        }
+    }
 }

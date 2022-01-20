@@ -525,6 +525,8 @@ md_table_series#:#Serien-Metadaten
 md_conf_form_edit#:#Metadatenfeld bearbeiten
 md_conf_form_create#:#Metadatenfeld erstellen
 msg_md_config_info#:#Verwaltung der im Plugin verfügbaren Metadaten. Die Reihenfolge kann via Drag & Drop angepasst werden.
+msg_confirm_delete#:#Sind Sie sicher, dass folgende Elemente gelöscht werden sollen?
+delete_modal_title#:#Löschen bestätigen
 action_update#:#Bearbeiten
 action_delete#:#Löschen
 yes#:#Ja

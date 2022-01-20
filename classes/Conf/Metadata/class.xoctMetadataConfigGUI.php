@@ -159,7 +159,9 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function delete()
     {
-        // TODO: Implement delete() method.
+        $field_id = $this->dic->http()->request()->getQueryParams()['field_id'];
+        $this->repository->delete($field_id);
+        $this->dic->ctrl()->redirect($this, self::CMD_STANDARD);
     }
 
     protected function getAvailableMetadataFields(): array

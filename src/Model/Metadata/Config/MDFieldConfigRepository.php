@@ -27,5 +27,7 @@ interface MDFieldConfigRepository
 
     public function storeFromArray(array $data) : MDFieldConfigAR;
 
+    public function delete($field_id) : void;
+
 
 }

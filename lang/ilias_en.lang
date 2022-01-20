@@ -527,6 +527,8 @@ md_table_series#:#Series Metadata
 md_conf_form_edit#:#Edit Metadata Field
 md_conf_form_create#:#Create Metadata Field
 msg_md_config_info#:#Configuration of available metadata fields. Order can be changed via Drag & Drop.
+msg_confirm_delete#:#Are you sure you want to delete the following item(s)?
+delete_modal_title#:#Confirm deletion
 action_update#:#Update
 action_delete#:#Delete
 yes#:#Yes
