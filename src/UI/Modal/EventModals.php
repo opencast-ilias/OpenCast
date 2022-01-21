@@ -77,7 +77,10 @@ class EventModals
             $form_id = 'form_' . $form->getId();
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
                 ->withOnLoadCode(function ($id) use ($form_id) {
-                    return "$('#{$id}').click(function() { $('#{$form_id}').submit(); return false; });";
+                    return "$('#{$id}').click(function() { " .
+                        "$('#{$form_id}').submit(); " .
+                        "$(this).prop('disabled', true); " .
+                        "return false; });";
                 });
 
             $modal_republish = $this->dic->ui()->factory()->modal()->roundtrip(
@@ -135,7 +138,10 @@ class EventModals
 
         $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("send"), '#')
             ->withOnLoadCode(function ($id) use ($form_id) {
-                return "$('#{$id}').click(function() { $('#{$form_id}').submit(); return false; });";
+                return "$('#{$id}').click(function() { " .
+                    "$('#{$form_id}').submit(); " .
+                    "$(this).prop('disabled', true); " .
+                    "return false; });";
             });
 
         $modal = $this->dic->ui()->factory()->modal()->roundtrip(
