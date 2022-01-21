@@ -942,7 +942,7 @@ class xoctEventGUI extends xoctGUI
                 'workflow_definition_identifier' => $workflow->getWorkflowId(),
             ];
             $params = [];
-            foreach (explode(',', $workflow->getParameters()) as $param) {
+            foreach (array_filter(explode(',', $workflow->getParameters())) as $param) {
                 $params[$param] = 'true';
             }
             if (!empty($params)) {
