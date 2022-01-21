@@ -1,5 +1,8 @@
 # Change Log
 
+## [x.x.x]
+- Fix: disable submit button in modals after submit
+
 ## [3.7.3]
 - Feature/Improvement: support fetching streaming urls from publications instead of building them half-statically
 - Change/Fix: stop setting 1234 as default theme when creating a series (no theme is set anymore) 
