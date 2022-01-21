@@ -22,14 +22,44 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
      * @var UploadStorageService
      */
     private $uploadStorageService;
-
     /**
-     * @param UploadStorageService $uploadStorageService
+     * @var string
      */
-    public function __construct(UploadStorageService $uploadStorageService)
+    private $upload_url;
+    /**
+     * @var string
+     */
+    private $file_info_url;
+    /**
+     * @var string
+     */
+    private $file_removal_url;
+
+    public function __construct(UploadStorageService $uploadStorageService,
+                                string               $upload_url = '',
+                                string               $file_info_url = '',
+                                string               $file_removal_url = '')
     {
         parent::__construct();
         $this->uploadStorageService = $uploadStorageService;
+        $this->upload_url = $upload_url;
+        $this->file_info_url = $file_info_url;
+        $this->file_removal_url = $file_removal_url;
+    }
+
+    public function getUploadURL(): string
+    {
+        return $this->upload_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_UPLOAD);
+    }
+
+    public function getExistingFileInfoURL(): string
+    {
+        return $this->file_info_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_INFO);
+    }
+
+    public function getFileRemovalURL(): string
+    {
+        return $this->file_removal_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_REMOVE);
     }
 
 

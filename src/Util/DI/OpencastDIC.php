@@ -179,7 +179,9 @@ class OpencastDIC
                 $c['upload_storage_service'],
                 $c['upload_handler'],
                 $c['plugin'],
-                $c['scheduling_form_item_builder']
+                $c['scheduling_form_item_builder'],
+                $c['series_repository'],
+                $this->dic
             );
         });
         $this->container['event_table_builder'] = $this->container->factory(function($c) {
@@ -305,6 +307,11 @@ class OpencastDIC
     public function workflow_repository(): WorkflowRepository
     {
         return $this->container['workflow_repository'];
+    }
+
+    public function overwriteService(string $service_identifier, $value) : void
+    {
+        $this->container[$service_identifier] = $value;
     }
 
 }
