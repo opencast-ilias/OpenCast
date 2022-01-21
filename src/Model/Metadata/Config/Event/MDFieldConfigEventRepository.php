@@ -39,7 +39,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
      * @return array|MDFieldConfigAR[]
      * @throws xoctException
      */
-    public function getAllForForm(): array
+    public function getAllEditable(): array
     {
         $MDCatalogue = $this->MDCatalogueFactory->event();
         return array_filter(MDFieldConfigEventAR::orderBy('sort')->get(),

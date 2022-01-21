@@ -16,7 +16,7 @@ interface MDFieldConfigRepository
      *
      * @return array|MDFieldConfigAR[]
      */
-    public function getAllForForm() : array;
+    public function getAllEditable() : array;
 
     /**
      * @return array

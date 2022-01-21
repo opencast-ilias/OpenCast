@@ -37,7 +37,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
      * @return array|MDFieldConfigAR[]
      * @throws xoctException
      */
-    public function getAllForForm(): array
+    public function getAllEditable(): array
     {
         $MDCatalogue = $this->MDCatalogueFactory->event();
         return array_filter(MDFieldConfigSeriesAR::orderBy('sort')->get(),
@@ -64,7 +64,8 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
             $ar = new MDFieldConfigSeriesAR();
         }
         $ar->setFieldId($data['field_id']);
-        $ar->setTitle($data['title']);
+        $ar->setTitleDe($data['title_de']);
+        $ar->setTitleEn($data['title_en']);
         $ar->setVisibleForPermissions($data['visible_for_permissions']);
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);

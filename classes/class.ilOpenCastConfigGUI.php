@@ -14,6 +14,7 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 	
 	public function executeCommand() {
+//		xoctInternalAPI::getInstance()->events()->create()
 		/**
 		 * @var self::dic()->ctrl() ilCtrl
 		 */

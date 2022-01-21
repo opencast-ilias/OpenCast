@@ -141,6 +141,9 @@ class MDParser
                  as $id => $value) {
             $id = substr($id, 3);
             $definition = $catalogue->getFieldById($id);
+            if ($definition->isReadOnly()) {
+                continue;
+            }
             if ($id == MDFieldDefinition::F_START_DATE) {
                 // start date must be split up into startDate and startTime for the OC api
                 $field = new MetadataField($id, MDDataType::date());
