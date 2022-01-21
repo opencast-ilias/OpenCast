@@ -29,6 +29,7 @@ use srag\Plugins\Opencast\Model\Series\SeriesParser;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use srag\Plugins\Opencast\Traits\Singleton;
@@ -151,6 +152,9 @@ class OpencastDIC
             return new WorkflowDBRepository();
         });
         $this->container['workflow_parameter_conf_repository'] = $this->container->factory(function ($c) {
+            return new WorkflowParameterRepository($c['workflow_parameter_series_repository']);
+        });
+        $this->container['workflow_parameter_series_repository'] = $this->container->factory(function ($c) {
             return new SeriesWorkflowParameterRepository(
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
@@ -175,7 +179,7 @@ class OpencastDIC
             return new EventFormBuilder($this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_form_item_builder_event'],
-                $c['workflow_parameter_conf_repository'],
+                $c['workflow_parameter_series_repository'],
                 $c['upload_storage_service'],
                 $c['upload_handler'],
                 $c['plugin'],
@@ -284,9 +288,14 @@ class OpencastDIC
         return $this->container['series_form_builder'];
     }
 
-    public function workflow_parameter_conf_repository(): SeriesWorkflowParameterRepository
+    public function workflow_parameter_conf_repository(): WorkflowParameterRepository
     {
         return $this->container['workflow_parameter_conf_repository'];
+    }
+
+    public function workflow_parameter_series_repository(): SeriesWorkflowParameterRepository
+    {
+        return $this->container['workflow_parameter_series_repository'];
     }
 
     public function workflow_parameter_parser(): WorkflowParameterParser

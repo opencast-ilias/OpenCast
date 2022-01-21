@@ -14,12 +14,17 @@ class xoctWorkflowParameterTableGUI extends TableGUI
 
     const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
+    /**
+     * @var WorkflowParameterRepository
+     */
+    private $workflowParameterRepository;
 
 
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
         parent::__construct($parent, $parent_cmd);
         $this->setEnableNumInfo(false);
+        $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
 
@@ -121,13 +126,13 @@ class xoctWorkflowParameterTableGUI extends TableGUI
         $this->tpl->setVariable("TYPE", $row["type"]);
 
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_member]');
-        $ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
+        $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['default_value_member']);
         $this->tpl->setVariable("DEFAULT_VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_admin]');
-        $ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
+        $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['default_value_admin']);
         $this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 

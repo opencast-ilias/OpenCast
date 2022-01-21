@@ -19,6 +19,10 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      * @var xoctSeriesGUI
      */
     protected $parent_obj;
+    /**
+     * @var WorkflowParameterRepository
+     */
+    private $workflowParameterRepository;
 
 
     /**
@@ -27,10 +31,11 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      * @param $parent
      * @param $parent_cmd
      */
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
         parent::__construct($parent, $parent_cmd);
         $this->setEnableNumInfo(false);
+        $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
     /**
@@ -96,13 +101,13 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $this->tpl->setVariable("TYPE", $row["type"]);
 
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_member]');
-        $ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
+        $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['value_member']);
         $this->tpl->setVariable("VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
 
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_admin]');
-        $ilSelectInputGUI->setOptions(WorkflowParameterRepository::getSelectionOptions());
+        $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['value_admin']);
         $this->tpl->setVariable("VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 

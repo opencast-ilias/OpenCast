@@ -1,7 +1,9 @@
 <?php
 
+use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
  * Class xoctWorkflowParameterGUI
@@ -27,8 +29,26 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 * @var bool
 	 */
 	protected $overwrite_series_parameters = false;
+    /**
+     * @var WorkflowParameterRepository
+     */
+    private $workflowParameterRepository;
+    /**
+     * @var SeriesWorkflowParameterRepository
+     */
+    private $seriesWorkflowParameterRepository;
 
-	/**
+    /**
+     * @param WorkflowParameterRepository $workflowParameterRepository
+     */
+    public function __construct(WorkflowParameterRepository $workflowParameterRepository,
+                                SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
+    {
+        $this->workflowParameterRepository = $workflowParameterRepository;
+        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
+    }
+
+    /**
 	 *
 	 */
 	protected function index() {
@@ -37,7 +57,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	protected function setSubTabs() {
 		self::dic()->tabs()->addSubTab(self::SUBTAB_PARAMETERS, self::plugin()->translate(self::SUBTAB_PARAMETERS, 'subtab'), self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD));
@@ -51,7 +71,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	protected function showTable() {
 		ilUtil::sendInfo(self::plugin()->translate('msg_workflow_parameters_info'));
 		self::dic()->tabs()->setSubTabActive(self::SUBTAB_PARAMETERS);
-		$xoctWorkflowParameterTableGUI = new xoctWorkflowParameterTableGUI($this, self::CMD_SHOW_TABLE);
+		$xoctWorkflowParameterTableGUI = new xoctWorkflowParameterTableGUI($this, self::CMD_SHOW_TABLE, $this->workflowParameterRepository);
 		self::dic()->ui()->mainTemplate()->setContent($xoctWorkflowParameterTableGUI->getHTML());
 	}
 
@@ -102,7 +122,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 */
 	protected function loadWorkflowParameters() {
 		try {
-			$params = WorkflowParameterRepository::getInstance()->loadParametersFromAPI();
+			$params = $this->workflowParameterRepository->loadParametersFromAPI();
 			if (!count($params)) {
 				ilUtil::sendFailure(self::plugin()->translate('msg_no_params_found'), true);
 				self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
@@ -138,7 +158,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 		// create new and update existing
 		foreach ($delivered_params as $param_id => $parameter) {
-			$xoctWorkflowParameter = WorkflowParameterRepository::getInstance()->createOrUpdate($param_id, $parameter['title'], $parameter['type']);
+			$xoctWorkflowParameter = $this->workflowParameterRepository->createOrUpdate($param_id, $parameter['title'], $parameter['type']);
 			if (in_array($param_id, $to_create_ids)) {
 				$to_create[] = $xoctWorkflowParameter;
 			}
@@ -151,10 +171,10 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 		// create/delete the series settings
 		if (count($to_delete_ids)) {
-			SeriesWorkflowParameterRepository::getInstance()->deleteParamsForAllObjectsById($to_delete_ids);
+			$this->seriesWorkflowParameterRepository->deleteParamsForAllObjectsById($to_delete_ids);
 		}
 		if (count($to_create_ids)) {
-			SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($to_create);
+			$this->seriesWorkflowParameterRepository->createParamsForAllObjects($to_create);
 		}
 
 		ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
@@ -166,7 +186,9 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function edit() {
-		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this, filter_input(INPUT_GET, 'param_id'));
+		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this,
+            $this->workflowParameterRepository,
+            filter_input(INPUT_GET, 'param_id'));
 		self::dic()->ui()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
 	}
 
@@ -175,7 +197,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function add() {
-		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this);
+		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this, $this->workflowParameterRepository);
 		self::dic()->ui()->mainTemplate()->setContent($xoctWorkflowParameterFormGUI->getHTML());
 	}
 
@@ -224,7 +246,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function updateParameter() {
-		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this);
+		$xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this, $this->workflowParameterRepository);
 		$xoctWorkflowParameterFormGUI->setValuesByPost();
 		if ($xoctWorkflowParameterFormGUI->storeForm()) {
 			ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
@@ -235,7 +257,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws DICException
 	 */
 	protected function updateTable() {
 		foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $id => $value) {
@@ -254,7 +276,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function overwriteSeriesParameters() {
-		WorkflowParameterRepository::getInstance()->overwriteSeriesParameter();
+        $this->workflowParameterRepository->overwriteSeriesParameter();
 		ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
 		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_FORM);
 	}
@@ -263,7 +285,7 @@ class xoctWorkflowParameterGUI extends xoctGUI {
 	 *
 	 */
 	protected function confirmDelete() {
-		WorkflowParameterRepository::getInstance()->deleteById($_POST['param_id']);
+        $this->workflowParameterRepository->deleteById($_POST['param_id']);
 		ilUtil::sendSuccess(self::plugin()->translate('config_msg_success'), true);
 		self::dic()->ctrl()->redirect($this, self::CMD_SHOW_TABLE);
 	}

@@ -43,7 +43,7 @@ class xoctMainGUI extends xoctGUI
 
         self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
         self::dic()->tabs()->addTab(self::TAB_WORKFLOWS, self::plugin()->translate('tab_' . self::TAB_WORKFLOWS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowGUI::class));
-        self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget(new xoctWorkflowParameterGUI()));
+        self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowParameterGUI::class));
         self::dic()->tabs()->addTab(self::TAB_PUBLICATION_USAGE, self::plugin()->translate('tab_'
             . self::TAB_PUBLICATION_USAGE), self::dic()->ctrl()->getLinkTarget(new xoctPublicationUsageGUI()));
         self::dic()->tabs()->addTab(self::TAB_METADATA, self::plugin()->translate('tab_' . self::TAB_METADATA), self::dic()->ctrl()->getLinkTarget(new xoctMetadataConfigRouterGUI()));
@@ -80,7 +80,10 @@ class xoctMainGUI extends xoctGUI
                 break;
             case strtolower(xoctWorkflowParameterGUI::class):
                 self::dic()->tabs()->activateTab(self::TAB_WORKFLOW_PARAMETERS);
-                $xoctWorkflowParameterGUI = new xoctWorkflowParameterGUI();
+                $xoctWorkflowParameterGUI = new xoctWorkflowParameterGUI(
+                    $opencast_dic->workflow_parameter_conf_repository(),
+                    $opencast_dic->workflow_parameter_series_repository()
+                );
                 self::dic()->ctrl()->forwardCommand($xoctWorkflowParameterGUI);
                 break;
             case strtolower(xoctMetadataConfigRouterGUI::class):

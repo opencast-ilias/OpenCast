@@ -4,7 +4,6 @@ namespace srag\Plugins\Opencast\Model\Event;
 
 use DateTimeImmutable;
 use ilObjUser;
-use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLEntry;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -106,7 +105,6 @@ class Event
      */
     protected $series;
 
-    // todo: presenter might be a non-metadata field
 
     /**
      * @var bool

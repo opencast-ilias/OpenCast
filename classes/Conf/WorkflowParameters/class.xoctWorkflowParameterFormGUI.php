@@ -24,17 +24,17 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @var WorkflowParameter
 	 */
 	protected $xoctWorkflowParameter;
+    /**
+     * @var WorkflowParameterRepository
+     */
+    private $workflowParameterRepository;
 
 
-	/**
-	 * xoctWorkflowParameterFormGUI constructor.
-	 *
-	 * @param $parent
-	 */
-	public function __construct($parent, $param_id = '') {
+	public function __construct($parent, WorkflowParameterRepository $workflowParameterRepository, $param_id = '') {
 		$this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
-		parent::__construct($parent);
-	}
+        $this->workflowParameterRepository = $workflowParameterRepository;
+        parent::__construct($parent);
+    }
 
 
 	/**
@@ -49,7 +49,8 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initCommands() {
+	protected function initCommands() : void
+    {
 		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, self::dic()->language()->txt('save'));
 		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_CANCEL, self::dic()->language()->txt('cancel'));
 	}
@@ -58,7 +59,8 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initFields() {
+	protected function initFields() : void
+    {
 		$this->fields = [
 			self::F_ID => [
 				self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_ID),
@@ -86,14 +88,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
-				self::PROPERTY_OPTIONS => WorkflowParameterRepository::getSelectionOptions()
+				self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
 			],
 			self::F_DEFAULT_VALUE_ADMIN => [
 				self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_ADMIN),
 				self::PROPERTY_CLASS => ilSelectInputGUI::class,
 				self::PROPERTY_REQUIRED => true,
 				self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),
-				self::PROPERTY_OPTIONS => WorkflowParameterRepository::getSelectionOptions()
+				self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
 			],
 
 		];
@@ -103,14 +105,16 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initId() {
+	protected function initId() : void
+    {
 	}
 
 
 	/**
 	 *
 	 */
-	protected function initTitle() {
+	protected function initTitle() : void
+    {
 		$this->setTitle(self::dic()->language()->txt('edit'));
 	}
 
@@ -123,7 +127,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 			return false;
 		}
 
-		WorkflowParameterRepository::getInstance()->createOrUpdate(
+		$this->workflowParameterRepository->createOrUpdate(
 			$this->getInput(self::F_ID),
 			$this->getInput(self::F_TITLE),
 			$this->getInput(self::F_TYPE),
@@ -139,6 +143,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI {
 	 * @param string $key
 	 * @param mixed  $value
 	 */
-	protected function storeValue(string $key, $value) {
+	protected function storeValue(string $key, $value) : void
+    {
 	}
 }

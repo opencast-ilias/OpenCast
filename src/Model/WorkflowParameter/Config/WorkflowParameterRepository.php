@@ -3,10 +3,12 @@
 namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
 
 use DOMDocument;
+use DOMElement;
 use ilException;
 use ilOpenCastPlugin;
 use ilUtil;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoctConf;
 use xoctConfGUI;
@@ -32,24 +34,26 @@ class WorkflowParameterRepository {
 	 * @var array
 	 */
 	protected $parameters;
+    /**
+     * @var SeriesWorkflowParameterRepository
+     */
+    protected $seriesWorkflowParameterRepository;
 
-	/**
-	 * @return self
-	 */
-	public static function getInstance() {
-		if (self::$instance == NULL) {
-			$self = new self();
-			self::$instance = $self;
-		}
-		return self::$instance;
-	}
+    /**
+     * @param SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository
+     */
+    public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
+    {
+        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
+    }
 
 
 	/**
 	 * @return array
 	 * @throws xoctException
 	 */
-	public function loadParametersFromAPI() {
+	public function loadParametersFromAPI() : array
+    {
 		xoctConf::setApiSettings();
 		$workflow_id = xoctConf::getConfig(xoctConf::F_WORKFLOW);
 		if (!$workflow_id) {
@@ -148,7 +152,7 @@ class WorkflowParameterRepository {
 		$xoctWorkflowParameter->store();
 
 		if ($is_new) {
-			SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($xoctWorkflowParameter);
+			$this->seriesWorkflowParameterRepository->createParamsForAllObjects($xoctWorkflowParameter);
 		}
 
 		return $xoctWorkflowParameter;
@@ -174,7 +178,7 @@ class WorkflowParameterRepository {
 	 * @return array
 	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
-	public static function getSelectionOptions() {
+	public function getSelectionOptions() {
 		$options = [];
 		foreach (WorkflowParameter::$possible_values as $value) {
 			$options[$value] = self::plugin()->translate('workflow_parameter_value_' . $value, 'config');
@@ -182,27 +186,4 @@ class WorkflowParameterRepository {
 		return $options;
 	}
 
-    /**
-     * @param bool $as_admin
-     */
-    public function getDefaultWorkflowParameters($as_admin = true) : array
-    {
-        $workflow_parameters = [];
-        /** @var WorkflowParameter $xoctWorkflowParameter */
-        foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
-            $default_value = $as_admin ? $xoctWorkflowParameter->getDefaultValueAdmin() : $xoctWorkflowParameter->getDefaultValueMember();
-
-            switch ($default_value) {
-                case WorkflowParameter::VALUE_ALWAYS_ACTIVE:
-                    $workflow_parameters[$xoctWorkflowParameter->getId()] = 1;
-                    break;
-                case WorkflowParameter::VALUE_ALWAYS_INACTIVE:
-                    $workflow_parameters[$xoctWorkflowParameter->getId()] = 0;
-                    break;
-                default:
-                    break;
-            }
-        }
-        return $workflow_parameters;
-    }
 }

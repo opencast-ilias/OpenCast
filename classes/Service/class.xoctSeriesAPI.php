@@ -2,6 +2,10 @@
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\Series\Series;
+use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class xoctSeriesAPI
@@ -17,19 +21,26 @@ class xoctSeriesAPI {
 	 * @var self
 	 */
 	protected static $instance;
+    /**
+     * @var SeriesRepository
+     */
+    private $series_repository;
 
 
-	/**
-	 * xoctSeriesAPI constructor.
+    /**
+	 * SeriesAPI constructor.
 	 */
 	public function __construct() {
+        $opencastDIC = OpencastDIC::getInstance();
+        $this->series_repository = $opencastDIC->series_repository();
 	}
 
 
 	/**
 	 * @return xoctSeriesAPI
 	 */
-	public static function getInstance() {
+	public static function getInstance() : self
+    {
 		if (!self::$instance) {
 			self::$instance = new self();
 		}
@@ -37,65 +48,63 @@ class xoctSeriesAPI {
 	}
 
 
-	/**
-	 * possible additional data:
-	 *
-	 *  owner => integer
-	 *  permission_template_id => integer
-	 *  series_id => text
-	 *  description => text
-	 *  online => boolean
-	 *  introduction_text => text
-	 *  license => text
-	 *  use_annotations => boolean
-	 *  streaming_only => boolean
-	 *  permission_per_clip => boolean
-	 *  permission_allow_set_own => boolean
-	 *  member_upload => boolean
-	 *  producers => int[]
-	 *
-	 *
-	 * @param       $parent_ref_id
-	 * @param       $title
-	 * @param array $additional_data
-	 *
-	 * @return ObjectSettings
-	 * @throws xoctInternalApiException
-	 */
-	public function create($parent_ref_id, $title, $additional_data = array()) {
-		$parent_type = ilObject2::_lookupType($parent_ref_id, true);
-		if (!self::dic()->objDefinition()->isContainer($parent_type)) {
-			throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is of type $parent_type but should be a container");
-		}
+    /**
+     * possible additional data:
+     *
+     *  owner => integer
+     *  permission_template_id => integer
+     *  series_id => text
+     *  description => text
+     *  online => boolean
+     *  introduction_text => text
+     *  license => text
+     *  use_annotations => boolean
+     *  streaming_only => boolean
+     *  permission_per_clip => boolean
+     *  permission_allow_set_own => boolean
+     *  member_upload => boolean
+     *  producers => int[]
+     *
+     *
+     * @param int $parent_ref_id
+     * @param string $title
+     * @param array $additional_data
+     *
+     * @return ObjectSettings
+     * @throws xoctException
+     * @throws xoctInternalApiException
+     */
+	public function create(int $parent_ref_id, string $title, $additional_data = array()) : ObjectSettings
+    {
 		if (!ilObjOpenCast::_getParentCourseOrGroup($parent_ref_id)) {
 			throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
 		}
 
-        $object = new ilObjOpenCast();
+        $ilObjOpenCast = new ilObjOpenCast();
         if (isset($additional_data['owner'])) {
-            $object->setOwner($additional_data['owner']);
+            $ilObjOpenCast->setOwner($additional_data['owner']);
         }
-        $object->setTitle($title);
-        $object->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
-        $object->create();
-        $object->createReference();
-        $object->putInTree($parent_ref_id);
-        $object->setPermissions($parent_ref_id);
+        $ilObjOpenCast->setTitle($title);
+        $ilObjOpenCast->setDescription($additional_data['description'] ?? '');
+        $ilObjOpenCast->create();
+        $ilObjOpenCast->createReference();
+        $ilObjOpenCast->putInTree($parent_ref_id);
+        $ilObjOpenCast->setPermissions($parent_ref_id);
 
-		$cast = new ObjectSettings();
-		$cast->setOnline(isset($additional_data['online']) ? $additional_data['online'] : false);
-		$cast->setAgreementAccepted(true);
-		$cast->setIntroductionText(isset($additional_data['introduction_text']) ? $additional_data['introduction_text'] : '');
-		$cast->setUseAnnotations(isset($additional_data['use_annotations']) ? $additional_data['use_annotations'] : false);
-		$cast->setStreamingOnly(isset($additional_data['streaming_only']) ? $additional_data['streaming_only'] : false);
-		$cast->setPermissionPerClip(isset($additional_data['permission_per_clip']) ? $additional_data['permission_per_clip'] : false);
-		$cast->setPermissionAllowSetOwn(isset($additional_data['permission_allow_set_own']) ? $additional_data['permission_allow_set_own'] : false);
+		$objectSettings = new ObjectSettings();
+		$objectSettings->setOnline($additional_data['online'] ?? false);
+		$objectSettings->setAgreementAccepted(true);
+		$objectSettings->setIntroductionText($additional_data['introduction_text'] ?? '');
+		$objectSettings->setUseAnnotations($additional_data['use_annotations'] ?? false);
+		$objectSettings->setStreamingOnly($additional_data['streaming_only'] ?? false);
+		$objectSettings->setPermissionPerClip($additional_data['permission_per_clip'] ?? false);
+		$objectSettings->setPermissionAllowSetOwn($additional_data['permission_allow_set_own'] ?? false);
 
-		$series = $cast->getSeries();
-		$series->setIdentifier(isset($additional_data['series_id']) ? $additional_data['series_id'] : '');
+		$series = new Series();
+		$series->setIdentifier($additional_data['series_id'] ?? '');
 		$series->setTitle($title);
-		$series->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
-		$series->setLicense(isset($additional_data['license']) ? $additional_data['license'] : '');
+		$series->setDescription($additional_data['description'] ?? '');
+		$series->setLicense($additional_data['license'] ?? '');
 
 		$std_acls = new xoctAclStandardSets();
 		$series_acls = $std_acls->getAcl();
@@ -103,16 +112,16 @@ class xoctSeriesAPI {
 			xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
 			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
 			$xoctPermissionTemplate = xoctPermissionTemplate::find($additional_data['permission_template_id']);
-			$xoctPermissionTemplate->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
+			$xoctPermissionTemplate->addToAcls($series_acls, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
 		} elseif ($default_template = xoctPermissionTemplate::where(array('is_default' => 1))->first()) {
             /** @var xoctPermissionTemplate $default_template */
-            $default_template->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
+            $default_template->addToAcls($series_acls, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
         }
 
         $series->setAccessPolicies($series_acls);
 
 		// add producers
-        $producers = ilObjOpenCastAccess::getProducersForRefID($object->getRefId());
+        $producers = ilObjOpenCastAccess::getProducersForRefID($ilObjOpenCast->getRefId());
 
         if (isset($additional_data['owner'])) {
             $producers[] = xoctUser::getInstance($additional_data['owner']);
@@ -131,7 +140,7 @@ class xoctSeriesAPI {
         }
 
         $series->addProducers($producers, true);
-        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($object->getRefId())->getTitle(), true);
+        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle(), true);
 
 		if ($series->getIdentifier()) {
 			$series->update();
@@ -139,18 +148,18 @@ class xoctSeriesAPI {
 			$series->create();
 		}
 
-		$cast->setSeriesIdentifier($series->getIdentifier());
-        $cast->setObjId($object->getId());
-        $cast->create(true);
+		$objectSettings->setSeriesIdentifier($series->getIdentifier());
+        $objectSettings->setObjId($ilObjOpenCast->getId());
+        $objectSettings->create();
 
 		//member upload
 		if (isset($additional_data['member_upload'])) {
-			ilObjOpenCastAccess::activateMemberUpload($object->getRefId());
+			ilObjOpenCastAccess::activateMemberUpload($ilObjOpenCast->getRefId());
 		}
 
-		SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($object->getId());
+		SeriesWorkflowParameterRepository::getInstance()->syncAvailableParameters($ilObjOpenCast->getId());
 
-		return $cast;
+		return $objectSettings;
 	}
 
 

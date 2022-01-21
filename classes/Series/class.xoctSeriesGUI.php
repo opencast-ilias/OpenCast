@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
 
@@ -55,17 +56,23 @@ class xoctSeriesGUI extends xoctGUI
      * @var SeriesWorkflowParameterRepository
      */
     private $seriesWorkflowParameterRepository;
+    /**
+     * @var WorkflowParameterRepository
+     */
+    private $workflowParameterRepository;
 
     public function __construct(ilObjOpenCast                     $object,
                                 SeriesFormBuilder                 $seriesFormBuilder,
                                 SeriesRepository                  $seriesRepository,
-                                SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
+                                SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
+                                WorkflowParameterRepository       $workflowParameterRepository)
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
         $this->seriesRepository = $seriesRepository;
         $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
+        $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
 
@@ -203,7 +210,7 @@ class xoctSeriesGUI extends xoctGUI
         }
         self::dic()->tabs()->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
-        $xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS);
+        $xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS, $this->workflowParameterRepository);
         self::dic()->ui()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
     }
 

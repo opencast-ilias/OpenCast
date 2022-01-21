@@ -114,30 +114,30 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 case 'xoctivtgroupparticipantgui':
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctIVTGroupParticipantGUI($objectSettings);
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
+                    $xoctIVTGroupParticipantGUI = new xoctIVTGroupParticipantGUI($objectSettings);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctIVTGroupParticipantGUI);
                     $this->showMainTemplate();
                     break;
                 case 'xoctinvitationgui':
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctInvitationGUI(
+                    $xoctInvitationGUI = new xoctInvitationGUI(
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->acl_utils()
                     );
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctInvitationGUI);
                     $this->showMainTemplate();
                     break;
                 case 'xoctchangeownergui':
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctChangeOwnerGUI(
+                    $xoctChangeOwnerGUI = new xoctChangeOwnerGUI(
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->acl_utils()
                     );
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctChangeOwnerGUI);
                     $this->showMainTemplate();
                     break;
                 case 'xoctseriesgui':
@@ -145,6 +145,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctSeriesGUI = new xoctSeriesGUI($this->object,
                         $this->opencast_dic->series_form_builder(),
                         $this->opencast_dic->series_repository(),
+                        $this->opencast_dic->workflow_parameter_series_repository(),
                         $this->opencast_dic->workflow_parameter_conf_repository()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
@@ -169,8 +170,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 case 'xoctivtgroupgui':
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctSeriesGUI = new xoctIVTGroupGUI($objectSettings);
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
+                    $xoctIVTGroupGUI = new xoctIVTGroupGUI($objectSettings);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctIVTGroupGUI);
                     $this->showMainTemplate();
                     break;
                 case 'ilpermissiongui':
@@ -435,7 +436,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue());
         $newObj->update();
 
-        $this->opencast_dic->workflow_parameter_conf_repository()->syncAvailableParameters($newObj->getId());
+        $this->opencast_dic->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());
 
         parent::afterSave($newObj);
     }
