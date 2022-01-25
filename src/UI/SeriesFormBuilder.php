@@ -78,19 +78,19 @@ class SeriesFormBuilder
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
-                'series_type' => $this->buildSeriesSelectionSection(),
+                'series_type' => $this->buildSeriesSelectionSection(true),
                 'settings' => $this->objectSettingsFormItemBuilder->create()
             ]
 
         );
     }
 
-    public function update(string $form_action, ObjectSettings $objectSettings, Series $series): Standard
+    public function update(string $form_action, ObjectSettings $objectSettings, Series $series, bool $is_admin): Standard
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
-                'metadata' => $this->formItemBuilder->update_section($series->getMetadata()),
+                'metadata' => $this->formItemBuilder->update_section($series->getMetadata(), $is_admin),
                 'settings' => $this->objectSettingsFormItemBuilder->update($objectSettings, $series),
             ]
         );
@@ -137,17 +137,18 @@ class SeriesFormBuilder
     }
 
     /**
+     * @param bool $is_admin
      * @return Input
      * @throws xoctException
      */
-    private function buildSeriesSelectionSection(): Input
+    private function buildSeriesSelectionSection(bool $is_admin): Input
     {
         $existing_series = $this->getSeriesSelectOptions();
         $series_type = $this->ui_factory->input()->field()->switchableGroup([
             self::EXISTING_YES => $this->ui_factory->input()->field()->group([
                 self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID), $existing_series)->withRequired(true)
             ], $this->plugin->txt('yes')),
-            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items(), $this->plugin->txt('no'))
+            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items($is_admin), $this->plugin->txt('no'))
         ], 'Existing Series')->withValue(self::EXISTING_NO);
         return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type], $this->plugin->txt(self::F_CHANNEL_TYPE))
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {

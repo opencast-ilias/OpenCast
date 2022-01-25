@@ -135,7 +135,8 @@ class xoctSeriesGUI extends xoctGUI
         self::dic()->tabs()->activateSubTab(self::SUBTAB_GENERAL);
         $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_GENERAL),
             $this->objectSettings,
-            $series);
+            $series,
+            ilObjOpenCastAccess::hasPermission('edit_videos'));
         self::dic()->ui()->mainTemplate()->setContent(self::dic()->ui()->renderer()->render($form));
     }
 
@@ -157,7 +158,11 @@ class xoctSeriesGUI extends xoctGUI
     protected function updateGeneral()
     {
         $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-        $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this), $this->objectSettings, $series)
+        $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this),
+            $this->objectSettings,
+            $series,
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        )
             ->withRequest(self::dic()->http()->request());
         $data = $form->getData();
         if (!$data) {

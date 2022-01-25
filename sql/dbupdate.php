@@ -344,7 +344,7 @@ $DIC->database()->insert('xoct_md_field_event', [
 ]);
 // series
 $DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
     'field_id' => ['text', 'title'],
     'title_de' => ['text', 'Titel'],
     'title_en' => ['text', 'Title'],
@@ -355,7 +355,7 @@ $DIC->database()->insert('xoct_md_field_series', [
     'sort' => ['integer', 1],
 ]);
 $DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
     'field_id' => ['text', 'description'],
     'title_de' => ['text', 'Beschreibung'],
     'title_en' => ['text', 'Description'],
@@ -364,5 +364,27 @@ $DIC->database()->insert('xoct_md_field_series', [
     'read_only' => ['integer', 0],
     'prefill' => ['text', 'none'],
     'sort' => ['integer', 2],
+]);
+$DIC->database()->insert('xoct_md_field_series', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+    'field_id' => ['text', 'creator'],
+    'title_de' => ['text', 'Veranstalter'],
+    'title_en' => ['text', 'Organizers'],
+    'visible_for_permissions' => ['text', 'all'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 1],
+    'prefill' => ['text', 'crs_title'],
+    'sort' => ['integer', 3],
+]);
+$DIC->database()->insert('xoct_md_field_series', [
+    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+    'field_id' => ['text', 'contributor'],
+    'title_de' => ['text', 'Mitwirkende'],
+    'title_en' => ['text', 'Contributors'],
+    'visible_for_permissions' => ['text', 'all'],
+    'required' => ['integer', 0],
+    'read_only' => ['integer', 1],
+    'prefill' => ['text', 'username_creator'],
+    'sort' => ['integer', 4],
 ]);
 ?>

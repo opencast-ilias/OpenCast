@@ -154,7 +154,9 @@ class MDParser
             } else {
                 $field = new MetadataField($id, $definition->getType());
             }
-            $metadata->addField($value ? $field->withValue($value) : $field);
+            $metadata->addField($value ? $field->withValue(
+                $definition->getType()->getTitle() === MDDataType::text_array()->getTitle() ? explode(', ', $value) : $value
+            ) : $field);
         }
         return $metadata;
     }

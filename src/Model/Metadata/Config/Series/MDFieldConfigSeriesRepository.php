@@ -46,7 +46,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
      */
     public function getAllEditable(bool $is_admin): array
     {
-        $MDCatalogue = $this->MDCatalogueFactory->event();
+        $MDCatalogue = $this->MDCatalogueFactory->series();
         $AR = MDFieldConfigSeriesAR::orderBy('sort');
         if (!$is_admin) {
             $AR = $AR->where(['visible_for_permissions' => 'all']);

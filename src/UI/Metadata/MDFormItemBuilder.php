@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\UI\Metadata;
 
 use DateTime;
+use DateTimeImmutable;
 use ILIAS\DI\Container;
 use ILIAS\Refinery\Custom\Transformation;
 use ILIAS\Refinery\Factory as RefineryFactory;
@@ -186,10 +187,10 @@ class MDFormItemBuilder
     {
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_DATETIME:
-                /** @var $value DateTime */
-                return $value->format('Y-m-d H:i:s');
+                /** @var $value DateTimeImmutable */
+                return $value instanceof DateTimeImmutable ? $value->format('Y-m-d H:i:s') : $value;
             case MDDataType::TYPE_TEXT_ARRAY:
-                return implode(',', $value);
+                return is_array($value) ? implode(',', $value) : $value;
             default:
                 return $value;
         }

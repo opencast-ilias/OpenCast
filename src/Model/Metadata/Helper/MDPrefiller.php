@@ -37,7 +37,7 @@ class MDPrefiller
                 }
                 return $course_or_group->getTitle();
             case MDPrefillOption::T_USERNAME_OF_CREATOR:
-                return $this->dic->user()->getPublicName();
+                return $this->dic->user()->getFirstname() . ' ' . $this->dic->user()->getLastname();
             case MDPrefillOption::T_NONE:
             default:
                 return null;
