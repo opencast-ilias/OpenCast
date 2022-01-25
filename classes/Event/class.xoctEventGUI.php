@@ -533,22 +533,14 @@ class xoctEventGUI extends xoctGUI
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
 
-        if (!ToUManager::hasAcceptedToU(self::dic()->user()->getId())) {
-            $eula_accepted = $data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA];
-            if (!$eula_accepted) {
-                // this is necessary because the 'required'-function of the checkbox doesn't work currently
-                // otherwise, $data would just be null
-                ilUtil::sendFailure(self::plugin()->getPluginObject()->txt('event_error_alert_accpet_terms_of_use'));
-                self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
-                return;
-            } else {
-                ToUManager::setToUAccepted(self::dic()->user()->getId());
-            }
-        }
 
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
+        }
+
+        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA]) {
+            ToUManager::setToUAccepted(self::dic()->user()->getId());
         }
 
         $metadata = $data['metadata']['object'];
@@ -606,25 +598,15 @@ class xoctEventGUI extends xoctGUI
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
 
-        if (!ToUManager::hasAcceptedToU(self::dic()->user()->getId())) {
-            $eula_accepted = $data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA];
-            if (!$eula_accepted) {
-                // this is necessary because the 'required'-function of the checkbox doesn't work currently
-                // otherwise, $data would just be null
-                ilUtil::sendFailure(self::plugin()->getPluginObject()->txt('event_error_alert_accpet_terms_of_use'));
-                self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
-                return;
-            } else {
-                ToUManager::setToUAccepted(self::dic()->user()->getId());
-            }
-        }
-
         if (!$data) {
             self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
             return;
         }
 
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA]) {
+            ToUManager::setToUAccepted(self::dic()->user()->getId());
+        }
+
         $metadata = $data['metadata']['object'];
         $metadata->addField((new MetadataField(MDFieldDefinition::F_IS_PART_OF, MDDataType::text()))
             ->withValue($this->objectSettings->getSeriesIdentifier()));

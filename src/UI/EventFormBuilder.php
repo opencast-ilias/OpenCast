@@ -228,6 +228,10 @@ class EventFormBuilder
             self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
                 $this->plugin->txt('event_accept_eula'), xoctConf::getConfig(xoctConf::F_EULA))
                 ->withRequired(true)
+                ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
+                    // must be checked (required-functionality doesn't guarantee that)
+                    return $vs;
+                }, $this->plugin->txt('event_error_alert_accpet_terms_of_use')))
         ], $this->plugin->txt('event_accept_eula'));
     }
 
