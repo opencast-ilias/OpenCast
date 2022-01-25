@@ -515,10 +515,13 @@ grp_create_xoct#:#Create Opencast object
 root_create_xoct#:#Create Opencast object
 btn_add_new_metadata_field#:#Add new Metadata Field
 md_field_id#:#ID
-md_visible_for_permissions#:#Visible for Roles
+md_visible_for_permissions#:#Visible for
 md_required#:#Required
 md_read_only#:#Read-Only
 md_prefill#:#Prefilled with
+md_prefill_none#:#None
+md_prefill_username_creator#:#Username
+md_prefill_crs_title#:#Course Title
 md_actions#:#Actions
 md_title_de#:#Title German
 md_title_en#:#Title English
@@ -526,6 +529,8 @@ md_table_events#:#Event Metadata
 md_table_series#:#Series Metadata
 md_conf_form_edit#:#Edit Metadata Field
 md_conf_form_create#:#Create Metadata Field
+md_visible_all#:#Everyone
+md_visible_admin#:#Admins only
 msg_md_config_info#:#Configuration of available metadata fields. Order can be changed via Drag & Drop.
 msg_confirm_delete#:#Are you sure you want to delete the following item(s)?
 delete_modal_title#:#Confirm deletion

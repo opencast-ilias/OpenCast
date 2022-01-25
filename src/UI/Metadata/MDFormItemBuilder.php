@@ -78,9 +78,9 @@ class MDFormItemBuilder
         $this->dic = $dic;
     }
 
-    public function create_section(): Input
+    public function create_section(bool $as_admin): Input
     {
-        return $this->ui_factory->input()->field()->section($this->create_items(), $this->plugin->txt('metadata'))
+        return $this->ui_factory->input()->field()->section($this->create_items($as_admin), $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
     }
 
@@ -88,10 +88,10 @@ class MDFormItemBuilder
      * @return Input[]
      * @throws xoctException
      */
-    public function create_items(): array
+    public function create_items(bool $as_admin): array
     {
         $form_elements = [];
-        $MDFieldConfigARS = $this->md_conf_repository->getAllEditable();
+        $MDFieldConfigARS = $this->md_conf_repository->getAllEditable($as_admin);
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements) {
             // TODO: visible for permission!
             $key = $this->prefixPostVar($md_field_config->getFieldId());
@@ -101,10 +101,10 @@ class MDFormItemBuilder
         return $form_elements;
     }
 
-    public function update_section(Metadata $existing_metadata): Input
+    public function update_section(Metadata $existing_metadata, bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = $this->md_conf_repository->getAll();
+        $MDFieldConfigARS = $this->md_conf_repository->getAll($as_admin);
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
@@ -114,10 +114,10 @@ class MDFormItemBuilder
             ->withAdditionalTransformation($this->transformation());
     }
 
-    public function schedule_section(): Input
+    public function schedule_section(bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable(), function (MDFieldConfigEventAR $fieldConfigAR) {
+        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
             return !in_array($fieldConfigAR->getFieldId(),
                 [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]);
@@ -131,10 +131,10 @@ class MDFormItemBuilder
             ->withAdditionalTransformation($this->transformation());
     }
 
-    public function update_scheduled_section(Metadata $existing_metadata): Input
+    public function update_scheduled_section(Metadata $existing_metadata, bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll(), function (MDFieldConfigEventAR $fieldConfigAR) {
+        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
             return !in_array($fieldConfigAR->getFieldId(),
                 [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]);

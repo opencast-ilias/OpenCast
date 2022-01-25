@@ -168,7 +168,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
         $already_configured = array_map(function (MDFieldConfigAR $md_config) {
             return $md_config->getFieldId();
-        }, $this->repository->getAll());
+        }, $this->repository->getAll(false));
         $available_total = array_map(function (MDFieldDefinition $md_field_def) {
             return $md_field_def->getId();
         }, $this->getMetadataCatalogue()->getFieldDefinitions());
@@ -205,7 +205,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                             ->withValue($md_field_config ? $md_field_config->getTitle('en') : ''),
                         'visible_for_permissions' => $this->ui_factory->input()->field()->select(
                             self::plugin()->translate('md_visible_for_permissions'),
-                            ['read' => 'read', 'edit_videos' => 'Edit Videos', 'write' => 'Write'] // TODO: roles
+                            [MDFieldConfigAR::VISIBLE_ALL => $this->plugin->txt('md_visible_all'),
+                                MDFieldConfigAR::VISIBLE_ADMIN => $this->plugin->txt('md_visible_admin')]
                         )->withRequired(true)
                             ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : null),
                         'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
@@ -228,7 +229,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
         $options = [];
         foreach (MDPrefillOption::$allowed_values as $allowed_value) {
-            $options[$allowed_value] = self::plugin()->translate($allowed_value);
+            $options[$allowed_value] = self::plugin()->translate('md_prefill_' . $allowed_value);
         }
         return $options;
     }

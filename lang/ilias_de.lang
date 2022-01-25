@@ -513,10 +513,13 @@ root_create_xoct#:#Opencast-Objekt anlegen
 field_id#:#ID
 btn_add_new_metadata_field#:#Neues Metadaten-Feld hinzufügen
 md_field_id#:#ID
-md_visible_for_permissions#:#Sichbar für Rollen
+md_visible_for_permissions#:#Sichbar für
 md_required#:#Verpflichtend
 md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
+md_prefill_none#:#Leer
+md_prefill_username_creator#:#Benutzername
+md_prefill_crs_title#:#Kurstitel
 md_actions#:#Aktionen
 md_title_de#:#Titel Deutsch
 md_title_en#:#Titel Englisch
@@ -524,6 +527,8 @@ md_table_events#:#Event-Metadaten
 md_table_series#:#Serien-Metadaten
 md_conf_form_edit#:#Metadatenfeld bearbeiten
 md_conf_form_create#:#Metadatenfeld erstellen
+md_visible_all#:#Alle
+md_visible_admin#:#Nur Admins
 msg_md_config_info#:#Verwaltung der im Plugin verfügbaren Metadaten. Die Reihenfolge kann via Drag & Drop angepasst werden.
 msg_confirm_delete#:#Sind Sie sicher, dass folgende Elemente gelöscht werden sollen?
 delete_modal_title#:#Löschen bestätigen

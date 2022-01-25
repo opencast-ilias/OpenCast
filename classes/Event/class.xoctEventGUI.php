@@ -670,7 +670,8 @@ class xoctEventGUI extends xoctGUI
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
         $form = $this->formBuilder->update(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
-            $event->getMetadata()
+            $event->getMetadata(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
@@ -690,7 +691,8 @@ class xoctEventGUI extends xoctGUI
         $form = $this->formBuilder->update_scheduled(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
-            $event->getScheduling()
+            $event->getScheduling(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
@@ -840,7 +842,8 @@ class xoctEventGUI extends xoctGUI
         self::dic()->ctrl()->setParameter($this, self::IDENTIFIER, $event->getIdentifier());
         $form = $this->formBuilder->update(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE),
-            $event->getMetadata()
+            $event->getMetadata(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
 
@@ -875,7 +878,8 @@ class xoctEventGUI extends xoctGUI
         $form = $this->formBuilder->update_scheduled(
             self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
-            $event->getScheduling()
+            $event->getScheduling(),
+            ilObjOpenCastAccess::hasPermission('edit_videos')
         )->withRequest(self::dic()->http()->request());
         $data = $form->getData();
 

@@ -8,7 +8,7 @@ interface MDFieldConfigRepository
     /**
      * @return MDFieldConfigAR[]
      */
-    public function getAll() : array;
+    public function getAll(bool $is_admin) : array;
     /**
      * Important: this returns all fields that are defined as read_only by the Opencast Metadata Catalogue - NOT ONLY by the
      * metadata field configuration in the plugin. This is an important distinction, since fields that are read_only in
@@ -16,7 +16,7 @@ interface MDFieldConfigRepository
      *
      * @return array|MDFieldConfigAR[]
      */
-    public function getAllEditable() : array;
+    public function getAllEditable(bool $is_admin) : array;
 
     /**
      * @return array

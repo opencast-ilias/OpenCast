@@ -7,6 +7,8 @@ use xoctException;
 
 abstract class MDFieldConfigAR extends ActiveRecord
 {
+    const VISIBLE_ALL = 'all';
+    const VISIBLE_ADMIN = 'admin';
     /**
      * @var int
      *

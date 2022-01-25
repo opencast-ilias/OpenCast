@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Metadata\Config\Series;
 
+use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
@@ -22,11 +23,17 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
     }
 
     /**
+     * @param bool $is_admin
      * @return MDFieldConfigSeriesAR[]
+     * @throws Exception
      */
-    public function getAll(): array
+    public function getAll(bool $is_admin): array
     {
-        return MDFieldConfigSeriesAR::orderBy('sort')->get();
+        $AR = MDFieldConfigSeriesAR::orderBy('sort');
+        if (!$is_admin) {
+            $AR = $AR->where(['visible_for_permissions' => 'all']);
+        }
+        return $AR->get();
     }
 
     /**
@@ -37,10 +44,14 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
      * @return array|MDFieldConfigAR[]
      * @throws xoctException
      */
-    public function getAllEditable(): array
+    public function getAllEditable(bool $is_admin): array
     {
         $MDCatalogue = $this->MDCatalogueFactory->event();
-        return array_filter(MDFieldConfigSeriesAR::orderBy('sort')->get(),
+        $AR = MDFieldConfigSeriesAR::orderBy('sort');
+        if (!$is_admin) {
+            $AR = $AR->where(['visible_for_permissions' => 'all']);
+        }
+        return array_filter($AR->get(),
             function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue) {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
             });

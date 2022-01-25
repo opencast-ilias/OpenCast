@@ -158,7 +158,6 @@ class EventFormBuilder
                 $id = $file[0];
                 return $upload_storage_service->getFileInfo($id);
             }));
-        // todo: series selector if obj is 0
         $file_section_inputs = ['file' => $file_input];
         if ($obj_id == 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
@@ -169,7 +168,7 @@ class EventFormBuilder
         );
         $inputs = [
             'file' => $file_section,
-            'metadata' => $this->formItemBuilder->create_section(),
+            'metadata' => $this->formItemBuilder->create_section($as_admin),
             'workflow_configuration' => ($obj_id == 0 ?
                 $this->workflowParameterRepository->getGeneralFormSection()
                 : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin)),
@@ -183,18 +182,18 @@ class EventFormBuilder
         );
     }
 
-    public function update(string $form_action, Metadata $metadata): Form
+    public function update(string $form_action, Metadata $metadata, bool $as_admin): Form
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            [$this->formItemBuilder->update_section($metadata)]
+            [$this->formItemBuilder->update_section($metadata, $as_admin)]
         );
     }
 
     public function schedule(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
         $inputs = [
-            'metadata' => $this->formItemBuilder->schedule_section(),
+            'metadata' => $this->formItemBuilder->schedule_section($as_admin),
             'scheduling' => $this->schedulingFormItemBuilder->create(),
             'workflow_configuration' => ($obj_id == 0 ?
                 $this->workflowParameterRepository->getGeneralFormSection()
@@ -208,9 +207,9 @@ class EventFormBuilder
             $inputs);
     }
 
-    public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling): Form
+    public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling, bool $as_admin): Form
     {
-        $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata)];
+        $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata, $as_admin)];
         $allow_edit_scheduling = (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA);
         if ($allow_edit_scheduling) {
             $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling);

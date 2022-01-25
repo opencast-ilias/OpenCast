@@ -148,15 +148,22 @@ class xoctEventAPI
             unset($data['online']);
         }
 
+        $metadata = $this->md_factory->event()->withoutEmptyFields();
         foreach ($data as $title => $value) {
-            // presenters is actually an MD field called creator. this is a workaround to not break compatability
-            $title = $title === 'presenters' ? MDFieldDefinition::F_CREATOR : $title;
-            $value = $value instanceof DateTime ? DateTimeImmutable::createFromMutable($value) : $value;
-            $event->getMetadata()->getField($title)->setValue($value);
+            if (in_array($title, ['title', 'description', 'presenters'])) {
+                // presenters is actually an MD field called creator. this is a workaround to not break compatability
+                $title = $title === 'presenters' ? MDFieldDefinition::F_CREATOR : $title;
+                $value = $value instanceof DateTime ? DateTimeImmutable::createFromMutable($value) : $value;
+                $metadataField = $event->getMetadata()->getField($title);
+                $metadataField->setValue($value);
+                $metadata->addField($metadataField);
+            } elseif (in_array($title, ['start', 'end', 'location'])) {
+
+            }
         }
 
         if (count($data)) { // this prevents an update, if only 'online' has changed
-            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload($event->getMetadata())));
+            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload($metadata)));
         }
 
         return $event;
