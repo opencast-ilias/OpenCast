@@ -80,7 +80,7 @@ class MDConfigTable extends ilTable2GUI
         $a_set['read_only'] = $a_set['read_only'] ? 'ok' : 'not_ok';
         /** @var $prefill MDPrefillOption */
         $prefill = $a_set['prefill'];
-        $a_set['prefill'] = $prefill->getValue();
+        $a_set['prefill'] = $this->plugin->txt('md_prefill_' . $prefill->getValue());
         parent::fillRow($a_set);
     }
 
