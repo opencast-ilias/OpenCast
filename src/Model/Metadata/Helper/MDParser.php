@@ -154,8 +154,12 @@ class MDParser
             } else {
                 $field = new MetadataField($id, $definition->getType());
             }
+            // todo: remove this if-clause as soon as this is fixed: https://mantis.ilias.de/view.php?id=31966
+            if ($value && $definition->getType()->getTitle() === MDDataType::TYPE_TEXT_ARRAY && !is_array($value)) {
+                $value = explode(',', $value);
+            }
             $metadata->addField($value ? $field->withValue(
-                $definition->getType()->getTitle() === MDDataType::text_array()->getTitle() ? explode(', ', $value) : $value
+                $value
             ) : $field);
         }
         return $metadata;
