@@ -73,6 +73,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         $ar = MDFieldConfigSeriesAR::where(['field_id' => $data['field_id']])->first();
         if (is_null($ar)) {
             $ar = new MDFieldConfigSeriesAR();
+            $ar->setSort($this->getNextSort());
         }
         $ar->setFieldId($data['field_id']);
         $ar->setTitleDe($data['title_de']);
@@ -81,7 +82,6 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);
         $ar->setRequired($data['required']);
-        $ar->setSort($this->getNextSort());
         $ar->create();
         return $ar;
     }
