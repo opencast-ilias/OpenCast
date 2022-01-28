@@ -55,6 +55,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			case xoctMainGUI::SUBTAB_SERIES:
 				$this->initSeriesSection();
 				break;
+			case xoctMainGUI::SUBTAB_TOU:
+				$this->initToUSection();
+				break;
 			case xoctMainGUI::SUBTAB_GROUPS_ROLES:
 				$this->initGroupsRolesSection();
 				break;
@@ -342,34 +345,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('series'));
 		$this->addItem($h);
 
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
-		$te->setRequired(true);
-		$te->setUseRte(true);
-		$te->setRteTagSet("extended");
-		$te->disableButtons(array(
-			'charmap',
-			'undo',
-			'redo',
-			'justifyleft',
-			'justifycenter',
-			'justifyright',
-			'justifyfull',
-			'anchor',
-			'fullscreen',
-			'cut',
-			'copy',
-			'paste',
-			'pastetext',
-			'formatselect',
-		));
-		$te->setRows(5);
-		$this->addItem($te);
-
-		// Reset?
-		$reset = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_RESET), xoctConf::F_RESET);
-		$reset->setInfo($this->parent_gui->txt(xoctConf::F_RESET . "_info"));
-		$this->addItem($reset);
-
 		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
 		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
 		$this->addItem($te);
@@ -430,13 +405,48 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$cb->addSubItem($te);
+	}
+
+
+	private function initToUSection()
+	{
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('eula'));
+		$this->addItem($h);
+
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
+		$te->setRequired(true);
+		$te->setUseRte(true);
+		$te->setRteTagSet("extended");
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
+		$te->setRows(5);
+		$this->addItem($te);
 
 		// Terms of Use
 		$terms = new ilCheckboxInputGUI($this->parent_gui->txt("accept_terms"), xoctConf::F_ACCEPT_TERMS);
 		$terms->setInfo($this->parent_gui->txt("accept_terms_info"));
 		$this->addItem($terms);
-	}
 
+		// Reset?
+		$reset = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_RESET), xoctConf::F_RESET);
+		$reset->setInfo($this->parent_gui->txt(xoctConf::F_RESET . "_info"));
+		$this->addItem($reset);
+	}
 
 	/**
 	 *
