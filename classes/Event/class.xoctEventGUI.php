@@ -187,10 +187,6 @@ class xoctEventGUI extends xoctGUI
             case self::CMD_STANDARD:
                 $this->prepareContent();
                 break;
-            case "add":
-                ilUtil::sendInfo(xoctConf::getConfig(xoctConf::F_EULA));
-                parent::performCommand($cmd);
-                break;
             default:
         }
         parent::performCommand($cmd);
