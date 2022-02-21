@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
@@ -39,13 +40,18 @@ class xoctEventAPI
      * @var ACLUtils
      */
     private $acl_utils;
+    /**
+     * @var SeriesWorkflowParameterRepository
+     */
+    private $workflow_param_repository;
 
     public function __construct()
     {
         $opencastDIC = OpencastDIC::getInstance();
         $this->event_repository = $opencastDIC->event_repository();
-        $this->md_factory = OpencastDIC::getInstance()->metadata()->metadataFactory();
-        $this->acl_utils = OpencastDIC::getInstance()->acl_utils();
+        $this->md_factory = $opencastDIC->metadata()->metadataFactory();
+        $this->acl_utils = $opencastDIC->acl_utils();
+        $this->workflow_param_repository = $opencastDIC->workflow_parameter_series_repository();
     }
 
 
@@ -90,7 +96,6 @@ class xoctEventAPI
             $additional_data['description'] ?? '');
         $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue(
             isset($additional_data['presenters']) ? explode(',', $additional_data['presenters']) : []);
-        $metadata->getField(MDFieldDefinition::F_LOCATION)->setValue($location);
 
         $scheduling = new Scheduling(
             $location,
@@ -98,9 +103,17 @@ class xoctEventAPI
             $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end) : new DateTimeImmutable($end),
         );
 
+
+        $workflow_parameters = $this->workflow_param_repository->getGeneralAutomaticallySetParameters();
+        if (is_array($additional_data['workflow_parameters'])) {
+            $workflow_parameters = $workflow_parameters + $additional_data['workflow_parameters'];
+        }
+        $workflow_parameters = array_map(function ($value) {
+            return $value == 1 ? 'true' : 'false';
+        }, $workflow_parameters);
         $processing = new Processing(
             PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-            (object)$additional_data['workflow_parameters']);
+            (object)$workflow_parameters);
 
         $acl = $this->acl_utils->getStandardRolesACL();
 
