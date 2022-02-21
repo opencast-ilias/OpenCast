@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Util\Upload;
+namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use ILIAS\Data\DataSize;
 use ILIAS\DI\Container;

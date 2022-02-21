@@ -40,9 +40,9 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataService;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
-use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
-use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
-use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use xoctFileUploadHandler;
 
 class OpencastDIC

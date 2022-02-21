@@ -14,8 +14,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
-use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
-use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use xoctFileUploadHandler;
 
 class ObjectSettingsFormItemBuilder

@@ -33,7 +33,7 @@ use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
-use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 
 /**
  * Class xoctEventGUI

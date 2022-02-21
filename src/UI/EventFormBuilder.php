@@ -19,7 +19,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
-use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 
 class EventFormBuilder
 {

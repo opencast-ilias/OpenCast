@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Util\Upload;
+namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;

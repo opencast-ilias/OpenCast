@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
-use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 
 /**
  * Class xoctPlayerGUI

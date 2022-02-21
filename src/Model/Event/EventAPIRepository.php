@@ -8,7 +8,7 @@ use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
-use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
+use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use xoctException;
 use xoctRequest;
 
