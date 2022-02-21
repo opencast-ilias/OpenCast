@@ -281,7 +281,7 @@ class OpencastDIC
         return $this->container['upload_handler'];
     }
 
-    public function paella_config_storage_service(): UploadStorageService
+    public function paella_config_storage_service(): PaellaConfigStorageService
     {
         return $this->container['paella_config_storage_service'];
     }

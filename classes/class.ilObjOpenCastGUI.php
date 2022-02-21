@@ -166,6 +166,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $this->opencast_dic->acl_utils(),
                         $this->opencast_dic->series_repository(),
                         $this->opencast_dic->upload_handler(),
+                        $this->opencast_dic->paella_config_storage_service(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();

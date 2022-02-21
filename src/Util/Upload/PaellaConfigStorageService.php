@@ -3,13 +3,19 @@
 namespace srag\Plugins\Opencast\Util\Upload;
 
 use ILIAS\Data\DataSize;
+use ILIAS\DI\Container;
 use ILIAS\Filesystem\Exception\FileNotFoundException;
 use ILIAS\Filesystem\Exception\IOException;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\Location;
+use ilUtil;
+use ilWACSignedPath;
 
 class PaellaConfigStorageService extends UploadStorageService
 {
+    /**
+     * @var Container
+     */
     protected $dic;
 
     /**
@@ -39,6 +45,13 @@ class PaellaConfigStorageService extends UploadStorageService
             'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath())
         ];
+    }
+
+    public function getWACSignedPath(string $identifier) : string
+    {
+        // ilUtil::getWebspaceDir is deprecated, but I didn't find out how else to get an absolute path, which we need
+        // for the paella player
+        return ilWACSignedPath::signFile(ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR . $this->idToFileMetadata($identifier)->getPath());
     }
 //
 //    public function fetchConfigFromUrlAndStore(string $url, string $series_identifier, bool $live = false) : string

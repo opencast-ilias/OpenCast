@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
+use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 
 /**
  * Class xoctPlayerGUI
@@ -37,12 +38,19 @@ class xoctPlayerGUI extends xoctGUI
      * @var EventRepository
      */
     private $event_repository;
+    /**
+     * @var PaellaConfigStorageService
+     */
+    private $paellaConfigStorageService;
 
-    public function __construct(EventRepository $event_repository, ?ObjectSettings $objectSettings = NULL)
+    public function __construct(EventRepository $event_repository,
+                                PaellaConfigStorageService $paellaConfigStorageService,
+                                ?ObjectSettings $objectSettings = NULL)
     {
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
+        $this->paellaConfigStorageService = $paellaConfigStorageService;
     }
 
     /**
@@ -156,7 +164,8 @@ class xoctPlayerGUI extends xoctGUI
             case ObjectSettings::PAELLA_OPTION_URL:
                 return $live ? $objectSettings->getPaellaPlayerLiveUrl() : $objectSettings->getPaellaPlayerUrl();
             case ObjectSettings::PAELLA_OPTION_FILE:
-                return $live ? $objectSettings->getPaellaPlayerLivePath() : $objectSettings->getPaellaPlayerPath();
+                return $this->paellaConfigStorageService->getWACSignedPath(
+                    $live ? $objectSettings->getPaellaPlayerLivePath() : $objectSettings->getPaellaPlayerPath());
             case ObjectSettings::PAELLA_OPTION_DEFAULT:
             default:
                 return $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;

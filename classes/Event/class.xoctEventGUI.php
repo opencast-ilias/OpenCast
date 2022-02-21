@@ -28,6 +28,7 @@ use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
+use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 
 /**
  * Class xoctEventGUI
@@ -108,17 +109,22 @@ class xoctEventGUI extends xoctGUI
      * @var UploadHandler
      */
     private $uploadHandler;
+    /**
+     * @var PaellaConfigStorageService
+     */
+    private $paellaConfigStorageService;
 
-    public function __construct(ilObjOpenCastGUI   $parent_gui,
-                                ObjectSettings     $objectSettings,
-                                EventRepository    $event_repository,
-                                EventFormBuilder   $formBuilder,
-                                EventTableBuilder  $eventTableBuilder,
-                                WorkflowRepository $workflowRepository,
-                                ACLUtils           $ACLUtils,
-                                SeriesRepository   $seriesRepository,
-                                UploadHandler      $uploadHandler,
-                                Container          $dic)
+    public function __construct(ilObjOpenCastGUI           $parent_gui,
+                                ObjectSettings             $objectSettings,
+                                EventRepository            $event_repository,
+                                EventFormBuilder           $formBuilder,
+                                EventTableBuilder          $eventTableBuilder,
+                                WorkflowRepository         $workflowRepository,
+                                ACLUtils                   $ACLUtils,
+                                SeriesRepository           $seriesRepository,
+                                UploadHandler              $uploadHandler,
+                                PaellaConfigStorageService $paellaConfigStorageService,
+                                Container                  $dic)
     {
         $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
@@ -131,6 +137,7 @@ class xoctEventGUI extends xoctGUI
         $this->seriesRepository = $seriesRepository;
         $this->eventTableBuilder = $eventTableBuilder;
         $this->uploadHandler = $uploadHandler;
+        $this->paellaConfigStorageService = $paellaConfigStorageService;
     }
 
     /**
@@ -150,7 +157,9 @@ class xoctEventGUI extends xoctGUI
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository, $this->objectSettings);
+                $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository,
+                    $this->paellaConfigStorageService,
+                    $this->objectSettings);
                 self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
                 break;
             case strtolower(xoctFileUploadHandler::class):

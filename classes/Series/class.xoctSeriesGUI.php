@@ -221,7 +221,7 @@ class xoctSeriesGUI extends xoctGUI
         /** @var Metadata $metadata */
         $metadata = $data['metadata']['object'];
         $this->seriesRepository->updateMetadata(new UpdateSeriesMetadataRequest($this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesMetadataRequestPayload($metadata)));
+            new UpdateSeriesMetadataRequestPayload($metadata->withoutEmptyFields()))); // TODO: this is wrong,
         $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($this->objectSettings->getSeriesIdentifier(),
             new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
 
