@@ -373,6 +373,11 @@ series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht sel
 series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
+series_paella_player_option#:#Paella Player Config für Video-On-Demand
+series_paella_player_option_live#:#Paella Player Config für Live-Streams
+pp_default#:#Standard-Config verwenden
+pp_file#:#Config-Datei hochladen
+pp_url#:#URL hinterlegen
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
 system_account_create#:#Erstellen

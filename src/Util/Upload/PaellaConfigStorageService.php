@@ -51,37 +51,7 @@ class PaellaConfigStorageService extends UploadStorageService
     {
         // ilUtil::getWebspaceDir is deprecated, but I didn't find out how else to get an absolute path, which we need
         // for the paella player
-        return ilWACSignedPath::signFile(ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR . $this->idToFileMetadata($identifier)->getPath());
+        return ilWACSignedPath::signFile(ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR
+            . $this->idToFileMetadata($identifier)->getPath());
     }
-//
-//    public function fetchConfigFromUrlAndStore(string $url, string $series_identifier, bool $live = false) : string
-//    {
-//        $config_as_string = file_get_contents($url);
-//        $path = $this->createAndGetPath($series_identifier);
-//        $path .= $live ? "config_live.json" : "config.json";
-//        $this->deleteOldFile($path);
-//        $stream = Streams::ofString($config_as_string);
-//        $web = $this->dic->filesystem()->web();
-//        $web->writeStream($path, $stream);
-//        return $path;
-//    }
-//
-//    protected function createAndGetPath(string $series_identifier) : string
-//    {
-//        $path = self::BASEPATH . 'custom_config' . DIRECTORY_SEPARATOR . $series_identifier . DIRECTORY_SEPARATOR;
-//        if (!$this->dic->filesystem()->web()->hasDir($path)) {
-//            $this->dic->filesystem()->web()->createDir($path);
-//        }
-//
-//        return $path;
-//    }
-//
-//    protected function deleteOldFile(string $path)
-//    {
-//        $filesystem = $this->dic->filesystem()->web();
-//        if ($filesystem->has($path)) {
-//            $filesystem->delete($path);
-//        }
-//
-//    }
 }
