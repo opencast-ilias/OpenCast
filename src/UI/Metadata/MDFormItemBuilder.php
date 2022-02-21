@@ -163,7 +163,7 @@ class MDFormItemBuilder
                 $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
                     ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function (string $value) {
                         return explode(',', $value);
-                    }));
+                    }))->withValue(''); // can be removed if this is fixed: https://mantis.ilias.de/view.php?id=32104
                 break;
             case MDDataType::TYPE_TEXT_LONG:
                 $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
