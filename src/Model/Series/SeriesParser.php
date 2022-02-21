@@ -29,4 +29,5 @@ class SeriesParser
         }
         return $series;
     }
+
 }

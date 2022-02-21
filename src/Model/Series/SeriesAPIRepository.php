@@ -5,10 +5,12 @@ namespace srag\Plugins\Opencast\Model\Series;
 use ilException;
 use srag\Plugins\Opencast\Cache\Cache;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
@@ -111,6 +113,13 @@ class SeriesAPIRepository implements SeriesRepository
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
+    /**
+     * Warning: Doesn't load all metadata, only the title, since it's currently used only for selection dropdowns
+     *
+     * @param string $user_string
+     * @return array|Series[]
+     * @throws xoctException
+     */
     public function getAllForUser(string $user_string): array
     {
         if ($existing = $this->cache->get('series-' . $user_string)) {
@@ -123,10 +132,11 @@ class SeriesAPIRepository implements SeriesRepository
             return [];
         }
         foreach ($data as $d) {
-            $obj = new Series();
             try {
-                $d->metadata = $this->fetchMD($d->identifier);
-                $return[] = $this->seriesParser->parseAPIResponse($d);;
+                $metadata = $this->metadataFactory->series();
+                $metadata->addField((new MetadataField(MDFieldDefinition::F_TITLE, MDDataType::text()))->withValue($d->title));
+                $d->metadata = $metadata;
+                $return[] = $this->seriesParser->parseAPIResponse($d);
             } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
                 continue;
             }
@@ -156,12 +166,12 @@ class SeriesAPIRepository implements SeriesRepository
         $existing = xoctRequest::root()->series()->parameter(
             'filter',
             'title:' . $this->getOwnSeriesTitle($xoct_user)
-        )->get();
+        )->parameter('withacl', 'true')->get();
         $existing = json_decode($existing, true);
         if (empty($existing)) {
             return null;
         }
-        $series = $this->find($existing[0]['identifier']);
+        $series = $this->seriesParser->parseAPIResponse((object) $existing[0]);
         $series->getAccessPolicies()->merge(
             $this->ACLUtils->getUserRolesACL($xoct_user)
         );
