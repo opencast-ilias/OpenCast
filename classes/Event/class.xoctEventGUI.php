@@ -1009,7 +1009,7 @@ class xoctEventGUI extends xoctGUI
         }
         if (count($event->publications()->getPublications()) && PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH)) {
             try {
-                $event->unpublish();
+                $this->unpublish($event);
                 ilUtil::sendSuccess($this->txt('msg_unpublish_started'), true);
             } catch (xoctException $e) {
                 if ($e->getCode() == 409) {
@@ -1025,6 +1025,19 @@ class xoctEventGUI extends xoctGUI
         $this->cancel();
     }
 
+    /**
+     * @return bool
+     * @throws xoctException
+     */
+    private function unpublish(Event $event)
+    {
+        $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
+        xoctRequest::root()->workflows()->post(array(
+            'workflow_definition_identifier' => $workflow,
+            'event_identifier' => $event->getIdentifier()
+        ));
+        return true;
+    }
 
     /**
      *

@@ -221,7 +221,7 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
-event_republish#:#Publizieren
+event_republish#:#Workflow starten
 event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start

@@ -360,7 +360,7 @@ class xoctEventRenderer {
 			$state_tpl->setVariable('STATE_CSS', Event::$state_mapping[$processing_state]);
 
 			$suffix = '';
-			if ($this->event->isOwner(xoctUser::getInstance(self::dic()->user()))
+			if ($this->opencastDIC->acl_utils()->isUserOwnerOfEvent(xoctUser::getInstance(self::dic()->user()), $this->event)
 				&& in_array($processing_state, array(
 					Event::STATE_FAILED,
 					Event::STATE_ENCODING
@@ -470,7 +470,7 @@ class xoctEventRenderer {
 	 */
 	public function getOwnerHTML() {
 		$owner_tpl = self::plugin()->template('default/tpl.event_owner.html');
-		$owner_tpl->setVariable('OWNER', $this->event->getOwnerUsername());
+		$owner_tpl->setVariable('OWNER', $this->opencastDIC->acl_utils()->getOwnerUsernameOfEvent($this->event));
 
 		if ($this->objectSettings instanceof ObjectSettings && $this->objectSettings->getPermissionPerClip()) {
 			$owner_tpl->setCurrentBlock('invitations');

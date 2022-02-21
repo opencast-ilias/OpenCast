@@ -67,6 +67,15 @@ class ACLUtils
         return null;
     }
 
+    public function getOwnerUsernameOfEvent(Event $event)
+    {
+        $owner = $this->getOwnerOfEvent($event);
+        if (!$owner) {
+            return $event->getMetadata()->getField('rightsHolder')->getValue() ?: '&nbsp';
+        }
+        return $owner->getNamePresentation();
+    }
+
     public function removeOwnerFromACL(ACL $acl): ACL
     {
         $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);

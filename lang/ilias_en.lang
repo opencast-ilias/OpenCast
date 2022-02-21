@@ -256,7 +256,7 @@ event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
 event_report_quality_problem#:#Report Quality Problems
-event_republish#:#Publish
+event_republish#:#Start Workflow
 event_series#:#Series
 event_own_series#:#Own Series (%s)
 groups_available_participants_header#:#Available Participants

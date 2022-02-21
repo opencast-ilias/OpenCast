@@ -120,19 +120,12 @@ class Event
     }
 
 
-    /**
-     * @param string $status
-     */
     public function setStatus(string $status): void
     {
         $this->status = $status;
     }
 
-
-    /**
-     * @return array
-     */
-    public function getArrayForTable()
+    public function getArrayForTable(): array
     {
         $array = array_column(array_map(function (MetadataField $mf) {
             return [$mf->getId(), $mf->toString()];
@@ -142,78 +135,6 @@ class Event
         }, $this->getMetadata()->getFields()), 1, 0);
         $array['object'] = $this;
         return $array + $sortable;
-    }
-
-
-    /**
-     * @param xoctUser $xoctUser
-     * @return bool
-     * @throws xoctException
-     */
-    public function isOwner(xoctUser $xoctUser)
-    {
-        $xoctAcl = $this->getOwnerAcl();
-        if (!$xoctAcl instanceof ACLEntry) {
-            return false;
-        }
-        if ($xoctAcl->getRole() == $xoctUser->getOwnerRoleName()) {
-            return true;
-        }
-    }
-
-
-    /**
-     * @return null|ACLEntry
-     */
-    public function getOwnerAcl()
-    {
-        static $owner_acl;
-        if (isset($owner_acl[$this->getIdentifier()])) {
-            return $owner_acl[$this->getIdentifier()];
-        }
-        foreach ($this->getAcl()->getEntries() as $acl_entry) {
-            if (strpos($acl_entry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false) {
-                $owner_acl[$this->getIdentifier()] = $acl_entry;
-
-                return $acl_entry;
-            }
-        }
-        $owner_acl[$this->getIdentifier()] = null;
-
-        return null;
-    }
-
-
-    /**
-     * @return null|xoctUser
-     */
-    public function getOwner()
-    {
-        $acl = $this->getOwnerAcl();
-        if ($acl instanceof ACLEntry) {
-            $usr_id = xoctUser::lookupUserIdForOwnerRole($acl->getRole());
-            if ($usr_id) {
-                return xoctUser::getInstance(new ilObjUser($usr_id));
-            }
-        } else {
-            return null;
-        }
-    }
-
-
-    /**
-     * @return bool
-     * @throws xoctException
-     */
-    public function unpublish()
-    {
-        $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        xoctRequest::root()->workflows()->post(array(
-            'workflow_definition_identifier' => $workflow,
-            'event_identifier' => $this->getIdentifier()
-        ));
-//        self::removeFromCache($this->getIdentifier());
-        return true;
     }
 
     /**
@@ -416,15 +337,6 @@ class Event
     public function setSeriesIdentifier(string $series_identifier): void
     {
         $this->getMetadata()->getField('isPartOf')->setValue($series_identifier);
-    }
-
-    public function getOwnerUsername(): string
-    {
-        if ($this->getOwner()) {
-            return $this->getOwner()->getNamePresentation();
-        } else {
-            return $this->getMetadata()->getField('rightsHolder')->getValue() ?: '&nbsp';
-        }
     }
 
     public function getXoctEventAdditions(): EventAdditionsAR
