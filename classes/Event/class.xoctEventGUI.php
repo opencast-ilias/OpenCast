@@ -530,7 +530,6 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
 
-        // >>>>>>>>>>>>>>>>>>>>>>>>
         $form = $this->formBuilder->upload(
             self::dic()->ctrl()->getFormAction($this, self::CMD_CREATE),
             !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),

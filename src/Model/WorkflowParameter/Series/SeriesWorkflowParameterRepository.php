@@ -8,7 +8,6 @@ use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
-use srag\Plugins\Opencast\UI\Input\EventFormGUI;
 use xoctConf;
 
 /**
@@ -193,7 +192,7 @@ class SeriesWorkflowParameterRepository
         $items = [];
         foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
             $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
-            $post_var = EventFormGUI::F_WORKFLOW_PARAMETER . '_' . $id;
+            $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
         }
         return $this->buildFormSection($items);
@@ -299,7 +298,7 @@ class SeriesWorkflowParameterRepository
         $items = [];
         foreach ($this->getGeneralParametersInForm() as $id => $data) {
             $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
-            $post_var = EventFormGUI::F_WORKFLOW_PARAMETER . '_' . $id;
+            $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
         }
         return $this->buildFormSection($items);
