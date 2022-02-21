@@ -3,6 +3,7 @@ use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class ilObjOpenCast
@@ -62,7 +63,12 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doDelete() {
-		ObjectSettings::find($this->getId())->delete();
+		$opencast_dic = OpencastDIC::getInstance();
+		/** @var ObjectSettings $objectSettings */
+		$objectSettings = ObjectSettings::find($this->getId());
+		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerPath());
+		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLivePath());
+		$objectSettings->delete();
 	}
 
 
@@ -91,6 +97,12 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$objectSettingsNew->setStreamingOnly($objectSettingsOld->getStreamingOnly());
 		$objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
 		$objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
+		$objectSettingsNew->setPaellaPlayerOption($objectSettingsOld->getPaellaPlayerOption());
+		$objectSettingsNew->setPaellaPlayerPath($objectSettingsOld->getPaellaPlayerPath());
+		$objectSettingsNew->setPaellaPlayerUrl($objectSettingsOld->getPaellaPlayerUrl());
+		$objectSettingsNew->setPaellaPlayerLiveOption($objectSettingsOld->getPaellaPlayerLiveOption());
+		$objectSettingsNew->setPaellaPlayerLivePath($objectSettingsOld->getPaellaPlayerLivePath());
+		$objectSettingsNew->setPaellaPlayerLiveUrl($objectSettingsOld->getPaellaPlayerLiveUrl());
 
 		$objectSettingsNew->create();
 	}
