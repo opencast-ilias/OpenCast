@@ -106,7 +106,7 @@ class xoctEventGUI extends xoctGUI
      */
     private $eventTableBuilder;
     /**
-     * @var UploadHandler
+     * @var xoctFileUploadHandler
      */
     private $uploadHandler;
     /**
@@ -560,6 +560,7 @@ class xoctEventGUI extends xoctGUI
                 $data['workflow_configuration']['object']),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
+        $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }

@@ -75,7 +75,8 @@ class UploadStorageService
             'path' => ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $metadata->getPath(),
             'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),
             'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
-            'mimeType' => $this->fileSystem->getMimeType($metadata->getPath())
+            'mimeType' => $this->fileSystem->getMimeType($metadata->getPath()),
+            'id' => $identifier
         ];
     }
 
