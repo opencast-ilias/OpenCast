@@ -51,7 +51,10 @@ class UploadStorageService
      */
     public function delete(string $identifier) : void
     {
-        $this->fileSystem->deleteDir($this->idToDirPath($identifier));
+        $dir = $this->idToDirPath($identifier);
+        if ($this->fileSystem->hasDir($dir)) {
+            $this->fileSystem->deleteDir($dir);
+        }
     }
 
     /**

@@ -215,7 +215,7 @@ class ObjectSettingsFormItemBuilder
             ObjectSettings::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
             ObjectSettings::PAELLA_OPTION_FILE => $f->group([
                 'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
-//                    ->withValue(['name' => 'somename']) // todo: set existing value - format?
+                    ->withValue([$path]) // todo: set existing value - format?
             ], $this->plugin->txt('file')),
             ObjectSettings::PAELLA_OPTION_URL => $f->group([
                 'url' => $f->text($this->plugin->txt('link'))->withRequired(true)

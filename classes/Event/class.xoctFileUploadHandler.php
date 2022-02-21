@@ -101,20 +101,26 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
 
     protected function getInfoResult(string $identifier): FileInfoResult
     {
-        $info = $this->uploadStorageService->getFileInfo($identifier, DataSize::MiB);
+        $info = $this->uploadStorageService->getFileInfo($identifier);
+        /** @var DataSize $size */
+        $size = $info['size'];
         return new BasicFileInfoResult(
             $this->getFileIdentifierParameterName(),
             $identifier,
             $info['name'],
-            $info['size'],
+            $size->getSize(),
             $info['mimeType']
         );
     }
 
     public function getInfoForExistingFiles(array $file_ids): array
     {
-        // TODO: check what this is used for
-        return [];
+        $infos = [];
+        foreach (array_filter($file_ids) as $file_id) {
+            $infos[] = $this->getInfoResult($file_id);
+        }
+
+        return $infos;
     }
 
     /**
