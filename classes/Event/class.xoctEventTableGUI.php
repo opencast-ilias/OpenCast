@@ -5,10 +5,10 @@ use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
-use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
  * Class xoctEventTableGUI

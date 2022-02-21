@@ -3,9 +3,9 @@
 namespace srag\Plugins\Opencast\Model\ACL;
 
 use ilObjUser;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
-use xoctConf;
-use xoctUser;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 class ACLUtils
 {
@@ -26,7 +26,7 @@ class ACLUtils
     public function getStandardRolesACL(): ACL
     {
         $entries = [];
-        foreach (xoctConf::getConfig(xoctConf::F_STD_ROLES) as $std_role) {
+        foreach (PluginConfig::getConfig(PluginConfig::F_STD_ROLES) as $std_role) {
             if (!$std_role) {
                 continue;
             }
@@ -69,7 +69,7 @@ class ACLUtils
 
     public function removeOwnerFromACL(ACL $acl): ACL
     {
-        $standard_roles = xoctConf::getConfig(xoctConf::F_STD_ROLES);
+        $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);
         $ACLEntries = $acl->getEntries();
         foreach ($ACLEntries as $i => $acl) {
             if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)

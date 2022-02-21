@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -61,7 +62,7 @@ class xoctPlayerGUI extends xoctGUI
     public function streamVideo()
     {
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
-        if (!xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
+        if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
             header('Location: ' . $event->publications()->getPlayerLink());
             exit;
@@ -122,7 +123,7 @@ class xoctPlayerGUI extends xoctGUI
     protected function isChatVisible(): bool
     {
         return !filter_input(INPUT_GET, 'force_no_chat')
-            && xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)
+            && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)
             && $this->objectSettings->isChatActive();
     }
 

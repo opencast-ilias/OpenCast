@@ -5,8 +5,8 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
-use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 
 /**
  * Class xoctEventTileGUI
@@ -66,7 +66,7 @@ class xoctEventTileGUI
         $this->factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
         $this->page = (int)filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
-        $this->limit = xoctUserSettings::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
+        $this->limit = UserSettingsRepository::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
         $this->events = array_values(array_map(function ($item) {
             return $item['object'];
         }, $data));

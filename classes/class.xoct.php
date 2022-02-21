@@ -1,5 +1,8 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once('./include/inc.ilias_version.php');
 /**
@@ -73,7 +76,7 @@ class xoct {
 	}
 
 	public static function isApiVersionGreaterThan($api_version) {
-		return version_compare(xoctConf::getConfig(xoctConf::F_API_VERSION), $api_version, '>=');
+		return version_compare(PluginConfig::getConfig(PluginConfig::F_API_VERSION), $api_version, '>=');
 	}
 
 	/**

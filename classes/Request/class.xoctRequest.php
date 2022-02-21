@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 /**
  * Class xoctRequest
  *
@@ -166,7 +169,7 @@ class xoctRequest {
     protected function __construct()
     {
         if (!self::$base) {
-            xoctConf::setApiSettings();
+            PluginConfig::setApiSettings();
         }
     }
 

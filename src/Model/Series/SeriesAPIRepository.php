@@ -14,9 +14,9 @@ use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
 use xoctRequest;
-use xoctUser;
 
 class SeriesAPIRepository implements SeriesRepository
 {

@@ -3,13 +3,13 @@
 namespace srag\Plugins\Opencast\Model\Event;
 
 use srag\Plugins\Opencast\Cache\Cache;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
-use xoctConf;
 use xoctException;
-use xoctInvitation;
 use xoctRequest;
 
 /**
@@ -59,7 +59,7 @@ class EventAPIRepository implements EventRepository
             ->parameter('withacl', true)
             ->parameter('withpublications', true)
             ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) xoctConf::getConfig(xoctConf::F_PRESIGN_LINKS))
+            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS))
             ->get());
         $event = $this->eventParser->parseAPIResponse($data, $identifier);
         if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
@@ -71,7 +71,7 @@ class EventAPIRepository implements EventRepository
     public function delete(string $identifier): bool
     {
         xoctRequest::root()->events($identifier)->delete();
-        foreach (xoctInvitation::where(array('event_identifier' => $identifier))->get() as $invitation) {
+        foreach (PermissionGrant::where(array('event_identifier' => $identifier))->get() as $invitation) {
             $invitation->delete();
         }
         return true;
@@ -82,7 +82,7 @@ class EventAPIRepository implements EventRepository
      */
     public function upload(UploadEventRequest $request): void
     {
-        if (xoctConf::getConfig(xoctConf::F_INGEST_UPLOAD)) {
+        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
             $this->ingestService->ingest($request);
         } else {
             json_decode(xoctRequest::root()->events()
@@ -129,7 +129,7 @@ class EventAPIRepository implements EventRepository
             ->parameter('withacl', true)
             ->parameter('withpublications', true)
             ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) xoctConf::getConfig(xoctConf::F_PRESIGN_LINKS));
+            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
 
         $data = json_decode($request->get($roles, $for_user)) ?: [];
         $return = array();

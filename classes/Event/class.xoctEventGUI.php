@@ -6,6 +6,7 @@ use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
@@ -19,10 +20,14 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\Report\Report;
 use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
@@ -225,7 +230,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "schedule" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && xoctConf::getConfig(xoctConf::F_CREATE_SCHEDULED_ALLOWED)) {
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && PluginConfig::getConfig(PluginConfig::F_CREATE_SCHEDULED_ALLOWED)) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_schedule_new');
             $b->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_SCHEDULE));
@@ -234,7 +239,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "Opencast Studio" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && xoctConf::getConfig(xoctConf::F_STUDIO_ALLOWED)) {
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && PluginConfig::getConfig(PluginConfig::F_STUDIO_ALLOWED)) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_opencast_studio');
             $b->setUrl(self::dic()->ctrl()->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
@@ -243,7 +248,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "clear cache" button
-        if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE)) {
             $b = ilLinkButton::getInstance();
             $b->setId('rep_robj_xoct_event_clear_cache');
             $b->setCaption('rep_robj_xoct_event_clear_cache');
@@ -277,16 +282,16 @@ class xoctEventGUI extends xoctGUI
             self::dic()->user()->getId()
         );
 
-        switch (xoctUserSettings::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
-            case xoctUserSettings::VIEW_TYPE_LIST:
+        switch (UserSettingsRepository::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'))) {
+            case UserSettingsRepository::VIEW_TYPE_LIST:
                 $html = $this->indexList();
                 break;
-            case xoctUserSettings::VIEW_TYPE_TILES:
+            case UserSettingsRepository::VIEW_TYPE_TILES:
                 $html = $this->indexTiles();
                 break;
             default:
                 throw new xoctException(xoctException::INTERNAL_ERROR, 'Invalid view type ' .
-                    xoctUserSettings::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
+                    UserSettingsRepository::getViewTypeForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id')) .
                     ' for user with id ' . self::dic()->user()->getId());
         }
 
@@ -306,7 +311,7 @@ class xoctEventGUI extends xoctGUI
 
         if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->getObjId()) . '_xpt'])
             || !empty($_POST)
-            || xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
+            || PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY)) {
             // load table synchronously
             return $this->getTableGUI();
         }
@@ -329,7 +334,7 @@ class xoctEventGUI extends xoctGUI
     {
         $this->initViewSwitcherHTML('tiles');
 
-        if (xoctConf::getConfig(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY)) {
+        if (PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY)) {
             return $this->getTilesGUI();
         }
 
@@ -368,7 +373,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function switchToTiles()
     {
-        xoctUserSettings::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserSettings::VIEW_TYPE_TILES);
+        UserSettingsRepository::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), UserSettingsRepository::VIEW_TYPE_TILES);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
 
@@ -377,7 +382,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function switchToList()
     {
-        xoctUserSettings::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), xoctUserSettings::VIEW_TYPE_LIST);
+        UserSettingsRepository::changeViewType(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), UserSettingsRepository::VIEW_TYPE_LIST);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
 
@@ -388,7 +393,7 @@ class xoctEventGUI extends xoctGUI
     {
         $tile_limit = filter_input(INPUT_POST, 'tiles_per_page');
         if (in_array($tile_limit, [4, 8, 12, 16])) {
-            xoctUserSettings::changeTileLimit(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), $tile_limit);
+            UserSettingsRepository::changeTileLimit(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'), $tile_limit);
         }
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
     }
@@ -555,7 +560,7 @@ class xoctEventGUI extends xoctGUI
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
             $metadata,
             $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance(self::dic()->user())),
-            new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
+            new Processing(PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
                 $data['workflow_configuration']['object']),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
@@ -622,7 +627,7 @@ class xoctEventGUI extends xoctGUI
                 $metadata,
                 $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->dic->user())),
                 $data['scheduling']['object'],
-                new Processing(xoctConf::getConfig(xoctConf::F_WORKFLOW),
+                new Processing(PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
                     $data['workflow_configuration']['object'])
             )));
         } catch (xoctException $e) {
@@ -711,7 +716,7 @@ class xoctEventGUI extends xoctGUI
     {
         $this->addCurrentUserToProducers();
         // redirect to oc studio
-        $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
+        $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
 
         $return_link = ILIAS_HTTP_PATH . '/'
@@ -765,9 +770,9 @@ class xoctEventGUI extends xoctGUI
         }
         $url = $publication->getUrl();
         $extension = pathinfo($url)['extension'];
-        $url = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
+        $url = PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
 
-        if (xoctConf::getConfig(xoctConf::F_EXT_DL_SOURCE)) {
+        if (PluginConfig::getConfig(PluginConfig::F_EXT_DL_SOURCE)) {
             // Open external source page
             header('Location: ' . $url);
         } else {
@@ -954,7 +959,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function removeInvitations()
     {
-        foreach (xoctInvitation::get() as $xoctInvitation) {
+        foreach (PermissionGrant::get() as $xoctInvitation) {
             $xoctInvitation->delete();
         }
         ilUtil::sendSuccess($this->txt('msg_success'), true);
@@ -975,7 +980,7 @@ class xoctEventGUI extends xoctGUI
         }
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
-        if (count($event->publications()->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+        if (count($event->publications()->getPublications()) && PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH)) {
             $header_text = $this->txt('unpublish_confirm');
             $action_text = 'unpublish';
         } else {
@@ -1002,7 +1007,7 @@ class xoctEventGUI extends xoctGUI
             ilUtil::sendFailure($this->txt('msg_no_access'), true);
             $this->cancel();
         }
-        if (count($event->publications()->getPublications()) && xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH)) {
+        if (count($event->publications()->getPublications()) && PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH)) {
             try {
                 $event->unpublish();
                 ilUtil::sendSuccess($this->txt('msg_unpublish_started'), true);
@@ -1051,8 +1056,8 @@ class xoctEventGUI extends xoctGUI
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
             $message = $this->getDateReportMessage($_POST['message']);
             $subject = 'ILIAS Opencast Plugin: neue Meldung «geplante Termine anpassen»';
-            $report = new xoctReport();
-            $report->setType(xoctReport::TYPE_DATE)
+            $report = new Report();
+            $report->setType(Report::TYPE_DATE)
                 ->setUserId(self::dic()->user()->getId())
                 ->setSubject($subject)
                 ->setMessage($message)
@@ -1072,8 +1077,8 @@ class xoctEventGUI extends xoctGUI
             $message = $this->getQualityReportMessage($event, $_POST['message']);
             $subject = 'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»';
 
-            $report = new xoctReport();
-            $report->setType(xoctReport::TYPE_QUALITY)
+            $report = new Report();
+            $report->setType(Report::TYPE_QUALITY)
                 ->setUserId(self::dic()->user()->getId())
                 ->setSubject($subject)
                 ->setMessage($message)
@@ -1192,7 +1197,7 @@ class xoctEventGUI extends xoctGUI
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         // add user to ilias producers
         try {
-            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
             $sleep = $ilias_producers->addMember($xoctUser);
         } catch (xoctException $e) {
             $sleep = false;

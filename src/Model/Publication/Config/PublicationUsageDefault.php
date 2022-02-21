@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
-use xoctConf;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class PublicationUsageDefault
@@ -19,7 +19,7 @@ class PublicationUsageDefault extends PublicationUsage
     protected static function initDefaultValues()
     {
         if (is_null(self::$default_values)) {
-            $internal_player = xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER);
+            $internal_player = PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER);
             self::$default_values = [
                 PublicationUsage::USAGE_PLAYER => [
                     'channel' => ($internal_player ? 'api' : 'engage-player'),

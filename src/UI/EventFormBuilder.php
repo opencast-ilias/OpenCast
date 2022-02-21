@@ -5,22 +5,21 @@ namespace srag\Plugins\Opencast\UI;
 use ILIAS\DI\Container;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Container\Form\Form;
-use ILIAS\UI\Component\Input\Field\Select;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ilMimeTypeUtil;
 use ilPlugin;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
-use xoctConf;
-use xoctUser;
 
 class EventFormBuilder
 {
@@ -210,7 +209,7 @@ class EventFormBuilder
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling, bool $as_admin): Form
     {
         $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata, $as_admin)];
-        $allow_edit_scheduling = (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA);
+        $allow_edit_scheduling = (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA);
         if ($allow_edit_scheduling) {
             $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling);
         }
@@ -225,7 +224,7 @@ class EventFormBuilder
     {
         return $this->ui_factory->input()->field()->section([
             self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
-                $this->plugin->txt('event_accept_eula'), xoctConf::getConfig(xoctConf::F_EULA))
+                $this->plugin->txt('event_accept_eula'), PluginConfig::getConfig(PluginConfig::F_EULA))
                 ->withRequired(true)
                 ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
                     // must be checked (required-functionality doesn't guarantee that)
@@ -236,7 +235,7 @@ class EventFormBuilder
 
     private function getMimeTypes(): array
     {
-        return xoctConf::getConfig(xoctConf::F_AUDIO_ALLOWED) ?
+        return PluginConfig::getConfig(PluginConfig::F_AUDIO_ALLOWED) ?
             self::$accepted_video_mimetypes + self::$accepted_audio_mimetypes
             : self::$accepted_video_mimetypes;
     }

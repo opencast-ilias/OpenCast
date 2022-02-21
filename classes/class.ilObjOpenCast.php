@@ -1,5 +1,7 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -42,7 +44,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 	public function updateObjectFromSeries(Metadata $metadata)
 	{
-		xoctConf::setApiSettings();
+		PluginConfig::setApiSettings();
 		if (self::dic()->ctrl()->isAsynch()) {
 			// don't update title/description on async calls
 			return;
@@ -80,7 +82,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|void
 	 */
 	protected function doCloneObject($new_obj, $a_target_id, $a_copy_id = NULL) {
-		xoctConf::setApiSettings();
+		PluginConfig::setApiSettings();
 		/**
 		 * @var $objectSettingsNew ObjectSettings
 		 * @var $objectSettingsOld ObjectSettings

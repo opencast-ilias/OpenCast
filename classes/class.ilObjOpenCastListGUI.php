@@ -1,5 +1,7 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
@@ -122,7 +124,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	protected function getOpenCast($get_exceoptions = false) {
 		$objectSettings = new ObjectSettings();
 		try {
-			xoctConf::setApiSettings();
+			PluginConfig::setApiSettings();
 			$objectSettings = ObjectSettings::find($this->obj_id);
 		} catch (xoctException $e) {
 			if ($get_exceoptions) {

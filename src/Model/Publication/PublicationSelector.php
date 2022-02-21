@@ -2,23 +2,19 @@
 
 namespace srag\Plugins\Opencast\Model\Publication;
 
-use Closure;
 use ilObjOpenCastAccess;
 use ilOpenCastPlugin;
 use Opis\Closure\SerializableClosure;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use stdClass;
-use xoctAttachment;
-use xoctConf;
 use xoctException;
-use xoctMedia;
-use xoctPublication;
 use xoctSecureLink;
-use xoctUser;
 
 /**
  * Class PublicationSelector
@@ -49,7 +45,7 @@ class PublicationSelector
      */
     protected $event;
     /**
-     * @var xoctPublication[]
+     * @var Publication[]
      */
     protected $publications;
     /**
@@ -57,19 +53,19 @@ class PublicationSelector
      */
     protected $publication_usage_repository;
     /**
-     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @var Publication[]|Media[]|Attachment[]
      */
     protected $player_publications;
     /**
-     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @var Publication[]|Media[]|Attachment[]
      */
     protected $download_publications;
     /**
-     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @var Publication[]|Media[]|Attachment[]
      */
     protected $preview_publications;
     /**
-     * @var xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @var Publication[]|Media[]|Attachment[]
      */
     protected $segment_publications;
     /**
@@ -123,7 +119,7 @@ class PublicationSelector
     {
         $publications = array();
         foreach ($publication_data as $p_array) {
-            $md = new xoctPublication();
+            $md = new Publication();
             if ($p_array instanceof stdClass) {
                 $md->loadFromStdClass($p_array);
             } else {
@@ -137,14 +133,14 @@ class PublicationSelector
 
 
     /**
-     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getPlayerPublications() : array
     {
         if (!isset($this->player_publications)) {
             $player_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER);
-            if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {   // force media for internal player
+            if (PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER)) {   // force media for internal player
                 $player_usage->setMdType(PublicationUsage::MD_TYPE_MEDIA);
             }
             $pubs = $this->getPublicationMetadataForUsage($player_usage);
@@ -156,7 +152,7 @@ class PublicationSelector
 
 
     /**
-     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getDownloadPublications() : array
@@ -184,9 +180,9 @@ class PublicationSelector
     public function getDownloadDtos(bool $with_urls = true) : array {
         $download_publications = $this->getDownloadPublications();
         usort($download_publications, function ($pub1, $pub2) {
-            /** @var $pub1 xoctPublication|xoctMedia|xoctAttachment */
-            /** @var $pub2 xoctPublication|xoctMedia|xoctAttachment */
-            if ($pub1 instanceof xoctMedia && $pub2 instanceof xoctMedia) {
+            /** @var $pub1 Publication|Media|Attachment */
+            /** @var $pub2 Publication|Media|Attachment */
+            if ($pub1 instanceof Media && $pub2 instanceof Media) {
                 if ($pub1->getHeight() == $pub2->getHeight()) {
                     return 0;
                 }
@@ -195,16 +191,16 @@ class PublicationSelector
             return 0;
         });
         return array_map(function($pub, $i) use ($with_urls) {
-            /** @var $pub xoctPublication|xoctMedia|xoctAttachment */
-            $label = ($pub instanceof xoctMedia) ? $pub->getHeight() . 'p' :
-                ($pub instanceof xoctAttachment ? $pub->getFlavor() : 'Download ' . $i);
+            /** @var $pub Publication|Media|Attachment */
+            $label = ($pub instanceof Media) ? $pub->getHeight() . 'p' :
+                ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
             return new DownloadDto(
                 $pub->getId(),
                 $label,
                 $with_urls ?
-                    (xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS) ?
+                    (PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ?
                         xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl())
                     : ''
             );
@@ -213,7 +209,7 @@ class PublicationSelector
 
 
     /**
-     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getPreviewPublications() : array
@@ -228,7 +224,7 @@ class PublicationSelector
 
 
     /**
-     * @return xoctAttachment[]
+     * @return Attachment[]
      * @throws xoctException
      */
     public function getSegmentPublications() : array
@@ -248,7 +244,7 @@ class PublicationSelector
     public function getCuttingLink()
     {
         if (!isset($this->cutting_url)) {
-            $url = str_replace('{event_id}', $this->event->getIdentifier(), xoctConf::getConfig(xoctConf::F_EDITOR_LINK));
+            $url = str_replace('{event_id}', $this->event->getIdentifier(), PluginConfig::getConfig(PluginConfig::F_EDITOR_LINK));
             if (!$url) {
                 $xoctPublication = $this->getFirstPublicationMetadataForUsage(
                     $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CUTTING)
@@ -256,7 +252,7 @@ class PublicationSelector
                 $url = is_null($xoctPublication) ? '' : $xoctPublication->getUrl();
             }
             if (!$url) {
-                $base = rtrim(xoctConf::getConfig(xoctConf::F_API_BASE), "/");
+                $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
                 $base = str_replace('/api', '', $base);
                 $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier() . '/tools/editor';
             }
@@ -268,7 +264,7 @@ class PublicationSelector
     }
 
     /**
-     * @return xoctPublication
+     * @return Publication
      * @throws xoctException
      */
     public function getPlayerPublication()
@@ -287,7 +283,7 @@ class PublicationSelector
         if (!isset($this->player_url)) {
             $url = $this->getPlayerPublication()->getUrl();
 
-            if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+            if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) {
                 $this->player_url = xoctSecureLink::signPlayer($url);
             } else {
                 $this->player_url = $url;
@@ -328,16 +324,16 @@ class PublicationSelector
             }
 
             $url = $annotation_publication->getUrl();
-            if (xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS)) {
+            if (PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS)) {
                 $this->annotation_url = xoctSecureLink::signAnnotation($url);
             } else {
                 $this->annotation_url = $url;
             }
 
-            if ($ref_id > 0 && xoctConf::getConfig(xoctConf::F_ANNOTATION_TOKEN_SEC)) {
+            if ($ref_id > 0 && PluginConfig::getConfig(PluginConfig::F_ANNOTATION_TOKEN_SEC)) {
                 $xoctUser = xoctUser::getInstance(self::dic()->user());
                 // Get Media URL
-                $media_objects = $annotation_publication instanceof xoctPublication ? $annotation_publication->getMedia() : [$annotation_publication];
+                $media_objects = $annotation_publication instanceof Publication ? $annotation_publication->getMedia() : [$annotation_publication];
                 //TODO: Get all urls for all mediatypes and compress them to send by URL
                 foreach ($media_objects as $media_object) {
                     if ($media_object->getMediatype() == "application/x-mpegURL"){
@@ -345,7 +341,7 @@ class PublicationSelector
                     }
                 }
 
-                if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS)) {
+                if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) {
                     // Get duration from metadata
                     $duration = $media_object->duration;
 
@@ -411,7 +407,7 @@ class PublicationSelector
                 continue;
             }
             $url = $xoctPublication->getUrl();
-            if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+            if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
                 $this->thumbnail_url = xoctSecureLink::signThumbnail($url);
             } else {
                 $this->thumbnail_url = $url;
@@ -430,7 +426,7 @@ class PublicationSelector
     /**
      * @param $PublicationUsage
      *
-     * @return xoctPublication[]|xoctMedia[]|xoctAttachment[]
+     * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getPublicationMetadataForUsage($PublicationUsage) : array
@@ -440,8 +436,8 @@ class PublicationSelector
         }
         /**
          * @var $PublicationUsage       PublicationUsage
-         * @var $attachment             xoctAttachment
-         * @var $medium                 xoctMedia
+         * @var $attachment             Attachment
+         * @var $medium                 Media
          */
         $media = [];
         $attachments = [];
@@ -493,7 +489,7 @@ class PublicationSelector
                 }
                 break;
             default:
-                return [new xoctPublication()];
+                return [new Publication()];
         }
 
         return array_filter($return);
@@ -501,7 +497,7 @@ class PublicationSelector
 
     /**
      * @param $xoctPublicationUsage
-     * @return xoctAttachment|xoctMedia|xoctPublication|null
+     * @return Attachment|Media|Publication|null
      * @throws xoctException
      */
     public function getFirstPublicationMetadataForUsage($xoctPublicationUsage)
@@ -557,7 +553,7 @@ class PublicationSelector
     }
 
     /**
-     * @return xoctPublication[]
+     * @return Publication[]
      */
     public function getPublications() : array
     {

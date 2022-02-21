@@ -6,8 +6,8 @@ namespace srag\Plugins\Opencast\Model\Series;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use xoctUser;
 
 /**
  * Class SeriesRepository

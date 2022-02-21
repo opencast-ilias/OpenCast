@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Model\Series;
 
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use xoctPermissionTemplate;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 
 /**
  * Class Series
@@ -96,7 +96,7 @@ class Series {
      * @return int
      */
 	public function getPermissionTemplateId() {
-		$template = xoctPermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
+		$template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
 		return $template ? $template->getId() : 0;
 	}
 
@@ -105,7 +105,7 @@ class Series {
      */
 	public function isPublishedOnVideoPortal() : bool
     {
-        $template = xoctPermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
+        $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
 	    return $template && !$template->isDefault();
     }
 }

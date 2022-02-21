@@ -1,6 +1,7 @@
 <?php
 /**
  * Class xoctLog
+ * TODO: initialize and make available in OpencastDIC
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  * @version 1.0.0

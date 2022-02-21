@@ -8,15 +8,15 @@ use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
-use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
+use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
-use xoctConf;
 use xoctException;
-use xoctUser;
 
 class SeriesFormBuilder
 {
@@ -119,7 +119,7 @@ class SeriesFormBuilder
         $options = array(
             null => 'As defined in content',
         );
-        $licenses = xoctConf::getConfig(xoctConf::F_LICENSES);
+        $licenses = PluginConfig::getConfig(PluginConfig::F_LICENSES);
         if ($licenses) {
             foreach (explode("\n", $licenses) as $nl) {
                 $lic = explode("#", $nl);

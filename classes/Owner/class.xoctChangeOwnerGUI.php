@@ -7,6 +7,7 @@ use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequestPayload;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
  * Class xoctChangeOwnerGUI

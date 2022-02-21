@@ -1,8 +1,12 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Model\ACL\ACLEntry;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
@@ -185,7 +189,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 							&& $opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent)))
 					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
 					&& $xoctEvent->getProcessingState() != Event::STATE_FAILED
-					&& (!$xoctEvent->isScheduled() || xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) != xoctConf::NO_METADATA);
+					&& (!$xoctEvent->isScheduled() || PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) != PluginConfig::NO_METADATA);
 			case self::ACTION_SET_ONLINE_OFFLINE:
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
@@ -205,13 +209,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 					self::hasWriteAccess(); // = permission: 'edit settings'
 			case self::ACTION_REPORT_QUALITY_PROBLEM:
 				return
-					xoctConf::getConfig(xoctConf::F_REPORT_QUALITY)
-					&& ((xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_ACCESS) == xoctConf::ACCESS_ALL)
+					PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY)
+					&& ((PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_ACCESS) == PluginConfig::ACCESS_ALL)
 						|| self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
 						|| $opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctUser, $xoctEvent));
 			case self::ACTION_REPORT_DATE_CHANGE:
 				return
-					xoctConf::getConfig(xoctConf::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
+					PluginConfig::getConfig(PluginConfig::F_REPORT_DATE) && self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
 			default:
 				return false;
 		}
@@ -283,14 +287,14 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		// with ivt mode: show videos of ivt group and invitations (own videos already checked)
 		$role_names = array();
 
-		$xoctGroupParticipants = xoctIVTGroup::getAllGroupParticipantsOfUser($event->getSeriesIdentifier(), $xoctUser);
+		$xoctGroupParticipants = PermissionGroup::getAllGroupParticipantsOfUser($event->getSeriesIdentifier(), $xoctUser);
 		foreach ($xoctGroupParticipants as $xoctGroupParticipant) {
 			if ($opencastDIC->acl_utils()->isUserOwnerOfEvent($xoctGroupParticipant->getXoctUser(), $event)) {
 				return true;
 			}
 		}
 
-		$invitations = xoctInvitation::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $objectSettings->getPermissionAllowSetOwn());
+		$invitations = PermissionGrant::getAllInvitationsOfUser($event->getIdentifier(), $xoctUser, $objectSettings->getPermissionAllowSetOwn());
 		if (!empty($invitations)) {
 			return true; //has invitations
 		}

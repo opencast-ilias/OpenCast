@@ -2,6 +2,7 @@
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
@@ -98,7 +99,7 @@ class xoctEventAPI
         );
 
         $processing = new Processing(
-            xoctConf::getConfig(xoctConf::F_WORKFLOW),
+            PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
             (object)$additional_data['workflow_parameters']);
 
         $acl = $this->acl_utils->getStandardRolesACL();

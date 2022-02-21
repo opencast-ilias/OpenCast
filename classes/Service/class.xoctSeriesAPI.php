@@ -1,14 +1,17 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
-use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
@@ -126,12 +129,12 @@ class xoctSeriesAPI {
 
         $acl = $this->aclUtils->getStandardRolesACL();
 		if (isset($additional_data['permission_template_id'])) {
-			xoctPermissionTemplate::removeAllTemplatesFromAcls($acl);
-			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
-			$xoctPermissionTemplate = xoctPermissionTemplate::find($additional_data['permission_template_id']);
+			PermissionTemplate::removeAllTemplatesFromAcls($acl);
+			/** @var PermissionTemplate $xoctPermissionTemplate */
+			$xoctPermissionTemplate = PermissionTemplate::find($additional_data['permission_template_id']);
 			$xoctPermissionTemplate->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
-		} elseif ($default_template = xoctPermissionTemplate::where(array('is_default' => 1))->first()) {
-            /** @var xoctPermissionTemplate $default_template */
+		} elseif ($default_template = PermissionTemplate::where(array('is_default' => 1))->first()) {
+            /** @var PermissionTemplate $default_template */
             $default_template->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
         }
 
@@ -149,7 +152,7 @@ class xoctSeriesAPI {
         }
 
         try {
-            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
             $ilias_producers->addMembers($producers);
         } catch (xoctException $e) {
         }
@@ -246,9 +249,9 @@ class xoctSeriesAPI {
 		if (isset($data['permission_template_id']) ||
 			($series->getPermissionTemplateId() && (isset($data['use_annotations']) || isset($data['streaming_only'])))) {
 			$series_acls = $series->getAccessPolicies();
-			xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
-			/** @var xoctPermissionTemplate $xoctPermissionTemplate */
-			$xoctPermissionTemplate = xoctPermissionTemplate::find($data['permission_template_id'] ? $data['permission_template_id'] : $series->getPermissionTemplateId());
+			PermissionTemplate::removeAllTemplatesFromAcls($series_acls);
+			/** @var PermissionTemplate $xoctPermissionTemplate */
+			$xoctPermissionTemplate = PermissionTemplate::find($data['permission_template_id'] ? $data['permission_template_id'] : $series->getPermissionTemplateId());
 			$xoctPermissionTemplate->addToAcls($series_acls, !$cast->getStreamingOnly(), $cast->getUseAnnotations());
 			$series->setAccessPolicies($series_acls);
 			$update_opencast_data = true;

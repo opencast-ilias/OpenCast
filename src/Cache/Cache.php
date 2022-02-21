@@ -2,13 +2,13 @@
 
 namespace srag\Plugins\Opencast\Cache;
 
-use ilGlobalCache;
-use ilOpenCastPlugin;
-use ilGlobalCacheService;
-use xoctConf;
 use Exception;
+use ilGlobalCache;
+use ilGlobalCacheService;
+use ilOpenCastPlugin;
 use RuntimeException;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctLog;
 
 /**
@@ -72,16 +72,16 @@ class Cache extends ilGlobalCache {
 		}
 
 		switch ($this->getCacheType()) {
-			case xoctConf::CACHE_STANDARD:
+			case PluginConfig::CACHE_STANDARD:
 				$serviceName = self::lookupServiceClassName($this->getServiceType());
 				$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
 				$ilGlobalCacheService->setServiceType($this->getServiceType());
 				break;
-			case xoctConf::CACHE_DATABASE:
+			case PluginConfig::CACHE_DATABASE:
 				$ilGlobalCacheService = new DBCacheService(self::$unique_service_id, $this->getComponent());
 				$ilGlobalCacheService->setServiceType(DBCacheService::TYPE_DB);
 				break;
-			case xoctConf::CACHE_DISABLED:
+			case PluginConfig::CACHE_DISABLED:
 			default:
 				$serviceName = self::lookupServiceClassName(self::TYPE_STATIC);
 				$ilGlobalCacheService = new $serviceName(self::$unique_service_id, $this->getComponent());
@@ -101,10 +101,10 @@ class Cache extends ilGlobalCache {
 	 */
 	private function getCacheType() {
 		try {
-			return (int) xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE);
+			return (int) PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE);
 		} catch (Exception $exception) //catch exception while dbupdate is running. (xoctConf is not ready at that time).
 		{
-			return xoctConf::CACHE_DISABLED;
+			return PluginConfig::CACHE_DISABLED;
 		}
 	}
 

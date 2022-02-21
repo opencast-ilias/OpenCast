@@ -6,17 +6,17 @@ use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
+use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
-use xoctConf;
 use xoctFileUploadHandler;
-use xoctPermissionTemplate;
-use xoctUserSettings;
 
 class ObjectSettingsFormItemBuilder
 {
@@ -108,16 +108,16 @@ class ObjectSettingsFormItemBuilder
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
             self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                xoctUserSettings::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_LIST),
-                xoctUserSettings::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_TILES),
+                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_LIST),
+                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_TILES),
             ])->withRequired(true),
             self::F_VIEW_CHANGEABLE => $field_factory->checkbox($this->txt(self::F_VIEW_CHANGEABLE),
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info'))
         ];
-        if (xoctPermissionTemplate::count()) {
+        if (PermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup([
                 $this->getPermissionTemplateRadioInput()
-            ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)),
+            ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'));
         }
 
@@ -159,17 +159,17 @@ class ObjectSettingsFormItemBuilder
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE))->withValue($objectSettings->isOnline()),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue($objectSettings->getIntroductionText()),
             self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                xoctUserSettings::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_LIST),
-                xoctUserSettings::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_TILES),
+                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_LIST),
+                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_TILES),
             ])->withRequired(true)->withValue($objectSettings->getDefaultView()),
             self::F_VIEW_CHANGEABLE => $field_factory->checkbox($this->txt(self::F_VIEW_CHANGEABLE),
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info'))->withValue($objectSettings->isViewChangeable())
         ];
 
-        if (xoctPermissionTemplate::count()) {
+        if (PermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup([
                 self::F_PUBLISH_ON_VIDEO_PORTAL => $this->getPermissionTemplateRadioInput()
-            ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)),
+            ], sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'))
                 ->withValue($series->isPublishedOnVideoPortal() ?
                     [self::F_PUBLISH_ON_VIDEO_PORTAL => $series->getPermissionTemplateId()] : null);
@@ -238,8 +238,8 @@ class ObjectSettingsFormItemBuilder
     private function getPermissionTemplateRadioInput(): Input
     {
         $radio = $this->ui_factory->input()->field()->radio($this->txt(self::F_PERMISSION_TEMPLATE));
-        /** @var xoctPermissionTemplate $ptpl */
-        foreach (xoctPermissionTemplate::where(array('is_default' => 0))->orderBy('sort')->get() as $ptpl) {
+        /** @var PermissionTemplate $ptpl */
+        foreach (PermissionTemplate::where(array('is_default' => 0))->orderBy('sort')->get() as $ptpl) {
             $radio = $radio->withOption($ptpl->getId(), $ptpl->getTitle(), $ptpl->getInfo() ?? null);
         }
         return $radio->withRequired(true);

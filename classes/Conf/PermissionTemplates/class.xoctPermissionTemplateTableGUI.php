@@ -1,6 +1,9 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+
 /**
  * Class xoctPermissionTemplateTableGUI
  *
@@ -41,7 +44,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 		self::dic()->ui()->mainTemplate()->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
 
 		$this->initColumns();
-		$this->setData(xoctPermissionTemplate::orderBy('sort')->getArray());
+		$this->setData(PermissionTemplate::orderBy('sort')->getArray());
 	}
 
 	protected function initColumns() {

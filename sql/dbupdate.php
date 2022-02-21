@@ -1,18 +1,15 @@
 <#1>
 <?php
 
-use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
-use srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR;
-
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
-xoctConf::updateDB();
-xoctIVTGroup::updateDB();
+\srag\Plugins\Opencast\Model\Config\PluginConfig::updateDB();
+\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup::updateDB();
 \srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 ?>
 <#2>
 <?php
-xoctIVTGroupParticipant::updateDB();
-xoctInvitation::updateDB();
+\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant::updateDB();
+\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant::updateDB();
 ?>
 <#3>
 <?php
@@ -63,7 +60,7 @@ if($offering_admin)
 ?>
 <#8>
 <?php
-xoctPermissionTemplate::updateDB();
+\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
 ?>
 <#9>
 <?php
@@ -77,90 +74,90 @@ xoctPermissionTemplate::updateDB();
 ?>
 <#10>
 <?php
-xoctPermissionTemplate::updateDB();
+\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
 //xoctConf::set(xoctConf::F_VIDEO_PORTAL_TITLE, 'Video Portal');
 ?>
 <#11>
 <?php
-xoctPermissionTemplate::updateDB();
+\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
 ?>
 <#12>
 <?php
-xoctReport::updateDB();
+\srag\Plugins\Opencast\Model\Report\Report::updateDB();
 ?>
 <#13>
 <?php
-WorkflowParameter::updateDB();
-SeriesWorkflowParameter::updateDB();
+\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::updateDB();
+\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::updateDB();
 ?>
 <#14>
 <?php
 /**
  * define standard workflow parameters as they were hard-coded before
  */
-if (WorkflowParameter::count() === 0) {
+if (\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::count() === 0) {
 	$params = [];
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('flagForCutting')
 		->setTitle('Flag for Cutting')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('flagForReview')
 		->setTitle('Flag for Review')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('publishToEngage')
 		->setTitle('Publish to Engage')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('publishToHarvesting')
 		->setTitle('Publish to Harvesting')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('straightToPublishing')
 		->setTitle('Straight to Publishing')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('publishToApi')
 		->setTitle('Publish to API')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	$params[] = (new WorkflowParameter())
+	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
 		->setId('autopublish')
 		->setTitle('Automatisch Publizieren')
-		->setDefaultValueMember(WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
-		->setType(WorkflowParameter::TYPE_CHECKBOX)
+		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
+		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
 		->create();
-	SeriesWorkflowParameter::truncateDB();
-	SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
+	\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::truncateDB();
+	\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
 }
 ?>
 <#15>
 <?php
 \srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
-xoctUserSetting::updateDB();
+\srag\Plugins\Opencast\Model\UserSettings\UserSetting::updateDB();
 ?>
 <#16>
 <?php
-xoctUserSetting::updateDB();
+\srag\Plugins\Opencast\Model\UserSettings\UserSetting::updateDB();
 ?>
 <#17>
 <?php
@@ -192,7 +189,7 @@ $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)
  * 'flavor', to keep the existing behavior
  */
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
-/** @var PublicationUsage $publication_usage */
+/** @var \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage $publication_usage */
 foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
 	$publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
 	$publication_usage->update();
@@ -206,7 +203,7 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get()
  * with the tag 'engage-streaming' (that was hard-coded until now)
  */
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
-if (xoctConf::getConfig(xoctConf::F_INTERNAL_VIDEO_PLAYER)) {
+if (\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_INTERNAL_VIDEO_PLAYER)) {
     // to keep the existing behavior
     $player_pub = (new \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_PLAYER);
     if (!is_null($player_pub)) {
@@ -268,15 +265,15 @@ if (!is_null($api_pub)) {
 ?>
 <#28>
 <?php
-xoctConf::set(xoctConf::F_COMMON_IDP, 1);
+\srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_COMMON_IDP, 1);
 ?>
 <#29>
 <?php
 // combine owner role prefix ext & email
-$is_mapping_email = xoctConf::getConfig(xoctConf::F_USER_MAPPING) == xoctUser::MAP_EMAIL;
-$role_owner_prefix = xoctConf::getConfig($is_mapping_email ? 'role_ivt_email_prefix' : 'role_ivt_external_prefix');
+$is_mapping_email = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_USER_MAPPING) == \srag\Plugins\Opencast\Model\User\xoctUser::MAP_EMAIL;
+$role_owner_prefix = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig($is_mapping_email ? 'role_ivt_email_prefix' : 'role_ivt_external_prefix');
 if ($role_owner_prefix) {
-    xoctConf::set(xoctConf::F_ROLE_OWNER_PREFIX, $role_owner_prefix);
+    \srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_ROLE_OWNER_PREFIX, $role_owner_prefix);
 }
 ?>
 <#30>

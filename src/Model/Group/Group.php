@@ -3,9 +3,9 @@
 namespace srag\Plugins\Opencast\Model\Group;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
 use xoctRequest;
-use xoctUser;
 
 /**
  * Class xoctGroup

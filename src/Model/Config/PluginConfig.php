@@ -1,15 +1,24 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+namespace srag\Plugins\Opencast\Model\Config;
+
+use ActiveRecord;
+use ilOpenCastPlugin;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\TermsOfUse\ToUManager;
+use xoctCurl;
+use xoctCurlSettings;
+use xoctLog;
+use xoctRequest;
+use xoctRequestSettings;
 
 /**
  * Class xoctConf
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class xoctConf extends ActiveRecord
+class PluginConfig extends ActiveRecord
 {
 
     const TABLE_NAME = 'xoct_config';
@@ -20,67 +29,67 @@ class xoctConf extends ActiveRecord
     const F_CURL_PASSWORD = 'curl_password';
     const F_WORKFLOW = 'workflow';
     const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
-	const F_EULA = 'eula';
-	const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
-	const F_API_VERSION = 'api_version';
-	const F_API_BASE = 'api_base';
-	const F_ACTIVATE_CACHE = 'activate_cache';
-	const CACHE_DISABLED = 0;
-	const CACHE_STANDARD = 1;
-	const CACHE_DATABASE = 2;
-	const F_USER_MAPPING = 'user_mapping';
-	const F_GROUP_PRODUCERS = 'group_producers';
-	const F_STD_ROLES = 'std_roles';
-	const F_ROLE_USER_PREFIX = 'role_user_prefix';
-	const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
-	const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
-	const F_LICENSE_INFO = 'license_info';
-	const F_LICENSES = 'licenses';
-	const F_UPLOAD_TOKEN = 'upload_token';
-	const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
-	const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
-	const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
-	const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
-	const F_EDITOR_LINK = 'editor_link';
-	const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
-	const F_PRESIGN_LINKS = 'presign_links';
-	const F_SIGN_PLAYER_LINKS = 'sign_player_links';
-	const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
-	const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
-	const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
-	const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
-	const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
-	const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
-	const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
-	const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
-	const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
-	const F_AUDIO_ALLOWED = 'audio_allowed';
-	const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
-	const F_STUDIO_ALLOWED = 'oc_studio_allowed';
-	const F_EXT_DL_SOURCE = 'external_download_source';
-	const F_VIDEO_PORTAL_LINK = 'video_portal_link';
-	const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
-	const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
-	const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
-	const F_PRESENTATION_NODE = 'presentation_node';
-	const F_ENABLE_CHAT = 'enable_chat';
+    const F_EULA = 'eula';
+    const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+    const F_API_VERSION = 'api_version';
+    const F_API_BASE = 'api_base';
+    const F_ACTIVATE_CACHE = 'activate_cache';
+    const CACHE_DISABLED = 0;
+    const CACHE_STANDARD = 1;
+    const CACHE_DATABASE = 2;
+    const F_USER_MAPPING = 'user_mapping';
+    const F_GROUP_PRODUCERS = 'group_producers';
+    const F_STD_ROLES = 'std_roles';
+    const F_ROLE_USER_PREFIX = 'role_user_prefix';
+    const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
+    const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
+    const F_LICENSE_INFO = 'license_info';
+    const F_LICENSES = 'licenses';
+    const F_UPLOAD_TOKEN = 'upload_token';
+    const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
+    const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
+    const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
+    const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
+    const F_EDITOR_LINK = 'editor_link';
+    const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
+    const F_PRESIGN_LINKS = 'presign_links';
+    const F_SIGN_PLAYER_LINKS = 'sign_player_links';
+    const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
+    const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
+    const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
+    const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
+    const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
+    const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
+    const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
+    const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
+    const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
+    const F_AUDIO_ALLOWED = 'audio_allowed';
+    const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
+    const F_STUDIO_ALLOWED = 'oc_studio_allowed';
+    const F_EXT_DL_SOURCE = 'external_download_source';
+    const F_VIDEO_PORTAL_LINK = 'video_portal_link';
+    const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
+    const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
+    const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
+    const F_PRESENTATION_NODE = 'presentation_node';
+    const F_ENABLE_CHAT = 'enable_chat';
 
-	const F_REPORT_QUALITY = 'report_quality';
-	const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
-	const F_REPORT_QUALITY_TEXT = 'report_quality_text';
-	const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
-	const ACCESS_ALL = 1;
-	const ACCESS_OWNER_ADMIN = 2;
-	const F_REPORT_DATE = 'report_date';
-	const F_REPORT_DATE_EMAIL = 'report_date_email';
-	const F_REPORT_DATE_TEXT = 'report_date_text';
-	const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
-	const NO_METADATA = 0;
-	const ALL_METADATA = 1;
-	const METADATA_EXCEPT_DATE_PLACE = 2;
-	const F_PRESENTER_MANDATORY = 'presenter_mandatory';
+    const F_REPORT_QUALITY = 'report_quality';
+    const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
+    const F_REPORT_QUALITY_TEXT = 'report_quality_text';
+    const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
+    const ACCESS_ALL = 1;
+    const ACCESS_OWNER_ADMIN = 2;
+    const F_REPORT_DATE = 'report_date';
+    const F_REPORT_DATE_EMAIL = 'report_date_email';
+    const F_REPORT_DATE_TEXT = 'report_date_text';
+    const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
+    const NO_METADATA = 0;
+    const ALL_METADATA = 1;
+    const METADATA_EXCEPT_DATE_PLACE = 2;
+    const F_PRESENTER_MANDATORY = 'presenter_mandatory';
 
-	const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
+    const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
     const F_STREAMING_URL = 'streaming_url';
     const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
     const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
@@ -97,56 +106,59 @@ class xoctConf extends ActiveRecord
     public static $roles = array(
         self::F_ROLE_USER_PREFIX,
         self::F_ROLE_OWNER_PREFIX
-	);
-	/**
-	 * @var array
-	 */
-	public static $groups = array(
-		self::F_GROUP_PRODUCERS,
-	);
+    );
+    /**
+     * @var array
+     */
+    public static $groups = array(
+        self::F_GROUP_PRODUCERS,
+    );
 
 
-	/**
-	 * @return string
-	 * @deprecated
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
-	}
+    /**
+     * @return string
+     * @deprecated
+     */
+    static function returnDbTableName()
+    {
+        return self::TABLE_NAME;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function getConnectorContainerName() {
-		return self::TABLE_NAME;
-	}
+    /**
+     * @return string
+     */
+    public function getConnectorContainerName()
+    {
+        return self::TABLE_NAME;
+    }
 
 
-	public static function setApiSettings() {
-		// CURL
-		$xoctCurlSettings = new xoctCurlSettings();
-		$xoctCurlSettings->setUsername(self::getConfig(self::F_CURL_USERNAME));
-		$xoctCurlSettings->setPassword(self::getConfig(self::F_CURL_PASSWORD));
-		$xoctCurlSettings->setVerifyPeer(true);
-		$xoctCurlSettings->setVerifyHost(true);
-		xoctCurl::init($xoctCurlSettings);
+    public static function setApiSettings()
+    {
+        // CURL
+        $xoctCurlSettings = new xoctCurlSettings();
+        $xoctCurlSettings->setUsername(self::getConfig(self::F_CURL_USERNAME));
+        $xoctCurlSettings->setPassword(self::getConfig(self::F_CURL_PASSWORD));
+        $xoctCurlSettings->setVerifyPeer(true);
+        $xoctCurlSettings->setVerifyHost(true);
+        xoctCurl::init($xoctCurlSettings);
 
-		//CACHE
-		//		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
-		//		xoctCache::setOverrideActive(true);
+        //CACHE
+        //		xoctCache::setOverrideActive(self::getConfig(self::F_ACTIVATE_CACHE));
+        //		xoctCache::setOverrideActive(true);
 
-		// API
-		$xoctRequestSettings = new xoctRequestSettings();
-		$xoctRequestSettings->setApiBase(self::getConfig(self::F_API_BASE));
-		xoctRequest::init($xoctRequestSettings);
+        // API
+        $xoctRequestSettings = new xoctRequestSettings();
+        $xoctRequestSettings->setApiBase(self::getConfig(self::F_API_BASE));
+        xoctRequest::init($xoctRequestSettings);
 
-		// LOG
-		xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
+        // LOG
+        xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
-		// USER
-		xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_LOGIN);
-	}
+        // USER
+        xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_LOGIN);
+    }
 
     /**
      * @param string $xml_file_path
@@ -165,7 +177,7 @@ class xoctConf extends ActiveRecord
             $value = $node->getElementsByTagName('value')->item(0)->nodeValue;
             if ($name) {
                 $value = (is_array(json_decode($value))) ? json_decode($value) : $value;
-                xoctConf::set($name, $value);
+                PluginConfig::set($name, $value);
             }
         }
 
@@ -185,7 +197,7 @@ class xoctConf extends ActiveRecord
             $xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
             $xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
 
-            if (!WorkflowParameter::where(array( 'id' => $xoctWorkflowParameter->getId() ))->hasSets()) {
+            if (!WorkflowParameter::where(array('id' => $xoctWorkflowParameter->getId()))->hasSets()) {
                 $xoctWorkflowParameter->create();
             } else {
                 $xoctWorkflowParameter->update();
@@ -222,7 +234,7 @@ class xoctConf extends ActiveRecord
     /**
      * @return string
      */
-    public static function getXMLExport() : string
+    public static function getXMLExport(): string
     {
         $opencast_plugin = ilOpenCastPlugin::getInstance();
         $domxml = new DOMDocument('1.0', 'UTF-8');
@@ -233,18 +245,18 @@ class xoctConf extends ActiveRecord
         $xml_info = $config->appendChild(new DOMElement('info'));
         $xml_info->appendChild(new DOMElement('plugin_version', $opencast_plugin->getVersion()));
         $xml_info->appendChild(new DOMElement('plugin_db_version', $opencast_plugin->getDBVersion()));
-        $xml_info->appendChild(new DOMElement('config_version', xoctConf::getConfig(xoctConf::CONFIG_VERSION)));
+        $xml_info->appendChild(new DOMElement('config_version', PluginConfig::getConfig(PluginConfig::CONFIG_VERSION)));
 
         // xoctConf
         $xml_xoctConfs = $config->appendChild(new DOMElement('xoct_confs'));
         /**
-         * @var $xoctConf xoctConf
+         * @var $xoctConf PluginConfig
          */
-        foreach (xoctConf::getCollection()->get() as $xoctConf) {
+        foreach (PluginConfig::getCollection()->get() as $xoctConf) {
             $xml_xoctConf = $xml_xoctConfs->appendChild(new DOMElement('xoct_conf'));
             $xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
             //			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
-            $value = xoctConf::getConfig($xoctConf->getName());
+            $value = PluginConfig::getConfig($xoctConf->getName());
             $value = is_array($value) ? json_encode($value) : $value;
             $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
         }
@@ -340,8 +352,7 @@ class xoctConf extends ActiveRecord
             // ToDo: get instance_id and add as parameter
             ToUManager::resetForInstance();
             $obj->setValue("");
-            }
-        else {
+        } else {
             $obj->setValue(json_encode($value));
         }
         if (self::where(array('name' => $name))->hasSets()) {

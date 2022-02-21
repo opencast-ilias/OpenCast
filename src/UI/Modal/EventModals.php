@@ -12,8 +12,8 @@ use ilPropertyFormGUI;
 use ilSelectInputGUI;
 use ilTemplate;
 use ilTemplateException;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use xoctConf;
 
 /**
  * Class EventModals
@@ -101,7 +101,7 @@ class EventModals
         $this->setReportDateModal($this->buildReportingModal(
             'reportDate',
             $this->plugin->txt('event_report_date_modification'),
-            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_DATE_TEXT))
+            nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT))
         ));
     }
 
@@ -114,7 +114,7 @@ class EventModals
         $this->setReportQualityModal($this->buildReportingModal(
             "reportQuality",
             $this->plugin->txt('event_report_quality_problem'),
-            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_TEXT))
+            nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT))
         ));
     }
 

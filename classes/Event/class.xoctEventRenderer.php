@@ -5,10 +5,13 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
@@ -133,7 +136,7 @@ class xoctEventRenderer {
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->event->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
 			$link_tpl->setVariable('TARGET', '_blank');
-			if (xoctConf::getConfig(xoctConf::F_USE_MODALS)) {
+			if (PluginConfig::getConfig(PluginConfig::F_USE_MODALS)) {
 				$modal = $this->getPlayerModal();
 				$link_tpl->setVariable('LINK_URL', '#');
 				$link_tpl->setVariable('MODAL', $modal->getHTML());
@@ -369,7 +372,7 @@ class xoctEventRenderer {
 			if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
                 $placeholders[] = date(
                     'd.m.Y, H:i',
-                    $this->event->getScheduling()->getStart()->getTimestamp() - (((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
+                    $this->event->getScheduling()->getStart()->getTimestamp() - (((int)PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
                 );
 			}
 
@@ -471,7 +474,7 @@ class xoctEventRenderer {
 
 		if ($this->objectSettings instanceof ObjectSettings && $this->objectSettings->getPermissionPerClip()) {
 			$owner_tpl->setCurrentBlock('invitations');
-			$in = xoctInvitation::getActiveInvitationsForEvent($this->event, $this->objectSettings, true);
+			$in = PermissionGrant::getActiveInvitationsForEvent($this->event, $this->objectSettings, true);
 			if ($in > 0) {
 				$owner_tpl->setVariable('INVITATIONS', $in);
 			}
@@ -498,7 +501,7 @@ class xoctEventRenderer {
             }
 	        if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
 	            $start = $this->event->getScheduling()->getStart()->getTimestamp();
-                $accessible_before_start = ((int)xoctConf::getConfig(xoctConf::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
+                $accessible_before_start = ((int)PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
                 $accessible_from = $start - $accessible_before_start;
                 $accessible_to = $this->event->getScheduling()->getEnd()->getTimestamp();
 	            return ($accessible_from < time()) && ($accessible_to > time());
@@ -539,7 +542,7 @@ class xoctEventRenderer {
             $this->event->getIdentifier()
         );
         self::dic()->ctrl()->setParameterByClass(
-            xoctInvitationGUI::class,
+            xoctGrantPermissionGUI::class,
             xoctEventGUI::IDENTIFIER,
             $this->event->getIdentifier()
         );
@@ -570,7 +573,7 @@ class xoctEventRenderer {
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_invite_others'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctInvitationGUI::class, xoctInvitationGUI::CMD_STANDARD)
+                self::dic()->ctrl()->getLinkTargetByClass(xoctGrantPermissionGUI::class, xoctGrantPermissionGUI::CMD_STANDARD)
             );
         }
 
@@ -622,7 +625,7 @@ class xoctEventRenderer {
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)) {
             // show different langvar when date is editable
             $lang_var = ($this->event->isScheduled()
-                && (xoctConf::getConfig(xoctConf::F_SCHEDULED_METADATA_EDITABLE) == xoctConf::ALL_METADATA)) ?
+                && (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA)) ?
                 'event_edit_date'  : 'event_edit';
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate($lang_var),

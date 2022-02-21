@@ -3,8 +3,6 @@
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use srag\Plugins\Opencast\Cache\Cache;
-use xoctException;
-use xoctPublication;
 use xoctRequest;
 
 class PublicationAPIRepository implements PublicationRepository
@@ -32,7 +30,7 @@ class PublicationAPIRepository implements PublicationRepository
         $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());
         $publications = [];
         foreach ($data as $d) {
-            $p = new xoctPublication();
+            $p = new Publication();
             $p->loadFromStdClass($d);
             $publications[] = $p;
         }

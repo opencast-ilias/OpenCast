@@ -2,9 +2,10 @@
 
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
@@ -113,7 +114,7 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected function setSubTabs()
     {
-        if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
             self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
             self::dic()->ctrl()->setParameter($this, 'cmd', self::CMD_EDIT_GENERAL);
             self::dic()->tabs()->addSubTab(self::SUBTAB_GENERAL, self::plugin()->translate('subtab_' . self::SUBTAB_GENERAL), self::dic()->ctrl()->getLinkTarget($this));
@@ -207,10 +208,10 @@ class xoctSeriesGUI extends xoctGUI
         }
 
         $perm_tpl_id = $data['settings']['permission_template'];
-        $series->setAccessPolicies(xoctPermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
+        $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
         if ($perm_tpl_id) {
-            /** @var xoctPermissionTemplate $perm_tpl */
-            $perm_tpl = xoctPermissionTemplate::find($perm_tpl_id);
+            /** @var PermissionTemplate $perm_tpl */
+            $perm_tpl = PermissionTemplate::find($perm_tpl_id);
             $series->setAccessPolicies($perm_tpl->addToAcls(
                 $series->getAccessPolicies(),
                 !$objectSettings->getStreamingOnly(),

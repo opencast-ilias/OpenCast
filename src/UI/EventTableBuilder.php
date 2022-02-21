@@ -16,9 +16,9 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctEventTableGUI;
 use xoctEventTileGUI;
-use xoctUser;
 
 class EventTableBuilder
 {

@@ -1,9 +1,14 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
-use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
+use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 
 /**
  * Class xoctSeriesFormGUI
@@ -165,8 +170,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$options = array(
 			null => 'As defined in content',
 		);
-		$licenses = xoctConf::getConfig(xoctConf::F_LICENSES);
-		$license_info = xoctConf::getConfig(xoctConf::F_LICENSE_INFO);
+		$licenses = PluginConfig::getConfig(PluginConfig::F_LICENSES);
+		$license_info = PluginConfig::getConfig(PluginConfig::F_LICENSE_INFO);
 		if ($licenses) {
 			foreach (explode("\n", $licenses) as $nl) {
 				$lic = explode("#", $nl);
@@ -183,8 +188,8 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		if (xoct::ILIAS_54) {
 			$default_view = new ilSelectInputGUI($this->txt(self::F_DEFAULT_VIEW), self::F_DEFAULT_VIEW);
 			$options = [
-				xoctUserSettings::VIEW_TYPE_LIST => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_LIST),
-				xoctUserSettings::VIEW_TYPE_TILES => $this->txt('view_type_' . xoctUserSettings::VIEW_TYPE_TILES),
+				UserSettingsRepository::VIEW_TYPE_LIST => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_LIST),
+				UserSettingsRepository::VIEW_TYPE_TILES => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_TILES),
 			];
 			$default_view->setOptions($options);
 			$this->addItem($default_view);
@@ -199,14 +204,14 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$department->setInfo($this->infoTxt(self::F_DEPARTMENT));
 		// $this->addItem($department);
 
-        if (xoctPermissionTemplate::count()) {
-            $publish_on_video_portal = new ilCheckboxInputGUI(sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), self::F_PUBLISH_ON_VIDEO_PORTAL);
+        if (PermissionTemplate::count()) {
+            $publish_on_video_portal = new ilCheckboxInputGUI(sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)), self::F_PUBLISH_ON_VIDEO_PORTAL);
             $publish_on_video_portal->setInfo($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info'));
 
             $permission_template = new ilRadioGroupInputGUI($this->txt(self::F_PERMISSION_TEMPLATE), self::F_PERMISSION_TEMPLATE);
             $permission_template->setRequired(true);
-            /** @var xoctPermissionTemplate $ptpl */
-            foreach (xoctPermissionTemplate::where(array('is_default' => 0))->orderBy('sort')->get() as $ptpl) {
+            /** @var PermissionTemplate $ptpl */
+            foreach (PermissionTemplate::where(array('is_default' => 0))->orderBy('sort')->get() as $ptpl) {
                 $radio_opt = new ilRadioOption($ptpl->getTitle(), $ptpl->getId());
                 if ($ptpl->getInfo()) {
                     $radio_opt->setInfo($ptpl->getInfo());
@@ -244,14 +249,14 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		}
 
         if (!$this->is_new) {
-            if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+            if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
                 $chat_active = new ilCheckboxInputGUI($this->txt(self::F_CHAT_ACTIVE), self::F_CHAT_ACTIVE);
                 $chat_active->setInfo($this->infoTxt(self::F_CHAT_ACTIVE));
                 $this->addItem($chat_active);
             }
 
-			if (xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK) && $this->series->isPublishedOnVideoPortal()) {
-                $video_portal_link = new ilCustomInputGUI(sprintf($this->txt(self::F_VIDEO_PORTAL_LINK), xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)), self::F_VIDEO_PORTAL_LINK);
+			if (PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_LINK) && $this->series->isPublishedOnVideoPortal()) {
+                $video_portal_link = new ilCustomInputGUI(sprintf($this->txt(self::F_VIDEO_PORTAL_LINK), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)), self::F_VIDEO_PORTAL_LINK);
                 $video_portal_link->setHtml($this->cast->getVideoPortalLink());
                 $this->addItem($video_portal_link);
             }
@@ -302,7 +307,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 			self::F_DEFAULT_VIEW  			 => $this->cast->getDefaultView(),
             self::F_VIEW_CHANGEABLE          => $this->cast->isViewChangeable()
 		];
-        if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $array[self::F_CHAT_ACTIVE] = $this->cast->isChatActive();
         }
 		$this->setValuesByArray($array);
@@ -342,7 +347,7 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 		$this->cast->setAgreementAccepted(true);
         $this->cast->setDefaultView($this->getInput(self::F_DEFAULT_VIEW));
         $this->cast->setViewChangeable($this->getInput(self::F_VIEW_CHANGEABLE));
-        if (xoctConf::getConfig(xoctConf::F_ENABLE_CHAT)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $this->cast->setChatActive($this->getInput(self::F_CHAT_ACTIVE));
         }
 
@@ -397,16 +402,16 @@ class xoctSeriesFormGUI extends ilPropertyFormGUI {
 
 		// set chosen permission template, remove existing templates
 		$series_acls = $this->series->getAccessPolicies() ? $this->series->getAccessPolicies() : array();
-		xoctPermissionTemplate::removeAllTemplatesFromAcls($series_acls);
+		PermissionTemplate::removeAllTemplatesFromAcls($series_acls);
 		if ($this->getInput(self::F_PUBLISH_ON_VIDEO_PORTAL)) {
             $perm_tpl_id = $this->getInput(self::F_PERMISSION_TEMPLATE);
             if ($perm_tpl_id) {
-                /** @var xoctPermissionTemplate $xoctPermissionTemplate */
-                $xoctPermissionTemplate = xoctPermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
+                /** @var PermissionTemplate $xoctPermissionTemplate */
+                $xoctPermissionTemplate = PermissionTemplate::find($this->getInput(self::F_PERMISSION_TEMPLATE));
                 $xoctPermissionTemplate->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
             }
-        } elseif ($default_template = xoctPermissionTemplate::where(array('is_default' => 1))->first()) {
-            /** @var xoctPermissionTemplate $default_template */
+        } elseif ($default_template = PermissionTemplate::where(array('is_default' => 1))->first()) {
+            /** @var PermissionTemplate $default_template */
 		    $default_template->addToAcls($series_acls, !$this->cast->getStreamingOnly(), $this->cast->getUseAnnotations());
         }
 

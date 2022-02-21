@@ -2,9 +2,15 @@
 
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Report\Report;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -47,8 +53,8 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 */
 	protected function afterUpdate()
 	{
-		if (xoctConf::count() == 0) {
-			xoctConf::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
+		if (PluginConfig::count() == 0) {
+			PluginConfig::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
 		}
 	}
 
@@ -56,15 +62,15 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 * @return bool
 	 */
 	protected function uninstallCustom() {
-		$this->db->dropTable(xoctInvitation::TABLE_NAME, false);
-		$this->db->dropTable(xoctIVTGroupParticipant::TABLE_NAME, false);
-		$this->db->dropTable(xoctIVTGroup::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGrant::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGroup::TABLE_NAME, false);
 		$this->db->dropTable(ObjectSettings::TABLE_NAME, false);
 		$this->db->dropTable(EventAdditionsAR::TABLE_NAME, false);
-		$this->db->dropTable(xoctPermissionTemplate::TABLE_NAME, false);
+		$this->db->dropTable(PermissionTemplate::TABLE_NAME, false);
 		$this->db->dropTable(PublicationUsage::TABLE_NAME, false);
-		$this->db->dropTable(xoctConf::TABLE_NAME, false);
-		$this->db->dropTable(xoctReport::DB_TABLE, false);
+		$this->db->dropTable(PluginConfig::TABLE_NAME, false);
+		$this->db->dropTable(Report::DB_TABLE, false);
 		$this->db->dropTable(WorkflowAR::TABLE_NAME, false);
 
 		return true;

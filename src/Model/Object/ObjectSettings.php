@@ -7,12 +7,12 @@ use ilException;
 use ilObjOpenCast;
 use ilOpenCastPlugin;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use xoctConf;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use xoctException;
-use xoctIVTGroup;
-use xoctUserSettings;
 
 /**
  * Class ObjectSettings
@@ -82,7 +82,7 @@ class ObjectSettings extends ActiveRecord {
      */
     public function delete() {
 //        $this->removeOrganizerAndContributor();
-		foreach (xoctIVTGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
+		foreach (PermissionGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
 			$ivt_group->delete();
 		}
 		parent::delete();
@@ -131,7 +131,7 @@ class ObjectSettings extends ActiveRecord {
      * @return mixed|string
      */
 	public function getVideoPortalLink() {
-		if ($link_template = xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_LINK)) {
+		if ($link_template = PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_LINK)) {
 			$link = str_replace('{series_id}', $this->getSeriesIdentifier(), $link_template);
 			return '<a target="_blank" href="' . $link . '">' . $link . '</a>';
 		}
@@ -234,7 +234,7 @@ class ObjectSettings extends ActiveRecord {
 	 * @con_fieldtype integer
 	 * @con_length    8
 	 */
-	protected $default_view = xoctUserSettings::VIEW_TYPE_LIST;
+	protected $default_view = UserSettingsRepository::VIEW_TYPE_LIST;
 	/**
 	 * @var bool
 	 *

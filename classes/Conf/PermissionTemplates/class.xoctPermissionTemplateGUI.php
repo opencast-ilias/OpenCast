@@ -1,5 +1,8 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+
 /**
  * Class xoctPermissionTemplateGUI
  *
@@ -53,7 +56,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 *
 	 */
 	protected function add() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new xoctPermissionTemplate());
+		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new PermissionTemplate());
 		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
 
@@ -62,7 +65,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 *
 	 */
 	protected function create() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new xoctPermissionTemplate());
+		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new PermissionTemplate());
 		$xoctPermissionTemplateFormGUI->setValuesByPost();
 		if ($xoctPermissionTemplateFormGUI->saveForm()) {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
@@ -76,7 +79,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 *
 	 */
 	protected function edit() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,xoctPermissionTemplate::find($_GET[self::IDENTIFIER]));
+		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,PermissionTemplate::find($_GET[self::IDENTIFIER]));
 		$xoctPermissionTemplateFormGUI->fillForm();
 		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
 	}
@@ -99,7 +102,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 *
 	 */
 	protected function updateTemplate() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,xoctPermissionTemplate::find($_GET[self::IDENTIFIER]));
+		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,PermissionTemplate::find($_GET[self::IDENTIFIER]));
 		$xoctPermissionTemplateFormGUI->setValuesByPost();
 		if ($xoctPermissionTemplateFormGUI->saveForm()) {
 			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
@@ -122,7 +125,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	 */
 	protected function confirmDelete() {
         $tpl_id = $_POST['tpl_id'];
-        $template = xoctPermissionTemplate::find($tpl_id);
+        $template = PermissionTemplate::find($tpl_id);
         $template->delete();
         ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
@@ -135,7 +138,7 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 	protected function delete() {
 	    ilUtil::sendQuestion(self::plugin()->getPluginObject()->txt('msg_confirm_delete_perm_template'));
 		$tpl_id = $_GET['tpl_id'];
-		$template = xoctPermissionTemplate::find($tpl_id);
+		$template = PermissionTemplate::find($tpl_id);
 		$ilConfirmationGUI = new ilConfirmationGUI();
 		$ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
 		$ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
@@ -152,8 +155,8 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 		$ids = $_POST['ids'];
 		$sort = 1;
 		foreach ($ids as $id) {
-			/** @var xoctPermissionTemplate $perm_tpl */
-			$perm_tpl = xoctPermissionTemplate::find($id);
+			/** @var PermissionTemplate $perm_tpl */
+			$perm_tpl = PermissionTemplate::find($id);
 			$perm_tpl->setSort($sort);
 			$perm_tpl->update();
 			$sort++;

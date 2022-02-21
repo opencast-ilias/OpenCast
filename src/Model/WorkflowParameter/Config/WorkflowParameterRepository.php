@@ -8,9 +8,9 @@ use ilException;
 use ilOpenCastPlugin;
 use ilUtil;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
-use xoctConf;
 use xoctConfGUI;
 use xoctException;
 use xoctRequest;
@@ -54,8 +54,8 @@ class WorkflowParameterRepository {
 	 */
 	public function loadParametersFromAPI() : array
     {
-		xoctConf::setApiSettings();
-		$workflow_id = xoctConf::getConfig(xoctConf::F_WORKFLOW);
+		PluginConfig::setApiSettings();
+		$workflow_id = PluginConfig::getConfig(PluginConfig::F_WORKFLOW);
 		if (!$workflow_id) {
 			throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
 		}

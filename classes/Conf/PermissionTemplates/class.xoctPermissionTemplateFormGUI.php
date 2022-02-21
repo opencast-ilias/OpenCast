@@ -1,5 +1,8 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+
 /**
  * Class xoctPermissionTemplateFormGUI
  *
@@ -23,7 +26,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 	const F_ADDITIONAL_ACTIONS_ANNOTATE = 'additional_actions_annotate';
 
 	/**
-	 * @var  xoctPermissionTemplate
+	 * @var  PermissionTemplate
 	 */
 	protected $object;
 	/**
@@ -37,9 +40,9 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
 	/**
 	 * @param xoctPermissionTemplateGUI $parent_gui
-	 * @param xoctPermissionTemplate $xoctPermissionTemplate
+	 * @param PermissionTemplate $xoctPermissionTemplate
 	 */
-	public function __construct($parent_gui, xoctPermissionTemplate $xoctPermissionTemplate) {
+	public function __construct($parent_gui, PermissionTemplate $xoctPermissionTemplate) {
 		parent::__construct();
 		$this->object = $xoctPermissionTemplate;
 		$this->parent_gui = $parent_gui;
@@ -159,8 +162,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
 		// reset other default template(s) if this one is set as default
         if ($this->getInput(self::F_DEFAULT)) {
-           foreach(xoctPermissionTemplate::where(array('is_default' => 1))->get() as $default_template) {
-               /** @var $default_template xoctPermissionTemplate */
+           foreach(PermissionTemplate::where(array('is_default' => 1))->get() as $default_template) {
+               /** @var $default_template PermissionTemplate */
                $default_template->setDefault(0);
                $default_template->update();
            }

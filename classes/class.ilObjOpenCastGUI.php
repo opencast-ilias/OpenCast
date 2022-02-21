@@ -6,12 +6,15 @@ use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
@@ -64,7 +67,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     private function cleanUpDBCache()
     {
-        if (xoctConf::getConfig(xoctConf::F_ACTIVATE_CACHE) == xoctConf::CACHE_DATABASE) {
+        if (PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE) == PluginConfig::CACHE_DATABASE) {
             $bm = microtime(true);
             DBCacheService::cleanup($this->ilias_dic->database());
             $this->ilias_dic->logger()->root()->info('cache cleanup done in ' . round((microtime(true) - $bm) * 1000) . 'ms');
@@ -101,7 +104,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     {
         $this->checkPermission('read');
         try {
-            xoctConf::setApiSettings();
+            PluginConfig::setApiSettings();
             $next_class = $this->ilias_dic->ctrl()->getNextClass();
             $cmd = $this->ilias_dic->ctrl()->getCmd();
             if (xoct::isIlias6()) {
@@ -110,26 +113,26 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->ilias_dic->ui()->mainTemplate()->getStandardTemplate();
             }
 
-            switch ($next_class) {
-                case 'xoctivtgroupparticipantgui':
+            switch (strtolower($next_class)) {
+                case strtolower(xoctPermissionGroupParticipantGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctIVTGroupParticipantGUI = new xoctIVTGroupParticipantGUI($objectSettings);
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctIVTGroupParticipantGUI);
+                    $xoctPermissionGroupParticipantGUI = new xoctPermissionGroupParticipantGUI($objectSettings);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctPermissionGroupParticipantGUI);
                     $this->showMainTemplate();
                     break;
-                case 'xoctinvitationgui':
+                case strtolower(xoctGrantPermissionGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctInvitationGUI = new xoctInvitationGUI(
+                    $xoctGrantPermissionGUI = new xoctGrantPermissionGUI(
                         $objectSettings,
                         $this->opencast_dic->event_repository(),
                         $this->opencast_dic->acl_utils()
                     );
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctInvitationGUI);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctGrantPermissionGUI);
                     $this->showMainTemplate();
                     break;
-                case 'xoctchangeownergui':
+                case strtolower(xoctChangeOwnerGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctChangeOwnerGUI = new xoctChangeOwnerGUI(
@@ -140,7 +143,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->ilias_dic->ctrl()->forwardCommand($xoctChangeOwnerGUI);
                     $this->showMainTemplate();
                     break;
-                case 'xoctseriesgui':
+                case strtolower(xoctSeriesGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctSeriesGUI($this->object,
@@ -153,7 +156,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
                     break;
-                case 'xocteventgui':
+                case strtolower(xoctEventGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctEventGUI = new xoctEventGUI(
@@ -171,14 +174,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
                     break;
-                case 'xoctivtgroupgui':
+                case strtolower(xoctPermissionGroupGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
-                    $xoctIVTGroupGUI = new xoctIVTGroupGUI($objectSettings);
-                    $this->ilias_dic->ctrl()->forwardCommand($xoctIVTGroupGUI);
+                    $xoctPermissionGroupGUI = new xoctPermissionGroupGUI($objectSettings);
+                    $this->ilias_dic->ctrl()->forwardCommand($xoctPermissionGroupGUI);
                     $this->showMainTemplate();
                     break;
-                case 'ilpermissiongui':
+                case strtolower(ilPermissionGUI::class):
                     $this->initHeader(false);
                     parent::executeCommand();
                     break;
@@ -276,7 +279,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         if ($objectSettings->getPermissionPerClip() && ilObjOpenCastAccess::hasPermission('read')) {
-            $this->ilias_dic->tabs()->addTab(self::TAB_GROUPS, self::plugin()->translate('tab_groups'), $this->ilias_dic->ctrl()->getLinkTarget(new xoctIVTGroupGUI()));
+            $this->ilias_dic->tabs()->addTab(self::TAB_GROUPS, self::plugin()->translate('tab_groups'), $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI()));
         }
         if ($this->ilias_dic->user()->getId() == 6 and ilObjOpenCast::DEV) {
             $this->ilias_dic->tabs()->addTab('migrate_event', self::plugin()->translate('tab_migrate_event'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'search'));
@@ -301,7 +304,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     private function showEula()
     {
         self::dic()->tabs()->activateTab("eula");
-        self::dic()->ui()->mainTemplate()->setContent(xoctConf::getConfig(xoctConf::F_EULA));
+        self::dic()->ui()->mainTemplate()->setContent(PluginConfig::getConfig(PluginConfig::F_EULA));
     }
 
     /**
@@ -390,7 +393,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $producers[] = xoctUser::getInstance($this->ilias_dic->user());
 
         try {
-            $ilias_producers = Group::find(xoctConf::getConfig(xoctConf::F_GROUP_PRODUCERS));
+            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
             $ilias_producers->addMembers($producers);
         } catch (xoctException $e) {
             self::dic()->log()->warning('Could not add producers to group while creating a series, msg: '
@@ -403,9 +406,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         if ($perm_tpl_id) {
-            $acl = xoctPermissionTemplate::removeAllTemplatesFromAcls($acl);
-            /** @var xoctPermissionTemplate $perm_tpl */
-            $perm_tpl = xoctPermissionTemplate::find($perm_tpl_id);
+            $acl = PermissionTemplate::removeAllTemplatesFromAcls($acl);
+            /** @var PermissionTemplate $perm_tpl */
+            $perm_tpl = PermissionTemplate::find($perm_tpl_id);
             $acl = $perm_tpl->addToAcls(
                 $acl,
                 !$settings->getStreamingOnly(),
@@ -524,7 +527,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         if ($objectSettings->getVideoPortalLink()
             && $this->opencast_dic->series_repository()->find($objectSettings->getSeriesIdentifier())->isPublishedOnVideoPortal()) {
             $info->addSection(self::plugin()->translate('series_links'));
-            $info->addProperty(self::plugin()->translate('series_video_portal_link', '', [xoctConf::getConfig(xoctConf::F_VIDEO_PORTAL_TITLE)]), $objectSettings->getVideoPortalLink());
+            $info->addProperty(self::plugin()->translate('series_video_portal_link', '', [PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)]), $objectSettings->getVideoPortalLink());
         }
 
         // general information

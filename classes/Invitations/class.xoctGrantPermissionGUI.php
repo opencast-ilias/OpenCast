@@ -5,15 +5,17 @@ use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
- * Class xoctInvitationGUI
+ * Class xoctGrantPermissionGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctInvitationGUI: ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctGrantPermissionGUI: ilObjOpenCastGUI
  */
-class xoctInvitationGUI extends xoctGUI
+class xoctGrantPermissionGUI extends xoctGUI
 {
 
     /**
@@ -104,7 +106,7 @@ class xoctInvitationGUI extends xoctGUI
         foreach ($course_members_user_ids as $user_id) {
             $xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
         }
-        $active_invitations = xoctInvitation::getActiveInvitationsForEvent($this->event, $this->objectSettings->getPermissionAllowSetOwn());
+        $active_invitations = PermissionGrant::getActiveInvitationsForEvent($this->event, $this->objectSettings->getPermissionAllowSetOwn());
         $invited_user_ids = array();
         foreach ($active_invitations as $inv) {
             $invited_user_ids[] = $inv->getUserId();
@@ -163,13 +165,13 @@ class xoctInvitationGUI extends xoctGUI
 
     protected function create()
     {
-        $obj = xoctInvitation::where(array(
+        $obj = PermissionGrant::where(array(
             'event_identifier' => $this->event->getIdentifier(),
             'user_id' => $_POST['id'],
         ))->first();
         $new = false;
-        if (!$obj instanceof xoctInvitation) {
-            $obj = new xoctInvitation();
+        if (!$obj instanceof PermissionGrant) {
+            $obj = new PermissionGrant();
             $new = true;
         }
         $obj->setEventIdentifier($this->event->getIdentifier());
@@ -191,13 +193,13 @@ class xoctInvitationGUI extends xoctGUI
     {
         $objects = [];
         foreach ($_POST['ids'] as $id) {
-            $obj = xoctInvitation::where(array(
+            $obj = PermissionGrant::where(array(
                 'event_identifier' => $this->event->getIdentifier(),
                 'user_id' => $id,
             ))->first();
             $new = false;
-            if (!$obj instanceof xoctInvitation) {
-                $obj = new xoctInvitation();
+            if (!$obj instanceof PermissionGrant) {
+                $obj = new PermissionGrant();
                 $new = true;
             }
             $obj->setEventIdentifier($this->event->getIdentifier());
@@ -231,11 +233,11 @@ class xoctInvitationGUI extends xoctGUI
 
     protected function delete()
     {
-        $obj = xoctInvitation::where(array(
+        $obj = PermissionGrant::where(array(
             'event_identifier' => $this->event->getIdentifier(),
             'user_id' => $_POST['id'],
         ))->first();
-        if ($obj instanceof xoctInvitation) {
+        if ($obj instanceof PermissionGrant) {
             $obj->delete();
         }
     }

@@ -2,15 +2,17 @@
 
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 
 /**
- * Class xoctIVTGroupGUI
+ * Class xoctPermissionGroupGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctIVTGroupGUI: ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctPermissionGroupGUI: ilObjOpenCastGUI
  */
-class xoctIVTGroupGUI extends xoctGUI {
+class xoctPermissionGroupGUI extends xoctGUI {
 
 
     /**
@@ -74,7 +76,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 		$temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));
 		$temp->setVariable('BUTTON_GROUP_NAME', self::plugin()->translate('groups_new_button'));
 		$temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-		$temp->setVariable('GP_BASE_URL', (self::dic()->ctrl()->getLinkTarget(new xoctIVTGroupParticipantGUI($this->objectSettings), '', '', true)));
+		$temp->setVariable('GP_BASE_URL', (self::dic()->ctrl()->getLinkTarget(new xoctPermissionGroupParticipantGUI($this->objectSettings), '', '', true)));
 		$temp->setVariable('GROUP_LANGUAGE', json_encode(array(
 			'no_title' => self::plugin()->translate('group_alert_no_title'),
 			'delete_group' => self::plugin()->translate('group_alert_delete_group'),
@@ -108,8 +110,8 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 	public function getAll() {
 		$arr = array();
-		foreach (xoctIVTGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
-		    $users = xoctIVTGroupParticipant::where(array( 'group_id' => $group->getId() ))->getArray(null, 'user_id');
+		foreach (PermissionGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
+		    $users = PermissionGroupParticipant::where(array( 'group_id' => $group->getId() ))->getArray(null, 'user_id');
 			$stdClass = $group->__asStdClass();
 			$stdClass->user_count = count($users);
 			$stdClass->name = $stdClass->title;
@@ -123,9 +125,9 @@ class xoctIVTGroupGUI extends xoctGUI {
 	public function getParticipants() {
         $data = array();
         /**
-         * @var $xoctGroupParticipant xoctIVTGroupParticipant
+         * @var $xoctGroupParticipant PermissionGroupParticipant
          */
-        foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant)
+        foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant)
         {
             $data[] = [
                 'user_id' => $xoctGroupParticipant->getUserId(),
@@ -138,7 +140,7 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 
 	protected function create() {
-		$obj = new xoctIVTGroup();
+		$obj = new PermissionGroup();
 		$obj->setSerieId($this->objectSettings->getObjId());
 		$obj->setTitle($_POST['title']);
 		$obj->create();
@@ -163,10 +165,10 @@ class xoctIVTGroupGUI extends xoctGUI {
 
 	protected function delete() {
 		/**
-		 * @var $xoctIVTGroup xoctIVTGroup
+		 * @var $xoctIVTGroup PermissionGroup
 		 */
 		$status = false;
-		$xoctIVTGroup = xoctIVTGroup::find($_GET['id']);
+		$xoctIVTGroup = PermissionGroup::find($_GET['id']);
 		if ($xoctIVTGroup->getSerieId() == $this->objectSettings->getObjId()) {
 			$xoctIVTGroup->delete();
 			$status = true;

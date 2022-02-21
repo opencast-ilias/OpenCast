@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use ilObjUser;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLEntry;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
@@ -13,11 +14,10 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
-use xoctConf;
 use xoctException;
 use xoctRequest;
-use xoctUser;
 
 /**
  * Opencast Event Object
@@ -207,7 +207,7 @@ class Event
      */
     public function unpublish()
     {
-        $workflow = xoctConf::getConfig(xoctConf::F_WORKFLOW_UNPUBLISH);
+        $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
         xoctRequest::root()->workflows()->post(array(
             'workflow_definition_identifier' => $workflow,
             'event_identifier' => $this->getIdentifier()

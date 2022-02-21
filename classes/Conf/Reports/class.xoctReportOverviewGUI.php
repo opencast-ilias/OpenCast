@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Report\Report;
+
 /**
  * Class xoctReportOverviewGUI
  *
@@ -67,7 +69,7 @@ class xoctReportOverviewGUI extends xoctGUI {
      */
     protected function confirmDelete() {
         foreach ($_POST['id'] as $id) {
-            $report = xoctReport::find($id);
+            $report = Report::find($id);
             $report->delete();
         }
         ilUtil::sendSuccess(self::plugin()->translate('msg_success'));
@@ -85,7 +87,7 @@ class xoctReportOverviewGUI extends xoctGUI {
         $ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this, self::CMD_STANDARD));
         $ilConfirmationGUI->setHeaderText(self::plugin()->translate('msg_confirm_delete_reports'));
         foreach ($_POST['id'] as $id) {
-            $report = xoctReport::find($id);
+            $report = Report::find($id);
             $ilConfirmationGUI->addItem('id[]', $id, $report->getSubject() . ' (' . $report->getCreatedAt() . ')');
         }
         $ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);

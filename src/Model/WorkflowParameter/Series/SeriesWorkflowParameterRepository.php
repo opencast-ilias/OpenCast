@@ -5,10 +5,10 @@ namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
-use xoctConf;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
@@ -135,7 +135,7 @@ class SeriesWorkflowParameterRepository
     public function getParametersInFormForObjId($obj_id, $as_admin)
     {
         $parameter = [];
-        if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
             /** @var SeriesWorkflowParameter $input */
             foreach (SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id', ['title'])->where([
                 'obj_id' => $obj_id,
@@ -209,7 +209,7 @@ class SeriesWorkflowParameterRepository
     public function getAutomaticallySetParametersForObjId($obj_id, $as_admin = true)
     {
         $parameters = [];
-        if (xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
             /** @var SeriesWorkflowParameter $xoctSeriesWorkflowParameter */
             foreach (SeriesWorkflowParameter::where([
                 'obj_id' => $obj_id,

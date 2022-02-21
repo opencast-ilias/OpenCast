@@ -2,6 +2,7 @@
 
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\Plugins\Opencast\Model\Report\Report;
 
 /**
  * Class xoctReportOverviewTableGUI
@@ -70,13 +71,13 @@ class xoctReportOverviewTableGUI extends TableGUI {
         }
 
         if ($filter_date_from && $filter_date_to) {
-            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
         } elseif ($filter_date_from) {
-            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
         } elseif ($filter_date_to) {
-            $data = xoctReport::where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
         } else {
-            $data = xoctReport::getArray();
+            $data = Report::getArray();
         }
 
         $filtered = [];

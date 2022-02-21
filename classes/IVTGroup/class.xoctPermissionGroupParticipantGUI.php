@@ -1,14 +1,15 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 
 /**
- * Class xoctIVTGroupParticipantGUI
+ * Class xoctPermissionGroupParticipantGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
- * @ilCtrl_IsCalledBy xoctIVTGroupParticipantGUI:ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctPermissionGroupParticipantGUI:ilObjOpenCastGUI
  */
-class xoctIVTGroupParticipantGUI extends xoctGUI
+class xoctPermissionGroupParticipantGUI extends xoctGUI
 {
 
     /**
@@ -70,9 +71,9 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 	{
 		$data = array();
 		/**
-		 * @var $xoctGroupParticipant xoctIVTGroupParticipant
+		 * @var $xoctGroupParticipant PermissionGroupParticipant
 		 */
-		foreach (xoctIVTGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
+		foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
@@ -94,9 +95,9 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 			$this->outJson(null);
 		}
 		/**
-		 * @var $xoctGroupParticipant xoctIVTGroupParticipant
+		 * @var $xoctGroupParticipant PermissionGroupParticipant
 		 */
-		foreach (xoctIVTGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
+		foreach (PermissionGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
 			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
@@ -120,7 +121,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		{
 			$this->outJson(false);
 		}
-		$xoctGroupParticipant = new xoctIVTGroupParticipant();
+		$xoctGroupParticipant = new PermissionGroupParticipant();
 		$xoctGroupParticipant->setUserId($_POST['user_id']);
 		$xoctGroupParticipant->setGroupId($_POST['group_id']);
 		$xoctGroupParticipant->create();
@@ -149,7 +150,7 @@ class xoctIVTGroupParticipantGUI extends xoctGUI
 		{
 			$this->outJson(false);
 		}
-		$o = xoctIVTGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
+		$o = PermissionGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
 		$o->delete();
 		$this->outJson(true);
 	}
