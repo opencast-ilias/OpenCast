@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettingsParser;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
+use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 use xoctConf;
 use xoctFileUploadHandler;
 use xoctPermissionTemplate;
@@ -215,6 +216,7 @@ class ObjectSettingsFormItemBuilder
             ObjectSettings::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
             ObjectSettings::PAELLA_OPTION_FILE => $f->group([
                 'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
+                    ->withByline($this->buildInlineDownload($path))
                     ->withValue([$path])
             ], $this->plugin->txt('pp_file')),
             ObjectSettings::PAELLA_OPTION_URL => $f->group([
@@ -239,5 +241,20 @@ class ObjectSettingsFormItemBuilder
     private function txt(string $lang_var): string
     {
         return $this->plugin->txt('series_' . $lang_var);
+    }
+
+    private function buildInlineDownload(string $file_id) : string
+    {
+        if (!$file_id) {
+            return '';
+        }
+        /** @var PaellaConfigStorageService $paellaStorageService */
+        $paellaStorageService = $this->fileUploadHandler->getUploadStorageService();
+        $fileAsBase64 = $paellaStorageService->getFileAsBase64($file_id);
+        $fileInfo = $paellaStorageService->getFileInfo($file_id);
+        return '<a href="data:text/vtt;base64,'
+            . $fileAsBase64
+            . '" target="blank" download="' . $fileInfo['name'] . '">Download</a>'
+            ;
     }
 }

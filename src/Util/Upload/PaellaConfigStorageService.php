@@ -42,7 +42,7 @@ class PaellaConfigStorageService extends UploadStorageService
         $metadata = $this->idToFileMetadata($identifier);
         return [
             'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),
-            'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
+            'name' => pathinfo($metadata->getPath(), PATHINFO_BASENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath())
         ];
     }
@@ -53,5 +53,11 @@ class PaellaConfigStorageService extends UploadStorageService
         // for the paella player
         return ilWACSignedPath::signFile(ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR
             . $this->idToFileMetadata($identifier)->getPath());
+    }
+
+    public function getFileAsBase64(string $identifier) : string
+    {
+        $contents = $this->fileSystem->read($this->idToFileMetadata($identifier)->getPath());
+        return base64_encode($contents);
     }
 }
