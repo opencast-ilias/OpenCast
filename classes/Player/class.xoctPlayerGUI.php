@@ -164,8 +164,11 @@ class xoctPlayerGUI extends xoctGUI
             case ObjectSettings::PAELLA_OPTION_URL:
                 return $live ? $objectSettings->getPaellaPlayerLiveUrl() : $objectSettings->getPaellaPlayerUrl();
             case ObjectSettings::PAELLA_OPTION_FILE:
-                return $this->paellaConfigStorageService->getWACSignedPath(
-                    $live ? $objectSettings->getPaellaPlayerLivePath() : $objectSettings->getPaellaPlayerPath());
+                $path = $live ? $objectSettings->getPaellaPlayerLivePath() : $objectSettings->getPaellaPlayerPath();
+                // fallback to default if file doesn't exist
+                return $this->paellaConfigStorageService->exists($path) ?
+                    $this->paellaConfigStorageService->getWACSignedPath($path)
+                    : ($live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH);
             case ObjectSettings::PAELLA_OPTION_DEFAULT:
             default:
                 return $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;

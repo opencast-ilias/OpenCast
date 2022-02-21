@@ -51,6 +51,9 @@ class UploadStorageService
      */
     public function delete(string $identifier) : void
     {
+        if (strlen($identifier) == 0) {
+            return;
+        }
         $dir = $this->idToDirPath($identifier);
         if ($this->fileSystem->hasDir($dir)) {
             $this->fileSystem->deleteDir($dir);
@@ -67,8 +70,7 @@ class UploadStorageService
     public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte) : array
     {
         $metadata = $this->idToFileMetadata($identifier);
-        // TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way
-        // to get the path dynamically from the file service
+        /** TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way to get the path dynamically from the file service */
         return [
             'path' => ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $metadata->getPath(),
             'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),

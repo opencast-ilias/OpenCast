@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 use xoctConf;
 use xoctFileUploadHandler;
 use xoctPermissionTemplate;
@@ -73,6 +74,10 @@ class ObjectSettingsFormItemBuilder
      * @var xoctFileUploadHandler
      */
     private $fileUploadHandler;
+    /**
+     * @var UploadStorageService
+     */
+    private $paellaStorageService;
 
     /**
      * @param UIFactory $ui_factory
@@ -93,6 +98,7 @@ class ObjectSettingsFormItemBuilder
         $this->plugin = $plugin;
         $this->objectSettingsParser = $objectSettingsParser;
         $this->fileUploadHandler = $fileUploadHandler;
+        $this->paellaStorageService = $this->fileUploadHandler->getUploadStorageService();
     }
 
     public function create(): Input
@@ -216,8 +222,9 @@ class ObjectSettingsFormItemBuilder
             ObjectSettings::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
             ObjectSettings::PAELLA_OPTION_FILE => $f->group([
                 'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
+                    ->withAcceptedMimeTypes(['application/json'])
                     ->withByline($this->buildInlineDownload($path))
-                    ->withValue([$path])
+                    ->withValue($this->paellaStorageService->exists($path) ? [$path] : null)
             ], $this->plugin->txt('pp_file')),
             ObjectSettings::PAELLA_OPTION_URL => $f->group([
                 'url' => $f->text($this->plugin->txt('link'))->withRequired(true)
@@ -245,13 +252,12 @@ class ObjectSettingsFormItemBuilder
 
     private function buildInlineDownload(string $file_id) : string
     {
-        if (!$file_id) {
+        /** @var PaellaConfigStorageService $paellaStorageService */
+        if (!$file_id || !$this->paellaStorageService->exists($file_id)) {
             return '';
         }
-        /** @var PaellaConfigStorageService $paellaStorageService */
-        $paellaStorageService = $this->fileUploadHandler->getUploadStorageService();
-        $fileAsBase64 = $paellaStorageService->getFileAsBase64($file_id);
-        $fileInfo = $paellaStorageService->getFileInfo($file_id);
+        $fileAsBase64 = $this->paellaStorageService->getFileAsBase64($file_id);
+        $fileInfo = $this->paellaStorageService->getFileInfo($file_id);
         return '<a href="data:text/vtt;base64,'
             . $fileAsBase64
             . '" target="blank" download="' . $fileInfo['name'] . '">Download</a>'

@@ -60,4 +60,9 @@ class PaellaConfigStorageService extends UploadStorageService
         $contents = $this->fileSystem->read($this->idToFileMetadata($identifier)->getPath());
         return base64_encode($contents);
     }
+
+    public function exists(string $file_id) : bool
+    {
+        return $this->fileSystem->hasDir($this->idToDirPath($file_id));
+    }
 }
