@@ -150,7 +150,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
         $first = true;
         foreach ($this->md_fields as $md_field) {
-            if ($this->isColumsSelected($md_field->getId())) {
+            if ($this->isColumsSelected($md_field->getFieldId())) {
                 $this->tpl->setCurrentBlock('generic' . ($first ? '_w_state' : ''));
                 if ($first) {
                     $this->tpl->setVariable('STATE', $renderer->getStateHTML());
@@ -194,9 +194,10 @@ class xoctEventTableGUI extends ilTable2GUI
         );
 
         foreach ($this->md_fields as $md_field) {
-            $columns[$md_field->getTitle($this->lang_key)] = [
+            $columns[$md_field->getFieldId()] = [
                 'selectable' => true,
-                'sort_field' => $md_field->getFieldId() . '_s'
+                'sort_field' => $md_field->getFieldId() . '_s',
+                'text' => $md_field->getTitle($this->lang_key)
             ];
         }
 
@@ -255,7 +256,7 @@ class xoctEventTableGUI extends ilTable2GUI
                 continue;
             }
             if ($col['selectable'] == false or in_array($key, $selected_columns)) {
-                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $key;
+                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $col['text'];
                 $this->addColumn($col_title, $col['sort_field'], $col['width']);
             }
         }
@@ -448,7 +449,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $selectable_columns = array();
         foreach ($this->getAllColums() as $key => $col) {
             if ($col['selectable']) {
-                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $key;
+                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = array(
                     'txt' => $col_title,
                     'default' => isset($col['default']) ? $col['default'] : true,
