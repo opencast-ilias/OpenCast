@@ -145,7 +145,7 @@ class MDFormItemBuilder
             $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue());
         });
-        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('event_metadata'))
+        return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
     }
 

@@ -150,21 +150,32 @@ class xoctEventAPI
         }
 
         $metadata = $this->md_factory->event()->withoutEmptyFields();
+        $scheduling = $event->getScheduling();
         foreach ($data as $title => $value) {
             if (in_array($title, ['title', 'description', 'presenters'])) {
                 // presenters is actually an MD field called creator. this is a workaround to not break compatability
-                $title = $title === 'presenters' ? MDFieldDefinition::F_CREATOR : $title;
-                $value = $value instanceof DateTime ? DateTimeImmutable::createFromMutable($value) : $value;
+                if ($title === 'presenters') {
+                    $title = MDFieldDefinition::F_CREATOR;
+                    $value = explode(',', $value);
+                }
                 $metadataField = $event->getMetadata()->getField($title);
                 $metadataField->setValue($value);
                 $metadata->addField($metadataField);
-            } elseif (in_array($title, ['start', 'end', 'location'])) {
-
+            } elseif ($title === 'start') {
+                $scheduling->setStart(new DateTimeImmutable($data['start']));
+            } elseif ($title === 'end') {
+                $scheduling->setEnd(new DateTimeImmutable($data['end']));
+            } elseif ($title === 'location') {
+                $scheduling->setAgentId($data['location']);
             }
         }
 
         if (count($data)) { // this prevents an update, if only 'online' has changed
-            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload($metadata)));
+            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload(
+                $metadata,
+                null,
+                $scheduling
+            )));
         }
 
         return $event;
