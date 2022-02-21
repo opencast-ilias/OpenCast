@@ -40,7 +40,7 @@ class Report extends ActiveRecord
         parent::create();
 
         if (!$omit_send_mail) {
-            $mail = new ilMail(ANONYMOUS_USER_ID);
+            $mail = new ilMail($this->user_id);
             $type = array('system');
 
             $mail->setSaveInSentbox(false);
