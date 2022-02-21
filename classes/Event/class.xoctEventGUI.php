@@ -1,6 +1,7 @@
 <?php
 
 use ILIAS\DI\Container;
+use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Cache\CacheFactory;
@@ -27,7 +28,6 @@ use srag\Plugins\Opencast\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
-use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
 /**
  * Class xoctEventGUI
@@ -104,6 +104,10 @@ class xoctEventGUI extends xoctGUI
      * @var EventTableBuilder
      */
     private $eventTableBuilder;
+    /**
+     * @var UploadHandler
+     */
+    private $uploadHandler;
 
     public function __construct(ilObjOpenCastGUI   $parent_gui,
                                 ObjectSettings     $objectSettings,
@@ -113,6 +117,7 @@ class xoctEventGUI extends xoctGUI
                                 WorkflowRepository $workflowRepository,
                                 ACLUtils           $ACLUtils,
                                 SeriesRepository   $seriesRepository,
+                                UploadHandler      $uploadHandler,
                                 Container          $dic)
     {
         $this->objectSettings = $objectSettings;
@@ -125,6 +130,7 @@ class xoctEventGUI extends xoctGUI
         $this->dic = $dic;
         $this->seriesRepository = $seriesRepository;
         $this->eventTableBuilder = $eventTableBuilder;
+        $this->uploadHandler = $uploadHandler;
     }
 
     /**
@@ -152,12 +158,7 @@ class xoctEventGUI extends xoctGUI
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $fileUploadHandler = new xoctFileUploadHandler(
-                    new UploadStorageService(
-                        self::dic()->filesystem()->temp(),
-                        self::dic()->upload())
-                );
-                self::dic()->ctrl()->forwardCommand($fileUploadHandler);
+                self::dic()->ctrl()->forwardCommand($this->uploadHandler);
                 break;
             default:
                 $cmd = self::dic()->ctrl()->getCmd(self::CMD_STANDARD);

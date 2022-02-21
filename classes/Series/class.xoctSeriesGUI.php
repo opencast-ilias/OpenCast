@@ -1,5 +1,6 @@
 <?php
 
+use ILIAS\UI\Component\Input\Field\UploadHandler;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -13,6 +14,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
+use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 
 /**
  * Class xoctSeriesGUI
@@ -60,12 +62,17 @@ class xoctSeriesGUI extends xoctGUI
      * @var WorkflowParameterRepository
      */
     private $workflowParameterRepository;
+    /**
+     * @var xoctFileUploadHandler
+     */
+    private $uploadHandler;
 
     public function __construct(ilObjOpenCast                     $object,
                                 SeriesFormBuilder                 $seriesFormBuilder,
                                 SeriesRepository                  $seriesRepository,
                                 SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
-                                WorkflowParameterRepository       $workflowParameterRepository)
+                                WorkflowParameterRepository       $workflowParameterRepository,
+                                UploadHandler                     $uploadHandler)
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
@@ -73,6 +80,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->seriesRepository = $seriesRepository;
         $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
         $this->workflowParameterRepository = $workflowParameterRepository;
+        $this->uploadHandler = $uploadHandler;
     }
 
 
@@ -86,7 +94,17 @@ class xoctSeriesGUI extends xoctGUI
         }
         self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
         $this->setSubTabs();
-        parent::executeCommand();
+        switch (self::dic()->ctrl()->getNextClass()) {
+            case strtolower(xoctFileUploadHandler::class):
+                if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+                    ilUtil::sendFailure(self::plugin()->getPluginObject()->txt("msg_no_access"), true);
+                    $this->cancel();
+                }
+                self::dic()->ctrl()->forwardCommand($this->uploadHandler);
+                break;
+            default:
+                parent::executeCommand();
+        }
     }
 
 
@@ -170,11 +188,23 @@ class xoctSeriesGUI extends xoctGUI
             return;
         }
 
+        /** @var ObjectSettings $oldObjectSettings */
+        $oldObjectSettings = ObjectSettings::where(['obj_id' => $this->getObjId()])->first();
         /** @var ObjectSettings $objectSettings */
         $objectSettings = $data['settings']['object'];
         $objectSettings->setObjId($this->getObjId());
         $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
+
+        // delete old paella config file if new one was uploaded
+        /** @var PaellaConfigStorageService $paella_config_storage */
+        $paella_config_storage = $this->uploadHandler->getUploadStorageService();
+        if ($oldObjectSettings->getPaellaPlayerPath() && ($oldObjectSettings->getPaellaPlayerPath() !== $objectSettings->getPaellaPlayerPath())) {
+            $paella_config_storage->delete($oldObjectSettings->getPaellaPlayerPath());
+        }
+        if ($oldObjectSettings->getPaellaPlayerLivePath() && ($oldObjectSettings->getPaellaPlayerLivePath() !== $objectSettings->getPaellaPlayerLivePath())) {
+            $paella_config_storage->delete($oldObjectSettings->getPaellaPlayerLivePath());
+        }
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(xoctPermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));

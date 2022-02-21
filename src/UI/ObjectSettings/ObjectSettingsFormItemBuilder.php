@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
 use xoctConf;
+use xoctFileUploadHandler;
 use xoctPermissionTemplate;
 use xoctUserSettings;
 
@@ -36,6 +37,17 @@ class ObjectSettingsFormItemBuilder
     const F_VIEW_CHANGEABLE = 'view_changeable';
     const F_CHAT_ACTIVE = 'chat_active';
 
+    // Paella Player Path
+    const F_PAELLA_PLAYER_OPTION = 'paella_player_option';
+    const F_PAELLA_PLAYER_DEFAULT = 'pp_default';
+    const F_PAELLA_PLAYER_FILE = 'pp_file';
+    const F_PAELLA_PLAYER_LINK = 'pp_link';
+    // Paella Player live Path
+    const F_PAELLA_PLAYER_LIVE_OPTION = 'paella_player_live_option';
+    const F_PAELLA_PLAYER_LIVE_DEFAULT = 'pp_default';
+    const F_PAELLA_PLAYER_LIVE_FILE = 'pp_live_file';
+    const F_PAELLA_PLAYER_LIVE_LINK = 'pp_live_link';
+
     /**
      * @var UIFactory
      */
@@ -56,6 +68,10 @@ class ObjectSettingsFormItemBuilder
      * @var ObjectSettingsParser
      */
     private $objectSettingsParser;
+    /**
+     * @var xoctFileUploadHandler
+     */
+    private $fileUploadHandler;
 
     /**
      * @param UIFactory $ui_factory
@@ -67,6 +83,7 @@ class ObjectSettingsFormItemBuilder
                                 RefineryFactory            $refinery_factory,
                                 PublicationUsageRepository $publicationUsageRepository,
                                 ObjectSettingsParser       $objectSettingsParser,
+                                xoctFileUploadHandler      $fileUploadHandler,
                                 ilPlugin                   $plugin)
     {
         $this->ui_factory = $ui_factory;
@@ -74,6 +91,7 @@ class ObjectSettingsFormItemBuilder
         $this->publicationUsageRepository = $publicationUsageRepository;
         $this->plugin = $plugin;
         $this->objectSettingsParser = $objectSettingsParser;
+        $this->fileUploadHandler = $fileUploadHandler;
     }
 
     public function create(): Input
@@ -169,6 +187,14 @@ class ObjectSettingsFormItemBuilder
             ->withValue($objectSettings->getPermissionPerClip() ?
                 [self::F_PERMISSION_ALLOW_SET_OWN => $objectSettings->getPermissionAllowSetOwn()] : null);
 
+        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
+            $objectSettings->getPaellaPlayerOption(),
+            $objectSettings->getPaellaPlayerPath(),
+            $objectSettings->getPaellaPlayerUrl());
+        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
+            $objectSettings->getPaellaPlayerLiveOption(),
+            $objectSettings->getPaellaPlayerLivePath(),
+            $objectSettings->getPaellaPlayerLiveUrl());
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
@@ -179,6 +205,25 @@ class ObjectSettingsFormItemBuilder
                 }
                 return $vs;
             }));
+    }
+
+    private function getPaellaPlayerPathInput(bool $live, string $option, string $path, string $url): Input
+    {
+        $f = $this->ui_factory->input()->field();
+        $live_s = $live ? '_live' : '';
+        return $f->switchableGroup([
+            ObjectSettings::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
+            ObjectSettings::PAELLA_OPTION_FILE => $f->group([
+                'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
+//                    ->withValue(['name' => 'somename']) // todo: set existing value - format?
+            ], $this->plugin->txt('file')),
+            ObjectSettings::PAELLA_OPTION_URL => $f->group([
+                'url' => $f->text($this->plugin->txt('link'))->withRequired(true)
+                    ->withValue($url)
+            ], $this->plugin->txt('link'))
+        ], $this->txt(self::F_PAELLA_PLAYER_OPTION . $live_s))
+            ->withValue($option)
+            ->withRequired(true);
     }
 
     private function getPermissionTemplateRadioInput(): Input

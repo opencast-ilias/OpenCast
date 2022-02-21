@@ -388,3 +388,13 @@ $DIC->database()->insert('xoct_md_field_series', [
     'sort' => ['integer', 4],
 ]);
 ?>
+<#34>
+<?php
+\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+/** @var $objectSettings \srag\Plugins\Opencast\Model\Object\ObjectSettings */
+foreach (\srag\Plugins\Opencast\Model\Object\ObjectSettings::get() as $objectSettings) {
+    $objectSettings->setPaellaPlayerOption('default');
+    $objectSettings->setPaellaPlayerLiveOption('default');
+    $objectSettings->update();
+}
+?>

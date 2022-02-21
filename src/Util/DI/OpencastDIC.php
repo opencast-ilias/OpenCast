@@ -41,6 +41,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\Upload\OpencastIngestService;
+use srag\Plugins\Opencast\Util\Upload\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 use xoctFileUploadHandler;
 
@@ -96,6 +97,12 @@ class OpencastDIC
         });
         $this->container['upload_handler'] = $this->container->factory(function ($c) {
             return new xoctFileUploadHandler($c['upload_storage_service']);
+        });
+        $this->container['paella_config_storage_service'] = $this->container->factory(function ($c) {
+            return new PaellaConfigStorageService($this->dic->filesystem()->web(), $this->dic->upload());
+        });
+        $this->container['paella_config_upload_handler'] = $this->container->factory(function ($c) {
+            return new xoctFileUploadHandler($c['paella_config_storage_service']);
         });
         $this->container['agent_repository'] = $this->container->factory(function ($c) {
             return new AgentApiRepository($c['agent_parser']);
@@ -215,6 +222,7 @@ class OpencastDIC
                 $this->dic->refinery(),
                 $c['publication_usage_repository'],
                 $c['object_settings_parser'],
+                $c['paella_config_upload_handler'],
                 $c['plugin']
             );
         });
@@ -271,6 +279,16 @@ class OpencastDIC
     public function upload_handler(): UploadHandler
     {
         return $this->container['upload_handler'];
+    }
+
+    public function paella_config_storage_service(): UploadStorageService
+    {
+        return $this->container['paella_config_storage_service'];
+    }
+
+    public function paella_config_upload_handler(): UploadHandler
+    {
+        return $this->container['paella_config_upload_handler'];
     }
 
     public function event_form_builder(): EventFormBuilder

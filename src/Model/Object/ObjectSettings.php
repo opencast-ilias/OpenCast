@@ -24,6 +24,12 @@ class ObjectSettings extends ActiveRecord {
 
 	const TABLE_NAME = 'xoct_data';
 
+	const PAELLA_OPTION_DEFAULT = 'default';
+	const PAELLA_OPTION_FILE = 'file';
+	const PAELLA_OPTION_URL = 'url';
+	const DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
+	const DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
+
 
 	/**
 	 * @return string
@@ -245,6 +251,46 @@ class ObjectSettings extends ActiveRecord {
      * @con_length    1
      */
 	protected $chat_active = true;
+	/**
+	 * @var string
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     56
+	 * @con_is_notnull true
+	 */
+	protected $paella_player_option = self::PAELLA_OPTION_DEFAULT;
+	/**
+	 * @var string
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 */
+	protected $paella_player_path = '';
+	/**
+	 * @var string
+	 * @con_has_field true
+	 * @con_fieldtype text
+	 */
+	protected $paella_player_url = '';
+	/**
+	 * @var string
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 * @con_length     56
+	 * @con_is_notnull true
+	 */
+	protected $paella_player_live_option = self::PAELLA_OPTION_DEFAULT;
+	/**
+	 * @var string
+	 * @con_has_field  true
+	 * @con_fieldtype  text
+	 */
+	protected $paella_player_live_path = '';
+	/**
+	 * @var string
+	 * @con_has_field true
+	 * @con_fieldtype text
+	 */
+	protected $paella_player_live_url = '';
 
 	public function getObjId() : int
 	{
@@ -375,6 +421,135 @@ class ObjectSettings extends ActiveRecord {
     {
         return (bool) $this->chat_active;
     }
+
+	/**
+	 * @return string
+	 */
+	public function getIntroText(): string
+	{
+		return $this->intro_text;
+	}
+
+	/**
+	 * @param string $intro_text
+	 */
+	public function setIntroText(string $intro_text): void
+	{
+		$this->intro_text = $intro_text;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isObjOnline(): bool
+	{
+		return $this->obj_online;
+	}
+
+	/**
+	 * @param bool $obj_online
+	 */
+	public function setObjOnline(bool $obj_online): void
+	{
+		$this->obj_online = $obj_online;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerOption(): string
+	{
+		return $this->paella_player_option;
+	}
+
+	/**
+	 * @param string $paella_player_option
+	 */
+	public function setPaellaPlayerOption(string $paella_player_option): void
+	{
+		$this->paella_player_option = $paella_player_option;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerPath(): string
+	{
+		return $this->paella_player_path ?? '';
+	}
+
+	/**
+	 * @param string $paella_player_path
+	 */
+	public function setPaellaPlayerPath(string $paella_player_path): void
+	{
+		$this->paella_player_path = $paella_player_path;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerUrl(): string
+	{
+		return $this->paella_player_url ?? '';
+	}
+
+	/**
+	 * @param string $paella_player_url
+	 */
+	public function setPaellaPlayerUrl(string $paella_player_url): void
+	{
+		$this->paella_player_url = $paella_player_url;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerLiveOption(): string
+	{
+		return $this->paella_player_live_option;
+	}
+
+	/**
+	 * @param string $paella_player_live_option
+	 */
+	public function setPaellaPlayerLiveOption(string $paella_player_live_option): void
+	{
+		$this->paella_player_live_option = $paella_player_live_option;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerLivePath(): string
+	{
+		return $this->paella_player_live_path ?? '';
+	}
+
+	/**
+	 * @param string $paella_player_live_path
+	 */
+	public function setPaellaPlayerLivePath(string $paella_player_live_path): void
+	{
+		$this->paella_player_live_path = $paella_player_live_path;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPaellaPlayerLiveUrl(): string
+	{
+		return $this->paella_player_live_url ?? '';
+	}
+
+	/**
+	 * @param string $paella_player_live_url
+	 */
+	public function setPaellaPlayerLiveUrl(string $paella_player_live_url): void
+	{
+		$this->paella_player_live_url = $paella_player_live_url;
+	}
+
 
     /**
      * @throws xoctException|ilException

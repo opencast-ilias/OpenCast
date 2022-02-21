@@ -22,15 +22,12 @@ class UploadStorageService
     /**
      * @var Filesystem
      */
-    private $fileSystem;
+    protected $fileSystem;
     /**
      * @var FileUpload
      */
-    private $fileUpload;
+    protected $fileUpload;
 
-    /**
-     * @param Filesystem $file_system
-     */
     public function __construct(Filesystem $file_system, FileUpload $fileUpload)
     {
         $this->fileSystem = $file_system;
@@ -67,7 +64,8 @@ class UploadStorageService
     public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte) : array
     {
         $metadata = $this->idToFileMetadata($identifier);
-        // TODO: check if a FileStream can be sent instead of hard-coding the ilias temp dir
+        // TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way
+        // to get the path dynamically from the file service
         return [
             'path' => ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $metadata->getPath(),
             'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),
@@ -89,7 +87,7 @@ class UploadStorageService
         return $upload_file;
     }
 
-    private function idToDirPath(string $identifier) : string
+    protected function idToDirPath(string $identifier) : string
     {
         return self::TEMP_SUB_DIR . '/' . $identifier;
     }
@@ -97,7 +95,7 @@ class UploadStorageService
     /**
      * @throws FileNotFoundException
      */
-    private function idToFileMetadata(string $identifier) : FileMetadata
+    protected function idToFileMetadata(string $identifier) : FileMetadata
     {
         $dir = $this->idToDirPath($identifier);
         foreach ($this->fileSystem->finder()->in([$dir]) as $file) {

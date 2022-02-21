@@ -12,7 +12,7 @@ use ILIAS\FileUpload\Handler\HandlerResult;
 use srag\Plugins\Opencast\Util\Upload\UploadStorageService;
 
 /**
- * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI
+ * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI, xoctSeriesGUI
  */
 class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
 {
@@ -49,17 +49,17 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
 
     public function getUploadURL(): string
     {
-        return $this->upload_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_UPLOAD);
+        return $this->upload_url ?: $this->ctrl->getLinkTargetByClass([static::class], self::CMD_UPLOAD);
     }
 
     public function getExistingFileInfoURL(): string
     {
-        return $this->file_info_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_INFO);
+        return $this->file_info_url ?: $this->ctrl->getLinkTargetByClass([static::class], self::CMD_INFO);
     }
 
     public function getFileRemovalURL(): string
     {
-        return $this->file_removal_url ?? $this->ctrl->getLinkTargetByClass([static::class], self::CMD_REMOVE);
+        return $this->file_removal_url ?: $this->ctrl->getLinkTargetByClass([static::class], self::CMD_REMOVE);
     }
 
 
@@ -115,5 +115,13 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
     {
         // TODO: check what this is used for
         return [];
+    }
+
+    /**
+     * @return UploadStorageService
+     */
+    public function getUploadStorageService(): UploadStorageService
+    {
+        return $this->uploadStorageService;
     }
 }

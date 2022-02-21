@@ -152,7 +152,7 @@ class EventFormBuilder
     {
         $upload_storage_service = $this->uploadStorageService;
         // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
-        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, 'File')
+        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'))
             ->withAcceptedMimeTypes($this->getMimeTypes())
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($file) use ($upload_storage_service) {
                 $id = $file[0];

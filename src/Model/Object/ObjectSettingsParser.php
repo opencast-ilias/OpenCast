@@ -18,6 +18,24 @@ class ObjectSettingsParser
         $objectSettings->setPermissionPerClip(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP]));
         $objectSettings->setPermissionAllowSetOwn(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP])
             && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN]);
+        if (isset($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION])) {
+            $paella_player_option = $data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][0];
+            $objectSettings->setPaellaPlayerOption($paella_player_option);
+            if ($paella_player_option === ObjectSettings::PAELLA_OPTION_URL) {
+                $objectSettings->setPaellaPlayerUrl($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][1]['url']);
+            } else if ($paella_player_option === ObjectSettings::PAELLA_OPTION_FILE) {
+                $objectSettings->setPaellaPlayerPath($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][1]['file'][0]);
+            }
+        }
+        if (isset($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION])) {
+            $paella_player_option = $data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION][0];
+            $objectSettings->setPaellaPlayerLiveOption($paella_player_option);
+            if ($paella_player_option === ObjectSettings::PAELLA_OPTION_URL) {
+                $objectSettings->setPaellaPlayerLiveUrl($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['url']);
+            } else if ($paella_player_option === ObjectSettings::PAELLA_OPTION_FILE) {
+                $objectSettings->setPaellaPlayerLivePath($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['file'][0]);
+            }
+        }
         return $objectSettings;
     }
 }

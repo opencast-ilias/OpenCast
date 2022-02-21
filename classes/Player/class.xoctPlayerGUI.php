@@ -96,8 +96,7 @@ class xoctPlayerGUI extends xoctGUI
     protected function buildJSConfig(Event $event): stdClass
     {
         $js_config = new stdClass();
-        $js_config->paella_config_file = self::plugin()->getPluginObject()->getDirectory() . "/js/paella_player/config"
-            . ($event->isLiveEvent() ? "_live" : "") . ".json";
+        $js_config->paella_config_file = $this->getEffectivePaellaPlayerUrl($event->isLiveEvent());
         $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
 
         if ($event->isLiveEvent()) {
@@ -145,6 +144,22 @@ class xoctPlayerGUI extends xoctGUI
                 ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
+        }
+    }
+
+
+    public function getEffectivePaellaPlayerUrl(bool $live) : string
+    {
+        $objectSettings = $this->objectSettings;
+        $option = $live ? $objectSettings->getPaellaPlayerLiveOption() : $objectSettings->getPaellaPlayerOption();
+        switch ($option) {
+            case ObjectSettings::PAELLA_OPTION_URL:
+                return $live ? $objectSettings->getPaellaPlayerLiveUrl() : $objectSettings->getPaellaPlayerUrl();
+            case ObjectSettings::PAELLA_OPTION_FILE:
+                return $live ? $objectSettings->getPaellaPlayerLivePath() : $objectSettings->getPaellaPlayerPath();
+            case ObjectSettings::PAELLA_OPTION_DEFAULT:
+            default:
+                return $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;
         }
     }
 
