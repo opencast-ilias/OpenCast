@@ -34,6 +34,7 @@ use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 
 /**
  * Class xoctEventGUI
@@ -118,6 +119,10 @@ class xoctEventGUI extends xoctGUI
      * @var PaellaConfigStorageService
      */
     private $paellaConfigStorageService;
+    /**
+     * @var PaellaConfigServiceFactory
+     */
+    private $paellaConfigServiceFactory;
 
     public function __construct(ilObjOpenCastGUI           $parent_gui,
                                 ObjectSettings             $objectSettings,
@@ -129,6 +134,7 @@ class xoctEventGUI extends xoctGUI
                                 SeriesRepository           $seriesRepository,
                                 UploadHandler              $uploadHandler,
                                 PaellaConfigStorageService $paellaConfigStorageService,
+                                PaellaConfigServiceFactory $paellaConfigServiceFactory,
                                 Container                  $dic)
     {
         $this->objectSettings = $objectSettings;
@@ -143,6 +149,7 @@ class xoctEventGUI extends xoctGUI
         $this->eventTableBuilder = $eventTableBuilder;
         $this->uploadHandler = $uploadHandler;
         $this->paellaConfigStorageService = $paellaConfigStorageService;
+        $this->paellaConfigServiceFactory = $paellaConfigServiceFactory;
     }
 
     /**
@@ -164,6 +171,7 @@ class xoctEventGUI extends xoctGUI
                 }
                 $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository,
                     $this->paellaConfigStorageService,
+                    $this->paellaConfigServiceFactory,
                     $this->objectSettings);
                 self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
                 break;

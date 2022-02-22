@@ -16,6 +16,8 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterReposi
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
+use srag\Plugins\Opencast\Util\Player\PaellaConfigService;
+use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 
 /**
  * Class xoctSeriesGUI
@@ -67,15 +69,21 @@ class xoctSeriesGUI extends xoctGUI
      * @var xoctFileUploadHandler
      */
     private $uploadHandler;
+    /**
+     * @var PaellaConfigService
+     */
+    private $paellaConfigService;
 
     public function __construct(ilObjOpenCast                     $object,
                                 SeriesFormBuilder                 $seriesFormBuilder,
                                 SeriesRepository                  $seriesRepository,
                                 SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
                                 WorkflowParameterRepository       $workflowParameterRepository,
-                                UploadHandler                     $uploadHandler)
+                                UploadHandler                     $uploadHandler,
+                                PaellaConfigServiceFactory        $paellaConfigServiceFactory)
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
+        $this->paellaConfigService = $paellaConfigServiceFactory->forObject($this->objectSettings);
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
         $this->seriesRepository = $seriesRepository;
@@ -194,6 +202,7 @@ class xoctSeriesGUI extends xoctGUI
         $objectSettings->setObjId($this->getObjId());
         $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
+        $this->paellaConfigService->checkAndUpdatePaellaConfig($objectSettings);
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
@@ -220,6 +229,7 @@ class xoctSeriesGUI extends xoctGUI
         ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
     }
+
 
     /**
      * @return void

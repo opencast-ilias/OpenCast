@@ -25,7 +25,7 @@ class ObjectSettingsParser
                 $objectSettings->setPaellaPlayerUrl($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][1]['url']);
             } else if ($paella_player_option === ObjectSettings::PAELLA_OPTION_FILE) {
                 if ($file_id = $data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][1]['file'][0]) {
-                    $objectSettings->setPaellaPlayerPath($file_id);
+                    $objectSettings->setPaellaPlayerFileId($file_id);
                 }
             }
         }
@@ -36,7 +36,7 @@ class ObjectSettingsParser
                 $objectSettings->setPaellaPlayerLiveUrl($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['url']);
             } else if ($paella_player_option === ObjectSettings::PAELLA_OPTION_FILE) {
                 if ($file_id = $data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['file'][0]) {
-                    $objectSettings->setPaellaPlayerLivePath($file_id);
+                    $objectSettings->setPaellaPlayerLiveFileId($file_id);
                 }
             }
         }

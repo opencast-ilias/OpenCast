@@ -304,6 +304,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\PaellaConfigStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/PaellaConfigStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/UploadStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/LivePlayerDataBuilder.php',
+        'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigService.php',
+        'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigServiceFactory' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigServiceFactory.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/PlayerDataBuilder.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PlayerDataBuilderFactory' => __DIR__ . '/../..' . '/src/Util/Player/PlayerDataBuilderFactory.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\SelfGeneratedURLPlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/SelfGeneratedURLPlayerDataBuilder.php',

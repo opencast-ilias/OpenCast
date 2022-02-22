@@ -43,6 +43,7 @@ use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
+use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use xoctFileUploadHandler;
 
 class OpencastDIC
@@ -243,7 +244,9 @@ class OpencastDIC
         $this->container['acl_parser'] = $this->container->factory(function ($c) {
             return new ACLParser();
         });
-
+        $this->container['paella_config_service_factory'] = $this->container->factory(function ($c) {
+            return new PaellaConfigServiceFactory($c['paella_config_storage_service']);
+        });
     }
 
     public function series_repository(): SeriesRepository
@@ -334,6 +337,11 @@ class OpencastDIC
     public function workflow_repository(): WorkflowRepository
     {
         return $this->container['workflow_repository'];
+    }
+
+    public function paella_config_service_factory() : PaellaConfigServiceFactory
+    {
+        return $this->container['paella_config_service_factory'];
     }
 
     public function overwriteService(string $service_identifier, $value) : void

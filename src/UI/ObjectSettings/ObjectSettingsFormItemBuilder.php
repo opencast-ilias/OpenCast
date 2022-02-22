@@ -196,11 +196,11 @@ class ObjectSettingsFormItemBuilder
 
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
             $objectSettings->getPaellaPlayerOption(),
-            $objectSettings->getPaellaPlayerPath(),
+            $objectSettings->getPaellaPlayerFileId(),
             $objectSettings->getPaellaPlayerUrl());
         $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
             $objectSettings->getPaellaPlayerLiveOption(),
-            $objectSettings->getPaellaPlayerLivePath(),
+            $objectSettings->getPaellaPlayerLiveFileId(),
             $objectSettings->getPaellaPlayerLiveUrl());
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))

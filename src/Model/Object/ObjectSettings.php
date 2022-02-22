@@ -264,7 +264,7 @@ class ObjectSettings extends ActiveRecord {
 	 * @con_has_field  true
 	 * @con_fieldtype  text
 	 */
-	protected $paella_player_path = '';
+	protected $paella_player_file_id = '';
 	/**
 	 * @var string
 	 * @con_has_field true
@@ -284,7 +284,7 @@ class ObjectSettings extends ActiveRecord {
 	 * @con_has_field  true
 	 * @con_fieldtype  text
 	 */
-	protected $paella_player_live_path = '';
+	protected $paella_player_live_file_id = '';
 	/**
 	 * @var string
 	 * @con_has_field true
@@ -473,17 +473,17 @@ class ObjectSettings extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getPaellaPlayerPath(): string
+	public function getPaellaPlayerFileId(): string
 	{
-		return $this->paella_player_path ?? '';
+		return $this->paella_player_file_id ?? '';
 	}
 
 	/**
-	 * @param string $paella_player_path
+	 * @param string $paella_player_file_id
 	 */
-	public function setPaellaPlayerPath(string $paella_player_path): void
+	public function setPaellaPlayerFileId(string $paella_player_file_id): void
 	{
-		$this->paella_player_path = $paella_player_path;
+		$this->paella_player_file_id = $paella_player_file_id;
 	}
 
 	/**
@@ -521,17 +521,17 @@ class ObjectSettings extends ActiveRecord {
 	/**
 	 * @return string
 	 */
-	public function getPaellaPlayerLivePath(): string
+	public function getPaellaPlayerLiveFileId(): string
 	{
-		return $this->paella_player_live_path ?? '';
+		return $this->paella_player_live_file_id ?? '';
 	}
 
 	/**
-	 * @param string $paella_player_live_path
+	 * @param string $paella_player_live_file_id
 	 */
-	public function setPaellaPlayerLivePath(string $paella_player_live_path): void
+	public function setPaellaPlayerLiveFileId(string $paella_player_live_file_id): void
 	{
-		$this->paella_player_live_path = $paella_player_live_path;
+		$this->paella_player_live_file_id = $paella_player_live_file_id;
 	}
 
 	/**

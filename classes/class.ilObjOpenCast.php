@@ -68,8 +68,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$opencast_dic = OpencastDIC::getInstance();
 		/** @var ObjectSettings $objectSettings */
 		$objectSettings = ObjectSettings::find($this->getId());
-		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerPath());
-		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLivePath());
+		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerFileId());
+		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLiveFileId());
 		$objectSettings->delete();
 	}
 
@@ -100,10 +100,10 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
 		$objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
 		$objectSettingsNew->setPaellaPlayerOption($objectSettingsOld->getPaellaPlayerOption());
-		$objectSettingsNew->setPaellaPlayerPath($objectSettingsOld->getPaellaPlayerPath());
+		$objectSettingsNew->setPaellaPlayerFileId($objectSettingsOld->getPaellaPlayerFileId());
 		$objectSettingsNew->setPaellaPlayerUrl($objectSettingsOld->getPaellaPlayerUrl());
 		$objectSettingsNew->setPaellaPlayerLiveOption($objectSettingsOld->getPaellaPlayerLiveOption());
-		$objectSettingsNew->setPaellaPlayerLivePath($objectSettingsOld->getPaellaPlayerLivePath());
+		$objectSettingsNew->setPaellaPlayerLiveFileId($objectSettingsOld->getPaellaPlayerLiveFileId());
 		$objectSettingsNew->setPaellaPlayerLiveUrl($objectSettingsOld->getPaellaPlayerLiveUrl());
 
 		$objectSettingsNew->create();

@@ -151,7 +151,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $this->opencast_dic->series_repository(),
                         $this->opencast_dic->workflow_parameter_series_repository(),
                         $this->opencast_dic->workflow_parameter_conf_repository(),
-                        $this->opencast_dic->paella_config_upload_handler()
+                        $this->opencast_dic->paella_config_upload_handler(),
+                        $this->opencast_dic->paella_config_service_factory()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
@@ -170,6 +171,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $this->opencast_dic->series_repository(),
                         $this->opencast_dic->upload_handler(),
                         $this->opencast_dic->paella_config_storage_service(),
+                        $this->opencast_dic->paella_config_service_factory(),
                         $this->ilias_dic);
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
                     $this->showMainTemplate();
@@ -294,7 +296,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         // ToDo: Why does this access check not work?
-        if(ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
+        if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
             $this->ilias_dic->tabs()->addTab(self::TAB_EULA, self::plugin()->translate("eula"),
                 $this->ilias_dic->ctrl()->getLinkTarget($this, "showEula"));
         }
@@ -627,8 +629,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     * @param int    $a_obj_id
-     * @param int    $a_ref_id
+     * @param int $a_obj_id
+     * @param int $a_ref_id
      * @param string $a_form_name
      * @return string
      * @throws Exception

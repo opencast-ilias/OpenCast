@@ -24,6 +24,7 @@ class PaellaConfigStorageService extends UploadStorageService
      */
     public function fetchFromUrlAndStore(string $url) : string
     {
+        // only necessary if we want to cache the config for the 'url' option
         $identifier = uniqid();
         $content = file_get_contents($url);
         if (json_decode($content) === null) {
@@ -31,11 +32,6 @@ class PaellaConfigStorageService extends UploadStorageService
         }
         $this->fileSystem->write($this->idToDirPath($identifier) . DIRECTORY_SEPARATOR . 'config.json',
             $content);
-        // todo
-        $file_headers = @get_headers($url);
-        if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
-            $exists = false;
-        }
     }
 
     /**

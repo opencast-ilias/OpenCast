@@ -269,6 +269,8 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\PaellaConfigStorageService' => $baseDir . '/src/Util/FileTransfer/PaellaConfigStorageService.php',
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => $baseDir . '/src/Util/FileTransfer/UploadStorageService.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => $baseDir . '/src/Util/Player/LivePlayerDataBuilder.php',
+    'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => $baseDir . '/src/Util/Player/PaellaConfigService.php',
+    'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigServiceFactory' => $baseDir . '/src/Util/Player/PaellaConfigServiceFactory.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\PlayerDataBuilder' => $baseDir . '/src/Util/Player/PlayerDataBuilder.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\PlayerDataBuilderFactory' => $baseDir . '/src/Util/Player/PlayerDataBuilderFactory.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\SelfGeneratedURLPlayerDataBuilder' => $baseDir . '/src/Util/Player/SelfGeneratedURLPlayerDataBuilder.php',
