@@ -268,7 +268,8 @@ if (!is_null($api_pub)) {
 ?>
 <#28>
 <?php
-\srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_COMMON_IDP, 1);
+// is contained in default config xml
+//\srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_COMMON_IDP, 1);
 ?>
 <#29>
 <?php
@@ -298,95 +299,99 @@ if ($role_owner_prefix) {
 global $DIC;
 // preconfigure metadata
 // event
-$DIC->database()->insert('xoct_md_field_event', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
-    'field_id' => ['text', 'title'],
-    'title_de' => ['text', 'Titel'],
-    'title_en' => ['text', 'Title'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 1],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 1],
-]);
-$DIC->database()->insert('xoct_md_field_event', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
-    'field_id' => ['text', 'description'],
-    'title_de' => ['text', 'Beschreibung'],
-    'title_en' => ['text', 'Description'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 2],
-]);
-$DIC->database()->insert('xoct_md_field_event', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
-    'field_id' => ['text', 'location'],
-    'title_de' => ['text', 'Aufnahmestation'],
-    'title_en' => ['text', 'Recording Station'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 3],
-]);
-$DIC->database()->insert('xoct_md_field_event', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
-    'field_id' => ['text', 'startDate'],
-    'title_de' => ['text', 'Start'],
-    'title_en' => ['text', 'Start'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 4],
-]);
+if ($DIC->database()->query('select id from xoct_md_field_event')->rowCount() === 0) {
+    $DIC->database()->insert('xoct_md_field_event', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+        'field_id' => ['text', 'title'],
+        'title_de' => ['text', 'Titel'],
+        'title_en' => ['text', 'Title'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 1],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 1],
+    ]);
+    $DIC->database()->insert('xoct_md_field_event', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+        'field_id' => ['text', 'description'],
+        'title_de' => ['text', 'Beschreibung'],
+        'title_en' => ['text', 'Description'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 2],
+    ]);
+    $DIC->database()->insert('xoct_md_field_event', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+        'field_id' => ['text', 'location'],
+        'title_de' => ['text', 'Aufnahmestation'],
+        'title_en' => ['text', 'Recording Station'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 3],
+    ]);
+    $DIC->database()->insert('xoct_md_field_event', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_event')],
+        'field_id' => ['text', 'startDate'],
+        'title_de' => ['text', 'Start'],
+        'title_en' => ['text', 'Start'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 4],
+    ]);
+}
 // series
-$DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
-    'field_id' => ['text', 'title'],
-    'title_de' => ['text', 'Titel'],
-    'title_en' => ['text', 'Title'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 1],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 1],
-]);
-$DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
-    'field_id' => ['text', 'description'],
-    'title_de' => ['text', 'Beschreibung'],
-    'title_en' => ['text', 'Description'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 0],
-    'prefill' => ['text', 'none'],
-    'sort' => ['integer', 2],
-]);
-$DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
-    'field_id' => ['text', 'creator'],
-    'title_de' => ['text', 'Veranstalter'],
-    'title_en' => ['text', 'Organizers'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 1],
-    'prefill' => ['text', 'crs_title'],
-    'sort' => ['integer', 3],
-]);
-$DIC->database()->insert('xoct_md_field_series', [
-    'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
-    'field_id' => ['text', 'contributor'],
-    'title_de' => ['text', 'Mitwirkende'],
-    'title_en' => ['text', 'Contributors'],
-    'visible_for_permissions' => ['text', 'all'],
-    'required' => ['integer', 0],
-    'read_only' => ['integer', 1],
-    'prefill' => ['text', 'username_creator'],
-    'sort' => ['integer', 4],
-]);
+if ($DIC->database()->query('select id from xoct_md_field_series')->rowCount() === 0) {
+    $DIC->database()->insert('xoct_md_field_series', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+        'field_id' => ['text', 'title'],
+        'title_de' => ['text', 'Titel'],
+        'title_en' => ['text', 'Title'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 1],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 1],
+    ]);
+    $DIC->database()->insert('xoct_md_field_series', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+        'field_id' => ['text', 'description'],
+        'title_de' => ['text', 'Beschreibung'],
+        'title_en' => ['text', 'Description'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 0],
+        'prefill' => ['text', 'none'],
+        'sort' => ['integer', 2],
+    ]);
+    $DIC->database()->insert('xoct_md_field_series', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+        'field_id' => ['text', 'creator'],
+        'title_de' => ['text', 'Veranstalter'],
+        'title_en' => ['text', 'Organizers'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 1],
+        'prefill' => ['text', 'crs_title'],
+        'sort' => ['integer', 3],
+    ]);
+    $DIC->database()->insert('xoct_md_field_series', [
+        'id' => ['integer', $DIC->database()->nextId('xoct_md_field_series')],
+        'field_id' => ['text', 'contributor'],
+        'title_de' => ['text', 'Mitwirkende'],
+        'title_en' => ['text', 'Contributors'],
+        'visible_for_permissions' => ['text', 'all'],
+        'required' => ['integer', 0],
+        'read_only' => ['integer', 1],
+        'prefill' => ['text', 'username_creator'],
+        'sort' => ['integer', 4],
+    ]);
+}
 ?>
 <#34>
 <?php
@@ -402,5 +407,4 @@ foreach (\srag\Plugins\Opencast\Model\Object\ObjectSettings::get() as $objectSet
 <?php
 global $DIC;
 $DIC->database()->dropTable('xoct_system_account', false);
-\srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_ACCEPT_TERMS, 1);
 ?>

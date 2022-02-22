@@ -83,6 +83,14 @@
       <value><![CDATA[1]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>accept_terms</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>common_idp</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>licenses</name>
       <value><![CDATA[http://creativecommons.org/licenses/by/2.5/ch/#CC: Attribution
 http://creativecommons.org/licenses/by-nc/2.5/ch/#CC: Attribution-Noncommercial
