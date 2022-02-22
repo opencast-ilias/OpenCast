@@ -105,7 +105,7 @@ class SeriesWorkflowParameterRepository
                     ->setObjId($obj_id)
                     ->setParamId($param->getId())
                     ->setValueMember($param->getDefaultValueMember())
-                    ->setValueAdmin($param->getDefaultValueAdmin())
+                    ->setDefaultValueAdmin($param->getDefaultValueAdmin())
                     ->create();
             }
         }
@@ -187,6 +187,12 @@ class SeriesWorkflowParameterRepository
         return $parameter;
     }
 
+    /**
+     * TODO: refactor into a form builder
+     * @param int $obj_id
+     * @param bool $as_admin
+     * @return Input
+     */
     public function getFormSectionForObjId(int $obj_id, bool $as_admin): Input
     {
         $items = [];
@@ -275,7 +281,7 @@ class SeriesWorkflowParameterRepository
                 (new SeriesWorkflowParameter())
                     ->setObjId($obj_id)
                     ->setParamId($workflow_parameter->getId())
-                    ->setValueAdmin($workflow_parameter->getDefaultValueAdmin())
+                    ->setDefaultValueAdmin($workflow_parameter->getDefaultValueAdmin())
                     ->setValueMember($workflow_parameter->getDefaultValueMember())
                     ->create();
             } else {
@@ -291,6 +297,7 @@ class SeriesWorkflowParameterRepository
 
 
     /**
+     * TODO: refactor into a form builder
      * @return Input
      */
     public function getGeneralFormSection(): Input

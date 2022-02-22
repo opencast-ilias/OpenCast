@@ -141,8 +141,8 @@ class SeriesWorkflowParameter extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getValueMember() {
-		return $this->value_member;
+	public function getDefaultValueMember() {
+		return (int) $this->value_member;
 	}
 
 
@@ -161,8 +161,8 @@ class SeriesWorkflowParameter extends ActiveRecord {
 	/**
 	 * @return int
 	 */
-	public function getValueAdmin() {
-		return $this->value_admin;
+	public function getDefaultValueAdmin() {
+		return (int) $this->value_admin;
 	}
 
 
@@ -171,7 +171,7 @@ class SeriesWorkflowParameter extends ActiveRecord {
 	 *
 	 * @return static
 	 */
-	public function setValueAdmin($value_admin) {
+	public function setDefaultValueAdmin($value_admin) {
 		$this->value_admin = $value_admin;
 
 		return $this;

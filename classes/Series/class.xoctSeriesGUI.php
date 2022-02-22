@@ -258,7 +258,7 @@ class xoctSeriesGUI extends xoctGUI
             $value_admin = $value['value_admin'];
             $value_member = $value['value_member'];
             if (in_array($value_member, WorkflowParameter::$possible_values) && in_array($value_admin, WorkflowParameter::$possible_values)) {
-                SeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setValueAdmin($value_admin)->setValueMember($value_member)->update();
+                SeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
             }
         }
         ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
