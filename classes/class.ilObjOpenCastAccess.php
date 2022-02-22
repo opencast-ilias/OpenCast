@@ -385,7 +385,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 		$ops_id_upload = self::dic()->rbac()->review()->_getOperationIdByName('rep_robj_xoct_perm_upload');
 		$ops_ids = self::dic()->rbac()->review()->getActiveOperationsOfRole($ref_id, $member_role_id);
 		$ops_ids[] = $ops_id_upload;
-		self::dic()->rbacadmin()->grantPermission($member_role_id, $ops_ids, $ref_id);
+		self::dic()->rbac()->admin()->grantPermission($member_role_id, $ops_ids, $ref_id);
 	}
 
 

@@ -36,7 +36,7 @@ class MDCatalogueFactory
         if (!$catalogue) {
             return new MDCatalogue([
                 new MDFieldDefinition(MDFieldDefinition::F_TITLE, MDDataType::text(), false, true),
-                new MDFieldDefinition(MDFieldDefinition::F_SUBJECTS, MDDataType::text_array(), false, false),
+//                new MDFieldDefinition(MDFieldDefinition::F_SUBJECTS, MDDataType::text_array(), false, false), // subjects don't work currently (opencast bug)
                 new MDFieldDefinition(MDFieldDefinition::F_DESCRIPTION, MDDataType::text_long(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_LANGUAGE, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_RIGHTS_HOLDER, MDDataType::text(), false, false),
