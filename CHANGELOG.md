@@ -1,6 +1,6 @@
 # Change Log
 
-## [x.x.x]
+## [3.7.4]
 - Fix: disable submit button in modals after submit
 
 ## [3.7.3]
