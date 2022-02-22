@@ -1,7 +1,10 @@
 # Change Log
 
-## [3.8.0]
-- Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series"
+## [4.0.0]
+- Feature: Completely configurable metadata fields for events and series, used in forms and tables. See Configuration Tab "Metadata".
+- Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series".
+- Feature: Setting for using custom paella player configs (upload or from URL) at object level. See object settings.
+- Improvement: Quality & Date reports now set the senders email as ReplyTo address.
 
 ## [3.7.4]
 - Fix: disable submit button in modals after submit
