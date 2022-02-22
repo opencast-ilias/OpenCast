@@ -161,7 +161,7 @@ class EventAPIRepository implements EventRepository
     public function updateACL(UpdateEventRequest $request): void
     {
         xoctRequest::root()->events($request->getIdentifier())
-            ->acl()->post($request->getPayload()->jsonSerialize());
+            ->acl()->put($request->getPayload()->jsonSerialize());
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 }

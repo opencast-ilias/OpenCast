@@ -83,7 +83,7 @@ class SchedulingFormItemBuilder
                 ->withUseTime(true)->withRequired(true),
             'end_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_end'))
                 ->withUseTime(true)->withRequired(true),
-        ], $this->plugin->txt('yes'));
+        ], $this->plugin->txt('no'));
         $group_repeat = $this->ui_factory->input()->field()->group([
             'start_date' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_start'))
                 ->withUseTime(false)->withRequired(true),
@@ -102,7 +102,7 @@ class SchedulingFormItemBuilder
                 ->withTimeOnly(true)->withRequired(true),
             'end_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_end_time'))
                 ->withTimeOnly(true)->withRequired(true),
-        ], $this->plugin->txt('no'));
+        ], $this->plugin->txt('yes'));
 
         return $this->ui_factory->input()->field()->switchableGroup([
             'no_repeat' => $group_no_repeat,
