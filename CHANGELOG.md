@@ -5,6 +5,9 @@
 - Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series".
 - Feature: Setting for using custom paella player configs (upload or from URL) at object level. See object settings.
 - Improvement: Quality & Date reports now set the senders email as ReplyTo address.
+- Dependencies: Bumped npm packages, removed a few (hopefully) unused
+- Refactoring: Refactored a big part of the model: moved to /src, introduced namespaces, dependency injection, repository patterns, etc.
+- Doc: Added READMEs to some components
 
 ## [3.7.4]
 - Fix: disable submit button in modals after submit
