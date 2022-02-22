@@ -105,8 +105,7 @@ class MDParser
     {
         switch ($dataType->getTitle()) {
             case MDDataType::TYPE_DATETIME:
-                $tz = new DateTimeZone(ilTimeZone::_getInstance()->getIdentifier());
-                // TODO: time zone offset wrong..
+                $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
             case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TEXT:

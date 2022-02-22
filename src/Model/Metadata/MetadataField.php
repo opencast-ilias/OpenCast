@@ -3,6 +3,8 @@
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use DateTimeImmutable;
+use DateTimeZone;
+use ilTimeZone;
 use JsonSerializable;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use stdClass;
@@ -78,15 +80,15 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_DATETIME;
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('Y-m-d\TH:i:s\Z') : '';
+                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d\TH:i:s\Z') : '';
             case MDDataType::TYPE_TIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('H:i:s\Z') : '';
+                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('H:i:s\Z') : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('Y-m-d') : '';
+                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d') : '';
         }
     }
 
@@ -101,15 +103,15 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_DATETIME;
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('d.m.Y H:i:s') : '';
+                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y H:i:s') : '';
             case MDDataType::TYPE_TIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('H:i:s') : '';
+                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('H:i:s') : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->format('d.m.Y') : '';
+                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y') : '';
         }
     }
 

@@ -36,7 +36,6 @@ class EventAdditionsAR extends ActiveRecord {
 		if (!self::where(array( 'id' => $this->getId() ))->hasSets()) {
 			$this->create();
 		} else {
-			Event::removeFromCache($this->getId());
 			parent::update();
 		}
 	}
@@ -46,7 +45,6 @@ class EventAdditionsAR extends ActiveRecord {
 		if (!$this->getId()) {
 			return false;
 		}
-		Event::removeFromCache($this->getId());
 		parent::create();
 	}
 
