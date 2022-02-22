@@ -42,28 +42,35 @@ class PaellaConfigService
 //        }
     }
 
-    public function getEffectivePaellaPlayerUrl(bool $live) : string
+    /**
+     * @param bool $live
+     * @return array{url: string, info: string, warn: bool}
+     */
+    public function getEffectivePaellaPlayerUrl(bool $live) : array
     {
         $objectSettings = $this->objectSettings;
         $option = $live ? $objectSettings->getPaellaPlayerLiveOption() : $objectSettings->getPaellaPlayerOption();
+        $default_path = $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;
         switch ($option) {
             case ObjectSettings::PAELLA_OPTION_URL:
                 $url = $live ? $objectSettings->getPaellaPlayerLiveUrl() : $objectSettings->getPaellaPlayerUrl();
                 $reachable = $this->checkUrlReachable($url);
                 if (!$reachable) {
                     xoctLog::getInstance()->writeWarning('url for paella config unreachable: ' . $url);
-                    return $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;
+                    return ['url' => $default_path,
+                        'info' => 'url for paella config unreachable, fallback to default config',
+                        'warn' => true];
                 }
-                return $url;
+                return ['url' => $url, 'info' => 'config fetched from url', 'warn' => false];
             case ObjectSettings::PAELLA_OPTION_FILE:
                 $path = $live ? $objectSettings->getPaellaPlayerLiveFileId() : $objectSettings->getPaellaPlayerFileId();
                 // fallback to default if file doesn't exist
-                return $this->storageService->exists($path) ?
-                    $this->storageService->getWACSignedPath($path)
-                    : ($live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH);
+                return ($path && $this->storageService->exists($path)) ?
+                    ['url' => $this->storageService->getWACSignedPath($path), 'info' => 'uploaded config used', 'warn' => false]
+                    : ['url' => $default_path, 'info' => 'uploaded config not found, fallback to default config', 'warn' => true];
             case ObjectSettings::PAELLA_OPTION_DEFAULT:
             default:
-                return $live ? ObjectSettings::DEFAULT_PATH_LIVE : ObjectSettings::DEFAULT_PATH;
+                return ['url' => $default_path, 'info' => 'default config used', 'warn' => false];
         }
     }
 

@@ -113,7 +113,10 @@ class xoctPlayerGUI extends xoctGUI
     protected function buildJSConfig(Event $event): stdClass
     {
         $js_config = new stdClass();
-        $js_config->paella_config_file = $this->paellaConfigService->getEffectivePaellaPlayerUrl($event->isLiveEvent());
+        $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl($event->isLiveEvent());
+        $js_config->paella_config_file = $paella_config['url'];
+        $js_config->paella_config_info = $paella_config['info'];
+        $js_config->paella_config_is_warning = $paella_config['warn'];
         $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
 
         if ($event->isLiveEvent()) {

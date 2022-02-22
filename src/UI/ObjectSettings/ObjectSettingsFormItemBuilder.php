@@ -224,7 +224,7 @@ class ObjectSettingsFormItemBuilder
                 'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
                     ->withAcceptedMimeTypes(['application/json'])
                     ->withByline($this->buildInlineDownload($path))
-                    ->withValue($this->paellaStorageService->exists($path) ? [$path] : null)
+                    ->withValue(($path && $this->paellaStorageService->exists($path)) ? [$path] : null)
             ], $this->plugin->txt('pp_file')),
             ObjectSettings::PAELLA_OPTION_URL => $f->group([
                 'url' => $f->text($this->plugin->txt('link'))
