@@ -96,7 +96,7 @@ class xoctEventTableGUI extends ilTable2GUI
             }
         }
         $this->initColumns();
-//        $this->setDefaultOrderField('created_unix');
+        $this->setDefaultOrderField('created_s');
 
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats(array(self::EXPORT_CSV));
