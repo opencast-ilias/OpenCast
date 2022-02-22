@@ -2,6 +2,7 @@
 
 ## [3.7.4]
 - Fix: disable submit button in modals after submit
+- Change: adjusted lang vars for 'Streaming only' and 'Live Chat' settings
 
 ## [3.7.3]
 - Feature/Improvement: support fetching streaming urls from publications instead of building them half-statically
