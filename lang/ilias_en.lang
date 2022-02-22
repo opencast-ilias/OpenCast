@@ -381,6 +381,7 @@ series_paella_player_option_live#:#Paella Player Config for Live Streams
 pp_default#:#Use default config
 pp_file#:#Upload Config File
 pp_url#:#Remote URL
+pp_link_info#:#Please check if the player can successfully load the config file.
 system_account_add_new#:#Add System-Account
 system_account_cancel#:#Cancel
 system_account_create#:#Create

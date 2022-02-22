@@ -4,7 +4,6 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
-use xoctException;
 use xoctLog;
 
 class PaellaConfigService

@@ -227,7 +227,9 @@ class ObjectSettingsFormItemBuilder
                     ->withValue($this->paellaStorageService->exists($path) ? [$path] : null)
             ], $this->plugin->txt('pp_file')),
             ObjectSettings::PAELLA_OPTION_URL => $f->group([
-                'url' => $f->text($this->plugin->txt('link'))->withRequired(true)
+                'url' => $f->text($this->plugin->txt('link'))
+                    ->withByline($this->plugin->txt('pp_link_info'))
+                    ->withRequired(true)
                     ->withValue($url)
             ], $this->plugin->txt('pp_url'))
         ], $this->txt(self::F_PAELLA_PLAYER_OPTION . $live_s))
