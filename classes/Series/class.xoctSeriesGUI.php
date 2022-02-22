@@ -189,23 +189,11 @@ class xoctSeriesGUI extends xoctGUI
             return;
         }
 
-        /** @var ObjectSettings $oldObjectSettings */
-        $oldObjectSettings = ObjectSettings::where(['obj_id' => $this->getObjId()])->first();
         /** @var ObjectSettings $objectSettings */
         $objectSettings = $data['settings']['object'];
         $objectSettings->setObjId($this->getObjId());
         $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
-
-        // delete old paella config file if new one was uploaded
-        /** @var PaellaConfigStorageService $paella_config_storage */
-        $paella_config_storage = $this->uploadHandler->getUploadStorageService();
-        if ($oldObjectSettings->getPaellaPlayerPath() && ($oldObjectSettings->getPaellaPlayerPath() !== $objectSettings->getPaellaPlayerPath())) {
-            $paella_config_storage->delete($oldObjectSettings->getPaellaPlayerPath());
-        }
-        if ($oldObjectSettings->getPaellaPlayerLivePath() && ($oldObjectSettings->getPaellaPlayerLivePath() !== $objectSettings->getPaellaPlayerLivePath())) {
-            $paella_config_storage->delete($oldObjectSettings->getPaellaPlayerLivePath());
-        }
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));

@@ -19,6 +19,26 @@ class PaellaConfigStorageService extends UploadStorageService
     protected $dic;
 
     /**
+     * @param string $url
+     * @return string identifier
+     */
+    public function fetchFromUrlAndStore(string $url) : string
+    {
+        $identifier = uniqid();
+        $content = file_get_contents($url);
+        if (json_decode($content) === null) {
+            // todo: invalid json
+        }
+        $this->fileSystem->write($this->idToDirPath($identifier) . DIRECTORY_SEPARATOR . 'config.json',
+            $content);
+        // todo
+        $file_headers = @get_headers($url);
+        if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+            $exists = false;
+        }
+    }
+
+    /**
      * @param UploadResult $uploadResult
      * @return string identifier
      */

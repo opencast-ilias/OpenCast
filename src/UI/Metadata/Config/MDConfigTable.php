@@ -9,6 +9,10 @@ use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use xoctGUI;
 use xoctWaiterGUI;
 
+/**
+ * Table for Plugin config -> Metadata
+ * Uses JS for Drag'n'Drop sortation
+ */
 class MDConfigTable extends ilTable2GUI
 {
 
