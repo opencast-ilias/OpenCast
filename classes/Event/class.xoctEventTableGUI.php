@@ -87,6 +87,14 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
         $this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
         $this->setData($data);
+        foreach ($data as $item) {
+            /** @var Event $event */
+            $event = $item['object'];
+            if ($event->isScheduled()) {
+                $this->has_scheduled_events = true;
+                break;
+            }
+        }
         $this->initColumns();
 //        $this->setDefaultOrderField('created_unix');
 
@@ -281,30 +289,6 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->tpl->setVariable('ACTIONS',
             self::dic()->ui()->renderer()->renderAsync($dropdown)
         );
-    }
-
-    /**
-     * @throws xoctException
-     */
-    protected function parseData()
-    {
-        $filter = array('series' => $this->objectSettings->getSeriesIdentifier());
-        $a_data = $this->event_repository->getFiltered($filter, '', []);
-
-        $a_data = array_filter($a_data, $this->filterPermissions());
-        $a_data = array_filter($a_data, $this->filterArray());
-
-        foreach ($a_data as $row) {
-            /** @var $object Event */
-            $object = $row['object'];
-            if ($object->isScheduled()) {
-                $this->has_scheduled_events = true;
-            }
-            if ($object->publications()->getUnprotectedLink()) {
-                $this->has_unprotected_links = true;
-            }
-        }
-        $this->setData($a_data);
     }
 
 
