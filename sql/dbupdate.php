@@ -22,18 +22,16 @@ $xoct_type_id = ilDBUpdateNewObjectType::addNewType(ilOpenCastPlugin::PLUGIN_ID,
 
 //Adding a new Permission rep_robj_xoct_upload ("Upload")
 $offering_admin = ilDBUpdateNewObjectType::addCustomRBACOperation( //$a_id, $a_title, $a_class, $a_pos
-	'rep_robj_xoct_perm_upload', 'upload', 'object', 2010);
-if($offering_admin)
-{
-	ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
+    'rep_robj_xoct_perm_upload', 'upload', 'object', 2010);
+if ($offering_admin) {
+    ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
 }
 
 //Adding a new Permission rep_robj_xoct_edit_videos ("Edit Videos")
 $offering_admin = ilDBUpdateNewObjectType::addCustomRBACOperation( //$a_id, $a_title, $a_class, $a_pos
-	'rep_robj_xoct_perm_edit_videos', 'edit videos', 'object', 2020);
-if($offering_admin)
-{
-	ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
+    'rep_robj_xoct_perm_edit_videos', 'edit videos', 'object', 2020);
+if ($offering_admin) {
+    ilDBUpdateNewObjectType::addRBACOperation($xoct_type_id, $offering_admin);
 }
 ?>
 <#5>
@@ -96,58 +94,63 @@ if($offering_admin)
  * define standard workflow parameters as they were hard-coded before
  */
 if (\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::count() === 0) {
-	$params = [];
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('flagForCutting')
-		->setTitle('Flag for Cutting')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('flagForReview')
-		->setTitle('Flag for Review')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('publishToEngage')
-		->setTitle('Publish to Engage')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('publishToHarvesting')
-		->setTitle('Publish to Harvesting')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('straightToPublishing')
-		->setTitle('Straight to Publishing')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('publishToApi')
-		->setTitle('Publish to API')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	$params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
-		->setId('autopublish')
-		->setTitle('Automatisch Publizieren')
-		->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
-		->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
-		->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
-		->create();
-	\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::truncateDB();
-	\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository::getInstance()->createParamsForAllObjects($params);
+    $params = [];
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('flagForCutting')
+        ->setTitle('Flag for Cutting')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('flagForReview')
+        ->setTitle('Flag for Review')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('publishToEngage')
+        ->setTitle('Publish to Engage')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('publishToHarvesting')
+        ->setTitle('Publish to Harvesting')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_INACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('straightToPublishing')
+        ->setTitle('Straight to Publishing')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('publishToApi')
+        ->setTitle('Publish to API')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    $params[] = (new \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter())
+        ->setId('autopublish')
+        ->setTitle('Automatisch Publizieren')
+        ->setDefaultValueMember(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_ALWAYS_ACTIVE)
+        ->setDefaultValueAdmin(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
+        ->setType(\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::TYPE_CHECKBOX)
+        ->create();
+    \srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::truncateDB();
+    global $DIC;
+    (new \srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository(
+        $DIC->ui()->factory(),
+        $DIC->refinery(),
+        new \srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser()
+    ))->createParamsForAllObjects($params);
 }
 ?>
 <#15>
@@ -191,8 +194,8 @@ $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 /** @var \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage $publication_usage */
 foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
-	$publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
-	$publication_usage->update();
+    $publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
+    $publication_usage->update();
 }
 ?>
 <#22>
@@ -244,8 +247,8 @@ $repository = new \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsa
 $usage_segments = \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_SEGMENTS;
 $segments_pub = $repository->getUsage($usage_segments);
 if (!is_null($segments_pub)) {
-	$segments_pub->setMdType(\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::MD_TYPE_ATTACHMENT);
-	$segments_pub->update();
+    $segments_pub->setMdType(\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::MD_TYPE_ATTACHMENT);
+    $segments_pub->update();
 }
 ?>
 <#26>
@@ -394,4 +397,10 @@ foreach (\srag\Plugins\Opencast\Model\Object\ObjectSettings::get() as $objectSet
     $objectSettings->setPaellaPlayerLiveOption('default');
     $objectSettings->update();
 }
+?>
+<#35>
+<?php
+global $DIC;
+$DIC->database()->dropTable('xoct_system_account', false);
+\srag\Plugins\Opencast\Model\Config\PluginConfig::set(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_ACCEPT_TERMS, 1);
 ?>

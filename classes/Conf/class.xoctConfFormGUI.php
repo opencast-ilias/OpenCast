@@ -332,11 +332,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::METADATA_EXCEPT_DATE_PLACE), PluginConfig::METADATA_EXCEPT_DATE_PLACE);
 		$ri->addOption($ro);
 		$this->addItem($ri);
-
-		// MAKE PRESENTER FIELD MANDATORY
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_PRESENTER_MANDATORY), PluginConfig::F_PRESENTER_MANDATORY);
-		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_PRESENTER_MANDATORY . '_info'));
-		$this->addItem($cb);
 	}
 
 
@@ -495,9 +490,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	protected function initSecuritySection() {
+		ilUtil::sendInfo($this->parent_gui->txt('security_info'), true);
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('security'));
-		$h->setInfo($this->parent_gui->txt('security_info'));
 		$this->addItem($h);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS), PluginConfig::F_SIGN_PLAYER_LINKS);
@@ -593,10 +588,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			xoctLog::DEBUG_LEVEL_3 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_3),
 			xoctLog::DEBUG_LEVEL_4 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_4),
 		));
-		$this->addItem($te);
-
-		$te = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_UPLOAD_CHUNK_SIZE), PluginConfig::F_UPLOAD_CHUNK_SIZE);
-		$te->setInfo($this->parent_gui->txt(PluginConfig::F_UPLOAD_CHUNK_SIZE . '_info'));
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_INGEST_UPLOAD), PluginConfig::F_INGEST_UPLOAD);

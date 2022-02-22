@@ -3,6 +3,9 @@
 namespace srag\Plugins\Opencast\Model\Config;
 
 use ActiveRecord;
+use DOMCdataSection;
+use DOMDocument;
+use DOMElement;
 use ilOpenCastPlugin;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\User\xoctUser;
@@ -45,7 +48,6 @@ class PluginConfig extends ActiveRecord
     const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
     const F_LICENSE_INFO = 'license_info';
     const F_LICENSES = 'licenses';
-    const F_UPLOAD_TOKEN = 'upload_token';
     const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
     const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
     const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
@@ -62,7 +64,6 @@ class PluginConfig extends ActiveRecord
     const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
     const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
     const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
-    const F_WORKFLOW_PARAMETERS = 'workflow_parameters';
     const F_AUDIO_ALLOWED = 'audio_allowed';
     const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
     const F_STUDIO_ALLOWED = 'oc_studio_allowed';
@@ -87,12 +88,10 @@ class PluginConfig extends ActiveRecord
     const NO_METADATA = 0;
     const ALL_METADATA = 1;
     const METADATA_EXCEPT_DATE_PLACE = 2;
-    const F_PRESENTER_MANDATORY = 'presenter_mandatory';
 
     const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
     const F_STREAMING_URL = 'streaming_url';
     const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
-    const F_UPLOAD_CHUNK_SIZE = 'upload_chunk_size';
     const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
     const F_INGEST_UPLOAD = 'ingest_upload';
     const F_COMMON_IDP = 'common_idp';

@@ -2,8 +2,11 @@
 
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
@@ -11,7 +14,11 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Model\UserSettings\UserSetting;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
+use srag\Plugins\Opencast\TermsOfUse\AcceptedToU;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -72,6 +79,13 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 		$this->db->dropTable(PluginConfig::TABLE_NAME, false);
 		$this->db->dropTable(Report::DB_TABLE, false);
 		$this->db->dropTable(WorkflowAR::TABLE_NAME, false);
+		$this->db->dropTable(WorkflowParameter::TABLE_NAME, false);
+		$this->db->dropTable(SeriesWorkflowParameter::TABLE_NAME, false);
+		$this->db->dropTable(MDFieldConfigEventAR::TABLE_NAME, false);
+		$this->db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
+		$this->db->dropTable(UserSetting::TABLE_NAME, false);
+		$this->db->dropTable(AcceptedToU::TABLE_NAME, false);
+		$this->db->dropTable(DBCacheAR::TABLE_NAME, false);
 
 		return true;
 	}

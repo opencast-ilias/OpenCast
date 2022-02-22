@@ -19,12 +19,6 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
 
     public function executeCommand()
     {
-//		xoctInternalAPI::getInstance()->events()->update(
-//			'9a867db7-a992-4c98-80e7-2aaf226c351d',
-//			[
-//				'title' => 'internal api 2'
-//			]
-//		);
         /**
          * @var self::dic()->ctrl() ilCtrl
          */

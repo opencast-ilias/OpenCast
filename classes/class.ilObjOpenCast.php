@@ -5,6 +5,8 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
@@ -68,9 +70,14 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$opencast_dic = OpencastDIC::getInstance();
 		/** @var ObjectSettings $objectSettings */
 		$objectSettings = ObjectSettings::find($this->getId());
-		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerFileId());
-		$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLiveFileId());
-		$objectSettings->delete();
+		if ($objectSettings) {
+			$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerFileId());
+			$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLiveFileId());
+			$objectSettings->delete();
+		}
+		foreach (PermissionGroup::where(array('serie_id' => $this->getId()))->get() as $ivt_group) {
+			$ivt_group->delete();
+		}
 	}
 
 

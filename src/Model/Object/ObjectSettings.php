@@ -78,18 +78,6 @@ class ObjectSettings extends ActiveRecord {
 	}
 
     /**
-     *
-     */
-    public function delete() {
-//        $this->removeOrganizerAndContributor();
-		foreach (PermissionGroup::where(array('serie_id' => $this->obj_id))->get() as $ivt_group) {
-			$ivt_group->delete();
-		}
-		parent::delete();
-	}
-
-
-    /**
      * @return Int[]
      * @throws ilException
      */
