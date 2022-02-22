@@ -46,7 +46,7 @@ class xoctGrantPermissionGUI extends xoctGUI
 
         self::dic()->tabs()->setBackTarget(self::plugin()->translate('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
-        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.css'));
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.css?v=2'));
         self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.js'));
         self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
