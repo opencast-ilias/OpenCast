@@ -18,6 +18,7 @@ class ObjectSettingsParser
         $objectSettings->setPermissionPerClip(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP]));
         $objectSettings->setPermissionAllowSetOwn(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP])
             && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN]);
+        $objectSettings->setChatActive($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE] ?? false);
         if (isset($data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION])) {
             $paella_player_option = $data[ObjectSettingsFormItemBuilder::F_PAELLA_PLAYER_OPTION][0];
             $objectSettings->setPaellaPlayerOption($paella_player_option);
