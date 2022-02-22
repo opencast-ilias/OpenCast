@@ -203,6 +203,13 @@ class ObjectSettingsFormItemBuilder
             $objectSettings->getPaellaPlayerLiveFileId(),
             $objectSettings->getPaellaPlayerLiveUrl());
 
+        if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
+            $inputs[self::F_CHAT_ACTIVE] = $this->ui_factory->input()->field()->checkbox(
+                $this->plugin->txt('series_' . self::F_CHAT_ACTIVE),
+                $this->plugin->txt('series_' . self::F_CHAT_ACTIVE . '_info'),
+            )->withValue($objectSettings->isChatActive());
+        }
+
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
                 $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
