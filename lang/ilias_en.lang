@@ -329,8 +329,8 @@ series_cancel#:#Cancel
 series_channel_id#:#Series ID
 series_channel_type#:#Series-Type
 series_create#:#Create Series
-series_chat_active#:#Live Chat
-series_chat_active_info#:#Activates an on-screen chat for live events.
+series_chat_active#:#Chat for live events
+series_chat_active_info#:#For live events only: activates an on-screen chat
 series_default_view#:#Default View
 series_department#:#Department
 series_department_info#:#How is the name of your department?
@@ -360,7 +360,7 @@ series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
 series_show_upload_token_info#:#Displays a code which students can use to upload own Events
-series_streaming_only#:#Streaming only
+series_streaming_only#:#No Download
 series_streaming_only_info#:#Hides 'Download' Buttons.
 series_title#:#Title
 series_update#:#Update

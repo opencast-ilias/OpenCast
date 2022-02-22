@@ -326,8 +326,8 @@ series_cancel#:#Abbrechen
 series_channel_id#:#Series ID
 series_channel_type#:#Serie-Typ
 series_create#:#Serie anlegen
-series_chat_active#:#Live-Chat
-series_chat_active_info#:#Aktiviert einen on-screen Chat bei Live-Events.
+series_chat_active#:#Chat bei Live-Streams
+series_chat_active_info#:#Nur bei Live-Streams (nicht bei Aufzeichnungen): Aktiviert einen on-screen Chat
 series_default_view#:#Standard-Ansicht
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
@@ -357,7 +357,7 @@ series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
 series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen können
-series_streaming_only#:#Nur Streaming
+series_streaming_only#:#Ohne Download
 series_streaming_only_info#:#Entfernt 'Download'-Buttons.
 series_title#:#Titel
 series_update#:#Aktualisieren

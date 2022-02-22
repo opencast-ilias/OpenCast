@@ -1,7 +1,11 @@
 # Change Log
 
-## [3.7.4]
+## [3.8.0]
 - Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series"
+
+## [3.7.4]
+- Fix: disable submit button in modals after submit
+- Change: adjusted lang vars for 'Streaming only' and 'Live Chat' settings
 
 ## [3.7.3]
 - Feature/Improvement: support fetching streaming urls from publications instead of building them half-statically
