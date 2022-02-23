@@ -303,9 +303,11 @@ class xoctEventGUI extends xoctGUI
                     ' for user with id ' . self::dic()->user()->getId());
         }
 
-        $filter_html = $this->dic->ui()->renderer()->render(
-            $this->eventTableBuilder->filter(
-                $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)));
+        if (xoct::isIlias7()) { // todo: remove when this is fixed https://mantis.ilias.de/view.php?id=32134
+            $filter_html = $this->dic->ui()->renderer()->render(
+                $this->eventTableBuilder->filter(
+                    $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)));
+        }
         self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $filter_html . $html);
     }
 

@@ -20,6 +20,7 @@ class xoct {
 	const ILIAS_53 = 53;
 	const ILIAS_54 = 54;
 	const ILIAS_6 = 60;
+	const ILIAS_7 = 70;
 	const MIN_ILIAS_VERSION = self::ILIAS_54;
 
 	/**
@@ -119,5 +120,10 @@ class xoct {
 
 		return $path;
 	}
+
+    public static function isIlias7() : bool
+    {
+        return self::getILIASVersion() >= self::ILIAS_7;
+    }
 
 }

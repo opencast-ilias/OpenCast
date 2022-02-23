@@ -17,6 +17,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use xoct;
 use xoctEventTableGUI;
 use xoctEventTileGUI;
 
@@ -122,6 +123,9 @@ class EventTableBuilder
 
     private function applyFilter(array $events, ObjectSettings $objectSettings): array
     {
+        if (!xoct::isIlias7()) { // todo: remove when this is fixed https://mantis.ilias.de/view.php?id=32134
+            return $events;
+        }
         $filters = $this->filterData();
         return array_filter($events, function (array $event) use ($filters, $objectSettings) {
             $event_object = $event['object'];
