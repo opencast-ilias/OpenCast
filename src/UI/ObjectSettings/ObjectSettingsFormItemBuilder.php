@@ -194,14 +194,14 @@ class ObjectSettingsFormItemBuilder
             ->withValue($objectSettings->getPermissionPerClip() ?
                 [self::F_PERMISSION_ALLOW_SET_OWN => $objectSettings->getPermissionAllowSetOwn()] : null);
 
-        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
-            $objectSettings->getPaellaPlayerOption(),
-            $objectSettings->getPaellaPlayerFileId(),
-            $objectSettings->getPaellaPlayerUrl());
-        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
-            $objectSettings->getPaellaPlayerLiveOption(),
-            $objectSettings->getPaellaPlayerLiveFileId(),
-            $objectSettings->getPaellaPlayerLiveUrl());
+//        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
+//            $objectSettings->getPaellaPlayerOption(),
+//            $objectSettings->getPaellaPlayerFileId(),
+//            $objectSettings->getPaellaPlayerUrl());
+//        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
+//            $objectSettings->getPaellaPlayerLiveOption(),
+//            $objectSettings->getPaellaPlayerLiveFileId(),
+//            $objectSettings->getPaellaPlayerLiveUrl());
 
         if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $inputs[self::F_CHAT_ACTIVE] = $this->ui_factory->input()->field()->checkbox(
