@@ -5,7 +5,8 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
 use srag\DIC\OpenCast\DICTrait;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -16,7 +17,6 @@ use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * User Interface class for example repository object.

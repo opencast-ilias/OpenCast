@@ -5,7 +5,6 @@ use ILIAS\UI\Factory;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class xoctWorkflowGUI

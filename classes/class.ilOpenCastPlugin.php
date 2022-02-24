@@ -2,7 +2,7 @@
 
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Cache\Service\DB\DBCacheAR;
+use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -14,11 +14,11 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Model\TermsOfUse\AcceptedToU;
 use srag\Plugins\Opencast\Model\UserSettings\UserSetting;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
-use srag\Plugins\Opencast\TermsOfUse\AcceptedToU;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

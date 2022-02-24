@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Group\Group;
@@ -15,7 +16,6 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayloa
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class xoctSeriesAPI

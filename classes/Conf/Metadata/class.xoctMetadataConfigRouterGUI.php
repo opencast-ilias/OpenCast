@@ -1,10 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
-use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
-use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
-use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * @ilCtrl_IsCalledBy xoctMetadataConfigRouterGUI : xoctMainGUI

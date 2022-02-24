@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\Plugins\Opencast\Cache;
+namespace srag\Plugins\Opencast\Model\Cache;
 
 use Exception;
 use ilGlobalCache;
 use ilGlobalCacheService;
 use ilOpenCastPlugin;
 use RuntimeException;
-use srag\Plugins\Opencast\Cache\Service\DB\DBCacheService;
+use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctLog;
 

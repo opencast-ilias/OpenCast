@@ -1,13 +1,13 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\User\xoctUser;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Access/Condition checking for OpenCast object

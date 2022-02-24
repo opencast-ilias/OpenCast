@@ -1,13 +1,12 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
-use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
 
 /**
  * Class ilObjOpenCast

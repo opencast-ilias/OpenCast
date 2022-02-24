@@ -1,7 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Util\DI\OpencastDIC;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Publication;
 
-use srag\Plugins\Opencast\Cache\Cache;
+use srag\Plugins\Opencast\Model\Cache\Cache;
 use xoctRequest;
 
 class PublicationAPIRepository implements PublicationRepository

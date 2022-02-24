@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Cache;
+namespace srag\Plugins\Opencast\Model\Cache;
 
 /**
  * @author  Theodor Truffer <tt@studer-raimann.ch>

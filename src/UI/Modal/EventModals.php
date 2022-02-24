@@ -16,11 +16,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
 /**
- * Class EventModals
- *
- * @package srag\Plugins\Opencast\UI\Modal
- *
- * @author  Theodor Truffer <tt@studer-raimann.ch>
+ * Responsible for building modals.
  */
 class EventModals
 {

@@ -21,6 +21,11 @@ use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 
+/**
+ * Responsible for creating forms to upload, schedule or edit an event.
+ * Delegates stuff to other builders, like MDFormItemBuilder for Metadata fields.
+ * One might consider splitting this into smaller builders: one each for upload, schedule and edit.
+ */
 class EventFormBuilder
 {
     const F_ACCEPT_EULA = 'accept_eula';

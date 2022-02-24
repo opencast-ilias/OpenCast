@@ -1,9 +1,9 @@
 <?php
 
-namespace srag\Plugins\Opencast\Cache\Service\DB;
+namespace srag\Plugins\Opencast\Model\Cache\Service\DB;
 
-use ilGlobalCacheService;
 use ilDBInterface;
+use ilGlobalCacheService;
 
 /**
  * @author Theodor Truffer <tt@studer-raimann.ch>

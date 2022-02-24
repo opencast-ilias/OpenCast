@@ -24,6 +24,10 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use xoctException;
 
+/**
+ * Responsible for building form sections for Metadata fields.
+ * Should be split into multiple sub builders, since there are too many use-cases here (create, update, createScheduled, etc.)
+ */
 class MDFormItemBuilder
 {
 

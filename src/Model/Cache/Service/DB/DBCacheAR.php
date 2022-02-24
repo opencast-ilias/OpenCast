@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\Cache\Service\DB;
+namespace srag\Plugins\Opencast\Model\Cache\Service\DB;
 
 use ActiveRecord;
 

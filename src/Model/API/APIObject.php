@@ -6,10 +6,10 @@ use DateTime;
 use ilStr;
 use ReflectionClass;
 use ReflectionException;
+use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use stdClass;
 use xoctException;
 use xoctLog;
-use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * Class Object

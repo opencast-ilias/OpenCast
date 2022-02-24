@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\Plugins\Opencast\TermsOfUse;
+namespace srag\Plugins\Opencast\Model\TermsOfUse;
 
 use ActiveRecord;
 

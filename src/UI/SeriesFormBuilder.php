@@ -18,6 +18,10 @@ use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use xoctException;
 
+/**
+ * Responsible for creating forms to create or edit a series/an ILIAS Opencast object.
+ * Delegates stuff to other builders, like ObjectSettingsFormItemBuilder for ObjectSettings.
+ */
 class SeriesFormBuilder
 {
     const F_CHANNEL_TYPE = 'channel_type';

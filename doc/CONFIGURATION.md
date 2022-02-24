@@ -27,6 +27,8 @@ In older versions of Opencast, the event's publications have to be retracted bef
 ##### Link to Opencast Video Editor
 Link used for the action 'cut'. The placeholder {event_id} can be used. Default: https://[your-opencast-url.com]/admin-ng/index.html#!/events/events/{event_id}/tools/editor
 
+If this is empty, the Publication Usage for cutting will be used to fetch the link from Opencast (see [Publications](#Publications))
+
 ##### Activate "Schedule Event(s)"
 If active, admins will have the possibility to create scheduled events via an Opencast series in ILIAS.
 
@@ -43,12 +45,19 @@ Configures the Upload form to allow audio files. Note that the same workflow as 
 ##### Internal video player
 This enables the usages of the plugin's integrated standalone Paella Player. Otherwise the 'Play' button will redirect to Opencast, which may require the user to login to Opencast.
 
-In order for the player to find the video data, the 'Player' publication will have to be configured correctly (see chapter 'Publications').
+In order for the player to find the video data, the 'Player' publication will have to be configured correctly (see chapter [Publications](#Publications)).
 
 The player can be configured to use streaming URLs. This requires a Wowza streaming server though.
 
 ##### Live Streams
 Allow viewing Live Streams, optionally with an on-screen chat during the event. The publication "Live Stream" has to be configured properly for the plugin to recognize live events.
+
+##### Use self-generated streaming URLs
+If this is active, the plugin will generate streaming urls with the given 'Wowza URL', according to this pattern:
+
+[WowzaURL]/smil:engage-player_[EventID]_[presenter|presentation].smil/playlist.m3u8
+
+Otherwise, the urls will be fetched from the player publication. These can be static video urls or streaming urls, depending on how Opencast is configured.
 
 ##### Open player in modal
 When active: the video player will not be opened in a seperate window but in a overlaying "Modal" window.
@@ -60,9 +69,6 @@ If enabled, the "Actions" dropdown of events will offer the option "Report Quali
 Defined whether scheduled events can be edited in ILIAS. 
 
 ### Series
-##### EULA
-"End User License Agreement", will be shown and has to be accepted when creating a new series.
-
 ##### Licenses
 Configure licenses which will be shown as a dropdown input when creating a new series or editing a series' setting, respectively. The configured license of a series is purely informative.
 
@@ -93,6 +99,17 @@ Indicates the owner of an event. This rules doesn't have to exist in Opencast, a
 ##### User mapping in uppercase
 Will transform the user's identifier to all uppercase. Possibly necessary to match the user role. E.g. if the user's external account is 'jdoe', the user role will be ROLE_USER_JDOE instead of ROLE_USER_jdoe.
 
+### Terms of Use
+##### EULA
+"End User License Agreement". Will be shown in objects in a separate tab 'Terms of Use'.
+
+##### All users must accept the Terms of Use
+If active, users will have to accept the ToU the first time they create an event.
+
+##### Updated Terms of Use
+If this is checked when saving the config form, all users which have already accepted the ToU are reset and will have 
+to accept it again on the next upload.
+
 ### Security
 ##### Sign * Link
 The URLs for the player, download, thumbnail and annotation tool can be signed by Opencast, in order to make them available only for a certain period of time and optionally for a certain IP address. *This will only work if the url signing is configured in Opencast* (see https://docs.opencast.org/develop/admin/#configuration/stream-security/). 
@@ -103,6 +120,9 @@ The download links are not visible to the user, because the download is executed
 *This function will only work with a certain version of the Annotation tool (https://github.com/mliradelc/annotation-tool/tree/uzk-ilias-frontend-hash).*
 
  Sends the course reference ID, and the user, admin or a student, as a hash to the annotation tool. With that information, the tool will verify if the user is coming from ILIAS and if it is the same user as the user logged in ILIAS. 
+
+##### Presign (experimental)
+If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
 
 ### Advanced
 
@@ -117,16 +137,7 @@ Improves the performance by temporarily storing event metadata.
 
 ##### Debug level
 Level of detail for log entries. The log can be found in ILIAS' external data directory (same place where the ilias.log is found) and is titled 'curl.log'.
-
-##### Request combination level
-Defines the way the plugin is sending requests to fetch events from Opencast (many small/few large requests). This has no impact on the functionality but may affect the performance.
-
-##### Without metadata
-The metadata don't need to be fetched seperately in the latest API versions, therefore this option will improve the performance. However, this will lead to an error in previous versions.
-
-##### Upload chunk size
-The video upload is separated in chunks, whereas one chunk has the here defined size. Increasing the chunk size can improve the upload speed. Default: 20MB
-
+ 
 ##### Upload via Ingest Nodes
 If enabled, the upload will be executed via Ingest Nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 
@@ -171,6 +182,22 @@ So e.g. for the thumbnails to work, a publication of the usage 'thumbnail' has t
 The default configuration (after a fresh install, or at /configuration/default_config.xml) contains publication configurations for all essential functions, that is the player, download, and thumbnails. Additionally, there are default values for the publications player, download, thumbnails, segments and preview, so these publications will use default values, even if they are not configured in the plugin configuration.
 
 Note that the default configuration only works with an out-of-the-box Opencast. If there are different workflows which affect the publications, this configuration will have to be adjusted accordingly.
+
+## Metadata
+The plugin uses a configurable selection of Opencast's [Metadata Catalogue](https://docs.opencast.org/r/11.x/developer/#api/types/#metadata-catalogs).
+Note the subtabs for switching between event's and series' metadata configuration.
+
+The configured Metadata fields will be visible in:
+- the forms for creating or editing a series/an ILIAS object (series metadata)
+- the forms for creating or editing an event (event metadata)
+- the table containing events (event metadata)
+
+A metadata field can be configured as:
+- visible for: either everyone or only for admins
+- read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- prefilled: field is prefilled when creating an event or a series. Options are prefilled with current user's username or title of the course.
+
 
 ## Video Portal
 Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series. 

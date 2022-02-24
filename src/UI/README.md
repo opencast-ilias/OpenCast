@@ -1,5 +1,7 @@
 # UI
 
+Should contain all UI related stuff: builders, factories, DTOs etc.
+
 ## Refactoring
 
 Parts of the UI (mostly the ones in this namespace) are using the ILIAS UI Service. That's why here are mostly 
