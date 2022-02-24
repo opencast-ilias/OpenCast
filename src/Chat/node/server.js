@@ -30,6 +30,10 @@ const argv = yargs
 		type: 'string',
 		default: '0.0.0.0'
 	})
+	.option('host', {
+		description: 'Domain or IP address which will be used to reach the chat server. If empty: option "ip" will be used as host.',
+		alias: 'H'
+	})
 	.option('use-https', {
 		description: 'set if the node server should use ssl',
 		type: 'boolean',
@@ -56,6 +60,7 @@ const client_id = argv.clientId;
 const ilias_installation_dir = argv.iliasDir ? argv.iliasDir.replace(/\/+$/,'') : '/var/www/ilias';
 const port = argv.port;
 const ip = argv.ip;
+const host = argv.host ?? ip;
 if (argv.useHttps && (!(typeof argv.sslKeyPath == 'string') || !(typeof argv.sslCertPath == 'string') || !(typeof argv.sslPassphrase == 'string'))) {
 	console.error('please define a ssl-key-path, ssl-cert-path and ssl-passphrase when using https');
 	process.exit(1);
@@ -70,7 +75,7 @@ const moment = require('moment');
 const index_file = fs.readFileSync(__dirname + '/templates/index.ejs', 'utf8');
 const QueryUtils = require('./modules/QueryUtils.js');
 QueryUtils.init(client_id, ilias_installation_dir);
-QueryUtils.writeChatServerConfig(ip, port, protocol);
+QueryUtils.writeChatServerConfig(ip, port, protocol, host);
 const express = require('express');
 const app = express();
 

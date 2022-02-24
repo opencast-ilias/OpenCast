@@ -52,17 +52,17 @@ class ChatGUI {
 	 * @throws ilTemplateException
 	 */
 	public function render($async = false) {
-        $ip = ConfigAR::getConfig(ConfigAR::C_IP);
         $port = ConfigAR::getConfig(ConfigAR::C_PORT);
         $protocol = ConfigAR::getConfig(ConfigAR::C_PROTOCOL);
+        $host = ConfigAR::getConfig(ConfigAR::C_HOST);
 
         $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim(__DIR__, ILIAS_ABSOLUTE_PATH) . '/open_chat.php';
         $url = $script_open_chat .
             '?port=' . $port .
             '&token=' . $this->token->getToken()->toString() .
             '&protocol=' . $protocol;
-        if (is_string($ip) && $ip !== '0.0.0.0') {
-            $url .= '&ip=' . $ip;
+        if (is_string($host) && $host !== '0.0.0.0') {
+            $url .= '&host=' . $host;
         }
 		// TODO: get rid of self::plugin() to be independent
 		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
