@@ -55,9 +55,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			case xoctMainGUI::SUBTAB_EVENTS:
 				$this->initEventsSection();
 				break;
-			case xoctMainGUI::SUBTAB_SERIES:
-				$this->initSeriesSection();
-				break;
 			case xoctMainGUI::SUBTAB_TOU:
 				$this->initToUSection();
 				break;
@@ -322,54 +319,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->addSubItem($ri);
 
 
-		// SCHEDULED METADATA EDITABLE
-		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE), PluginConfig::F_SCHEDULED_METADATA_EDITABLE);
-		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::NO_METADATA), PluginConfig::NO_METADATA);
-		$ri->addOption($ro);
-		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA), PluginConfig::ALL_METADATA);
-		$ro->setInfo($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA . '_info'));
-		$ri->addOption($ro);
-		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::METADATA_EXCEPT_DATE_PLACE), PluginConfig::METADATA_EXCEPT_DATE_PLACE);
-		$ri->addOption($ro);
-		$this->addItem($ri);
-	}
-
-
-	/**
-	 *
-	 */
-	protected function initSeriesSection() {
-		$h = new ilFormSectionHeaderGUI();
-		$h->setTitle($this->parent_gui->txt('series'));
-		$this->addItem($h);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_LICENSES), PluginConfig::F_LICENSES);
-		$te->setInfo($this->parent_gui->txt(PluginConfig::F_LICENSES . '_info'));
-		$this->addItem($te);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_LICENSE_INFO), PluginConfig::F_LICENSE_INFO);
-		$te->setRequired(true);
-		$te->setUseRte(true);
-		$te->setRteTagSet("extended");
-		$te->disableButtons(array(
-			'charmap',
-			'undo',
-			'redo',
-			'justifyleft',
-			'justifycenter',
-			'justifyright',
-			'justifyfull',
-			'anchor',
-			'fullscreen',
-			'cut',
-			'copy',
-			'paste',
-			'pastetext',
-			'formatselect',
-		));
-		$te->setRows(5);
-		$this->addItem($te);
-
 		// DATE REPORT
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_DATE), PluginConfig::F_REPORT_DATE);
 		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_DATE . '_info'));
@@ -403,7 +352,19 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$cb->addSubItem($te);
+
+		// SCHEDULED METADATA EDITABLE
+		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE), PluginConfig::F_SCHEDULED_METADATA_EDITABLE);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::NO_METADATA), PluginConfig::NO_METADATA);
+		$ri->addOption($ro);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA), PluginConfig::ALL_METADATA);
+		$ro->setInfo($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA . '_info'));
+		$ri->addOption($ro);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::METADATA_EXCEPT_DATE_PLACE), PluginConfig::METADATA_EXCEPT_DATE_PLACE);
+		$ri->addOption($ro);
+		$this->addItem($ri);
 	}
+
 
 
 	private function initToUSection()

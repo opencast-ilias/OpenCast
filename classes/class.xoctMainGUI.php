@@ -26,7 +26,6 @@ class xoctMainGUI extends xoctGUI
     const TAB_METADATA = 'metadata';
 
     const SUBTAB_API = 'api';
-    const SUBTAB_SERIES = 'series';
     const SUBTAB_TOU = 'terms_of_use';
     const SUBTAB_EVENTS = 'events';
     const SUBTAB_GROUPS_ROLES = 'groups_roles';
@@ -107,8 +106,6 @@ class xoctMainGUI extends xoctGUI
         self::dic()->tabs()->addSubTab(self::SUBTAB_API, self::plugin()->translate('subtab_' . self::SUBTAB_API), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_EVENTS);
         self::dic()->tabs()->addSubTab(self::SUBTAB_EVENTS, self::plugin()->translate('subtab_' . self::SUBTAB_EVENTS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SERIES);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_SERIES, self::plugin()->translate('subtab_' . self::SUBTAB_SERIES), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
         self::dic()->tabs()->addSubTab(self::SUBTAB_TOU, self::plugin()->translate('eula'), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);

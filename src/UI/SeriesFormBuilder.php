@@ -116,25 +116,6 @@ class SeriesFormBuilder
         return $existing_series;
     }
 
-
-    private function getLicenseSelectOptions(): array
-    {
-        // TODO: is license metadata?
-        $options = array(
-            null => 'As defined in content',
-        );
-        $licenses = PluginConfig::getConfig(PluginConfig::F_LICENSES);
-        if ($licenses) {
-            foreach (explode("\n", $licenses) as $nl) {
-                $lic = explode("#", $nl);
-                if ($lic[0] && $lic[1]) {
-                    $options[$lic[0]] = $lic[1];
-                }
-            }
-        }
-        return $options;
-    }
-
     private function txt(string $lang_var): string
     {
         return $this->plugin->txt('series_' . $lang_var);
