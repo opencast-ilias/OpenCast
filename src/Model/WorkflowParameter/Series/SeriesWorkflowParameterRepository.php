@@ -193,13 +193,16 @@ class SeriesWorkflowParameterRepository
      * @param bool $as_admin
      * @return Input
      */
-    public function getFormSectionForObjId(int $obj_id, bool $as_admin): Input
+    public function getFormSectionForObjId(int $obj_id, bool $as_admin): ?Input
     {
         $items = [];
         foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
             $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
             $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
+        }
+        if (empty($items)) {
+            return null;
         }
         return $this->buildFormSection($items);
     }
@@ -300,13 +303,16 @@ class SeriesWorkflowParameterRepository
      * TODO: refactor into a form builder
      * @return Input
      */
-    public function getGeneralFormSection(): Input
+    public function getGeneralFormSection(): ?Input
     {
         $items = [];
         foreach ($this->getGeneralParametersInForm() as $id => $data) {
             $cb = $this->ui_factory->input()->field()->checkbox($data['title'])->withValue($data['preset']);
             $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
+        }
+        if (empty($items)) {
+            return null;
         }
         return $this->buildFormSection($items);
     }

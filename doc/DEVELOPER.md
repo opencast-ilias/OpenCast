@@ -9,3 +9,5 @@ For developing the plugin, most of all the developer doc's external API descript
 
 **Component READMEs**: many components in the /src directory have a README to explain some concepts or the current state
 of the component. Start at the base [README](../src/README.md).
+
+**Public Test servers**: https://develop.opencast.org/ and https://stable.opencast.org/

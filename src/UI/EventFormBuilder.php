@@ -170,13 +170,16 @@ class EventFormBuilder
             $file_section_inputs,
             $this->plugin->txt('file')
         );
+        $workflow_param_section = $obj_id == 0 ?
+            $this->workflowParameterRepository->getGeneralFormSection()
+            : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin);
         $inputs = [
             'file' => $file_section,
             'metadata' => $this->formItemBuilder->create_section($as_admin),
-            'workflow_configuration' => ($obj_id == 0 ?
-                $this->workflowParameterRepository->getGeneralFormSection()
-                : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin)),
         ];
+        if (!is_null($workflow_param_section)) {
+            $inputs['workflow_configuration'] = $workflow_param_section;
+        }
         if ($with_terms_of_use) {
             $inputs[self::F_ACCEPT_EULA] = $this->buildTermsOfUseSection();
         }
@@ -196,13 +199,16 @@ class EventFormBuilder
 
     public function schedule(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
+        $workflow_param_section = $obj_id == 0 ?
+            $this->workflowParameterRepository->getGeneralFormSection()
+            : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin);
         $inputs = [
             'metadata' => $this->formItemBuilder->schedule_section($as_admin),
-            'scheduling' => $this->schedulingFormItemBuilder->create(),
-            'workflow_configuration' => ($obj_id == 0 ?
-                $this->workflowParameterRepository->getGeneralFormSection()
-                : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin)),
+            'scheduling' => $this->schedulingFormItemBuilder->create()
         ];
+        if (!is_null($workflow_param_section)) {
+            $inputs['workflow_configuration'] = $workflow_param_section;
+        }
         if ($with_terms_of_use) {
             $inputs[self::F_ACCEPT_EULA] = $this->buildTermsOfUseSection();
         }

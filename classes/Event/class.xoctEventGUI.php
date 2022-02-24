@@ -571,7 +571,7 @@ class xoctEventGUI extends xoctGUI
             $metadata,
             $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance(self::dic()->user())),
             new Processing(PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                $data['workflow_configuration']['object']),
+                $data['workflow_configuration']['object'] ?? new stdClass()),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);

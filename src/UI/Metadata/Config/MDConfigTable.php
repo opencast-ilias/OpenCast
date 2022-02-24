@@ -95,20 +95,18 @@ class MDConfigTable extends ilTable2GUI
             $this->dic->ui()->factory()->button()->shy($this->dic->language()->txt('update'),
                 $this->dic->ctrl()->getLinkTarget($this->parent, xoctGUI::CMD_EDIT))
         ];
-        if (!$a_set['required']) {
-            $delete_modal = $this->dic->ui()->factory()->modal()->interruptive(
-                $this->plugin->txt('delete_modal_title'),
-                $this->plugin->txt('msg_confirm_delete'),
-                $this->dic->ctrl()->getFormAction($this->parent_obj, 'delete')
-            )->withAffectedItems([
-                $this->dic->ui()->factory()->modal()->interruptiveItem(
-                    $a_set['field_id'],
-                    $a_set['title_de']
-                )
-            ]);
-            $actions[] = $this->dic->ui()->factory()->button()->shy($this->dic->language()->txt('delete'),
-                    '#')->withOnClick($delete_modal->getShowSignal());
-        }
+        $delete_modal = $this->dic->ui()->factory()->modal()->interruptive(
+            $this->plugin->txt('delete_modal_title'),
+            $this->plugin->txt('msg_confirm_delete'),
+            $this->dic->ctrl()->getFormAction($this->parent_obj, 'delete')
+        )->withAffectedItems([
+            $this->dic->ui()->factory()->modal()->interruptiveItem(
+                $a_set['field_id'],
+                $a_set['title_de']
+            )
+        ]);
+        $actions[] = $this->dic->ui()->factory()->button()->shy($this->dic->language()->txt('delete'),
+                '#')->withOnClick($delete_modal->getShowSignal());
         return $this->dic->ui()->renderer()->render(
             $this->dic->ui()->factory()->dropdown()->standard([
                 $actions

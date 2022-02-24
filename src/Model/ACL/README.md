@@ -1,0 +1,1 @@
+See https://docs.opencast.org/develop/developer/#api/types/#access-control-lists
