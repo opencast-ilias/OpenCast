@@ -4,6 +4,7 @@
 - Feature: Completely configurable metadata fields for events and series, used in forms and tables. See Configuration Tab "Metadata".
 - Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series".
 - Feature: Setting for using custom paella player configs (upload or from URL) at object level. See object settings.
+- Feature: node chat now has a parameter 'host', which is used for addressing the server. Up until now (and still, if no host is given), 'ip' was used for this. Now IP should only be for listening. This should simplify the setup with docker.
 - Improvement: Quality & Date reports now set the senders email as ReplyTo address.
 - Dependencies: Bumped npm packages, removed a few (hopefully) unused
 - Refactoring: Refactored a big part of the model: moved to /src, introduced namespaces, dependency injection, repository patterns, etc.
