@@ -65,24 +65,13 @@ When active: the video player will not be opened in a seperate window but in a o
 ##### Enable "Report Quality Problems"
 If enabled, the "Actions" dropdown of events will offer the option "Report Quality Problems". This will open an overlay where the user can describe the problem and send it to the here configured email address.
 
+##### Enable "Report Date Modification"
+If active and a series contains one or multiple scheduled events, the toolbar will show a button "Report Date Modifications" for admins. This button opens an overlay where the admin can describe the problem and send it to the here configured email address.
+
 ##### Metadata of scheduled events editable
 Defined whether scheduled events can be edited in ILIAS. 
 
 ### Series
-##### Licenses
-Configure licenses which will be shown as a dropdown input when creating a new series or editing a series' setting, respectively. The configured license of a series is purely informative.
-
-Add new licenses in the form 'URL#Name', e.g.:
-
-> http://creativecommons.org/licenses/by/2.5/ch/#CC: Attribution
-> http://creativecommons.org/licenses/by-nc/2.5/ch/#CC: Attribution-Noncommercial
-
-##### License info
-This info will be shown below the 'Licenses' dropdown.
-
-##### Enable "Report Date Modification"
-If active and a series contains one or multiple scheduled events, the toolbar will show a button "Report Date Modifications" for admins. This button opens an overlay where the admin can describe the problem and send it to the here configured email address.
-
 ### Groups & Roles
 ##### ILIAS Producers
 This is a group which must exist in Opencast. Users with the permission 'Edit Videos' will be enlisted in this group when a series is created or when the user performs the actions 'cut' or 'annotate'. This should grant these users the permission to access the Opencast video editor and annotation tool, so this group should contain enough roles to enable these tools.

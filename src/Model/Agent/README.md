@@ -11,6 +11,6 @@ software, which can be installed on devices responsible for recording events. Th
 This component models the API repository and objects to fetch the configured agents from Opencast. These agents are then 
 used to schedule events via the Plugin.
 
-_Note that the agent-id is called 'location' in the metadata context._
+_Note that the agent-id becomes the metadata field 'location' after an event is recorded._
 
 Most common Capture Agent: https://github.com/opencast/pyCA

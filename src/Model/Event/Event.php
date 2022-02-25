@@ -100,10 +100,6 @@ class Event
      * @var WorkflowInstanceCollection
      */
     protected $workflows;
-    /**
-     * @var string
-     */
-    protected $series;
 
 
     /**
