@@ -14,7 +14,7 @@ class MDCatalogueFactory
                 new MDFieldDefinition(MDFieldDefinition::F_DESCRIPTION, MDDataType::text_long(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_RIGHTS_HOLDER, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_IS_PART_OF, MDDataType::text(), true, false),
-                new MDFieldDefinition(MDFieldDefinition::F_CREATOR, MDDataType::text_array(), true, false),
+                new MDFieldDefinition(MDFieldDefinition::F_CREATOR, MDDataType::text_array(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_START_DATE, MDDataType::datetime(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_DURATION, MDDataType::text(), false, false),
                 new MDFieldDefinition(MDFieldDefinition::F_LOCATION, MDDataType::text(), false, false),
