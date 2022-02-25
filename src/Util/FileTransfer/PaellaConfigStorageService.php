@@ -24,7 +24,7 @@ class PaellaConfigStorageService extends UploadStorageService
      */
     public function moveUploadToStorage(UploadResult $uploadResult) : string
     {
-        $identifier = uniqid();
+        $identifier = uniqid('oc_');
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::WEB);
         return $identifier;
     }
@@ -64,5 +64,10 @@ class PaellaConfigStorageService extends UploadStorageService
     public function exists(string $file_id) : bool
     {
         return $this->fileSystem->hasDir($this->idToDirPath($file_id));
+    }
+
+    protected function idToDirPath(string $identifier) : string
+    {
+        return $identifier;
     }
 }
