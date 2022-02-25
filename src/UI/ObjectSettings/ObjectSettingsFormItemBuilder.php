@@ -39,16 +39,6 @@ class ObjectSettingsFormItemBuilder
     const F_VIEW_CHANGEABLE = 'view_changeable';
     const F_CHAT_ACTIVE = 'chat_active';
 
-    // Paella Player Path
-    const F_PAELLA_PLAYER_OPTION = 'paella_player_option';
-    const F_PAELLA_PLAYER_DEFAULT = 'pp_default';
-    const F_PAELLA_PLAYER_FILE = 'pp_file';
-    const F_PAELLA_PLAYER_LINK = 'pp_link';
-    // Paella Player live Path
-    const F_PAELLA_PLAYER_LIVE_OPTION = 'paella_player_live_option';
-    const F_PAELLA_PLAYER_LIVE_DEFAULT = 'pp_default';
-    const F_PAELLA_PLAYER_LIVE_FILE = 'pp_live_file';
-    const F_PAELLA_PLAYER_LIVE_LINK = 'pp_live_link';
 
     /**
      * @var UIFactory
@@ -194,14 +184,6 @@ class ObjectSettingsFormItemBuilder
             ->withValue($objectSettings->getPermissionPerClip() ?
                 [self::F_PERMISSION_ALLOW_SET_OWN => $objectSettings->getPermissionAllowSetOwn()] : null);
 
-//        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
-//            $objectSettings->getPaellaPlayerOption(),
-//            $objectSettings->getPaellaPlayerFileId(),
-//            $objectSettings->getPaellaPlayerUrl());
-//        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
-//            $objectSettings->getPaellaPlayerLiveOption(),
-//            $objectSettings->getPaellaPlayerLiveFileId(),
-//            $objectSettings->getPaellaPlayerLiveUrl());
 
         if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $inputs[self::F_CHAT_ACTIVE] = $this->ui_factory->input()->field()->checkbox(
@@ -221,28 +203,7 @@ class ObjectSettingsFormItemBuilder
             }));
     }
 
-    private function getPaellaPlayerPathInput(bool $live, string $option, string $path, string $url): Input
-    {
-        $f = $this->ui_factory->input()->field();
-        $live_s = $live ? '_live' : '';
-        return $f->switchableGroup([
-            ObjectSettings::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
-            ObjectSettings::PAELLA_OPTION_FILE => $f->group([
-                'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
-                    ->withAcceptedMimeTypes(['application/json'])
-                    ->withByline($this->buildInlineDownload($path))
-                    ->withValue(($path && $this->paellaStorageService->exists($path)) ? [$path] : null)
-            ], $this->plugin->txt('pp_file')),
-            ObjectSettings::PAELLA_OPTION_URL => $f->group([
-                'url' => $f->text($this->plugin->txt('link'))
-                    ->withByline($this->plugin->txt('pp_link_info'))
-                    ->withRequired(true)
-                    ->withValue($url)
-            ], $this->plugin->txt('pp_url'))
-        ], $this->txt(self::F_PAELLA_PLAYER_OPTION . $live_s))
-            ->withValue($option)
-            ->withRequired(true);
-    }
+
 
     private function getPermissionTemplateRadioInput(): Input
     {
@@ -257,19 +218,5 @@ class ObjectSettingsFormItemBuilder
     private function txt(string $lang_var): string
     {
         return $this->plugin->txt('series_' . $lang_var);
-    }
-
-    private function buildInlineDownload(string $file_id) : string
-    {
-        /** @var PaellaConfigStorageService $paellaStorageService */
-        if (!$file_id || !$this->paellaStorageService->exists($file_id)) {
-            return '';
-        }
-        $fileAsBase64 = $this->paellaStorageService->getFileAsBase64($file_id);
-        $fileInfo = $this->paellaStorageService->getFileInfo($file_id);
-        return '<a href="data:text/vtt;base64,'
-            . $fileAsBase64
-            . '" target="blank" download="' . $fileInfo['name'] . '">Download</a>'
-            ;
     }
 }

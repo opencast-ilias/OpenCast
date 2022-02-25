@@ -373,8 +373,8 @@ series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht sel
 series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
-series_paella_player_option#:#Paella Player Config für Video-On-Demand
-series_paella_player_option_live#:#Paella Player Config für Live-Streams
+config_paella_player_option#:#Paella Player Config für Video-On-Demand
+config_paella_player_option_live#:#Paella Player Config für Live-Streams
 pp_default#:#Standard-Config verwenden
 pp_file#:#Config-Datei hochladen
 pp_url#:#URL hinterlegen
@@ -407,6 +407,7 @@ tab_workflow_params#:#Workflow Parameter
 tab_metadata#:#Metadaten
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
+subtab_player#:#Player
 subtab_series#:#Serien
 subtab_general#:#Allgemeines
 subtab_groups_roles#:#Gruppen & Rollen

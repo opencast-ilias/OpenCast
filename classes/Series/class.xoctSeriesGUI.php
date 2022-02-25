@@ -15,9 +15,6 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
-use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
-use srag\Plugins\Opencast\Util\Player\PaellaConfigService;
-use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 
 /**
  * Class xoctSeriesGUI
@@ -65,31 +62,19 @@ class xoctSeriesGUI extends xoctGUI
      * @var WorkflowParameterRepository
      */
     private $workflowParameterRepository;
-    /**
-     * @var xoctFileUploadHandler
-     */
-    private $uploadHandler;
-    /**
-     * @var PaellaConfigService
-     */
-    private $paellaConfigService;
 
     public function __construct(ilObjOpenCast                     $object,
                                 SeriesFormBuilder                 $seriesFormBuilder,
                                 SeriesRepository                  $seriesRepository,
                                 SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
-                                WorkflowParameterRepository       $workflowParameterRepository,
-                                UploadHandler                     $uploadHandler,
-                                PaellaConfigServiceFactory        $paellaConfigServiceFactory)
+                                WorkflowParameterRepository       $workflowParameterRepository)
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
-        $this->paellaConfigService = $paellaConfigServiceFactory->forObject($this->objectSettings);
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
         $this->seriesRepository = $seriesRepository;
         $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
         $this->workflowParameterRepository = $workflowParameterRepository;
-        $this->uploadHandler = $uploadHandler;
     }
 
 
@@ -104,13 +89,6 @@ class xoctSeriesGUI extends xoctGUI
         self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
         $this->setSubTabs();
         switch (self::dic()->ctrl()->getNextClass()) {
-            case strtolower(xoctFileUploadHandler::class):
-                if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
-                    ilUtil::sendFailure(self::plugin()->getPluginObject()->txt("msg_no_access"), true);
-                    $this->cancel();
-                }
-                self::dic()->ctrl()->forwardCommand($this->uploadHandler);
-                break;
             default:
                 parent::executeCommand();
         }
@@ -202,7 +180,6 @@ class xoctSeriesGUI extends xoctGUI
         $objectSettings->setObjId($this->getObjId());
         $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
-        $this->paellaConfigService->checkAndUpdatePaellaConfig($objectSettings);
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));

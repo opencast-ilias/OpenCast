@@ -105,12 +105,6 @@ class ilObjOpenCast extends ilObjectPlugin {
 		$objectSettingsNew->setStreamingOnly($objectSettingsOld->getStreamingOnly());
 		$objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
 		$objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
-		$objectSettingsNew->setPaellaPlayerOption($objectSettingsOld->getPaellaPlayerOption());
-		$objectSettingsNew->setPaellaPlayerFileId($objectSettingsOld->getPaellaPlayerFileId());
-		$objectSettingsNew->setPaellaPlayerUrl($objectSettingsOld->getPaellaPlayerUrl());
-		$objectSettingsNew->setPaellaPlayerLiveOption($objectSettingsOld->getPaellaPlayerLiveOption());
-		$objectSettingsNew->setPaellaPlayerLiveFileId($objectSettingsOld->getPaellaPlayerLiveFileId());
-		$objectSettingsNew->setPaellaPlayerLiveUrl($objectSettingsOld->getPaellaPlayerLiveUrl());
 
 		$objectSettingsNew->create();
 	}

@@ -59,7 +59,7 @@ class xoctPlayerGUI extends xoctGUI
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
         $this->paellaConfigStorageService = $paellaConfigStorageService;
-        $this->paellaConfigService = $paellaConfigServiceFactory->forObject($this->objectSettings);
+        $this->paellaConfigService = $paellaConfigServiceFactory->get();
     }
 
     /**

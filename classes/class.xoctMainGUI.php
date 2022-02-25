@@ -28,6 +28,7 @@ class xoctMainGUI extends xoctGUI
     const SUBTAB_API = 'api';
     const SUBTAB_TOU = 'terms_of_use';
     const SUBTAB_EVENTS = 'events';
+    const SUBTAB_PLAYER = 'player';
     const SUBTAB_GROUPS_ROLES = 'groups_roles';
     const SUBTAB_SECURITY = 'security';
     const SUBTAB_ADVANCED = 'advanced';
@@ -39,9 +40,10 @@ class xoctMainGUI extends xoctGUI
      */
     public function executeCommand()
     {
+        global $DIC;
         $nextClass = self::dic()->ctrl()->getNextClass();
 
-        self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->tabs()->addTab(self::TAB_WORKFLOWS, self::plugin()->translate('tab_' . self::TAB_WORKFLOWS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowGUI::class));
         self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowParameterGUI::class));
         self::dic()->tabs()->addTab(self::TAB_PUBLICATION_USAGE, self::plugin()->translate('tab_'
@@ -94,7 +96,12 @@ class xoctMainGUI extends xoctGUI
             default:
                 self::dic()->tabs()->activateTab(self::TAB_SETTINGS);
                 $this->setSubTabs();
-                $xoctConfGUI = new xoctConfGUI();
+                $xoctConfGUI = new xoctConfGUI(
+                    $DIC->ui()->renderer(),
+                    $DIC->ctrl(),
+                    $opencast_dic->paella_config_upload_handler(),
+                    $opencast_dic->paella_config_form_builder()
+                );
                 self::dic()->ctrl()->forwardCommand($xoctConfGUI);
                 break;
         }
@@ -103,17 +110,19 @@ class xoctMainGUI extends xoctGUI
     protected function setSubTabs()
     {
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_API, self::plugin()->translate('subtab_' . self::SUBTAB_API), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_API, self::plugin()->translate('subtab_' . self::SUBTAB_API), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_EVENTS);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_EVENTS, self::plugin()->translate('subtab_' . self::SUBTAB_EVENTS), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_EVENTS, self::plugin()->translate('subtab_' . self::SUBTAB_EVENTS), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
+        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_PLAYER);
+        self::dic()->tabs()->addSubTab(self::SUBTAB_PLAYER, self::plugin()->translate('subtab_' . self::SUBTAB_PLAYER), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class, 'player'));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_TOU, self::plugin()->translate('eula'), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_TOU, self::plugin()->translate('eula'), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_GROUPS_ROLES, self::plugin()->translate('subtab_' . self::SUBTAB_GROUPS_ROLES), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_GROUPS_ROLES, self::plugin()->translate('subtab_' . self::SUBTAB_GROUPS_ROLES), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_SECURITY, self::plugin()->translate('subtab_' . self::SUBTAB_SECURITY), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_SECURITY, self::plugin()->translate('subtab_' . self::SUBTAB_SECURITY), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_ADVANCED, self::plugin()->translate('subtab_' . self::SUBTAB_ADVANCED), self::dic()->ctrl()->getLinkTarget(new xoctConfGUI()));
+        self::dic()->tabs()->addSubTab(self::SUBTAB_ADVANCED, self::plugin()->translate('subtab_' . self::SUBTAB_ADVANCED), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->clearParametersByClass(xoctConfGUI::class);
     }
 

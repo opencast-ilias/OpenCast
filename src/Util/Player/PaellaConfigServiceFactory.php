@@ -5,6 +5,9 @@ namespace srag\Plugins\Opencast\Util\Player;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 
+/**
+ * this factory is unnecessary by now, but I didn't have time to refactor it away..
+ */
 class PaellaConfigServiceFactory
 {
     /**
@@ -21,8 +24,8 @@ class PaellaConfigServiceFactory
     }
 
 
-    public function forObject(ObjectSettings $objectSettings) : PaellaConfigService
+    public function get() : PaellaConfigService
     {
-        return new PaellaConfigService($objectSettings, $this->storageService);
+        return new PaellaConfigService($this->storageService);
     }
 }

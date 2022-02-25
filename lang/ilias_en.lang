@@ -376,8 +376,8 @@ series_view_changeable_info#:#The user has the possibility to change the view.
 series_view_type_0#:#List
 series_view_type_1#:#Tiles
 series_links#:#Links
-series_paella_player_option#:#Paella Player Config for Video On Demand
-series_paella_player_option_live#:#Paella Player Config for Live Streams
+config_paella_player_option#:#Paella Player Config for Video On Demand
+config_paella_player_option_live#:#Paella Player Config for Live Streams
 pp_default#:#Use default config
 pp_file#:#Upload Config File
 pp_url#:#Remote URL
@@ -411,6 +411,7 @@ tab_metadata#:#Metadata
 subtab_api#:#API
 subtab_general#:#General
 subtab_events#:#Events
+subtab_player#:#Player
 subtab_series#:#Series
 subtab_groups_roles#:#Groups & Roles
 subtab_security#:#Security

@@ -24,13 +24,6 @@ class ObjectSettings extends ActiveRecord {
 
 	const TABLE_NAME = 'xoct_data';
 
-	const PAELLA_OPTION_DEFAULT = 'default';
-	const PAELLA_OPTION_FILE = 'file';
-	const PAELLA_OPTION_URL = 'url';
-	const DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
-	const DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
-
-
 	/**
 	 * @return string
 	 */
@@ -239,46 +232,7 @@ class ObjectSettings extends ActiveRecord {
      * @con_length    1
      */
 	protected $chat_active = true;
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_fieldtype  text
-	 * @con_length     56
-	 * @con_is_notnull true
-	 */
-	protected $paella_player_option = self::PAELLA_OPTION_DEFAULT;
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_fieldtype  text
-	 */
-	protected $paella_player_file_id = '';
-	/**
-	 * @var string
-	 * @con_has_field true
-	 * @con_fieldtype text
-	 */
-	protected $paella_player_url = '';
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_fieldtype  text
-	 * @con_length     56
-	 * @con_is_notnull true
-	 */
-	protected $paella_player_live_option = self::PAELLA_OPTION_DEFAULT;
-	/**
-	 * @var string
-	 * @con_has_field  true
-	 * @con_fieldtype  text
-	 */
-	protected $paella_player_live_file_id = '';
-	/**
-	 * @var string
-	 * @con_has_field true
-	 * @con_fieldtype text
-	 */
-	protected $paella_player_live_url = '';
+
 
 	public function getObjId() : int
 	{

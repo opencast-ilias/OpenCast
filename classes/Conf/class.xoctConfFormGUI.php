@@ -1,7 +1,9 @@
 <?php
 
+use ILIAS\UI\Component\Input\Field\Input;
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
@@ -559,7 +561,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY . '_info'));
 		$this->addItem($cb);
 	}
-
 }
 
 ?>

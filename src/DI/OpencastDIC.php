@@ -38,6 +38,7 @@ use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
+use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
@@ -247,6 +248,14 @@ class OpencastDIC
         $this->container['paella_config_service_factory'] = $this->container->factory(function ($c) {
             return new PaellaConfigServiceFactory($c['paella_config_storage_service']);
         });
+        $this->container['paella_config_form_builder'] = $this->container->factory(function ($c) {
+            return new PaellaConfigFormBuilder(
+                $c['plugin'],
+                $c['paella_config_upload_handler'],
+                $c['paella_config_storage_service'],
+                $this->dic->ui()->factory()
+            );
+        });
     }
 
     public function series_repository(): SeriesRepository
@@ -342,6 +351,11 @@ class OpencastDIC
     public function paella_config_service_factory() : PaellaConfigServiceFactory
     {
         return $this->container['paella_config_service_factory'];
+    }
+
+    public function paella_config_form_builder() : PaellaConfigFormBuilder
+    {
+        return $this->container['paella_config_form_builder'];
     }
 
     public function overwriteService(string $service_identifier, $value) : void

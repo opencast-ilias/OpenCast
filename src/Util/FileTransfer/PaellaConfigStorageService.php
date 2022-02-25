@@ -19,22 +19,6 @@ class PaellaConfigStorageService extends UploadStorageService
     protected $dic;
 
     /**
-     * @param string $url
-     * @return string identifier
-     */
-    public function fetchFromUrlAndStore(string $url) : string
-    {
-        // only necessary if we want to cache the config for the 'url' option
-        $identifier = uniqid();
-        $content = file_get_contents($url);
-        if (json_decode($content) === null) {
-            // todo: invalid json
-        }
-        $this->fileSystem->write($this->idToDirPath($identifier) . DIRECTORY_SEPARATOR . 'config.json',
-            $content);
-    }
-
-    /**
      * @param UploadResult $uploadResult
      * @return string identifier
      */

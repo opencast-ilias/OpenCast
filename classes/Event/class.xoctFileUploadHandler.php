@@ -12,7 +12,7 @@ use ILIAS\FileUpload\Handler\HandlerResult;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 
 /**
- * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI, xoctSeriesGUI
+ * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI, xoctConfGUI
  */
 class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
 {
