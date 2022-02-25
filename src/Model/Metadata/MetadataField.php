@@ -76,15 +76,12 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
             case MDDataType::TYPE_TEXT_ARRAY:
-                return $this->getValue();
+            case MDDataType::TYPE_TIME:
+            return $this->getValue();
             case MDDataType::TYPE_DATETIME;
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d\TH:i:s\Z') : '';
-            case MDDataType::TYPE_TIME:
-                /** @var DateTimeImmutable|null $value */
-                $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('H:i:s\Z') : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
@@ -96,6 +93,7 @@ class MetadataField implements JsonSerializable
     {
         switch ($this->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
+            case MDDataType::TYPE_TIME:
             case MDDataType::TYPE_TEXT_LONG:
                 return $this->getValue();
             case MDDataType::TYPE_TEXT_ARRAY:
@@ -104,10 +102,6 @@ class MetadataField implements JsonSerializable
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y H:i:s') : '';
-            case MDDataType::TYPE_TIME:
-                /** @var DateTimeImmutable|null $value */
-                $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('H:i:s') : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();

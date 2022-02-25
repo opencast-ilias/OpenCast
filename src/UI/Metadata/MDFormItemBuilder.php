@@ -175,6 +175,12 @@ class MDFormItemBuilder
                 $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
                 break;
             case MDDataType::TYPE_TIME:
+                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
+                    ->withByline($this->plugin->txt('byline_timeformat'))
+                    ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
+                        return empty($vs) || preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/", $vs);
+                    }, $this->plugin->txt('msg_invalid_time_format')));
+                break;
             case MDDataType::TYPE_DATETIME:
                 $field = $this->ui_factory->input()->field()->dateTime($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))->withUseTime(true);
                 break;

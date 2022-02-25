@@ -88,6 +88,8 @@ class MDDataType
             case self::TYPE_TEXT_LONG:
                 return is_string($value);
             case self::TYPE_TIME:
+                return is_string($value) &&
+                    (empty($value) || preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/", $value));
             case self::TYPE_DATETIME:
             case self::TYPE_DATE:
                 return ($value instanceof DateTimeImmutable);

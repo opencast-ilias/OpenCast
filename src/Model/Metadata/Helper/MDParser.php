@@ -107,6 +107,7 @@ class MDParser
             case MDDataType::TYPE_DATETIME:
                 $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
+            case MDDataType::TYPE_TIME:
             case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
@@ -148,7 +149,7 @@ class MDParser
                 $field = new MetadataField($id, MDDataType::date());
                 /** @var DateTimeImmutable $value */
                 $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));
-                $time_field = $value ? $time_field->withValue($value) : $time_field;
+                $time_field = $value ? $time_field->withValue($value->format('H:i:s')) : $time_field;
                 $metadata->addField($time_field);
             } else {
                 $field = new MetadataField($id, $definition->getType());
