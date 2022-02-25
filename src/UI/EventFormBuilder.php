@@ -186,7 +186,10 @@ class EventFormBuilder
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $inputs
-        );
+        )->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
+            // this is a workaround for https://mantis.ilias.de/view.php?id=31645
+            return !is_null($vs['file']['file']);
+        }, $this->plugin->txt('msg_missing_file')));
     }
 
     public function update(string $form_action, Metadata $metadata, bool $as_admin): Form
