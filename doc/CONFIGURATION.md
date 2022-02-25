@@ -71,7 +71,12 @@ If active and a series contains one or multiple scheduled events, the toolbar wi
 ##### Metadata of scheduled events editable
 Defined whether scheduled events can be edited in ILIAS. 
 
-### Series
+### Player
+Define what config.json should be used for the plugin's Paella Player. You can chose from the default config ([located in the plugins code](../js/paella_player)),
+an uploaded file, or a remote URL.
+
+Note that there's a separate config for live streams and for Video on Demand, since they need different flags to be set in the config.
+
 ### Groups & Roles
 ##### ILIAS Producers
 This is a group which must exist in Opencast. Users with the permission 'Edit Videos' will be enlisted in this group when a series is created or when the user performs the actions 'cut' or 'annotate'. This should grant these users the permission to access the Opencast video editor and annotation tool, so this group should contain enough roles to enable these tools.
