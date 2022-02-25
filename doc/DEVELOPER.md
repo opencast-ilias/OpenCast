@@ -4,7 +4,7 @@
 Many components in the /src directory have a README to explain some concepts or the current state
 of the component. Start at the base [README](../src/README.md).
 
-## Configuraiton README
+## Configuration README
 A more detailed description of the whole plugin configuration: [README](./CONFIGURATION.md).
 
 ## Opencast Documentation
