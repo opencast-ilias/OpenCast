@@ -92,7 +92,7 @@ class MDConfigTable extends ilTable2GUI
     {
         $this->dic->ctrl()->setParameter($this->parent_obj, 'field_id', $a_set['field_id']);
         $actions = [
-            $this->dic->ui()->factory()->button()->shy($this->dic->language()->txt('update'),
+            $this->dic->ui()->factory()->button()->shy($this->dic->language()->txt('edit'),
                 $this->dic->ctrl()->getLinkTarget($this->parent, xoctGUI::CMD_EDIT))
         ];
         $delete_modal = $this->dic->ui()->factory()->modal()->interruptive(
