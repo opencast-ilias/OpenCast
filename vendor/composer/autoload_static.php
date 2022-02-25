@@ -259,7 +259,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationSelector.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\publicationMetadata' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Report\\Report' => __DIR__ . '/../..' . '/src/Model/Report/Report.php',
-        'srag\\Plugins\\Opencast\\Model\\Scheduling\\Processing' => __DIR__ . '/../..' . '/src/Model/Scheduling/Processing.php',
+        'srag\\Plugins\\Opencast\\Model\\Scheduling\\Processing' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Processing.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\RRule' => __DIR__ . '/../..' . '/src/Model/Scheduling/RRule.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/Scheduling/Scheduling.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingParser' => __DIR__ . '/../..' . '/src/Model/Scheduling/SchedulingParser.php',

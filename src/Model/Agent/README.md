@@ -13,4 +13,4 @@ used to schedule events via the Plugin.
 
 _Note that the agent-id becomes the metadata field 'location' after an event is recorded._
 
-Most common Capture Agent: https://github.com/opencast/pyCA
+Most common Capture Agent software: https://github.com/opencast/pyCA

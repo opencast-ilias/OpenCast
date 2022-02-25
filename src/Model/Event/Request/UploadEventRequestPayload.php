@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Event\Request;
 use CURLFile;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\Scheduling\Processing;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
 use xoctUploadFile;
 
 class UploadEventRequestPayload

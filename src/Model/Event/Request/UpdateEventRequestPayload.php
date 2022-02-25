@@ -5,8 +5,8 @@ namespace srag\Plugins\Opencast\Model\Event\Request;
 use JsonSerializable;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\Scheduling\Processing;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
 
 class UpdateEventRequestPayload implements JsonSerializable
 {

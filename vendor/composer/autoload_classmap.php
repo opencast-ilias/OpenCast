@@ -224,7 +224,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationSelector' => $baseDir . '/src/Model/Publication/PublicationSelector.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\publicationMetadata' => $baseDir . '/src/Model/Publication/PublicationMetadata.php',
     'srag\\Plugins\\Opencast\\Model\\Report\\Report' => $baseDir . '/src/Model/Report/Report.php',
-    'srag\\Plugins\\Opencast\\Model\\Scheduling\\Processing' => $baseDir . '/src/Model/Scheduling/Processing.php',
+    'srag\\Plugins\\Opencast\\Model\\Scheduling\\Processing' => $baseDir . '/src/Model/WorkflowParameter/Processing.php',
     'srag\\Plugins\\Opencast\\Model\\Scheduling\\RRule' => $baseDir . '/src/Model/Scheduling/RRule.php',
     'srag\\Plugins\\Opencast\\Model\\Scheduling\\Scheduling' => $baseDir . '/src/Model/Scheduling/Scheduling.php',
     'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingParser' => $baseDir . '/src/Model/Scheduling/SchedulingParser.php',
