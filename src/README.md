@@ -1,4 +1,4 @@
-# SRC
+# Component READMEs
 
 - [Dependency Injection](./DI/README.md)
 - [Model](./Model/README.md)
