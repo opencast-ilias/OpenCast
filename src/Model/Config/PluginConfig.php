@@ -99,13 +99,10 @@ class PluginConfig extends ActiveRecord
 
     const F_PAELLA_OPTION = 'paella_config_option';
     const F_PAELLA_OPTION_LIVE = 'paella_config_option_l';
-    const F_PAELLA_FILE_ID = 'paella_conf_fid';
-    const F_PAELLA_FILE_ID_LIVE = 'paella_conf_fid_l';
     const F_PAELLA_URL = 'paella_conf_url';
     const F_PAELLA_URL_LIVE = 'paella_conf_url_l';
 
     const PAELLA_OPTION_DEFAULT = 'default';
-    const PAELLA_OPTION_FILE = 'file';
     const PAELLA_OPTION_URL = 'url';
     const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
     const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';

@@ -53,11 +53,9 @@ class PaellaConfigFormBuilder
     {
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION),
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_FILE_ID) ?? '',
             PluginConfig::getConfig(PluginConfig::F_PAELLA_URL) ?? '');
         $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE),
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_FILE_ID_LIVE) ?? '',
             PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE) ?? '');
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
@@ -65,18 +63,12 @@ class PaellaConfigFormBuilder
         );
     }
 
-    private function getPaellaPlayerPathInput(bool $live, string $option, string $path, string $url): Input
+    private function getPaellaPlayerPathInput(bool $live, string $option, string $url): Input
     {
         $f = $this->ui_factory->input()->field();
         $live_s = $live ? '_live' : '';
         return $f->switchableGroup([
             PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
-            PluginConfig::PAELLA_OPTION_FILE => $f->group([
-                'file' => $f->file($this->fileUploadHandler, $this->plugin->txt('file')) // todo: set required when this is fixed: https://mantis.ilias.de/view.php?id=31645
-                ->withAcceptedMimeTypes(['application/json'])
-                    ->withByline($this->buildInlineDownload($path))
-                    ->withValue(($path && $this->paellaStorageService->exists($path)) ? [$path] : null)
-            ], $this->plugin->txt('pp_file')),
             PluginConfig::PAELLA_OPTION_URL => $f->group([
                 'url' => $f->text($this->plugin->txt('link'))
                     ->withByline($this->plugin->txt('pp_link_info'))

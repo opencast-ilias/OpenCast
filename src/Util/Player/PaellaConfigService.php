@@ -39,13 +39,6 @@ class PaellaConfigService
                         'warn' => true];
                 }
                 return ['url' => $url, 'info' => 'config fetched from url', 'warn' => false];
-            case PluginConfig::PAELLA_OPTION_FILE:
-                $path = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_FILE_ID_LIVE)
-                    : PluginConfig::getConfig(PluginConfig::F_PAELLA_FILE_ID);
-                // fallback to default if file doesn't exist
-                return ($path && $this->storageService->exists($path)) ?
-                    ['url' => $this->storageService->getWACSignedPath($path), 'info' => 'uploaded config used', 'warn' => false]
-                    : ['url' => $default_path, 'info' => 'uploaded config not found, fallback to default config', 'warn' => true];
             case PluginConfig::PAELLA_OPTION_DEFAULT:
             default:
                 return ['url' => $default_path, 'info' => 'default config used', 'warn' => false];

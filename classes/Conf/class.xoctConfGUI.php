@@ -118,10 +118,6 @@ class xoctConfGUI extends xoctGUI
             PluginConfig::set(PluginConfig::F_PAELLA_OPTION, $paella_player_option);
             if ($paella_player_option === PluginConfig::PAELLA_OPTION_URL) {
                 PluginConfig::set(PluginConfig::F_PAELLA_URL, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][1]['url']);
-            } else if ($paella_player_option === PluginConfig::PAELLA_OPTION_FILE) {
-                if ($file_id = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][1]['file'][0]) {
-                    PluginConfig::set(PluginConfig::F_PAELLA_FILE_ID, $file_id);
-                }
             }
         }
         if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION])) {
@@ -129,10 +125,6 @@ class xoctConfGUI extends xoctGUI
             PluginConfig::set(PluginConfig::F_PAELLA_OPTION_LIVE, $paella_player_option);
             if ($paella_player_option === PluginConfig::PAELLA_OPTION_URL) {
                 PluginConfig::set(PluginConfig::F_PAELLA_URL_LIVE, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['url']);
-            } else if ($paella_player_option === PluginConfig::PAELLA_OPTION_FILE) {
-                if ($file_id = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['file'][0]) {
-                    PluginConfig::set(PluginConfig::F_PAELLA_FILE_ID_LIVE, $file_id);
-                }
             }
         }
 
