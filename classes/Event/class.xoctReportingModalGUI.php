@@ -1,5 +1,8 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 /**
  * Class xoctReportingFormGUI
  *
@@ -24,7 +27,7 @@ class xoctReportingModalGUI extends ilModalGUI {
         $this->parent_gui = $parent_gui;
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        self::dic()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
 		$send_button->setCaption('send');
@@ -41,13 +44,13 @@ class xoctReportingModalGUI extends ilModalGUI {
 			case self::REPORTING_TYPE_DATE:
 				$this->setId('xoct_report_date_modal');
 				$this->setHeading(self::plugin()->translate('event_report_date_modification'));
-				$this->setBody(nl2br(xoctConf::getConfig(xoctConf::F_REPORT_DATE_TEXT)));
+				$this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
 				$send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
 				break;
 			case self::REPORTING_TYPE_QUALITY:
 				$this->setId('xoct_report_quality_modal');
 				$this->setHeading(self::plugin()->translate('event_report_quality_problem'));
-				$this->setBody(nl2br(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_TEXT)));
+				$this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
 				$send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
 				break;
 		}

@@ -1,5 +1,7 @@
 <?php
 
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 /**
  * Class xoctSecureLink
  *
@@ -56,9 +58,9 @@ class xoctSecureLink {
 	 * @throws xoctException
 	 */
 	public static function signThumbnail($url) {
-		$duration = xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME);
+		$duration = PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_TIME);
 		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
-		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
+		return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
 	}
 
 
@@ -69,9 +71,9 @@ class xoctSecureLink {
 	 * @throws xoctException
 	 */
 	public static function signAnnotation($url) {
-		$duration = xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS_TIME);
+		$duration = PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_TIME);
 		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
-		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_ANNOTATION_LINKS_WITH_IP));
+		return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP));
 	}
 
 
@@ -85,12 +87,12 @@ class xoctSecureLink {
 	 */
 	public static function signPlayer($url, $duration = 0) {
 		$valid_until = null;
-		if (xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT) && $duration > 0) {
+		if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT) && $duration > 0) {
 			$duration_in_seconds = $duration / 1000;
-			$additional_time_percent = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
+			$additional_time_percent = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
 			$valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
 		}
-		return self::sign($url, $valid_until, xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS_WITH_IP));
+		return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP));
 	}
 
 
@@ -101,7 +103,7 @@ class xoctSecureLink {
 	 * @throws xoctException
 	 */
 	public static function signDownload($url) {
-		$duration = xoctConf::getConfig(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME);
+		$duration = PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS_TIME);
 		$valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
 		return self::sign($url, $valid_until);
 	}

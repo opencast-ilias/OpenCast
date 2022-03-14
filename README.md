@@ -13,7 +13,7 @@ Use Opencast in ILIAS LMS with a wide variety of features:
 ## Getting Started
 
 ### Requirements
-* ILIAS 5.4.x / 6.x / 7.x
+* ILIAS 6.x / 7.x
 
 ### Installation
 Start at your ILIAS root directory

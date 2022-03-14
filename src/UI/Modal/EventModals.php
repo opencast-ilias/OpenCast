@@ -12,16 +12,11 @@ use ilPropertyFormGUI;
 use ilSelectInputGUI;
 use ilTemplate;
 use ilTemplateException;
-use ilTextAreaInputGUI;
-use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
-use xoctConf;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
 /**
- * Class EventModals
- *
- * @package srag\Plugins\Opencast\UI\Modal
- *
- * @author  Theodor Truffer <tt@studer-raimann.ch>
+ * Responsible for building modals.
  */
 class EventModals
 {
@@ -52,15 +47,6 @@ class EventModals
      */
     private $plugin;
 
-
-    /**
-     * EventModals constructor.
-     *
-     * @param                    $parent_gui
-     * @param ilOpenCastPlugin   $plugin
-     * @param Container          $dic
-     * @param WorkflowRepository $workflow_repository
-     */
     public function __construct($parent_gui, ilOpenCastPlugin $plugin, Container $dic, WorkflowRepository $workflow_repository)
     {
         $this->parent_gui = $parent_gui;
@@ -72,14 +58,13 @@ class EventModals
 
     public function initRepublish()
     {
-        $workflow_repository = new WorkflowRepository();
-        if ($workflow_repository->anyWorkflowExists()) {
+        if ($this->workflow_repository->anyWorkflowExists()) {
             $form = new ilPropertyFormGUI();
             $form->setFormAction($this->dic->ctrl()->getFormAction($this->parent_gui, "republish"));
             $form->setId(uniqid('form'));
 
             $select = new ilSelectInputGUI($this->plugin->txt('workflow'), 'workflow_id');
-            $select->setOptions($workflow_repository->getAllWorkflowsAsArray('id', 'title'));
+            $select->setOptions($this->workflow_repository->getAllWorkflowsAsArray('id', 'title'));
             $form->addItem($select);
 
             $hidden = new ilHiddenInputGUI('republish_event_id');
@@ -112,7 +97,7 @@ class EventModals
         $this->setReportDateModal($this->buildReportingModal(
             'reportDate',
             $this->plugin->txt('event_report_date_modification'),
-            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_DATE_TEXT))
+            nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT))
         ));
     }
 
@@ -125,7 +110,7 @@ class EventModals
         $this->setReportQualityModal($this->buildReportingModal(
             "reportQuality",
             $this->plugin->txt('event_report_quality_problem'),
-            nl2br(xoctConf::getConfig(xoctConf::F_REPORT_QUALITY_TEXT))
+            nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT))
         ));
     }
 

@@ -24,10 +24,11 @@ var QueryUtils = {
 		this.con.query = util.promisify(this.con.query);
 	},
 
-	writeChatServerConfig: async function (ip, port, protocol) {
+	writeChatServerConfig: async function (ip, port, protocol, host) {
 		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("ip", "' + ip + '") ON DUPLICATE KEY UPDATE value = "' + ip + '"');
 		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("port", "' + port + '") ON DUPLICATE KEY UPDATE value = "' + port + '"');
 		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("protocol", "' + protocol + '") ON DUPLICATE KEY UPDATE value = "' + protocol + '"');
+		await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("host", "' + host + '") ON DUPLICATE KEY UPDATE value = "' + host + '"');
 	},
 
 	getOldMessages: async function (chat_room_id) {

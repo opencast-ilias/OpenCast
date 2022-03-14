@@ -4,6 +4,8 @@ xoctPaellaPlayer = {
     
     config: {
         paella_config_file: '',
+        paella_config_info: '',
+        paella_config_is_warning: false,
         paella_player_folder: '',
         is_live_stream: false,
         event_start: 0,
@@ -20,6 +22,12 @@ xoctPaellaPlayer = {
     init: function(data, config) {
         // workaround for paella issue https://github.com/polimediaupv/paella/issues/661
         paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/';
+
+        if (config.paella_config_is_warning) {
+            console.warn(config.paella_config_info);
+        } else {
+            console.log(config.paella_config_info);
+        }
 
         this.data = data;
         this.config = config;

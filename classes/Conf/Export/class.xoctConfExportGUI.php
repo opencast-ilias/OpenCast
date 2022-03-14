@@ -1,6 +1,6 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class xoctConfExportGUI
@@ -32,7 +32,7 @@ class xoctConfExportGUI extends xoctGUI {
 	 *
 	 */
 	protected function import() {
-		xoctConf::importFromXML($_FILES['xoct_import']['tmp_name']);
+		PluginConfig::importFromXML($_FILES['xoct_import']['tmp_name']);
 		$this->cancel();
 	}
 
@@ -42,7 +42,7 @@ class xoctConfExportGUI extends xoctGUI {
 	protected function export() {
 		// ob_end_clean();
 		header('Content-Disposition: attachment; filename="opencastexport.xml"');
-		echo xoctConf::getXMLExport();exit;
+		echo PluginConfig::getXMLExport();exit;
 	}
 
 

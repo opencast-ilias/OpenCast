@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
-use xoctConf;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctRequest;
 
 /**
@@ -18,7 +18,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         $episode_json = xoctRequest::root()->episodeJson($this->event->getIdentifier())->get(
             [],
             '',
-            xoctConf::getConfig(xoctConf::F_PRESENTATION_NODE)
+            PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
         );
 
         $episode_data = json_decode($episode_json, true);

@@ -1,6 +1,7 @@
 <?php
 
-use \srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
+use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class xoctWorkflowParametersFormGUI
@@ -30,23 +31,18 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 
 	}
 
-
-	/**
-	 *
-	 */
-	protected function initCommands() {
+	protected function initCommands() : void
+    {
 		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
 	}
 
 
-	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
-	 */
-	protected function initFields() {
-		$this->fields[xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-			self::PROPERTY_TITLE => self::plugin()->translate(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
+	protected function initFields() : void
+    {
+		$this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
+			self::PROPERTY_TITLE => self::plugin()->translate(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
 			self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-			self::PROPERTY_VALUE => (bool) xoctConf::getConfig(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
+			self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
 			self::PROPERTY_SUBITEMS => [
 				self::F_OVERWRITE_SERIES_PARAMS => [
 					self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
@@ -61,14 +57,16 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	/**
 	 *
 	 */
-	protected function initId() {
+	protected function initId() : void
+    {
 	}
 
 
 	/**
 	 *
 	 */
-	protected function initTitle() {
+	protected function initTitle() : void
+    {
 		$this->setTitle(self::plugin()->translate('settings', 'tab'));
 	}
 
@@ -77,10 +75,11 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 	 * @param string $key
 	 * @param mixed  $value
 	 */
-	protected function storeValue(string $key, $value) {
+	protected function storeValue(string $key, $value) : void
+    {
 		switch ($key) {
-			case xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
-				xoctConf::set(xoctConf::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
+			case PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
+				PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
 				break;
 			case self::F_OVERWRITE_SERIES_PARAMS:
 				if ($value == true) {

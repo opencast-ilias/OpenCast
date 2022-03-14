@@ -8,5 +8,8 @@
 #xoct_invite_all {
     margin-top: 10px;
     margin-left: 2px;
+}
 
+.xoct_preview_image {
+    max-width: 100%;
 }

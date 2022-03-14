@@ -1,7 +1,24 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Config\PublicationUsage\PublicationUsage;
-use srag\Plugins\Opencast\Model\Config\Workflow\Workflow;
+use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Model\TermsOfUse\AcceptedToU;
+use srag\Plugins\Opencast\Model\UserSettings\UserSetting;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -15,11 +32,16 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 
+	const PLUGIN_CLASS_NAME = self::class;
+
+	use DataTableUITrait;
+	use DICTrait;
+
 	const PLUGIN_ID = 'xoct';
 	const PLUGIN_NAME = 'OpenCast';
-	/**
-	 * @var ilDB
-	 */
+    /**
+     * @var ilDBInterface
+     */
 	protected $db;
 
 
@@ -29,8 +51,8 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	public function __construct() {
 		parent::__construct();
 
-		global $ilDB;
-		$this->db = $ilDB;
+		global $DIC;
+		$this->db = $DIC->database();
 	}
 
 	/**
@@ -38,8 +60,8 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 */
 	protected function afterUpdate()
 	{
-		if (xoctConf::count() == 0) {
-			xoctConf::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
+		if (PluginConfig::count() == 0) {
+			PluginConfig::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
 		}
 	}
 
@@ -47,17 +69,23 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 * @return bool
 	 */
 	protected function uninstallCustom() {
-		$this->db->dropTable(xoctInvitation::TABLE_NAME, false);
-		$this->db->dropTable(xoctIVTGroupParticipant::TABLE_NAME, false);
-		$this->db->dropTable(xoctIVTGroup::TABLE_NAME, false);
-		$this->db->dropTable(xoctOpenCast::TABLE_NAME, false);
-		$this->db->dropTable(xoctEventAdditions::TABLE_NAME, false);
-		$this->db->dropTable(xoctPermissionTemplate::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGrant::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
+		$this->db->dropTable(PermissionGroup::TABLE_NAME, false);
+		$this->db->dropTable(ObjectSettings::TABLE_NAME, false);
+		$this->db->dropTable(EventAdditionsAR::TABLE_NAME, false);
+		$this->db->dropTable(PermissionTemplate::TABLE_NAME, false);
 		$this->db->dropTable(PublicationUsage::TABLE_NAME, false);
-		$this->db->dropTable(xoctSystemAccount::TABLE_NAME, false);
-		$this->db->dropTable(xoctConf::TABLE_NAME, false);
-		$this->db->dropTable(xoctReport::DB_TABLE, false);
-		$this->db->dropTable(Workflow::TABLE_NAME, false);
+		$this->db->dropTable(PluginConfig::TABLE_NAME, false);
+		$this->db->dropTable(Report::DB_TABLE, false);
+		$this->db->dropTable(WorkflowAR::TABLE_NAME, false);
+		$this->db->dropTable(WorkflowParameter::TABLE_NAME, false);
+		$this->db->dropTable(SeriesWorkflowParameter::TABLE_NAME, false);
+		$this->db->dropTable(MDFieldConfigEventAR::TABLE_NAME, false);
+		$this->db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
+		$this->db->dropTable(UserSetting::TABLE_NAME, false);
+		$this->db->dropTable(AcceptedToU::TABLE_NAME, false);
+		$this->db->dropTable(DBCacheAR::TABLE_NAME, false);
 
 		return true;
 	}
@@ -74,7 +102,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	 */
 	public static function getInstance() {
 		if (!isset(self::$cache)) {
-			//require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/sql/dbupdate.php');
 			self::$cache = new self();
 		}
 
@@ -93,6 +120,11 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	{
 		return true;
 	}
-}
 
-?>
+	public function updateLanguages($a_lang_keys = null)
+	{
+		parent::updateLanguages($a_lang_keys);
+		self::dataTableUI()->installLanguages(self::plugin());
+	}
+
+}

@@ -83,6 +83,14 @@
       <value><![CDATA[1]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>accept_terms</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>common_idp</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>licenses</name>
       <value><![CDATA[http://creativecommons.org/licenses/by/2.5/ch/#CC: Attribution
 http://creativecommons.org/licenses/by-nc/2.5/ch/#CC: Attribution-Noncommercial
@@ -136,8 +144,12 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[<p>Haben Sie Qualitätsprobleme mit dem Bild oder Ton Ihrer Aufzeichnungen oder Videos? Sie können den Support über das untenstehende Formular kontaktieren.<br /><br />Nennen Sie die betroffenen Videos und die Art der Qualitätsprobleme. Der Support nimmt so bald wie möglich Kontakt mit Ihnen auf.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>request_comb_lv</name>
-      <value><![CDATA[3]]></value>
+      <name>paella_config_option</name>
+      <value><![CDATA[default]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>paella_config_option_l</name>
+      <value><![CDATA[default]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>role_anonymous</name>

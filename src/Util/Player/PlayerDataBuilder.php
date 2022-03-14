@@ -2,14 +2,8 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
-use xoctEvent;
+use srag\Plugins\Opencast\Model\Event\Event;
 use xoctException;
-use xoctAttachment;
-use xoctConf;
-use Metadata;
-use DateTime;
-use DateTimeZone;
-use xoctSecureLink;
 
 /**
  * Class StreamingDataBuilder
@@ -22,15 +16,15 @@ abstract class PlayerDataBuilder
     const ROLE_SLAVE = "presentation";
 
     /**
-     * @var xoctEvent
+     * @var Event
      */
     protected $event;
 
     /**
      * PlayerDataBuilder constructor.
-     * @param xoctEvent $event
+     * @param Event $event
      */
-    public function __construct(xoctEvent $event)
+    public function __construct(Event $event)
     {
         $this->event = $event;
     }

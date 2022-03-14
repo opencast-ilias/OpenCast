@@ -1,30 +1,67 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
-use srag\Plugins\Opencast\Model\API\Event\EventRepository;
+use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\ACL\ACLUtils;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
+use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequestPayload;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
+use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 
 /**
  * Class xoctEventAPI
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctEventAPI {
+class xoctEventAPI
+{
 
-	/**
-	 * @var self
-	 */
-	protected static $instance;
+    /**
+     * @var self
+     */
+    protected static $instance;
+    /**
+     * @var EventAPIRepository
+     */
+    private $event_repository;
+    /**
+     * @var MetadataFactory
+     */
+    private $md_factory;
+    /**
+     * @var ACLUtils
+     */
+    private $acl_utils;
+    /**
+     * @var SeriesWorkflowParameterRepository
+     */
+    private $workflow_param_repository;
+
+    public function __construct()
+    {
+        $opencastDIC = OpencastDIC::getInstance();
+        $this->event_repository = $opencastDIC->event_repository();
+        $this->md_factory = $opencastDIC->metadata()->metadataFactory();
+        $this->acl_utils = $opencastDIC->acl_utils();
+        $this->workflow_param_repository = $opencastDIC->workflow_parameter_series_repository();
+    }
 
 
-	/**
-	 * @return xoctEventAPI
-	 */
-	public static function getInstance() {
-		if (!self::$instance) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+    public static function getInstance() : self
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
 
     /**
@@ -36,97 +73,133 @@ class xoctEventAPI {
      *
      * @param String $series_id
      * @param String $title
-     * @param        $start
-     * @param        $end
+     * @param String|DateTime $start
+     * @param String|DateTime $end
      * @param String $location
-     * @param array  $additional_data
+     * @param array $additional_data
      *
-     * @return xoctEvent
-     * @throws ilTimeZoneException
+     * @return Event
+     * @throws xoctException
      */
-	public function create($series_id, $title, $start, $end, $location, $additional_data = array()) {
-		$event = new xoctEvent();
-		$event->setSeriesIdentifier($series_id);
-		$event->setTitle($title);
-		$event->setStart($start instanceof DateTime ? $start : new DateTime($start));
-		$event->setEnd($end instanceof DateTime ? $end : new DateTime($end));
-		$event->setLocation($location);
-		$event->setDescription(isset($additional_data['description']) ? $additional_data['description'] : '');
-		$event->setPresenter(isset($additional_data['presenters']) ? $additional_data['presenters'] : '');
-		$event->addDefaultWorkflowParameters();
-		if (is_array($additional_data['workflow_parameters'])) {
-            foreach ($additional_data['workflow_parameters'] as $param_id => $value) {
-                $event->setWorkflowParameter($param_id, $value);
-		    }
+    public function create(string $series_id,
+                           string $title,
+                                  $start,
+                                  $end,
+                           string $location,
+                           array  $additional_data = array()
+    ): Event
+    {
+        $metadata = $this->md_factory->event();
+        $metadata->getField(MDFieldDefinition::F_IS_PART_OF)->setValue($series_id);
+        $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($title);
+        $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->setValue(
+            $additional_data['description'] ?? '');
+        $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue(
+            isset($additional_data['presenters']) ? explode(',', $additional_data['presenters']) : []);
+
+        $scheduling = new Scheduling(
+            $location,
+            $start instanceof DateTime ? DateTimeImmutable::createFromMutable($start) : new DateTimeImmutable($start),
+            $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end) : new DateTimeImmutable($end),
+        );
+
+
+        $workflow_parameters = $this->workflow_param_repository->getGeneralAutomaticallySetParameters();
+        if (is_array($additional_data['workflow_parameters'])) {
+            $workflow_parameters = $workflow_parameters + $additional_data['workflow_parameters'];
         }
+        $workflow_parameters = array_map(function ($value) {
+            return $value == 1 ? 'true' : 'false';
+        }, $workflow_parameters);
+        $processing = new Processing(
+            PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
+            (object)$workflow_parameters);
 
-		$std_acls = new xoctAclStandardSets();
-		$event->setAcl($std_acls->getAcls());
+        $acl = $this->acl_utils->getStandardRolesACL();
 
-		$event->schedule('', true);
-		return $event;
-	}
+        $this->event_repository->schedule(new ScheduleEventRequest(
+            new ScheduleEventRequestPayload(
+                $metadata->withoutEmptyFields(), $acl, $scheduling, $processing)
+        ));
 
-	/**
-	 * @param $event_id
-	 *
-	 * @return xoctEvent
-	 */
-	public function read($event_id) {
-		$event = new xoctEvent($event_id);
-		return $event;
-	}
+        $event = new Event();
+        $event->setMetadata($metadata);
+        $event->setAcl($acl);
+        $event->setScheduling($scheduling);
+        return $event;
+    }
 
-
-	/**
-	 * possible data:
-	 *
-	 *  title => text
-	 *  start => date
-	 *  end => date
-	 *  location => text
-	 *  description => text
-	 *  presenters => text
-	 *
-	 * @param String $event_id
-	 * @param array $data
-	 *
-	 * @return xoctEvent
-	 */
-	public function update($event_id, $data) {
-		$event = new xoctEvent($event_id);
-
-		// field 'online' is stored in ILIAS, not in Opencast
-		if (isset($data['online'])) {
-			$event->getXoctEventAdditions()->setIsOnline($data['online']);
-			$event->getXoctEventAdditions()->update();
-			unset($data['online']);
-		}
-
-		foreach ($data as $title => $value) {
-			$setter = 'set'.$title;
-			$event->$setter($value);
-		}
-
-		if (count($data)) { // this prevents an update, if only 'online' has changed
-			$event->update();
-		}
-
-		return $event;
-	}
+    public function read(string $event_id): Event
+    {
+        return $this->event_repository->find($event_id);
+    }
 
 
     /**
-     * @param $event_id
+     * possible data:
      *
-     * @return bool
-     * @throws xoctException
+     *  title => text
+     *  start => date
+     *  end => date
+     *  location => text
+     *  description => text
+     *  presenters => text
+     *  online => bool
+     *
+     * @param String $event_id
+     * @param array $data
+     *
+     * @return Event
      */
-	public function delete($event_id) {
-		$event = new xoctEvent($event_id);
-		$event->delete();
-		return true;
-	}
+    public function update(string $event_id, array $data): Event
+    {
+        $event = $this->event_repository->find($event_id);
+
+        // field 'online' is stored in ILIAS, not in Opencast
+        if (isset($data['online'])) {
+            $event->getXoctEventAdditions()->setIsOnline($data['online']);
+            $event->getXoctEventAdditions()->update();
+            unset($data['online']);
+        }
+
+        $metadata = $this->md_factory->event()->withoutEmptyFields();
+        $scheduling = $event->getScheduling();
+        foreach ($data as $title => $value) {
+            if (in_array($title, ['title', 'description', 'presenters'])) {
+                // presenters is actually an MD field called creator. this is a workaround to not break compatability
+                if ($title === 'presenters') {
+                    $title = MDFieldDefinition::F_CREATOR;
+                    $value = explode(',', $value);
+                }
+                $metadataField = $event->getMetadata()->getField($title);
+                $metadataField->setValue($value);
+                $metadata->addField($metadataField);
+            } elseif ($title === 'start') {
+                $scheduling->setStart(new DateTimeImmutable($data['start']));
+            } elseif ($title === 'end') {
+                $scheduling->setEnd(new DateTimeImmutable($data['end']));
+            } elseif ($title === 'location') {
+                $scheduling->setAgentId($data['location']);
+            }
+        }
+
+        if (count($data)) { // this prevents an update, if only 'online' has changed
+            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload(
+                $metadata,
+                null,
+                $scheduling
+            )));
+        }
+
+        return $event;
+    }
+
+
+    public function delete($event_id) : bool
+    {
+        $this->event_repository->delete($event_id);
+        return true;
+    }
 
 
     /**
@@ -135,9 +208,9 @@ class xoctEventAPI {
      * @return array
      * @throws xoctException
      */
-    public function filter(array $filter){
-        global $DIC;
-        return (new EventRepository($DIC))->getFiltered($filter);
+    public function filter(array $filter) : array
+    {
+        return $this->event_repository->getFiltered($filter);
     }
 
 }

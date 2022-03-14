@@ -1,5 +1,13 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+
 /**
  * Class ilObjOpenCast
  *
@@ -35,35 +43,19 @@ class ilObjOpenCast extends ilObjectPlugin {
 	public function doCreate() {
 	}
 
-	/**
-	 * @throws xoctException
-	 */
-	public function updateObjectFromSeries()
+	public function updateObjectFromSeries(Metadata $metadata)
 	{
-		xoctConf::setApiSettings();
-		/**
-		 * @var $xoctOpenCast xoctOpenCast
-		 */
-		$xoctOpenCast = xoctOpenCast::find($this->getId());
+		PluginConfig::setApiSettings();
 		if (self::dic()->ctrl()->isAsynch()) {
 			// don't update title/description on async calls
 			return;
 		}
 
-		// catch exception: the series may already be deleted in opencast (404 exception)
-		try {
-			$series = $xoctOpenCast->getSeries();
-		} catch (xoctException $e) {
-		    xoctLog::getInstance()->write($e->getMessage());
-			if (ilContext::hasHTML()) {
-				ilUtil::sendInfo($e->getMessage(), true);
-			}
-			return;
-		}
-
-		if ($series->getTitle() != $this->getTitle() || $series->getDescription() != $this->getDescription()) {
-			$this->setTitle($series->getTitle());
-			$this->setDescription($series->getDescription());
+		$title = $metadata->getField(MDFieldDefinition::F_TITLE)->getValue();
+		$description = $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue();
+		if ($title != $this->getTitle() || $description != $this->getDescription()) {
+			$this->setTitle($title);
+			$this->setDescription($description);
 			$this->update();
 		}
 	}
@@ -74,7 +66,17 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	public function doDelete() {
-		xoctOpenCast::find($this->getId())->delete();
+		$opencast_dic = OpencastDIC::getInstance();
+		/** @var ObjectSettings $objectSettings */
+		$objectSettings = ObjectSettings::find($this->getId());
+		if ($objectSettings) {
+			$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerFileId());
+			$opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLiveFileId());
+			$objectSettings->delete();
+		}
+		foreach (PermissionGroup::where(array('serie_id' => $this->getId()))->get() as $ivt_group) {
+			$ivt_group->delete();
+		}
 	}
 
 
@@ -86,26 +88,25 @@ class ilObjOpenCast extends ilObjectPlugin {
 	 * @return bool|void
 	 */
 	protected function doCloneObject($new_obj, $a_target_id, $a_copy_id = NULL) {
-		xoctConf::setApiSettings();
+		PluginConfig::setApiSettings();
 		/**
-		 * @var $xoctOpenCastNew xoctOpenCast
-		 * @var $xoctOpenCastOld xoctOpenCast
+		 * @var $objectSettingsNew ObjectSettings
+		 * @var $objectSettingsOld ObjectSettings
 		 */
-		require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/class.xoctOpenCast.php');
-		$xoctOpenCastNew = new xoctOpenCast();
-		$xoctOpenCastNew->setObjId($new_obj->getId());
-		$xoctOpenCastOld = xoctOpenCast::find($this->getId());
+		$objectSettingsNew = new ObjectSettings();
+		$objectSettingsNew->setObjId($new_obj->getId());
+		$objectSettingsOld = ObjectSettings::find($this->getId());
 
-		$xoctOpenCastNew->setSeriesIdentifier($xoctOpenCastOld->getSeriesIdentifier());
-		$xoctOpenCastNew->setIntroductionText($xoctOpenCastOld->getIntroductionText());
-		$xoctOpenCastNew->setAgreementAccepted($xoctOpenCastOld->getAgreementAccepted());
-		$xoctOpenCastNew->setOnline(false);
-		$xoctOpenCastNew->setPermissionAllowSetOwn($xoctOpenCastOld->getPermissionAllowSetOwn());
-		$xoctOpenCastNew->setStreamingOnly($xoctOpenCastOld->getStreamingOnly());
-		$xoctOpenCastNew->setUseAnnotations($xoctOpenCastOld->getUseAnnotations());
-		$xoctOpenCastNew->setPermissionPerClip($xoctOpenCastOld->getPermissionPerClip());
+		$objectSettingsNew->setSeriesIdentifier($objectSettingsOld->getSeriesIdentifier());
+		$objectSettingsNew->setIntroductionText($objectSettingsOld->getIntroductionText());
+		$objectSettingsNew->setAgreementAccepted($objectSettingsOld->getAgreementAccepted());
+		$objectSettingsNew->setOnline(false);
+		$objectSettingsNew->setPermissionAllowSetOwn($objectSettingsOld->getPermissionAllowSetOwn());
+		$objectSettingsNew->setStreamingOnly($objectSettingsOld->getStreamingOnly());
+		$objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
+		$objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
 
-		$xoctOpenCastNew->create();
+		$objectSettingsNew->create();
 	}
 
 	public function getParentCourseOrGroup() {
@@ -113,6 +114,8 @@ class ilObjOpenCast extends ilObjectPlugin {
 	}
 
 	/**
+	 * TODO: weird static method - think about where this belongs
+	 *
 	 * @param $ref_id
 	 *
 	 * @return bool|ilObjCourse|ilObjGroup
@@ -135,7 +138,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 				$crs_or_grp_object[$ref_id] = false;
 				return $crs_or_grp_object[$ref_id];
 			}
-			$ref_id = self::dic()->tree()->getParentId($ref_id);
+			$ref_id = self::dic()->repositoryTree()->getParentId($ref_id);
 		}
 
 		$crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
@@ -148,13 +151,13 @@ class ilObjOpenCast extends ilObjectPlugin {
     public static function _getCourseOrGroupRole() {
 		$crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
 
-		if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
+		if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';
         }
-        if (self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
+        if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
 			return $crs_or_group instanceof ilObjCourse ? 'Kursmitglied' : 'Gruppenmitglied';
         }
-        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbacreview()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
+        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
 			return 'Kurstutor';
         }
 

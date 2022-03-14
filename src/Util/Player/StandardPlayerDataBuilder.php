@@ -2,16 +2,16 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
-use xoctMedia;
-use xoctException;
-use xoctConf;
-use xoctPublicationMetadata;
-use xoctSecureLink;
-use xoctEvent;
-use xoctAttachment;
-use Metadata;
 use DateTime;
 use DateTimeZone;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\Model\Publication\Attachment;
+use srag\Plugins\Opencast\Model\Publication\Media;
+use srag\Plugins\Opencast\Model\Publication\publicationMetadata;
+use xoctException;
+use xoctSecureLink;
 
 /**
  * Class DefaultPlayerDataBuilder
@@ -27,8 +27,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     ];
 
     private static $role_mapping = [
-        xoctPublicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
-        xoctPublicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
+        publicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
+        publicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
     ];
 
     /**
@@ -37,7 +37,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      */
     public function buildStreamingData() : array
     {
-        $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (xoctMedia $medium) {
+        $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium) {
             return in_array($medium->getMediatype(), array_keys(self::$mimetype_mapping));
         }));
 
@@ -61,7 +61,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param xoctMedia[] $media
+     * @param Media[] $media
      * @return array
      * @throws xoctException
      */
@@ -70,8 +70,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         $duration = 0;
         $streams = [];
         $sources = [
-            xoctPublicationMetadata::ROLE_PRESENTER => [],
-            xoctPublicationMetadata::ROLE_PRESENTATION => []
+            publicationMetadata::ROLE_PRESENTER => [],
+            publicationMetadata::ROLE_PRESENTATION => []
         ];
 
         foreach ($media as $medium) {
@@ -103,7 +103,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      */
     private function buildSource($medium, int $duration) : array
     {
-        $url = xoctConf::getConfig(xoctConf::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::signPlayer($medium->getUrl(),
+        $url = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::signPlayer($medium->getUrl(),
             $duration) : $medium->getUrl();
         return [
             "src" => $url,
@@ -116,17 +116,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param xoctEvent $xoctEvent
+     * @param Event $event
      *
      * @return array
      * @throws xoctException
      */
-    protected function buildSegments(xoctEvent $xoctEvent) : array
+    protected function buildSegments(Event $event) : array
     {
         $frameList = [];
-        $segments = $xoctEvent->publications()->getSegmentPublications();
+        $segments = $event->publications()->getSegmentPublications();
         if (count($segments) > 0) {
-            $segments = array_reduce($segments, function (array &$segments, xoctAttachment $segment) {
+            $segments = array_reduce($segments, function (array &$segments, Attachment $segment) {
                 if (!isset($segments[$segment->getRef()])) {
                     $segments[$segment->getRef()] = [];
                 }
@@ -138,9 +138,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             ksort($segments);
             $frameList = array_values(array_map(function (array $segment) {
 
-                if (xoctConf::getConfig(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
+                if (PluginConfig::getConfig(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
                     /**
-                     * @var xoctAttachment[] $segment
+                     * @var Attachment[] $segment
                      */
                     $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
                     $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
@@ -155,7 +155,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
                     $high_url = $high->getUrl();
                     $low_url = $low->getUrl();
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+                    if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
                         $high_url = xoctSecureLink::signThumbnail($high_url);
                         $low_url = xoctSecureLink::signThumbnail($low_url);
                     }
@@ -179,7 +179,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                     $time = $time->getTimestamp();
 
                     $url = $preview->getUrl();
-                    if (xoctConf::getConfig(xoctConf::F_SIGN_THUMBNAIL_LINKS)) {
+                    if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
                         $url = xoctSecureLink::signThumbnail($url);
                     }
 

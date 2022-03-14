@@ -1,4 +1,7 @@
 <?php
+
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 /**
  * Class xoctRequest
  *
@@ -166,7 +169,7 @@ class xoctRequest {
     protected function __construct()
     {
         if (!self::$base) {
-            xoctConf::setApiSettings();
+            PluginConfig::setApiSettings();
         }
     }
 
@@ -289,6 +292,7 @@ class xoctRequest {
 		$this->checkBranch(array( self::BRANCH_SERIES ));
 		$this->branch = self::BRANCH_SERIES;
 		$this->addPart('series');
+//        $this->parameter('withacl', true);
 		if ($series_id) {
 			$this->addPart($series_id);
 		}

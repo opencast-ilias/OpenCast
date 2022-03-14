@@ -66,7 +66,7 @@ class ChatHistoryGUI {
 
 		$chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
 		if (!$async) {
-            self::dic()->mainTemplate()->addCss($chat_css_path);
+            self::dic()->ui()->mainTemplate()->addCss($chat_css_path);
         } else {
 		    $template->setCurrentBlock('css');
 		    $template->setVariable('CSS_PATH', $chat_css_path);

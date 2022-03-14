@@ -2,6 +2,7 @@
 
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\Plugins\Opencast\Model\Report\Report;
 
 /**
  * Class xoctReportOverviewTableGUI
@@ -47,7 +48,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 * @throws \srag\DIC\OpenCast\Exception\DICException
 	 */
-	protected function initColumns() {
+	protected function initColumns() : void {
         $this->addColumn('', '', '', true);
 	    $this->addColumn(self::dic()->language()->txt('message'));
 	    $this->addColumn(self::plugin()->translate('sender'), 'sender');
@@ -58,7 +59,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 * @throws Exception
 	 */
-	protected function initData() {
+	protected function initData() : void {
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
@@ -70,13 +71,13 @@ class xoctReportOverviewTableGUI extends TableGUI {
         }
 
         if ($filter_date_from && $filter_date_to) {
-            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
         } elseif ($filter_date_from) {
-            $data = xoctReport::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
         } elseif ($filter_date_to) {
-            $data = xoctReport::where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
         } else {
-            $data = xoctReport::getArray();
+            $data = Report::getArray();
         }
 
         $filtered = [];
@@ -96,7 +97,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initFilterFields() {
+	protected function initFilterFields() : void {
         $this->filter_fields = [
         	"sender" => [
         	    PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
@@ -114,7 +115,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initId() {
+	protected function initId() : void {
         $this->setId('xoct_reports');
     }
 
@@ -122,14 +123,14 @@ class xoctReportOverviewTableGUI extends TableGUI {
 	/**
 	 *
 	 */
-	protected function initTitle() {
+	protected function initTitle() : void {
     }
 
 
 	/**
 	 * @param array $row
 	 */
-	protected function fillRow($row) {
+	protected function fillRow($row) : void {
 	    $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);

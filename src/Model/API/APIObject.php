@@ -6,10 +6,10 @@ use DateTime;
 use ilStr;
 use ReflectionClass;
 use ReflectionException;
+use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use stdClass;
 use xoctException;
 use xoctLog;
-use srag\Plugins\Opencast\Cache\CacheFactory;
 
 /**
  * Class Object
@@ -348,15 +348,6 @@ abstract class APIObject
     }
 
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    protected function fixPercentCharacter(string $string) : string
-    {
-        // TODO: Bug in OpenCast server? The server think the JSON body is url encoded, but % is valid in JSON
-        return str_replace('%', rawurlencode('%'), $string);
-    }
+
 }
 

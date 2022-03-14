@@ -32,15 +32,15 @@ The SeriesAPI always handles both, the ILIAS object and the Opencast series and 
 
 *Response*:
 
-If no exception is thrown, the series was created successfully and an object of type *xoctOpenCast* is returned. The *xoctOpenCast* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+If no exception is thrown, the series was created successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
 Create a series with a few options in parent directory with reference id 83 and fetch it's series_id and it's ref_id: \
 `$additional_data = array('online' => true, 'license' => 'http://creativecommons.org/licenses/by/2.5/ch', 'streaming_only' => true);` \
-`$xoctOpencast = xoctInternalAPI::getInstance()->series()->create(83, 'Lecture Recordings 001', $additional_data);`\
-`$series_id = $xoctOpencast->getSeries()->getIdentifier();`
-`$ref_id = $xoctOpencast->getILIASObject()->getRefID();`
+`$ObjectSettings = xoctInternalAPI::getInstance()->series()->create(83, 'Lecture Recordings 001', $additional_data);`\
+`$series_id = $ObjectSettings->getSeries()->getIdentifier();`
+`$ref_id = $ObjectSettings->getILIASObject()->getRefID();`
 
 #### read
 *Parameters*:
@@ -48,13 +48,13 @@ Create a series with a few options in parent directory with reference id 83 and 
 
 *Response*:
 
-An object of type *xoctOpenCast*. The *xoctOpenCast* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+An object of type *ObjectSettings*. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
-`$xoctOpencast = xoctInternalAPI::getInstance()->series()->read(172);`\
-`$use_annotations = $xoctOpencast->getUseAnnotations();`\
-`$series_id = $xoctOpencast->getSeries()->getIdentifier();`
+`$ObjectSettings = xoctInternalAPI::getInstance()->series()->read(172);`\
+`$use_annotations = $ObjectSettings->getUseAnnotations();`\
+`$series_id = $ObjectSettings->getSeries()->getIdentifier();`
 
 #### update
 
@@ -74,7 +74,7 @@ An object of type *xoctOpenCast*. The *xoctOpenCast* object contains metadata of
 
 *Response*:
 
-If no exception is thrown, the object was updated successfully and an object of type *xoctOpenCast* is returned. The *xoctOpenCast* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *xoctSeries* (->getSeries()) objects.
+If no exception is thrown, the object was updated successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*: 
 

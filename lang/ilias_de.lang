@@ -1,6 +1,8 @@
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
 common_actions#:#Aktionen
+config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
+config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.
 config_activate_cache#:#Caching
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_activate_cache_0#:#Cache deaktivieren
@@ -19,7 +21,7 @@ config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
 config_create_scheduled_allowed_info#:#Achtung: Das planen von Aufzeichnungsterminen ist erst ab Opencast API-Version 1.1.0 möglich.
 config_common_idp#:#Gemeinsamer IdP
-config_common_idp_info#:#Auswählen, falls ILIAS und Opencast den selben Identity Provider verwenden (z.B. Shibboleth oder LDAP). Dadurch können gewisse Rechteprüfungen genauer durchgeführt werden.
+config_common_idp_info#:#Auswählen, falls ILIAS und Opencast den selben Identity Provider verwenden (z.B. Shibboleth oder LDAP). Dadurch können gewisse Rechteprüfungen genauer durchgeführt werden ("als User" statt nur "mit Rolle des Users").
 config_oc_studio_allowed#:#Opencast Studio aktivieren
 config_oc_studio_allowed_info#:#Ermöglichen Sie Benutzern den Zugriff auf Opencast Studio von Ilias aus (Erfordert Opencast > 8.3)
 config_curl#:#cURL
@@ -79,8 +81,6 @@ config_sign_thumbnail_links#:#Thumbnaillink signieren
 config_sign_thumbnail_links_time#:#Gültigkeit in Sekunden
 config_sign_thumbnail_links_time_info#:#Wie lange der Link für Thumbnail gültig sein soll (0 entspricht Verwaltung durch Opencast).
 config_sign_thumbnail_links_with_ip#:#Für Client-IP signieren
-config_request_comb_lv#:#Request Kombinations Level
-config_request_comb_lv_info#:#Definiert die Zusammensetzung der Anfragen, mit welchen die Events von Opencast geholt werden (viele kleine/wenige grosse Anfragen). Dies hat keinen Einfluss auf die Funktionalität, beeinflusst jedoch die Performanz.
 config_groups#:#Opencast-Gruppen
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standardrollen
@@ -94,14 +94,12 @@ config_streaming_url_info#:#Wowza-URL für adaptive streaming. Bsp: https://wowz
 config_use_streaming_info#:#Wenn aktiv, werden die Streaming URLs für Opencast Events vom Plugin eigens generiert, in der Form: [Wowza-URL]/smil:engage-player_[Event-ID]_[presenter|presentation].smil/playlist.m3u8
 config_use_modals_info#:#Wenn aktiviert: Beim Abspielen von Videos wird kein neues Browserfenster geöffnet, sondern der Player wird im aktuellen Fenster angezeigt.
 config_workflow_info#:#ID des workflows, welcher nach dem Hochladen eines Videos in Opencast angewendet wird.
-config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0.
+config_workflow_unpublish_info#:#ID des workflows, welcher vor dem Löschen eines Videos in Opencast angewendet wird. Benötigt API-Version 1.1.0. Wird bei neueren Opencast-Versionen nicht mehr benötigt, da im Löschvorgang integriert.
 config_user_mapping_info#:#Benutzerfeld in ILIAS, welches zur Identifikation eines Benutzers in Opencast verwendet werden soll. <br><b>Achtung: Die Email-Adresse kann je nach ILIAS-Konfiguration durch den Benutzer selbst geändert werden. In diesem Fall sollte Email-Adresse auf keinen Fall als Mapping verwendet werden.</b>
 config_group_producers_info#:#Benutzer mit dem Recht "Videos editieren" werden vom Plugin in der hier angegebenen Opencast-Gruppe eingeschrieben, um dadurch Zugriff auf Opencast zu erhalten.
 config_role_user_prefix_info#:#Benutzereigene Rolle in Opencast. Wird auf Serien gesetzt, um dem Benutzer genügend Rechte in Opencast einzuräumen. Bsp: ROLE_USER_&#123IDENTIFIER}
 config_role_owner_prefix_info#:#Gibt den Besitzer eines Events an. Diese Rolle muss NICHT in Opencast existieren. Bsp: ROLE_OWNER_&#123IDENTIFIER}. NICHT den gleichen Wert wie für Benutzerrolle wählen.
 config_identifier_to_uppercase#:#User-Mapping in Grossbuchstaben
-config_no_metadata#:#Ohne Metadaten
-config_no_metadata_info#:#Ab API Version 1.1.0 müssen die Metadaten nicht mehr separat geholt werden, mit dieser Option kann somit die Performanz verbessert werden. In allen älteren Versionen wird diese Option allerdings zu einem Fehler führen.
 config_internal_player#:#Interner Video-Player
 config_internal_player_info#:#Wenn aktiviert, wird ein im Plugin integrierter Video-Player verwendet, statt an Opencast weiterzuleiten.
 config_use_streaming#:#Selbstgenerierte Streaming-URLs verwenden
@@ -123,6 +121,8 @@ config_report_date_email#:#Email
 config_report_date_email_info#:#Adresse, an welche die Meldung der Anpassung geschickt wird.
 config_report_date_text#:#Info-Text
 config_report_date_text_info#:#Text, welcher als Info im Formular zum Melden von Terminanpassungen angezeigt wird.
+config_reset_terms#:#Aktualisierte Nutzungsbedingungen
+config_reset_terms_info#:#Fordere alle User (erneut) auf, die Nutzungsbedingungen zu akzeptieren. Diese Option sollte nur dann gewählt werden, wenn die Nutzungsbedingungen inhaltlich verändert wurden.
 config_scheduled_metadata_editable#:#Metadaten von geplanten Events editierbar
 config_scheduled_metadata_editable_0#:#Nein
 config_scheduled_metadata_editable_1#:#Ja, mit wirksamer Änderung der Terminprogrammierung
@@ -164,6 +164,8 @@ config_enable_chat_info#:#Aktiviert einen on-screen Chat neben dem Live-Event. D
 config_ingest_upload#:#Upload via Ingest-Nodes
 config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
+eula#:#Nutzungsbedingungen
+event_accept_eula#:#Nutzungsbedingungen
 event_annotate#:#Annotieren
 event_auto_publish#:#Automatisch publizieren
 event_cancel#:#Abbrechen
@@ -186,6 +188,7 @@ event_edit#:#Metadaten bearbeiten
 event_edit_date#:#Metadaten und Termin bearbeiten
 event_edit_owner#:#Besitzer bearbeiten
 event_end#:#Ende
+event_error_alert_accpet_terms_of_use#:#Akzeptieren Sie die Nutzungsbedingungen.
 event_file_presenter#:#Video-Datei
 event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
@@ -218,7 +221,7 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
-event_republish#:#Publizieren
+event_republish#:#Workflow starten
 event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start
@@ -370,6 +373,12 @@ series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht sel
 series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
+config_paella_player_option#:#Paella Player Config für Video-On-Demand
+config_paella_player_option_live#:#Paella Player Config für Live-Streams
+pp_default#:#<a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json"/>Standard-Config</a> verwenden
+pp_file#:#Config-Datei hochladen
+pp_url#:#URL hinterlegen
+pp_link_info#:#Bitte überprüfen Sie durch einen Aufruf des Players, ob die Config erfolgreich geladen werden kann und das richtige Format hat.
 system_account_add_new#:#System-Account hinzufügen
 system_account_cancel#:#Abbrechen
 system_account_create#:#Erstellen
@@ -395,8 +404,10 @@ tab_migration#:#Migration
 tab_video_portal#:#Videoportal
 tab_reports#:#Verfasste Meldungen
 tab_workflow_params#:#Workflow Parameter
+tab_metadata#:#Metadaten
 subtab_api#:#API
 subtab_events#:#Aufzeichnungen
+subtab_player#:#Player
 subtab_series#:#Serien
 subtab_general#:#Allgemeines
 subtab_groups_roles#:#Gruppen & Rollen
@@ -436,6 +447,9 @@ msg_success#:#Änderungen erfolgreich gespeichert.
 msg_confirm_overwrite_series_params#:#Achtung: Damit werden alle lokal angepassten Konfigurationen zu Workflow-Parameter in den Einstellungen von ILIAS-Opencast-Objekten überschrieben. Fortfahren?
 msg_workflow_params_parsing_failed#:#Das Lesen der Parameter aus der API ist fehlgeschlagen:
 msg_workflow_parameters_info#:#Workflow-Parameter sind Informationen, welche beim Hochladen oder Planen eines Events in der Variable 'processing' an Opencast mitgeschickt werden. Beachten Sie, dass die Parameter auf den Konfigurierten Workflow (Einstellungen -> Aufzeichnungen -> Processing-Workflow-ID) abgestimmt sein müssen. Über die Schaltfläche "Parameter via API Laden" können Sie versuchen, diese Parameter automatisch zu laden - dies funktioniert allerdings nur, wenn in der Workflow-Definition in Opencast ein entsprechendes Configuration-Panel konfiguriert ist.
+msg_invalid_time_format#:#Ungültiges Format.
+msg_missing_file#:#Bitte laden Sie eine Datei hoch.
+byline_timeformat#:#Format: 00:00:00
 table_column_default#:#Default
 table_column_is_default#:#Default
 table_column_title#:#Titel
@@ -505,4 +519,42 @@ cat_create_xoct#:#Opencast-Objekt anlegen
 crs_create_xoct#:#Opencast-Objekt anlegen
 fold_create_xoct#:#Opencast-Objekt anlegen
 grp_create_xoct#:#Opencast-Objekt anlegen
-root_create_xoct#:#Opencast-Objekt anlegen 
+root_create_xoct#:#Opencast-Objekt anlegen
+field_id#:#ID
+btn_add_new_metadata_field#:#Neues Metadaten-Feld hinzufügen
+md_field_id#:#ID
+md_visible_for_permissions#:#Sichbar für
+md_required#:#Verpflichtend
+md_read_only#:#Nicht editierbar
+md_prefill#:#Vorausgefüllt mit
+md_prefill_none#:#Leer
+md_prefill_username_creator#:#Benutzername
+md_prefill_crs_title#:#Kurstitel
+md_actions#:#Aktionen
+md_title_de#:#Titel Deutsch
+md_title_en#:#Titel Englisch
+md_table_events#:#Event-Metadaten
+md_table_series#:#Serien-Metadaten
+md_conf_form_edit#:#Metadatenfeld bearbeiten
+md_conf_form_create#:#Metadatenfeld erstellen
+md_visible_all#:#Alle
+md_visible_admin#:#Nur Admins
+msg_md_config_info#:#Verwaltung der im Plugin verfügbaren Metadaten. Die Reihenfolge kann via Drag & Drop angepasst werden.
+msg_confirm_delete#:#Sind Sie sicher, dass folgende Elemente gelöscht werden sollen?
+delete_modal_title#:#Löschen bestätigen
+action_update#:#Bearbeiten
+action_delete#:#Löschen
+yes#:#Ja
+no#:#Nein
+monday#:#Montag
+tuesday#:#Dienstag
+wednesday#:#Mittwoch
+thursday#:#Donnerstag
+friday#:#Freitag
+saturday#:#Samstag
+sunday#:#Sonntag
+metadata#:#Metadaten
+object_settings#:#Einstellungen
+channel_type#:#Serie
+file#:#Datei
+link#:#URL

@@ -6,7 +6,7 @@
 $port = filter_input(INPUT_GET, 'port');
 $token = filter_input(INPUT_GET, 'token');
 $protocol = filter_input(INPUT_GET, 'protocol');
-$host = filter_input(INPUT_GET, 'ip') ?? $_SERVER['SERVER_NAME'];
+$host = filter_input(INPUT_GET, 'host') ?? $_SERVER['SERVER_NAME'];
 
 $chat_base_url = $protocol . '://' . $host . ':' . $port;
 

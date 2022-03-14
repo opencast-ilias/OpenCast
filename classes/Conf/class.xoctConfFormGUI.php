@@ -1,5 +1,10 @@
 <?php
+
+use ILIAS\UI\Component\Input\Field\Input;
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
  * Class xoctConfFormGUI
@@ -13,7 +18,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
 	/**
-	 * @var  xoctConf
+	 * @var  PluginConfig
 	 */
 	protected $object;
 	/**
@@ -52,8 +57,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			case xoctMainGUI::SUBTAB_EVENTS:
 				$this->initEventsSection();
 				break;
-			case xoctMainGUI::SUBTAB_SERIES:
-				$this->initSeriesSection();
+			case xoctMainGUI::SUBTAB_TOU:
+				$this->initToUSection();
 				break;
 			case xoctMainGUI::SUBTAB_GROUPS_ROLES:
 				$this->initGroupsRolesSection();
@@ -98,7 +103,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	private function getValuesForItem($item, &$array) {
 		if (self::checkItem($item)) {
 			$key = $item->getPostVar();
-			$array[$key] = xoctConf::getConfig($key);
+			$array[$key] = PluginConfig::getConfig($key);
 			if (self::checkForSubItem($item)) {
 				foreach ($item->getSubItems() as $subitem) {
 					$this->getValuesForItem($subitem, $array);
@@ -118,7 +123,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		foreach ($this->getItems() as $item) {
 			$this->saveValueForItem($item);
 		}
-		xoctConf::set(xoctConf::F_CONFIG_VERSION, xoctConf::CONFIG_VERSION);
+		PluginConfig::set(PluginConfig::F_CONFIG_VERSION, PluginConfig::CONFIG_VERSION);
 
 		return true;
 	}
@@ -130,7 +135,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	private function saveValueForItem($item) {
 		if (self::checkItem($item)) {
 			$key = $item->getPostVar();
-			xoctConf::set($key, $this->getInput($key));
+			PluginConfig::set($key, $this->getInput($key));
 			if (self::checkForSubItem($item)) {
 				foreach ($item->getSubItems() as $subitem) {
 					$this->saveValueForItem($subitem);
@@ -168,23 +173,23 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('curl'));
 		$this->addItem($h);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_VERSION), xoctConf::F_API_VERSION);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_API_VERSION . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_API_VERSION), PluginConfig::F_API_VERSION);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_API_VERSION . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_API_BASE), xoctConf::F_API_BASE);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_API_BASE . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_API_BASE), PluginConfig::F_API_BASE);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_API_BASE . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_CURL_USERNAME), xoctConf::F_CURL_USERNAME);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_USERNAME . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_CURL_USERNAME), PluginConfig::F_CURL_USERNAME);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_USERNAME . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD), xoctConf::F_CURL_PASSWORD);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_PASSWORD . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_CURL_PASSWORD), PluginConfig::F_CURL_PASSWORD);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_PASSWORD . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 	}
@@ -198,93 +203,93 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('events'));
 		$this->addItem($h);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_WORKFLOW), xoctConf::F_WORKFLOW);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_WORKFLOW . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_WORKFLOW), PluginConfig::F_WORKFLOW);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_WORKFLOW . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_WORKFLOW_UNPUBLISH), xoctConf::F_WORKFLOW_UNPUBLISH);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_WORKFLOW_UNPUBLISH . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_WORKFLOW_UNPUBLISH), PluginConfig::F_WORKFLOW_UNPUBLISH);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_WORKFLOW_UNPUBLISH . '_info'));
 		$this->addItem($te);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_EDITOR_LINK), xoctConf::F_EDITOR_LINK);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_EDITOR_LINK . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_EDITOR_LINK), PluginConfig::F_EDITOR_LINK);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_EDITOR_LINK . '_info'));
 		$this->addItem($te);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_CREATE_SCHEDULED_ALLOWED), xoctConf::F_CREATE_SCHEDULED_ALLOWED);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_CREATE_SCHEDULED_ALLOWED . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_CREATE_SCHEDULED_ALLOWED), PluginConfig::F_CREATE_SCHEDULED_ALLOWED);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_CREATE_SCHEDULED_ALLOWED . '_info'));
 		$this->addItem($cb);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_EXT_DL_SOURCE), xoctConf::F_EXT_DL_SOURCE);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_EXT_DL_SOURCE . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE), PluginConfig::F_EXT_DL_SOURCE);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE . '_info'));
 		$this->addItem($cb);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_STUDIO_ALLOWED), xoctConf::F_STUDIO_ALLOWED);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_STUDIO_ALLOWED . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_STUDIO_ALLOWED), PluginConfig::F_STUDIO_ALLOWED);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_STUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED), xoctConf::F_AUDIO_ALLOWED);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_AUDIO_ALLOWED . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_AUDIO_ALLOWED), PluginConfig::F_AUDIO_ALLOWED);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
 		// INTERNAL VIDEO PLAYER
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER), xoctConf::F_INTERNAL_VIDEO_PLAYER);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INTERNAL_VIDEO_PLAYER . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_INTERNAL_VIDEO_PLAYER), PluginConfig::F_INTERNAL_VIDEO_PLAYER);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_INTERNAL_VIDEO_PLAYER . '_info'));
 		$this->addItem($cb);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_GENERATED_STREAMING_URLS), xoctConf::F_USE_GENERATED_STREAMING_URLS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_GENERATED_STREAMING_URLS . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_USE_GENERATED_STREAMING_URLS), PluginConfig::F_USE_GENERATED_STREAMING_URLS);
+		$cbs->setInfo($this->parent_gui->txt(PluginConfig::F_USE_GENERATED_STREAMING_URLS . '_info'));
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_STREAMING_URL), xoctConf::F_STREAMING_URL);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_STREAMING_URL . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_STREAMING_URL), PluginConfig::F_STREAMING_URL);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_STREAMING_URL . '_info'));
 		$te->setRequired(true);
 		$cbs->addSubItem($te);
 
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS), xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS), PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS);
+		$cbs->setInfo($this->parent_gui->txt(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS . '_info'));
 		$cbs->setRequired(false);
 		$cb->addSubItem($cbs);
 
 		// LIVE STREAMS
-		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS), xoctConf::F_ENABLE_LIVE_STREAMS);
-		$cbs->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_LIVE_STREAMS . '_info'));
+		$cbs = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_ENABLE_LIVE_STREAMS), PluginConfig::F_ENABLE_LIVE_STREAMS);
+		$cbs->setInfo($this->parent_gui->txt(PluginConfig::F_ENABLE_LIVE_STREAMS . '_info'));
 		$cbs->setRequired(false);
 		$this->addItem($cbs);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE), xoctConf::F_PRESENTATION_NODE);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTATION_NODE . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_PRESENTATION_NODE), PluginConfig::F_PRESENTATION_NODE);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_PRESENTATION_NODE . '_info'));
 		$te->setRequired(true);
 		$cbs->addSubItem($te);
 
-		$ni = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE), xoctConf::F_START_X_MINUTES_BEFORE_LIVE);
-		$ni->setInfo($this->parent_gui->txt(xoctConf::F_START_X_MINUTES_BEFORE_LIVE . '_info'));
+		$ni = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE), PluginConfig::F_START_X_MINUTES_BEFORE_LIVE);
+		$ni->setInfo($this->parent_gui->txt(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE . '_info'));
 		$cbs->addSubItem($ni);
 
-		$cbs2 = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT), xoctConf::F_ENABLE_CHAT);
-		$cbs2->setInfo($this->parent_gui->txt(xoctConf::F_ENABLE_CHAT . '_info'));
+		$cbs2 = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_ENABLE_CHAT), PluginConfig::F_ENABLE_CHAT);
+		$cbs2->setInfo($this->parent_gui->txt(PluginConfig::F_ENABLE_CHAT . '_info'));
 		$cbs2->setRequired(false);
 		$cbs->addSubItem($cbs2);
 
 		// MODALS
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_USE_MODALS), xoctConf::F_USE_MODALS);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_USE_MODALS . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_USE_MODALS), PluginConfig::F_USE_MODALS);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_USE_MODALS . '_info'));
 		$this->addItem($cb);
 
 
 		// QUALITY REPORT
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY), xoctConf::F_REPORT_QUALITY);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY), PluginConfig::F_REPORT_QUALITY);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY . '_info'));
 		$this->addItem($cb);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_EMAIL), xoctConf::F_REPORT_QUALITY_EMAIL);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_EMAIL . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_EMAIL), PluginConfig::F_REPORT_QUALITY_EMAIL);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_EMAIL . '_info'));
 		$te->setRequired(true);
 		$cb->addSubItem($te);
 
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_TEXT), xoctConf::F_REPORT_QUALITY_TEXT);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_TEXT . '_info'));
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_TEXT), PluginConfig::F_REPORT_QUALITY_TEXT);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_TEXT . '_info'));
 		$te->setRequired(true);
 		$te->setRows(8);
 		$te->setUseRte(1);
@@ -307,103 +312,27 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$cb->addSubItem($te);
 
-		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS), xoctConf::F_REPORT_QUALITY_ACCESS);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS . '_' . xoctConf::ACCESS_ALL), xoctConf::ACCESS_ALL);
+		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_ACCESS), PluginConfig::F_REPORT_QUALITY_ACCESS);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_ACCESS . '_' . PluginConfig::ACCESS_ALL), PluginConfig::ACCESS_ALL);
 		$ri->addOption($ro);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_REPORT_QUALITY_ACCESS . '_' . xoctConf::ACCESS_OWNER_ADMIN), xoctConf::ACCESS_OWNER_ADMIN);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_REPORT_QUALITY_ACCESS . '_' . PluginConfig::ACCESS_OWNER_ADMIN), PluginConfig::ACCESS_OWNER_ADMIN);
 		$ri->addOption($ro);
 		$ri->setRequired(true);
 		$cb->addSubItem($ri);
 
 
-		// SCHEDULED METADATA EDITABLE
-		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE), xoctConf::F_SCHEDULED_METADATA_EDITABLE);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::NO_METADATA), xoctConf::NO_METADATA);
-		$ri->addOption($ro);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::ALL_METADATA), xoctConf::ALL_METADATA);
-		$ro->setInfo($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::ALL_METADATA . '_info'));
-		$ri->addOption($ro);
-		$ro = new ilRadioOption($this->parent_gui->txt(xoctConf::F_SCHEDULED_METADATA_EDITABLE . '_' . xoctConf::METADATA_EXCEPT_DATE_PLACE), xoctConf::METADATA_EXCEPT_DATE_PLACE);
-		$ri->addOption($ro);
-		$this->addItem($ri);
-
-		// MAKE PRESENTER FIELD MANDATORY
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESENTER_MANDATORY), xoctConf::F_PRESENTER_MANDATORY);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_PRESENTER_MANDATORY . '_info'));
-		$this->addItem($cb);
-	}
-
-
-	/**
-	 *
-	 */
-	protected function initSeriesSection() {
-		$h = new ilFormSectionHeaderGUI();
-		$h->setTitle($this->parent_gui->txt('series'));
-		$this->addItem($h);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_EULA), xoctConf::F_EULA);
-		$te->setRequired(true);
-		$te->setUseRte(true);
-		$te->setRteTagSet("extended");
-		$te->disableButtons(array(
-			'charmap',
-			'undo',
-			'redo',
-			'justifyleft',
-			'justifycenter',
-			'justifyright',
-			'justifyfull',
-			'anchor',
-			'fullscreen',
-			'cut',
-			'copy',
-			'paste',
-			'pastetext',
-			'formatselect',
-		));
-		$te->setRows(5);
-		$this->addItem($te);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSES), xoctConf::F_LICENSES);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_LICENSES . '_info'));
-		$this->addItem($te);
-
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_LICENSE_INFO), xoctConf::F_LICENSE_INFO);
-		$te->setRequired(true);
-		$te->setUseRte(true);
-		$te->setRteTagSet("extended");
-		$te->disableButtons(array(
-			'charmap',
-			'undo',
-			'redo',
-			'justifyleft',
-			'justifycenter',
-			'justifyright',
-			'justifyfull',
-			'anchor',
-			'fullscreen',
-			'cut',
-			'copy',
-			'paste',
-			'pastetext',
-			'formatselect',
-		));
-		$te->setRows(5);
-		$this->addItem($te);
-
 		// DATE REPORT
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_DATE), xoctConf::F_REPORT_DATE);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_DATE), PluginConfig::F_REPORT_DATE);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_DATE . '_info'));
 		$this->addItem($cb);
 
-		$te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_DATE_EMAIL), xoctConf::F_REPORT_DATE_EMAIL);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE_EMAIL . '_info'));
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_DATE_EMAIL), PluginConfig::F_REPORT_DATE_EMAIL);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_DATE_EMAIL . '_info'));
 		$te->setRequired(true);
 		$cb->addSubItem($te);
 
-		$te = new ilTextAreaInputGUI($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT), xoctConf::F_REPORT_DATE_TEXT);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_REPORT_DATE_TEXT . '_info'));
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_REPORT_DATE_TEXT), PluginConfig::F_REPORT_DATE_TEXT);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_REPORT_DATE_TEXT . '_info'));
 		$te->setRequired(true);
 		$te->setRows(8);
 		$te->setUseRte(true);
@@ -425,8 +354,60 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 			'formatselect',
 		));
 		$cb->addSubItem($te);
+
+		// SCHEDULED METADATA EDITABLE
+		$ri = new ilRadioGroupInputGUI($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE), PluginConfig::F_SCHEDULED_METADATA_EDITABLE);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::NO_METADATA), PluginConfig::NO_METADATA);
+		$ri->addOption($ro);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA), PluginConfig::ALL_METADATA);
+		$ro->setInfo($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA . '_info'));
+		$ri->addOption($ro);
+		$ro = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::METADATA_EXCEPT_DATE_PLACE), PluginConfig::METADATA_EXCEPT_DATE_PLACE);
+		$ri->addOption($ro);
+		$this->addItem($ri);
 	}
 
+
+
+	private function initToUSection()
+	{
+		$h = new ilFormSectionHeaderGUI();
+		$h->setTitle($this->parent_gui->txt('eula'));
+		$this->addItem($h);
+
+		$te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_EULA), PluginConfig::F_EULA);
+		$te->setRequired(true);
+		$te->setUseRte(true);
+		$te->setRteTagSet("extended");
+		$te->disableButtons(array(
+			'charmap',
+			'undo',
+			'redo',
+			'justifyleft',
+			'justifycenter',
+			'justifyright',
+			'justifyfull',
+			'anchor',
+			'fullscreen',
+			'cut',
+			'copy',
+			'paste',
+			'pastetext',
+			'formatselect',
+		));
+		$te->setRows(5);
+		$this->addItem($te);
+
+		// Terms of Use
+		$terms = new ilCheckboxInputGUI($this->parent_gui->txt("accept_terms"), PluginConfig::F_ACCEPT_TERMS);
+		$terms->setInfo($this->parent_gui->txt("accept_terms_info"));
+		$this->addItem($terms);
+
+		// Reset?
+		$reset = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_RESET), PluginConfig::F_RESET);
+		$reset->setInfo($this->parent_gui->txt(PluginConfig::F_RESET . "_info"));
+		$this->addItem($reset);
+	}
 
 	/**
 	 *
@@ -437,7 +418,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($h);
 
 		// groups
-		foreach (xoctConf::$groups as $group) {
+		foreach (PluginConfig::$groups as $group) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($group), $group);
 			$te->setInfo($this->parent_gui->txt($group . '_info'));
 			$te->setRequired(true);
@@ -449,21 +430,21 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$this->addItem($h);
 
 		// standard roles
-		$te = new ilTextInputGUI($this->parent_gui->txt('std_roles'), xoctConf::F_STD_ROLES);
+		$te = new ilTextInputGUI($this->parent_gui->txt('std_roles'), PluginConfig::F_STD_ROLES);
 		$te->setInfo($this->parent_gui->txt('std_roles_info'));
 		$te->setMulti(true);
 		$te->setInlineStyle('min-width:250px');
 		$this->addItem($te);
 
 		// other roles
-		foreach (xoctConf::$roles as $role) {
+		foreach (PluginConfig::$roles as $role) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($role), $role);
 			$te->setInfo($this->parent_gui->txt($role . '_info'));
 			$te->setRequired(true);
 			$this->addItem($te);
 		}
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_IDENTIFIER_TO_UPPERCASE), xoctConf::F_IDENTIFIER_TO_UPPERCASE);
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_IDENTIFIER_TO_UPPERCASE), PluginConfig::F_IDENTIFIER_TO_UPPERCASE);
 		$this->addItem($cb);
 	}
 
@@ -472,58 +453,58 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 	 *
 	 */
 	protected function initSecuritySection() {
+		ilUtil::sendInfo($this->parent_gui->txt('security_info'), true);
 		$h = new ilFormSectionHeaderGUI();
 		$h->setTitle($this->parent_gui->txt('security'));
-		$h->setInfo($this->parent_gui->txt('security_info'));
 		$this->addItem($h);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS), xoctConf::F_SIGN_PLAYER_LINKS);
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS), PluginConfig::F_SIGN_PLAYER_LINKS);
 		$this->addItem($cb);
 
-		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT), xoctConf::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT);
+		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT), PluginConfig::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT);
 		$cb->addSubItem($cb_sub);
 
-		$cb_sub_2 = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT), xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT);
-		$cb_sub_2->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT . '_info'));
+		$cb_sub_2 = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT), PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT);
+		$cb_sub_2->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT . '_info'));
 		$cb_sub->addSubItem($cb_sub_2);
 
-		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_PLAYER_LINKS_WITH_IP), xoctConf::F_SIGN_PLAYER_LINKS_WITH_IP);
+		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP), PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP);
 		$cb->addSubItem($cb_sub);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS), xoctConf::F_SIGN_DOWNLOAD_LINKS);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_DOWNLOAD_LINKS), PluginConfig::F_SIGN_DOWNLOAD_LINKS);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_DOWNLOAD_LINKS . '_info'));
 		$this->addItem($cb);
 
-		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME), xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME);
-		$cb_sub->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_DOWNLOAD_LINKS_TIME . '_info'));
+		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_DOWNLOAD_LINKS_TIME), PluginConfig::F_SIGN_DOWNLOAD_LINKS_TIME);
+		$cb_sub->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_DOWNLOAD_LINKS_TIME . '_info'));
 		$cb->addSubItem($cb_sub);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_THUMBNAIL_LINKS), xoctConf::F_SIGN_THUMBNAIL_LINKS);
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_THUMBNAIL_LINKS), PluginConfig::F_SIGN_THUMBNAIL_LINKS);
 		$this->addItem($cb);
 
-		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME), xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME);
-		$cb_sub->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_THUMBNAIL_LINKS_TIME . '_info'));
+		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_THUMBNAIL_LINKS_TIME), PluginConfig::F_SIGN_THUMBNAIL_LINKS_TIME);
+		$cb_sub->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_THUMBNAIL_LINKS_TIME . '_info'));
 		$cb->addSubItem($cb_sub);
 
-		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_THUMBNAIL_LINKS_WITH_IP), xoctConf::F_SIGN_THUMBNAIL_LINKS_WITH_IP);
+		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP), PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP);
 		$cb->addSubItem($cb_sub);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS), xoctConf::F_SIGN_ANNOTATION_LINKS);
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_ANNOTATION_LINKS), PluginConfig::F_SIGN_ANNOTATION_LINKS);
 		$this->addItem($cb);
 
-		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS_TIME), xoctConf::F_SIGN_ANNOTATION_LINKS_TIME);
-		$cb_sub->setInfo($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS_TIME . '_info'));
+		$cb_sub = new ilNumberInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_ANNOTATION_LINKS_TIME), PluginConfig::F_SIGN_ANNOTATION_LINKS_TIME);
+		$cb_sub->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_ANNOTATION_LINKS_TIME . '_info'));
 		$cb->addSubItem($cb_sub);
 
-		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_SIGN_ANNOTATION_LINKS_WITH_IP), xoctConf::F_SIGN_ANNOTATION_LINKS_WITH_IP);
+		$cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP), PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP);
 		$cb->addSubItem($cb_sub);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_ANNOTATION_TOKEN_SEC), xoctConf::F_ANNOTATION_TOKEN_SEC);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ANNOTATION_TOKEN_SEC . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_ANNOTATION_TOKEN_SEC), PluginConfig::F_ANNOTATION_TOKEN_SEC);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_ANNOTATION_TOKEN_SEC . '_info'));
 		$this->addItem($cb);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS), xoctConf::F_PRESIGN_LINKS);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_PRESIGN_LINKS . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_PRESIGN_LINKS), PluginConfig::F_PRESIGN_LINKS);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_PRESIGN_LINKS . '_info'));
 		$this->addItem($cb);
 	}
 
@@ -533,12 +514,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$h->setTitle($this->parent_gui->txt('advanced'));
 		$this->addItem($h);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_COMMON_IDP), xoctConf::F_COMMON_IDP);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_COMMON_IDP . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_COMMON_IDP), PluginConfig::F_COMMON_IDP);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_COMMON_IDP . '_info'));
 		$this->addItem($cb);
 
-		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_USER_MAPPING), xoctConf::F_USER_MAPPING);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_USER_MAPPING . '_info'));
+		$te = new ilSelectInputGUI($this->parent_gui->txt(PluginConfig::F_USER_MAPPING), PluginConfig::F_USER_MAPPING);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_USER_MAPPING . '_info'));
 		$te->setOptions(array(
 			xoctUser::MAP_EXT_ID => 'External-ID',
 			xoctUser::MAP_LOGIN => 'Login',
@@ -546,23 +527,23 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
-		$cb = new ilRadioGroupInputGUI($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE), xoctConf::F_ACTIVATE_CACHE);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_info'));
-		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DISABLED),
-			xoctConf::CACHE_DISABLED);
+		$cb = new ilRadioGroupInputGUI($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE), PluginConfig::F_ACTIVATE_CACHE);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_info'));
+		$opt = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_DISABLED),
+			PluginConfig::CACHE_DISABLED);
 		$cb->addOption($opt);
-		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_STANDARD),
-			xoctConf::CACHE_STANDARD);
-		$opt->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_STANDARD . '_info', '', []));
+		$opt = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_STANDARD),
+			PluginConfig::CACHE_STANDARD);
+		$opt->setInfo($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_STANDARD . '_info', '', []));
 		$cb->addOption($opt);
-		$opt = new ilRadioOption($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DATABASE),
-			xoctConf::CACHE_DATABASE);
-		$opt->setInfo($this->parent_gui->txt(xoctConf::F_ACTIVATE_CACHE . '_' . xoctConf::CACHE_DATABASE . '_info'));
+		$opt = new ilRadioOption($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_DATABASE),
+			PluginConfig::CACHE_DATABASE);
+		$opt->setInfo($this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_DATABASE . '_info'));
 		$cb->addOption($opt);
 		$this->addItem($cb);
 
-		$te = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL), xoctConf::F_CURL_DEBUG_LEVEL);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_CURL_DEBUG_LEVEL . '_info'));
+		$te = new ilSelectInputGUI($this->parent_gui->txt(PluginConfig::F_CURL_DEBUG_LEVEL), PluginConfig::F_CURL_DEBUG_LEVEL);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_DEBUG_LEVEL . '_info'));
 		$te->setOptions(array(
 			xoctLog::DEBUG_DEACTIVATED => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_DEACTIVATED),
 			xoctLog::DEBUG_LEVEL_1 => $this->parent_gui->txt('log_level_' . xoctLog::DEBUG_LEVEL_1),
@@ -572,32 +553,14 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		));
 		$this->addItem($te);
 
-		$cb = new ilSelectInputGUI($this->parent_gui->txt(xoctConf::F_REQUEST_COMBINATION_LEVEL), xoctConf::F_REQUEST_COMBINATION_LEVEL);
-		$cb->setOptions(array(
-			xoctConf::SEP_EVERYTHING => 'Everything separate',
-			xoctConf::SEP_EV_ACL_MD => 'Event + ACL + MD',
-			xoctConf::SEP_EV_ACL_MD_PUB => 'Event + ACL + MD + PUB',
-		));
-		$cb->setInfo($this->parent_gui->txt(xoctconf::F_REQUEST_COMBINATION_LEVEL . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_INGEST_UPLOAD), PluginConfig::F_INGEST_UPLOAD);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_INGEST_UPLOAD . '_info'));
 		$this->addItem($cb);
 
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_NO_METADATA), xoctConf::F_NO_METADATA);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_NO_METADATA . '_info'));
-		$this->addItem($cb);
-
-		$te = new ilNumberInputGUI($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE), xoctConf::F_UPLOAD_CHUNK_SIZE);
-		$te->setInfo($this->parent_gui->txt(xoctConf::F_UPLOAD_CHUNK_SIZE . '_info'));
-		$this->addItem($te);
-
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD), xoctConf::F_INGEST_UPLOAD);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_INGEST_UPLOAD . '_info'));
-		$this->addItem($cb);
-
-		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY), xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY);
-		$cb->setInfo($this->parent_gui->txt(xoctConf::F_LOAD_TABLE_SYNCHRONOUSLY . '_info'));
+		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY), PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
+		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY . '_info'));
 		$this->addItem($cb);
 	}
-
 }
 
 ?>

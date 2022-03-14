@@ -1,5 +1,8 @@
 <?php
+
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 /**
  * Class xoctPermissionTemplateFormGUI
  *
@@ -11,7 +14,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
 	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
-     * @var  xoctConf
+     * @var  PluginConfig
      */
     protected $object;
     /**
@@ -48,14 +51,14 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
 
 
         // VIDEO PORTAL TITLE
-        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_TITLE), xoctConf::F_VIDEO_PORTAL_TITLE);
+        $te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_TITLE), PluginConfig::F_VIDEO_PORTAL_TITLE);
 //        $te->setInfo($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
         $te->setRequired(true);
         $this->addItem($te);
 
         // VIDEO PORTAL LINK
-        $te = new ilTextInputGUI($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_LINK), xoctConf::F_VIDEO_PORTAL_LINK);
-        $te->setInfo($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_LINK . '_info'));
+        $te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK), PluginConfig::F_VIDEO_PORTAL_LINK);
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
 
@@ -92,7 +95,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     private function getValuesForItem($item, &$array) {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
-            $array[$key] = xoctConf::getConfig($key);
+            $array[$key] = PluginConfig::getConfig($key);
             if (self::checkForSubItem($item)) {
                 foreach ($item->getSubItems() as $subitem) {
                     $this->getValuesForItem($subitem, $array);
@@ -112,7 +115,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
         foreach ($this->getItems() as $item) {
             $this->saveValueForItem($item);
         }
-        xoctConf::set(xoctConf::F_CONFIG_VERSION, xoctConf::CONFIG_VERSION);
+        PluginConfig::set(PluginConfig::F_CONFIG_VERSION, PluginConfig::CONFIG_VERSION);
 
         return true;
     }
@@ -124,7 +127,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     private function saveValueForItem($item) {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
-            xoctConf::set($key, $this->getInput($key));
+            PluginConfig::set($key, $this->getInput($key));
             if (self::checkForSubItem($item)) {
                 foreach ($item->getSubItems() as $subitem) {
                     $this->saveValueForItem($subitem);

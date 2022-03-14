@@ -1,9 +1,14 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
+
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once('./include/inc.ilias_version.php');
 /**
  * Class xoct
+ *
+ * TODO: this is a helper class with all-static methods. I doubt that this is best practice, try and find a better place for this stuff at some point.
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
@@ -15,6 +20,7 @@ class xoct {
 	const ILIAS_53 = 53;
 	const ILIAS_54 = 54;
 	const ILIAS_6 = 60;
+	const ILIAS_7 = 70;
 	const MIN_ILIAS_VERSION = self::ILIAS_54;
 
 	/**
@@ -71,7 +77,7 @@ class xoct {
 	}
 
 	public static function isApiVersionGreaterThan($api_version) {
-		return version_compare(xoctConf::getConfig(xoctConf::F_API_VERSION), $api_version, '>=');
+		return version_compare(PluginConfig::getConfig(PluginConfig::F_API_VERSION), $api_version, '>=');
 	}
 
 	/**
@@ -114,5 +120,10 @@ class xoct {
 
 		return $path;
 	}
+
+    public static function isIlias7() : bool
+    {
+        return self::getILIASVersion() >= self::ILIAS_7;
+    }
 
 }

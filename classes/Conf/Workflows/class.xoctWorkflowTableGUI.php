@@ -5,8 +5,8 @@ use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\DIC\OpenCast\Exception\DICException;
-use srag\Plugins\Opencast\Model\Config\Workflow\Workflow;
-use srag\Plugins\Opencast\Model\Config\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -37,18 +37,9 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected $renderer;
 
-
-    /**
-     * xoctWorkflowTableGUI constructor.
-     *
-     * @param $parent
-     * @param $parent_cmd
-     *
-     * @throws DICException
-     */
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, $parent_cmd, WorkflowRepository $workflow_repository)
     {
-        $this->workflow_repository = new WorkflowRepository();
+        $this->workflow_repository = $workflow_repository;
         $this->factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
         $this->setExternalSorting(true);
@@ -61,7 +52,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @throws DICException
      */
-    protected function initColumns()
+    protected function initColumns() : void
     {
         $this->addColumn(self::dic()->language()->txt('id'));
         $this->addColumn(self::dic()->language()->txt('title'));
@@ -84,7 +75,7 @@ class xoctWorkflowTableGUI extends TableGUI
      * @inheritDoc
      *
      * @param     $column
-     * @param     $row Workflow
+     * @param     $row WorkflowAR
      * @param int $format
      *
      * @return string
@@ -160,7 +151,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initData()
+    protected function initData() : void
     {
         $this->setData($this->workflow_repository->getAllWorkflows());
     }
@@ -169,7 +160,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initFilterFields()
+    protected function initFilterFields() : void
     {
         // TODO: Implement initFilterFields() method.
     }
@@ -178,7 +169,7 @@ class xoctWorkflowTableGUI extends TableGUI
     /**
      * @inheritDoc
      */
-    protected function initId()
+    protected function initId() : void
     {
         // TODO: Implement initId() method.
     }
@@ -188,7 +179,7 @@ class xoctWorkflowTableGUI extends TableGUI
      * @inheritDoc
      * @throws DICException
      */
-    protected function initTitle()
+    protected function initTitle() : void
     {
         $this->setTitle(self::plugin()->translate('table_title', self::LANG_MODULE));
     }

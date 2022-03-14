@@ -8,8 +8,6 @@ use Throwable;
  * Class PHPVersionChecker
  *
  * @package srag\DIC\OpenCast
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
  */
 final class PHPVersionChecker
 {
@@ -38,6 +36,15 @@ final class PHPVersionChecker
      * @var string
      */
     private static $should_php_version = "";
+
+
+    /**
+     * PHPVersionChecker constructor
+     */
+    private function __construct()
+    {
+
+    }
 
 
     /**
@@ -133,15 +140,6 @@ final class PHPVersionChecker
 
             return preg_replace("/\/+/", "/", "$a/$b");
         }, "/");
-    }
-
-
-    /**
-     * PHPVersionChecker constructor
-     */
-    private function __construct()
-    {
-
     }
 }
 

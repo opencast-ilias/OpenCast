@@ -19,6 +19,7 @@ class ConfigAR extends ActiveRecord
     const C_IP = 'ip';
     const C_PORT = 'port';
     const C_PROTOCOL = 'protocol';
+    const C_HOST = 'host';
 
 
     /**
@@ -51,7 +52,7 @@ class ConfigAR extends ActiveRecord
     public static function getConfig($name) {
         if (!self::$cache_loaded[$name]) {
             $obj = new self($name);
-            self::$cache[$name] = json_decode($obj->getValue());
+            self::$cache[$name] = $obj->getValue();
             self::$cache_loaded[$name] = true;
         }
 
