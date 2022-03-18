@@ -20,7 +20,7 @@ Start at your ILIAS root directory
 ```bash
 mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/
 cd Customizing/global/plugins/Services/Repository/RepositoryObject/
-git clone https://github.com/studer-raimann/OpenCast.git
+git clone https://github.com/fluxapps/OpenCast.git
 ```
 As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
@@ -56,10 +56,6 @@ If your web server uses HTTPS, you will need to make the chat understand HTTPS a
 
  Note that when using a reverse proxy, the chat will open an unsecured websocket (ws://), whereas the first option will open a secured one (wss://).
 
-## Authors
-
-This is an OpenSource project by studer + raimann ag (https://studer-raimann.ch)
-
 ## License
 
 This project is licensed under the GPL v3 License 
@@ -67,11 +63,10 @@ This project is licensed under the GPL v3 License
 ## Contributing :purple_heart:
 Please ...
 1. ... register an account at https://git.fluxlabs.ch
-2. ... write us an email: support@fluxlabs.ch
-3. ... we give you access to the projects you like to contribute :fire:
+2. ... create pull requests :fire:
 
 ## Adjustment suggestions / bug reporting :feet:
 Please ...
 1. ... register an account at https://git.fluxlabs.ch
-2. ... ask us for a sla: support@fluxlabs.ch :kissing_heart:
-3. ... we will give you the access with the possibility to read and create issues or to discuss feature requests with us.
+2. ... ask us for a Service Level Agreement: support@fluxlabs.ch :kissing_heart:
+3. ... Read and create issues
