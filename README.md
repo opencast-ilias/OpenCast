@@ -1,4 +1,6 @@
 # ILIAS-Plugin Opencast
+Provided and maintained by fluxlabs.
+
 Use Opencast in ILIAS LMS with a wide variety of features:
 * create Opencast series as repository objects
 * upload, schedule and edit events
@@ -62,7 +64,6 @@ This project is licensed under the GPL v3 License
 Please ...
 1. ... register an account at https://git.fluxlabs.ch
 2. ... create pull requests :fire:
-
 
 ## Adjustment suggestions / bug reporting :feet:
 Please ...
