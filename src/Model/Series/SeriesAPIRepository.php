@@ -83,7 +83,7 @@ class SeriesAPIRepository implements SeriesRepository
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
-    public function create(CreateSeriesRequest $request): string
+    public function create(CreateSeriesRequest $request): ?string
     {
         $response = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
         return $response->identifier;

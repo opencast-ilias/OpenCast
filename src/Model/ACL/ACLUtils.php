@@ -38,6 +38,10 @@ class ACLUtils
 
     public function getUserRolesACL(xoctUser $user): ACL
     {
+        if($user->getUserRoleName() === null) {
+           return new ACL([]);
+        }
+
         return new ACL([
             new ACLEntry($user->getUserRoleName(), ACLEntry::WRITE, true),
             new ACLEntry($user->getUserRoleName(), ACLEntry::READ, true)]);

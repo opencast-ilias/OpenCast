@@ -59,14 +59,15 @@ class SeriesFormBuilder
      */
     private $seriesRepository;
 
-    public function __construct(UIFactory                     $ui_factory,
-                                Refinery                      $refinery,
-                                MDFormItemBuilder             $formItemBuilder,
-                                ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder,
-                                SeriesRepository              $seriesRepository,
-                                ilPlugin                      $plugin,
-                                Container                     $dic)
-    {
+    public function __construct(
+        UIFactory $ui_factory,
+        Refinery $refinery,
+        MDFormItemBuilder $formItemBuilder,
+        ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder,
+        SeriesRepository $seriesRepository,
+        ilPlugin $plugin,
+        Container $dic
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery = $refinery;
         $this->formItemBuilder = $formItemBuilder;
@@ -76,8 +77,7 @@ class SeriesFormBuilder
         $this->seriesRepository = $seriesRepository;
     }
 
-
-    public function create(string $form_action): Standard
+    public function create(string $form_action) : Standard
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
@@ -89,8 +89,12 @@ class SeriesFormBuilder
         );
     }
 
-    public function update(string $form_action, ObjectSettings $objectSettings, Series $series, bool $is_admin): Standard
-    {
+    public function update(
+        string $form_action,
+        ObjectSettings $objectSettings,
+        Series $series,
+        bool $is_admin
+    ) : Standard {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
@@ -104,19 +108,23 @@ class SeriesFormBuilder
      * @return array
      * @throws xoctException
      */
-    private function getSeriesSelectOptions(): array
+    private function getSeriesSelectOptions() : array
     {
         $existing_series = array();
         $xoctUser = xoctUser::getInstance($this->dic->user());
-        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
-        foreach ($user_series as $series) {
-            $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
+        if (is_null($xoctUser->getUserRoleName()) !== true) {
+            $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
+            foreach ($user_series as $series) {
+                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr($series->getIdentifier(),
+                        -4, 4) . ')';
+            }
+            array_multisort($existing_series);
+            return $existing_series;
         }
-        array_multisort($existing_series);
-        return $existing_series;
+        return [];
     }
 
-    private function txt(string $lang_var): string
+    private function txt(string $lang_var) : string
     {
         return $this->plugin->txt('series_' . $lang_var);
     }
@@ -126,25 +134,29 @@ class SeriesFormBuilder
      * @return Input
      * @throws xoctException
      */
-    private function buildSeriesSelectionSection(bool $is_admin): Input
+    private function buildSeriesSelectionSection(bool $is_admin) : Input
     {
         $existing_series = $this->getSeriesSelectOptions();
         $series_type = $this->ui_factory->input()->field()->switchableGroup([
             self::EXISTING_YES => $this->ui_factory->input()->field()->group([
-                self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID), $existing_series)->withRequired(true)
+                self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID),
+                    $existing_series)->withRequired(true)
             ], $this->plugin->txt('yes')),
-            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items($is_admin), $this->plugin->txt('no'))
+            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items($is_admin),
+                $this->plugin->txt('no'))
         ], 'Existing Series')->withValue(self::EXISTING_NO);
-        return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type], $this->plugin->txt(self::F_CHANNEL_TYPE))
-            ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
-                if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
-                    $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
-                } else {
-                    $vs[self::F_CHANNEL_ID] = false;
-                    $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries($vs[self::F_EXISTING_IDENTIFIER][1]);
-                }
-                unset($vs[self::F_EXISTING_IDENTIFIER]);
-                return $vs;
-            }));
+        return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type],
+            $this->plugin->txt(self::F_CHANNEL_TYPE))
+                                ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs
+                                ) {
+                                    if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
+                                        $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
+                                    } else {
+                                        $vs[self::F_CHANNEL_ID] = false;
+                                        $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries($vs[self::F_EXISTING_IDENTIFIER][1]);
+                                    }
+                                    unset($vs[self::F_EXISTING_IDENTIFIER]);
+                                    return $vs;
+                                }));
     }
 }
