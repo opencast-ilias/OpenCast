@@ -426,7 +426,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $metadata = $this->opencast_dic->series_repository()->find($series_id)->getMetadata();
         }
 
-        $settings->setSeriesIdentifier($series_id);
+        if($series_id !== null) {
+            $settings->setSeriesIdentifier($series_id);
+        }
         $settings->setObjId($newObj->getId());
         $settings->create();
 

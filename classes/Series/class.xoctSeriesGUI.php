@@ -132,7 +132,13 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected function editGeneral()
     {
+        $seriesIdentifier = $this->objectSettings->getSeriesIdentifier();
+        if($seriesIdentifier === null) {
+            return;
+        }
+
         $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+
         $this->object->updateObjectFromSeries($series->getMetadata());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));

@@ -1227,12 +1227,15 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add user to series producers
-        $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-        if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
-            $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($series->getIdentifier(),
-                new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
-            $sleep = true;
+        if($this->objectSettings->getSeriesIdentifier() !== null) {
+            $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+            if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
+                $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($series->getIdentifier(),
+                    new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
+                $sleep = true;
+            }
         }
+
 
         // race condition fix (opencast takes some time to actually update the ACL)
         if ($sleep) {

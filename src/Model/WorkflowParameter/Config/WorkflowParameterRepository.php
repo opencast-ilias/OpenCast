@@ -87,30 +87,34 @@ class WorkflowParameterRepository {
 		$dom = new DOMDocument();
 		$dom->strictErrorChecking = false;
 		$configuration_panel_html = trim(str_replace("\n", "", $configuration_panel_html));
-		$dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
-		$inputs = $dom->getElementsByTagName('input');
-		$labels = $dom->getElementsByTagName('label');
-		$workflow_parameters = [];
-		/** @var DOMElement $input */
-		foreach ($inputs as $input) {
-			/** @var WorkflowParameter $xoctWorkflowParameter */
-			$xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($input->getAttribute('id'));
-			if (!$xoctWorkflowParameter->getTitle()) {
-				$name = $input->getAttribute('name');
-				/** @var DOMElement $label */
-				foreach ($labels as $label) {
-					if ($label->getAttribute('for') == $name) {
-						$xoctWorkflowParameter->setTitle($label->nodeValue);
-						break;
-					}
-				}
-			}
-			if (!$xoctWorkflowParameter->getType()) {
+        $workflow_parameters = [];
+
+        if(strlen($configuration_panel_html) > 0) {
+            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
+            $inputs = $dom->getElementsByTagName('input');
+            $labels = $dom->getElementsByTagName('label');
+            /** @var DOMElement $input */
+            foreach ($inputs as $input) {
+                /** @var WorkflowParameter $xoctWorkflowParameter */
+                $xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($input->getAttribute('id'));
+                if (!$xoctWorkflowParameter->getTitle()) {
+                    $name = $input->getAttribute('name');
+                    /** @var DOMElement $label */
+                    foreach ($labels as $label) {
+                        if ($label->getAttribute('for') == $name) {
+                            $xoctWorkflowParameter->setTitle($label->nodeValue);
+                            break;
+                        }
+                    }
+                }
+                if (!$xoctWorkflowParameter->getType()) {
 //				$xoctWorkflowParameter->setType($input->getAttribute('type'));  // for now, only checkbox is supported
-				$xoctWorkflowParameter->setType(WorkflowParameter::TYPE_CHECKBOX);
-			}
-			$workflow_parameters[] = $xoctWorkflowParameter;
-		}
+                    $xoctWorkflowParameter->setType(WorkflowParameter::TYPE_CHECKBOX);
+                }
+                $workflow_parameters[] = $xoctWorkflowParameter;
+            }
+        }
+
 		return $workflow_parameters;
 	}
 

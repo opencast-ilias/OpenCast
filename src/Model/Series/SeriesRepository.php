@@ -24,9 +24,9 @@ interface SeriesRepository
 
     /**
      * @param CreateSeriesRequest $request
-     * @return string series identifier
+     * @return ?string series identifier
      */
-    public function create(CreateSeriesRequest $request) : string;
+    public function create(CreateSeriesRequest $request) : ?string;
 
     public function updateMetadata(UpdateSeriesMetadataRequest $request) : void;
 

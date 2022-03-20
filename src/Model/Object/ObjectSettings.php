@@ -244,7 +244,7 @@ class ObjectSettings extends ActiveRecord {
 		$this->obj_id = $obj_id;
 	}
 
-	public function getSeriesIdentifier() : string
+	public function getSeriesIdentifier() : ?string
 	{
 		return $this->series_identifier;
 	}
