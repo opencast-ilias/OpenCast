@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
+use ActiveRecord;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
@@ -56,18 +57,21 @@ class SeriesWorkflowParameterRepository
     public static function getInstance()
     {
         if (self::$instance == NULL) {
-            $self = new self();
+            global $DIC;
+            $self = new self(
+                $DIC->ui()->factory(),
+                $DIC->refinery(),
+                new WorkflowParameterParser()
+            );
             self::$instance = $self;
         }
         return self::$instance;
     }
 
-
     /**
      * @param $obj_id
      * @param $param_id
-     *
-     * @return SeriesWorkflowParameter
+     * @return SeriesWorkflowParameter|ActiveRecord
      */
     public static function getByObjAndParamId($obj_id, $param_id)
     {
