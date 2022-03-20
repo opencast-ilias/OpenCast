@@ -41,6 +41,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'ilObjOpenCast' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCast.php',
         'ilObjOpenCastAccess' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastAccess.php',
         'ilObjOpenCastGUI' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastGUI.php',
@@ -259,7 +260,6 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationSelector.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\publicationMetadata' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Report\\Report' => __DIR__ . '/../..' . '/src/Model/Report/Report.php',
-        'srag\\Plugins\\Opencast\\Model\\Scheduling\\Processing' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Processing.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\RRule' => __DIR__ . '/../..' . '/src/Model/Scheduling/RRule.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/Scheduling/Scheduling.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingParser' => __DIR__ . '/../..' . '/src/Model/Scheduling/SchedulingParser.php',
@@ -283,6 +283,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\WorkflowInstance\\WorkflowOperation' => __DIR__ . '/../..' . '/src/Model/WorkflowInstance/WorkflowOperation.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\Config\\WorkflowParameter' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Config/WorkflowParameter.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\Config\\WorkflowParameterRepository' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Config/WorkflowParameterRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\Processing' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Processing.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\Series\\SeriesWorkflowParameter' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Series/SeriesWorkflowParameter.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\Series\\SeriesWorkflowParameterRepository' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/Series/SeriesWorkflowParameterRepository.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowParameter\\WorkflowParameterParser' => __DIR__ . '/../..' . '/src/Model/WorkflowParameter/WorkflowParameterParser.php',
