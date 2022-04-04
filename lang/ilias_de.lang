@@ -428,6 +428,7 @@ xoct_read#:#Lesezugriff auf Opencast-Objekt
 xoct_write#:#Einstellungen eines Opencast-Objekts bearbeiten
 xoct_delete#:#Opencast-Objekt löschen oder verschieben
 xoct_edit_permission#:#Rechteeinstellungen des Opencast-Objektes ändern
+xoct_copy#:#Benutzer kann das Objekt kopieren
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 form_msg_not_supported#:#Dateityp wird nicht unterstützt
 info_linked_items#:#Verlinkungen

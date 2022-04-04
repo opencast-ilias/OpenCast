@@ -431,6 +431,7 @@ xoct_read#:#User has read access to Opencast and can watch videos
 xoct_write#:#User can edit setting of Opencast object
 xoct_delete#:#User can move or delete Opencast object
 xoct_edit_permission#:#User can change permission settings
+xoct_copy#:#User can copy the object
 form_msg_select#:#Please select fist a Videofile
 form_msg_not_supported#:#Filetype is not supported
 info_linked_items#:#Links
