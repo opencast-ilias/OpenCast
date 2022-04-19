@@ -8,7 +8,7 @@ Use Opencast in ILIAS LMS with a wide variety of features:
 * integrated Paella video Player
 * live stream events with an on-screen chat
 * detailed permission configuration
-* use Opencast videos in the ILIAS page editor (additional plugin required: https://github.com/studer-raimann/OpencastPageComponent)
+* use Opencast videos in the ILIAS page editor (additional plugin required: https://github.com/opencast-ilias/OpencastPageComponent)
 
 ## Getting Started
 
@@ -34,7 +34,7 @@ This is only required if the plugin is configured to show live events and if you
 The live chat runs on a node js server and was tested with node version 10.x. To install nodejs v10.x on Ubuntu, execute:
 ```bash
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-sudo apt-get install -y nodejs 
+sudo apt-get install -y nodejs
 ```
 For other OS, see https://nodejs.org/en/download/package-manager/
 
@@ -58,15 +58,4 @@ If your web server uses HTTPS, you will need to make the chat understand HTTPS a
 
 ## License
 
-This project is licensed under the GPL v3 License 
-
-## Contributing :purple_heart:
-Please ...
-1. ... register an account at https://git.fluxlabs.ch
-2. ... create pull requests :fire:
-
-## Adjustment suggestions / bug reporting :feet:
-Please ...
-1. ... register an account at https://git.fluxlabs.ch
-2. ... ask us for a Service Level Agreement: support@fluxlabs.ch :kissing_heart:
-3. ... Read and create issues
+This project is licensed under the GPL v3 License
