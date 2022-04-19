@@ -1,5 +1,4 @@
 # ILIAS-Plugin Opencast
-Provided and maintained by fluxlabs.
 
 Use Opencast in ILIAS LMS with a wide variety of features:
 * create Opencast series as repository objects
@@ -20,7 +19,7 @@ Start at your ILIAS root directory
 ```bash
 mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/
 cd Customizing/global/plugins/Services/Repository/RepositoryObject/
-git clone https://github.com/fluxapps/OpenCast.git
+git clone https://github.com/opencast-ilias/OpenCast.git
 ```
 As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 
