@@ -65,7 +65,7 @@ class Group extends APIObject
     protected function read()
     {
         $data = json_decode(xoctRequest::root()->groups($this->getIdentifier())->get());
-        if(strlen($data) > 0) {
+        if(!empty($data)) {
             $this->loadFromStdClass($data);
         }
     }
