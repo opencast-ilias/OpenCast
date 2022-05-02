@@ -1,5 +1,5 @@
 <?php
-
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/vendor/srag/dic/src/DICTrait.php');
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
