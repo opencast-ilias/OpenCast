@@ -1,5 +1,5 @@
 <?php
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 
 /**
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const F_USAGE_ID = 'usage_id';
 	const F_TITLE = 'title';
@@ -40,7 +40,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI {
 	 */
 	public function __construct($parent_gui, $xoctPublicationUsage) {
 		global $DIC;
-		$DIC->ui()->mainTemplate()->addJavaScript(ilOpenCastPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js');
+		$DIC->ui()->mainTemplate()->addJavaScript(ilOpencastObjectPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js');
 		parent::__construct();
 		$this->object = $xoctPublicationUsage;
 		$this->parent_gui = $parent_gui;

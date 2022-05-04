@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI;
 
 require_once __DIR__ . "/../../../../autoload.php";
 
@@ -10,7 +10,7 @@ use ilObjUser;
 /**
  * Class UsersAjaxAutoCompleteCtrl
  *
- * @package srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI
  */
 class UsersAjaxAutoCompleteCtrl extends AbstractAjaxAutoCompleteCtrl
 {

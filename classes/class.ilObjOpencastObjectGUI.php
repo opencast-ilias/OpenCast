@@ -3,8 +3,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -26,15 +26,15 @@ use srag\Plugins\Opencast\UI\LegacyFormWrapper;
  * - The GUI class is called by ilRepositoryGUI
  * - GUI classes used by this class are ilPermissionGUI (provides the rbac
  *   screens) and ilInfoScreenGUI (handles the info screen).
- * @ilCtrl_isCalledBy ilObjOpenCastGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI
- * @ilCtrl_Calls      ilObjOpenCastGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI
+ * @ilCtrl_isCalledBy ilObjOpencastObjectGUI: ilRepositoryGUI, ilObjPluginDispatchGUI, ilAdministrationGUI
+ * @ilCtrl_Calls      ilObjOpencastObjectGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI
  */
-class ilObjOpenCastGUI extends ilObjectPluginGUI
+class ilObjOpencastObjectGUI extends ilObjectPluginGUI
 {
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const CMD_SHOW_CONTENT = 'showContent';
     const CMD_REDIRECT_SETTING = 'redirectSettings';
@@ -45,7 +45,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     const TAB_EULA = "eula";
 
     /**
-     * @var ilObjOpenCast
+     * @var ilObjOpencastObject
      */
     //	public $object;
     /**
@@ -53,7 +53,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected $form;
     /**
-     * @var ilObjOpenCast
+     * @var ilObjOpencastObject
      */
     public $object;
     /**
@@ -87,7 +87,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     final function getType()
     {
-        return ilOpenCastPlugin::PLUGIN_ID;
+        return ilOpencastObjectPlugin::PLUGIN_ID;
     }
 
 
@@ -207,11 +207,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @return ilObjOpenCast
+     * @return ilObjOpencastObject
      */
-    public function getObject(): ilObjOpenCast
+    public function getObject(): ilObjOpencastObject
     {
-        return $this->object ?: new ilObjOpenCast();
+        return $this->object ?: new ilObjOpencastObject();
     }
 
     /**
@@ -274,14 +274,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->ilias_dic->tabs()->addTab(self::TAB_EVENTS, self::plugin()->translate('tab_event_index'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_STANDARD));
         $this->ilias_dic->tabs()->addTab(self::TAB_INFO, self::plugin()->translate('tab_info'), $this->ilias_dic->ctrl()->getLinkTarget($this, 'infoScreen'));
 
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_SETTINGS)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EDIT_SETTINGS)) {
             $this->ilias_dic->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_series_settings'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT_GENERAL));
         }
 
-        if ($objectSettings->getPermissionPerClip() && ilObjOpenCastAccess::hasPermission('read')) {
+        if ($objectSettings->getPermissionPerClip() && ilObjOpencastObjectAccess::hasPermission('read')) {
             $this->ilias_dic->tabs()->addTab(self::TAB_GROUPS, self::plugin()->translate('tab_groups'), $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI()));
         }
-        if ($this->ilias_dic->user()->getId() == 6 and ilObjOpenCast::DEV) {
+        if ($this->ilias_dic->user()->getId() == 6 and ilObjOpencastObject::DEV) {
             $this->ilias_dic->tabs()->addTab('migrate_event', self::plugin()->translate('tab_migrate_event'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'search'));
             $this->ilias_dic->tabs()->addTab('list_all', self::plugin()->translate('tab_list_all'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'listAll'));
         }
@@ -294,7 +294,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         // ToDo: Why does this access check not work?
-        if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
+        if (ilObjOpencastObjectAccess::hasPermission(ilObjOpencastObjectAccess::PERMISSION_UPLOAD)) {
             $this->ilias_dic->tabs()->addTab(self::TAB_EULA, self::plugin()->translate("eula"),
                 $this->ilias_dic->ctrl()->getLinkTarget($this, "showEula"));
         }
@@ -316,11 +316,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected function initCreationForms($a_new_type)
     {
-        if (!ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
+        if (!ilObjOpencastObject::_getParentCourseOrGroup($_GET['ref_id'])) {
             ilUtil::sendFailure(self::plugin()->translate('msg_creation_failed'), true);
             ilUtil::redirect('/');
         }
-        $this->ilias_dic->ctrl()->setParameter($this, 'new_type', ilOpenCastPlugin::PLUGIN_ID);
+        $this->ilias_dic->ctrl()->setParameter($this, 'new_type', ilOpencastObjectPlugin::PLUGIN_ID);
 
         return array(self::CFORM_NEW => $this->initCreateForm($a_new_type));
     }
@@ -389,7 +389,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $perm_tpl_id = $additional_args['settings']['permission_template'];
 
         // set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
-        $producers = ilObjOpenCastAccess::getProducersForRefID($newObj->getRefId());
+        $producers = ilObjOpencastObjectAccess::getProducersForRefID($newObj->getRefId());
         $producers[] = xoctUser::getInstance($this->ilias_dic->user());
 
         try {
@@ -438,7 +438,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         // checkbox from creation gui to activate "upload" permission for members
         if ($is_memberupload_enabled) {
-            ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
+            ilObjOpencastObjectAccess::activateMemberUpload($newObj->getRefId());
         }
 
         $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
@@ -480,9 +480,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 self::dic()->history()->addItem($_GET['ref_id'], $this->ilias_dic->ctrl()->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $this->object->getTitle());
             }
             require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
-            $list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpenCastPlugin::PLUGIN_ID);
+            $list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpencastObjectPlugin::PLUGIN_ID);
             /**
-             * @var $list_gui ilObjOpenCastListGUI
+             * @var $list_gui ilObjOpencastObjectListGUI
              */
             if (!$objectSettings->isOnline()) {
                 $this->ilias_dic->ui()->mainTemplate()->setAlertProperties($list_gui->getAlertProperties());
@@ -490,8 +490,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         } else {
             $this->ilias_dic->ui()->mainTemplate()->setTitle(self::plugin()->translate('series_create'));
         }
-        $this->ilias_dic->ui()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
-        $this->ilias_dic->ui()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
+        $this->ilias_dic->ui()->mainTemplate()->setTitleIcon(ilObjOpencastObject::_getIcon($this->object_id));
+        $this->ilias_dic->ui()->mainTemplate()->setPermanentLink(ilOpencastObjectPlugin::PLUGIN_ID, $_GET['ref_id']);
 
         return $objectSettings;
     }

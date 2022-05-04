@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DIC\OpenCast\Exception;
+namespace srag\DIC\OpencastObject\Exception;
 
 use ilException;
 
 /**
  * Class DICException
  *
- * @package srag\DIC\OpenCast\Exception
+ * @package srag\DIC\OpencastObject\Exception
  */
 final class DICException extends ilException
 {

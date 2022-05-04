@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
+namespace srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent;
 
 use ILIAS\Refinery\Constraint;
 use ILIAS\Refinery\Custom\Constraint as CustomConstraint;
@@ -8,7 +8,7 @@ use ILIAS\Refinery\Custom\Constraint as CustomConstraint;
 /**
  * Class InputGUIWrapperConstraint
  *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+ * @package srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent
  */
 class InputGUIWrapperConstraint extends CustomConstraint implements Constraint
 {

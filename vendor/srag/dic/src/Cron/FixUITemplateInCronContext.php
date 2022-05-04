@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DIC\OpenCast\Cron;
+namespace srag\DIC\OpencastObject\Cron;
 
 use ilTemplate;
 
 /**
  * Trait FixUITemplateInCronContext
  *
- * @package srag\DIC\OpenCast\Cron
+ * @package srag\DIC\OpencastObject\Cron
  */
 trait FixUITemplateInCronContext
 {

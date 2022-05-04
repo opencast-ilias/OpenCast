@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column\Formatter;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column\Formatter;
 
 use ilDatePresentation;
 use ilDateTime;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
 
 /**
  * Class DateFormatter
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column\Formatter
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column\Formatter
  */
 class DateFormatter extends DefaultFormatter
 {

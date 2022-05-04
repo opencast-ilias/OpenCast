@@ -34,7 +34,7 @@
   },
   "autoload": {
     "psr-4": {
-      "srag\\LibraryLanguageInstaller\\OpenCast\\": "src/"
+      "srag\\LibraryLanguageInstaller\\OpencastObject\\": "src/"
     }
   },
   "config": {

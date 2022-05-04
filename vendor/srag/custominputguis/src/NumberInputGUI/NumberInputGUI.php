@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\NumberInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\NumberInputGUI;
 
 use ilNumberInputGUI;
 use ilTableFilterItem;
 use ilToolbarItem;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class NumberInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\NumberInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\NumberInputGUI
  */
 class NumberInputGUI extends ilNumberInputGUI implements ilTableFilterItem, ilToolbarItem
 {

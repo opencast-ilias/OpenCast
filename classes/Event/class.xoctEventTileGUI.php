@@ -2,8 +2,8 @@
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
@@ -18,7 +18,7 @@ class xoctEventTileGUI
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const GET_PAGE = 'page';
 

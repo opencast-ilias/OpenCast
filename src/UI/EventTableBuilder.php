@@ -6,7 +6,7 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Container\Filter\Standard;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
-use ilObjOpenCastAccess;
+use ilObjOpencastObjectAccess;
 use ilUIService;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -71,7 +71,7 @@ class EventTableBuilder
             $parent_cmd,
             $objectSettings,
             $this->MDFieldConfigEventRepository->getAll(
-                ilObjOpenCastAccess::hasPermission('edit_videos')
+                ilObjOpencastObjectAccess::hasPermission('edit_videos')
             ),
             $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
                 $objectSettings),
@@ -88,7 +88,7 @@ class EventTableBuilder
 
     public function filter(string $form_action): Standard
     {
-        $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable(ilObjOpenCastAccess::hasPermission('edit_videos'));
+        $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable(ilObjOpencastObjectAccess::hasPermission('edit_videos'));
         return $this->ui_service->filter()->standard(
             'xoct_event_table',
             $form_action,
@@ -140,7 +140,7 @@ class EventTableBuilder
                 }
             }
 
-            return ilObjOpenCastAccess::hasReadAccessOnEvent(
+            return ilObjOpencastObjectAccess::hasReadAccessOnEvent(
                 $event_object,
                 xoctUser::getInstance($this->dic->user()),
                 $objectSettings);

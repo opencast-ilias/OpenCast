@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TabsInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\TabsInputGUI;
 
 use ilFormPropertyGUI;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\PropertyFormGUI;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class MultilangualTabsInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\TabsInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\TabsInputGUI
  */
 class MultilangualTabsInputGUI
 {
@@ -169,4 +169,3 @@ class MultilangualTabsInputGUI
         }
     }
 }
-

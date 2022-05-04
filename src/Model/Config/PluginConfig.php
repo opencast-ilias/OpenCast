@@ -6,7 +6,7 @@ use ActiveRecord;
 use DOMCdataSection;
 use DOMDocument;
 use DOMElement;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\Model\User\xoctUser;
@@ -104,8 +104,8 @@ class PluginConfig extends ActiveRecord
 
     const PAELLA_OPTION_DEFAULT = 'default';
     const PAELLA_OPTION_URL = 'url';
-    const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
-    const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
+    const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/js/paella_player/config.json';
+    const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/js/paella_player/config_live.json';
 
     /**
      * @var array
@@ -243,7 +243,7 @@ class PluginConfig extends ActiveRecord
      */
     public static function getXMLExport(): string
     {
-        $opencast_plugin = ilOpenCastPlugin::getInstance();
+        $opencast_plugin = ilOpencastObjectPlugin::getInstance();
         $domxml = new DOMDocument('1.0', 'UTF-8');
         $domxml->preserveWhiteSpace = false;
         $domxml->formatOutput = true;

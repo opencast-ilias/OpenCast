@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column\Formatter;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column\Formatter;
 
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Formatter;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Formatter;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractFormatter
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column\Formatter
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column\Formatter
  */
 abstract class AbstractFormatter implements Formatter
 {

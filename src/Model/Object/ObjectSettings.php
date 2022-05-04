@@ -4,9 +4,9 @@ namespace srag\Plugins\Opencast\Model\Object;
 
 use ActiveRecord;
 use ilException;
-use ilObjOpenCast;
-use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
+use ilObjOpencastObject;
+use ilOpencastObjectPlugin;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -20,7 +20,7 @@ use xoctException;
 class ObjectSettings extends ActiveRecord {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const TABLE_NAME = 'xoct_data';
 
@@ -121,13 +121,13 @@ class ObjectSettings extends ActiveRecord {
 
 
 	/**
-	 * @return ilObjOpenCast
+	 * @return ilObjOpencastObject
 	 */
 	public function getILIASObject() {
 	    static $object;
 	    if (is_null($object[$this->getObjId()])) {
-            $references = ilObjOpenCast::_getAllReferences($this->getObjId());
-		    $object[$this->getObjId()] = new ilObjOpenCast(array_shift($references));
+            $references = ilObjOpencastObject::_getAllReferences($this->getObjId());
+		    $object[$this->getObjId()] = new ilObjOpencastObject(array_shift($references));
         }
         return $object[$this->getObjId()];
     }

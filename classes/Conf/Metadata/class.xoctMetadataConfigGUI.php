@@ -4,7 +4,7 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;

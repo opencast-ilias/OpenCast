@@ -1,6 +1,6 @@
 <?php
 
-use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\CustomInputGUIs\OpencastObject\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 
@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterReposi
 class xoctWorkflowParameterTableGUI extends TableGUI
 {
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
     const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
     /**
      * @var WorkflowParameterRepository
@@ -105,7 +105,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI
 
 
     /**
-     * @throws \srag\DIC\OpenCast\Exception\DICException
+     * @throws \srag\DIC\OpencastObject\Exception\DICException
      */
     protected function initTitle(): void
     {
@@ -116,7 +116,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI
     /**
      * @param array $row
      *
-     * @throws \srag\DIC\OpenCast\Exception\DICException
+     * @throws \srag\DIC\OpencastObject\Exception\DICException
      * @throws ilTemplateException
      */
     protected function fillRow($row): void

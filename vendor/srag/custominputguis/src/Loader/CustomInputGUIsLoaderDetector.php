@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\Loader;
+namespace srag\CustomInputGUIs\OpencastObject\Loader;
 
 use Closure;
 use ILIAS\UI\Component\Component;
@@ -9,14 +9,14 @@ use ILIAS\UI\Implementation\Render\ComponentRenderer;
 use ILIAS\UI\Implementation\Render\Loader;
 use ILIAS\UI\Renderer;
 use Pimple\Container;
-use srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent\InputGUIWrapperUIInputComponent;
-use srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent\Renderer as InputGUIWrapperUIInputComponentRenderer;
-use srag\DIC\OpenCast\Loader\AbstractLoaderDetector;
+use srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent\InputGUIWrapperUIInputComponent;
+use srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent\Renderer as InputGUIWrapperUIInputComponentRenderer;
+use srag\DIC\OpencastObject\Loader\AbstractLoaderDetector;
 
 /**
  * Class CustomInputGUIsLoaderDetector
  *
- * @package srag\CustomInputGUIs\OpenCast\Loader
+ * @package srag\CustomInputGUIs\OpencastObject\Loader
  */
 class CustomInputGUIsLoaderDetector extends AbstractLoaderDetector
 {

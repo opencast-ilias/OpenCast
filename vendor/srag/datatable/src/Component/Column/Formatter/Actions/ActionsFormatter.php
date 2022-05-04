@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions;
+namespace srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions;
 
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Formatter;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Formatter;
 
 /**
  * Interface ActionsFormatter
  *
- * @package srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions
+ * @package srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions
  */
 interface ActionsFormatter extends Formatter
 {

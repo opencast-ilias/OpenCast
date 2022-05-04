@@ -1,14 +1,14 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Column;
+namespace srag\DataTableUI\OpencastObject\Component\Column;
 
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Formatter;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Formatter;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
 
 /**
  * Interface Column
  *
- * @package srag\DataTableUI\OpenCast\Component\Column
+ * @package srag\DataTableUI\OpencastObject\Component\Column
  */
 interface Column
 {

@@ -57,7 +57,7 @@ class xoctConfGUI extends xoctGUI
 
         switch ($nextClass) {
             case strtolower(xoctFileUploadHandler::class):
-                if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+                if (!ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_ADD_EVENT)) {
                     ilUtil::sendFailure(self::plugin()->getPluginObject()->txt("msg_no_access"), true);
                     $this->cancel();
                 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data\Fetcher;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher;
 
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\DataFetcher;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\DataFetcher;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data\Fetcher
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher
  */
 class Factory implements FactoryInterface
 {

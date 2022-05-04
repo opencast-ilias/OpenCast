@@ -13,7 +13,7 @@ $(document).ready(function () {
 		xoctWaiter.show();
 		var identifier = $('#existing_identifier').val();
 		$.ajax({
-			url: "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/json.php",
+			url: "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/classes/Series/json.php",
 			type: "GET",
 			data: {
 				"identifier": identifier

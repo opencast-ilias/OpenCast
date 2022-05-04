@@ -1,22 +1,22 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation;
+namespace srag\DataTableUI\OpencastObject\Implementation;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Render\AbstractComponentRenderer;
 use ILIAS\UI\Implementation\Render\ResourceRegistry;
 use ILIAS\UI\Renderer as RendererInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Renderer
  *
- * @package srag\DataTableUI\OpenCast\Implementation
+ * @package srag\DataTableUI\OpencastObject\Implementation
  */
 class Renderer extends AbstractComponentRenderer
 {

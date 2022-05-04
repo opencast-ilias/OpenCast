@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
+namespace srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent;
 
 use Closure;
 use ilCheckboxInputGUI;
@@ -10,13 +10,13 @@ use ILIAS\Refinery\Constraint;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ILIAS\UI\Implementation\Component\Input\NameSource;
 use ilRepositorySelector2InputGUI;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class InputGUIWrapperUIInputComponent
  *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+ * @package srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent
  */
 class InputGUIWrapperUIInputComponent extends Input
 {

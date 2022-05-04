@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DIC\OpenCast\DIC;
+namespace srag\DIC\OpencastObject\DIC;
 
 use ILIAS\DI\Container;
-use srag\DIC\OpenCast\Database\DatabaseDetector;
-use srag\DIC\OpenCast\Database\DatabaseInterface;
+use srag\DIC\OpencastObject\Database\DatabaseDetector;
+use srag\DIC\OpencastObject\Database\DatabaseInterface;
 
 /**
  * Class AbstractDIC
  *
- * @package srag\DIC\OpenCast\DIC
+ * @package srag\DIC\OpencastObject\DIC
  */
 abstract class AbstractDIC implements DICInterface
 {

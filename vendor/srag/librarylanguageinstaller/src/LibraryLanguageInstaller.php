@@ -1,18 +1,18 @@
 <?php
 
-namespace srag\LibraryLanguageInstaller\OpenCast;
+namespace srag\LibraryLanguageInstaller\OpencastObject;
 
 use ilDBConstants;
 use ilGlobalCache;
 use ilObjLanguage;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\Pluginable;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\Pluginable;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
 
 /**
  * Class LibraryLanguageInstaller
  *
- * @package srag\LibraryLanguageInstaller\OpenCast
+ * @package srag\LibraryLanguageInstaller\OpencastObject
  */
 final class LibraryLanguageInstaller implements Pluginable
 {

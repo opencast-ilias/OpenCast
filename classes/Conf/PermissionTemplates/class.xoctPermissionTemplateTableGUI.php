@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 
 /**
@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 class xoctPermissionTemplateTableGUI extends ilTable2GUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var xoctPermissionTemplateGUI

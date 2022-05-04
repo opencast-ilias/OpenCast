@@ -1,6 +1,6 @@
 <?php
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/vendor/srag/dic/src/DICTrait.php');
-use srag\DIC\OpenCast\DICTrait;
+require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/vendor/srag/dic/src/DICTrait.php');
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -9,16 +9,16 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 
 /**
- * Class ilObjOpenCast
+ * Class ilObjOpencastObject
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  *
  * @version 1.0.00
  */
-class ilObjOpenCast extends ilObjectPlugin {
+class ilObjOpencastObject extends ilObjectPlugin {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var bool
@@ -36,7 +36,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	final function initType() {
-		$this->setType(ilOpenCastPlugin::PLUGIN_ID);
+		$this->setType(ilOpencastObjectPlugin::PLUGIN_ID);
 	}
 
 
@@ -81,7 +81,7 @@ class ilObjOpenCast extends ilObjectPlugin {
 
 
 	/**
-	 * @param ilObjOpenCast $new_obj
+	 * @param ilObjOpencastObject $new_obj
 	 * @param               $a_target_id
 	 * @param null $a_copy_id
 	 *

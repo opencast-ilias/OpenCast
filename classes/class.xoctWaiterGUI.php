@@ -1,5 +1,5 @@
 <?php
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 /**
  * Class xoctWaiterGUI
  *
@@ -9,7 +9,7 @@ use srag\DIC\OpenCast\DICTrait;
 class xoctWaiterGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var bool
@@ -26,8 +26,8 @@ class xoctWaiterGUI {
 	 */
 	public static function loadLib() {
 		if (!self::$init) {
-			self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
-			self::dic()->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
+			self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/default/waiter.min.js');
+			self::dic()->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/default/waiter.css');
 			self::$init = true;
 		}
 	}

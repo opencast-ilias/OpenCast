@@ -6,7 +6,7 @@ use ActiveRecord;
 
 /**
  * class AcceptedToU
- * Holds the information which user has accepted the terms of use for which OpenCast instance
+ * Holds the information which user has accepted the terms of use for which OpencastObject instance
  * @author fluxlabs <connect@fluxlabs.ch>
  * @author Sophie Pfister <sophie@fluxlabs.ch>
  */
@@ -41,7 +41,7 @@ class AcceptedToU extends ActiveRecord
     protected $oc_instance_id;
 
     /**
-     * Has the user accepted the terms of use for this OpenCast-Instance?
+     * Has the user accepted the terms of use for this OpencastObject-Instance?
      * @var bool
      * @con_has_field  true
      * @con_fieldtype  integer

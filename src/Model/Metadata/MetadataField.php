@@ -142,7 +142,7 @@ class MetadataField implements JsonSerializable
      */
     protected function fixPercentCharacter(string $string) : string
     {
-        // Bug in OpenCast server? The server think the JSON body is url encoded, but % is valid in JSON
+        // Bug in OpencastObject server? The server think the JSON body is url encoded, but % is valid in JSON
         return str_replace('%', rawurlencode('%'), $string);
     }
 

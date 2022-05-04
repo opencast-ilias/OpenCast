@@ -1,7 +1,7 @@
 <?php
 
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
@@ -23,14 +23,14 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
- * OpenCast repository object plugin
+ * OpencastObject repository object plugin
  *
  * @author  Fabian Schmid <fs@studer-raimann.ch>
  *
  * @version 1.0.00
  *
  */
-class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
+class ilOpencastObjectPlugin extends ilRepositoryObjectPlugin {
 
 	const PLUGIN_CLASS_NAME = self::class;
 
@@ -38,7 +38,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 	use DICTrait;
 
 	const PLUGIN_ID = 'xoct';
-	const PLUGIN_NAME = 'OpenCast';
+	const PLUGIN_NAME = 'OpencastObject';
     /**
      * @var ilDBInterface
      */
@@ -92,13 +92,13 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin {
 
 
 	/**
-	 * @var ilOpenCastPlugin
+	 * @var ilOpencastObjectPlugin
 	 */
 	protected static $cache;
 
 
 	/**
-	 * @return ilOpenCastPlugin
+	 * @return ilOpencastObjectPlugin
 	 */
 	public static function getInstance() {
 		if (!isset(self::$cache)) {

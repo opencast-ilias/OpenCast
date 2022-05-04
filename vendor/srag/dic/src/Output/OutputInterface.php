@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DIC\OpenCast\Output;
+namespace srag\DIC\OpencastObject\Output;
 
 use ilTemplateException;
 use JsonSerializable;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use stdClass;
 
 /**
  * Interface OutputInterface
  *
- * @package srag\DIC\OpenCast\Output
+ * @package srag\DIC\OpencastObject\Output
  */
 interface OutputInterface
 {

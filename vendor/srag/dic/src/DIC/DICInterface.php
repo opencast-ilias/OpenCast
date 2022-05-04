@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\DIC;
+namespace srag\DIC\OpencastObject\DIC;
 
 use Collator;
 use ilAccessHandler;
@@ -65,13 +65,13 @@ use ilToolbarGUI;
 use ilTree;
 use ilUIService;
 use Session;
-use srag\DIC\OpenCast\Database\DatabaseInterface;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Database\DatabaseInterface;
+use srag\DIC\OpencastObject\Exception\DICException;
 
 /**
  * Interface DICInterface
  *
- * @package srag\DIC\OpenCast\DIC
+ * @package srag\DIC\OpencastObject\DIC
  */
 interface DICInterface
 {

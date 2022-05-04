@@ -1,18 +1,18 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\WeekdayInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\WeekdayInputGUI;
 
 use ilCalendarUtil;
 use ilFormPropertyGUI;
 use ilTableFilterItem;
 use ilTemplate;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class WeekdayInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\WeekdayInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\WeekdayInputGUI
  */
 class WeekdayInputGUI extends ilFormPropertyGUI implements ilTableFilterItem
 {

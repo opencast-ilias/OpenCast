@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 class xoctReportingModalGUI extends ilModalGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const REPORTING_TYPE_DATE = 1;
 	const REPORTING_TYPE_QUALITY = 2;
@@ -68,7 +68,7 @@ class xoctReportingModalGUI extends ilModalGUI {
 
 	/**
 	 * @return string
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws \srag\DIC\OpencastObject\Exception\DICException
 	 * @throws ilTemplateException
 	 */
 	function getHTML() {

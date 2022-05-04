@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 
 /**
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const F_DEFAULT = 'is_default';
 	const F_TITLE_DE = 'title_de';

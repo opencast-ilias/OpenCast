@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\Plugin;
+namespace srag\DIC\OpencastObject\Plugin;
 
 use Closure;
 use Exception;
@@ -8,14 +8,14 @@ use ilCtrlStructureReader;
 use ilLanguage;
 use ilObjComponentSettingsGUI;
 use ilPlugin;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 
 /**
  * Class Plugin
  *
- * @package srag\DIC\OpenCast\Plugin
+ * @package srag\DIC\OpencastObject\Plugin
  */
 final class Plugin implements PluginInterface
 {

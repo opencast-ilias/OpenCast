@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\UIInputComponentWrapperInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\UIInputComponentWrapperInputGUI;
 
 use ilFormException;
 use ilFormPropertyGUI;
@@ -9,16 +9,16 @@ use ILIAS\UI\Implementation\Component\Input\Container\Form\PostDataFromServerReq
 use ilTableFilterItem;
 use ilTemplate;
 use ilToolbarItem;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 use Throwable;
 
 /**
  * Class UIInputComponentWrapperInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\UIInputComponentWrapperInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\UIInputComponentWrapperInputGUI
  */
 class UIInputComponentWrapperInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToolbarItem
 {

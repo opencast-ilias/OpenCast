@@ -4,11 +4,11 @@ namespace srag\Plugins\Opencast\Chat\GUI;
 
 use arException;
 use ilObjUser;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use ilTemplate;
 use ilTemplateException;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 
 /**
@@ -20,7 +20,7 @@ use srag\Plugins\Opencast\Chat\Model\MessageAR;
 class ChatHistoryGUI {
 
     use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var integer

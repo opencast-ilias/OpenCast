@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
@@ -10,7 +10,7 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctPermissionGroupGUI: ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctPermissionGroupGUI: ilObjOpencastObjectGUI
  */
 class xoctPermissionGroupGUI extends xoctGUI {
 
@@ -33,7 +33,7 @@ class xoctPermissionGroupGUI extends xoctGUI {
 		} else {
 			$this->objectSettings = new ObjectSettings ();
 		}
-		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
+		self::dic()->tabs()->setTabActive(ilObjOpencastObjectGUI::TAB_GROUPS);
 		//		xoctGroup::installDB();
 		xoctWaiterGUI::loadLib();
 		self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.css'));
@@ -47,9 +47,9 @@ class xoctPermissionGroupGUI extends xoctGUI {
     protected function performCommand($cmd)
     {
         if (in_array($cmd, self::$admin_commands)) {
-            $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
+            $access = ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_MANAGE_IVT_GROUPS);
         } else {
-            $access = ilObjOpenCastAccess::hasPermission('read');
+            $access = ilObjOpencastObjectAccess::hasPermission('read');
         }
         if (!$access) {
             ilUtil::sendFailure('No access.');
@@ -66,7 +66,7 @@ class xoctPermissionGroupGUI extends xoctGUI {
     protected function index()
     {
 		$temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.groups.html', false, false);
-		$temp->setVariable('IS_ADMIN', (int) ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS));
+		$temp->setVariable('IS_ADMIN', (int) ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_MANAGE_IVT_GROUPS));
 		$temp->setVariable('HEADER_GROUPS', self::plugin()->translate('groups_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS', self::plugin()->translate('groups_participants_header'));
 		$temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->translate('groups_available_participants_header'));
@@ -131,7 +131,7 @@ class xoctPermissionGroupGUI extends xoctGUI {
         {
             $data[] = [
                 'user_id' => $xoctGroupParticipant->getUserId(),
-                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess())
+                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpencastObjectAccess::hasWriteAccess())
             ];
         }
 

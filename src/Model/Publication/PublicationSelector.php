@@ -2,10 +2,10 @@
 
 namespace srag\Plugins\Opencast\Model\Publication;
 
-use ilObjOpenCastAccess;
-use ilOpenCastPlugin;
+use ilObjOpencastObjectAccess;
+use ilOpencastObjectPlugin;
 use Opis\Closure\SerializableClosure;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -27,11 +27,11 @@ class PublicationSelector
 {
 
     use DICTrait;
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
-    const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
-    const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
-    const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
+    const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/images/no_preview.png';
+    const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/images/thumbnail_scheduled.png';
+    const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/images/thumbnail_scheduled_live.png';
+    const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/images/thumbnail_live_running.png';
     /**
      * @var self[]
      */
@@ -353,7 +353,7 @@ class PublicationSelector
 
                 // Get user and course ref id
                 $user_id = $xoctUser->getIdentifier();
-                $is_admin = (int) ilObjOpenCastAccess::hasWriteAccess($ref_id);
+                $is_admin = (int) ilObjOpencastObjectAccess::hasWriteAccess($ref_id);
 
                 // Create the hash
                 $hash_input = $user_id . $ref_id . $is_admin;

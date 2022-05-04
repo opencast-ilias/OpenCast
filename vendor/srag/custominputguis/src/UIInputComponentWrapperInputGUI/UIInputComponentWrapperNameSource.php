@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\UIInputComponentWrapperInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\UIInputComponentWrapperInputGUI;
 
 use ILIAS\UI\Implementation\Component\Input\NameSource;
 
 /**
  * Class UIInputComponentWrapperNameSource
  *
- * @package srag\CustomInputGUIs\OpenCast\UIInputComponentWrapperInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\UIInputComponentWrapperInputGUI
  */
 class UIInputComponentWrapperNameSource implements NameSource
 {

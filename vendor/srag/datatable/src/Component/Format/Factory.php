@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Format;
+namespace srag\DataTableUI\OpencastObject\Component\Format;
 
-use srag\DataTableUI\OpenCast\Component\Format\Browser\Factory as BrowserFactory;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\Factory as BrowserFactory;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Format
+ * @package srag\DataTableUI\OpencastObject\Component\Format
  */
 interface Factory
 {

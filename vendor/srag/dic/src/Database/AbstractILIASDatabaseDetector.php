@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\Database;
+namespace srag\DIC\OpencastObject\Database;
 
 use ilDBConstants;
 use ilDBPdoInterface;
@@ -8,7 +8,7 @@ use ilDBPdoInterface;
 /**
  * Class AbstractILIASDatabaseDetector
  *
- * @package srag\DIC\OpenCast\Database
+ * @package srag\DIC\OpencastObject\Database
  */
 abstract class AbstractILIASDatabaseDetector implements DatabaseInterface
 {

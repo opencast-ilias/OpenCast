@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\Database;
+namespace srag\DIC\OpencastObject\Database;
 
 use ilDBPdoInterface;
 use ilDBStatement;
@@ -8,7 +8,7 @@ use ilDBStatement;
 /**
  * Interface DatabaseInterface
  *
- * @package srag\DIC\OpenCast\Database
+ * @package srag\DIC\OpencastObject\Database
  */
 interface DatabaseInterface extends ilDBPdoInterface
 {

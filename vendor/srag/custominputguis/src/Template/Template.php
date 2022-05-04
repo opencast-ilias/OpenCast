@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\Template;
+namespace srag\CustomInputGUIs\OpencastObject\Template;
 
 use ilTemplate;
 
 /**
  * Class Template
  *
- * @package srag\CustomInputGUIs\OpenCast\Template
+ * @package srag\CustomInputGUIs\OpencastObject\Template
  */
 class Template extends ilTemplate
 {

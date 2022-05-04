@@ -2,7 +2,7 @@
 
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 

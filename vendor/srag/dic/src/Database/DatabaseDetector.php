@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\Database;
+namespace srag\DIC\OpencastObject\Database;
 
 use ilDBConstants;
 use ilDBInterface;
@@ -8,13 +8,13 @@ use ilDBPdoInterface;
 use ilDBPdoPostgreSQL;
 use ilDBStatement;
 use PDO;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use stdClass;
 
 /**
  * Class DatabaseDetector
  *
- * @package srag\DIC\OpenCast\Database
+ * @package srag\DIC\OpencastObject\Database
  */
 class DatabaseDetector extends AbstractILIASDatabaseDetector
 {

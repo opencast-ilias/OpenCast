@@ -1,24 +1,24 @@
 <?php
 
-namespace srag\DIC\OpenCast;
+namespace srag\DIC\OpencastObject;
 
 use ilLogLevel;
 use ilPlugin;
-use srag\DIC\OpenCast\DIC\DICInterface;
-use srag\DIC\OpenCast\DIC\Implementation\ILIAS60DIC;
-use srag\DIC\OpenCast\DIC\Implementation\ILIAS70DIC;
-use srag\DIC\OpenCast\Exception\DICException;
-use srag\DIC\OpenCast\Output\Output;
-use srag\DIC\OpenCast\Output\OutputInterface;
-use srag\DIC\OpenCast\Plugin\Plugin;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\Version;
-use srag\DIC\OpenCast\Version\VersionInterface;
+use srag\DIC\OpencastObject\DIC\DICInterface;
+use srag\DIC\OpencastObject\DIC\Implementation\ILIAS60DIC;
+use srag\DIC\OpencastObject\DIC\Implementation\ILIAS70DIC;
+use srag\DIC\OpencastObject\Exception\DICException;
+use srag\DIC\OpencastObject\Output\Output;
+use srag\DIC\OpencastObject\Output\OutputInterface;
+use srag\DIC\OpencastObject\Plugin\Plugin;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\Version;
+use srag\DIC\OpencastObject\Version\VersionInterface;
 
 /**
  * Class DICStatic
  *
- * @package srag\DIC\OpenCast
+ * @package srag\DIC\OpencastObject
  */
 final class DICStatic implements DICStaticInterface
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings\Storage;
+namespace srag\DataTableUI\OpencastObject\Component\Settings\Storage;
 
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Interface SettingsStorage
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings\Storage
+ * @package srag\DataTableUI\OpencastObject\Component\Settings\Storage
  */
 interface SettingsStorage
 {

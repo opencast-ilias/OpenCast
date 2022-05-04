@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings\Sort;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings\Sort;
 
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField as SortFieldInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField as SortFieldInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 use stdClass;
 
 /**
  * Class SortField
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings\Sort
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings\Sort
  */
 class SortField implements SortFieldInterface
 {

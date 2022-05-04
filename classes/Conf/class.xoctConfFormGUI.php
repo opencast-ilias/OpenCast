@@ -1,7 +1,7 @@
 <?php
 
 use ILIAS\UI\Component\Input\Field\Input;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\User\xoctUser;
@@ -15,7 +15,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 class xoctConfFormGUI extends ilPropertyFormGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var  PluginConfig

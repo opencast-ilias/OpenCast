@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -11,7 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  * @version           1.0.0
  *
- * @ilCtrl_IsCalledBy xoctMainGUI : ilOpenCastConfigGUI
+ * @ilCtrl_IsCalledBy xoctMainGUI : ilOpencastObjectConfigGUI
  */
 class xoctMainGUI extends xoctGUI
 {

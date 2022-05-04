@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\HiddenInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\HiddenInputGUI;
 
 use ilHiddenInputGUI;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class HiddenInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\HiddenInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\HiddenInputGUI
  */
 class HiddenInputGUI extends ilHiddenInputGUI
 {

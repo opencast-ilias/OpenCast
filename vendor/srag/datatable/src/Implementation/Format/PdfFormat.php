@@ -1,14 +1,14 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Format;
+namespace srag\DataTableUI\OpencastObject\Implementation\Format;
 
 use ilHtmlToPdfTransformerFactory;
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Class PdfFormat
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Format
+ * @package srag\DataTableUI\OpencastObject\Implementation\Format
  */
 class PdfFormat extends HtmlFormat
 {

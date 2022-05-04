@@ -1,14 +1,14 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\ViewControlModeUI;
+namespace srag\CustomInputGUIs\OpencastObject\ViewControlModeUI;
 
 use ilSession;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class ViewControlModeUI
  *
- * @package srag\CustomInputGUIs\OpenCast\ViewControlModeUI
+ * @package srag\CustomInputGUIs\OpencastObject\ViewControlModeUI
  */
 class ViewControlModeUI
 {

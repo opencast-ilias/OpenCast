@@ -32,7 +32,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "srag\\CustomInputGUIs\\OpenCast\\": "src/"
+                "srag\\CustomInputGUIs\\OpencastObject\\": "src/"
             },
             "classmap": [
                 "src/MultiSelectSearchNewInputGUI/class.ObjectChildrenAjaxAutoCompleteCtrl.php",
@@ -98,7 +98,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "srag\\DataTableUI\\OpenCast\\": "src/"
+                "srag\\DataTableUI\\OpencastObject\\": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -153,7 +153,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "srag\\DIC\\OpenCast\\": "src/"
+                "srag\\DIC\\OpencastObject\\": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -259,7 +259,7 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "srag\\LibraryLanguageInstaller\\OpenCast\\": "src/"
+                "srag\\LibraryLanguageInstaller\\OpencastObject\\": "src/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",

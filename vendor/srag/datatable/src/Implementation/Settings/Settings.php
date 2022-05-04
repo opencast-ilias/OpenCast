@@ -1,21 +1,21 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings;
 
 use Closure;
 use ILIAS\UI\Component\ViewControl\Pagination as PaginationInterface;
 use ILIAS\UI\Implementation\Component\ComponentHelper;
 use ILIAS\UI\Implementation\Component\ViewControl\Pagination;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings as SettingsInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings as SettingsInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Settings
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings
  */
 class Settings implements SettingsInterface
 {

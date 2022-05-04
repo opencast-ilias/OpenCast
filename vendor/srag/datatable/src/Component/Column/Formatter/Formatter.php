@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Column\Formatter;
+namespace srag\DataTableUI\OpencastObject\Component\Column\Formatter;
 
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
 
 /**
  * Interface Formatter
  *
- * @package srag\DataTableUI\OpenCast\Component\Column\Formatter
+ * @package srag\DataTableUI\OpencastObject\Component\Column\Formatter
  */
 interface Formatter
 {

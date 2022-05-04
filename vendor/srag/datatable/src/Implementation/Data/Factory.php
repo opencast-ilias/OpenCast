@@ -1,20 +1,20 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data;
 
-use srag\DataTableUI\OpenCast\Component\Data\Data as DataInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\Factory as FetcherFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Row\Factory as RowFactoryInterface;
-use srag\DataTableUI\OpenCast\Implementation\Data\Fetcher\Factory as FetcherFactory;
-use srag\DataTableUI\OpenCast\Implementation\Data\Row\Factory as RowFactory;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Data as DataInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\Factory as FetcherFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\Factory as RowFactoryInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher\Factory as FetcherFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Data\Row\Factory as RowFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data
  */
 class Factory implements FactoryInterface
 {

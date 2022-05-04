@@ -1,5 +1,5 @@
 <?php
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class xoctGUI
@@ -10,7 +10,7 @@ use srag\DIC\OpenCast\DICTrait;
 abstract class xoctGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const CMD_STANDARD = 'index';
 	const CMD_ADD = 'add';

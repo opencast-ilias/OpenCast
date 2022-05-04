@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DIC\OpenCast;
+namespace srag\DIC\OpencastObject;
 
 use Throwable;
 
 /**
  * Class PHPVersionChecker
  *
- * @package srag\DIC\OpenCast
+ * @package srag\DIC\OpencastObject
  */
 final class PHPVersionChecker
 {

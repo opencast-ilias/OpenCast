@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
+namespace srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent;
 
 use ilFormPropertyGUI;
 use ILIAS\Data\Factory as DataFactory;
@@ -9,7 +9,7 @@ use ilLanguage;
 /**
  * Trait InputGUIWrapperConstraintTrait
  *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+ * @package srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent
  */
 trait InputGUIWrapperConstraintTrait
 {

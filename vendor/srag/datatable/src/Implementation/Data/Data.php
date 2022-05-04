@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data;
 
 use ILIAS\UI\Implementation\Component\ComponentHelper;
-use srag\DataTableUI\OpenCast\Component\Data\Data as DataInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Data as DataInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Data
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data
  */
 class Data implements DataInterface
 {

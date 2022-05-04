@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Format;
+namespace srag\DataTableUI\OpencastObject\Component\Format;
 
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Interface Format
  *
- * @package srag\DataTableUI\OpenCast\Component\Format
+ * @package srag\DataTableUI\OpencastObject\Component\Format
  */
 interface Format
 {

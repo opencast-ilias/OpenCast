@@ -30,7 +30,7 @@ Declare your class like follow:
 
 ```php
 //...
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 //...
 class x {
 	//...
@@ -50,7 +50,7 @@ You can now access the DIC interface, in instance and in static places:
 ```php
 /**
  * Get DIC interface
- * 
+ *
  * @return DICInterface DIC interface
  */
 self::dic(): DICInterface;
@@ -70,7 +70,7 @@ You can access the plugin interface, in instance and in static places:
 ```php
 /**
  * Get plugin interface
- * 
+ *
  * @return PluginInterface Plugin interface
  *
  * @throws DICException
@@ -85,7 +85,7 @@ For plugin dir use:
 ```php
 /**
  * Get plugin directory
- * 
+ *
  * @return string Plugin directory
  */
 self::plugin()->directory(): string;
@@ -96,7 +96,7 @@ For output HTML or GUI use:
 ```php
 /**
  * Output HTML or GUI
- * 
+ *
  * @param string|object $html          HTML code or some GUI instance
  * @param bool          $show          Show main template?
  * @param bool          $main_template Display main skin?
@@ -111,7 +111,7 @@ For output JSON:
 ```php
 /**
  * Output JSON
- * 
+ *
  * @param string|int|double|bool|array|stdClass|null|JsonSerializable $value JSON value
  *
  * @throws DICException
@@ -124,7 +124,7 @@ For get HTML of GUI:
 ```php
 /**
  * Get HTML of GUI
- * 
+ *
  * @param string|object $html HTML code or some GUI instance
  *
  * @return string HTML
@@ -139,7 +139,7 @@ For get a template use:
 ```php
 /**
  * Get a template
- * 
+ *
  * @param string $template                 Template path
  * @param bool   $remove_unknown_variables Should remove unknown variables?
  * @param bool   $remove_empty_blocks      Should remove empty blocks?
@@ -157,7 +157,7 @@ For translate use:
 ```php
 /**
  * Translate text
- * 
+ *
  * @param string $key          Language key
  * @param string $module       Language module
  * @param array  $placeholders Placeholders in your language texst to replace with vsprintf
@@ -195,7 +195,7 @@ You can access ILIAS version informations, in instance and in static places:
 ```php
 /**
  * Get version interface
- * 
+ *
  * @return VersionInterface Version interface
  */
 self::version(): VersionInterface;
@@ -218,7 +218,7 @@ If you realy need to access to original ILIAS `ilDB` instance, use `self:.dic()-
 Use auto increment on a spec. field (in `dbupdate.php`):
 
 ```php
-use srag\DIC\OpenCast\x\DICStatic;use srag\Plugins\x\x\x;DICStatic::dic()->database()->createAutoIncrement(x::TABLE_NAME, "id");
+use srag\DIC\OpencastObject\x\DICStatic;use srag\Plugins\x\x\x;DICStatic::dic()->database()->createAutoIncrement(x::TABLE_NAME, "id");
 ```
 
 Reset auto increment:
@@ -249,7 +249,7 @@ $x->setId(self::dic()->database()->store(x::TABLE_NAME, [
 ```php
 $array = self::dic()->database()->fetchAllCallback(self::dic()->database()->query('SELECT * FROM ' . self::dic()->database()
 				->quoteIdentifier(x::TABLE_NAME)), [ $this->factory(), "fromDB" ]);
-		
+
 ...
 
 public function fromDB(stdClass $data): x {
@@ -303,7 +303,7 @@ Optimal, it's also possible to pass a second URL which used if ILIAS Dev-Mode is
 
 ```php
 ...
-use srag\DIC\OpenCast\x\Version\PluginVersionParameter;
+use srag\DIC\OpencastObject\x\Version\PluginVersionParameter;
 ...
 $version_parameter = PluginVersionParameter::getInstance()->withPlugin(self::plugin());
 self::dic()->ui()->mainTemplate()->addCss($version_parameter->appendToUrl("..."));

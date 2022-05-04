@@ -1,18 +1,18 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column\Formatter;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column\Formatter;
 
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions\Factory as ActionsFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Formatter;
-use srag\DataTableUI\OpenCast\Implementation\Column\Formatter\Actions\Factory as ActionsFactory;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions\Factory as ActionsFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Formatter;
+use srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\Actions\Factory as ActionsFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column\Formatter
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column\Formatter
  */
 class Factory implements FactoryInterface
 {

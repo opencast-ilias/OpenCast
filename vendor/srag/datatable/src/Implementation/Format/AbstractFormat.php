@@ -1,21 +1,21 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Format;
+namespace srag\DataTableUI\OpencastObject\Implementation\Format;
 
 use ilUtil;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractFormat
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Format
+ * @package srag\DataTableUI\OpencastObject\Implementation\Format
  */
 abstract class AbstractFormat implements Format
 {

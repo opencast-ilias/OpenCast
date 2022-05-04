@@ -1,21 +1,21 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
- * ilOpenCastConfigGUI
+ * ilOpencastObjectConfigGUI
  *
  * @author             Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy  ilOpenCastConfigGUI: ilObjComponentSettingsGUIs
+ * @ilCtrl_IsCalledBy  ilOpencastObjectConfigGUI: ilObjComponentSettingsGUIs
  */
-class ilOpenCastConfigGUI extends ilPluginConfigGUI
+class ilOpencastObjectConfigGUI extends ilPluginConfigGUI
 {
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     public function executeCommand()
     {

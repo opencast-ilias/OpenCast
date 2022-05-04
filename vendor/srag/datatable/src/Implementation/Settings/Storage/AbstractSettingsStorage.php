@@ -1,19 +1,19 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings\Storage;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings\Storage;
 
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractSettingsStorage
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings\Storage
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings\Storage
  */
 abstract class AbstractSettingsStorage implements SettingsStorage
 {

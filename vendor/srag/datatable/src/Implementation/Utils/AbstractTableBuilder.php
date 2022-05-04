@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Utils;
+namespace srag\DataTableUI\OpencastObject\Implementation\Utils;
 
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Component\Utils\TableBuilder;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Utils\TableBuilder;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractTableBuilder
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Utils
+ * @package srag\DataTableUI\OpencastObject\Implementation\Utils
  */
 abstract class AbstractTableBuilder implements TableBuilder
 {
