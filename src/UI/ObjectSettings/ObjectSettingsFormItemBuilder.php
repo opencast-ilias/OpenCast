@@ -188,7 +188,7 @@ class ObjectSettingsFormItemBuilder
         if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $inputs[self::F_CHAT_ACTIVE] = $this->ui_factory->input()->field()->checkbox(
                 $this->plugin->txt('series_' . self::F_CHAT_ACTIVE),
-                $this->plugin->txt('series_' . self::F_CHAT_ACTIVE . '_info'),
+                $this->plugin->txt('series_' . self::F_CHAT_ACTIVE . '_info')
             )->withValue($objectSettings->isChatActive());
         }
 
