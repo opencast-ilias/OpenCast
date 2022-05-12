@@ -7,6 +7,7 @@ use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use stdClass;
 use xoctException;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 class SchedulingParser
 {
@@ -26,12 +27,13 @@ class SchedulingParser
                 return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
                     $start,
                     $end,
+                    PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL),
                     $duration,
                     RRule::fromStartAndWeekdays($start, $scheduling_data['weekdays']));
             case 'no_repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date_time']);
-                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end);
+                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end, PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL));
         }
         throw new xoctException(xoctException::INTERNAL_ERROR, $type . ' is not a valid scheduling type');
     }
@@ -41,7 +43,8 @@ class SchedulingParser
         // for some reason unknown to me, the start/end are already DateTimeImmutables here...
         return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
             $form_data['start_date_time'],
-            $form_data['end_date_time']);
+            $form_data['end_date_time'],
+            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL));
     }
 
     public function parseApiResponse(stdClass $data) : Scheduling
@@ -50,9 +53,10 @@ class SchedulingParser
             $data->agent_id,
             new DateTimeImmutable($data->start),
             new DateTimeImmutable($data->end),
+            $data->inputs,
             null,
-            null,
-            $data->inputs
+            null
+
         );
     }
 
