@@ -218,6 +218,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_SCHEDULE_CHANNEL), PluginConfig::F_SCHEDULE_CHANNEL);
 		$te->setInfo($this->parent_gui->txt(PluginConfig::F_SCHEDULE_CHANNEL . '_info'));
+		$te->setMulti(true);
 		$this->addItem($te);
 
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_CREATE_SCHEDULED_ALLOWED), PluginConfig::F_CREATE_SCHEDULED_ALLOWED);
