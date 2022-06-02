@@ -1219,11 +1219,13 @@ class xoctEventGUI extends xoctGUI
     {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
         // add user to ilias producers
+        $sleep = false;
         try {
-            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
-            $sleep = $ilias_producers->addMember($xoctUser);
+            if ($group_producers = PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS)) {
+                $ilias_producers = Group::find($group_producers);
+                $sleep = $ilias_producers->addMember($xoctUser);
+            }
         } catch (xoctException $e) {
-            $sleep = false;
         }
 
         // add user to series producers
