@@ -65,6 +65,7 @@ class PluginConfig extends ActiveRecord
     const F_AUDIO_ALLOWED = 'audio_allowed';
     const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
     const F_STUDIO_ALLOWED = 'oc_studio_allowed';
+    const F_STUDIO_URL = 'oc_studio_url';
     const F_EXT_DL_SOURCE = 'external_download_source';
     const F_VIDEO_PORTAL_LINK = 'video_portal_link';
     const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
