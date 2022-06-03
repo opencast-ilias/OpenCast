@@ -32,5 +32,20 @@ var xoctEvent = {
   outFunc: function(element) {
     var tooltip = $(element).find('span.xoct_tooltiptext')[0];
     tooltip.innerHTML = this.lang['tooltip_copy_link'];
+  },
+
+  previewPlay: function(element, event) {
+    event.preventDefault();
+    var play_link_obj = $('a[data-preview_link="' + $(element).data('id') + '"]');
+    if (play_link_obj.length) {
+      var play_link = play_link_obj[0];
+      var href = $(play_link).attr('href');
+      if (href && href != '#') {
+        var target = $(play_link).attr('target') ? $(play_link).attr('target') : '_blank';
+        window.open(href, target);
+      } else {
+        $(play_link).click();
+      }
+    }
   }
 };
