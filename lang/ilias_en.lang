@@ -279,8 +279,8 @@ invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
 invitations_invite_all#:#Add all
-obj_xoct#:#Opencast
-objs_xoct#:#Opencast
+obj_xoct#:#Opencast Object
+objs_xoct#:#Opencast Object
 perm_upload#:#Upload
 perm_edit_videos#:#Edit Videos
 publication_usage_add#:#Add

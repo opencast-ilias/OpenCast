@@ -276,8 +276,8 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 invitations_invite_all#:#Alle hinzufügen
-obj_xoct#:#Opencast
-objs_xoct#:#Opencast
+obj_xoct#:#Opencast Objekt
+objs_xoct#:#Opencast Objekt
 perm_upload#:#Upload
 perm_edit_videos#:#Videos Editieren
 publication_usage_add#:#Hinzufügen
