@@ -1,6 +1,6 @@
 <?php
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 
@@ -14,7 +14,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 class xoctPublicationUsageTableGUI extends ilTable2GUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const TBL_ID = 'tbl_xoct_pub_u';
 	/**
@@ -39,7 +39,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI {
 		self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
 		parent::__construct($a_parent_obj, $a_parent_cmd);
 		$this->parent_obj = $a_parent_obj;
-		$this->setRowTemplate('tpl.publication_usage.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
+		$this->setRowTemplate('tpl.publication_usage.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject');
 		$this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
 		$this->initColumns();
 		$this->parseData();

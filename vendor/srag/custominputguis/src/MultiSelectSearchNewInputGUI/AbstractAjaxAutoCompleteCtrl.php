@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI;
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractAjaxAutoCompleteCtrl
  *
- * @package srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI
  */
 abstract class AbstractAjaxAutoCompleteCtrl
 {

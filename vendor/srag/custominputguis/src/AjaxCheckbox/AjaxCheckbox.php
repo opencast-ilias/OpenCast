@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\AjaxCheckbox;
+namespace srag\CustomInputGUIs\OpencastObject\AjaxCheckbox;
 
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\CustomInputGUIs\OpenCast\Waiter\Waiter;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\CustomInputGUIs\OpencastObject\Waiter\Waiter;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class AjaxCheckbox
  *
- * @package srag\CustomInputGUIs\OpenCast\AjaxCheckbox
+ * @package srag\CustomInputGUIs\OpencastObject\AjaxCheckbox
  */
 class AjaxCheckbox
 {

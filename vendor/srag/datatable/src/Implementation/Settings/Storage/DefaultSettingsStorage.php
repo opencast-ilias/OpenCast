@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings\Storage;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings\Storage;
 
 use ilTablePropertiesStorage;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
 
 /**
  * Class DefaultSettingsStorage
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings\Storage
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings\Storage
  */
 class DefaultSettingsStorage extends AbstractSettingsStorage
 {

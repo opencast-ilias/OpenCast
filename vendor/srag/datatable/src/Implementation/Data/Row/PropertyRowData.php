@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data\Row;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data\Row;
 
 /**
  * Class PropertyRowData
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data\Row
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data\Row
  */
 class PropertyRowData extends AbstractRowData
 {

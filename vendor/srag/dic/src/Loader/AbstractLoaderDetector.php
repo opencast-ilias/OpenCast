@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DIC\OpenCast\Loader;
+namespace srag\DIC\OpencastObject\Loader;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Render\ComponentRenderer;
 use ILIAS\UI\Implementation\Render\Loader;
 use ILIAS\UI\Implementation\Render\RendererFactory;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractLoaderDetector
  *
- * @package srag\DIC\OpenCast\Loader
+ * @package srag\DIC\OpencastObject\Loader
  */
 abstract class AbstractLoaderDetector implements Loader
 {

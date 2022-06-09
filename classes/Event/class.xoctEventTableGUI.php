@@ -1,7 +1,7 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -22,7 +22,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const TBL_ID = 'tbl_xoct';
     /**
@@ -84,7 +84,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->setId($a_val);
         self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
         parent::__construct($a_parent_obj, $a_parent_cmd);
-        $this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
+        $this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject');
         $this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
         $this->setData($data);
         foreach ($data as $item) {
@@ -98,7 +98,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->initColumns();
         $this->setDefaultOrderField('created_s');
 
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats(array(self::EXPORT_CSV));
         }
     }
@@ -174,7 +174,7 @@ class xoctEventTableGUI extends ilTable2GUI
         }
 
         if ($this->has_unprotected_links
-            && ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
+            && ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
             $renderer->insertUnprotectedLink($this->tpl, 'generic', 'VALUE');
         }
 
@@ -229,7 +229,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
         if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
             || !$this->has_unprotected_links
-            || !ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
+            || !ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
             unset($columns['unprotected_link']);
         }
 
@@ -246,7 +246,7 @@ class xoctEventTableGUI extends ilTable2GUI
         if ($owner_visible !== NULL) {
             return $owner_visible;
         }
-        $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->objectSettings->getPermissionPerClip());
+        $owner_visible = (ilObjOpencastObjectAccess::isActionAllowedForRole('upload', 'member') || $this->objectSettings->getPermissionPerClip());
 
         return $owner_visible;
     }
@@ -337,7 +337,7 @@ class xoctEventTableGUI extends ilTable2GUI
             $xoctUser = xoctUser::getInstance(self::dic()->user());
             $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find($array['identifier']);
 
-            return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->objectSettings);
+            return ilObjOpencastObjectAccess::hasReadAccessOnEvent($event, $xoctUser, $this->objectSettings);
         };
     }
 
@@ -373,7 +373,7 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     public function exportData($format, $send = false)
     {
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
+        if (!ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EXPORT_CSV)) {
             echo "Access Denied";
             exit;
         }

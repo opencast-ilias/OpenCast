@@ -1,19 +1,19 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column\Formatter\Actions;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\Actions;
 
-use srag\CustomInputGUIs\OpenCast\Waiter\Waiter;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions\ActionsFormatter;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Column\Formatter\DefaultFormatter;
+use srag\CustomInputGUIs\OpencastObject\Waiter\Waiter;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions\ActionsFormatter;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\DefaultFormatter;
 
 /**
  * Class SortFormatter
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column\Formatter\Actions
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\Actions
  */
 class SortFormatter extends DefaultFormatter implements ActionsFormatter
 {

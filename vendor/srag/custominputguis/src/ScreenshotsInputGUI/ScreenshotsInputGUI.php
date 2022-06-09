@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\ScreenshotsInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\ScreenshotsInputGUI;
 
 use GuzzleHttp\Psr7\UploadedFile;
 use ilFormException;
@@ -8,15 +8,15 @@ use ilFormPropertyGUI;
 use ILIAS\FileUpload\DTO\ProcessingStatus;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ilTemplate;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\Pluginable;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\Pluginable;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class ScreenshotsInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\ScreenshotsInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\ScreenshotsInputGUI
  */
 class ScreenshotsInputGUI extends ilFormPropertyGUI implements Pluginable
 {

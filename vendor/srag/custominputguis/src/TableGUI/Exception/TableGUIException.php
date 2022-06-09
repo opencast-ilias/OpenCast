@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TableGUI\Exception;
+namespace srag\CustomInputGUIs\OpencastObject\TableGUI\Exception;
 
 use ilException;
 
 /**
  * Class TableGUIException
  *
- * @package srag\CustomInputGUIs\OpenCast\TableGUI\Exception
+ * @package srag\CustomInputGUIs\OpencastObject\TableGUI\Exception
  *
  * @deprecated
  */

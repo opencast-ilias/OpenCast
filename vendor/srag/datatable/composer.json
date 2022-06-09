@@ -35,7 +35,7 @@
   },
   "autoload": {
     "psr-4": {
-      "srag\\DataTableUI\\OpenCast\\": "src/"
+      "srag\\DataTableUI\\OpencastObject\\": "src/"
     }
   },
   "config": {

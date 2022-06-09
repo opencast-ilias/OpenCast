@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DIC\OpenCast\DIC\Implementation;
+namespace srag\DIC\OpencastObject\DIC\Implementation;
 
 use Collator;
 use ilAccessHandler;
@@ -65,12 +65,12 @@ use ilToolbarGUI;
 use ilTree;
 use ilUIService;
 use Session;
-use srag\DIC\OpenCast\DIC\AbstractDIC;
+use srag\DIC\OpencastObject\DIC\AbstractDIC;
 
 /**
  * Class ILIAS70DIC
  *
- * @package srag\DIC\OpenCast\DIC\Implementation
+ * @package srag\DIC\OpencastObject\DIC\Implementation
  */
 final class ILIAS70DIC extends AbstractDIC
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DIC\OpenCast\Database;
+namespace srag\DIC\OpencastObject\Database;
 
 use ilDBPdo;
 use ilDBPdoInterface;
 use PDO;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 
 /**
  * Class PdoContextHelper
  *
- * @package srag\DIC\OpenCast\Database
+ * @package srag\DIC\OpencastObject\Database
  *
  * @internal
  */

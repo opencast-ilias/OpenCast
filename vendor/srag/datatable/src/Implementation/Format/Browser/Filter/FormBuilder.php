@@ -1,18 +1,18 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Format\Browser\Filter;
+namespace srag\DataTableUI\OpencastObject\Implementation\Format\Browser\Filter;
 
-use srag\CustomInputGUIs\OpenCast\FormBuilder\AbstractFormBuilder;
-use srag\DataTableUI\OpenCast\Component\Format\Browser\BrowserFormat;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
+use srag\CustomInputGUIs\OpencastObject\FormBuilder\AbstractFormBuilder;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\BrowserFormat;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
 
 /**
  * Class FormBuilder
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Format\Browser\Filter
+ * @package srag\DataTableUI\OpencastObject\Implementation\Format\Browser\Filter
  */
 class FormBuilder extends AbstractFormBuilder
 {

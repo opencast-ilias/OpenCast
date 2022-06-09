@@ -1,7 +1,7 @@
 xoctPaellaPlayer = {
-    
+
     data: [],
-    
+
     config: {
         paella_config_file: '',
         paella_config_info: '',
@@ -19,9 +19,9 @@ xoctPaellaPlayer = {
     // events started too late
     event_start_buffer: 60 * 10,
 
-    init: function(data, config) {
+    init: function (data, config) {
         // workaround for paella issue https://github.com/polimediaupv/paella/issues/661
-        paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/node_modules/paellaplayer/build/player/';
+        paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/node_modules/paellaplayer/build/player/';
 
         if (config.paella_config_is_warning) {
             console.warn(config.paella_config_info);
@@ -32,7 +32,7 @@ xoctPaellaPlayer = {
         this.data = data;
         this.config = config;
         if (this.config.is_live_stream === true) {
-            this.hasWorkingStream().then(function(stream_available) {
+            this.hasWorkingStream().then(function (stream_available) {
                 if (stream_available) {
                     xoctPaellaPlayer.loadPlayer();
                     xoctPaellaPlayer.checkStreamStatus();
@@ -45,21 +45,21 @@ xoctPaellaPlayer = {
             this.loadPlayer();
         }
 
-        window.addEventListener('message', function(e) {
+        window.addEventListener('message', function (e) {
             // message passed can be accessed in "data" attribute of the event object
             let scroll_height = e.data;
             $('#srchat_iframe').attr('height', scroll_height + 'px');
-        } , false);
+        }, false);
     },
 
-    reloadPlayer: function() {
+    reloadPlayer: function () {
         paella.player.pause();
-        delete(paella);
+        delete (paella);
         xoctPaellaPlayer.reloadScript(xoctPaellaPlayer.config.paella_player_folder + '/javascript/paella_player.js');
         xoctPaellaPlayer.reloadScript(xoctPaellaPlayer.config.paella_player_folder + '/javascript/base.js');
         $('#playerContainer').empty();
         // the loading of the script takes some time, that's why we need an interval
-        let i = setInterval(function() {
+        let i = setInterval(function () {
             if (typeof paella == 'object') {
                 xoctPaellaPlayer.loadPlayer();
                 paella.player.play();
@@ -68,14 +68,14 @@ xoctPaellaPlayer = {
         }, 500);
     },
 
-    reloadScript: function(src) {
+    reloadScript: function (src) {
         let scriptElement = document.createElement('script');
         scriptElement.type = 'text/javascript';
         scriptElement.src = src + '?' + (new Date).getTime();
         document.getElementsByTagName('head')[0].appendChild(scriptElement);
     },
 
-    loadPlayer: function() {
+    loadPlayer: function () {
         $('#overlay_live_waiting').hide();
         this.filterStreams().then(() => {
             paella.lazyLoad('playerContainer', {
@@ -85,7 +85,7 @@ xoctPaellaPlayer = {
         });
     },
 
-    triggerOverlays: function() {
+    triggerOverlays: function () {
         let ts = Math.round(new Date().getTime() / 1000);
         if (ts < (xoctPaellaPlayer.config.event_start + xoctPaellaPlayer.event_start_buffer)) {
             xoctPaellaPlayer.showOverlay('waiting');
@@ -96,12 +96,12 @@ xoctPaellaPlayer = {
         }
     },
 
-    showOverlay: function(status) {
+    showOverlay: function (status) {
         xoctPaellaPlayer.hideOverlays();
         $('#overlay_live_' + status).show();
     },
 
-    hideOverlays: function() {
+    hideOverlays: function () {
         $('#overlay_live_waiting').hide();
         $('#overlay_live_interrupted').hide();
         $('#overlay_live_over').hide();
@@ -109,7 +109,7 @@ xoctPaellaPlayer = {
         // $('#playerContainer_videoContainer').click()
     },
 
-    isStreamWorking: async function(url) {
+    isStreamWorking: async function (url) {
         let working = (await $.get(xoctPaellaPlayer.config.check_script_hls + "?url=" + url) === 'true');
         return working;
     },
@@ -118,7 +118,7 @@ xoctPaellaPlayer = {
      * check for working streams
      * @returns {Promise<boolean>}
      */
-    hasWorkingStream: async function() {
+    hasWorkingStream: async function () {
         var working_stream_found = false;
         for (const stream of xoctPaellaPlayer.data.streams) {
             if (!working_stream_found) {
@@ -133,8 +133,8 @@ xoctPaellaPlayer = {
      * (this check is executed before event start)
      * @returns {Promise<void>}
      */
-    checkAndLoadLive: async function() {
-        var i = setInterval(async function() {
+    checkAndLoadLive: async function () {
+        var i = setInterval(async function () {
             if (await xoctPaellaPlayer.hasWorkingStream()) {
                 xoctPaellaPlayer.hideOverlays();
                 xoctPaellaPlayer.loadPlayer();
@@ -151,9 +151,9 @@ xoctPaellaPlayer = {
      * and shows the appropriate overlays, or hides them and reloads
      * the player, respectively
      */
-    checkStreamStatus: function() {
+    checkStreamStatus: function () {
         let i = null;
-        let f = async function() {
+        let f = async function () {
             console.log('check stream status');
             var ts = Math.round(new Date().getTime() / 1000);
             if (!(await xoctPaellaPlayer.hasWorkingStream())) {
@@ -186,11 +186,11 @@ xoctPaellaPlayer = {
         i = setInterval(f, 20000)
     },
 
-    filterStreams: async function() {
+    filterStreams: async function () {
         if (this.config.is_live_stream) {
             for (const streamKey in xoctPaellaPlayer.data.streams) {
                 if (xoctPaellaPlayer.data.streams.hasOwnProperty(streamKey) &&
-                  (!(await xoctPaellaPlayer.isStreamWorking(xoctPaellaPlayer.data.streams[streamKey].sources.hls[0].src)))) {
+                    (!(await xoctPaellaPlayer.isStreamWorking(xoctPaellaPlayer.data.streams[streamKey].sources.hls[0].src)))) {
                     xoctPaellaPlayer.data.streams.splice(streamKey, 1);
                 }
             }

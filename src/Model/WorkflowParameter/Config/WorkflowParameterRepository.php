@@ -5,9 +5,9 @@ namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
 use DOMDocument;
 use DOMElement;
 use ilException;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use ilUtil;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
@@ -24,7 +24,7 @@ use xoctWorkflowParameterGUI;
 class WorkflowParameterRepository {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var self
@@ -180,7 +180,7 @@ class WorkflowParameterRepository {
 
 	/**
 	 * @return array
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws \srag\DIC\OpencastObject\Exception\DICException
 	 */
 	public function getSelectionOptions() {
 		$options = [];

@@ -1,21 +1,21 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TabsInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\TabsInputGUI;
 
 use ilFormPropertyGUI;
 use ilTableFilterItem;
 use ilTemplate;
 use ilToolbarItem;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class TabsInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\TabsInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\TabsInputGUI
  */
 class TabsInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToolbarItem
 {

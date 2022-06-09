@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -9,7 +9,7 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 class xoctMetadataConfigRouterGUI
 {
     use DICTrait;
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const SUBTAB_EVENTS = 'events';
     const SUBTAB_SERIES = 'series';
@@ -28,7 +28,7 @@ class xoctMetadataConfigRouterGUI
                     $opencast_dic->metadata()->confRepositorySeries(),
                     $opencast_dic->metadata()->catalogueFactory(),
                     $DIC,
-                    ilOpenCastPlugin::getInstance()
+                    ilOpencastObjectPlugin::getInstance()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;
@@ -39,7 +39,7 @@ class xoctMetadataConfigRouterGUI
                     $opencast_dic->metadata()->confRepositoryEvent(),
                     $opencast_dic->metadata()->catalogueFactory(),
                     $DIC,
-                    ilOpenCastPlugin::getInstance()
+                    ilOpencastObjectPlugin::getInstance()
                 );
                 self::dic()->ctrl()->forwardCommand($gui);
                 break;

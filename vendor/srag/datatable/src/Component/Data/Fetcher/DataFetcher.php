@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Data\Fetcher;
+namespace srag\DataTableUI\OpencastObject\Component\Data\Fetcher;
 
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Interface DataFetcher
  *
- * @package srag\DataTableUI\OpenCast\Component\Data\Fetcher
+ * @package srag\DataTableUI\OpencastObject\Component\Data\Fetcher
  */
 interface DataFetcher
 {

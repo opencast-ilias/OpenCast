@@ -3,8 +3,8 @@
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -23,7 +23,7 @@ use srag\Plugins\Opencast\UI\Modal\EventModals;
 class xoctEventRenderer {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 	const LANG_MODULE = 'event';
 
 	/**
@@ -161,7 +161,7 @@ class xoctEventRenderer {
         return self::dic()->ctrl()->getLinkTargetByClass(
             [
                 ilRepositoryGUI::class,
-                ilObjOpenCastGUI::class,
+                ilObjOpencastObjectGUI::class,
                 xoctEventGUI::class,
                 xoctPlayerGUI::class
             ], xoctPlayerGUI::CMD_STREAM_VIDEO);
@@ -554,7 +554,7 @@ class xoctEventRenderer {
 
         $actions = [];
 
-        if (ilObjOpenCast::DEV) {
+        if (ilObjOpencastObject::DEV) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_view'),
                 self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_VIEW)
@@ -562,7 +562,7 @@ class xoctEventRenderer {
         }
 
         // Edit Owner
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $this->event, $xoctUser, $this->objectSettings)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EDIT_OWNER, $this->event, $xoctUser, $this->objectSettings)) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_edit_owner'),
                 self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD)
@@ -570,7 +570,7 @@ class xoctEventRenderer {
         }
 
         // Share event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_invite_others'),
                 self::dic()->ctrl()->getLinkTargetByClass(xoctGrantPermissionGUI::class, xoctGrantPermissionGUI::CMD_STANDARD)
@@ -578,7 +578,7 @@ class xoctEventRenderer {
         }
 
         // Cut Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this->event, $xoctUser)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_CUT, $this->event, $xoctUser)) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_cut'),
                 self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT)
@@ -586,7 +586,7 @@ class xoctEventRenderer {
         }
 
         // Republish
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)
             && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getRepublishModal())
         ) {
             $actions[] = $this->factory->button()->shy(
@@ -598,7 +598,7 @@ class xoctEventRenderer {
         }
 
         // Online/offline
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $this->event, $xoctUser)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_SET_ONLINE_OFFLINE, $this->event, $xoctUser)) {
             if ($this->event->getXoctEventAdditions()->getIsOnline()) {
                 $actions[] = $this->factory->link()->standard(
                     self::plugin()->translate('event_set_offline'),
@@ -614,7 +614,7 @@ class xoctEventRenderer {
         }
 
         // Delete Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this->event, $xoctUser)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_DELETE_EVENT, $this->event, $xoctUser)) {
             $actions[] = $this->factory->link()->standard(
                 self::plugin()->translate('event_delete'),
                 self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
@@ -622,7 +622,7 @@ class xoctEventRenderer {
         }
 
         // Edit Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)) {
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)) {
             // show different langvar when date is editable
             $lang_var = ($this->event->isScheduled()
                 && (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA)) ?
@@ -635,7 +635,7 @@ class xoctEventRenderer {
         }
 
         // Report Quality
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->event)
+        if (ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_REPORT_QUALITY_PROBLEM, $this->event)
             && !is_null(self::$modals) && !is_null(self::$modals->getReportQualityModal())
         ) {
             $actions[] = $this->factory->button()->shy(

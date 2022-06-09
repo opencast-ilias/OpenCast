@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions;
+namespace srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions
+ * @package srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions
  */
 interface Factory
 {

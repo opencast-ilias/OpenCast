@@ -7,7 +7,7 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Component\Modal\RoundTrip;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use ilPropertyFormGUI;
 use ilSelectInputGUI;
 use ilTemplate;
@@ -43,11 +43,11 @@ class EventModals
      */
     private $workflow_repository;
     /**
-     * @var ilOpenCastPlugin
+     * @var ilOpencastObjectPlugin
      */
     private $plugin;
 
-    public function __construct($parent_gui, ilOpenCastPlugin $plugin, Container $dic, WorkflowRepository $workflow_repository)
+    public function __construct($parent_gui, ilOpencastObjectPlugin $plugin, Container $dic, WorkflowRepository $workflow_repository)
     {
         $this->parent_gui = $parent_gui;
         $this->dic = $dic;

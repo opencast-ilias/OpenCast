@@ -3,8 +3,8 @@
 use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\CustomInputGUIs\OpencastObject\TableGUI\TableGUI;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
@@ -16,7 +16,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 class xoctWorkflowTableGUI extends TableGUI
 {
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const LANG_MODULE = 'workflow';
 

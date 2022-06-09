@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI;
 
 require_once __DIR__ . "/../../../../autoload.php";
 
@@ -9,7 +9,7 @@ use ilOrgUnitPathStorage;
 /**
  * Class OrgUnitAjaxAutoCompleteCtrl
  *
- * @package srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI
  */
 class OrgUnitAjaxAutoCompleteCtrl extends AbstractAjaxAutoCompleteCtrl
 {

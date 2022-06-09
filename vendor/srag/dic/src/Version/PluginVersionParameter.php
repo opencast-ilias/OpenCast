@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DIC\OpenCast\Version;
+namespace srag\DIC\OpencastObject\Version;
 
 use ilUtil;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\Pluginable;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\Pluginable;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
 
 /**
  * Class PluginVersionParameter
  *
- * @package srag\DIC\OpenCast\Version
+ * @package srag\DIC\OpencastObject\Version
  */
 final class PluginVersionParameter implements Pluginable
 {

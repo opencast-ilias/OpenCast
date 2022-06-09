@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\UserSettings;
 
-use ilObjOpenCast;
+use ilObjOpencastObject;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
@@ -49,7 +49,7 @@ class UserSettingsRepository
         /** @var UserSetting $xoctUserSetting */
         $xoctUserSetting = UserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_VIEW_TYPE])->first();
         /** @var ObjectSettings $objectSettings */
-        $objectSettings = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
+        $objectSettings = ObjectSettings::find(ilObjOpencastObject::_lookupObjectId($ref_id));
         if (!$objectSettings->isViewChangeable() || !$xoctUserSetting) {
             return $objectSettings->getDefaultView();
         }

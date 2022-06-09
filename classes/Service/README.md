@@ -1,12 +1,12 @@
 # Internal API
 
 ## Description
-The internal API contains CRUD-Methods (create, read, update, delete) for opencast events and series/objects. It aims to offer a simple way to 
+The internal API contains CRUD-Methods (create, read, update, delete) for opencast events and series/objects. It aims to offer a simple way to
 interact with Opencast objects, without knowing much about their structure or which fields are stored in ILIAS and which in Opencast.
 
 ## Usage
 ### Basic
-Every call starts either with a `xoctInternalAPI::getInstance()->series()` or with a `xoctInternalAPI::getInstance()->events()` depending on which kind of objects should be handled. 
+Every call starts either with a `xoctInternalAPI::getInstance()->series()` or with a `xoctInternalAPI::getInstance()->events()` depending on which kind of objects should be handled.
 
 These calls return instances of the classes `xoctSeriesAPI` or `xoctEventAPI`, respectively, but: never call these classes directly! The function `xoctInternalAPI::getInstance()` initializes the API settings needed to interact with the Opencast API.
 
@@ -14,7 +14,7 @@ These calls return instances of the classes `xoctSeriesAPI` or `xoctEventAPI`, r
 The SeriesAPI always handles both, the ILIAS object and the Opencast series and decides on it's own which data has to be changed where. However, the ILIAS reference ID is required as an identifier to find the objects and not the Opencast series ID, since multiple ILIAS objects can reference one Opencast series.
 
 #### create
-*Parameters*: 
+*Parameters*:
 * $parent_ref_id (integer): ILIAS reference ID of the container in which the series should be created. If this id does not belong to a container, or the container is not a course/group or a subobject of such, an exception will be thrown.
 * $title (String): This will be the title of the series, in ILIAS as well as in Opencast.
 * $additional_data (array): Optional list of additional fields for the created series. The following fields are accepted:
@@ -32,7 +32,7 @@ The SeriesAPI always handles both, the ILIAS object and the Opencast series and 
 
 *Response*:
 
-If no exception is thrown, the series was created successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
+If no exception is thrown, the series was created successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpencastObject* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
@@ -48,7 +48,7 @@ Create a series with a few options in parent directory with reference id 83 and 
 
 *Response*:
 
-An object of type *ObjectSettings*. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
+An object of type *ObjectSettings*. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpencastObject* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
 *Examples*:
 
@@ -58,7 +58,7 @@ An object of type *ObjectSettings*. The *ObjectSettings* object contains metadat
 
 #### update
 
-*Parameters*: 
+*Parameters*:
 * $ref_id (integer): Reference ID of the ILIAS object to be updated
 * $data (array): List of fields to be updated. Every field is optional. The following fields are accepted:
 	* title (String): The title will be set in ILIAS and in Opencast
@@ -74,9 +74,9 @@ An object of type *ObjectSettings*. The *ObjectSettings* object contains metadat
 
 *Response*:
 
-If no exception is thrown, the object was updated successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpenCast* (->getILIASObject()) and *Series* (->getSeries()) objects.
+If no exception is thrown, the object was updated successfully and an object of type *ObjectSettings* is returned. The *ObjectSettings* object contains metadata of the series, as well as a reference to the corresponding *ilObjOpencastObject* (->getILIASObject()) and *Series* (->getSeries()) objects.
 
-*Examples*: 
+*Examples*:
 
 Set object with ref_id 172 online:\
 `xoctInternalAPI::getInstance()->series()->update(172, array('online' => true)); // set object with ref_id 172 online`
@@ -109,14 +109,14 @@ This method only creates single scheduled events.
 
 *Parameters*
 * $series_id (String): Opencast's unique series identifier of the series, which this event should be part of.
-* $title (String): Representing title of the event. 
+* $title (String): Representing title of the event.
 * $start (DateTime): Start date and time.
 * $end (DateTime): End date and time.
 * $location (String): ID of the recording agent. Get a list of all recording agents with `xoctAgent::getAllAgents();`.
 * $additional_data (String): Optional list of additional fields for the created series. The following fields are accepted:
 	* description (String): Event description, in ILIAS shown as "Subtitle".
     * presenters (String): Presenting person(s).
-    
+
 *Response*:
 
 If no exception is thrown, the event was created successfully and an object of type *xoctEvent* is returned.
@@ -133,7 +133,7 @@ If no exception is thrown, the event was created successfully and an object of t
 *Parameters*:
 * event_id (String): Opencast unique event identifier
 
-*Response*: 
+*Response*:
 
 Object of type xoctEvent.
 

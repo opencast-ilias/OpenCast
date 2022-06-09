@@ -1,27 +1,27 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation;
+namespace srag\DataTableUI\OpencastObject\Implementation;
 
-use srag\DataTableUI\OpenCast\Component\Column\Factory as ColumnFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Factory as DataFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\DataFetcher;
-use srag\DataTableUI\OpenCast\Component\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Format\Factory as FormatFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Factory as SettingsFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Table as TableInterface;
-use srag\DataTableUI\OpenCast\Implementation\Column\Factory as ColumnFactory;
-use srag\DataTableUI\OpenCast\Implementation\Data\Factory as DataFactory;
-use srag\DataTableUI\OpenCast\Implementation\Format\Factory as FormatFactory;
-use srag\DataTableUI\OpenCast\Implementation\Settings\Factory as SettingsFactory;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\LibraryLanguageInstaller\OpenCast\LibraryLanguageInstaller;
+use srag\DataTableUI\OpencastObject\Component\Column\Factory as ColumnFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Factory as DataFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\DataFetcher;
+use srag\DataTableUI\OpencastObject\Component\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Format\Factory as FormatFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Factory as SettingsFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Table as TableInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Column\Factory as ColumnFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Data\Factory as DataFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Format\Factory as FormatFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Settings\Factory as SettingsFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\LibraryLanguageInstaller\OpencastObject\LibraryLanguageInstaller;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation
+ * @package srag\DataTableUI\OpencastObject\Implementation
  */
 class Factory implements FactoryInterface
 {

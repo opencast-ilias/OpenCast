@@ -2,11 +2,11 @@
 
 namespace srag\Plugins\Opencast\Chat\GUI;
 
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use ilTemplate;
 use ilTemplateException;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
@@ -21,7 +21,7 @@ use srag\Plugins\Opencast\Chat\Model\TokenAR;
 class ChatGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
 	 * @var ChatroomAR

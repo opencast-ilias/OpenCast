@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data\Row;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data\Row;
 
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractRowData
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data\Row
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data\Row
  */
 abstract class AbstractRowData implements RowData
 {

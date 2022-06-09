@@ -3,9 +3,9 @@
 namespace srag\Plugins\Opencast\Model\User;
 
 use ilObjUser;
-use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use ilOpencastObjectPlugin;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctException;
 
@@ -20,7 +20,7 @@ class xoctUser
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     const MAP_EMAIL = 1;
     const MAP_EXT_ID = 2;

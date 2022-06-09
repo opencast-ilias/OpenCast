@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\Waiter;
+namespace srag\CustomInputGUIs\OpencastObject\Waiter;
 
 use ilGlobalTemplateInterface;
 use ilTemplate;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class Waiter
  *
- * @package srag\CustomInputGUIs\OpenCast\Waiter
+ * @package srag\CustomInputGUIs\OpencastObject\Waiter
  */
 final class Waiter
 {

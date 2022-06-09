@@ -1,6 +1,6 @@
 <?php
 
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\PropertyFormGUI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -10,7 +10,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
 
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const PROPERTY_TITLE = 'setTitle';
 	const PROPERTY_INFO = 'setInfo';

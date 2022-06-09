@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
+namespace srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent;
 
 use ILIAS\UI\Implementation\Component\Input\Field\Renderer;
 use ILIAS\UI\Implementation\Render\ResourceRegistry;
 use ILIAS\UI\Implementation\Render\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class AbstractRenderer
  *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+ * @package srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent
  */
 abstract class AbstractRenderer extends Renderer
 {

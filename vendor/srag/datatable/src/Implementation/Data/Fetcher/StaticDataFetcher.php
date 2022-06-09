@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data\Fetcher;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher;
 
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
 use stdClass;
 
 /**
  * Class StaticDataFetcher
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data\Fetcher
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher
  */
 class StaticDataFetcher extends AbstractDataFetcher
 {

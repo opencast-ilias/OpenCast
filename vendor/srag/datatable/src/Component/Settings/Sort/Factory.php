@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings\Sort;
+namespace srag\DataTableUI\OpencastObject\Component\Settings\Sort;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings\Sort
+ * @package srag\DataTableUI\OpencastObject\Component\Settings\Sort
  */
 interface Factory
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Data\Row;
+namespace srag\DataTableUI\OpencastObject\Implementation\Data\Row;
 
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
 
 /**
  * Class GetterRowData
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Data\Row
+ * @package srag\DataTableUI\OpencastObject\Implementation\Data\Row
  */
 class GetterRowData extends AbstractRowData
 {

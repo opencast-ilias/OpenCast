@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items;
+namespace srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items;
 
 use ilDateTime;
 use ilFormPropertyGUI;
@@ -11,21 +11,21 @@ use ilPropertyFormGUI;
 use ilRadioOption;
 use ilRepositorySelector2InputGUI;
 use ilUtil;
-use srag\CustomInputGUIs\OpenCast\HiddenInputGUI\HiddenInputGUI;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Exception\PropertyFormGUIException;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
-use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\CustomInputGUIs\OpenCast\UIInputComponentWrapperInputGUI\UIInputComponentWrapperInputGUI;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\HiddenInputGUI\HiddenInputGUI;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Exception\PropertyFormGUIException;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\PropertyFormGUI;
+use srag\CustomInputGUIs\OpencastObject\TableGUI\TableGUI;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\CustomInputGUIs\OpencastObject\UIInputComponentWrapperInputGUI\UIInputComponentWrapperInputGUI;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 use TypeError;
 
 /**
  * Class Items
  *
- * @package srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items
+ * @package srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items
  *
  * @access  namespace
  */

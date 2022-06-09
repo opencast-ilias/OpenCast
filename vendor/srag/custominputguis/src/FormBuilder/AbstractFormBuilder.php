@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\FormBuilder;
+namespace srag\CustomInputGUIs\OpencastObject\FormBuilder;
 
 use Closure;
 use Exception;
@@ -14,16 +14,16 @@ use ILIAS\UI\Implementation\Component\Input\Field\Group;
 use ILIAS\UI\Implementation\Component\Input\Field\Radio;
 use ILIAS\UI\Implementation\Component\Input\Field\SwitchableGroup;
 use ilSubmitButton;
-use srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent\InputGUIWrapperUIInputComponent;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent\InputGUIWrapperUIInputComponent;
+use srag\DIC\OpencastObject\DICTrait;
 use Throwable;
 
 /**
  * Class AbstractFormBuilder
  *
- * @package      srag\CustomInputGUIs\OpenCast\FormBuilder
+ * @package      srag\CustomInputGUIs\OpencastObject\FormBuilder
  *
- * @ilCtrl_Calls srag\CustomInputGUIs\OpenCast\FormBuilder\AbstractFormBuilder: ilFormPropertyDispatchGUI
+ * @ilCtrl_Calls srag\CustomInputGUIs\OpencastObject\FormBuilder\AbstractFormBuilder: ilFormPropertyDispatchGUI
  */
 abstract class AbstractFormBuilder implements FormBuilder
 {

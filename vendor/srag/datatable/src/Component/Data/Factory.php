@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Data;
+namespace srag\DataTableUI\OpencastObject\Component\Data;
 
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\Factory as FetcherFactory;
-use srag\DataTableUI\OpenCast\Component\Data\Row\Factory as RowFactory;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\Factory as FetcherFactory;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\Factory as RowFactory;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Data
+ * @package srag\DataTableUI\OpencastObject\Component\Data
  */
 interface Factory
 {

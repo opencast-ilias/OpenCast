@@ -1,7 +1,7 @@
 <?php
 
 use ILIAS\UI\Component\Input\Field\UploadHandler;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -21,7 +21,7 @@ use srag\Plugins\Opencast\UI\SeriesFormBuilder;
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctSeriesGUI : ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctSeriesGUI : ilObjOpencastObjectGUI
  */
 class xoctSeriesGUI extends xoctGUI
 {
@@ -43,7 +43,7 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected $objectSettings;
     /**
-     * @var ilObjOpenCast
+     * @var ilObjOpencastObject
      */
     protected $object;
     /**
@@ -63,7 +63,7 @@ class xoctSeriesGUI extends xoctGUI
      */
     private $workflowParameterRepository;
 
-    public function __construct(ilObjOpenCast                     $object,
+    public function __construct(ilObjOpencastObject                     $object,
                                 SeriesFormBuilder                 $seriesFormBuilder,
                                 SeriesRepository                  $seriesRepository,
                                 SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
@@ -83,10 +83,10 @@ class xoctSeriesGUI extends xoctGUI
      */
     public function executeCommand()
     {
-        if (!ilObjOpenCastAccess::hasWriteAccess()) {
+        if (!ilObjOpencastObjectAccess::hasWriteAccess()) {
             self::dic()->ctrl()->redirectByClass('xoctEventGUI');
         }
-        self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
+        self::dic()->tabs()->activateTab(ilObjOpencastObjectGUI::TAB_SETTINGS);
         $this->setSubTabs();
         switch (self::dic()->ctrl()->getNextClass()) {
             default:
@@ -115,7 +115,7 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected function index()
     {
-        self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+        self::dic()->tabs()->activateTab(ilObjOpencastObjectGUI::TAB_EVENTS);
     }
 
 
@@ -147,7 +147,7 @@ class xoctSeriesGUI extends xoctGUI
         $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_GENERAL),
             $this->objectSettings,
             $series,
-            ilObjOpenCastAccess::hasPermission('edit_videos'));
+            ilObjOpencastObjectAccess::hasPermission('edit_videos'));
         self::dic()->ui()->mainTemplate()->setContent(self::dic()->ui()->renderer()->render($form));
     }
 
@@ -172,7 +172,7 @@ class xoctSeriesGUI extends xoctGUI
         $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this),
             $this->objectSettings,
             $series,
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpencastObjectAccess::hasPermission('edit_videos')
         )
             ->withRequest(self::dic()->http()->request());
         $data = $form->getData();
@@ -265,7 +265,7 @@ class xoctSeriesGUI extends xoctGUI
         return $this->objectSettings->getObjId();
     }
 
-    public function getObject(): ilObjOpenCast
+    public function getObject(): ilObjOpencastObject
     {
         return $this->object;
     }

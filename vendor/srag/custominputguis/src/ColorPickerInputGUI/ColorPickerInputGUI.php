@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\ColorPickerInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\ColorPickerInputGUI;
 
 use ilColorPickerInputGUI;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class ColorPickerInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\ColorPickerInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\ColorPickerInputGUI
  */
 class ColorPickerInputGUI extends ilColorPickerInputGUI
 {

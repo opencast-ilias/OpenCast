@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -27,7 +27,7 @@ class xoctSeriesAPI
 
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     /**
      * @var self
@@ -103,20 +103,20 @@ class xoctSeriesAPI
      */
     public function create(int $parent_ref_id, string $title, $additional_data = array()): ObjectSettings
     {
-        if (!ilObjOpenCast::_getParentCourseOrGroup($parent_ref_id)) {
+        if (!ilObjOpencastObject::_getParentCourseOrGroup($parent_ref_id)) {
             throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
         }
 
-        $ilObjOpenCast = new ilObjOpenCast();
+        $ilObjOpencastObject = new ilObjOpencastObject();
         if (isset($additional_data['owner'])) {
-            $ilObjOpenCast->setOwner($additional_data['owner']);
+            $ilObjOpencastObject->setOwner($additional_data['owner']);
         }
-        $ilObjOpenCast->setTitle($title);
-        $ilObjOpenCast->setDescription($additional_data['description'] ?? '');
-        $ilObjOpenCast->create();
-        $ilObjOpenCast->createReference();
-        $ilObjOpenCast->putInTree($parent_ref_id);
-        $ilObjOpenCast->setPermissions($parent_ref_id);
+        $ilObjOpencastObject->setTitle($title);
+        $ilObjOpencastObject->setDescription($additional_data['description'] ?? '');
+        $ilObjOpencastObject->create();
+        $ilObjOpencastObject->createReference();
+        $ilObjOpencastObject->putInTree($parent_ref_id);
+        $ilObjOpencastObject->setPermissions($parent_ref_id);
 
         $objectSettings = new ObjectSettings();
         $objectSettings->setOnline($additional_data['online'] ?? false);
@@ -144,7 +144,7 @@ class xoctSeriesAPI
         }
 
         // add producers
-        $producers = ilObjOpenCastAccess::getProducersForRefID($ilObjOpenCast->getRefId());
+        $producers = ilObjOpencastObjectAccess::getProducersForRefID($ilObjOpencastObject->getRefId());
 
         if (isset($additional_data['owner'])) {
             $producers[] = xoctUser::getInstance($additional_data['owner']);
@@ -166,20 +166,20 @@ class xoctSeriesAPI
             $acl->merge($this->aclUtils->getUserRolesACL($producer));
         }
 
-//        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle(), true);
+//        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($ilObjOpencastObject->getRefId())->getTitle(), true);
 
         $series_id = $this->series_repository->create(new CreateSeriesRequest(new CreateSeriesRequestPayload($metadata, $acl)));
 
         $objectSettings->setSeriesIdentifier($series_id);
-        $objectSettings->setObjId($ilObjOpenCast->getId());
+        $objectSettings->setObjId($ilObjOpencastObject->getId());
         $objectSettings->create();
 
         //member upload
         if (isset($additional_data['member_upload'])) {
-            ilObjOpenCastAccess::activateMemberUpload($ilObjOpenCast->getRefId());
+            ilObjOpencastObjectAccess::activateMemberUpload($ilObjOpencastObject->getRefId());
         }
 
-        $this->seriesWorkflowParameterRepository->syncAvailableParameters($ilObjOpenCast->getId());
+        $this->seriesWorkflowParameterRepository->syncAvailableParameters($ilObjOpencastObject->getId());
 
         return $objectSettings;
     }
@@ -193,7 +193,7 @@ class xoctSeriesAPI
     public function read($ref_id)
     {
         /** @var ObjectSettings $cast */
-        $cast = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
+        $cast = ObjectSettings::find(ilObjOpencastObject::_lookupObjectId($ref_id));
         return $cast;
     }
 
@@ -204,7 +204,7 @@ class xoctSeriesAPI
      */
     public function delete($ref_id, $delete_opencast_series)
     {
-        $object = new ilObjOpenCast($ref_id);
+        $object = new ilObjOpencastObject($ref_id);
         if ($delete_opencast_series) {
             ObjectSettings::find($object->getId())->getSeries()->delete();
         }
@@ -234,7 +234,7 @@ class xoctSeriesAPI
      */
     public function update($ref_id, $data)
     {
-        $object = new ilObjOpenCast($ref_id);
+        $object = new ilObjOpencastObject($ref_id);
         /** @var ObjectSettings $settings */
         $settings = ObjectSettings::where(array('obj_id' => $object->getId()))->first();
         $series = $this->series_repository->find($settings->getSeriesIdentifier());
@@ -282,7 +282,7 @@ class xoctSeriesAPI
 
         //member upload
         if (isset($data['member_upload'])) {
-            ilObjOpenCastAccess::activateMemberUpload($ref_id);
+            ilObjOpencastObjectAccess::activateMemberUpload($ref_id);
         }
 
         return $settings;

@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TextInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\TextInputGUI;
 
 use iljQueryUtil;
 use ilUtil;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class TextInputGUIWithModernAutoComplete
  *
- * @package srag\CustomInputGUIs\OpenCast\TextInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\TextInputGUI
  */
 class TextInputGUIWithModernAutoComplete extends TextInputGUI
 {

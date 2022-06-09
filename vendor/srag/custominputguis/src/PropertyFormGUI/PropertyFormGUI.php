@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\PropertyFormGUI;
+namespace srag\CustomInputGUIs\OpencastObject\PropertyFormGUI;
 
 use Closure;
 use ilFormPropertyGUI;
@@ -9,17 +9,17 @@ use ilPropertyFormGUI;
 use ilRadioGroupInputGUI;
 use ilRadioOption;
 use ilSubEnabledFormPropertyGUI;
-use srag\CustomInputGUIs\OpenCast\MultiLineNewInputGUI\MultiLineNewInputGUI;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Exception\PropertyFormGUIException;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
-use srag\CustomInputGUIs\OpenCast\TabsInputGUI\TabsInputGUI;
-use srag\CustomInputGUIs\OpenCast\TabsInputGUI\TabsInputGUITab;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\MultiLineNewInputGUI\MultiLineNewInputGUI;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Exception\PropertyFormGUIException;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
+use srag\CustomInputGUIs\OpencastObject\TabsInputGUI\TabsInputGUI;
+use srag\CustomInputGUIs\OpencastObject\TabsInputGUI\TabsInputGUITab;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class PropertyFormGUI
  *
- * @package    srag\CustomInputGUIs\OpenCast\PropertyFormGUI
+ * @package    srag\CustomInputGUIs\OpencastObject\PropertyFormGUI
  *
  * @deprecated Please use `AbstractFormBuilder`
  */

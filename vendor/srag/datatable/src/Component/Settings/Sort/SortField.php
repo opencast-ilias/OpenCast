@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings\Sort;
+namespace srag\DataTableUI\OpencastObject\Component\Settings\Sort;
 
 use JsonSerializable;
 use stdClass;
@@ -8,7 +8,7 @@ use stdClass;
 /**
  * Interface SortField
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings\Sort
+ * @package srag\DataTableUI\OpencastObject\Component\Settings\Sort
  */
 interface SortField extends JsonSerializable
 {

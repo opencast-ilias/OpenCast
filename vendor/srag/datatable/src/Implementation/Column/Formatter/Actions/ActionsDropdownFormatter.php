@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column\Formatter\Actions;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\Actions;
 
 use Closure;
 use ILIAS\UI\Component\Button\Shy;
@@ -8,17 +8,17 @@ use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Link\Standard as StandardInterface;
 use ILIAS\UI\Implementation\Component\Button\Button;
 use ILIAS\UI\Implementation\Component\Link\Standard;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions\ActionsFormatter;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Column\Formatter\DefaultFormatter;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions\ActionsFormatter;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\DefaultFormatter;
 
 /**
  * Class ActionsDropdownFormatter
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column\Formatter\Actions
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\Actions
  */
 class ActionsDropdownFormatter extends DefaultFormatter implements ActionsFormatter
 {

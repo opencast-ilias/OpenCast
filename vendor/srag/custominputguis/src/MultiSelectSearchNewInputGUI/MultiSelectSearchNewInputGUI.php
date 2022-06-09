@@ -1,20 +1,20 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI;
 
 use ilFormPropertyGUI;
 use ilTableFilterItem;
 use ilTemplate;
 use ilToolbarItem;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\PluginVersionParameter;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\PluginVersionParameter;
 
 /**
  * Class MultiSelectSearchNewInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\MultiSelectSearchNewInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\MultiSelectSearchNewInputGUI
  */
 class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToolbarItem
 {

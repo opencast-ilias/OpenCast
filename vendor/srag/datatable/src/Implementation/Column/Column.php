@@ -1,18 +1,18 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Column;
+namespace srag\DataTableUI\OpencastObject\Implementation\Column;
 
-use srag\DataTableUI\OpenCast\Component\Column\Column as ColumnInterface;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Actions\ActionsFormatter;
-use srag\DataTableUI\OpenCast\Component\Column\Formatter\Formatter;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Column\Column as ColumnInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Actions\ActionsFormatter;
+use srag\DataTableUI\OpencastObject\Component\Column\Formatter\Formatter;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Column
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Column
+ * @package srag\DataTableUI\OpencastObject\Implementation\Column
  */
 class Column implements ColumnInterface
 {

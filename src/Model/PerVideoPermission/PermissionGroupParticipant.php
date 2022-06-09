@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
 use ilObject2;
-use ilObjOpenCastAccess;
+use ilObjOpencastObjectAccess;
 use ilObjUser;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 
@@ -96,10 +96,10 @@ class PermissionGroupParticipant extends ActiveRecord
         if (isset(self::$crs_members_cache[$ref_id][$group_id])) {
             return self::$crs_members_cache[$ref_id][$group_id];
         }
-        $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
+        $existing = self::getAllUserIdsForOpencastObjectObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
 
         $return = array();
-        foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id) {
+        foreach (ilObjOpencastObjectAccess::getAllParticipants() as $user_id) {
             if (in_array($user_id, $existing)) {
                 continue;
             }
@@ -119,7 +119,7 @@ class PermissionGroupParticipant extends ActiveRecord
      *
      * @return array
      */
-    public function getAllUserIdsForOpenCastObjId($obj_id)
+    public function getAllUserIdsForOpencastObjectObjId($obj_id)
     {
         $all = PermissionGroup::where(array('serie_id' => $obj_id))->getArray(NULL, 'id');
         if (count($all) == 0) {
@@ -136,7 +136,7 @@ class PermissionGroupParticipant extends ActiveRecord
      *
      * @return array
      */
-    public static function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
+    public static function getAllUserIdsForOpencastObjectObjIdAndGroupId($obj_id, $group_id)
     {
         $all = PermissionGroup::where(array('serie_id' => $obj_id))->getArray(NULL, 'id');
         if (count($all) == 0) {

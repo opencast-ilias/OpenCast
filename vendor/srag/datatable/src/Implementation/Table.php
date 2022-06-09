@@ -1,23 +1,23 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation;
+namespace srag\DataTableUI\OpencastObject\Implementation;
 
 use ILIAS\UI\Component\Input\Field\FilterInput;
 use ILIAS\UI\Implementation\Component\ComponentHelper;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\DataFetcher;
-use srag\DataTableUI\OpenCast\Component\Format\Browser\BrowserFormat;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DataTableUI\OpenCast\Component\Table as TableInterface;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\DataFetcher;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\BrowserFormat;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DataTableUI\OpencastObject\Component\Table as TableInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
 
 /**
  * Class Table
  *
- * @package srag\DataTableUI\OpenCast\Implementation
+ * @package srag\DataTableUI\OpencastObject\Implementation
  */
 class Table implements TableInterface
 {

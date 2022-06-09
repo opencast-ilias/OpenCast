@@ -4,7 +4,7 @@ namespace srag\Plugins\Opencast\DI;
 
 use ILIAS\DI\Container as DIC;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use Pimple\Container;
 use srag\Plugins\Opencast\Model\ACL\ACLParser;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
@@ -229,7 +229,7 @@ class OpencastDIC
             );
         });
         $this->container['plugin'] = $this->container->factory(function ($c) {
-            return ilOpenCastPlugin::getInstance();
+            return ilOpencastObjectPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
             return new SeriesAPIRepository($c['cache'],

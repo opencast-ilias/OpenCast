@@ -276,8 +276,8 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 invitations_invite_all#:#Alle hinzufügen
-obj_xoct#:#Opencast
-objs_xoct#:#Opencast
+obj_xoct#:#Opencast Objekt
+objs_xoct#:#Opencast Objekt
 perm_upload#:#Upload
 perm_edit_videos#:#Videos Editieren
 publication_usage_add#:#Hinzufügen
@@ -375,7 +375,7 @@ series_view_type_1#:#Kacheln
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config für Video-On-Demand
 config_paella_player_option_live#:#Paella Player Config für Live-Streams
-pp_default#:#<a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json"/>Standard-Config</a> verwenden
+pp_default#:#<a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/js/paella_player/config.json"/>Standard-Config</a> verwenden
 pp_file#:#Config-Datei hochladen
 pp_url#:#URL hinterlegen
 pp_link_info#:#Bitte überprüfen Sie durch einen Aufruf des Players, ob die Config erfolgreich geladen werden kann und das richtige Format hat.

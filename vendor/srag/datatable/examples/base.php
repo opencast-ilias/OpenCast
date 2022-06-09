@@ -1,8 +1,8 @@
 <?php
 
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Utils\AbstractTableBuilder;
-use srag\DIC\OpenCast\DICStatic;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\AbstractTableBuilder;
+use srag\DIC\OpencastObject\DICStatic;
 
 /**
  * @return string

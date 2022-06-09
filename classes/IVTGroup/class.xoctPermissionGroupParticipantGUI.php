@@ -7,7 +7,7 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
  * Class xoctPermissionGroupParticipantGUI
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
- * @ilCtrl_IsCalledBy xoctPermissionGroupParticipantGUI:ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctPermissionGroupParticipantGUI:ilObjOpencastObjectGUI
  */
 class xoctPermissionGroupParticipantGUI extends xoctGUI
 {
@@ -29,7 +29,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
 		{
 			$this->objectSettings = new ObjectSettings();
 		}
-		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
+		self::dic()->tabs()->setTabActive(ilObjOpencastObjectGUI::TAB_GROUPS);
 		xoctWaiterGUI::loadLib();
 		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
 	}
@@ -40,9 +40,9 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
     protected function performCommand($cmd)
     {
         if (in_array($cmd, self::$admin_commands)) {
-            $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
+            $access = ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_MANAGE_IVT_GROUPS);
         } else {
-            $access = ilObjOpenCastAccess::hasPermission('read');
+            $access = ilObjOpencastObjectAccess::hasPermission('read');
         }
         if (!$access) {
             ilUtil::sendFailure('No access.');
@@ -76,7 +76,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
 		foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
 		{
 			$stdClass = $xoctGroupParticipant->__asStdClass();
-			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
+			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpencastObjectAccess::hasWriteAccess());
 			$data[] = $stdClass;
 		}
 

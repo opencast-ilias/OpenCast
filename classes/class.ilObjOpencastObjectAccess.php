@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -10,16 +10,16 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
- * Access/Condition checking for OpenCast object
+ * Access/Condition checking for OpencastObject object
  *
  * @author        Fabian Schmid <fs@studer-raimann.ch>
  *
  * @version       1.0.00
  */
-class ilObjOpenCastAccess extends ilObjectPluginAccess {
+class ilObjOpencastObjectAccess extends ilObjectPluginAccess {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	const ROLE_MEMBER = 1;
 	const ROLE_ADMIN = 2;
@@ -87,12 +87,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 		switch ($a_permission) {
 			case 'read':
-				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+				if (!ilObjOpencastObjectAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return false;
 				}
 				break;
 			case 'visible':
-				if (!ilObjOpenCastAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
+				if (!ilObjOpencastObjectAccess::checkOnline($a_obj_id) AND !self::dic()->access()->checkAccessOfUser($a_user_id, 'write', '', $a_ref_id)) {
 					return false;
 				}
 				break;
@@ -103,7 +103,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 
 
 	protected static function redirectNonAccess() {
-		ilUtil::sendFailure(ilOpenCastPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED), true);
+		ilUtil::sendFailure(ilOpencastObjectPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED), true);
 		self::dic()->ctrl()->redirectByClass('ilRepositoryGUI');
 	}
 
@@ -162,7 +162,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 				return
 					self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
 					&& $xoctEvent->getProcessingState() != Event::STATE_ENCODING
-					&& ilObjOpenCast::_getParentCourseOrGroup($ref_id)
+					&& ilObjOpencastObject::_getParentCourseOrGroup($ref_id)
 					&& $objectSettings->getPermissionPerClip();
 			case self::ACTION_SHARE_EVENT:
 				return
@@ -249,7 +249,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, ObjectSettings $objectSettings) {
 		// edit_videos and write access see all videos
-		if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
+		if (ilObjOpencastObjectAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpencastObjectAccess::hasWriteAccess()) {
 			return true;
 		}
 
@@ -309,7 +309,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 			return true;
 		}
 
-		$crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
+		$crs_or_grp_obj = ilObjOpencastObject::_getParentCourseOrGroup($_GET['ref_id']);
 		$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
 		foreach ($roles as $role) {
 			$getter_method = "getDefault{$role}Role";
@@ -332,7 +332,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	public static function isActionAllowedForRole($action, $role, $ref_id = 0) {
         $ref_id = $ref_id ? $ref_id : $_GET['ref_id'];
 		$prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
-		if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+		if (!$parent_obj = ilObjOpencastObject::_getParentCourseOrGroup($ref_id)) {
 			return false;
 		}
 		$fetch_role_method = "getDefault{$role}Role";
@@ -356,7 +356,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 */
 	public static function getProducersForRefID($ref_id) {
 		$producers = [];
-		if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+		if ($crs_or_grp_obj = ilObjOpencastObject::_getParentCourseOrGroup($ref_id)) {
 			//check each role (admin,tutor,member) for perm edit_videos, add to producers
 			$roles = ($crs_or_grp_obj instanceof ilObjCourse) ? array('admin', 'tutor', 'member') : array('admin', 'member');
 			foreach ($roles as $role) {
@@ -380,7 +380,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess {
 	 * @param $parent_ref_id
 	 */
 	public static function activateMemberUpload($ref_id) {
-		$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
+		$parent_obj = ilObjOpencastObject::_getParentCourseOrGroup($ref_id);
 		$member_role_id = $parent_obj->getDefaultMemberRole();
 		$ops_id_upload = self::dic()->rbac()->review()->_getOperationIdByName('rep_robj_xoct_perm_upload');
 		$ops_ids = self::dic()->rbac()->review()->getActiveOperationsOfRole($ref_id, $member_role_id);

@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DIC\OpenCast\Plugin;
+namespace srag\DIC\OpencastObject\Plugin;
 
 use ilPlugin;
 use ilTemplateException;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\Exception\DICException;
 
 /**
  * Interface PluginInterface
  *
- * @package srag\DIC\OpenCast\Plugin
+ * @package srag\DIC\OpencastObject\Plugin
  */
 interface PluginInterface
 {

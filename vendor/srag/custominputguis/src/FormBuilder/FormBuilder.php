@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\FormBuilder;
+namespace srag\CustomInputGUIs\OpencastObject\FormBuilder;
 
 use ILIAS\UI\Component\Input\Container\Form\Form;
 
 /**
  * Interface FormBuilder
  *
- * @package srag\CustomInputGUIs\OpenCast\FormBuilder
+ * @package srag\CustomInputGUIs\OpencastObject\FormBuilder
  */
 interface FormBuilder
 {

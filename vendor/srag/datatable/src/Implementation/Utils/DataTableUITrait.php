@@ -1,14 +1,14 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Utils;
+namespace srag\DataTableUI\OpencastObject\Implementation\Utils;
 
-use srag\DataTableUI\OpenCast\Component\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Implementation\Factory;
+use srag\DataTableUI\OpencastObject\Component\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Factory;
 
 /**
  * Trait DataTableUITrait
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Utils
+ * @package srag\DataTableUI\OpencastObject\Implementation\Utils
  */
 trait DataTableUITrait
 {

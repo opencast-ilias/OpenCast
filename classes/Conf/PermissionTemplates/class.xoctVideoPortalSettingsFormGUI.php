@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
     /**
      * @var  PluginConfig

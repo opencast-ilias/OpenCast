@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Data\Row;
+namespace srag\DataTableUI\OpencastObject\Component\Data\Row;
 
 /**
  * Interface RowData
  *
- * @package srag\DataTableUI\OpenCast\Component\Data\Row
+ * @package srag\DataTableUI\OpencastObject\Component\Data\Row
  */
 interface RowData
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\StaticHTMLPresentationInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\StaticHTMLPresentationInputGUI;
 
 use ilFormException;
 use ilFormPropertyGUI;
 use ilTemplate;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class StaticHTMLPresentationInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\StaticHTMLPresentationInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\StaticHTMLPresentationInputGUI
  */
 class StaticHTMLPresentationInputGUI extends ilFormPropertyGUI
 {

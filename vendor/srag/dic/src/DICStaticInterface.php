@@ -1,17 +1,17 @@
 <?php
 
-namespace srag\DIC\OpenCast;
+namespace srag\DIC\OpencastObject;
 
-use srag\DIC\OpenCast\DIC\DICInterface;
-use srag\DIC\OpenCast\Exception\DICException;
-use srag\DIC\OpenCast\Output\OutputInterface;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
-use srag\DIC\OpenCast\Version\VersionInterface;
+use srag\DIC\OpencastObject\DIC\DICInterface;
+use srag\DIC\OpencastObject\Exception\DICException;
+use srag\DIC\OpencastObject\Output\OutputInterface;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
+use srag\DIC\OpencastObject\Version\VersionInterface;
 
 /**
  * Interface DICStaticInterface
  *
- * @package srag\DIC\OpenCast
+ * @package srag\DIC\OpencastObject
  */
 interface DICStaticInterface
 {

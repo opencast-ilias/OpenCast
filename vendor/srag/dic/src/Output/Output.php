@@ -1,20 +1,20 @@
 <?php
 
-namespace srag\DIC\OpenCast\Output;
+namespace srag\DIC\OpencastObject\Output;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Render\Template;
 use ilTable2GUI;
 use ilTemplate;
 use JsonSerializable;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\DICTrait;
+use srag\DIC\OpencastObject\Exception\DICException;
 use stdClass;
 
 /**
  * Class Output
  *
- * @package srag\DIC\OpenCast\Output
+ * @package srag\DIC\OpencastObject\Output
  */
 final class Output implements OutputInterface
 {

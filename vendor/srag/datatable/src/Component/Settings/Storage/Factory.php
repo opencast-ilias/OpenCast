@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings\Storage;
+namespace srag\DataTableUI\OpencastObject\Component\Settings\Storage;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings\Storage
+ * @package srag\DataTableUI\OpencastObject\Component\Settings\Storage
  */
 interface Factory
 {

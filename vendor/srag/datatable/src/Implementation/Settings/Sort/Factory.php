@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings\Sort;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings\Sort;
 
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField as SortFieldInterface;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField as SortFieldInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings\Sort
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings\Sort
  */
 class Factory implements FactoryInterface
 {

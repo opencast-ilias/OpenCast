@@ -1,16 +1,16 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Format\Browser\Filter;
+namespace srag\DataTableUI\OpencastObject\Component\Format\Browser\Filter;
 
-use srag\CustomInputGUIs\OpenCast\FormBuilder\FormBuilder;
-use srag\DataTableUI\OpenCast\Component\Format\Browser\BrowserFormat;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\CustomInputGUIs\OpencastObject\FormBuilder\FormBuilder;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\BrowserFormat;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Format\Browser\Filter
+ * @package srag\DataTableUI\OpencastObject\Component\Format\Browser\Filter
  */
 interface Factory
 {

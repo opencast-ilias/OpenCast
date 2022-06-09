@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TabsInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\TabsInputGUI;
 
 use ilFormPropertyGUI;
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\Items\Items;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\Items\Items;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class TabsInputGUITab
  *
- * @package srag\CustomInputGUIs\OpenCast\TabsInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\TabsInputGUI
  */
 class TabsInputGUITab
 {
@@ -189,4 +189,3 @@ class TabsInputGUITab
         $this->active = $active;
     }
 }
-

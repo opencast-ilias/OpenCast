@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast;
+namespace srag\CustomInputGUIs\OpencastObject;
 
 /**
  * Trait CustomInputGUIsTrait
  *
- * @package srag\CustomInputGUIs\OpenCast
+ * @package srag\CustomInputGUIs\OpencastObject
  */
 trait CustomInputGUIsTrait
 {

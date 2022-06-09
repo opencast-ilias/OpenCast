@@ -1,21 +1,21 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Settings;
+namespace srag\DataTableUI\OpencastObject\Implementation\Settings;
 
 use ILIAS\UI\Component\ViewControl\Pagination;
-use srag\DataTableUI\OpenCast\Component\Settings\Factory as FactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings as SettingsInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\Factory as SortFactoryInterface;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\Factory as StorageFactoryInterface;
-use srag\DataTableUI\OpenCast\Implementation\Settings\Sort\Factory as SortFactory;
-use srag\DataTableUI\OpenCast\Implementation\Settings\Storage\Factory as StorageFactory;
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
+use srag\DataTableUI\OpencastObject\Component\Settings\Factory as FactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings as SettingsInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\Factory as SortFactoryInterface;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\Factory as StorageFactoryInterface;
+use srag\DataTableUI\OpencastObject\Implementation\Settings\Sort\Factory as SortFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Settings\Storage\Factory as StorageFactory;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\DataTableUITrait;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class Factory
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Settings
+ * @package srag\DataTableUI\OpencastObject\Implementation\Settings
  */
 class Factory implements FactoryInterface
 {

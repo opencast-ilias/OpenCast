@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings;
+namespace srag\DataTableUI\OpencastObject\Component\Settings;
 
 use ILIAS\UI\Component\ViewControl\Pagination;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\Factory as SortFactory;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\Factory as StorageFactory;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\Factory as SortFactory;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\Factory as StorageFactory;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings
+ * @package srag\DataTableUI\OpencastObject\Component\Settings
  */
 interface Factory
 {

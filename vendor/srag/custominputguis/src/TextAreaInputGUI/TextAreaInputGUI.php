@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\TextAreaInputGUI;
+namespace srag\CustomInputGUIs\OpencastObject\TextAreaInputGUI;
 
 use ilTextAreaInputGUI;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DIC\OpenCast\DICTrait;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DIC\OpencastObject\DICTrait;
 
 /**
  * Class TextAreaInputGUI
  *
- * @package srag\CustomInputGUIs\OpenCast\TextAreaInputGUI
+ * @package srag\CustomInputGUIs\OpencastObject\TextAreaInputGUI
  */
 class TextAreaInputGUI extends ilTextAreaInputGUI
 {

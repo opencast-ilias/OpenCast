@@ -1,7 +1,7 @@
 <?php
 
-use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
-use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use srag\CustomInputGUIs\OpencastObject\PropertyFormGUI\PropertyFormGUI;
+use srag\CustomInputGUIs\OpencastObject\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Report\Report;
 
 /**
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\Model\Report\Report;
  */
 class xoctReportOverviewTableGUI extends TableGUI {
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
     const ROW_TEMPLATE = "tpl.report_table_row.html";
 
     /**
@@ -46,7 +46,7 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
 
 	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
+	 * @throws \srag\DIC\OpencastObject\Exception\DICException
 	 */
 	protected function initColumns() : void {
         $this->addColumn('', '', '', true);

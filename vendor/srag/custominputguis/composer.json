@@ -35,7 +35,7 @@
   },
   "autoload": {
     "psr-4": {
-      "srag\\CustomInputGUIs\\OpenCast\\": "src/"
+      "srag\\CustomInputGUIs\\OpencastObject\\": "src/"
     },
     "classmap": [
       "src/MultiSelectSearchNewInputGUI/class.ObjectChildrenAjaxAutoCompleteCtrl.php",

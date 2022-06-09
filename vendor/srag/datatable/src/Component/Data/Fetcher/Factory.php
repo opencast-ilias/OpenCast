@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Data\Fetcher;
+namespace srag\DataTableUI\OpencastObject\Component\Data\Fetcher;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component\Data\Fetcher
+ * @package srag\DataTableUI\OpencastObject\Component\Data\Fetcher
  */
 interface Factory
 {

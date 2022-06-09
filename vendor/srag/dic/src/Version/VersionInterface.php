@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DIC\OpenCast\Version;
+namespace srag\DIC\OpencastObject\Version;
 
 /**
  * Interface VersionInterface
  *
- * @package srag\DIC\OpenCast\Version
+ * @package srag\DIC\OpencastObject\Version
  */
 interface VersionInterface
 {

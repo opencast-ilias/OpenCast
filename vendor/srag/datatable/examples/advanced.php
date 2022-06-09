@@ -1,16 +1,16 @@
 <?php
 
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Column\Formatter\DefaultFormatter;
-use srag\DataTableUI\OpenCast\Implementation\Data\Fetcher\AbstractDataFetcher;
-use srag\DataTableUI\OpenCast\Implementation\Utils\AbstractTableBuilder;
-use srag\DIC\OpenCast\DICStatic;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Column\Formatter\DefaultFormatter;
+use srag\DataTableUI\OpencastObject\Implementation\Data\Fetcher\AbstractDataFetcher;
+use srag\DataTableUI\OpencastObject\Implementation\Utils\AbstractTableBuilder;
+use srag\DIC\OpencastObject\DICStatic;
 
 /**
  * @return string

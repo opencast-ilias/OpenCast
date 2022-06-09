@@ -1,15 +1,15 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Settings;
+namespace srag\DataTableUI\OpencastObject\Component\Settings;
 
 use ILIAS\UI\Component\ViewControl\Pagination;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
 
 /**
  * Interface Settings
  *
- * @package srag\DataTableUI\OpenCast\Component\Settings
+ * @package srag\DataTableUI\OpencastObject\Component\Settings
  */
 interface Settings
 {

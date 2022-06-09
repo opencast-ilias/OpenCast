@@ -1,13 +1,13 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component\Utils;
+namespace srag\DataTableUI\OpencastObject\Component\Utils;
 
-use srag\DataTableUI\OpenCast\Component\Table;
+use srag\DataTableUI\OpencastObject\Component\Table;
 
 /**
  * Interface TableBuilder
  *
- * @package srag\DataTableUI\OpenCast\Component\Utils
+ * @package srag\DataTableUI\OpencastObject\Component\Utils
  */
 interface TableBuilder
 {

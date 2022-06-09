@@ -1,21 +1,21 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component;
+namespace srag\DataTableUI\OpencastObject\Component;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Input\Field\FilterInput;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\DataFetcher;
-use srag\DataTableUI\OpenCast\Component\Format\Browser\BrowserFormat;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DIC\OpenCast\Plugin\Pluginable;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\DataFetcher;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\BrowserFormat;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DIC\OpencastObject\Plugin\Pluginable;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
 
 /**
  * Interface Table
  *
- * @package srag\DataTableUI\OpenCast\Component
+ * @package srag\DataTableUI\OpencastObject\Component
  */
 interface Table extends Component, Pluginable
 {

@@ -1,19 +1,19 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Component;
+namespace srag\DataTableUI\OpencastObject\Component;
 
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Column\Factory as ColumnFactory;
-use srag\DataTableUI\OpenCast\Component\Data\Factory as DataFactory;
-use srag\DataTableUI\OpenCast\Component\Data\Fetcher\DataFetcher;
-use srag\DataTableUI\OpenCast\Component\Format\Factory as FormatFactory;
-use srag\DataTableUI\OpenCast\Component\Settings\Factory as SettingsFactory;
-use srag\DIC\OpenCast\Plugin\PluginInterface;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Column\Factory as ColumnFactory;
+use srag\DataTableUI\OpencastObject\Component\Data\Factory as DataFactory;
+use srag\DataTableUI\OpencastObject\Component\Data\Fetcher\DataFetcher;
+use srag\DataTableUI\OpencastObject\Component\Format\Factory as FormatFactory;
+use srag\DataTableUI\OpencastObject\Component\Settings\Factory as SettingsFactory;
+use srag\DIC\OpencastObject\Plugin\PluginInterface;
 
 /**
  * Interface Factory
  *
- * @package srag\DataTableUI\OpenCast\Component
+ * @package srag\DataTableUI\OpencastObject\Component
  */
 interface Factory
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent;
+namespace srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent;
 
 use ilHiddenInputGUI;
 use ILIAS\UI\Component\Component;
@@ -11,7 +11,7 @@ use ILIAS\UI\Renderer as RendererInterface;
 /**
  * Class Renderer
  *
- * @package srag\CustomInputGUIs\OpenCast\InputGUIWrapperUIInputComponent
+ * @package srag\CustomInputGUIs\OpencastObject\InputGUIWrapperUIInputComponent
  */
 class Renderer extends AbstractRenderer
 {

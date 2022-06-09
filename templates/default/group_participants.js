@@ -60,7 +60,7 @@ var xoctGroupParticipant = {
 
         $.expr[':'].contains = function (a, i, m) {
             return $(a).text().toUpperCase()
-                    .indexOf(m[3].toUpperCase()) >= 0;
+                .indexOf(m[3].toUpperCase()) >= 0;
         };
 
         this.filter_container.keyup(function () {
@@ -89,7 +89,7 @@ var xoctGroupParticipant = {
             this.before_load();
             var self = this;
             var url = this.data_url;
-            $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+            $.ajax({ url: url + "&cmd=delete", type: "POST", data: { "id": id, "group_id": xoctGroup.selected_id } }).done(function (data) {
                 xoctGroup.removeParticipant(id);
                 self.after_load();
                 console.log('load');
@@ -115,7 +115,7 @@ var xoctGroupParticipant = {
         this.before_load();
         var self = this;
         var url = this.data_url;
-        $.ajax({url: url + "&cmd=create", type: "POST", data: {"user_id": user_id, "group_id": xoctGroup.selected_id}}).done(function (data) {
+        $.ajax({ url: url + "&cmd=create", type: "POST", data: { "user_id": user_id, "group_id": xoctGroup.selected_id } }).done(function (data) {
             xoctGroup.addParticipant(user_id);
             self.after_load();
             self.load();
@@ -137,11 +137,11 @@ var xoctGroupParticipant = {
         self.container_available.empty();
         var participants = xoctGroup.getAvailableParticipantsForSelectedGroup();
 
-        participants.forEach(function(participant) {
+        participants.forEach(function (participant) {
             var checkmark = '';
             if (xoctGroup.isInAnyGroup(participant.user_id)) {
                 checkmark = '<img class="xoct_checkmark" width="10px" height="10px" ' +
-                    'src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/checkmark.svg"' +
+                    'src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpencastObject/templates/images/checkmark.svg"' +
                     '>';
             }
             // if ()
@@ -169,7 +169,7 @@ var xoctGroupParticipant = {
         this.before_load();
         self.container_per_group.empty();
         var participants = xoctGroup.getSelectedGroupParticipants();
-        participants.forEach(function(participant) {
+        participants.forEach(function (participant) {
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id
                 + '"><div style="margin-right:30px;">'

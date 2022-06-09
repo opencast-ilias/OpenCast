@@ -1,11 +1,11 @@
 <?php
 
-namespace srag\DIC\OpenCast\Plugin;
+namespace srag\DIC\OpencastObject\Plugin;
 
 /**
  * Interface Pluginable
  *
- * @package srag\DIC\OpenCast\Plugin
+ * @package srag\DIC\OpencastObject\Plugin
  */
 interface Pluginable
 {

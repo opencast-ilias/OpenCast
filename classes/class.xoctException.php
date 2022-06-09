@@ -24,14 +24,14 @@ class xoctException extends Exception {
 	 */
 	protected static $messages = array(
 		self::API_CALL_UNSUPPORTED => 'This Api-Call is not supported',
-		self::API_CALL_STATUS_500 => 'An error occurred while communicating with the OpenCast-Server',
+		self::API_CALL_STATUS_500 => 'An error occurred while communicating with the OpencastObject-Server',
 		self::API_CALL_STATUS_403 => 'Access denied',
 		self::API_CALL_STATUS_404 => 'Not Found',
 		self::API_CALL_STATUS_409 => 'Conflict',
-		self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
-		self::API_CREATION_FAILED => 'The response from the OpenCast-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
-		self::NO_USER_MAPPING => 'Your user-account cannot communicate with the OpenCast-Server. please contact your system administrator.',
-		self::API_CALL_BAD_CREDENTIALS => 'The OpenCast-Server cannot be accessed at the moment.',
+		self::OBJECT_WRONG_PARENT => 'OpencastObject-Object have to be in courses',
+		self::API_CREATION_FAILED => 'The response from the OpencastObject-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
+		self::NO_USER_MAPPING => 'Your user-account cannot communicate with the OpencastObject-Server. please contact your system administrator.',
+		self::API_CALL_BAD_CREDENTIALS => 'The OpencastObject-Server cannot be accessed at the moment.',
 		self::INTERNAL_ERROR => 'A plugin-internal error occured.',
 		self::NO_STREAMING_DATA => 'No streaming data found.',
 	);

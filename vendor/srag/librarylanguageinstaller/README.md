@@ -30,7 +30,7 @@ Expand you plugin class for installing languages of a library to your plugin
 
 ```php
 ...
-use srag\LibraryLanguageInstaller\OpenCast\x\LibraryLanguageInstaller;
+use srag\LibraryLanguageInstaller\OpencastObject\x\LibraryLanguageInstaller;
 ...
 	/**
      * @inheritDoc

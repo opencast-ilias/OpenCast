@@ -1,29 +1,29 @@
 <?php
 
-namespace srag\DataTableUI\OpenCast\Implementation\Format\Browser;
+namespace srag\DataTableUI\OpencastObject\Implementation\Format\Browser;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Input\Container\Filter\Standard as FilterStandard;
 use ilUtil;
 use LogicException;
-use srag\CustomInputGUIs\OpenCast\FormBuilder\FormBuilder;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
-use srag\DataTableUI\OpenCast\Component\Column\Column;
-use srag\DataTableUI\OpenCast\Component\Data\Data;
-use srag\DataTableUI\OpenCast\Component\Data\Row\RowData;
-use srag\DataTableUI\OpenCast\Component\Format\Browser\BrowserFormat;
-use srag\DataTableUI\OpenCast\Component\Format\Format;
-use srag\DataTableUI\OpenCast\Component\Settings\Settings;
-use srag\DataTableUI\OpenCast\Component\Settings\Sort\SortField;
-use srag\DataTableUI\OpenCast\Component\Settings\Storage\SettingsStorage;
-use srag\DataTableUI\OpenCast\Component\Table;
-use srag\DataTableUI\OpenCast\Implementation\Format\HtmlFormat;
+use srag\CustomInputGUIs\OpencastObject\FormBuilder\FormBuilder;
+use srag\CustomInputGUIs\OpencastObject\Template\Template;
+use srag\DataTableUI\OpencastObject\Component\Column\Column;
+use srag\DataTableUI\OpencastObject\Component\Data\Data;
+use srag\DataTableUI\OpencastObject\Component\Data\Row\RowData;
+use srag\DataTableUI\OpencastObject\Component\Format\Browser\BrowserFormat;
+use srag\DataTableUI\OpencastObject\Component\Format\Format;
+use srag\DataTableUI\OpencastObject\Component\Settings\Settings;
+use srag\DataTableUI\OpencastObject\Component\Settings\Sort\SortField;
+use srag\DataTableUI\OpencastObject\Component\Settings\Storage\SettingsStorage;
+use srag\DataTableUI\OpencastObject\Component\Table;
+use srag\DataTableUI\OpencastObject\Implementation\Format\HtmlFormat;
 use Throwable;
 
 /**
  * Class DefaultBrowserFormat
  *
- * @package srag\DataTableUI\OpenCast\Implementation\Format\Browser
+ * @package srag\DataTableUI\OpencastObject\Implementation\Format\Browser
  */
 class DefaultBrowserFormat extends HtmlFormat implements BrowserFormat
 {

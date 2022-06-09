@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Cache;
 use Exception;
 use ilGlobalCache;
 use ilGlobalCacheService;
-use ilOpenCastPlugin;
+use ilOpencastObjectPlugin;
 use RuntimeException;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -17,7 +17,7 @@ use xoctLog;
  */
 class Cache extends ilGlobalCache {
 
-	const COMP_PREFIX = ilOpenCastPlugin::PLUGIN_ID;
+	const COMP_PREFIX = ilOpencastObjectPlugin::PLUGIN_ID;
 	/**
 	 * @var bool
 	 */
@@ -68,7 +68,7 @@ class Cache extends ilGlobalCache {
 		 * @var $ilGlobalCacheService ilGlobalCacheService
 		 */
 		if (!$this->getComponent()) {
-			$this->setComponent(ilOpenCastPlugin::PLUGIN_NAME);
+			$this->setComponent(ilOpencastObjectPlugin::PLUGIN_NAME);
 		}
 
 		switch ($this->getCacheType()) {

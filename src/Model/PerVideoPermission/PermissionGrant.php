@@ -3,7 +3,7 @@
 namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
-use ilObjOpenCastAccess;
+use ilObjOpencastObjectAccess;
 use ilObjUser;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
@@ -109,7 +109,7 @@ class PermissionGrant extends ActiveRecord
 
         $active_invitations = array();
         foreach ($invitations as $inv) {
-            if (ilObjOpenCastAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
+            if (ilObjOpencastObjectAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
                 $active_invitations[] = $inv;
             }
         }
@@ -132,7 +132,7 @@ class PermissionGrant extends ActiveRecord
         ))->get();
 
         // filter out users which are not part of this course/group
-        $crs_participants = ilObjOpenCastAccess::getAllParticipants();
+        $crs_participants = ilObjOpencastObjectAccess::getAllParticipants();
         foreach ($all_invitations as $key => $invitation) {
             if (!in_array($invitation->getUserId(), $crs_participants)) {
                 unset($all_invitations[$key]);
@@ -150,7 +150,7 @@ class PermissionGrant extends ActiveRecord
         // if grant_access_rights is deactivated, only admins' invitations are active
         $active_invitations = array();
         foreach ($all_invitations as $inv) {
-            if (ilObjOpenCastAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
+            if (ilObjOpencastObjectAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
                 $active_invitations[] = $inv;
             }
         }

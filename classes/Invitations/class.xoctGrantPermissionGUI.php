@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
+use srag\DIC\OpencastObject\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -13,7 +13,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  *
  * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy xoctGrantPermissionGUI: ilObjOpenCastGUI
+ * @ilCtrl_IsCalledBy xoctGrantPermissionGUI: ilObjOpencastObjectGUI
  */
 class xoctGrantPermissionGUI extends xoctGUI
 {
@@ -60,7 +60,7 @@ class xoctGrantPermissionGUI extends xoctGUI
     protected function index()
     {
         $xoctUser = xoctUser::getInstance(self::dic()->user());
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
+        if (!ilObjOpencastObjectAccess::checkAction(ilObjOpencastObjectAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
             ilUtil::sendFailure('Access denied', true);
             self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
         }
@@ -156,7 +156,7 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected function getCourseMembers()
     {
-        $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
+        $parent = ilObjOpencastObject::_getParentCourseOrGroup($_GET['ref_id']);
         $p = $parent->getMembersObject();
 
         return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());

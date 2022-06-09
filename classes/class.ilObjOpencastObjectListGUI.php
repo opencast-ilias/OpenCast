@@ -1,11 +1,11 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\DIC\OpencastObject\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
- * ListGUI implementation for OpenCast object plugin. This one
+ * ListGUI implementation for OpencastObject object plugin. This one
  * handles the presentation in container items (categories, courses, ...)
  * together with the corresponfing ...Access class.
  *
@@ -18,19 +18,19 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  *
  * @version       1.0.00
  */
-class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
+class ilObjOpencastObjectListGUI extends ilObjectPluginListGUI {
 
 	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+	const PLUGIN_CLASS_NAME = ilOpencastObjectPlugin::class;
 
 	/**
-	 * @var ilOpenCastPlugin
+	 * @var ilOpencastObjectPlugin
 	 */
 	public $plugin;
 
 
 	public function initType() {
-		$this->setType(ilOpenCastPlugin::PLUGIN_ID);
+		$this->setType(ilOpencastObjectPlugin::PLUGIN_ID);
 	}
 
 
@@ -38,7 +38,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 * @return string
 	 */
 	public function getGuiClass() {
-		return 'ilObjOpenCastGUI';
+		return 'ilObjOpencastObjectGUI';
 	}
 
 
@@ -64,12 +64,12 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		$commands = array(
 			array(
 				'permission' => 'read',
-				'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT,
+				'cmd' => ilObjOpencastObjectGUI::CMD_SHOW_CONTENT,
 				'default' => true,
 			),
 			array(
 				'permission' => 'write',
-				'cmd' => ilObjOpenCastGUI::CMD_REDIRECT_SETTING,
+				'cmd' => ilObjOpencastObjectGUI::CMD_REDIRECT_SETTING,
 				'lang_var' => 'edit'
 			)
 		);
@@ -89,8 +89,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 		{
 			if($this->checkCommandAccess('delete','',$this->ref_id,$this->type))
 			{
-				self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI",'item_ref_id',$this->getCommandId());
-				$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
+				self::dic()->ctrl()->setParameterByClass("ilObjOpencastObjectGUI",'item_ref_id',$this->getCommandId());
+				$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpencastObjectGUI", "delete");
 				$this->insertCommand($cmd_link, self::dic()->language()->txt("delete"));
 				$this->adm_commands_included = true;
 				return true;
@@ -100,10 +100,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		if($this->checkCommandAccess('delete','',$this->ref_id,$this->type))
 		{
-			self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "ref_id",
+			self::dic()->ctrl()->setParameterByClass("ilObjOpencastObjectGUI", "ref_id",
 				$this->container_obj->object->getRefId());
-			self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
-			$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
+			self::dic()->ctrl()->setParameterByClass("ilObjOpencastObjectGUI", "item_ref_id", $this->getCommandId());
+			$cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpencastObjectGUI", "deleteObject");
 			$this->insertCommand($cmd_link, self::dic()->language()->txt("delete"), "",
 				"");
 			$this->adm_commands_included = true;
@@ -112,7 +112,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 
 	protected function getObject() {
-		return new ilObjOpenCast($this->ref_id);
+		return new ilObjOpencastObject($this->ref_id);
 	}
 
 
@@ -121,7 +121,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 	 * @return ActiveRecord|ObjectSettings
 	 * @throws xoctException
 	 */
-	protected function getOpenCast($get_exceoptions = false) {
+	protected function getOpencastObject($get_exceoptions = false) {
 		$objectSettings = new ObjectSettings();
 		try {
 			PluginConfig::setApiSettings();
@@ -148,7 +148,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI {
 
 		$props = parent::getCustomProperties(array());
 		try {
-			$objectSettings = $this->getOpenCast(true);
+			$objectSettings = $this->getOpencastObject(true);
 			if (!$objectSettings instanceof ObjectSettings) {
 				return $props;
 			}
