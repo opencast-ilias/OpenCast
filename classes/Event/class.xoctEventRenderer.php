@@ -91,10 +91,27 @@ class xoctEventRenderer {
      *
      * @throws xoctException
      */
-	public function insertThumbnail(&$tpl, $block_title = 'thumbnail', $variable = 'THUMBNAIL') {
-		$this->insert($tpl, $variable, $this->getThumbnailHTML(), $block_title);
+	public function insertPreviewImage(&$tpl, $block_title = 'preview_image', $variable = 'PREVIEW_IMAGE') {
+		$this->insert($tpl, $variable, $this->getPreviewImageHTML(), $block_title);
 	}
 
+    /**
+     * @return string
+     * @throws xoctException
+     */
+	public function getPreviewImageHTML() {
+		$preview_image_tpl = self::plugin()->template('default/tpl.event_preview_image.html');
+        $preview_image_tpl->setVariable('ID', $this->event->getIdentifier());
+        $preview_image_tpl->setVariable('THUMBNAIL', $this->getThumbnailHTML());
+        return $preview_image_tpl->get();
+	}
+
+    /**
+     * @return string
+     */
+    public function getPreviewLink() {
+	    return 'data-preview_link="' . $this->event->getIdentifier() . '"';
+    }
 
     /**
      * @return string
@@ -135,6 +152,7 @@ class xoctEventRenderer {
 			$link_tpl = self::plugin()->template('default/tpl.player_link.html');
 			$link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->event->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
 			$link_tpl->setVariable('BUTTON_TYPE', $button_type);
+			$link_tpl->setVariable('PREVIEW_LINK', $this->getPreviewLink());
 			$link_tpl->setVariable('TARGET', '_blank');
 			if (PluginConfig::getConfig(PluginConfig::F_USE_MODALS)) {
 				$modal = $this->getPlayerModal();
