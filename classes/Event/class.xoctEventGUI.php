@@ -729,11 +729,18 @@ class xoctEventGUI extends xoctGUI
         $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
 
+        $studio_link = $base . '/studio';
+
+        // get the custom url for the studio.
+        $custom_url = PluginConfig::getConfig(PluginConfig::F_STUDIO_URL);
+        if (!empty($custom_url)) {
+            $studio_link = rtrim($custom_url, "/");
+        }
+
         $return_link = ILIAS_HTTP_PATH . '/'
             . self::dic()->ctrl()->getLinkTarget($this, self::CMD_STANDARD);
 
-        $studio_link = $base . '/studio'
-            . '?upload.seriesId=' . $this->objectSettings->getSeriesIdentifier()
+        $studio_link .= '?upload.seriesId=' . $this->objectSettings->getSeriesIdentifier()
             . '&return.label=ILIAS'
             . '&return.target=' . urlencode($return_link);
         header('Location:' . $studio_link);

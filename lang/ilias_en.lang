@@ -26,6 +26,8 @@ config_external_download_source#:#External download source
 config_external_download_source_info#:#Enable this option in case of an external web page to show the downloads
 config_oc_studio_allowed#:#Enable Opencast Studio
 config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
+config_oc_studio_url#:#Opencast Studio URL
+config_oc_studio_url_info#:#A custom URL for Opencast Studio. Default: https://[your-opencast-url.com]/studio
 config_curl#:#cURL
 config_curl_debug_level#:#Debug level
 config_curl_password#:#API password

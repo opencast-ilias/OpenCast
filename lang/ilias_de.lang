@@ -24,6 +24,8 @@ config_common_idp#:#Gemeinsamer IdP
 config_common_idp_info#:#Auswählen, falls ILIAS und Opencast den selben Identity Provider verwenden (z.B. Shibboleth oder LDAP). Dadurch können gewisse Rechteprüfungen genauer durchgeführt werden ("als User" statt nur "mit Rolle des Users").
 config_oc_studio_allowed#:#Opencast Studio aktivieren
 config_oc_studio_allowed_info#:#Ermöglichen Sie Benutzern den Zugriff auf Opencast Studio von Ilias aus (Erfordert Opencast > 8.3)
+config_oc_studio_url#:#Opencast Studio URL
+config_oc_studio_url_info#:#Eine benutzerdefinierte URL für Opencast Studio. Default: https://[ihre-opencast-url.de]/studio
 config_curl#:#cURL
 config_curl_debug_level#:#Debug-Level
 config_curl_password#:#API-Passwort
