@@ -157,8 +157,10 @@ class xoctSeriesAPI
         }
 
         try {
-            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
-            $ilias_producers->addMembers($producers);
+            if ($group_producers = PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS)) {
+                $ilias_producers = Group::find($group_producers);
+                $ilias_producers->addMembers($producers);
+            }
         } catch (xoctException $e) {
         }
 

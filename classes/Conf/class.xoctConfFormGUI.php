@@ -426,7 +426,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		foreach (PluginConfig::$groups as $group) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($group), $group);
 			$te->setInfo($this->parent_gui->txt($group . '_info'));
-			$te->setRequired(true);
 			$this->addItem($te);
 		}
 
