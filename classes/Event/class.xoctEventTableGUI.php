@@ -145,7 +145,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
         $renderer = new xoctEventRenderer($event, $this->objectSettings);
 
-        $renderer->insertThumbnail($this->tpl, null);
+        $renderer->insertPreviewImage($this->tpl, null);
         $renderer->insertPlayerLink($this->tpl);
 
         if (!$this->objectSettings->getStreamingOnly()) {

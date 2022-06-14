@@ -228,6 +228,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_STUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
 
+		// Studio Link.
+		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_STUDIO_URL), PluginConfig::F_STUDIO_URL);
+		$te->setInfo($this->parent_gui->txt(PluginConfig::F_STUDIO_URL . '_info'));
+		$cb->addSubItem($te);
+
 		$cb = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_AUDIO_ALLOWED), PluginConfig::F_AUDIO_ALLOWED);
 		$cb->setInfo($this->parent_gui->txt(PluginConfig::F_AUDIO_ALLOWED . '_info'));
 		$this->addItem($cb);
@@ -421,7 +426,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		foreach (PluginConfig::$groups as $group) {
 			$te = new ilTextInputGUI($this->parent_gui->txt($group), $group);
 			$te->setInfo($this->parent_gui->txt($group . '_info'));
-			$te->setRequired(true);
 			$this->addItem($te);
 		}
 

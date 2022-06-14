@@ -393,8 +393,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $producers[] = xoctUser::getInstance($this->ilias_dic->user());
 
         try {
-            $ilias_producers = Group::find(PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS));
-            $ilias_producers->addMembers($producers);
+            if ($group_producers = PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS)) {
+                $ilias_producers = Group::find($group_producers);
+                $ilias_producers->addMembers($producers);
+            }
         } catch (xoctException $e) {
             self::dic()->log()->warning('Could not add producers to group while creating a series, msg: '
                 . $e->getMessage());

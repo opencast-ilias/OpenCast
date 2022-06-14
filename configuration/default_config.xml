@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opencast_settings>
   <info>
-    <plugin_version>3.0.0</plugin_version>
-    <plugin_db_version>25</plugin_db_version>
+    <plugin_version>4.0.1</plugin_version>
+    <plugin_db_version>36</plugin_db_version>
     <config_version/>
   </info>
   <xoct_confs>
@@ -20,11 +20,11 @@
     </xoct_conf>
     <xoct_conf>
       <name>api_base</name>
-      <value><![CDATA[https://opencast.example.org/api]]></value>
+      <value><![CDATA[https://stable.opencast.org/api]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>api_version</name>
-      <value><![CDATA[v1.3.0]]></value>
+      <value><![CDATA[v1.7.0]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>audio_allowed</name>
@@ -44,11 +44,11 @@
     </xoct_conf>
     <xoct_conf>
       <name>curl_password</name>
-      <value><![CDATA[opencast]]></value>
+      <value><![CDATA[password]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>curl_username</name>
-      <value><![CDATA[admin]]></value>
+      <value><![CDATA[username]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>editor_link</name>
@@ -68,7 +68,7 @@
     </xoct_conf>
     <xoct_conf>
       <name>group_producers</name>
-      <value><![CDATA[ilias_producers]]></value>
+      <value><![CDATA[ROLE_GROUP_ILIAS]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>identifier_to_uppercase</name>
@@ -88,20 +88,11 @@
     </xoct_conf>
     <xoct_conf>
       <name>common_idp</name>
-      <value><![CDATA[1]]></value>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>licenses</name>
-      <value><![CDATA[http://creativecommons.org/licenses/by/2.5/ch/#CC: Attribution
-http://creativecommons.org/licenses/by-nc/2.5/ch/#CC: Attribution-Noncommercial
-http://creativecommons.org/licenses/by-nc-nd/2.5/ch/#CC: Attribution-Noncommercial-No Derivative Works
-http://creativecommons.org/licenses/by-nc-sa/2.5/ch/#CC: Attribution-Noncommercial-Share Alike
-http://creativecommons.org/licenses/by-nd/2.5/ch/#CC: Attribution-No Derivative Works
-http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>license_info</name>
-      <value><![CDATA[<p>I accept the Opencast service conditions.</p>]]></value>
+      <name>load_table_sync</name>
+      <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>no_metadata</name>
@@ -128,6 +119,18 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[<p>Über das untenstehende Formular können Sie dem Support Terminanpassungen an Ihren geplanten Aufzeichnungen melden (z.B. Start- &amp; Endzeit, Datum, Hörsaal).<br /><br />Nennen Sie die betroffenen Termine und Ihre Anpassungswünsche. Der Support wird die Anpassungen nach Überprüfung vornehmen. Die Anpassungen werden Ihnen per Email bestätigt.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>sign_player_links_with_ip</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_thumbnail_links_time</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_thumbnail_links_with_ip</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>report_quality</name>
       <value><![CDATA[]]></value>
     </xoct_conf>
@@ -144,6 +147,30 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[<p>Haben Sie Qualitätsprobleme mit dem Bild oder Ton Ihrer Aufzeichnungen oder Videos? Sie können den Support über das untenstehende Formular kontaktieren.<br /><br />Nennen Sie die betroffenen Videos und die Art der Qualitätsprobleme. Der Support nimmt so bald wie möglich Kontakt mit Ihnen auf.</p>]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>request_comb_lv</name>
+      <value><![CDATA[3]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>reset_terms</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>role_owner_prefix</name>
+      <value><![CDATA[ROLE_OWNER_{IDENTIFIER}]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_annotation_links_time</name>
+      <value><![CDATA[0]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_annotation_links_with_ip</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>sign_download_links_time</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>paella_config_option</name>
       <value><![CDATA[default]]></value>
     </xoct_conf>
@@ -152,44 +179,12 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <value><![CDATA[default]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>role_anonymous</name>
-      <value><![CDATA[ROLE_ANONYMOUS]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_external_application_member</name>
-      <value><![CDATA[ROLE_EXTERNAL_APPLICATION_MEMBER]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_ext_application</name>
-      <value><![CDATA[ROLE_EXTERNAL_APPLICATION]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_federation_member</name>
-      <value><![CDATA[ROLE_AAI_FEDERATION_MEMBER]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_ivt_email_prefix</name>
-      <value><![CDATA[ROLE_OWNER_EMAIL_{IDENTIFIER}]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_ivt_external_prefix</name>
-      <value><![CDATA[ROLE_OWNER_{IDENTIFIER}]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_organisation_prefix</name>
-      <value><![CDATA[ROLE_AAI_ORG_{IDENTIFIER}_MEMBER]]></value>
-    </xoct_conf>
-    <xoct_conf>
-      <name>role_producer</name>
-      <value><![CDATA[ROLE_ORG_PRODUCER]]></value>
-    </xoct_conf>
-    <xoct_conf>
       <name>role_user_prefix</name>
       <value><![CDATA[ROLE_USER_{IDENTIFIER}]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>scheduled_metadata_editable</name>
-      <value><![CDATA[1]]></value>
+      <value><![CDATA[0]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>sign_annotation_links</name>
@@ -221,7 +216,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>std_roles</name>
-      <value><![CDATA[[""]]]></value>
+      <value><![CDATA[["ROLE_ADMIN",""]]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>streaming_url</name>
@@ -237,7 +232,7 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
     </xoct_conf>
     <xoct_conf>
       <name>user_mapping</name>
-      <value><![CDATA[2]]></value>
+      <value><![CDATA[1]]></value>
     </xoct_conf>
     <xoct_conf>
       <name>use_highlowres_segment_preview</name>
@@ -267,123 +262,27 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <name>workflow_unpublish</name>
       <value><![CDATA[]]></value>
     </xoct_conf>
+    <xoct_conf>
+      <name>external_download_source</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>presenter-mandatory</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>presign_links</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
+    <xoct_conf>
+      <name>paella_conf_url</name>
+      <value><![CDATA[]]></value>
+    </xoct_conf>
   </xoct_confs>
   <xoct_workflow_parameters>
     <xoct_workflow_parameter>
-      <id><![CDATA[flagForCutting]]></id>
-      <title><![CDATA[Cutting]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[3]]></default_value_member>
-      <default_value_admin><![CDATA[3]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagForReview]]></id>
-      <title><![CDATA[Review]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[3]]></default_value_member>
-      <default_value_admin><![CDATA[3]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagQuality1080p]]></id>
-      <title><![CDATA[1080p resolution (FullHD)]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[3]]></default_value_member>
-      <default_value_admin><![CDATA[3]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagQuality2160p]]></id>
-      <title><![CDATA[2160p resolution (UltraHD)]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[3]]></default_value_member>
-      <default_value_admin><![CDATA[3]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagQuality360p]]></id>
-      <title><![CDATA[360p resolution]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[0]]></default_value_member>
-      <default_value_admin><![CDATA[0]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagQuality480p]]></id>
-      <title><![CDATA[480p resolution]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[3]]></default_value_member>
-      <default_value_admin><![CDATA[3]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[flagQuality720p]]></id>
-      <title><![CDATA[720p resolution (HDready)]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[4]]></default_value_member>
-      <default_value_admin><![CDATA[4]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[holdOrPublishToggle_hold]]></id>
-      <title><![CDATA[]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[0]]></default_value_member>
-      <default_value_admin><![CDATA[0]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[holdOrPublishToggle_publish]]></id>
-      <title><![CDATA[]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[1]]></default_value_member>
-      <default_value_admin><![CDATA[1]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishLive]]></id>
-      <title><![CDATA[Add live event to Opencast Media Module]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[0]]></default_value_member>
-      <default_value_admin><![CDATA[0]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToApi]]></id>
-      <title><![CDATA[External Applications]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[1]]></default_value_member>
-      <default_value_admin><![CDATA[1]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToAws]]></id>
-      <title><![CDATA[]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[0]]></default_value_member>
-      <default_value_admin><![CDATA[0]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToEngage]]></id>
-      <title><![CDATA[]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[1]]></default_value_member>
-      <default_value_admin><![CDATA[1]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToOaiPmh]]></id>
-      <title><![CDATA[OAI-PMH Default Repository]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[1]]></default_value_member>
-      <default_value_admin><![CDATA[1]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToSearch]]></id>
-      <title><![CDATA[Opencast Index]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[1]]></default_value_member>
-      <default_value_admin><![CDATA[1]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
-      <id><![CDATA[publishToYouTube]]></id>
-      <title><![CDATA[YouTube]]></title>
-      <type><![CDATA[checkbox]]></type>
-      <default_value_member><![CDATA[0]]></default_value_member>
-      <default_value_admin><![CDATA[0]]></default_value_admin>
-    </xoct_workflow_parameter>
-    <xoct_workflow_parameter>
       <id><![CDATA[straightToPublishing]]></id>
-      <title><![CDATA[]]></title>
+      <title><![CDATA[Straight to publishing]]></title>
       <type><![CDATA[checkbox]]></type>
       <default_value_member><![CDATA[0]]></default_value_member>
       <default_value_admin><![CDATA[0]]></default_value_admin>
@@ -391,9 +290,19 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
   </xoct_workflow_parameters>
   <xoct_publication_usages>
     <xoct_publication_usage>
-      <usage_id><![CDATA[download]]></usage_id>
-      <title><![CDATA[Download]]></title>
-      <description><![CDATA[Publication used for offering a direct download link.]]></description>
+      <usage_id><![CDATA[preview]]></usage_id>
+      <title><![CDATA[Preview]]></title>
+      <description><![CDATA[Preview image]]></description>
+      <channel><![CDATA[api]]></channel>
+      <flavor><![CDATA[/player+preview]]></flavor>
+      <tag><![CDATA[]]></tag>
+      <search_key><![CDATA[flavor]]></search_key>
+      <md_type><![CDATA[1]]></md_type>
+    </xoct_publication_usage>
+    <xoct_publication_usage>
+      <usage_id><![CDATA[player]]></usage_id>
+      <title><![CDATA[Player]]></title>
+      <description><![CDATA[Publication to fetch the video data used for the (internal) video player.]]></description>
       <channel><![CDATA[api]]></channel>
       <flavor><![CDATA[/delivery]]></flavor>
       <tag><![CDATA[]]></tag>
@@ -401,41 +310,11 @@ http://creativecommons.org/licenses/by-sa/2.5/ch/#CC: Attribution-Share Alike]]>
       <md_type><![CDATA[2]]></md_type>
     </xoct_publication_usage>
     <xoct_publication_usage>
-      <usage_id><![CDATA[player]]></usage_id>
-      <title><![CDATA[Player]]></title>
-      <description><![CDATA[Publication to fetch the video data used for the (internal) video player.]]></description>
-      <channel><![CDATA[api]]></channel>
-      <flavor><![CDATA[]]></flavor>
-      <tag><![CDATA[engage-streaming]]></tag>
-      <search_key><![CDATA[tag]]></search_key>
-      <md_type><![CDATA[2]]></md_type>
-    </xoct_publication_usage>
-    <xoct_publication_usage>
       <usage_id><![CDATA[thumbnail]]></usage_id>
       <title><![CDATA[Thumbnail]]></title>
       <description><![CDATA[Publication used to fetch the preview thumbnails.]]></description>
       <channel><![CDATA[api]]></channel>
-      <flavor><![CDATA[presentation/player+preview]]></flavor>
-      <tag><![CDATA[]]></tag>
-      <search_key><![CDATA[flavor]]></search_key>
-      <md_type><![CDATA[1]]></md_type>
-    </xoct_publication_usage>
-    <xoct_publication_usage>
-      <usage_id><![CDATA[thumbnail_fallback]]></usage_id>
-      <title><![CDATA[Thumbnail Fallback]]></title>
-      <description><![CDATA[]]></description>
-      <channel><![CDATA[api]]></channel>
-      <flavor><![CDATA[presenter/player+preview]]></flavor>
-      <tag><![CDATA[]]></tag>
-      <search_key><![CDATA[flavor]]></search_key>
-      <md_type><![CDATA[1]]></md_type>
-    </xoct_publication_usage>
-    <xoct_publication_usage>
-      <usage_id><![CDATA[thumbnail_fallback_2]]></usage_id>
-      <title><![CDATA[Thumbnail Fallback 2]]></title>
-      <description><![CDATA[]]></description>
-      <channel><![CDATA[api]]></channel>
-      <flavor><![CDATA[presentation/search+preview]]></flavor>
+      <flavor><![CDATA[/search+preview]]></flavor>
       <tag><![CDATA[]]></tag>
       <search_key><![CDATA[flavor]]></search_key>
       <md_type><![CDATA[1]]></md_type>
