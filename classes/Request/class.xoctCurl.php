@@ -552,10 +552,31 @@ class xoctCurl {
 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
 
+		curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, array($this, 'progressCallback'));
+		curl_setopt( $ch, CURLOPT_NOPROGRESS, false);
+
 		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_2);
 		xoctLog::getInstance()->write(print_r($this->getPostFields(), true), xoctLog::DEBUG_LEVEL_2);
 	}
 
+	public function progressCallback($resource, $download_size, $downloaded, $upload_size, $uploaded)
+	{
+		set_time_limit(0);// Reset time limit for big files
+		global $DIC;
+		static $previous_progress = 0;
+		$progress = 0;
+		$upload_progress_path = 'opencast/' . $DIC->user()->getId() . '_upload_progress.txt';
+		if (!$DIC->filesystem()->temp()->has($upload_progress_path)) {
+			$DIC->filesystem()->temp()->write($upload_progress_path, $progress);
+		}
+		if($upload_size > 0) {
+			$progress = round(($uploaded / $upload_size)  * 100);
+		}
+		if ($progress > $previous_progress) {
+			$previous_progress = $progress;
+			$DIC->filesystem()->temp()->put($upload_progress_path, $progress);
+		}
+	}
 
 	/**
 	 * @param $ch
