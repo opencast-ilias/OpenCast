@@ -88,7 +88,7 @@ config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
 config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
-config_api_base_info#:#e.g.: https://myopencast.com/api
+config_api_base_info#:#e.g.: https://stable.opencast.org/api
 config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in Opencast which will be used to communicate over the API (needs enough permissions in OC).
 config_curl_password_info#:#Password for above account.
