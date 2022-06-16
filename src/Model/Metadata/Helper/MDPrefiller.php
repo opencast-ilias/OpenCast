@@ -24,7 +24,7 @@ class MDPrefiller
     }
 
 
-    public function getPrefillValue(MDPrefillOption $prefill_type) : ?string
+    public function getPrefillValue(MDPrefillOption $prefill_type): ?string
     {
         switch ($prefill_type->getValue()) {
             case MDPrefillOption::T_COURSE_TITLE:

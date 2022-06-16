@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\TermsOfUse;
 
-
 /**
  * class ToUManager
  * Manages the access to the AcceptedToU ActiveRecords
@@ -27,7 +26,7 @@ class ToUManager
     }
 
     // ToDo: Remove default value for instance
-    public static function hasAcceptedToU(int $user_id, int $instance_id = 0) : bool
+    public static function hasAcceptedToU(int $user_id, int $instance_id = 0): bool
     {
         /** @var AcceptedToU $ar */
         if ($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) {
@@ -49,7 +48,8 @@ class ToUManager
     }
 
     // ToDo: Remove default value for instance
-    public static function resetForInstance(int $instance_id = 0) {
+    public static function resetForInstance(int $instance_id = 0)
+    {
         if ($array = AcceptedToU::where(["oc_instance_id" => $instance_id])->get()) {
             /** @var AcceptedToU $ar */
             foreach ($array as $ar) {
@@ -58,7 +58,4 @@ class ToUManager
             }
         }
     }
-
-
-
 }

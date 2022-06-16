@@ -15,15 +15,14 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class PermissionGroup extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_group';
+    public const TABLE_NAME = 'xoct_group';
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -49,14 +48,14 @@ class PermissionGroup extends ActiveRecord
             $id = ilObject::_lookupObjectId($id);
         }
 
-        return self::where(array('serie_id' => $id))->orderBy('title')->get();
+        return self::where(['serie_id' => $id])->orderBy('title')->get();
     }
 
 
     /**
      * @var array
      */
-    protected static $series_id_to_groups_map = array();
+    protected static $series_id_to_groups_map = [];
     /**
      * @var int
      *
@@ -82,16 +81,16 @@ class PermissionGroup extends ActiveRecord
         $group_ids = self::$series_id_to_groups_map[$series_identifier];
 
         if (count($group_ids) == 0) {
-            return array();
+            return [];
         }
 
-        $my_groups = PermissionGroupParticipant::where(array('user_id' => $xoctUser->getIliasUserId(),))->where(array('group_id' => $group_ids))
-            ->getArray(NULL, 'group_id');
+        $my_groups = PermissionGroupParticipant::where(['user_id' => $xoctUser->getIliasUserId(),])->where(['group_id' => $group_ids])
+            ->getArray(null, 'group_id');
         if (count($my_groups) == 0) {
-            return array();
+            return [];
         }
 
-        return PermissionGroupParticipant::where(array('group_id' => $my_groups))->get();
+        return PermissionGroupParticipant::where(['group_id' => $my_groups])->get();
     }
 
 
@@ -103,14 +102,14 @@ class PermissionGroup extends ActiveRecord
     protected static function loadGroupIdsForSeriesId($series_identifier)
     {
         if (!isset(self::$series_id_to_groups_map[$series_identifier])) {
-            $objectSettings = ObjectSettings::where(array(
+            $objectSettings = ObjectSettings::where([
                 'series_identifier' => $series_identifier,
                 'obj_id' => ilObject2::_lookupObjectId($_GET['ref_id']),
-            ))->last();
+            ])->last();
             if (!$objectSettings instanceof ObjectSettings) {
-                return array();
+                return [];
             }
-            $array = self::where(array('serie_id' => $objectSettings->getObjId(),))->getArray(NULL, 'id');
+            $array = self::where(['serie_id' => $objectSettings->getObjId(),])->getArray(null, 'id');
 
             self::$series_id_to_groups_map[$series_identifier] = $array;
         }
@@ -156,7 +155,7 @@ class PermissionGroup extends ActiveRecord
         /**
          * @var $gp PermissionGroupParticipant
          */
-        foreach (PermissionGroupParticipant::where(array('group_id' => $this->getId()))->get() as $gp) {
+        foreach (PermissionGroupParticipant::where(['group_id' => $this->getId()])->get() as $gp) {
             $gp->delete();
         }
         parent::delete();

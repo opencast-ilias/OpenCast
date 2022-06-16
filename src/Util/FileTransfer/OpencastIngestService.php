@@ -25,7 +25,7 @@ class OpencastIngestService
     /**
      * @throws xoctException
      */
-    public function ingest(UploadEventRequest $uploadEventRequest) : void
+    public function ingest(UploadEventRequest $uploadEventRequest): void
     {
         $payload = $uploadEventRequest->getPayload();
         $ingest_node_url = $this->getIngestNodeURL();

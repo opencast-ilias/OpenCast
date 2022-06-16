@@ -15,16 +15,15 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class PermissionGroupParticipant extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_group_participant';
-    const STATUS_ACTIVE = 1;
+    public const TABLE_NAME = 'xoct_group_participant';
+    public const STATUS_ACTIVE = 1;
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -69,7 +68,7 @@ class PermissionGroupParticipant extends ActiveRecord
     /**
      * @var xoctUser
      */
-    protected $xoct_user = NULL;
+    protected $xoct_user = null;
     /**
      * @var int
      *
@@ -81,7 +80,7 @@ class PermissionGroupParticipant extends ActiveRecord
     /**
      * @var array
      */
-    protected static $crs_members_cache = array();
+    protected static $crs_members_cache = [];
 
 
     /**
@@ -91,14 +90,14 @@ class PermissionGroupParticipant extends ActiveRecord
      * @return array
      * @throws \xoctException
      */
-    public static function getAvailable($ref_id, $group_id = NULL)
+    public static function getAvailable($ref_id, $group_id = null)
     {
         if (isset(self::$crs_members_cache[$ref_id][$group_id])) {
             return self::$crs_members_cache[$ref_id][$group_id];
         }
         $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
 
-        $return = array();
+        $return = [];
         foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id) {
             if (in_array($user_id, $existing)) {
                 continue;
@@ -121,12 +120,12 @@ class PermissionGroupParticipant extends ActiveRecord
      */
     public function getAllUserIdsForOpenCastObjId($obj_id)
     {
-        $all = PermissionGroup::where(array('serie_id' => $obj_id))->getArray(NULL, 'id');
+        $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
         if (count($all) == 0) {
-            return array();
+            return [];
         }
 
-        return self::where(array('group_id' => $all))->getArray(NULL, 'user_id');
+        return self::where(['group_id' => $all])->getArray(null, 'user_id');
     }
 
 
@@ -138,12 +137,12 @@ class PermissionGroupParticipant extends ActiveRecord
      */
     public static function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
     {
-        $all = PermissionGroup::where(array('serie_id' => $obj_id))->getArray(NULL, 'id');
+        $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
         if (count($all) == 0) {
-            return array();
+            return [];
         }
 
-        return self::where(array('group_id' => $group_id))->getArray(NULL, 'user_id');
+        return self::where(['group_id' => $group_id])->getArray(null, 'user_id');
     }
 
 

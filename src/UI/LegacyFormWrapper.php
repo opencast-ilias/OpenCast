@@ -27,5 +27,4 @@ class LegacyFormWrapper extends ilPropertyFormGUI
     {
         return $this->html;
     }
-
 }

@@ -4,13 +4,13 @@
  */
 
 
-function fetch(string $url) : array
+function fetch(string $url): array
 {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch,  CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
@@ -29,7 +29,7 @@ function fetch(string $url) : array
     ];
 }
 
-function parsePlaylist(string $m3u8) : array
+function parsePlaylist(string $m3u8): array
 {
     // process the string
     $pieces = explode("\n", $m3u8); // make an array out of curl return value

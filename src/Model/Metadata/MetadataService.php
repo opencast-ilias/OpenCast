@@ -11,7 +11,6 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 
 class MetadataService
 {
-
     /**
      * @var Container
      */

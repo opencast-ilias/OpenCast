@@ -10,8 +10,7 @@ use ilGlobalCacheService;
  */
 class DBCacheService extends ilGlobalCacheService
 {
-
-    const TYPE_DB = 99;
+    public const TYPE_DB = 99;
 
     protected function getActive()
     {
@@ -75,7 +74,7 @@ class DBCacheService extends ilGlobalCacheService
         return true;
     }
 
-    protected function isExpired(DBCacheAR $DBCacheAR) : bool
+    protected function isExpired(DBCacheAR $DBCacheAR): bool
     {
         return !is_null($DBCacheAR->getExpires()) && (time() > $DBCacheAR->getExpires());
     }

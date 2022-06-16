@@ -37,7 +37,7 @@ class MDParser
     /**
      * @throws xoctException
      */
-    public function parseAPIResponseEvent(array $response) : Metadata
+    public function parseAPIResponseEvent(array $response): Metadata
     {
         foreach ($response as $d) {
             if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
@@ -46,8 +46,10 @@ class MDParser
             }
         }
         if (!isset($fields)) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                'Metadata for event could not be loaded.');
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Metadata for event could not be loaded.'
+            );
         }
 
         $catalogue = $this->catalogueFactory->event();
@@ -55,7 +57,7 @@ class MDParser
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
     }
 
-    public function parseAPIResponseSeries(array $response) : Metadata
+    public function parseAPIResponseSeries(array $response): Metadata
     {
         foreach ($response as $d) {
             if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_SERIES) {
@@ -64,8 +66,10 @@ class MDParser
             }
         }
         if (!isset($fields)) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                'Metadata for series could not be loaded.');
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Metadata for series could not be loaded.'
+            );
         }
 
         $catalogue = $this->catalogueFactory->series();
@@ -73,7 +77,7 @@ class MDParser
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
     }
 
-    private function parseAPIResponseGeneric(array $fields, Metadata $metadata, MDCatalogue $catalogue) : Metadata
+    private function parseAPIResponseGeneric(array $fields, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
         foreach ($catalogue->getFieldDefinitions() as $fieldDefinition) {
             if ($fieldDefinition->getId() == MDFieldDefinition::F_START_DATE) {
@@ -89,7 +93,9 @@ class MDParser
                 $key = array_search($fieldDefinition->getId(), array_column($fields, 'id'));
                 $field = $fields[$key];
             }
-            $metadata->addField((new MetadataField($field->id, $fieldDefinition->getType()
+            $metadata->addField((new MetadataField(
+                $field->id,
+                $fieldDefinition->getType()
             ))->withValue($this->formatMDValueFromAPIResponse($field->value, $fieldDefinition->getType())));
         }
         return $metadata;
@@ -121,23 +127,25 @@ class MDParser
      * @return Metadata
      * @throws xoctException
      */
-    public function parseFormDataEvent(array $data) : Metadata
+    public function parseFormDataEvent(array $data): Metadata
     {
         $metadata = $this->metadataFactory->event();
         $catalogue = $this->catalogueFactory->event();
         return $this->parseFormData($data, $metadata, $catalogue);
     }
 
-    public function parseFormDataSeries(array $data) : Metadata
+    public function parseFormDataSeries(array $data): Metadata
     {
         $metadata = $this->metadataFactory->series();
         $catalogue = $this->catalogueFactory->series();
         return $this->parseFormData($data, $metadata, $catalogue);
     }
 
-    private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue) : Metadata
+    private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
-        foreach (array_filter($data, function($key) {return strpos($key, 'md_') === 0;}, ARRAY_FILTER_USE_KEY)
+        foreach (array_filter($data, function ($key) {
+            return strpos($key, 'md_') === 0;
+        }, ARRAY_FILTER_USE_KEY)
                  as $id => $value) {
             $id = substr($id, 3);
             $definition = $catalogue->getFieldById($id);

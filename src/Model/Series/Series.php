@@ -11,25 +11,24 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class Series {
-
-
-	/**
-	 * @var string
-	 */
-	protected $identifier;
-	/**
-	 * @var ACL
-	 */
-	public $access_policies;
-	/**
-	 * @var Metadata
-	 */
-	protected $metadata = array();
-	/**
-	 * @var int
-	 */
-	protected $theme;
+class Series
+{
+    /**
+     * @var string
+     */
+    protected $identifier;
+    /**
+     * @var ACL
+     */
+    public $access_policies;
+    /**
+     * @var Metadata
+     */
+    protected $metadata = [];
+    /**
+     * @var int
+     */
+    protected $theme;
 
     /**
      * @return string
@@ -63,7 +62,7 @@ class Series {
         $this->access_policies = $access_policies;
     }
 
-    public function getMetadata() : Metadata
+    public function getMetadata(): Metadata
     {
         return $this->metadata;
     }
@@ -95,17 +94,18 @@ class Series {
     /**
      * @return int
      */
-	public function getPermissionTemplateId() {
-		$template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
-		return $template ? $template->getId() : 0;
-	}
+    public function getPermissionTemplateId()
+    {
+        $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
+        return $template ? $template->getId() : 0;
+    }
 
     /**
      * @return bool
      */
-	public function isPublishedOnVideoPortal() : bool
+    public function isPublishedOnVideoPortal(): bool
     {
         $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
-	    return $template && !$template->isDefault();
+        return $template && !$template->isDefault();
     }
 }

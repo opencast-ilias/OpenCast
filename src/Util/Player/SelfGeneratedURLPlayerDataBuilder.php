@@ -19,8 +19,7 @@ use xoctSecureLink;
  */
 class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
 {
-
-    protected function buildStreams(array $media) : array
+    protected function buildStreams(array $media): array
     {
         $event_id = $this->event->getIdentifier();
         $duration = 0;
@@ -51,7 +50,7 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
             ];
         }
 
-        return array($duration, $streams);
+        return [$duration, $streams];
     }
 
     /**
@@ -61,7 +60,7 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
      * @return string[]
      * @throws xoctException
      */
-    protected function buildStreamingUrls(Media $medium, string $event_id, int $duration) : array
+    protected function buildStreamingUrls(Media $medium, string $event_id, int $duration): array
     {
         $smil_url_identifier = ($medium->getRole() !== Media::ROLE_PRESENTATION ? "_presenter" : "_presentation");
         $streaming_server_url = PluginConfig::getConfig(PluginConfig::F_STREAMING_URL);
@@ -72,6 +71,6 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
             $hls_url = xoctSecureLink::signPlayer($hls_url, $duration);
             $dash_url = xoctSecureLink::signPlayer($dash_url, $duration);
         }
-        return array($hls_url, $dash_url);
+        return [$hls_url, $dash_url];
     }
 }

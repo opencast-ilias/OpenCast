@@ -14,7 +14,6 @@ use xoctRequest;
  */
 class Group extends APIObject
 {
-
     /**
      * @var String
      */
@@ -30,11 +29,11 @@ class Group extends APIObject
     /**
      * @var array
      */
-    protected $roles = array();
+    protected $roles = [];
     /**
      * @var array
      */
-    protected $members = array();
+    protected $members = [];
     /**
      * @var String
      */
@@ -65,7 +64,7 @@ class Group extends APIObject
     protected function read()
     {
         $data = json_decode(xoctRequest::root()->groups($this->getIdentifier())->get());
-        if(!empty($data)) {
+        if (!empty($data)) {
             $this->loadFromStdClass($data);
         }
     }
@@ -101,7 +100,7 @@ class Group extends APIObject
         }
 
         if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            xoctRequest::root()->groups($this->getIdentifier())->members()->post(array('member' => $xoctUser));
+            xoctRequest::root()->groups($this->getIdentifier())->members()->post(['member' => $xoctUser]);
             $this->members[] = $xoctUser;
 
             return true;
@@ -160,7 +159,7 @@ class Group extends APIObject
     /**
      * @return string
      */
-    public function getIdentifier() : string
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -178,7 +177,7 @@ class Group extends APIObject
     /**
      * @return string
      */
-    public function getRole() : string
+    public function getRole(): string
     {
         return $this->role;
     }
@@ -194,7 +193,7 @@ class Group extends APIObject
     /**
      * @return string
      */
-    public function getOrganization() : string
+    public function getOrganization(): string
     {
         return $this->organization;
     }
@@ -210,7 +209,7 @@ class Group extends APIObject
     /**
      * @return array
      */
-    public function getRoles() : array
+    public function getRoles(): array
     {
         return (array) $this->roles;
     }
@@ -226,7 +225,7 @@ class Group extends APIObject
     /**
      * @return array
      */
-    public function getMembers() : array
+    public function getMembers(): array
     {
         return (array) $this->members;
     }
@@ -244,7 +243,7 @@ class Group extends APIObject
     /**
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -260,7 +259,7 @@ class Group extends APIObject
     /**
      * @return string
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -272,5 +271,4 @@ class Group extends APIObject
     //	public function setDescription($description) {
     //		$this->description = $description;
     //	}
-
 }

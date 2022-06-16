@@ -7,12 +7,12 @@ use xoctException;
 
 class MDDataType
 {
-    const TYPE_TEXT = 'text';
-    const TYPE_TEXT_LONG = 'text_long';
-    const TYPE_DATETIME = 'datetime';
-    const TYPE_DATE = 'date';
-    const TYPE_TEXT_ARRAY = 'text_array';
-    const TYPE_TIME = 'time';
+    public const TYPE_TEXT = 'text';
+    public const TYPE_TEXT_LONG = 'text_long';
+    public const TYPE_DATETIME = 'datetime';
+    public const TYPE_DATE = 'date';
+    public const TYPE_TEXT_ARRAY = 'text_array';
+    public const TYPE_TIME = 'time';
     private static $types = [
         self::TYPE_TEXT,
         self::TYPE_TEXT_LONG,
@@ -34,8 +34,10 @@ class MDDataType
     public function __construct(string $title)
     {
         if (!in_array($title, self::$types)) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                "{$title} is not a valid MDDataType");
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                "{$title} is not a valid MDDataType"
+            );
         }
         $this->title = $title;
     }
@@ -60,7 +62,7 @@ class MDDataType
         return new self(self::TYPE_DATETIME);
     }
 
-    public static function date() : self
+    public static function date(): self
     {
         return new self(self::TYPE_DATE);
     }
@@ -81,7 +83,7 @@ class MDDataType
     /**
      * @throws xoctException
      */
-    public function isValidValue($value) : bool
+    public function isValidValue($value): bool
     {
         switch ($this->getTitle()) {
             case self::TYPE_TEXT:
@@ -96,12 +98,14 @@ class MDDataType
             case self::TYPE_TEXT_ARRAY:
                 return is_array($value);
             default:
-                throw new xoctException(xoctException::INTERNAL_ERROR,
-                    "invalid MDDataType: " . get_class($value));
+                throw new xoctException(
+                    xoctException::INTERNAL_ERROR,
+                    "invalid MDDataType: " . get_class($value)
+                );
         }
     }
 
-    public function isFilterable() : bool
+    public function isFilterable(): bool
     {
         return in_array($this->getTitle(), [
             self::TYPE_TEXT,
@@ -109,5 +113,4 @@ class MDDataType
             self::TYPE_TEXT_ARRAY,
         ]);
     }
-
 }

@@ -7,98 +7,106 @@ use ActiveRecord;
 /**
  * Metadata of an Event that is stored only in ILIAS
  */
-class EventAdditionsAR extends ActiveRecord {
-
-	const TABLE_NAME = 'xoct_event_additions';
-
-
-	/**
-	 * @return string
-	 * @deprecated
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
-	}
+class EventAdditionsAR extends ActiveRecord
+{
+    public const TABLE_NAME = 'xoct_event_additions';
 
 
-	/**
-	 * @return string
-	 */
-	public function getConnectorContainerName() {
-		return self::TABLE_NAME;
-	}
+    /**
+     * @return string
+     * @deprecated
+     */
+    public static function returnDbTableName()
+    {
+        return self::TABLE_NAME;
+    }
 
 
-	public function update() {
-		if (!$this->getId()) {
-			return false;
-		}
-		if (!self::where(array( 'id' => $this->getId() ))->hasSets()) {
-			$this->create();
-		} else {
-			parent::update();
-		}
-	}
+    /**
+     * @return string
+     */
+    public function getConnectorContainerName()
+    {
+        return self::TABLE_NAME;
+    }
 
 
-	public function create() {
-		if (!$this->getId()) {
-			return false;
-		}
-		parent::create();
-	}
+    public function update()
+    {
+        if (!$this->getId()) {
+            return false;
+        }
+        if (!self::where([ 'id' => $this->getId() ])->hasSets()) {
+            $this->create();
+        } else {
+            parent::update();
+        }
+    }
 
 
-	/**
-	 * @var string
-	 *
-	 * @description    Unique identifier from opencast
-	 *
-	 * @con_is_primary true
-	 * @con_is_unique  true
-	 * @con_has_field  true
-	 * @con_fieldtype  text
-	 * @con_length     64
-	 */
-	protected $id;
-	/**
-	 * @var bool
-	 *
-	 * @con_has_field  true
-	 * @con_fieldtype  integer
-	 * @con_length     1
-	 */
-	protected $is_online = true;
+    public function create()
+    {
+        if (!$this->getId()) {
+            return false;
+        }
+        parent::create();
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function getId() {
-		return $this->id;
-	}
+    /**
+     * @var string
+     *
+     * @description    Unique identifier from opencast
+     *
+     * @con_is_primary true
+     * @con_is_unique  true
+     * @con_has_field  true
+     * @con_fieldtype  text
+     * @con_length     64
+     */
+    protected $id;
+    /**
+     * @var bool
+     *
+     * @con_has_field  true
+     * @con_fieldtype  integer
+     * @con_length     1
+     */
+    protected $is_online = true;
 
 
-	/**
-	 * @param string $id
-	 */
-	public function setId($id) {
-		$this->id = $id;
-	}
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
 
-	/**
-	 * @return boolean
-	 */
-	public function getIsOnline() {
-		return $this->is_online;
-	}
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
 
-	/**
-	 * @param boolean $is_online
-	 */
-	public function setIsOnline($is_online) {
-		$this->is_online = $is_online;
-	}
+    /**
+     * @return boolean
+     */
+    public function getIsOnline()
+    {
+        return $this->is_online;
+    }
+
+
+    /**
+     * @param boolean $is_online
+     */
+    public function setIsOnline($is_online)
+    {
+        $this->is_online = $is_online;
+    }
 }

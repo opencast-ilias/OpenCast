@@ -13,14 +13,13 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class UserSettingsRepository
 {
+    public const S_VIEW_TYPE = 'view_type';
+    public const S_TILE_LIMIT = 'tile_limit';
 
-    const S_VIEW_TYPE = 'view_type';
-    const S_TILE_LIMIT = 'tile_limit';
-
-    const VIEW_TYPE_LIST = 0;
-    const VIEW_TYPE_TILES = 1;
-    const DEFAULT_VIEW_TYPE = self::VIEW_TYPE_LIST;
-    const DEFAULT_TILE_LIMIT = 12;
+    public const VIEW_TYPE_LIST = 0;
+    public const VIEW_TYPE_TILES = 1;
+    public const DEFAULT_VIEW_TYPE = self::VIEW_TYPE_LIST;
+    public const DEFAULT_TILE_LIMIT = 12;
 
 
     /**

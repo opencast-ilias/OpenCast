@@ -4,19 +4,18 @@ namespace srag\Plugins\Opencast\Model\Workflow;
 
 class WorkflowDBRepository implements WorkflowRepository
 {
-
-    public function anyWorkflowExists() : bool
+    public function anyWorkflowExists(): bool
     {
         return (WorkflowAR::count() > 0);
     }
 
-    public function getAllWorkflows() : array
+    public function getAllWorkflows(): array
     {
         return WorkflowAR::get();
     }
 
 
-    public function getAllWorkflowsAsArray($key = null, $values = null) : array
+    public function getAllWorkflowsAsArray($key = null, $values = null): array
     {
         return WorkflowAR::getArray($key, $values);
     }
@@ -32,7 +31,7 @@ class WorkflowDBRepository implements WorkflowRepository
     }
 
 
-    public function exists(string $workflow_id) : bool
+    public function exists(string $workflow_id): bool
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->hasSets();
     }

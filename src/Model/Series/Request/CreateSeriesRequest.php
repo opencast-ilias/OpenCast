@@ -24,5 +24,4 @@ class CreateSeriesRequest
     {
         return $this->payload;
     }
-
 }

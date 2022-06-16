@@ -8,102 +8,102 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctReportingModalGUI extends ilModalGUI {
+class xoctReportingModalGUI extends ilModalGUI
+{
+    use DICTrait;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const REPORTING_TYPE_DATE = 1;
+    public const REPORTING_TYPE_QUALITY = 2;
 
-	const REPORTING_TYPE_DATE = 1;
-	const REPORTING_TYPE_QUALITY = 2;
-
-	/**
-	 * @var xoctEventGUI
-	 */
-	protected $parent_gui;
-	/**
-	 * xoctReportingFormGUI constructor.
-	 */
-	public function __construct($parent_gui, $type) {
+    /**
+     * @var xoctEventGUI
+     */
+    protected $parent_gui;
+    /**
+     * xoctReportingFormGUI constructor.
+     */
+    public function __construct($parent_gui, $type)
+    {
         $this->parent_gui = $parent_gui;
 
         $this->setType(ilModalGUI::TYPE_LARGE);
         self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
-		$send_button->setCaption('send');
+        $send_button->setCaption('send');
 
-		$this->addButton($send_button);
+        $this->addButton($send_button);
 
-		$cancel_button = ilButton::getInstance();
+        $cancel_button = ilButton::getInstance();
         $cancel_button->setCaption('cancel');
         $type_title = $type == self::REPORTING_TYPE_DATE ? 'date' : 'quality';
         $cancel_button->setOnClick("$('#xoct_report_{$type_title}_modal').modal('hide');event.preventDefault();");
-		$this->addButton($cancel_button);
+        $this->addButton($cancel_button);
 
-		switch ($type) {
-			case self::REPORTING_TYPE_DATE:
-				$this->setId('xoct_report_date_modal');
-				$this->setHeading(self::plugin()->translate('event_report_date_modification'));
-				$this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
-				$send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
-				break;
-			case self::REPORTING_TYPE_QUALITY:
-				$this->setId('xoct_report_quality_modal');
-				$this->setHeading(self::plugin()->translate('event_report_quality_problem'));
-				$this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
-				$send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
-				break;
-		}
-	}
-
-
-	/**
-	 * @return ilModalGUI|void
-	 * @throws ilException
-	 */
-	static function getInstance() {
-		throw new ilException('Do not use this method, please use the constructor instead.');
-	}
+        switch ($type) {
+            case self::REPORTING_TYPE_DATE:
+                $this->setId('xoct_report_date_modal');
+                $this->setHeading(self::plugin()->translate('event_report_date_modification'));
+                $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
+                $send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
+                break;
+            case self::REPORTING_TYPE_QUALITY:
+                $this->setId('xoct_report_quality_modal');
+                $this->setHeading(self::plugin()->translate('event_report_quality_problem'));
+                $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
+                $send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
+                break;
+        }
+    }
 
 
-	/**
-	 * @return string
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
-	 * @throws ilTemplateException
-	 */
-	function getHTML() {
-		// only the following two lines differ from the parent method
-		$tpl = new ilTemplate("tpl.reporting_modal.html", true, true, self::plugin()->getPluginObject()->getDirectory());
-		$tpl->setVariable('FORM_ACTION', self::dic()->ctrl()->getFormAction($this->parent_gui));
+    /**
+     * @return ilModalGUI|void
+     * @throws ilException
+     */
+    public static function getInstance()
+    {
+        throw new ilException('Do not use this method, please use the constructor instead.');
+    }
 
-		if (count($this->getButtons()) > 0)
-		{
-			foreach ($this->getButtons() as $b)
-			{
-				$tpl->setCurrentBlock("button");
-				$tpl->setVariable("BUTTON", $b->render());
-				$tpl->parseCurrentBlock();
-			}
-			$tpl->setCurrentBlock("footer");
-			$tpl->parseCurrentBlock();
-		}
 
-		$tpl->setVariable("HEADING", $this->getHeading());
+    /**
+     * @return string
+     * @throws \srag\DIC\OpenCast\Exception\DICException
+     * @throws ilTemplateException
+     */
+    public function getHTML()
+    {
+        // only the following two lines differ from the parent method
+        $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, self::plugin()->getPluginObject()->getDirectory());
+        $tpl->setVariable('FORM_ACTION', self::dic()->ctrl()->getFormAction($this->parent_gui));
 
-		$tpl->setVariable("MOD_ID", $this->getId());
-		$tpl->setVariable("BODY", $this->getBody());
+        if (count($this->getButtons()) > 0) {
+            foreach ($this->getButtons() as $b) {
+                $tpl->setCurrentBlock("button");
+                $tpl->setVariable("BUTTON", $b->render());
+                $tpl->parseCurrentBlock();
+            }
+            $tpl->setCurrentBlock("footer");
+            $tpl->parseCurrentBlock();
+        }
 
-		switch ($this->getType())
-		{
-			case self::TYPE_LARGE:
-				$tpl->setVariable("CLASS", "modal-lg");
-				break;
+        $tpl->setVariable("HEADING", $this->getHeading());
 
-			case self::TYPE_SMALL:
-				$tpl->setVariable("CLASS", "modal-sm");
-				break;
-		}
+        $tpl->setVariable("MOD_ID", $this->getId());
+        $tpl->setVariable("BODY", $this->getBody());
 
-		return $tpl->get();
-	}
+        switch ($this->getType()) {
+            case self::TYPE_LARGE:
+                $tpl->setVariable("CLASS", "modal-lg");
+                break;
+
+            case self::TYPE_SMALL:
+                $tpl->setVariable("CLASS", "modal-sm");
+                break;
+        }
+
+        return $tpl->get();
+    }
 }

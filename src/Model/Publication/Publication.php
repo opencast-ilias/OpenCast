@@ -12,7 +12,6 @@ use stdClass;
  */
 class Publication extends APIObject
 {
-
     /**
      * @param string $id
      */
@@ -47,7 +46,7 @@ class Publication extends APIObject
     public function loadFromArray(array $array)
     {
         parent::loadFromArray($array);
-        $attachments = array();
+        $attachments = [];
         foreach ($this->getAttachments() as $attachment) {
             $xoctAttachment = new Attachment();
             $xoctAttachment->loadFromStdClass($attachment);
@@ -55,7 +54,7 @@ class Publication extends APIObject
         }
         $this->setAttachments($attachments);
 
-        $medias = array();
+        $medias = [];
         foreach ($this->getMedia() as $media) {
             $xoctMedia = new Media();
             $xoctMedia->loadFromStdClass($media);

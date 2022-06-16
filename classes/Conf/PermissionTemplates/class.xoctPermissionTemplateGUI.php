@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
@@ -10,16 +11,16 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
  *
  * @ilCtrl_IsCalledBy xoctPermissionTemplateGUI: xoctMainGUI
  */
-class xoctPermissionTemplateGUI extends xoctGUI {
+class xoctPermissionTemplateGUI extends xoctGUI
+{
+    public const IDENTIFIER = 'tpl_id';
 
-	const IDENTIFIER = 'tpl_id';
-	
-	const SUBTAB_GENERAL = 'general';
-	const SUBTAB_PERMISSION_TEMPLATES = 'permission_templates';
+    public const SUBTAB_GENERAL = 'general';
+    public const SUBTAB_PERMISSION_TEMPLATES = 'permission_templates';
 
-	const CMD_UPDATE_TEMPLATE = 'updateTemplate';
+    public const CMD_UPDATE_TEMPLATE = 'updateTemplate';
 
-	protected $subtab_active;
+    protected $subtab_active;
 
     public function executeCommand()
     {
@@ -30,9 +31,10 @@ class xoctPermissionTemplateGUI extends xoctGUI {
 
 
     /**
-	 *
-	 */
-	protected function index() {
+     *
+     */
+    protected function index()
+    {
         $this->setSubTabs();
 
         $this->subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : self::SUBTAB_GENERAL;
@@ -49,45 +51,49 @@ class xoctPermissionTemplateGUI extends xoctGUI {
                 self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateTableGUI->getHTML());
                 break;
         }
-	}
+    }
 
-
-	/**
-	 *
-	 */
-	protected function add() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new PermissionTemplate());
-		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
-	}
-
-
-	/**
-	 *
-	 */
-	protected function create() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,new PermissionTemplate());
-		$xoctPermissionTemplateFormGUI->setValuesByPost();
-		if ($xoctPermissionTemplateFormGUI->saveForm()) {
-			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
-			self::dic()->ctrl()->redirect($this);
-		}
-		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
-	}
-
-
-	/**
-	 *
-	 */
-	protected function edit() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,PermissionTemplate::find($_GET[self::IDENTIFIER]));
-		$xoctPermissionTemplateFormGUI->fillForm();
-		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
-	}
 
     /**
      *
      */
-    protected function update() {
+    protected function add()
+    {
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
+        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+    }
+
+
+    /**
+     *
+     */
+    protected function create()
+    {
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
+        $xoctPermissionTemplateFormGUI->setValuesByPost();
+        if ($xoctPermissionTemplateFormGUI->saveForm()) {
+            ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
+            self::dic()->ctrl()->redirect($this);
+        }
+        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+    }
+
+
+    /**
+     *
+     */
+    protected function edit()
+    {
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, PermissionTemplate::find($_GET[self::IDENTIFIER]));
+        $xoctPermissionTemplateFormGUI->fillForm();
+        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+    }
+
+    /**
+     *
+     */
+    protected function update()
+    {
         $xoctVideoPortalSettingsFormGUI = new xoctVideoPortalSettingsFormGUI($this);
         $xoctVideoPortalSettingsFormGUI->setValuesByPost();
         if ($xoctVideoPortalSettingsFormGUI->saveObject()) {
@@ -98,20 +104,22 @@ class xoctPermissionTemplateGUI extends xoctGUI {
     }
 
 
-	/**
-	 *
-	 */
-	protected function updateTemplate() {
-		$xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this,PermissionTemplate::find($_GET[self::IDENTIFIER]));
-		$xoctPermissionTemplateFormGUI->setValuesByPost();
-		if ($xoctPermissionTemplateFormGUI->saveForm()) {
-			ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
-			self::dic()->ctrl()->redirect($this);
-		}
-		self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
-	}
+    /**
+     *
+     */
+    protected function updateTemplate()
+    {
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, PermissionTemplate::find($_GET[self::IDENTIFIER]));
+        $xoctPermissionTemplateFormGUI->setValuesByPost();
+        if ($xoctPermissionTemplateFormGUI->saveForm()) {
+            ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
+            self::dic()->ctrl()->redirect($this);
+        }
+        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+    }
 
-    protected function setSubTabs() {
+    protected function setSubTabs()
+    {
         self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
         self::dic()->tabs()->addSubTab(self::SUBTAB_GENERAL, self::plugin()->getPluginObject()->txt('subtab_' . self::SUBTAB_GENERAL), self::dic()->ctrl()->getLinkTarget($this));
         self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_PERMISSION_TEMPLATES);
@@ -120,56 +128,60 @@ class xoctPermissionTemplateGUI extends xoctGUI {
     }
 
 
-	/**
-	 *
-	 */
-	protected function confirmDelete() {
+    /**
+     *
+     */
+    protected function confirmDelete()
+    {
         $tpl_id = $_POST['tpl_id'];
         $template = PermissionTemplate::find($tpl_id);
         $template->delete();
         ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
-	}
+    }
 
 
-	/**
-	 *
-	 */
-	protected function delete() {
-	    ilUtil::sendQuestion(self::plugin()->getPluginObject()->txt('msg_confirm_delete_perm_template'));
-		$tpl_id = $_GET['tpl_id'];
-		$template = PermissionTemplate::find($tpl_id);
-		$ilConfirmationGUI = new ilConfirmationGUI();
-		$ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
-		$ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
-		$ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);
-		$ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
-		self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
-	}
+    /**
+     *
+     */
+    protected function delete()
+    {
+        ilUtil::sendQuestion(self::plugin()->getPluginObject()->txt('msg_confirm_delete_perm_template'));
+        $tpl_id = $_GET['tpl_id'];
+        $template = PermissionTemplate::find($tpl_id);
+        $ilConfirmationGUI = new ilConfirmationGUI();
+        $ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
+        $ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
+        $ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
+        self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+    }
 
 
-	/**
-	 * ajax
-	 */
-	protected function reorder() {
-		$ids = $_POST['ids'];
-		$sort = 1;
-		foreach ($ids as $id) {
-			/** @var PermissionTemplate $perm_tpl */
-			$perm_tpl = PermissionTemplate::find($id);
-			$perm_tpl->setSort($sort);
-			$perm_tpl->update();
-			$sort++;
-		}
-		exit;
-	}
+    /**
+     * ajax
+     */
+    protected function reorder()
+    {
+        $ids = $_POST['ids'];
+        $sort = 1;
+        foreach ($ids as $id) {
+            /** @var PermissionTemplate $perm_tpl */
+            $perm_tpl = PermissionTemplate::find($id);
+            $perm_tpl->setSort($sort);
+            $perm_tpl->update();
+            $sort++;
+        }
+        exit;
+    }
 
     /**
      * @param $key
      *
      * @return string
      */
-    public function txt($key) {
+    public function txt($key)
+    {
         return self::plugin()->getPluginObject()->txt('config_' . $key);
     }
 }

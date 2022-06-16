@@ -7,8 +7,8 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
 
 class MetadataFactory
 {
-    const MD_TITLE_EVENT = 'EVENTS.EVENTS.DETAILS.CATALOG.EPISODE';
-    const MD_TITLE_SERIS = 'Opencast Series DublinCore';
+    public const MD_TITLE_EVENT = 'EVENTS.EVENTS.DETAILS.CATALOG.EPISODE';
+    public const MD_TITLE_SERIS = 'Opencast Series DublinCore';
 
     /**
      * @var MDCatalogueFactory
@@ -20,22 +20,21 @@ class MetadataFactory
         $this->catalogueFactory = $catalogueFactory;
     }
 
-    public function event() : Metadata
+    public function event(): Metadata
     {
         return new Metadata(
             $this->catalogueFactory->event(),
             self::MD_TITLE_EVENT,
-        Metadata::FLAVOR_DUBLINCORE_EPISODES
+            Metadata::FLAVOR_DUBLINCORE_EPISODES
         );
     }
 
-    public function series() : Metadata
+    public function series(): Metadata
     {
         return new Metadata(
             $this->catalogueFactory->series(),
             self::MD_TITLE_SERIS,
-        Metadata::FLAVOR_DUBLINCORE_SERIES
+            Metadata::FLAVOR_DUBLINCORE_SERIES
         );
     }
-
 }

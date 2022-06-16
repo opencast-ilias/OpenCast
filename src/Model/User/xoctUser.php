@@ -17,14 +17,13 @@ use xoctException;
  */
 class xoctUser
 {
-
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-    const MAP_EMAIL = 1;
-    const MAP_EXT_ID = 2;
-    const MAP_LOGIN = 3;
+    public const MAP_EMAIL = 1;
+    public const MAP_EXT_ID = 2;
+    public const MAP_LOGIN = 3;
 
     protected static $user_mapping_field_titles = [
         self::MAP_EMAIL => 'email',
@@ -70,7 +69,7 @@ class xoctUser
     /**
      * @var xoctUser[]
      */
-    protected static $instances = array();
+    protected static $instances = [];
 
 
     /**
@@ -90,7 +89,7 @@ class xoctUser
     public static function lookupUserIdForOwnerRole($role)
     {
         if (!$role) {
-            return NULL;
+            return null;
         }
         $regex = str_replace('{IDENTIFIER}', '(.*)', PluginConfig::getConfig(PluginConfig::F_ROLE_OWNER_PREFIX));
         $field = self::$user_mapping_field_titles[self::getUserMapping()];

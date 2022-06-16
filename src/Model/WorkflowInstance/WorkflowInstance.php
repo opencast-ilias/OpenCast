@@ -12,7 +12,6 @@ use stdClass;
  */
 class WorkflowInstance extends APIObject
 {
-
     /**
      * @var bool
      */
@@ -44,14 +43,13 @@ class WorkflowInstance extends APIObject
      */
     public function __construct()
     {
-
     }
 
 
     /**
      * @return bool
      */
-    public function hasChanged() : bool
+    public function hasChanged(): bool
     {
         return $this->has_changed;
     }
@@ -69,7 +67,7 @@ class WorkflowInstance extends APIObject
     /**
      * @return string
      */
-    public function getWorkflowDefinitionIdentifier() : string
+    public function getWorkflowDefinitionIdentifier(): string
     {
         return $this->workflow_definition_identifier;
     }
@@ -87,7 +85,7 @@ class WorkflowInstance extends APIObject
     /**
      * @return int
      */
-    public function getIdentifier() : int
+    public function getIdentifier(): int
     {
         return $this->identifier;
     }
@@ -105,7 +103,7 @@ class WorkflowInstance extends APIObject
     /**
      * @return string
      */
-    public function getCreator() : string
+    public function getCreator(): string
     {
         return $this->creator;
     }
@@ -123,7 +121,7 @@ class WorkflowInstance extends APIObject
     /**
      * @return WorkflowOperation[]
      */
-    public function getOperations() : array
+    public function getOperations(): array
     {
         return $this->operations;
     }
@@ -141,7 +139,7 @@ class WorkflowInstance extends APIObject
     /**
      * @return stdClass
      */
-    public function getConfiguration() : stdClass
+    public function getConfiguration(): stdClass
     {
         return $this->configuration;
     }
@@ -157,5 +155,4 @@ class WorkflowInstance extends APIObject
         }
         $this->configuration = $configuration;
     }
-
 }

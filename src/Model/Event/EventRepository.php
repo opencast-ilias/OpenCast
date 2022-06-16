@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Event;
 
-
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;

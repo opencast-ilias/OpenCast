@@ -19,13 +19,12 @@ use xoctLog;
  */
 abstract class APIObject
 {
-
-    const CACHE_TTL = 60 * 60 * 24;
+    public const CACHE_TTL = 60 * 60 * 24;
 
     /**
      * @var array
      */
-    protected static $cache = array();
+    protected static $cache = [];
     /**
      * @var bool
      */
@@ -168,7 +167,7 @@ abstract class APIObject
      * @return string
      * @throws ReflectionException
      */
-    public function __toJSON() : string
+    public function __toJSON(): string
     {
         return json_encode($this->__toStdClass());
     }
@@ -178,7 +177,7 @@ abstract class APIObject
      * @return stdClass
      * @throws ReflectionException
      */
-    public function __toStdClass() : stdClass
+    public function __toStdClass(): stdClass
     {
         $r = new ReflectionClass($this);
         $stdClass = new stdClass();
@@ -195,7 +194,7 @@ abstract class APIObject
                     $stdClass->{$key} = $value->__toStdClass();
                     break;
                 case (is_array($value)):
-                    $a = array();
+                    $a = [];
                     foreach ($value as $k => $v) {
                         if ($v instanceof APIObject) {
                             $a[$k] = $v->__toStdClass();
@@ -214,7 +213,7 @@ abstract class APIObject
                     $stdClass->{$key} = $value->getTimestamp();
                     break;
                 case ($value instanceof stdClass):
-                    $a = array();
+                    $a = [];
                     $value = (array) $value;
                     foreach ($value as $k => $v) {
                         if ($v instanceof APIObject) {
@@ -304,7 +303,7 @@ abstract class APIObject
     /**
      * @return boolean
      */
-    public function isLoaded() : bool
+    public function isLoaded(): bool
     {
         return (bool) $this->loaded;
     }
@@ -346,8 +345,4 @@ abstract class APIObject
     protected function afterObjectLoad()
     {
     }
-
-
-
 }
-

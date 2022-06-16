@@ -11,9 +11,8 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterReposi
  */
 class xoctWorkflowParameterTableGUI extends TableGUI
 {
-
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
     /**
      * @var WorkflowParameterRepository
      */
@@ -149,6 +148,6 @@ class xoctWorkflowParameterTableGUI extends TableGUI
 
         $this->tpl->setVariable("ACTIONS", self::output()->getHTML($actions));
 
-        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", NULL);
+        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", null);
     }
 }

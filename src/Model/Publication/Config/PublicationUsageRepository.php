@@ -11,12 +11,11 @@ namespace srag\Plugins\Opencast\Model\Publication\Config;
  */
 class PublicationUsageRepository
 {
-
     /**
      * @param string $usage
      * @return bool
      */
-    public function exists(string $usage) : bool
+    public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
     }
@@ -35,7 +34,7 @@ class PublicationUsageRepository
     /**
      * @return array
      */
-    public function getMissingUsageIds() : array
+    public function getMissingUsageIds(): array
     {
         $missing = array_diff(PublicationUsage::$usage_ids, $this->getArray(null, 'usage_id'));
 
@@ -49,7 +48,7 @@ class PublicationUsageRepository
      *
      * @return array
      */
-    public function getArray($key = null, $values = null) : array
+    public function getArray($key = null, $values = null): array
     {
         return PublicationUsage::getArray($key, $values);
     }

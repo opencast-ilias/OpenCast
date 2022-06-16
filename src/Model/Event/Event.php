@@ -24,27 +24,26 @@ use xoctRequest;
  */
 class Event
 {
-
-    const STATE_SUCCEEDED = 'SUCCEEDED';
-    const STATE_OFFLINE = 'OFFLINE';
-    const STATE_SCHEDULED = 'SCHEDULED';
-    const STATE_SCHEDULED_OFFLINE = 'SCHEDULED_OFFLINE';
-    const STATE_INSTANTIATED = 'INSTANTIATED';
-    const STATE_ENCODING = 'RUNNING';
-    const STATE_RECORDING = 'RECORDING';
-    const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
-    const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
-    const STATE_FAILED = 'FAILED';
-    const STATE_LIVE_SCHEDULED = 'LIVE_SCHEDULED';
-    const STATE_LIVE_RUNNING = 'LIVE_RUNNING';
-    const STATE_LIVE_OFFLINE = 'LIVE_OFFLINE';
+    public const STATE_SUCCEEDED = 'SUCCEEDED';
+    public const STATE_OFFLINE = 'OFFLINE';
+    public const STATE_SCHEDULED = 'SCHEDULED';
+    public const STATE_SCHEDULED_OFFLINE = 'SCHEDULED_OFFLINE';
+    public const STATE_INSTANTIATED = 'INSTANTIATED';
+    public const STATE_ENCODING = 'RUNNING';
+    public const STATE_RECORDING = 'RECORDING';
+    public const STATE_NOT_PUBLISHED = 'NOT_PUBLISHED';
+    public const STATE_READY_FOR_CUTTING = 'READY_FOR_CUTTING';
+    public const STATE_FAILED = 'FAILED';
+    public const STATE_LIVE_SCHEDULED = 'LIVE_SCHEDULED';
+    public const STATE_LIVE_RUNNING = 'LIVE_RUNNING';
+    public const STATE_LIVE_OFFLINE = 'LIVE_OFFLINE';
 
     /**
      * @var array
      *
      * used for colouring
      */
-    public static $state_mapping = array(
+    public static $state_mapping = [
         Event::STATE_SUCCEEDED => 'success',
         Event::STATE_INSTANTIATED => 'info',
         Event::STATE_ENCODING => 'info',
@@ -58,7 +57,7 @@ class Event
         Event::STATE_LIVE_SCHEDULED => 'scheduled',
         Event::STATE_LIVE_RUNNING => 'info',
         Event::STATE_LIVE_OFFLINE => 'info',
-    );
+    ];
     /**
      * @var PublicationSelector
      */
@@ -145,7 +144,7 @@ class Event
         }
     }
 
-    protected function initProcessingState() : void
+    protected function initProcessingState(): void
     {
         // todo: think this over
         if (!$this->getIdentifier()) {
@@ -354,5 +353,4 @@ class Event
     {
         return !is_null($this->publications()->getLivePublication());
     }
-
 }

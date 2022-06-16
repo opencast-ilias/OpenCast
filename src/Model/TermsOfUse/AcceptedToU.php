@@ -12,7 +12,7 @@ use ActiveRecord;
  */
 class AcceptedToU extends ActiveRecord
 {
-    const TABLE_NAME = "xoct_accepted_tou";
+    public const TABLE_NAME = "xoct_accepted_tou";
 
     /**
      * PrimaryKey ID
@@ -50,7 +50,7 @@ class AcceptedToU extends ActiveRecord
      */
     protected $tou_accepted = false;
 
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -60,7 +60,7 @@ class AcceptedToU extends ActiveRecord
         $this->id = $id;
     }
 
-    public function getUserId() : int
+    public function getUserId(): int
     {
         return $this->user_id;
     }
@@ -70,7 +70,7 @@ class AcceptedToU extends ActiveRecord
         $this->user_id = $id;
     }
 
-    public function getOCInstanceId() : int
+    public function getOCInstanceId(): int
     {
         return $this->oc_instance_id;
     }
@@ -80,7 +80,7 @@ class AcceptedToU extends ActiveRecord
         $this->oc_instance_id = $id;
     }
 
-    public function hasAccepted() : bool
+    public function hasAccepted(): bool
     {
         return $this->tou_accepted;
     }
@@ -102,7 +102,6 @@ class AcceptedToU extends ActiveRecord
 
     public function sleep($field_name)
     {
-
         switch ($field_name) {
             case "tou_accepted":
                 $value = $this->{$field_name};

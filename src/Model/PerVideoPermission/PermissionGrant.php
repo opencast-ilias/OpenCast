@@ -13,16 +13,15 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class PermissionGrant extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_invitations';
-    const STATUS_ACTIVE = 1;
+    public const TABLE_NAME = 'xoct_invitations';
+    public const STATUS_ACTIVE = 1;
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -75,7 +74,7 @@ class PermissionGrant extends ActiveRecord
     /**
      * @var xoctUser
      */
-    protected $xoct_user = NULL;
+    protected $xoct_user = null;
     /**
      * @var int
      *
@@ -87,7 +86,7 @@ class PermissionGrant extends ActiveRecord
     /**
      * @var array
      */
-    protected static $series_id_to_groups_map = array();
+    protected static $series_id_to_groups_map = [];
 
 
     /**
@@ -98,18 +97,18 @@ class PermissionGrant extends ActiveRecord
      */
     public static function getAllInvitationsOfUser($event_identifier, xoctUser $xoctUser, $grant_access_rights = true)
     {
-        $invitations = self::where(array(
+        $invitations = self::where([
             'user_id' => $xoctUser->getIliasUserId(),
             'event_identifier' => $event_identifier
-        ))->get();
+        ])->get();
 
         if ($grant_access_rights) {
             return $invitations;
         }
 
-        $active_invitations = array();
+        $active_invitations = [];
         foreach ($invitations as $inv) {
-            if (ilObjOpenCastAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
+            if (ilObjOpenCastAccess::hasPermission('edit_videos', null, $inv->getOwnerId())) {
                 $active_invitations[] = $inv;
             }
         }
@@ -127,9 +126,9 @@ class PermissionGrant extends ActiveRecord
      */
     public static function getActiveInvitationsForEvent(Event $xoctEvent, $grant_access_rights = false, $count = false)
     {
-        $all_invitations = self::where(array(
+        $all_invitations = self::where([
             'event_identifier' => $xoctEvent->getIdentifier(),
-        ))->get();
+        ])->get();
 
         // filter out users which are not part of this course/group
         $crs_participants = ilObjOpenCastAccess::getAllParticipants();
@@ -148,9 +147,9 @@ class PermissionGrant extends ActiveRecord
         }
 
         // if grant_access_rights is deactivated, only admins' invitations are active
-        $active_invitations = array();
+        $active_invitations = [];
         foreach ($all_invitations as $inv) {
-            if (ilObjOpenCastAccess::hasPermission('edit_videos', NULL, $inv->getOwnerId())) {
+            if (ilObjOpenCastAccess::hasPermission('edit_videos', null, $inv->getOwnerId())) {
                 $active_invitations[] = $inv;
             }
         }

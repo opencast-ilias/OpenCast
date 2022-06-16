@@ -15,8 +15,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
  */
 class xoctWorkflowGUI extends xoctGUI
 {
-
-    const LANG_MODULE = 'workflow';
+    public const LANG_MODULE = 'workflow';
     /**
      * @var Factory
      */
@@ -61,7 +60,7 @@ class xoctWorkflowGUI extends xoctGUI
      * @return Standard
      * @throws DICException
      */
-    protected function getForm(WorkflowAR $workflow = null) : Standard
+    protected function getForm(WorkflowAR $workflow = null): Standard
     {
         $id = $this->factory->input()->field()->text(self::dic()->language()->txt('id'))->withRequired(true);
         $title = $this->factory->input()->field()->text(self::dic()->language()->txt('title'))->withRequired(true);
@@ -80,7 +79,8 @@ class xoctWorkflowGUI extends xoctGUI
                         'id'    => is_null($workflow) ? $id : $id->withValue($workflow->getWorkflowId()),
                         'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle()),
                         'parameters' => is_null($workflow) ? $parameters : $parameters->withValue($workflow->getParameters())
-                    ], self::plugin()->translate('workflow')
+                    ],
+                    self::plugin()->translate('workflow')
                 )
             ]
         );

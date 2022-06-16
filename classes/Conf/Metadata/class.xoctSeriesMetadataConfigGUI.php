@@ -7,7 +7,6 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
  */
 class xoctSeriesMetadataConfigGUI extends xoctMetadataConfigGUI
 {
-
     protected function getMetadataCatalogue(): MDCatalogue
     {
         return $this->md_catalogue_factory->series();

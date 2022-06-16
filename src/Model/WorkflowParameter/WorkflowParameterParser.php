@@ -6,7 +6,7 @@ use stdClass;
 
 class WorkflowParameterParser
 {
-    public function configurationFromFormData(array $data) : stdClass
+    public function configurationFromFormData(array $data): stdClass
     {
         $configuration = new stdClass();
         foreach ($data as $key => $value) {

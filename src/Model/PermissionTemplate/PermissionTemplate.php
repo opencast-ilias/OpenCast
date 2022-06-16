@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 namespace srag\Plugins\Opencast\Model\PermissionTemplate;
@@ -15,15 +16,14 @@ use srag\Plugins\Opencast\Model\ACL\ACLEntry;
  */
 class PermissionTemplate extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_perm_template';
+    public const TABLE_NAME = 'xoct_perm_template';
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -175,10 +175,10 @@ class PermissionTemplate extends ActiveRecord
      */
     public static function getTemplateForAcls(ACL $ACL)
     {
-        $acls_formatted = array();
+        $acls_formatted = [];
         foreach ($ACL->getEntries() as $entry) {
             if (!isset($acls_formatted[$entry->getRole()])) {
-                $acls_formatted[$entry->getRole()] = array();
+                $acls_formatted[$entry->getRole()] = [];
             }
             $acls_formatted[$entry->getRole()][$entry->getAction()] = $entry->isAllow();
         }
@@ -228,7 +228,7 @@ class PermissionTemplate extends ActiveRecord
      */
     public function getAcls($with_download, $with_annotate): ACL
     {
-        $entries = array();
+        $entries = [];
 
         if ($this->getRead()) {
             $entries[] = $this->constructAclForAction(ACLEntry::READ);
@@ -504,5 +504,4 @@ class PermissionTemplate extends ActiveRecord
     {
         $this->is_default = $default;
     }
-
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace srag\Plugins\Opencast\Model\UserSettings;
+
 use ActiveRecord;
 
 /**
@@ -10,8 +11,7 @@ use ActiveRecord;
  */
 class UserSetting extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_user_setting';
+    public const TABLE_NAME = 'xoct_user_setting';
 
     /**
      * @return string
@@ -140,6 +140,4 @@ class UserSetting extends ActiveRecord
         $this->name = $name;
         return $this;
     }
-
-
 }

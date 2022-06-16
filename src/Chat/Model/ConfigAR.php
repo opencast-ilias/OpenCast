@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Chat\Model;
 
-
 use ActiveRecord;
 
 /**
@@ -14,12 +13,12 @@ use ActiveRecord;
  */
 class ConfigAR extends ActiveRecord
 {
-    const TABLE_NAME = 'sr_chat_config';
+    public const TABLE_NAME = 'sr_chat_config';
 
-    const C_IP = 'ip';
-    const C_PORT = 'port';
-    const C_PROTOCOL = 'protocol';
-    const C_HOST = 'host';
+    public const C_IP = 'ip';
+    public const C_PORT = 'port';
+    public const C_PROTOCOL = 'protocol';
+    public const C_HOST = 'host';
 
 
     /**
@@ -34,11 +33,11 @@ class ConfigAR extends ActiveRecord
     /**
      * @var array
      */
-    protected static $cache = array();
+    protected static $cache = [];
     /**
      * @var array
      */
-    protected static $cache_loaded = array();
+    protected static $cache_loaded = [];
     /**
      * @var bool
      */
@@ -49,7 +48,8 @@ class ConfigAR extends ActiveRecord
      *
      * @return mixed
      */
-    public static function getConfig($name) {
+    public static function getConfig($name)
+    {
         if (!self::$cache_loaded[$name]) {
             $obj = new self($name);
             self::$cache[$name] = $obj->getValue();
@@ -64,11 +64,12 @@ class ConfigAR extends ActiveRecord
      * @param $name
      * @param $value
      */
-    public static function set($name, $value) {
+    public static function set($name, $value)
+    {
         $obj = new self($name);
         $obj->setValue(json_encode($value));
 
-        if (self::where(array( 'name' => $name ))->hasSets()) {
+        if (self::where([ 'name' => $name ])->hasSets()) {
             $obj->update();
         } else {
             $obj->create();
@@ -100,7 +101,8 @@ class ConfigAR extends ActiveRecord
     /**
      * @param string $name
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
@@ -108,7 +110,8 @@ class ConfigAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -116,7 +119,8 @@ class ConfigAR extends ActiveRecord
     /**
      * @param string $value
      */
-    public function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
@@ -124,7 +128,8 @@ class ConfigAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getValue() {
+    public function getValue()
+    {
         return $this->value;
     }
 }

@@ -9,57 +9,62 @@ use srag\Plugins\Opencast\Model\Report\Report;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctReportOverviewTableGUI extends TableGUI {
-
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    const ROW_TEMPLATE = "tpl.report_table_row.html";
+class xoctReportOverviewTableGUI extends TableGUI
+{
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const ROW_TEMPLATE = "tpl.report_table_row.html";
 
     /**
      * xoctReportOverviewTableGUI constructor.
      * @param $parent xoctReportOverviewGUI
      * @param $parent_cmd
      */
-    public function __construct($parent, $parent_cmd) {
+    public function __construct($parent, $parent_cmd)
+    {
         parent::__construct($parent, $parent_cmd);
         $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, self::dic()->language()->txt(xoctReportOverviewGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
     }
 
 
-	/**
-	 * @param string $column
-	 * @param array  $row
-	 * @param bool   $format
-	 *
-	 * @return string|void
-	 */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT) : string {
+    /**
+     * @param string $column
+     * @param array  $row
+     * @param bool   $format
+     *
+     * @return string|void
+     */
+    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    {
     }
 
 
-	/**
-	 * @return array
-	 */
-	protected function getSelectableColumns2() : array {
+    /**
+     * @return array
+     */
+    protected function getSelectableColumns2(): array
+    {
         return [];
     }
 
 
-	/**
-	 * @throws \srag\DIC\OpenCast\Exception\DICException
-	 */
-	protected function initColumns() : void {
+    /**
+     * @throws \srag\DIC\OpenCast\Exception\DICException
+     */
+    protected function initColumns(): void
+    {
         $this->addColumn('', '', '', true);
-	    $this->addColumn(self::dic()->language()->txt('message'));
-	    $this->addColumn(self::plugin()->translate('sender'), 'sender');
-	    $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
+        $this->addColumn(self::dic()->language()->txt('message'));
+        $this->addColumn(self::plugin()->translate('sender'), 'sender');
+        $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
     }
 
 
-	/**
-	 * @throws Exception
-	 */
-	protected function initData() : void {
+    /**
+     * @throws Exception
+     */
+    protected function initData(): void
+    {
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
@@ -82,26 +87,27 @@ class xoctReportOverviewTableGUI extends TableGUI {
 
         $filtered = [];
         foreach ($data as $key => $value) {
-	        $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail($value['user_id']);
-	        if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
-		        unset($data[$key]);
-	        } else {
-	        	$filtered[] = $value;
-	        }
+            $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail($value['user_id']);
+            if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
+                unset($data[$key]);
+            } else {
+                $filtered[] = $value;
+            }
         }
 
         $this->setData($filtered);
     }
 
 
-	/**
-	 *
-	 */
-	protected function initFilterFields() : void {
+    /**
+     *
+     */
+    protected function initFilterFields(): void
+    {
         $this->filter_fields = [
-        	"sender" => [
-        	    PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
-	        ],
+            "sender" => [
+                PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
+            ],
             "date_from" => [
                 PropertyFormGUI::PROPERTY_CLASS => ilDateTimeInputGUI::class
             ],
@@ -112,31 +118,33 @@ class xoctReportOverviewTableGUI extends TableGUI {
     }
 
 
-	/**
-	 *
-	 */
-	protected function initId() : void {
+    /**
+     *
+     */
+    protected function initId(): void
+    {
         $this->setId('xoct_reports');
     }
 
 
-	/**
-	 *
-	 */
-	protected function initTitle() : void {
+    /**
+     *
+     */
+    protected function initTitle(): void
+    {
     }
 
 
-	/**
-	 * @param array $row
-	 */
-	protected function fillRow($row) : void {
-	    $this->tpl->setVariable('ID', $row['id']);
+    /**
+     * @param array $row
+     */
+    protected function fillRow($row): void
+    {
+        $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
         $this->tpl->setVariable('SENDER', $row['sender']);
-	    $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-	    $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime($row['created_at'])));
+        $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
+        $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime($row['created_at'])));
     }
-
 }

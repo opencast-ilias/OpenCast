@@ -1,6 +1,7 @@
 <?php
 
 namespace srag\Plugins\Opencast\Model\Report;
+
 use ActiveRecord;
 use ilException;
 use ilMail;
@@ -15,12 +16,11 @@ use const ANONYMOUS_USER_ID;
  */
 class Report extends ActiveRecord
 {
-
-    const DB_TABLE = 'xoct_report';
+    public const DB_TABLE = 'xoct_report';
 
     // Types
-    const TYPE_DATE = 1;
-    const TYPE_QUALITY = 2;
+    public const TYPE_DATE = 1;
+    public const TYPE_QUALITY = 2;
 
     /**
      * @return string
@@ -41,7 +41,7 @@ class Report extends ActiveRecord
 
         if (!$omit_send_mail) {
             $mail = new ilMail($this->user_id);
-            $type = array('system');
+            $type = ['system'];
 
             $mail->setSaveInSentbox(false);
             $mail->appendInstallationSignature(true);
@@ -51,7 +51,7 @@ class Report extends ActiveRecord
                 '',
                 $this->getSubject(),
                 $this->getMessage(),
-                array(),
+                [],
                 xoct::isIlias6() ? false : $type
             );
         }
@@ -289,6 +289,4 @@ class Report extends ActiveRecord
         $this->message = $message;
         return $this;
     }
-
-
 }

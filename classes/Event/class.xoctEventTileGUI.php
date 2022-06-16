@@ -15,12 +15,11 @@ use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
  */
 class xoctEventTileGUI
 {
-
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-    const GET_PAGE = 'page';
+    public const GET_PAGE = 'page';
 
     /**
      * @var xoctEventGUI
@@ -95,7 +94,8 @@ class xoctEventTileGUI
 
             $image = $this->factory->image()->standard(
                 $event->publications()->getThumbnailUrl(),
-                "Thumbnail");
+                "Thumbnail"
+            );
 
             $tile_tpl = self::plugin()->template('default/tpl.event_tile.html');
             $event_renderer->insertTitle($tile_tpl);

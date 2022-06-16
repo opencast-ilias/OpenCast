@@ -22,7 +22,7 @@ class PaellaConfigService
      * @param bool $live
      * @return array{url: string, info: string, warn: bool}
      */
-    public function getEffectivePaellaPlayerUrl(bool $live) : array
+    public function getEffectivePaellaPlayerUrl(bool $live): array
     {
         $option = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE)
             : PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION);
@@ -45,13 +45,12 @@ class PaellaConfigService
         }
     }
 
-    public function checkUrlReachable(string $url) : bool
+    public function checkUrlReachable(string $url): bool
     {
         $file_headers = @get_headers($url);
-        if(!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+        if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
             return false;
         }
         return true;
     }
-    
 }

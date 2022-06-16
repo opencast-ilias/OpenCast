@@ -18,7 +18,6 @@ use Exception;
  */
 class MetadataToXML
 {
-
     /**
      * @var Metadata
      */
@@ -39,7 +38,7 @@ class MetadataToXML
     /**
      * @return string
      */
-    public function getXML() : string
+    public function getXML(): string
     {
         $xml_writer = new ilXMLWriter();
         $xml_writer->xmlHeader();
@@ -58,7 +57,8 @@ class MetadataToXML
 
         $start_end_string_iso = (new ilDateTime(
             strtotime($this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField('startTime')->getValue()),
-            IL_CAL_UNIX)
+            IL_CAL_UNIX
+        )
         )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z');
         $xml_writer->xmlElement('dcterms:temporal', [
             'xsi:type' => 'dcterms:Period'

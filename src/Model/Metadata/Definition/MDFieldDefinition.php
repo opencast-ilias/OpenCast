@@ -4,24 +4,24 @@ namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
 class MDFieldDefinition
 {
-    const F_TITLE = 'title';
-    const F_DESCRIPTION = 'description';
-    const F_SUBJECTS = 'subjects';
-    const F_LANGUAGE = 'language';
-    const F_RIGHTS_HOLDER = 'rightsHolder';
-    const F_LICENSE = 'license';
-    const F_IS_PART_OF = 'isPartOf';
-    const F_CREATOR = 'creator';
-    const F_CONTRIBUTOR = 'contributor';
-    const F_START_DATE = 'startDate';
-    const F_START_TIME = 'startTime';
-    const F_DURATION = 'duration';
-    const F_SOURCE = 'source';
-    const F_CREATED = 'created';
-    const F_PUBLISHER = 'publisher';
-    const F_IDENTIFIER = 'identifier';
-    const F_CREATED_BY = 'createdBy';
-    const F_LOCATION = 'location';
+    public const F_TITLE = 'title';
+    public const F_DESCRIPTION = 'description';
+    public const F_SUBJECTS = 'subjects';
+    public const F_LANGUAGE = 'language';
+    public const F_RIGHTS_HOLDER = 'rightsHolder';
+    public const F_LICENSE = 'license';
+    public const F_IS_PART_OF = 'isPartOf';
+    public const F_CREATOR = 'creator';
+    public const F_CONTRIBUTOR = 'contributor';
+    public const F_START_DATE = 'startDate';
+    public const F_START_TIME = 'startTime';
+    public const F_DURATION = 'duration';
+    public const F_SOURCE = 'source';
+    public const F_CREATED = 'created';
+    public const F_PUBLISHER = 'publisher';
+    public const F_IDENTIFIER = 'identifier';
+    public const F_CREATED_BY = 'createdBy';
+    public const F_LOCATION = 'location';
 
     /**
      * @var string
@@ -85,6 +85,4 @@ class MDFieldDefinition
     {
         return $this->required;
     }
-
-
 }

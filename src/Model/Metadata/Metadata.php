@@ -15,18 +15,16 @@ use xoctException;
  */
 class Metadata implements JsonSerializable
 {
-
-
-    const FLAVOR_DUBLINCORE_SERIES = "dublincore/series";
-    const FLAVOR_DUBLINCORE_EPISODES = "dublincore/episode";
-    const FLAVOR_PRESENTER_PLAYER_PREVIEW = "presenter/player+preview";
-    const FLAVOR_PRESENTATION_PLAYER_PREVIEW = "presentation/player+preview";
-    const FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES = "presentation/segment+preview+highres";
-    const FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES = "presentation/segment+preview+lowres";
-    const FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES = "presenter/segment+preview+highres";
-    const FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES = "presenter/segment+preview+lowres";
-    const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
-    const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
+    public const FLAVOR_DUBLINCORE_SERIES = "dublincore/series";
+    public const FLAVOR_DUBLINCORE_EPISODES = "dublincore/episode";
+    public const FLAVOR_PRESENTER_PLAYER_PREVIEW = "presenter/player+preview";
+    public const FLAVOR_PRESENTATION_PLAYER_PREVIEW = "presentation/player+preview";
+    public const FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES = "presentation/segment+preview+highres";
+    public const FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES = "presentation/segment+preview+lowres";
+    public const FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES = "presenter/segment+preview+highres";
+    public const FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES = "presenter/segment+preview+lowres";
+    public const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
+    public const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
 
     /**
      * @var MDCatalogue
@@ -161,7 +159,7 @@ class Metadata implements JsonSerializable
         $this->fields = $fields;
     }
 
-    public function withoutEmptyFields() : self
+    public function withoutEmptyFields(): self
     {
         $clone = clone $this;
         $clone->fields = array_values(array_filter($clone->fields, function (MetadataField $field) {
@@ -182,4 +180,3 @@ class Metadata implements JsonSerializable
         return $std_class;
     }
 }
-?>

@@ -9,12 +9,12 @@ use JsonSerializable;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class ACLEntry implements JsonSerializable {
-
-	const ADMIN = 'ROLE_ADMIN';
-	const USER = 'ROLE_ADMIN';
-	const WRITE = 'write';
-	const READ = 'read';
+class ACLEntry implements JsonSerializable
+{
+    public const ADMIN = 'ROLE_ADMIN';
+    public const USER = 'ROLE_ADMIN';
+    public const WRITE = 'write';
+    public const READ = 'read';
 
 
     /**
@@ -26,9 +26,9 @@ class ACLEntry implements JsonSerializable {
      */
     public $action;
     /**
-	 * @var bool
-	 */
-	public $allow = false;
+     * @var bool
+     */
+    public $allow = false;
 
     /**
      * @param string $role
@@ -43,57 +43,63 @@ class ACLEntry implements JsonSerializable {
     }
 
 
-    public static function fromArray(array $data) : self
+    public static function fromArray(array $data): self
     {
         return new self($data['role'], $data['action'], $data['allow']);
     }
 
-	/**
-	 * @return boolean
-	 */
-	public function isAllow() {
-		return $this->allow;
-	}
+    /**
+     * @return boolean
+     */
+    public function isAllow()
+    {
+        return $this->allow;
+    }
 
 
-	/**
-	 * @param boolean $allow
-	 */
-	public function setAllow($allow) {
-		$this->allow = $allow;
-	}
+    /**
+     * @param boolean $allow
+     */
+    public function setAllow($allow)
+    {
+        $this->allow = $allow;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function getAction() {
-		return $this->action;
-	}
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
 
 
-	/**
-	 * @param string $action
-	 */
-	public function setAction($action) {
-		$this->action = $action;
-	}
+    /**
+     * @param string $action
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function getRole() {
-		return $this->role;
-	}
+    /**
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
 
 
-	/**
-	 * @param string $role
-	 */
-	public function setRole($role) {
-		$this->role = $role;
-	}
+    /**
+     * @param string $role
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+    }
 
     public function jsonSerialize()
     {

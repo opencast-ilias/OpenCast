@@ -9,5 +9,4 @@ namespace srag\Plugins\Opencast\Model\WorkflowInstance;
  */
 class WorkflowOperation
 {
-
 }

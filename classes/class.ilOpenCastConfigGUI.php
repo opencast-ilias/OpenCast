@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use srag\DIC\OpenCast\DICTrait;
@@ -12,10 +13,9 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class ilOpenCastConfigGUI extends ilPluginConfigGUI
 {
-
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public function executeCommand()
     {
@@ -45,7 +45,7 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
             $a_gui_object = new xoctMainGUI();
             self::dic()->ctrl()->forwardCommand($a_gui_object);
         } else {
-            self::dic()->ctrl()->redirectByClass(array('xoctMainGUI', 'xoctConfGUI'));
+            self::dic()->ctrl()->redirectByClass(['xoctMainGUI', 'xoctConfGUI']);
         }
     }
 
@@ -54,5 +54,3 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
     {
     }
 }
-
-?>

@@ -34,5 +34,4 @@ class UpdateSeriesMetadataRequest
     {
         return $this->payload;
     }
-
 }

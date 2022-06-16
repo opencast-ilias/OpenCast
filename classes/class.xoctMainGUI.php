@@ -15,23 +15,22 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 class xoctMainGUI extends xoctGUI
 {
+    public const TAB_SETTINGS = 'settings';
+    public const TAB_PUBLICATION_USAGE = 'publication_usage';
+    public const TAB_VIDEO_PORTAL = 'video_portal';
+    public const TAB_EXPORT = 'export';
+    public const TAB_REPORTS = 'reports';
+    public const TAB_WORKFLOW_PARAMETERS = 'workflow_params';
+    public const TAB_WORKFLOWS = 'workflows';
+    public const TAB_METADATA = 'metadata';
 
-    const TAB_SETTINGS = 'settings';
-    const TAB_PUBLICATION_USAGE = 'publication_usage';
-    const TAB_VIDEO_PORTAL = 'video_portal';
-    const TAB_EXPORT = 'export';
-    const TAB_REPORTS = 'reports';
-    const TAB_WORKFLOW_PARAMETERS = 'workflow_params';
-    const TAB_WORKFLOWS = 'workflows';
-    const TAB_METADATA = 'metadata';
-
-    const SUBTAB_API = 'api';
-    const SUBTAB_TOU = 'terms_of_use';
-    const SUBTAB_EVENTS = 'events';
-    const SUBTAB_PLAYER = 'player';
-    const SUBTAB_GROUPS_ROLES = 'groups_roles';
-    const SUBTAB_SECURITY = 'security';
-    const SUBTAB_ADVANCED = 'advanced';
+    public const SUBTAB_API = 'api';
+    public const SUBTAB_TOU = 'terms_of_use';
+    public const SUBTAB_EVENTS = 'events';
+    public const SUBTAB_PLAYER = 'player';
+    public const SUBTAB_GROUPS_ROLES = 'groups_roles';
+    public const SUBTAB_SECURITY = 'security';
+    public const SUBTAB_ADVANCED = 'advanced';
 
 
     /**
@@ -161,5 +160,3 @@ class xoctMainGUI extends xoctGUI
     {
     }
 }
-
-?>
