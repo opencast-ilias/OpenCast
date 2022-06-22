@@ -156,7 +156,7 @@ class EventFormBuilder
     {
         $upload_storage_service = $this->uploadStorageService;
         // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
-        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'))
+        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'), $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ',$this->getAcceptedSuffix()))
             ->withAcceptedMimeTypes($this->getMimeTypes())
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($file) use ($upload_storage_service) {
                 $id = $file[0];
@@ -252,6 +252,11 @@ class EventFormBuilder
         return PluginConfig::getConfig(PluginConfig::F_AUDIO_ALLOWED) ?
             array_merge(self::$accepted_video_mimetypes, self::$accepted_audio_mimetypes)
             : self::$accepted_video_mimetypes;
+    }
+
+    private function getAcceptedSuffix() : array
+    {
+        return array_unique(preg_replace(['#video/#', '#audio/#'], '.', $this->getMimeTypes()));
     }
 
     private function buildSeriesSelector(): \ILIAS\UI\Component\Input\Field\Input
