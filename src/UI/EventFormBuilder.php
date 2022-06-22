@@ -250,7 +250,7 @@ class EventFormBuilder
     private function getMimeTypes(): array
     {
         return PluginConfig::getConfig(PluginConfig::F_AUDIO_ALLOWED) ?
-            self::$accepted_video_mimetypes + self::$accepted_audio_mimetypes
+            array_merge(self::$accepted_video_mimetypes, self::$accepted_audio_mimetypes)
             : self::$accepted_video_mimetypes;
     }
 
