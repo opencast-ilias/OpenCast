@@ -543,11 +543,13 @@ class xoctEventGUI extends xoctGUI
      */
     public function readUploadProgress()
     {
-        $upload_progress_path = 'opencast/' . self::dic()->user()->getId() . '_upload_progress.txt';
         $progress = 0;
-        // read the upload progress temp file.
-        if (self::dic()->filesystem()->temp()->has($upload_progress_path)) {
-            $progress = intval(self::dic()->filesystem()->temp()->read($upload_progress_path));
+        if ($uid = $_GET['uid']) {
+            $upload_progress_path = 'opencast/'. $uid . '/' . self::dic()->user()->getId() . '_upload_progress.txt';
+            // read the upload progress temp file.
+            if (self::dic()->filesystem()->temp()->has($upload_progress_path)) {
+                $progress = intval(self::dic()->filesystem()->temp()->read($upload_progress_path));
+            }
         }
         echo json_encode(intval($progress));
         exit();
@@ -593,12 +595,6 @@ class xoctEventGUI extends xoctGUI
                 $data['workflow_configuration']['object'] ?? new stdClass()),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
-
-        // delete upload progress temp file.
-        $upload_progress_path = 'opencast/' . self::dic()->user()->getId() . '_upload_progress.txt';
-        if (self::dic()->filesystem()->temp()->has($upload_progress_path)) {
-            self::dic()->filesystem()->temp()->delete($upload_progress_path);
-        }
 
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
         ilUtil::sendSuccess($this->txt('msg_success'), true);

@@ -551,21 +551,26 @@ class xoctCurl {
 		}
 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
+		
+		$filename = $this->getPostFields()['presentation']->getFilename();
+		$filepath = str_replace(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/', '', dirname($filename));
 
-		curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, array($this, 'progressCallback'));
+		curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($resource, $download_size, $downloaded, $upload_size, $uploaded) use ($filepath) {
+			$this->uploadProgressCallback($upload_size, $uploaded, $filepath);
+		});
 		curl_setopt( $ch, CURLOPT_NOPROGRESS, false);
 
 		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_2);
 		xoctLog::getInstance()->write(print_r($this->getPostFields(), true), xoctLog::DEBUG_LEVEL_2);
 	}
 
-	public function progressCallback($resource, $download_size, $downloaded, $upload_size, $uploaded)
+	public function uploadProgressCallback($upload_size, $uploaded, $filepath)
 	{
 		set_time_limit(0);// Reset time limit for big files
 		global $DIC;
 		static $previous_progress = 0;
 		$progress = 0;
-		$upload_progress_path = 'opencast/' . $DIC->user()->getId() . '_upload_progress.txt';
+		$upload_progress_path = $filepath . '/' . $DIC->user()->getId() . '_upload_progress.txt';
 		if (!$DIC->filesystem()->temp()->has($upload_progress_path)) {
 			$DIC->filesystem()->temp()->write($upload_progress_path, $progress);
 		}
