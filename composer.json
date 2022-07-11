@@ -44,5 +44,9 @@
       "srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger::rewriteLibrariesNamespaces",
       "srag\\LibrariesNamespaceChanger\\PHP72Backport::PHP72Backport"
     ]
+  },
+  "require-dev": {
+    "captainhook/captainhook": "^5.10",
+    "friendsofphp/php-cs-fixer": "^3.8"
   }
 }
