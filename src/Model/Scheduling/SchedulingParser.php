@@ -7,6 +7,7 @@ use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use stdClass;
 use xoctException;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 class SchedulingParser
 {
@@ -18,6 +19,7 @@ class SchedulingParser
         $data = $form_data['scheduling'];
         $type = $data[0];
         $scheduling_data = $data[1];
+        $channel =  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] :  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL);
         switch ($type) {
             case 'repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date'] . ' ' . $scheduling_data['start_time']);
@@ -26,12 +28,13 @@ class SchedulingParser
                 return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
                     $start,
                     $end,
+                    $channel,
                     $duration,
                     RRule::fromStartAndWeekdays($start, $scheduling_data['weekdays']));
             case 'no_repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date_time']);
-                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end);
+                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end, $channel);
         }
         throw new xoctException(xoctException::INTERNAL_ERROR, $type . ' is not a valid scheduling type');
     }
@@ -41,7 +44,9 @@ class SchedulingParser
         // for some reason unknown to me, the start/end are already DateTimeImmutables here...
         return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
             $form_data['start_date_time'],
-            $form_data['end_date_time']);
+            $form_data['end_date_time'],
+            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] :  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
+        );
     }
 
     public function parseApiResponse(stdClass $data) : Scheduling
@@ -50,9 +55,10 @@ class SchedulingParser
             $data->agent_id,
             new DateTimeImmutable($data->start),
             new DateTimeImmutable($data->end),
+            $data->inputs,
             null,
-            null,
-            $data->inputs
+            null
+
         );
     }
 

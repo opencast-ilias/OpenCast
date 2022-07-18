@@ -63,6 +63,7 @@ class PluginConfig extends ActiveRecord
     const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
     const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
     const F_AUDIO_ALLOWED = 'audio_allowed';
+    const F_SCHEDULE_CHANNEL = 'schedule_channel';
     const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
     const F_STUDIO_ALLOWED = 'oc_studio_allowed';
     const F_STUDIO_URL = 'oc_studio_url';

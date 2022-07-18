@@ -44,9 +44,9 @@ class Scheduling implements JsonSerializable
     public function __construct(string             $agent_id,
                                 DateTimeImmutable  $start,
                                 ?DateTimeImmutable $end = null,
+                                ?array             $inputs = ['default'],
                                 ?int               $duration = null,
-                                ?RRule             $rrule = null,
-                                array              $inputs = ['default'])
+                                ?RRule             $rrule = null)
     {
         $this->agent_id = $agent_id;
         $this->start = $start;

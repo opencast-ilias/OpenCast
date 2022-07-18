@@ -20,6 +20,8 @@ config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
 config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.
+config_schedule_channel#:#Input value for scheduling
+config_schedule_channel_info#:#Input value sent to the capture agents when scheduling events via plugin. Warning: Scheduling events requires API v1.1.0.
 config_common_idp#:#Common IdP
 config_common_idp_info#:#Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks ("as-user" instead of "with-user-role").
 config_external_download_source#:#External download source
