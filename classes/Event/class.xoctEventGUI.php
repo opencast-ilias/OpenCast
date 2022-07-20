@@ -531,7 +531,28 @@ class xoctEventGUI extends xoctGUI
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
+
+        self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/form/upload_progress.js');
+        $cmd = self::dic()->ctrl()->getLinkTarget($this, 'readUploadProgress');
+        self::dic()->ui()->mainTemplate()->addOnLoadCode("xoctUploadProgress.init('$cmd');");
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
+    }
+
+    /**
+     * ajax call
+     */
+    public function readUploadProgress()
+    {
+        $progress = 0;
+        if ($uid = $_GET['uid']) {
+            $upload_progress_path = 'opencast/'. $uid . '/' . self::dic()->user()->getId() . '_upload_progress.txt';
+            // read the upload progress temp file.
+            if (self::dic()->filesystem()->temp()->has($upload_progress_path)) {
+                $progress = intval(self::dic()->filesystem()->temp()->read($upload_progress_path));
+            }
+        }
+        echo json_encode(intval($progress));
+        exit();
     }
 
 
@@ -574,6 +595,7 @@ class xoctEventGUI extends xoctGUI
                 $data['workflow_configuration']['object'] ?? new stdClass()),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
+
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
