@@ -6,7 +6,7 @@ use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 
 class MDFieldConfigEventAR extends MDFieldConfigAR
 {
-    const TABLE_NAME = 'xoct_md_field_event';
+    public const TABLE_NAME = 'xoct_md_field_event';
 
     public function getConnectorContainerName()
     {

@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 namespace srag\Plugins\Opencast\Model\Scheduling;
@@ -15,7 +16,6 @@ use stdClass;
  */
 class Scheduling implements JsonSerializable
 {
-
     /**
      * @var string
      */
@@ -41,12 +41,14 @@ class Scheduling implements JsonSerializable
      */
     protected $rrule;
 
-    public function __construct(string             $agent_id,
-                                DateTimeImmutable  $start,
-                                ?DateTimeImmutable $end = null,
-                                ?array             $inputs = ['default'],
-                                ?int               $duration = null,
-                                ?RRule             $rrule = null)
+    public function __construct(
+        string             $agent_id,
+        DateTimeImmutable  $start,
+        ?DateTimeImmutable $end = null,
+        ?array             $inputs = ['default'],
+        ?int               $duration = null,
+        ?RRule             $rrule = null
+    )
     {
         $this->agent_id = $agent_id;
         $this->start = $start;

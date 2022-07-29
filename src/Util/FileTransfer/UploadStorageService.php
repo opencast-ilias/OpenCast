@@ -17,7 +17,7 @@ use xoctUploadFile;
 
 class UploadStorageService
 {
-    const TEMP_SUB_DIR = 'opencast';
+    public const TEMP_SUB_DIR = 'opencast';
 
     /**
      * @var Filesystem
@@ -38,7 +38,7 @@ class UploadStorageService
      * @param UploadResult $uploadResult
      * @return string identifier
      */
-    public function moveUploadToStorage(UploadResult $uploadResult) : string
+    public function moveUploadToStorage(UploadResult $uploadResult): string
     {
         $identifier = uniqid();
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
@@ -49,7 +49,7 @@ class UploadStorageService
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public function delete(string $identifier) : void
+    public function delete(string $identifier): void
     {
         if (strlen($identifier) == 0) {
             return;
@@ -67,7 +67,7 @@ class UploadStorageService
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte) : array
+    public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte): array
     {
         $metadata = $this->idToFileMetadata($identifier);
         /** TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way to get the path dynamically from the file service */
@@ -93,7 +93,7 @@ class UploadStorageService
         return $upload_file;
     }
 
-    protected function idToDirPath(string $identifier) : string
+    protected function idToDirPath(string $identifier): string
     {
         return self::TEMP_SUB_DIR . '/' . $identifier;
     }
@@ -101,7 +101,7 @@ class UploadStorageService
     /**
      * @throws FileNotFoundException
      */
-    protected function idToFileMetadata(string $identifier) : FileMetadata
+    protected function idToFileMetadata(string $identifier): FileMetadata
     {
         $dir = $this->idToDirPath($identifier);
         foreach ($this->fileSystem->finder()->in([$dir]) as $file) {

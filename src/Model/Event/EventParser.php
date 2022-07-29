@@ -58,5 +58,4 @@ class EventParser
         }
         return $event;
     }
-
 }

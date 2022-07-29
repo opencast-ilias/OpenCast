@@ -16,8 +16,6 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
  */
 class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
 {
-
-
     /**
      * @var UploadStorageService
      */
@@ -35,11 +33,12 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
      */
     private $file_removal_url;
 
-    public function __construct(UploadStorageService $uploadStorageService,
-                                string               $upload_url = '',
-                                string               $file_info_url = '',
-                                string               $file_removal_url = '')
-    {
+    public function __construct(
+        UploadStorageService $uploadStorageService,
+        string               $upload_url = '',
+        string               $file_info_url = '',
+        string               $file_removal_url = ''
+    ) {
         parent::__construct();
         $this->uploadStorageService = $uploadStorageService;
         $this->upload_url = $upload_url;

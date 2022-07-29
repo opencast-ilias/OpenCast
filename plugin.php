@@ -1,4 +1,5 @@
 <?php
+
 $id = 'xoct';
 $version = '4.0.1';
 $ilias_min_version = '6.0';

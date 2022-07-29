@@ -15,7 +15,7 @@ class PlayerDataBuilderFactory
 {
     use Singleton;
 
-    public function getBuilder(Event $event) : PlayerDataBuilder
+    public function getBuilder(Event $event): PlayerDataBuilder
     {
         if ($event->isLiveEvent()) {
             return new LivePlayerDataBuilder($event);

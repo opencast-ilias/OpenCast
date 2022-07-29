@@ -27,10 +27,12 @@ class ScheduleEventRequestPayload implements JsonSerializable
      */
     protected $processing;
 
-    public function __construct(Metadata    $metadata,
-                                ACL        $acl = null,
-                                Scheduling $scheduling = null,
-                                Processing $processing = null)
+    public function __construct(
+        Metadata    $metadata,
+        ACL        $acl = null,
+        Scheduling $scheduling = null,
+        Processing $processing = null
+    )
     {
         $this->metadata = $metadata;
         $this->acl = $acl;

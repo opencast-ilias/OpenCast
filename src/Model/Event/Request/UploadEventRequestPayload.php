@@ -27,10 +27,12 @@ class UploadEventRequestPayload
      */
     protected $presentation;
 
-    public function __construct(Metadata    $metadata,
-                                ACL        $acl,
-                                Processing $processing,
-                                xoctUploadFile $presentation)
+    public function __construct(
+        Metadata    $metadata,
+        ACL        $acl,
+        Processing $processing,
+        xoctUploadFile $presentation
+    )
     {
         $this->metadata = $metadata;
         $this->acl = $acl;

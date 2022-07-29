@@ -71,9 +71,11 @@ class OpencastDIC
     private function init(): void
     {
         $this->container['event_repository'] = $this->container->factory(function ($c) {
-            return new EventAPIRepository($c['cache'],
+            return new EventAPIRepository(
+                $c['cache'],
                 $c['event_parser'],
-                $c['ingest_service']);
+                $c['ingest_service']
+            );
         });
         $this->container['event_parser'] = $this->container->factory(function ($c) {
             return new EventParser(
@@ -167,7 +169,8 @@ class OpencastDIC
             return new SeriesWorkflowParameterRepository(
                 $this->dic->ui()->factory(),
                 $this->dic->refinery(),
-                $c['workflow_parameter_parser']);
+                $c['workflow_parameter_parser']
+            );
         });
         $this->container['workflow_parameter_parser'] = $this->container->factory(function ($c) {
             return new WorkflowParameterParser();
@@ -185,7 +188,8 @@ class OpencastDIC
             );
         });
         $this->container['event_form_builder'] = $this->container->factory(function ($c) {
-            return new EventFormBuilder($this->dic->ui()->factory(),
+            return new EventFormBuilder(
+                $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_form_item_builder_event'],
                 $c['workflow_parameter_series_repository'],
@@ -197,7 +201,7 @@ class OpencastDIC
                 $this->dic
             );
         });
-        $this->container['event_table_builder'] = $this->container->factory(function($c) {
+        $this->container['event_table_builder'] = $this->container->factory(function ($c) {
             return new EventTableBuilder(
                 $c['md_conf_repository_event'],
                 $c['md_catalogue_factory'],
@@ -206,7 +210,8 @@ class OpencastDIC
             );
         });
         $this->container['series_form_builder'] = $this->container->factory(function ($c) {
-            return new SeriesFormBuilder($this->dic->ui()->factory(),
+            return new SeriesFormBuilder(
+                $this->dic->ui()->factory(),
                 $this->dic->refinery(),
                 $c['md_form_item_builder_series'],
                 $c['object_settings_form_item_builder'],
@@ -232,7 +237,8 @@ class OpencastDIC
             return ilOpenCastPlugin::getInstance();
         });
         $this->container['series_repository'] = $this->container->factory(function ($c) {
-            return new SeriesAPIRepository($c['cache'],
+            return new SeriesAPIRepository(
+                $c['cache'],
                 $c['series_parser'],
                 $c['acl_utils'],
                 $c['md_factory'],
@@ -348,19 +354,18 @@ class OpencastDIC
         return $this->container['workflow_repository'];
     }
 
-    public function paella_config_service_factory() : PaellaConfigServiceFactory
+    public function paella_config_service_factory(): PaellaConfigServiceFactory
     {
         return $this->container['paella_config_service_factory'];
     }
 
-    public function paella_config_form_builder() : PaellaConfigFormBuilder
+    public function paella_config_form_builder(): PaellaConfigFormBuilder
     {
         return $this->container['paella_config_form_builder'];
     }
 
-    public function overwriteService(string $service_identifier, $value) : void
+    public function overwriteService(string $service_identifier, $value): void
     {
         $this->container[$service_identifier] = $value;
     }
-
 }

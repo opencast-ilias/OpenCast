@@ -19,7 +19,7 @@ class RRule
         $this->value = $value;
     }
 
-    public static function fromStartAndWeekdays(DateTimeImmutable $start, array $weekdays) : self
+    public static function fromStartAndWeekdays(DateTimeImmutable $start, array $weekdays): self
     {
         $byhour = $start->format('H');
         $byminute = $start->format('i');

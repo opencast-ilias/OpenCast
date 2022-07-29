@@ -20,7 +20,7 @@ class AgentApiRepository implements AgentRepository
         $this->agentParser = $agentParser;
     }
 
-    public function findAll() : array
+    public function findAll(): array
     {
         $data = json_decode(xoctRequest::root()->agents()->get());
         return $this->agentParser->parseApiResponse($data);

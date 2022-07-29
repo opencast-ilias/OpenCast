@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
@@ -23,7 +24,6 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  */
 class xoctEventAPI
 {
-
     /**
      * @var self
      */
@@ -55,7 +55,7 @@ class xoctEventAPI
     }
 
 
-    public static function getInstance() : self
+    public static function getInstance(): self
     {
         if (!self::$instance) {
             self::$instance = new self();
@@ -81,27 +81,29 @@ class xoctEventAPI
      * @return Event
      * @throws xoctException
      */
-    public function create(string $series_id,
-                           string $title,
-                                  $start,
-                                  $end,
-                           string $location,
-                           array  $additional_data = array()
-    ): Event
-    {
+    public function create(
+        string $series_id,
+        string $title,
+        $start,
+        $end,
+        string $location,
+        array  $additional_data = []
+    ): Event {
         $metadata = $this->md_factory->event();
         $metadata->getField(MDFieldDefinition::F_IS_PART_OF)->setValue($series_id);
         $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($title);
         $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->setValue(
-            $additional_data['description'] ?? '');
+            $additional_data['description'] ?? ''
+        );
         $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue(
-            isset($additional_data['presenters']) ? explode(',', $additional_data['presenters']) : []);
+            isset($additional_data['presenters']) ? explode(',', $additional_data['presenters']) : []
+        );
 
         $scheduling = new Scheduling(
             $location,
             $start instanceof DateTime ? DateTimeImmutable::createFromMutable($start) : new DateTimeImmutable($start),
             $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end) : new DateTimeImmutable($end),
-            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] :  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
+            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
         );
 
 
@@ -114,13 +116,18 @@ class xoctEventAPI
         }, $workflow_parameters);
         $processing = new Processing(
             PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-            (object)$workflow_parameters);
+            (object)$workflow_parameters
+        );
 
         $acl = $this->acl_utils->getStandardRolesACL();
 
         $this->event_repository->schedule(new ScheduleEventRequest(
             new ScheduleEventRequestPayload(
-                $metadata->withoutEmptyFields(), $acl, $scheduling, $processing)
+                $metadata->withoutEmptyFields(),
+                $acl,
+                $scheduling,
+                $processing
+            )
         ));
 
         $event = new Event();
@@ -196,7 +203,7 @@ class xoctEventAPI
     }
 
 
-    public function delete($event_id) : bool
+    public function delete($event_id): bool
     {
         $this->event_repository->delete($event_id);
         return true;
@@ -209,9 +216,8 @@ class xoctEventAPI
      * @return array
      * @throws xoctException
      */
-    public function filter(array $filter) : array
+    public function filter(array $filter): array
     {
         return $this->event_repository->getFiltered($filter);
     }
-
 }

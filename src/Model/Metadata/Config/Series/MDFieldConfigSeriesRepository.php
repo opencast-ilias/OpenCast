@@ -51,10 +51,12 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         if (!$is_admin) {
             $AR = $AR->where(['visible_for_permissions' => 'all']);
         }
-        return array_filter($AR->get(),
+        return array_filter(
+            $AR->get(),
             function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue) {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
-            });
+            }
+        );
     }
 
     public function getArray(): array

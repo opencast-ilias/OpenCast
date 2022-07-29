@@ -11,7 +11,6 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
  */
 class xoctPermissionGroupParticipantGUI extends xoctGUI
 {
-
     /**
      * @var array
      */
@@ -20,19 +19,17 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         self::CMD_DELETE
     ];
 
-	public function __construct(?ObjectSettings $objectSettings = null)
-	{
-		if ($objectSettings instanceof ObjectSettings)
-		{
-			$this->objectSettings = $objectSettings;
-		} else
-		{
-			$this->objectSettings = new ObjectSettings();
-		}
-		self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
-		xoctWaiterGUI::loadLib();
-		self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
-	}
+    public function __construct(?ObjectSettings $objectSettings = null)
+    {
+        if ($objectSettings instanceof ObjectSettings) {
+            $this->objectSettings = $objectSettings;
+        } else {
+            $this->objectSettings = new ObjectSettings();
+        }
+        self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
+        xoctWaiterGUI::loadLib();
+        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
+    }
 
     /**
      * @param $cmd
@@ -51,107 +48,102 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         parent::performCommand($cmd);
     }
 
-	/**
-	 * @param $data
-	 */
-	protected function outJson($data)
-	{
-		header('Content-type: application/json');
-		echo json_encode($data);
-		exit;
-	}
+    /**
+     * @param $data
+     */
+    protected function outJson($data)
+    {
+        header('Content-type: application/json');
+        echo json_encode($data);
+        exit;
+    }
 
 
-	protected function index()
-	{
-	}
+    protected function index()
+    {
+    }
 
 
-	protected function getAvailable()
-	{
-		$data = array();
-		/**
-		 * @var $xoctGroupParticipant PermissionGroupParticipant
-		 */
-		foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant)
-		{
-			$stdClass = $xoctGroupParticipant->__asStdClass();
-			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
-			$data[] = $stdClass;
-		}
+    protected function getAvailable()
+    {
+        $data = [];
+        /**
+         * @var $xoctGroupParticipant PermissionGroupParticipant
+         */
+        foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant) {
+            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
+            $data[] = $stdClass;
+        }
 
-		usort($data, ['xoctGUI', 'compareStdClassByName']);
+        usort($data, ['xoctGUI', 'compareStdClassByName']);
 
-		$this->outJson($data);
-	}
-
-
-	protected function getPerGroup()
-	{
-		$data = array();
-		$group_id = $_GET['group_id'];
-		if (!$group_id)
-		{
-			$this->outJson(null);
-		}
-		/**
-		 * @var $xoctGroupParticipant PermissionGroupParticipant
-		 */
-		foreach (PermissionGroupParticipant::where(array( 'group_id' => $group_id ))->get() as $xoctGroupParticipant)
-		{
-			$stdClass = $xoctGroupParticipant->__asStdClass();
-			$stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
-			$data[] = $stdClass;
-		}
-
-		usort($data, ['xoctGUI', 'compareStdClassByName']);
-
-		$this->outJson($data);
-	}
+        $this->outJson($data);
+    }
 
 
-	protected function add()
-	{
-	}
+    protected function getPerGroup()
+    {
+        $data = [];
+        $group_id = $_GET['group_id'];
+        if (!$group_id) {
+            $this->outJson(null);
+        }
+        /**
+         * @var $xoctGroupParticipant PermissionGroupParticipant
+         */
+        foreach (PermissionGroupParticipant::where([ 'group_id' => $group_id ])->get() as $xoctGroupParticipant) {
+            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
+            $data[] = $stdClass;
+        }
+
+        usort($data, ['xoctGUI', 'compareStdClassByName']);
+
+        $this->outJson($data);
+    }
 
 
-	protected function create()
-	{
-		if (!$_POST['user_id'] OR !$_POST['group_id'])
-		{
-			$this->outJson(false);
-		}
-		$xoctGroupParticipant = new PermissionGroupParticipant();
-		$xoctGroupParticipant->setUserId($_POST['user_id']);
-		$xoctGroupParticipant->setGroupId($_POST['group_id']);
-		$xoctGroupParticipant->create();
-		$this->outJson(true);
-	}
+    protected function add()
+    {
+    }
 
 
-	protected function edit()
-	{
-	}
+    protected function create()
+    {
+        if (!$_POST['user_id'] or !$_POST['group_id']) {
+            $this->outJson(false);
+        }
+        $xoctGroupParticipant = new PermissionGroupParticipant();
+        $xoctGroupParticipant->setUserId($_POST['user_id']);
+        $xoctGroupParticipant->setGroupId($_POST['group_id']);
+        $xoctGroupParticipant->create();
+        $this->outJson(true);
+    }
 
 
-	protected function update()
-	{
-	}
+    protected function edit()
+    {
+    }
 
 
-	protected function confirmDelete()
-	{
-	}
+    protected function update()
+    {
+    }
 
 
-	protected function delete()
-	{
-		if (!$_POST['id'] || !$_POST['group_id'])
-		{
-			$this->outJson(false);
-		}
-		$o = PermissionGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
-		$o->delete();
-		$this->outJson(true);
-	}
+    protected function confirmDelete()
+    {
+    }
+
+
+    protected function delete()
+    {
+        if (!$_POST['id'] || !$_POST['group_id']) {
+            $this->outJson(false);
+        }
+        $o = PermissionGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
+        $o->delete();
+        $this->outJson(true);
+    }
 }

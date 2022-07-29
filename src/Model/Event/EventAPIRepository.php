@@ -21,7 +21,7 @@ use xoctRequest;
  */
 class EventAPIRepository implements EventRepository
 {
-    const CACHE_PREFIX = 'event-';
+    public const CACHE_PREFIX = 'event-';
 
     /**
      * @var Cache
@@ -37,9 +37,11 @@ class EventAPIRepository implements EventRepository
     private $eventParser;
 
 
-    public function __construct(Cache                 $cache,
-                                EventParser           $eventParser,
-                                OpencastIngestService $ingestService)
+    public function __construct(
+        Cache                 $cache,
+        EventParser           $eventParser,
+        OpencastIngestService $ingestService
+    )
     {
         $this->cache = $cache;
         $this->ingestService = $ingestService;
@@ -71,7 +73,7 @@ class EventAPIRepository implements EventRepository
     public function delete(string $identifier): bool
     {
         xoctRequest::root()->events($identifier)->delete();
-        foreach (PermissionGrant::where(array('event_identifier' => $identifier))->get() as $invitation) {
+        foreach (PermissionGrant::where(['event_identifier' => $identifier])->get() as $invitation) {
             $invitation->delete();
         }
         return true;
@@ -132,7 +134,7 @@ class EventAPIRepository implements EventRepository
             ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
 
         $data = json_decode($request->get($roles, $for_user)) ?: [];
-        $return = array();
+        $return = [];
 
         foreach ($data as $d) {
             $event = $this->eventParser->parseAPIResponse($d, $d->identifier);

@@ -11,10 +11,9 @@ use srag\Plugins\Opencast\Model\API\APIObject;
  */
 class publicationMetadata extends APIObject
 {
-
-    const MEDIA_TYPE_VIDEO = "video";
-    const ROLE_PRESENTATION = "presentation";
-    const ROLE_PRESENTER = "presenter";
+    public const MEDIA_TYPE_VIDEO = "video";
+    public const ROLE_PRESENTATION = "presentation";
+    public const ROLE_PRESENTER = "presenter";
 
 
     /**

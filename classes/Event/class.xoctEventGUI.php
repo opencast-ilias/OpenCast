@@ -44,28 +44,27 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
  */
 class xoctEventGUI extends xoctGUI
 {
-
-    const IDENTIFIER = 'eid';
-    const CMD_STANDARD = 'index';
-    const CMD_CLEAR_CACHE = 'clearCache';
-    const CMD_EDIT_OWNER = 'editOwner';
-    const CMD_UPDATE_OWNER = 'updateOwner';
-    const CMD_SET_ONLINE = 'setOnline';
-    const CMD_SET_OFFLINE = 'setOffline';
-    const CMD_CUT = 'cut';
-    const CMD_ANNOTATE = 'annotate';
-    const CMD_REPORT_DATE = 'reportDate';
-    const CMD_REPORT_QUALITY = 'reportQuality';
-    const CMD_SCHEDULE = 'schedule';
-    const CMD_SWITCH_TO_LIST = 'switchToList';
-    const CMD_SWITCH_TO_TILES = 'switchToTiles';
-    const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
-    const CMD_REPUBLISH = 'republish';
-    const CMD_OPENCAST_STUDIO = 'opencaststudio';
-    const CMD_DOWNLOAD = 'download';
-    const CMD_CREATE_SCHEDULED = 'createScheduled';
-    const CMD_EDIT_SCHEDULED = 'editScheduled';
-    const CMD_UPDATE_SCHEDULED = 'updateScheduled';
+    public const IDENTIFIER = 'eid';
+    public const CMD_STANDARD = 'index';
+    public const CMD_CLEAR_CACHE = 'clearCache';
+    public const CMD_EDIT_OWNER = 'editOwner';
+    public const CMD_UPDATE_OWNER = 'updateOwner';
+    public const CMD_SET_ONLINE = 'setOnline';
+    public const CMD_SET_OFFLINE = 'setOffline';
+    public const CMD_CUT = 'cut';
+    public const CMD_ANNOTATE = 'annotate';
+    public const CMD_REPORT_DATE = 'reportDate';
+    public const CMD_REPORT_QUALITY = 'reportQuality';
+    public const CMD_SCHEDULE = 'schedule';
+    public const CMD_SWITCH_TO_LIST = 'switchToList';
+    public const CMD_SWITCH_TO_TILES = 'switchToTiles';
+    public const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
+    public const CMD_REPUBLISH = 'republish';
+    public const CMD_OPENCAST_STUDIO = 'opencaststudio';
+    public const CMD_DOWNLOAD = 'download';
+    public const CMD_CREATE_SCHEDULED = 'createScheduled';
+    public const CMD_EDIT_SCHEDULED = 'editScheduled';
+    public const CMD_UPDATE_SCHEDULED = 'updateScheduled';
     /**
      * @var ilObjOpenCastGUI
      */
@@ -124,19 +123,20 @@ class xoctEventGUI extends xoctGUI
      */
     private $paellaConfigServiceFactory;
 
-    public function __construct(ilObjOpenCastGUI           $parent_gui,
-                                ObjectSettings             $objectSettings,
-                                EventRepository            $event_repository,
-                                EventFormBuilder           $formBuilder,
-                                EventTableBuilder          $eventTableBuilder,
-                                WorkflowRepository         $workflowRepository,
-                                ACLUtils                   $ACLUtils,
-                                SeriesRepository           $seriesRepository,
-                                UploadHandler              $uploadHandler,
-                                PaellaConfigStorageService $paellaConfigStorageService,
-                                PaellaConfigServiceFactory $paellaConfigServiceFactory,
-                                Container                  $dic)
-    {
+    public function __construct(
+        ilObjOpenCastGUI           $parent_gui,
+        ObjectSettings             $objectSettings,
+        EventRepository            $event_repository,
+        EventFormBuilder           $formBuilder,
+        EventTableBuilder          $eventTableBuilder,
+        WorkflowRepository         $workflowRepository,
+        ACLUtils                   $ACLUtils,
+        SeriesRepository           $seriesRepository,
+        UploadHandler              $uploadHandler,
+        PaellaConfigStorageService $paellaConfigStorageService,
+        PaellaConfigServiceFactory $paellaConfigServiceFactory,
+        Container                  $dic
+    ) {
         $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
@@ -169,10 +169,12 @@ class xoctEventGUI extends xoctGUI
                     ilUtil::sendFailure($this->txt("msg_no_access"), true);
                     $this->cancel();
                 }
-                $xoctPlayerGUI = new xoctPlayerGUI($this->event_repository,
+                $xoctPlayerGUI = new xoctPlayerGUI(
+                    $this->event_repository,
                     $this->paellaConfigStorageService,
                     $this->paellaConfigServiceFactory,
-                    $this->objectSettings);
+                    $this->objectSettings
+                );
                 self::dic()->ctrl()->forwardCommand($xoctPlayerGUI);
                 break;
             case strtolower(xoctFileUploadHandler::class):
@@ -306,7 +308,9 @@ class xoctEventGUI extends xoctGUI
         if (xoct::isIlias7()) { // todo: remove when this is fixed https://mantis.ilias.de/view.php?id=32134
             $filter_html = $this->dic->ui()->renderer()->render(
                 $this->eventTableBuilder->filter(
-                    $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)));
+                    $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)
+                )
+            );
         }
         self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $filter_html . $html);
     }
@@ -570,8 +574,10 @@ class xoctEventGUI extends xoctGUI
         $this->event_repository->upload(new UploadEventRequest(new UploadEventRequestPayload(
             $metadata,
             $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance(self::dic()->user())),
-            new Processing(PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                $data['workflow_configuration']['object'] ?? new stdClass()),
+            new Processing(
+                PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
+                $data['workflow_configuration']['object'] ?? new stdClass()
+            ),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
@@ -637,8 +643,10 @@ class xoctEventGUI extends xoctGUI
                 $metadata,
                 $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->dic->user())),
                 $data['scheduling']['object'],
-                new Processing(PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                    $data['workflow_configuration']['object'])
+                new Processing(
+                    PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
+                    $data['workflow_configuration']['object']
+                )
             )));
         } catch (xoctException $e) {
             $this->checkAndShowConflictMessage($e);
@@ -1049,10 +1057,10 @@ class xoctEventGUI extends xoctGUI
     private function unpublish(Event $event)
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        xoctRequest::root()->workflows()->post(array(
+        xoctRequest::root()->workflows()->post([
             'workflow_definition_identifier' => $workflow,
             'event_identifier' => $event->getIdentifier()
-        ));
+        ]);
         return true;
     }
 
@@ -1125,8 +1133,11 @@ class xoctEventGUI extends xoctGUI
      */
     protected function getQualityReportMessage(Event $event, $message)
     {
-        $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID,
-            true);
+        $link = ilLink::_getStaticLink(
+            $_GET['ref_id'],
+            ilOpenCastPlugin::PLUGIN_ID,
+            true
+        );
         $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $crs_grp_role = ilObjOpenCast::_getCourseOrGroupRole();
@@ -1236,11 +1247,13 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add user to series producers
-        if($this->objectSettings->getSeriesIdentifier() !== null) {
+        if ($this->objectSettings->getSeriesIdentifier() !== null) {
             $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
             if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
-                $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($series->getIdentifier(),
-                    new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
+                $this->seriesRepository->updateACL(new UpdateSeriesACLRequest(
+                    $series->getIdentifier(),
+                    new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+                ));
                 $sleep = true;
             }
         }

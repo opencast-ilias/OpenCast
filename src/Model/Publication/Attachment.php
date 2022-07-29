@@ -9,7 +9,6 @@ namespace srag\Plugins\Opencast\Model\Publication;
  */
 class Attachment extends publicationMetadata
 {
-
     /**
      * @var string
      */

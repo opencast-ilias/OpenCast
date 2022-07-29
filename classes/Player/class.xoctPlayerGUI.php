@@ -23,12 +23,12 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
  */
 class xoctPlayerGUI extends xoctGUI
 {
-    const CMD_STREAM_VIDEO = 'streamVideo';
+    public const CMD_STREAM_VIDEO = 'streamVideo';
 
-    const IDENTIFIER = 'eid';
+    public const IDENTIFIER = 'eid';
 
-    const ROLE_MASTER = "presenter";
-    const ROLE_SLAVE = "presentation";
+    public const ROLE_MASTER = "presenter";
+    public const ROLE_SLAVE = "presentation";
     /**
      * @var ObjectSettings
      */
@@ -50,10 +50,12 @@ class xoctPlayerGUI extends xoctGUI
      */
     private $paellaConfigService;
 
-    public function __construct(EventRepository $event_repository,
-                                PaellaConfigStorageService $paellaConfigStorageService,
-                                PaellaConfigServiceFactory $paellaConfigServiceFactory,
-                                ?ObjectSettings $objectSettings = NULL)
+    public function __construct(
+        EventRepository $event_repository,
+        PaellaConfigStorageService $paellaConfigStorageService,
+        PaellaConfigServiceFactory $paellaConfigServiceFactory,
+        ?ObjectSettings $objectSettings = null
+    )
     {
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
@@ -93,8 +95,11 @@ class xoctPlayerGUI extends xoctGUI
         $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
         if ($event->isLiveEvent()) {
-            $tpl->setVariable('LIVE_WAITING_TEXT', self::plugin()->translate('live_waiting_text', 'event',
-                [date('H:i', $event->getScheduling()->getStart()->getTimestamp())]));
+            $tpl->setVariable('LIVE_WAITING_TEXT', self::plugin()->translate(
+                'live_waiting_text',
+                'event',
+                [date('H:i', $event->getScheduling()->getStart()->getTimestamp())]
+            ));
             $tpl->setVariable('LIVE_INTERRUPTED_TEXT', self::plugin()->translate('live_interrupted_text', 'event'));
             $tpl->setVariable('LIVE_OVER_TEXT', self::plugin()->translate('live_over_text', 'event'));
         }
@@ -149,8 +154,10 @@ class xoctPlayerGUI extends xoctGUI
     {
         $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->objectSettings->getObjId());
         if ($event->isLiveEvent()) {
-            $tpl->setVariable("STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
+            $tpl->setVariable(
+                "STYLE_SHEET_LOCATION",
+                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css"
+            );
             $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->objectSettings->getObjId());
             $public_name = self::dic()->user()->hasPublicProfile() ?
                 self::dic()->user()->getFirstname() . " " . self::dic()->user()->getLastname()
@@ -160,8 +167,10 @@ class xoctPlayerGUI extends xoctGUI
             $tpl->setVariable('CHAT', $ChatGUI->render(true));
         } elseif ($ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()) {
             // show chat history for past live events
-            $tpl->setVariable("STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css");
+            $tpl->setVariable(
+                "STYLE_SHEET_LOCATION",
+                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css"
+            );
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
         }

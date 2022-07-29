@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Workflow;
 
-
 /**
  * Class WorkflowRepository
  *

@@ -28,7 +28,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
  */
 class EventFormBuilder
 {
-    const F_ACCEPT_EULA = 'accept_eula';
+    public const F_ACCEPT_EULA = 'accept_eula';
 
     private static $accepted_video_mimetypes = [
         ilMimeTypeUtil::VIDEO__AVI,
@@ -121,18 +121,18 @@ class EventFormBuilder
     private $dic;
 
 
-    public function __construct(UIFactory                         $ui_factory,
-                                RefineryFactory                   $refinery_factory,
-                                MDFormItemBuilder                 $formItemBuilder,
-                                SeriesWorkflowParameterRepository $workflowParameterRepository,
-                                UploadStorageService              $uploadStorageService,
-                                UploadHandler                     $uploadHandler,
-                                ilPlugin                          $plugin,
-                                SchedulingFormItemBuilder         $schedulingFormItemBuilder,
-                                SeriesRepository                  $seriesRepository,
-                                Container                         $dic
-    )
-    {
+    public function __construct(
+        UIFactory                         $ui_factory,
+        RefineryFactory                   $refinery_factory,
+        MDFormItemBuilder                 $formItemBuilder,
+        SeriesWorkflowParameterRepository $workflowParameterRepository,
+        UploadStorageService              $uploadStorageService,
+        UploadHandler                     $uploadHandler,
+        ilPlugin                          $plugin,
+        SchedulingFormItemBuilder         $schedulingFormItemBuilder,
+        SeriesRepository                  $seriesRepository,
+        Container                         $dic
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
         $this->formItemBuilder = $formItemBuilder;
@@ -156,7 +156,7 @@ class EventFormBuilder
     {
         $upload_storage_service = $this->uploadStorageService;
         // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
-        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'), $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ',$this->getAcceptedSuffix()))
+        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'), $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix()))
             ->withAcceptedMimeTypes($this->getMimeTypes())
             ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($file) use ($upload_storage_service) {
                 $id = $file[0];
@@ -217,7 +217,8 @@ class EventFormBuilder
         }
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            $inputs);
+            $inputs
+        );
     }
 
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling, bool $as_admin): Form
@@ -238,7 +239,9 @@ class EventFormBuilder
     {
         return $this->ui_factory->input()->field()->section([
             self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
-                $this->plugin->txt('event_accept_eula'), PluginConfig::getConfig(PluginConfig::F_EULA))
+                $this->plugin->txt('event_accept_eula'),
+                PluginConfig::getConfig(PluginConfig::F_EULA)
+            )
                 ->withRequired(true)
                 ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
                     // must be checked (required-functionality doesn't guarantee that)
@@ -254,7 +257,7 @@ class EventFormBuilder
             : self::$accepted_video_mimetypes;
     }
 
-    private function getAcceptedSuffix() : array
+    private function getAcceptedSuffix(): array
     {
         return array_unique(preg_replace(['#video/#', '#audio/#'], '.', $this->getMimeTypes()));
     }
@@ -268,7 +271,7 @@ class EventFormBuilder
         foreach ($this->seriesRepository->getAllForUser($xoct_user->getUserRoleName()) as $series) {
             $series_options[$series->getIdentifier()] =
                 $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue()
-                . ' (...' . substr($series->getIdentifier(),-4, 4) . ')';
+                . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
         }
 
         natcasesort($series_options);
@@ -283,5 +286,4 @@ class EventFormBuilder
             $series_options
         )->withRequired(true);
     }
-
 }

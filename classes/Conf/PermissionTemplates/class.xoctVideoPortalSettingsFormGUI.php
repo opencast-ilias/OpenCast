@@ -8,10 +8,10 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
-
-	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
+{
+    use DICTrait;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
      * @var  PluginConfig
@@ -30,8 +30,9 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     /**
      * @param $parent_gui
      */
-    public function __construct(xoctPermissionTemplateGUI $parent_gui) {
-    	parent::__construct();
+    public function __construct(xoctPermissionTemplateGUI $parent_gui)
+    {
+        parent::__construct();
         $this->parent_gui = $parent_gui;
         $this->initForm();
     }
@@ -40,7 +41,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     /**
      *
      */
-    protected function initForm() {
+    protected function initForm()
+    {
         $this->setTarget('_top');
         $this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
         $this->initButtons();
@@ -61,15 +63,14 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
         $te->setInfo($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
-
-
     }
 
 
     /**
      *
      */
-    protected function initButtons() {
+    protected function initButtons()
+    {
         $this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
     }
 
@@ -77,8 +78,9 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     /**
      *
      */
-    public function fillForm() {
-        $array = array();
+    public function fillForm()
+    {
+        $array = [];
         foreach ($this->getItems() as $item) {
             $this->getValuesForItem($item, $array);
         }
@@ -92,7 +94,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      *
      * @internal param $key
      */
-    private function getValuesForItem($item, &$array) {
+    private function getValuesForItem($item, &$array)
+    {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
             $array[$key] = PluginConfig::getConfig($key);
@@ -108,7 +111,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     /**
      * @return bool
      */
-    public function saveObject() {
+    public function saveObject()
+    {
         if (!$this->checkInput()) {
             return false;
         }
@@ -124,7 +128,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
     /**
      * @param $item
      */
-    private function saveValueForItem($item) {
+    private function saveValueForItem($item)
+    {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
             PluginConfig::set($key, $this->getInput($key));
@@ -142,8 +147,9 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      *
      * @return bool
      */
-    public static function checkForSubItem($item) {
-        return !$item instanceof ilFormSectionHeaderGUI AND !$item instanceof ilMultiSelectInputGUI;
+    public static function checkForSubItem($item)
+    {
+        return !$item instanceof ilFormSectionHeaderGUI and !$item instanceof ilMultiSelectInputGUI;
     }
 
 
@@ -152,10 +158,8 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI {
      *
      * @return bool
      */
-    public static function checkItem($item) {
+    public static function checkItem($item)
+    {
         return !$item instanceof ilFormSectionHeaderGUI;
     }
-
-
-
 }

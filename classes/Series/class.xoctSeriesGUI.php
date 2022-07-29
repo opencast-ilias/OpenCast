@@ -25,18 +25,17 @@ use srag\Plugins\Opencast\UI\SeriesFormBuilder;
  */
 class xoctSeriesGUI extends xoctGUI
 {
+    public const SERIES_ID = 'series_id';
 
-    const SERIES_ID = 'series_id';
+    public const CMD_EDIT_GENERAL = 'editGeneral';
+    public const CMD_EDIT = self::CMD_EDIT_GENERAL;
+    public const CMD_EDIT_WORKFLOW_PARAMS = 'editWorkflowParameters';
+    public const CMD_UPDATE_GENERAL = 'updateGeneral';
+    public const CMD_UPDATE = self::CMD_UPDATE_GENERAL;
+    public const CMD_UPDATE_WORKFLOW_PARAMS = 'updateWorkflowParameters';
 
-    const CMD_EDIT_GENERAL = 'editGeneral';
-    const CMD_EDIT = self::CMD_EDIT_GENERAL;
-    const CMD_EDIT_WORKFLOW_PARAMS = 'editWorkflowParameters';
-    const CMD_UPDATE_GENERAL = 'updateGeneral';
-    const CMD_UPDATE = self::CMD_UPDATE_GENERAL;
-    const CMD_UPDATE_WORKFLOW_PARAMS = 'updateWorkflowParameters';
-
-    const SUBTAB_GENERAL = 'general';
-    const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
+    public const SUBTAB_GENERAL = 'general';
+    public const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
 
     /**
      * @var ObjectSettings
@@ -63,11 +62,13 @@ class xoctSeriesGUI extends xoctGUI
      */
     private $workflowParameterRepository;
 
-    public function __construct(ilObjOpenCast                     $object,
-                                SeriesFormBuilder                 $seriesFormBuilder,
-                                SeriesRepository                  $seriesRepository,
-                                SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
-                                WorkflowParameterRepository       $workflowParameterRepository)
+    public function __construct(
+        ilObjOpenCast                     $object,
+        SeriesFormBuilder                 $seriesFormBuilder,
+        SeriesRepository                  $seriesRepository,
+        SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
+        WorkflowParameterRepository       $workflowParameterRepository
+    )
     {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
@@ -133,7 +134,7 @@ class xoctSeriesGUI extends xoctGUI
     protected function editGeneral()
     {
         $seriesIdentifier = $this->objectSettings->getSeriesIdentifier();
-        if($seriesIdentifier === null) {
+        if ($seriesIdentifier === null) {
             return;
         }
 
@@ -144,10 +145,12 @@ class xoctSeriesGUI extends xoctGUI
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
         }
         self::dic()->tabs()->activateSubTab(self::SUBTAB_GENERAL);
-        $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_GENERAL),
+        $form = $this->seriesFormBuilder->update(
+            self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_GENERAL),
             $this->objectSettings,
             $series,
-            ilObjOpenCastAccess::hasPermission('edit_videos'));
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        );
         self::dic()->ui()->mainTemplate()->setContent(self::dic()->ui()->renderer()->render($form));
     }
 
@@ -169,7 +172,8 @@ class xoctSeriesGUI extends xoctGUI
     protected function updateGeneral()
     {
         $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-        $form = $this->seriesFormBuilder->update(self::dic()->ctrl()->getFormAction($this),
+        $form = $this->seriesFormBuilder->update(
+            self::dic()->ctrl()->getFormAction($this),
             $this->objectSettings,
             $series,
             ilObjOpenCastAccess::hasPermission('edit_videos')
@@ -201,10 +205,14 @@ class xoctSeriesGUI extends xoctGUI
 
         /** @var Metadata $metadata */
         $metadata = $data['metadata']['object'];
-        $this->seriesRepository->updateMetadata(new UpdateSeriesMetadataRequest($this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesMetadataRequestPayload($metadata)));
-        $this->seriesRepository->updateACL(new UpdateSeriesACLRequest($this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
+        $this->seriesRepository->updateMetadata(new UpdateSeriesMetadataRequest(
+            $this->objectSettings->getSeriesIdentifier(),
+            new UpdateSeriesMetadataRequestPayload($metadata)
+        ));
+        $this->seriesRepository->updateACL(new UpdateSeriesACLRequest(
+            $this->objectSettings->getSeriesIdentifier(),
+            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+        ));
 
         $this->object->updateObjectFromSeries($metadata);
 

@@ -23,112 +23,111 @@ use xoctRequestSettings;
  */
 class PluginConfig extends ActiveRecord
 {
+    public const TABLE_NAME = 'xoct_config';
+    public const CONFIG_VERSION = 1;
+    public const F_CONFIG_VERSION = 'config_version';
+    public const F_USE_MODALS = 'use_modals';
+    public const F_CURL_USERNAME = 'curl_username';
+    public const F_CURL_PASSWORD = 'curl_password';
+    public const F_WORKFLOW = 'workflow';
+    public const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
+    public const F_EULA = 'eula';
+    public const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
+    public const F_API_VERSION = 'api_version';
+    public const F_API_BASE = 'api_base';
+    public const F_ACTIVATE_CACHE = 'activate_cache';
+    public const CACHE_DISABLED = 0;
+    public const CACHE_STANDARD = 1;
+    public const CACHE_DATABASE = 2;
+    public const F_USER_MAPPING = 'user_mapping';
+    public const F_GROUP_PRODUCERS = 'group_producers';
+    public const F_STD_ROLES = 'std_roles';
+    public const F_ROLE_USER_PREFIX = 'role_user_prefix';
+    public const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
+    public const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
+    public const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
+    public const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
+    public const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
+    public const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
+    public const F_EDITOR_LINK = 'editor_link';
+    public const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
+    public const F_PRESIGN_LINKS = 'presign_links';
+    public const F_SIGN_PLAYER_LINKS = 'sign_player_links';
+    public const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
+    public const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
+    public const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
+    public const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
+    public const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
+    public const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
+    public const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
+    public const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
+    public const F_AUDIO_ALLOWED = 'audio_allowed';
+    public const F_SCHEDULE_CHANNEL = 'schedule_channel';
+    public const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
+    public const F_STUDIO_ALLOWED = 'oc_studio_allowed';
+    public const F_STUDIO_URL = 'oc_studio_url';
+    public const F_EXT_DL_SOURCE = 'external_download_source';
+    public const F_VIDEO_PORTAL_LINK = 'video_portal_link';
+    public const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
+    public const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
+    public const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
+    public const F_PRESENTATION_NODE = 'presentation_node';
+    public const F_ENABLE_CHAT = 'enable_chat';
 
-    const TABLE_NAME = 'xoct_config';
-    const CONFIG_VERSION = 1;
-    const F_CONFIG_VERSION = 'config_version';
-    const F_USE_MODALS = 'use_modals';
-    const F_CURL_USERNAME = 'curl_username';
-    const F_CURL_PASSWORD = 'curl_password';
-    const F_WORKFLOW = 'workflow';
-    const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
-    const F_EULA = 'eula';
-    const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
-    const F_API_VERSION = 'api_version';
-    const F_API_BASE = 'api_base';
-    const F_ACTIVATE_CACHE = 'activate_cache';
-    const CACHE_DISABLED = 0;
-    const CACHE_STANDARD = 1;
-    const CACHE_DATABASE = 2;
-    const F_USER_MAPPING = 'user_mapping';
-    const F_GROUP_PRODUCERS = 'group_producers';
-    const F_STD_ROLES = 'std_roles';
-    const F_ROLE_USER_PREFIX = 'role_user_prefix';
-    const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
-    const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
-    const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
-    const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
-    const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';
-    const F_SIGN_ANNOTATION_LINKS_WITH_IP = 'sign_annotation_links_with_ip';
-    const F_EDITOR_LINK = 'editor_link';
-    const F_INTERNAL_VIDEO_PLAYER = 'internal_player';
-    const F_PRESIGN_LINKS = 'presign_links';
-    const F_SIGN_PLAYER_LINKS = 'sign_player_links';
-    const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
-    const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
-    const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
-    const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
-    const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
-    const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';
-    const F_SIGN_THUMBNAIL_LINKS_TIME = 'sign_thumbnail_links_time';
-    const F_SIGN_THUMBNAIL_LINKS_WITH_IP = 'sign_thumbnail_links_with_ip';
-    const F_AUDIO_ALLOWED = 'audio_allowed';
-    const F_SCHEDULE_CHANNEL = 'schedule_channel';
-    const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
-    const F_STUDIO_ALLOWED = 'oc_studio_allowed';
-    const F_STUDIO_URL = 'oc_studio_url';
-    const F_EXT_DL_SOURCE = 'external_download_source';
-    const F_VIDEO_PORTAL_LINK = 'video_portal_link';
-    const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
-    const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
-    const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
-    const F_PRESENTATION_NODE = 'presentation_node';
-    const F_ENABLE_CHAT = 'enable_chat';
+    public const F_REPORT_QUALITY = 'report_quality';
+    public const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
+    public const F_REPORT_QUALITY_TEXT = 'report_quality_text';
+    public const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
+    public const ACCESS_ALL = 1;
+    public const ACCESS_OWNER_ADMIN = 2;
+    public const F_REPORT_DATE = 'report_date';
+    public const F_REPORT_DATE_EMAIL = 'report_date_email';
+    public const F_REPORT_DATE_TEXT = 'report_date_text';
+    public const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
+    public const NO_METADATA = 0;
+    public const ALL_METADATA = 1;
+    public const METADATA_EXCEPT_DATE_PLACE = 2;
 
-    const F_REPORT_QUALITY = 'report_quality';
-    const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
-    const F_REPORT_QUALITY_TEXT = 'report_quality_text';
-    const F_REPORT_QUALITY_ACCESS = 'report_quality_access';
-    const ACCESS_ALL = 1;
-    const ACCESS_OWNER_ADMIN = 2;
-    const F_REPORT_DATE = 'report_date';
-    const F_REPORT_DATE_EMAIL = 'report_date_email';
-    const F_REPORT_DATE_TEXT = 'report_date_text';
-    const F_SCHEDULED_METADATA_EDITABLE = 'scheduled_metadata_editable';
-    const NO_METADATA = 0;
-    const ALL_METADATA = 1;
-    const METADATA_EXCEPT_DATE_PLACE = 2;
+    public const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
+    public const F_STREAMING_URL = 'streaming_url';
+    public const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
+    public const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
+    public const F_INGEST_UPLOAD = 'ingest_upload';
+    public const F_COMMON_IDP = 'common_idp';
+    public const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
+    public const F_ACCEPT_TERMS = "accept_terms";
+    public const F_RESET = "reset_terms";
 
-    const F_USE_GENERATED_STREAMING_URLS = 'use_streaming';
-    const F_STREAMING_URL = 'streaming_url';
-    const F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS = 'use_highlowres_segment_preview';
-    const F_ALLOW_WORKFLOW_PARAMS_IN_SERIES = 'allow_workflow_params_in_series';
-    const F_INGEST_UPLOAD = 'ingest_upload';
-    const F_COMMON_IDP = 'common_idp';
-    const F_LOAD_TABLE_SYNCHRONOUSLY = 'load_table_sync';
-    const F_ACCEPT_TERMS = "accept_terms";
-    const F_RESET = "reset_terms";
+    public const F_PAELLA_OPTION = 'paella_config_option';
+    public const F_PAELLA_OPTION_LIVE = 'paella_config_option_l';
+    public const F_PAELLA_URL = 'paella_conf_url';
+    public const F_PAELLA_URL_LIVE = 'paella_conf_url_l';
 
-    const F_PAELLA_OPTION = 'paella_config_option';
-    const F_PAELLA_OPTION_LIVE = 'paella_config_option_l';
-    const F_PAELLA_URL = 'paella_conf_url';
-    const F_PAELLA_URL_LIVE = 'paella_conf_url_l';
-
-    const PAELLA_OPTION_DEFAULT = 'default';
-    const PAELLA_OPTION_URL = 'url';
-    const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
-    const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
+    public const PAELLA_OPTION_DEFAULT = 'default';
+    public const PAELLA_OPTION_URL = 'url';
+    public const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
+    public const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
 
     /**
      * @var array
      */
-    public static $roles = array(
+    public static $roles = [
         self::F_ROLE_USER_PREFIX,
         self::F_ROLE_OWNER_PREFIX
-    );
+    ];
     /**
      * @var array
      */
-    public static $groups = array(
+    public static $groups = [
         self::F_GROUP_PRODUCERS,
-    );
+    ];
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -206,7 +205,7 @@ class PluginConfig extends ActiveRecord
             $xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
             $xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
 
-            if (!WorkflowParameter::where(array('id' => $xoctWorkflowParameter->getId()))->hasSets()) {
+            if (!WorkflowParameter::where(['id' => $xoctWorkflowParameter->getId()])->hasSets()) {
                 $xoctWorkflowParameter->create();
             } else {
                 $xoctWorkflowParameter->update();
@@ -232,7 +231,7 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsage->setSearchKey($node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor');
             $xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
-            if (!PublicationUsage::where(array('usage_id' => $xoctPublicationUsage->getUsageId()))->hasSets()) {
+            if (!PublicationUsage::where(['usage_id' => $xoctPublicationUsage->getUsageId()])->hasSets()) {
                 $xoctPublicationUsage->create();
             } else {
                 $xoctPublicationUsage->update();
@@ -307,11 +306,11 @@ class PluginConfig extends ActiveRecord
     /**
      * @var array
      */
-    protected static $cache = array();
+    protected static $cache = [];
     /**
      * @var array
      */
-    protected static $cache_loaded = array();
+    protected static $cache_loaded = [];
     /**
      * @var bool
      */
@@ -364,12 +363,11 @@ class PluginConfig extends ActiveRecord
         } else {
             $obj->setValue(json_encode($value));
         }
-        if (self::where(array('name' => $name))->hasSets()) {
+        if (self::where(['name' => $name])->hasSets()) {
             $obj->update();
         } else {
             $obj->create();
         }
-
     }
 
     /**

@@ -35,7 +35,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      * @return array
      * @throws xoctException
      */
-    public function buildStreamingData() : array
+    public function buildStreamingData(): array
     {
         $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium) {
             return in_array($medium->getMediatype(), array_keys(self::$mimetype_mapping));
@@ -65,7 +65,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      * @return array
      * @throws xoctException
      */
-    protected function buildStreams(array $media) : array
+    protected function buildStreams(array $media): array
     {
         $duration = 0;
         $streams = [];
@@ -92,7 +92,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             }
         }
 
-        return array($duration, $streams);
+        return [$duration, $streams];
     }
 
     /**
@@ -101,10 +101,12 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      * @return array
      * @throws xoctException
      */
-    private function buildSource($medium, int $duration) : array
+    private function buildSource($medium, int $duration): array
     {
-        $url = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::signPlayer($medium->getUrl(),
-            $duration) : $medium->getUrl();
+        $url = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS) ? xoctSecureLink::signPlayer(
+            $medium->getUrl(),
+            $duration
+        ) : $medium->getUrl();
         return [
             "src" => $url,
             "mimetype" => $medium->getMediatype(),
@@ -121,7 +123,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      * @return array
      * @throws xoctException
      */
-    protected function buildSegments(Event $event) : array
+    protected function buildSegments(Event $event): array
     {
         $frameList = [];
         $segments = $event->publications()->getSegmentPublications();
@@ -137,7 +139,6 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
             ksort($segments);
             $frameList = array_values(array_map(function (array $segment) {
-
                 if (PluginConfig::getConfig(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
                     /**
                      * @var Attachment[] $segment

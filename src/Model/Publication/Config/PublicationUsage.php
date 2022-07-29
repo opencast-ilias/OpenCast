@@ -11,31 +11,30 @@ use ActiveRecord;
  */
 class PublicationUsage extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_publication_usage';
-    const USAGE_ANNOTATE = 'annotate';
-    const USAGE_PLAYER = 'player';
-    const USAGE_THUMBNAIL = 'thumbnail';
-    const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
-    const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
-    const USAGE_DOWNLOAD = 'download';
-    const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
-    const USAGE_CUTTING = 'cutting';
-    const USAGE_SEGMENTS = 'segments';
-    const USAGE_PREVIEW = 'preview';
-    const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
-    const USAGE_LIVE_EVENT = 'live_event';
-    const USAGE_UNPROTECTED_LINK = 'unprotected_link';
-    const MD_TYPE_ATTACHMENT = 1;
-    const MD_TYPE_MEDIA = 2;
-    const MD_TYPE_PUBLICATION_ITSELF = 0;
-    const SEARCH_KEY_FLAVOR = 'flavor';
-    const SEARCH_KEY_TAG = 'tag';
+    public const TABLE_NAME = 'xoct_publication_usage';
+    public const USAGE_ANNOTATE = 'annotate';
+    public const USAGE_PLAYER = 'player';
+    public const USAGE_THUMBNAIL = 'thumbnail';
+    public const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
+    public const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
+    public const USAGE_DOWNLOAD = 'download';
+    public const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
+    public const USAGE_CUTTING = 'cutting';
+    public const USAGE_SEGMENTS = 'segments';
+    public const USAGE_PREVIEW = 'preview';
+    public const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
+    public const USAGE_LIVE_EVENT = 'live_event';
+    public const USAGE_UNPROTECTED_LINK = 'unprotected_link';
+    public const MD_TYPE_ATTACHMENT = 1;
+    public const MD_TYPE_MEDIA = 2;
+    public const MD_TYPE_PUBLICATION_ITSELF = 0;
+    public const SEARCH_KEY_FLAVOR = 'flavor';
+    public const SEARCH_KEY_TAG = 'tag';
     /**
      * @var array
      */
     public static $usage_ids
-        = array(
+        = [
             self::USAGE_ANNOTATE,
             self::USAGE_PLAYER,
             self::USAGE_THUMBNAIL,
@@ -48,14 +47,14 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_PREVIEW,
             self::USAGE_LIVE_EVENT,
             self::USAGE_UNPROTECTED_LINK,
-        );
+        ];
 
 
     /**
      * @return string
      * @deprecated
      */
-    static function returnDbTableName()
+    public static function returnDbTableName()
     {
         return self::TABLE_NAME;
     }
@@ -157,7 +156,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getUsageId() : string
+    public function getUsageId(): string
     {
         return $this->usage_id ?? '';
     }
@@ -175,7 +174,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getTitle() : string
+    public function getTitle(): string
     {
         return $this->title ?? '';
     }
@@ -193,7 +192,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description ?? '';
     }
@@ -211,7 +210,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getChannel() : string
+    public function getChannel(): string
     {
         return $this->channel ?? '';
     }
@@ -246,7 +245,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return bool
      */
-    public function isAllowMultiple() : bool
+    public function isAllowMultiple(): bool
     {
         return (bool) $this->allow_multiple;
     }
@@ -262,7 +261,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getFlavor() : string
+    public function getFlavor(): string
     {
         return $this->flavor ?? '';
     }
@@ -280,7 +279,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getSearchKey() : string
+    public function getSearchKey(): string
     {
         return $this->search_key ?? '';
     }
@@ -298,7 +297,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getTag() : string
+    public function getTag(): string
     {
         return $this->tag ?? '';
     }
@@ -316,7 +315,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return int
      */
-    public function getMdType() : int
+    public function getMdType(): int
     {
         return (int) $this->md_type;
     }

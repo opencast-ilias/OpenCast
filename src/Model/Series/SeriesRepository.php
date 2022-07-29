@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Series;
 
-
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequest;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
@@ -18,17 +17,17 @@ use xoctException;
  */
 interface SeriesRepository
 {
-    public function find(string $identifier) : Series;
+    public function find(string $identifier): Series;
 
-    public function fetch(string $identifier) : Series;
+    public function fetch(string $identifier): Series;
 
     /**
      * @param CreateSeriesRequest $request
      * @return ?string series identifier
      */
-    public function create(CreateSeriesRequest $request) : ?string;
+    public function create(CreateSeriesRequest $request): ?string;
 
-    public function updateMetadata(UpdateSeriesMetadataRequest $request) : void;
+    public function updateMetadata(UpdateSeriesMetadataRequest $request): void;
 
     public function updateACL(UpdateSeriesACLRequest $request): void;
 

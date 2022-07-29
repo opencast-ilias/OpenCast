@@ -13,8 +13,10 @@ class UpdateEventRequest
      */
     protected $payload;
 
-    public function __construct(string                    $identifier,
-                                UpdateEventRequestPayload $payload)
+    public function __construct(
+        string                    $identifier,
+        UpdateEventRequestPayload $payload
+    )
     {
         $this->identifier = $identifier;
         $this->payload = $payload;
@@ -29,6 +31,4 @@ class UpdateEventRequest
     {
         return $this->payload;
     }
-
-
 }
