@@ -2,6 +2,8 @@
 
 namespace srag\Plugins\Opencast\UI\Scheduling;
 
+use DateTimeZone;
+use ilTimeZone;
 use ILIAS\Refinery\Custom\Constraint;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
@@ -119,10 +121,10 @@ class SchedulingFormItemBuilder
         return [
             'start_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_start'))
                 ->withUseTime(true)->withRequired(true)
-                ->withValue($scheduling->getStart()->format('Y-m-d H:i:s')),
+                ->withValue($scheduling->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s')),
             'end_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_end'))
                 ->withUseTime(true)->withRequired(true)
-                ->withValue($scheduling->getEnd()->format('Y-m-d H:i:s')),
+                ->withValue($scheduling->getEnd()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s')),
         ];
     }
 
