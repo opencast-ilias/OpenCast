@@ -552,12 +552,15 @@ class xoctCurl {
 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostFields());
 		
-		$filename = $this->getPostFields()['presentation']->getFilename();
-		$filepath = str_replace(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/', '', dirname($filename));
-
-		curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($resource, $download_size, $downloaded, $upload_size, $uploaded) use ($filepath) {
-			$this->uploadProgressCallback($upload_size, $uploaded, $filepath);
-		});
+		$postfields = $this->getPostFields();
+		if (!empty($postfields) && isset($postfields['presentation'])) {
+			$filename = $this->getPostFields()['presentation']->getFilename();
+			$filepath = str_replace(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/', '', dirname($filename));
+	
+			curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function ($resource, $download_size, $downloaded, $upload_size, $uploaded) use ($filepath) {
+				$this->uploadProgressCallback($upload_size, $uploaded, $filepath);
+			});
+		}
 		curl_setopt( $ch, CURLOPT_NOPROGRESS, false);
 
 		xoctLog::getInstance()->write('POST-Body', xoctLog::DEBUG_LEVEL_2);
