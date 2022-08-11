@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Scheduling;
 
+use DateTimeZone;
 use DateTimeImmutable;
 use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
