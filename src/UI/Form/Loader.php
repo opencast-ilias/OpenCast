@@ -40,7 +40,7 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
                 $this->dic["lng"],
                 $this->dic["ui.javascript_binding"],
                 $this->dic["refinery"],
-                $this->dic["ui.pathresolver"]
+                $this->dic["ui.pathresolver"] ?? null
             );
             $renderer->registerResources($this->dic["ui.resource_registry"]);
             $renderer->setPluginInstance($this->plugin);

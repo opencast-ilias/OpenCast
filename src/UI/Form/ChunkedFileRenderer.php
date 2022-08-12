@@ -51,9 +51,11 @@ class ChunkedFileRenderer extends Renderer
                 true
             )
         );
-        
-        
-        $this->applyName($component, $tpl);
+    
+        // Support ILIAS 6 and 7
+        if (method_exists($this, 'applyName')) {
+            $this->applyName($component, $tpl);
+        }
         
         $settings = new \stdClass();
         $handler = $component->getUploadHandler();
@@ -96,7 +98,9 @@ class ChunkedFileRenderer extends Renderer
                 });";
             }
         );
-        $id = $this->bindJSandApplyId($component, $tpl);
+        
+        $id = $this->bindJavaScript($component) ?? $this->createId();
+        $tpl->setVariable("ID", $id);
         
         $tpl->setVariable(
             'BUTTON',
@@ -113,9 +117,17 @@ class ChunkedFileRenderer extends Renderer
             '<br>' .
             $this->txt('file_notice') . ' ' . $settings->max_file_size . ' MiB'
         );
+    
+        if ($component->isDisabled()) {
+            $tpl->setVariable("DISABLED", 'disabled="disabled"');
+        }
         
-        $this->maybeDisable($component, $tpl);
-        return $this->wrapInFormContext($component, $tpl->get(), $id);
+        // Support ILIAS 6 and 7
+        if (method_exists($this, 'wrapInFormContext')) {
+            return $this->wrapInFormContext($component, $tpl->get(), $id);
+        } else {
+            return $this->renderInputFieldWithContext($default_renderer, $tpl, $component);
+        }
     }
     
     protected function getComponentInterfaceName() : array

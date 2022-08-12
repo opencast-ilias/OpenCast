@@ -21,6 +21,7 @@ class ChunkedFile extends File
     private $max_chunk_size = -1;
     private $chunked = false;
     
+    
     public function __construct(
         DataFactory $data_factory,
         Factory $refinery,
@@ -31,6 +32,7 @@ class ChunkedFile extends File
         parent::__construct($data_factory, $refinery, $handler, $label, $byline);
     }
     
+
     public static function getInstance(
         AbstractCtrlAwareChunkedUploadHandler $upload_handler,
         string $label,
