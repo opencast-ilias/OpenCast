@@ -4,17 +4,17 @@ use ILIAS\Data\DataSize;
 use ILIAS\Filesystem\Exception\FileNotFoundException;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\Exception\IllegalStateException;
-use ILIAS\FileUpload\Handler\AbstractCtrlAwareUploadHandler;
 use ILIAS\FileUpload\Handler\BasicFileInfoResult;
 use ILIAS\FileUpload\Handler\BasicHandlerResult;
 use ILIAS\FileUpload\Handler\FileInfoResult;
 use ILIAS\FileUpload\Handler\HandlerResult;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
+use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
 
 /**
  * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI, xoctConfGUI
  */
-class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
+class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
 {
 
 
@@ -71,15 +71,20 @@ class xoctFileUploadHandler extends AbstractCtrlAwareUploadHandler
         $this->upload->process();
         $array = $this->upload->getResults();
         $result = end($array);
-
+        
         if ($result instanceof UploadResult && $result->isOK()) {
-            $identifier = $this->uploadStorageService->moveUploadToStorage($result);
+            if ($this->is_chunked) {
+                $identifier = $this->uploadStorageService->appendChunkToStorage($result, $this->chunk_id);
+            } else {
+                $identifier = $this->uploadStorageService->moveUploadToStorage($result);
+            }
+        
             $status = HandlerResult::STATUS_OK;
             $message = 'Upload ok';
         } else {
             $status = HandlerResult::STATUS_FAILED;
             $identifier = '';
-            $message = $result->getStatus()->getMessage();
+            $message = '';
         }
 
         return new BasicHandlerResult($this->getFileIdentifierParameterName(), $status, $identifier, $message);

@@ -20,6 +20,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
+use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -156,17 +157,29 @@ class EventFormBuilder
     {
         $upload_storage_service = $this->uploadStorageService;
         // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
-        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'), $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ',$this->getAcceptedSuffix()))
-            ->withAcceptedMimeTypes($this->getMimeTypes())
-            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($file) use ($upload_storage_service) {
-                $id = $file[0];
-                return $upload_storage_service->getFileInfo($id);
-            }));
+        $factory = $this->ui_factory->input()->field();
+        $file_input = ChunkedFile::getInstance(
+            $this->uploadHandler,
+            $this->plugin->txt('file'),
+            $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix())
+        );
+        $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
+                                 ->withChunkedUpload(true)
+                                 ->withMaxFileSize(5 * 1024 * 1024 * 1024)
+                                 ->withAdditionalTransformation(
+                                     $this->refinery_factory->custom()->transformation(
+                                         function ($file) use ($upload_storage_service) {
+                                             $id = $file[0];
+                                             return $upload_storage_service->getFileInfo($id);
+                                         }
+                                     )
+                                 );
+        
         $file_section_inputs = ['file' => $file_input];
         if ($obj_id == 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
         }
-        $file_section = $this->ui_factory->input()->field()->section(
+        $file_section = $factory->section(
             $file_section_inputs,
             $this->plugin->txt('file')
         );

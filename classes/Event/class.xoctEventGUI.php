@@ -35,6 +35,7 @@ use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
+use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 
 /**
  * Class xoctEventGUI
@@ -70,7 +71,11 @@ class xoctEventGUI extends xoctGUI
      * @var ilObjOpenCastGUI
      */
     private $parent_gui;
-
+    /**
+     * @var \ILIAS\UI\Implementation\DefaultRenderer
+     */
+    protected $custom_renderer;
+    
     /**
      * @var ObjectSettings
      */
@@ -140,7 +145,6 @@ class xoctEventGUI extends xoctGUI
         $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
-        $this->ui_renderer = $dic->ui()->renderer();
         $this->formBuilder = $formBuilder;
         $this->workflowRepository = $workflowRepository;
         $this->ACLUtils = $ACLUtils;
@@ -150,6 +154,10 @@ class xoctEventGUI extends xoctGUI
         $this->uploadHandler = $uploadHandler;
         $this->paellaConfigStorageService = $paellaConfigStorageService;
         $this->paellaConfigServiceFactory = $paellaConfigServiceFactory;
+        global $DIC;
+        $this->ui_renderer = new \ILIAS\UI\Implementation\DefaultRenderer(
+            new Loader($DIC, ilOpenCastPlugin::getInstance())
+        );
     }
 
     /**
