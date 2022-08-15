@@ -47,7 +47,7 @@ class UploadStorageService
     
     public function appendChunkToStorage(UploadResult $uploadResult, string $chunk_id) : string
     {
-        $path = $this->idToDirPath($chunk_id);
+        $path = $this->idToDirPath($chunk_id) . '/' . $uploadResult->getName();
         
         if ($this->fileSystem->has($path)) {
             $stream = fopen($this->fileSystem->readStream($path)->getMetadata()['uri'], 'a');
