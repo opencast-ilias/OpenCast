@@ -29,7 +29,7 @@ il.UI.Input = il.UI.Input || {};
     };
 
     var debug = function (string) {
-      // console.log(string);
+      console.log(string);
     }
 
 
@@ -45,8 +45,7 @@ il.UI.Input = il.UI.Input || {};
       $(container + ' .il-input-file-template').remove();
       var input_template = $(container + ' .input-template').clone();
       $(container + ' .input-template').remove();
-
-      debug(preview_template.html());
+      debug(settings);
 
       var myDropzone = new Dropzone(dropzone, {
         url: encodeURI(settings.upload_url),
@@ -66,27 +65,31 @@ il.UI.Input = il.UI.Input || {};
         chunkSize: settings.chunk_size,
         acceptedFiles: settings.accepted_files,
         dictInvalidFileType: settings.dictInvalidFileType,
-        progress_storage: 0,
-        uploadprogress: function (file, progress, bytesSent) {
-          if (file.previewElement) {
-            let progressElement = file.previewElement.querySelector(".progress-bar");
-            let number = Math.round(progress);
-            if (number === 100 && bytesSent < file.size) {
-              return;
-            }
-            if (progressElement) {
-              progressElement.display = "block";
-              if (number > this.progress_storage) {
-                progressElement.style.width = number + "%";
-              }
+        progress_storage: 0
+      });
 
-              if (number === 100) {
-                // progressElement.style.display = "none";
-              }
-            }
-            this.progress_storage = number;
+      myDropzone.on('uploadprogress', function (file, progress, bytesSent) {
+        if (file.previewElement) {
+          let progressElement = file.previewElement.querySelector(".progress-bar");
+          let number = Math.round(progress);
+          if (number === 100 && bytesSent < file.size) {
+            return;
           }
+          if (progressElement) {
+            progressElement.display = "block";
+            if (number > myDropzone.progress_storage) {
+              progressElement.style.width = number + "%";
+            }
+            if (number === 100) {
+              // progressElement.style.display = "none";
+            }
+          }
+          this.progress_storage = number;
         }
+      });
+
+      myDropzone.on('totaluploadprogress', function(file){
+
       });
 
       myDropzone.on("maxfilesreached", function (file) {
@@ -113,15 +116,21 @@ il.UI.Input = il.UI.Input || {};
         $(container).append(clone);
       };
 
-      var successFromResponse = function (files, response) {
+      var successFromResponse = function (files) {
+        let response = files.xhr.response;
         try {
+          debug('parsing repsonse');
+          debug(response);
           var json = JSON.parse(response);
         }
         catch (e) {
+          debug(e);
           return;
         }
         if (json.hasOwnProperty(settings.file_identifier_key)) {
           var file_id = json[settings.file_identifier_key];
+          debug('new file id');
+          debug(file_id);
           success(files, file_id);
         }
       };
