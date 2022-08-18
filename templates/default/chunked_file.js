@@ -51,7 +51,7 @@ il.UI.Input = il.UI.Input || {};
         url: encodeURI(settings.upload_url),
         method: 'post',
         createImageThumbnails: true,
-        maxFiles: 3,
+        maxFiles: settings.max_files,
         maxFilesize: settings.max_file_size,
         dictDefaultMessage: '',
         dictFileTooBig: settings.max_file_size_text,

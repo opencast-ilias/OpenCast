@@ -30,6 +30,7 @@ class PluginConfig extends ActiveRecord
     const F_USE_MODALS = 'use_modals';
     const F_CURL_USERNAME = 'curl_username';
     const F_CURL_PASSWORD = 'curl_password';
+    const F_CURL_MAX_UPLOADSIZE = 'curl_max_upload_size';
     const F_WORKFLOW = 'workflow';
     const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
     const F_EULA = 'eula';
