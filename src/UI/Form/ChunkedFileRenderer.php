@@ -59,9 +59,6 @@ class ChunkedFileRenderer extends Renderer
         
         $settings = new \stdClass();
         $handler = $component->getUploadHandler();
-        if (!$handler->supportsChunkedUploads() && $component->isChunkedUpload()) {
-            $component = $component->withChunkedUpload(false);
-        }
         $settings->upload_url = $handler->getUploadURL();
         $settings->removal_url = $handler->getFileRemovalURL();
         $settings->info_url = $handler->getExistingFileInfoURL();
@@ -71,7 +68,7 @@ class ChunkedFileRenderer extends Renderer
         $settings->existing_files = $handler->getInfoForExistingFiles($component->getValue() ?? []);
         
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
-        $settings->chunked_upload = $component->isChunkedUpload();
+        $settings->chunked_upload = $handler->supportsChunkedUploads();
         $settings->chunk_size = $upload_limit / 2;
         if (!$settings->chunked_upload) {
             $max_file_size = $component->getMaxFileFize() === -1
@@ -94,7 +91,7 @@ class ChunkedFileRenderer extends Renderer
             function ($id) use ($settings) {
                 $settings = json_encode($settings);
                 return "$(document).ready(function() {
-                    il.UI.Input.chunked_file.init('$id', '{$settings}');
+                    il.UI.Input.chunkedFile.init('$id', '{$settings}');
                 });";
             }
         );

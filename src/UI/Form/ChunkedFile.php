@@ -15,13 +15,6 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploa
  */
 class ChunkedFile extends File
 {
-    /**
-     * @var int
-     */
-    private $max_chunk_size = -1;
-    private $chunked = false;
-    
-    
     public function __construct(
         DataFactory $data_factory,
         Factory $refinery,
@@ -50,18 +43,5 @@ class ChunkedFile extends File
             $label,
             $byline
         ));
-    }
-    
-    public function withChunkedUpload(bool $chunked) : \ILIAS\UI\Component\Input\Field\File
-    {
-        $clone = clone $this;
-        $clone->chunked = $chunked;
-        
-        return $clone;
-    }
-    
-    public function isChunkedUpload() : bool
-    {
-        return $this->chunked;
     }
 }

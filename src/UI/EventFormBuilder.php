@@ -101,7 +101,7 @@ class EventFormBuilder
      */
     private $uploadStorageService;
     /**
-     * @var UploadHandler
+     * @var UploadHandler|\xoctFileUploadHandler
      */
     private $uploadHandler;
     /**
@@ -164,8 +164,7 @@ class EventFormBuilder
             $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix())
         );
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
-                                 ->withChunkedUpload(true)
-                                 ->withMaxFileSize(5 * 1024 * 1024 * 1024)
+                                 ->withMaxFileSize(5 * 1024 * 1024 * 1024) // TODO configurable
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service) {
