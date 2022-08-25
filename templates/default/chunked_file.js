@@ -115,7 +115,15 @@ il.UI.Input = il.UI.Input || {};
       };
 
       var successFromResponse = function (files, _response) {
-        let response = _response ?? files.xhr.response ?? '{}';
+        let response;
+        if (_response !== '' && typeof _response === 'object') {
+          response = _response;
+        } else if (files.hasOwnProperty('xhr')) {
+          response = files.xhr.response;
+        } else {
+          response = '{}';
+        }
+
         try {
           debug('parsing repsonse');
           debug(response);

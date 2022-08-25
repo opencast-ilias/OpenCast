@@ -169,8 +169,9 @@ class EventFormBuilder
         $upload_limit = $configured_upload_limit > 0
             ? $configured_upload_limit * self::MIB_IN_B
             : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MIB_IN_B;
-        
+    
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
+                                 ->withRequired(false)
                                  ->withMaxFileSize($upload_limit)
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
