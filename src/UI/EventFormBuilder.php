@@ -157,7 +157,6 @@ class EventFormBuilder
     public function upload(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
         $upload_storage_service = $this->uploadStorageService;
-        // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
         $factory = $this->ui_factory->input()->field();
         $file_input = ChunkedFile::getInstance(
             $this->uploadHandler,
@@ -171,7 +170,7 @@ class EventFormBuilder
             : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MIB_IN_B;
     
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
-                                 ->withRequired(false)
+                                 ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(

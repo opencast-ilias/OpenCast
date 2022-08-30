@@ -25,7 +25,6 @@ class ChunkedFile extends File
         parent::__construct($data_factory, $refinery, $handler, $label, $byline);
     }
     
-
     public static function getInstance(
         AbstractCtrlAwareChunkedUploadHandler $upload_handler,
         string $label,
@@ -43,5 +42,33 @@ class ChunkedFile extends File
             $label,
             $byline
         ));
+    }
+    
+    protected function isClientSideValueOk($value) : bool
+    {
+        if (is_null($value)) {
+            return true;
+        }
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                if (!is_string($v)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    protected function getConstraintForRequirement()
+    {
+        return $this->refinery->custom()->constraint(
+            function ($value) {
+                return (is_array($value) && count($value) > 0);
+            },
+            function ($txt, $value) {
+                return $txt("msg_no_files_selected");
+            },
+        );
     }
 }
