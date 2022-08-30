@@ -36,6 +36,7 @@ use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
+use srag\CustomInputGUIs\OneDrive\Waiter\Waiter;
 
 /**
  * Class xoctEventGUI
@@ -538,6 +539,12 @@ class xoctEventGUI extends xoctGUI
             !ToUManager::hasAcceptedToU(self::dic()->user()->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
+        );
+        xoctWaiterGUI::initJS();
+        self::dic()->ui()->mainTemplate()->addOnLoadCode(
+            'window.onbeforeunload = function(){
+                        xoctWaiter.show();
+                    };'
         );
         self::dic()->ui()->mainTemplate()->setContent($this->ui_renderer->render($form));
     }
