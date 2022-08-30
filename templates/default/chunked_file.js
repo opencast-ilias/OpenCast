@@ -29,12 +29,12 @@ il.UI.Input = il.UI.Input || {};
     };
 
     var debug = function (string) {
-      console.log(string);
+      // console.log(string);
     }
 
 
     var init = function (container_id, settings) {
-      var replacer = new RegExp('amp;', 'g');
+      let replacer = new RegExp('amp;', 'g');
       settings = Object.assign(_default_settings, JSON.parse(settings));
       settings.upload_url = settings.upload_url.replace(replacer, '');
       settings.removal_url = settings.removal_url.replace(replacer, '');
@@ -116,6 +116,7 @@ il.UI.Input = il.UI.Input || {};
 
       var successFromResponse = function (files, _response) {
         let response;
+        let json = JSON.parse('{}');
         if (_response !== '' && typeof _response === 'object') {
           response = _response;
         } else if (files.hasOwnProperty('xhr')) {
@@ -127,7 +128,11 @@ il.UI.Input = il.UI.Input || {};
         try {
           debug('parsing repsonse');
           debug(response);
-          var json = JSON.parse(response);
+          if (typeof _response !== 'object') {
+            json = JSON.parse(response);
+          } else {
+            json = response;
+          }
         }
         catch (e) {
           debug(e);
@@ -204,22 +209,16 @@ il.UI.Input = il.UI.Input || {};
         myDropzone._updateMaxFilesReachedClass();
       };
 
-      if (settings.get_file_info_async) {
-        var data = {};
-        for (var i in settings.existing_file_ids) {
-          data[settings.file_identifier_key] = settings.existing_file_ids[i];
-          $.get(settings.info_url, data, function (response) {
-            debug(response);
-            var mockFile = JSON.parse(response);
-            if (mockFile.size > 0) {
-              addExisting(mockFile, response);
-            }
-          });
-        }
-      } else {
-        for (var i in settings.existing_files) {
-          addExisting(settings.existing_files[i], {});
-        }
+      for (let i in settings.existing_file_ids) {
+        let data = {};
+        data[settings.file_identifier_key] = settings.existing_file_ids[i];
+        $.get(settings.info_url, data, function (response) {
+          debug(response);
+          let mockFile = JSON.parse(response);
+          if (mockFile.size > 0) {
+            addExisting(mockFile, mockFile);
+          }
+        });
       }
 
     };
