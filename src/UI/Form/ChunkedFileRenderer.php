@@ -112,7 +112,7 @@ class ChunkedFileRenderer extends Renderer
         $component = $component->withByline(
             $component->getByline() .
             '<br>' .
-            $this->txt('file_notice') . ' ' . $settings->max_file_size . ' MiB'
+            $this->txt('file_notice') . ' ' . $settings->max_file_size . ' MB'
         );
     
         if ($component->isDisabled()) {
