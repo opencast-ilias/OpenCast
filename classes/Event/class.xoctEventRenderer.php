@@ -449,7 +449,7 @@ class xoctEventRenderer {
 	 * @return string
 	 */
 	public function getStartHTML($format = 'd.m.Y - H:i') {
-		return $this->event->getStart()->format($format);
+		return $this->event->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format($format);
 	}
 
     /**

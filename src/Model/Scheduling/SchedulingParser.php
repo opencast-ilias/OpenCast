@@ -2,6 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Scheduling;
 
+use DateTimeZone;
 use DateTimeImmutable;
 use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -26,15 +27,15 @@ class SchedulingParser
                 $end = new DateTimeImmutable($scheduling_data['end_date'] . ' ' . $scheduling_data['end_time']);
                 $duration = $end->getTimestamp() - $start->getTimestamp();
                 return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
-                    $start,
-                    $end,
+                    $start->setTimezone(new DateTimeZone('GMT')),
+                    $end->setTimezone(new DateTimeZone('GMT')),
                     $channel,
                     $duration,
                     RRule::fromStartAndWeekdays($start, $scheduling_data['weekdays']));
             case 'no_repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date_time']);
-                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start, $end, $channel);
+                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start->setTimezone(new DateTimeZone('GMT')), $end->setTimezone(new DateTimeZone('GMT')), $channel);
         }
         throw new xoctException(xoctException::INTERNAL_ERROR, $type . ' is not a valid scheduling type');
     }
@@ -43,8 +44,8 @@ class SchedulingParser
     {
         // for some reason unknown to me, the start/end are already DateTimeImmutables here...
         return new Scheduling($form_data[MDFieldDefinition::F_LOCATION],
-            $form_data['start_date_time'],
-            $form_data['end_date_time'],
+            $form_data['start_date_time']->setTimezone(new DateTimeZone('GMT')),
+            $form_data['end_date_time']->setTimezone(new DateTimeZone('GMT')),
             PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] :  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
         );
     }
