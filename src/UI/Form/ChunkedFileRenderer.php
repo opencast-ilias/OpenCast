@@ -14,6 +14,8 @@ use ilTemplateException;
 class ChunkedFileRenderer extends Renderer
 {
     const TEMPLATES = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/';
+    const MB_IN_B = 1000 * 1000;
+    const MIB_F = 1.024;
     
     /**
      * @var \ilOpenCastPlugin
@@ -74,9 +76,9 @@ class ChunkedFileRenderer extends Renderer
             $max_file_size = $component->getMaxFileFize() === -1
                 ? $upload_limit
                 : $component->getMaxFileFize();
-            $settings->max_file_size = min($max_file_size, $upload_limit) / 1024 / 1024; // dropzone.js expects MiB
+            $settings->max_file_size = min($max_file_size, $upload_limit) / self::MB_IN_B * self::MIB_F ; // dropzone.js expects MiB
         } else {
-            $settings->max_file_size = $component->getMaxFileFize() / 1024 / 1024; // dropzone.js expects MiB
+            $settings->max_file_size = $component->getMaxFileFize() / self::MB_IN_B * self::MIB_F; // dropzone.js expects MiB
         }
         
         $settings->max_file_size_text = sprintf(
@@ -112,7 +114,7 @@ class ChunkedFileRenderer extends Renderer
         $component = $component->withByline(
             $component->getByline() .
             '<br>' .
-            $this->txt('file_notice') . ' ' . $settings->max_file_size . ' MB'
+            $this->txt('file_notice') . ' ' . ($settings->max_file_size / self::MIB_F) . ' MB'
         );
     
         if ($component->isDisabled()) {

@@ -30,7 +30,7 @@ use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 class EventFormBuilder
 {
     const F_ACCEPT_EULA = 'accept_eula';
-    const MIB_IN_B = 1024 * 1024;
+    const MB_IN_B = 1000 * 1000;
     const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
     
     private static $accepted_video_mimetypes = [
@@ -166,8 +166,8 @@ class EventFormBuilder
         // Upload Limit
         $configured_upload_limit =  (int)PluginConfig::getConfig(PluginConfig::F_CURL_MAX_UPLOADSIZE);
         $upload_limit = $configured_upload_limit > 0
-            ? $configured_upload_limit * self::MIB_IN_B
-            : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MIB_IN_B;
+            ? $configured_upload_limit * self::MB_IN_B
+            : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MB_IN_B;
     
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
