@@ -71,7 +71,7 @@ class ChunkedFileRenderer extends Renderer
         
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
-        $settings->chunk_size = $upload_limit / 2;
+        $settings->chunk_size = round($upload_limit / 2) * self::MIB_F;
         if (!$settings->chunked_upload) {
             $max_file_size = $component->getMaxFileFize() === -1
                 ? $upload_limit
