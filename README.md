@@ -32,9 +32,9 @@ After a fresh installation, the plugin configuration will already contain a basi
 This is only required if the plugin is configured to show live events and if you wish to display a live chat during these events.
 
 #### Install Node JS
-The live chat runs on a node js server and was tested with node version 10.x. To install nodejs v10.x on Ubuntu, execute:
+The live chat runs on a node js server and was tested with node version 12.x. To install nodejs v10.x on Ubuntu, execute:
 ```bash
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 For other OS, see https://nodejs.org/en/download/package-manager/
