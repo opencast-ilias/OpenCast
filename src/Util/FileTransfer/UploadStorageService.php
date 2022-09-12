@@ -11,14 +11,13 @@ use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\FileUpload;
 use ILIAS\FileUpload\Location;
 use srag\Plugins\Opencast\Model\ACL\ACL;
-use srag\Plugins\Opencast\UI\Input\Plupload;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use xoctUploadFile;
 
 class UploadStorageService
 {
     const TEMP_SUB_DIR = 'opencast';
-
+    
     /**
      * @var Filesystem
      */
@@ -27,13 +26,13 @@ class UploadStorageService
      * @var FileUpload
      */
     protected $fileUpload;
-
+    
     public function __construct(Filesystem $file_system, FileUpload $fileUpload)
     {
         $this->fileSystem = $file_system;
         $this->fileUpload = $fileUpload;
     }
-
+    
     /**
      * @param UploadResult $uploadResult
      * @return string identifier
@@ -44,7 +43,21 @@ class UploadStorageService
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
         return $identifier;
     }
-
+    
+    public function appendChunkToStorage(UploadResult $uploadResult, string $chunk_id) : string
+    {
+        $path = $this->idToDirPath($chunk_id) . '/' . $uploadResult->getName();
+        
+        if ($this->fileSystem->has($path)) {
+            $stream = fopen($this->fileSystem->readStream($path)->getMetadata()['uri'], 'a');
+            fwrite($stream, file_get_contents($uploadResult->getPath()));
+        } else {
+            $this->fileSystem->write($path, file_get_contents($uploadResult->getPath()));
+        }
+        
+        return $chunk_id;
+    }
+    
     /**
      * @throws FileNotFoundException
      * @throws IOException
@@ -59,10 +72,10 @@ class UploadStorageService
             $this->fileSystem->deleteDir($dir);
         }
     }
-
+    
     /**
      * @param string $identifier
-     * @param int $fileSizeUnit
+     * @param int    $fileSizeUnit
      * @return array{path: string, size: DataSize, name: string, mimeType: string}
      * @throws FileNotFoundException
      * @throws IOException
@@ -79,25 +92,27 @@ class UploadStorageService
             'id' => $identifier
         ];
     }
-
-    public function buildACLUploadFile(ACL $acl): xoctUploadFile
+    
+    public function buildACLUploadFile(ACL $acl) : xoctUploadFile
     {
         $tmp_name = uniqid('tmp');
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
-        $upload_file->setFileSize($this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)
-            ->getSize());
+        $upload_file->setFileSize(
+            $this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)
+                             ->getSize()
+        );
         $upload_file->setPostVar('attachment');
         $upload_file->setTitle('attachment');
         $upload_file->setPath(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $this->idToDirPath($tmp_name));
         return $upload_file;
     }
-
+    
     protected function idToDirPath(string $identifier) : string
     {
         return self::TEMP_SUB_DIR . '/' . $identifier;
     }
-
+    
     /**
      * @throws FileNotFoundException
      */

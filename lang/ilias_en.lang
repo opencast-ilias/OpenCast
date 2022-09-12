@@ -16,6 +16,8 @@ config_annotation_token_security_info#:#Adds the course reference and a security
 config_api_base#:#API base URL
 config_api_version#:#API Version
 config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
+config_curl_max_upload_size#:#Max. File-Size in MB
+config_curl_max_upload_size_info#:#Defines the maximum possible upload size for video files in MB
 config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"

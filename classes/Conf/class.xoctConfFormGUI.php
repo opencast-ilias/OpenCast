@@ -207,6 +207,14 @@ class xoctConfFormGUI extends ilPropertyFormGUI {
 		$te->setInfo($this->parent_gui->txt(PluginConfig::F_WORKFLOW . '_info'));
 		$te->setRequired(true);
 		$this->addItem($te);
+        
+        $te = new ilNumberInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_CURL_MAX_UPLOADSIZE),
+            PluginConfig::F_CURL_MAX_UPLOADSIZE
+        );
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_MAX_UPLOADSIZE . '_info'));
+        $te->setRequired(false);
+        $this->addItem($te);
 
 		$te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_WORKFLOW_UNPUBLISH), PluginConfig::F_WORKFLOW_UNPUBLISH);
 		$te->setInfo($this->parent_gui->txt(PluginConfig::F_WORKFLOW_UNPUBLISH . '_info'));

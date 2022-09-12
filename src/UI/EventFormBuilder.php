@@ -20,6 +20,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
+use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -29,7 +30,9 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 class EventFormBuilder
 {
     const F_ACCEPT_EULA = 'accept_eula';
-
+    const MB_IN_B = 1000 * 1000;
+    const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
+    
     private static $accepted_video_mimetypes = [
         ilMimeTypeUtil::VIDEO__AVI,
         ilMimeTypeUtil::VIDEO__QUICKTIME,
@@ -78,7 +81,6 @@ class EventFormBuilder
         '.aiff',
         '.wav',
     ];
-
     /**
      * @var UIFactory
      */
@@ -100,7 +102,7 @@ class EventFormBuilder
      */
     private $uploadStorageService;
     /**
-     * @var UploadHandler
+     * @var UploadHandler|\xoctFileUploadHandler
      */
     private $uploadHandler;
     /**
@@ -155,18 +157,35 @@ class EventFormBuilder
     public function upload(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
         $upload_storage_service = $this->uploadStorageService;
-        // todo: make required when https://mantis.ilias.de/view.php?id=31645 is fixed
-        $file_input = $this->ui_factory->input()->field()->file($this->uploadHandler, $this->plugin->txt('file'), $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ',$this->getAcceptedSuffix()))
-            ->withAcceptedMimeTypes($this->getMimeTypes())
-            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($file) use ($upload_storage_service) {
-                $id = $file[0];
-                return $upload_storage_service->getFileInfo($id);
-            }));
+        $factory = $this->ui_factory->input()->field();
+        $file_input = ChunkedFile::getInstance(
+            $this->uploadHandler,
+            $this->plugin->txt('file'),
+            $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix())
+        )->withRequired(true);
+        // Upload Limit
+        $configured_upload_limit =  (int)PluginConfig::getConfig(PluginConfig::F_CURL_MAX_UPLOADSIZE);
+        $upload_limit = $configured_upload_limit > 0
+            ? $configured_upload_limit * self::MB_IN_B
+            : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MB_IN_B;
+    
+        $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
+                                 ->withRequired(true)
+                                 ->withMaxFileSize($upload_limit)
+                                 ->withAdditionalTransformation(
+                                     $this->refinery_factory->custom()->transformation(
+                                         function ($file) use ($upload_storage_service) {
+                                             $id = $file[0];
+                                             return $upload_storage_service->getFileInfo($id);
+                                         }
+                                     )
+                                 );
+        
         $file_section_inputs = ['file' => $file_input];
         if ($obj_id == 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
         }
-        $file_section = $this->ui_factory->input()->field()->section(
+        $file_section = $factory->section(
             $file_section_inputs,
             $this->plugin->txt('file')
         );
@@ -186,10 +205,7 @@ class EventFormBuilder
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $inputs
-        )->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
-            // this is a workaround for https://mantis.ilias.de/view.php?id=31645
-            return !is_null($vs['file']['file']);
-        }, $this->plugin->txt('msg_missing_file')));
+        );
     }
 
     public function update(string $form_action, Metadata $metadata, bool $as_admin): Form

@@ -16,6 +16,8 @@ config_annotation_token_security_info#:#Fügt die Kursreferenz und einen Sicherh
 config_api_base#:#API-Basis-URL
 config_api_version#:#API-Version
 config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
+config_curl_max_upload_size#:#Maximale Upload-Größe in MB
+config_curl_max_upload_size_info#:#Defniert die maximal mögliche Uploadgrösse für Video-Dateien in MB
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
