@@ -16,8 +16,6 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploa
  */
 class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
 {
-
-
     /**
      * @var UploadStorageService
      */
@@ -35,10 +33,12 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
      */
     private $file_removal_url;
 
-    public function __construct(UploadStorageService $uploadStorageService,
-                                string               $upload_url = '',
-                                string               $file_info_url = '',
-                                string               $file_removal_url = '')
+    public function __construct(
+        UploadStorageService $uploadStorageService,
+        string $upload_url = '',
+        string $file_info_url = '',
+        string $file_removal_url = ''
+    )
     {
         parent::__construct();
         $this->uploadStorageService = $uploadStorageService;
@@ -71,14 +71,14 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         $this->upload->process();
         $array = $this->upload->getResults();
         $result = end($array);
-        
+
         if ($result instanceof UploadResult && $result->isOK()) {
             if ($this->is_chunked) {
                 $identifier = $this->uploadStorageService->appendChunkToStorage($result, $this->chunk_id);
             } else {
                 $identifier = $this->uploadStorageService->moveUploadToStorage($result);
             }
-        
+
             $status = HandlerResult::STATUS_OK;
             $message = 'Upload ok';
         } else {

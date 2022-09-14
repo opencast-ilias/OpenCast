@@ -22,9 +22,8 @@ use xoctRequest;
 
 class SeriesAPIRepository implements SeriesRepository
 {
-
-    const OWN_SERIES_PREFIX = 'Eigene Serie von ';
-    const CACHE_PREFIX = 'series-';
+    public const OWN_SERIES_PREFIX = 'Eigene Serie von ';
+    public const CACHE_PREFIX = 'series-';
     /**
      * @var Cache
      */
@@ -46,11 +45,13 @@ class SeriesAPIRepository implements SeriesRepository
      */
     private $MDParser;
 
-    public function __construct(Cache              $cache,
-                                SeriesParser       $seriesParser,
-                                ACLUtils           $ACLUtils,
-                                MetadataFactory    $metadataFactory,
-                                MDParser           $MDParser)
+    public function __construct(
+        Cache $cache,
+        SeriesParser $seriesParser,
+        ACLUtils $ACLUtils,
+        MetadataFactory $metadataFactory,
+        MDParser $MDParser
+    )
     {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
@@ -125,9 +126,9 @@ class SeriesAPIRepository implements SeriesRepository
         if ($existing = $this->cache->get('series-' . $user_string)) {
             return $existing;
         }
-        $return = array();
+        $return = [];
         try {
-            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get(array($user_string)));
+            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]));
         } catch (ilException $e) {
             return [];
         }
@@ -155,7 +156,8 @@ class SeriesAPIRepository implements SeriesRepository
             $this->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
                 $metadata,
                 $this->ACLUtils->getStandardRolesACL()->merge(
-                    $this->ACLUtils->getUserRolesACL($xoct_user))
+                    $this->ACLUtils->getUserRolesACL($xoct_user)
+                )
             )));
         }
         return $series;
@@ -175,8 +177,10 @@ class SeriesAPIRepository implements SeriesRepository
         $series->getAccessPolicies()->merge(
             $this->ACLUtils->getUserRolesACL($xoct_user)
         );
-        $this->updateACL(new UpdateSeriesACLRequest($series->getIdentifier(),
-            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())));
+        $this->updateACL(new UpdateSeriesACLRequest(
+            $series->getIdentifier(),
+            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+        ));
         return $series;
     }
 

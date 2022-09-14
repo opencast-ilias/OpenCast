@@ -22,7 +22,7 @@ class PaellaConfigStorageService extends UploadStorageService
      * @param UploadResult $uploadResult
      * @return string identifier
      */
-    public function moveUploadToStorage(UploadResult $uploadResult) : string
+    public function moveUploadToStorage(UploadResult $uploadResult): string
     {
         $identifier = uniqid('oc_');
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::WEB);
@@ -37,7 +37,7 @@ class PaellaConfigStorageService extends UploadStorageService
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte) : array
+    public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte): array
     {
         $metadata = $this->idToFileMetadata($identifier);
         return [
@@ -47,7 +47,7 @@ class PaellaConfigStorageService extends UploadStorageService
         ];
     }
 
-    public function getWACSignedPath(string $identifier) : string
+    public function getWACSignedPath(string $identifier): string
     {
         // ilUtil::getWebspaceDir is deprecated, but I didn't find out how else to get an absolute path, which we need
         // for the paella player
@@ -55,18 +55,18 @@ class PaellaConfigStorageService extends UploadStorageService
             . $this->idToFileMetadata($identifier)->getPath());
     }
 
-    public function getFileAsBase64(string $identifier) : string
+    public function getFileAsBase64(string $identifier): string
     {
         $contents = $this->fileSystem->read($this->idToFileMetadata($identifier)->getPath());
         return base64_encode($contents);
     }
 
-    public function exists(string $file_id) : bool
+    public function exists(string $file_id): bool
     {
         return $this->fileSystem->hasDir($this->idToDirPath($file_id));
     }
 
-    protected function idToDirPath(string $identifier) : string
+    protected function idToDirPath(string $identifier): string
     {
         return $identifier;
     }

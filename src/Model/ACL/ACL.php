@@ -19,7 +19,7 @@ class ACL implements JsonSerializable
         $this->acl_entries = $acl_entries;
     }
 
-    public static function fromResponse(array $response) : self
+    public static function fromResponse(array $response): self
     {
         $entries = [];
         foreach ($response as $data) {
@@ -44,14 +44,14 @@ class ACL implements JsonSerializable
         $this->acl_entries = $acl_entries;
     }
 
-    public function add(ACLEntry $acl_entry) : void
+    public function add(ACLEntry $acl_entry): void
     {
         if (!in_array($acl_entry, $this->acl_entries, true)) {
             $this->acl_entries[] = $acl_entry;
         }
     }
 
-    public function merge(ACL $acl) : self
+    public function merge(ACL $acl): self
     {
         foreach ($acl->getEntries() as $entry) {
             $this->add($entry);

@@ -18,7 +18,6 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctChangeOwnerGUI extends xoctGUI
 {
-
     /**
      * @var Event
      */
@@ -71,10 +70,10 @@ class xoctChangeOwnerGUI extends xoctGUI
         $temp->setVariable('HEADER_OWNER', self::plugin()->getPluginObject()->txt('current_owner_header'));
         $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->getPluginObject()->txt('groups_available_participants_header'));
         $temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-        $temp->setVariable('LANGUAGE', json_encode(array(
+        $temp->setVariable('LANGUAGE', json_encode([
             'none_available' => self::plugin()->getPluginObject()->txt('invitations_none_available'),
             'only_one_owner' => self::plugin()->getPluginObject()->txt('owner_only_one_owner')
-        )));
+        ]));
         self::dic()->ui()->mainTemplate()->setContent($temp->get());
     }
 
@@ -121,10 +120,10 @@ class xoctChangeOwnerGUI extends xoctGUI
 
         usort($available_users, ['xoctGUI', 'compareStdClassByName']);
 
-        $arr = array(
+        $arr = [
             'owner' => $owner_data,
             'available' => $available_users,
-        );
+        ];
 
         $this->outJson($arr);
     }
@@ -148,7 +147,10 @@ class xoctChangeOwnerGUI extends xoctGUI
         $user_id = $_GET['user_id'];
         $this->event->setAcl(
             $this->ACLUtils->changeOwner(
-                $this->event->getAcl(), xoctUser::getInstance($user_id)));
+                $this->event->getAcl(),
+                xoctUser::getInstance($user_id)
+            )
+        );
         $this->event_repository->updateACL(new UpdateEventRequest(
             $this->event->getIdentifier(),
             new UpdateEventRequestPayload(null, $this->event->getAcl())

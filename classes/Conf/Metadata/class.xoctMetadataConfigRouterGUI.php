@@ -9,10 +9,10 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 class xoctMetadataConfigRouterGUI
 {
     use DICTrait;
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-    const SUBTAB_EVENTS = 'events';
-    const SUBTAB_SERIES = 'series';
+    public const SUBTAB_EVENTS = 'events';
+    public const SUBTAB_SERIES = 'series';
 
 
     public function executeCommand()
@@ -60,5 +60,4 @@ class xoctMetadataConfigRouterGUI
         );
         self::dic()->tabs()->activateSubTab($active_subtab);
     }
-
 }

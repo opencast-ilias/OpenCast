@@ -15,7 +15,6 @@ use xoctException;
  */
 class MetadataField implements JsonSerializable
 {
-
     /**
      * @var string
      */
@@ -45,14 +44,16 @@ class MetadataField implements JsonSerializable
     public function __construct(string $id, MDDataType $type)
     {
         if (strlen($id) == 0) {
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                "id of MetadataField cannot be empty");
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                "id of MetadataField cannot be empty"
+            );
         }
         $this->id = $id;
         $this->type = $type;
     }
 
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -78,7 +79,7 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TIME:
             return $this->getValue();
-            case MDDataType::TYPE_DATETIME;
+            case MDDataType::TYPE_DATETIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d\TH:i:s\Z') : '';
@@ -89,7 +90,7 @@ class MetadataField implements JsonSerializable
         }
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         switch ($this->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
@@ -98,7 +99,7 @@ class MetadataField implements JsonSerializable
                 return $this->getValue();
             case MDDataType::TYPE_TEXT_ARRAY:
                 return implode(', ', $this->getValue());
-            case MDDataType::TYPE_DATETIME;
+            case MDDataType::TYPE_DATETIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y H:i:s') : '';
@@ -117,8 +118,10 @@ class MetadataField implements JsonSerializable
     {
         if (!$this->type->isValidValue($value)) {
             $class = gettype($value) === 'object' ? get_class($value) : gettype($value);
-            throw new xoctException(xoctException::INTERNAL_ERROR,
-                "invalid value type $class for md type {$this->type->getTitle()}");
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                "invalid value type $class for md type {$this->type->getTitle()}"
+            );
         }
         $this->value = $value;
     }
@@ -128,7 +131,7 @@ class MetadataField implements JsonSerializable
      * @return $this
      * @throws xoctException
      */
-    public function withValue($value) : self
+    public function withValue($value): self
     {
         $clone = clone $this;
         $clone->setValue($value);
@@ -140,7 +143,7 @@ class MetadataField implements JsonSerializable
      *
      * @return string
      */
-    protected function fixPercentCharacter(string $string) : string
+    protected function fixPercentCharacter(string $string): string
     {
         // Bug in OpenCast server? The server think the JSON body is url encoded, but % is valid in JSON
         return str_replace('%', rawurlencode('%'), $string);

@@ -39,7 +39,7 @@ class DownloadDto
     /**
      * @return string
      */
-    public function getPublicationId() : string
+    public function getPublicationId(): string
     {
         return $this->publication_id;
     }
@@ -47,7 +47,7 @@ class DownloadDto
     /**
      * @return string
      */
-    public function getResolution() : string
+    public function getResolution(): string
     {
         return $this->resolution;
     }
@@ -55,9 +55,8 @@ class DownloadDto
     /**
      * @return string
      */
-    public function getUrl() : string
+    public function getUrl(): string
     {
         return $this->url;
     }
-
 }

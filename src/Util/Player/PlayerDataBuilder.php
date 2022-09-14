@@ -12,8 +12,8 @@ use xoctException;
  */
 abstract class PlayerDataBuilder
 {
-    const ROLE_MASTER = "presenter";
-    const ROLE_SLAVE = "presentation";
+    public const ROLE_MASTER = "presenter";
+    public const ROLE_SLAVE = "presentation";
 
     /**
      * @var Event
@@ -33,7 +33,5 @@ abstract class PlayerDataBuilder
      * @return array
      * @throws xoctException
      */
-    public abstract function buildStreamingData() : array;
-
-
+    abstract public function buildStreamingData(): array;
 }

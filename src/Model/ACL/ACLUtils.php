@@ -9,14 +9,13 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 
 class ACLUtils
 {
-
     /**
      * A combination of standard roles, user roles and owner roles. Used on newly created objects.
      *
      * @param xoctUser $user
      * @return ACL
      */
-    public function getBaseACLForUser(xoctUser $user) : ACL
+    public function getBaseACLForUser(xoctUser $user): ACL
     {
         return $this->getOwnerRolesACL($user)
             ->merge($this->getUserRolesACL($user))
@@ -38,8 +37,8 @@ class ACLUtils
 
     public function getUserRolesACL(xoctUser $user): ACL
     {
-        if($user->getUserRoleName() === null) {
-           return new ACL([]);
+        if ($user->getUserRoleName() === null) {
+            return new ACL([]);
         }
 
         return new ACL([
@@ -54,7 +53,8 @@ class ACLUtils
         }
         return new ACL(
             [new ACLEntry($user->getOwnerRoleName(), ACLEntry::READ, true),
-                new ACLEntry($user->getOwnerRoleName(), ACLEntry::WRITE, true)]);
+                new ACLEntry($user->getOwnerRoleName(), ACLEntry::WRITE, true)]
+        );
     }
 
     public function getOwnerOfEvent(Event $event): ?xoctUser
@@ -95,23 +95,23 @@ class ACLUtils
 
     public function getOwnerAclOfEvent(Event $event): ACL
     {
-        return new ACL(array_filter($event->getAcl()->getEntries(), function(ACLEntry $entry) {
+        return new ACL(array_filter($event->getAcl()->getEntries(), function (ACLEntry $entry) {
             return $this->isOwnerRole($entry);
         }));
     }
 
-    public function changeOwner(ACL $ACL, xoctUser $owner) : ACL
+    public function changeOwner(ACL $ACL, xoctUser $owner): ACL
     {
         return $this->removeOwnerFromACL($ACL)
             ->merge($this->getOwnerRolesACL($owner));
     }
 
-    public function isOwnerRole(ACLEntry $ACLEntry) : bool
+    public function isOwnerRole(ACLEntry $ACLEntry): bool
     {
         return strpos($ACLEntry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false;
     }
 
-    public function isUserOwnerOfEvent(xoctUser $user, Event $event) : bool
+    public function isUserOwnerOfEvent(xoctUser $user, Event $event): bool
     {
         $owner = $this->getOwnerOfEvent($event);
         return !is_null($owner) && ($owner->getIliasUserId() == $user->getIliasUserId());

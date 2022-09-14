@@ -13,8 +13,7 @@ use ActiveRecord;
  */
 class WorkflowAR extends ActiveRecord
 {
-
-    const TABLE_NAME = 'xoct_workflow';
+    public const TABLE_NAME = 'xoct_workflow';
 
 
     /**
@@ -65,7 +64,7 @@ class WorkflowAR extends ActiveRecord
     /**
      * @return int
      */
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -83,7 +82,7 @@ class WorkflowAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getWorkflowId() : string
+    public function getWorkflowId(): string
     {
         return $this->workflow_id;
     }
@@ -101,7 +100,7 @@ class WorkflowAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getTitle() : string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -118,7 +117,7 @@ class WorkflowAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getParameters() : string
+    public function getParameters(): string
     {
         return $this->parameters ?: '';
     }
@@ -130,6 +129,4 @@ class WorkflowAR extends ActiveRecord
     {
         $this->parameters = $parameters;
     }
-
-
 }

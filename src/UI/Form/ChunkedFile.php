@@ -24,17 +24,17 @@ class ChunkedFile extends File
     ) {
         parent::__construct($data_factory, $refinery, $handler, $label, $byline);
     }
-    
+
     public static function getInstance(
         AbstractCtrlAwareChunkedUploadHandler $upload_handler,
         string $label,
         string $byline = null
-    ) : ChunkedFile {
+    ): ChunkedFile {
         global $DIC;
-        
+
         $data_factory = new \ILIAS\Data\Factory();
         $refinery = new \ILIAS\Refinery\Factory($data_factory, $DIC["lng"]);
-        
+
         return (new self(
             $data_factory,
             $refinery,
@@ -43,8 +43,8 @@ class ChunkedFile extends File
             $byline
         ));
     }
-    
-    protected function isClientSideValueOk($value) : bool
+
+    protected function isClientSideValueOk($value): bool
     {
         if (is_null($value)) {
             return true;
@@ -59,7 +59,7 @@ class ChunkedFile extends File
         }
         return false;
     }
-    
+
     protected function getConstraintForRequirement()
     {
         return $this->refinery->custom()->constraint(

@@ -29,10 +29,10 @@ use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
  */
 class EventFormBuilder
 {
-    const F_ACCEPT_EULA = 'accept_eula';
-    const MB_IN_B = 1000 * 1000;
-    const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
-    
+    public const F_ACCEPT_EULA = 'accept_eula';
+    public const MB_IN_B = 1000 * 1000;
+    public const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
+
     private static $accepted_video_mimetypes = [
         ilMimeTypeUtil::VIDEO__AVI,
         ilMimeTypeUtil::VIDEO__QUICKTIME,
@@ -123,18 +123,18 @@ class EventFormBuilder
     private $dic;
 
 
-    public function __construct(UIFactory                         $ui_factory,
-                                RefineryFactory                   $refinery_factory,
-                                MDFormItemBuilder                 $formItemBuilder,
-                                SeriesWorkflowParameterRepository $workflowParameterRepository,
-                                UploadStorageService              $uploadStorageService,
-                                UploadHandler                     $uploadHandler,
-                                ilPlugin                          $plugin,
-                                SchedulingFormItemBuilder         $schedulingFormItemBuilder,
-                                SeriesRepository                  $seriesRepository,
-                                Container                         $dic
-    )
-    {
+    public function __construct(
+        UIFactory $ui_factory,
+        RefineryFactory $refinery_factory,
+        MDFormItemBuilder $formItemBuilder,
+        SeriesWorkflowParameterRepository $workflowParameterRepository,
+        UploadStorageService $uploadStorageService,
+        UploadHandler $uploadHandler,
+        ilPlugin $plugin,
+        SchedulingFormItemBuilder $schedulingFormItemBuilder,
+        SeriesRepository $seriesRepository,
+        Container $dic
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
         $this->formItemBuilder = $formItemBuilder;
@@ -168,7 +168,7 @@ class EventFormBuilder
         $upload_limit = $configured_upload_limit > 0
             ? $configured_upload_limit * self::MB_IN_B
             : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MB_IN_B;
-    
+
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
@@ -180,7 +180,7 @@ class EventFormBuilder
                                          }
                                      )
                                  );
-        
+
         $file_section_inputs = ['file' => $file_input];
         if ($obj_id == 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
@@ -233,7 +233,8 @@ class EventFormBuilder
         }
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            $inputs);
+            $inputs
+        );
     }
 
     public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling, bool $as_admin): Form
@@ -254,7 +255,9 @@ class EventFormBuilder
     {
         return $this->ui_factory->input()->field()->section([
             self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
-                $this->plugin->txt('event_accept_eula'), PluginConfig::getConfig(PluginConfig::F_EULA))
+                $this->plugin->txt('event_accept_eula'),
+                PluginConfig::getConfig(PluginConfig::F_EULA)
+            )
                 ->withRequired(true)
                 ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
                     // must be checked (required-functionality doesn't guarantee that)
@@ -270,7 +273,7 @@ class EventFormBuilder
             : self::$accepted_video_mimetypes;
     }
 
-    private function getAcceptedSuffix() : array
+    private function getAcceptedSuffix(): array
     {
         return array_unique(preg_replace(['#video/#', '#audio/#'], '.', $this->getMimeTypes()));
     }
@@ -284,7 +287,7 @@ class EventFormBuilder
         foreach ($this->seriesRepository->getAllForUser($xoct_user->getUserRoleName()) as $series) {
             $series_options[$series->getIdentifier()] =
                 $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue()
-                . ' (...' . substr($series->getIdentifier(),-4, 4) . ')';
+                . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
         }
 
         natcasesort($series_options);
@@ -299,5 +302,4 @@ class EventFormBuilder
             $series_options
         )->withRequired(true);
     }
-
 }

@@ -38,5 +38,4 @@ class UpdateSeriesACLRequest
     {
         return $this->payload;
     }
-
 }

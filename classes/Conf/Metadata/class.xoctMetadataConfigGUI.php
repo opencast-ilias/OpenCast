@@ -15,8 +15,8 @@ use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
-    const CMD_STORE = 'store';
-    const CMD_REORDER = 'reorder';
+    public const CMD_STORE = 'store';
+    public const CMD_REORDER = 'reorder';
 
     /**
      * @var MDFieldConfigRepository
@@ -53,10 +53,12 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      */
     protected $plugin;
 
-    public function __construct(MDFieldConfigRepository $repository,
-                                MDCatalogueFactory      $md_catalogue_factory,
-                                Container               $dic,
-                                ilPlugin                $plugin)
+    public function __construct(
+        MDFieldConfigRepository $repository,
+        MDCatalogueFactory $md_catalogue_factory,
+        Container $dic,
+        ilPlugin $plugin
+    )
     {
         $this->repository = $repository;
         $this->ui_factory = self::dic()->ui()->factory();
@@ -88,8 +90,10 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $items = [];
         foreach ($this->getAvailableMetadataFields() as $field_id) {
             self::dic()->ctrl()->setParameter($this, 'field_id', $field_id);
-            $items[] = $this->ui_factory->link()->standard($field_id,
-                self::dic()->ctrl()->getLinkTarget($this, self::CMD_ADD));
+            $items[] = $this->ui_factory->link()->standard(
+                $field_id,
+                self::dic()->ctrl()->getLinkTarget($this, self::CMD_ADD)
+            );
         }
         self::dic()->ctrl()->clearParameters($this);
         if (count($items)) {
@@ -215,12 +219,15 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                         'read_only' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_read_only'))
                             ->withDisabled($md_field_def->isReadOnly())
                             ->withValue($md_field_def->isReadOnly() || ($md_field_config && $md_field_config->isReadOnly())),
-                        'prefill' => $this->ui_factory->input()->field()->select(self::plugin()->translate('md_prefill'),
-                            $this->getPrefillOptions())
+                        'prefill' => $this->ui_factory->input()->field()->select(
+                            self::plugin()->translate('md_prefill'),
+                            $this->getPrefillOptions()
+                        )
                             ->withRequired(true)
                             ->withDisabled($md_field_def->isReadOnly())
                             ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : MDPrefillOption::T_NONE)
-                    ], $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
+                    ],
+                    $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
                 )]
         );
     }

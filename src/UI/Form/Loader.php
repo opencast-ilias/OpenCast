@@ -19,18 +19,18 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
      * @var Container
      */
     protected $dic;
-    
+
     /**
      * @var \ilOpenCastPlugin
      */
     protected $plugin;
-    
+
     public function __construct(Container $dic, \ilOpenCastPlugin $plugin)
     {
         $this->dic = $dic;
         $this->plugin = $plugin;
     }
-    
+
     public function getRendererFor(Component $component, array $contexts)
     {
         if ($component instanceof ChunkedFile) {
@@ -44,13 +44,13 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
             );
             $renderer->registerResources($this->dic["ui.resource_registry"]);
             $renderer->setPluginInstance($this->plugin);
-            
+
             return $renderer;
         }
-        
+
         return $this->dic['ui.component_renderer_loader']->getRendererFor($component, $contexts);
     }
-    
+
     public function getRendererFactoryFor(Component $component)
     {
         return $this->dic['ui.component_renderer_loader']->getRendererFactoryFor($component);

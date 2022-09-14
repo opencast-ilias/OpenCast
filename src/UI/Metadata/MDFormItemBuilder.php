@@ -30,8 +30,7 @@ use xoctException;
  */
 class MDFormItemBuilder
 {
-
-    const LABEL_PREFIX = 'md_';
+    public const LABEL_PREFIX = 'md_';
 
     /**
      * @var UIFactory
@@ -66,14 +65,16 @@ class MDFormItemBuilder
      */
     private $dic;
 
-    public function __construct(MDCatalogue             $md_catalogue,
-                                MDFieldConfigRepository $repository,
-                                MDPrefiller             $prefiller,
-                                UIFactory               $ui_factory,
-                                RefineryFactory         $refinery_factory,
-                                MDParser                $MDParser,
-                                ilPlugin                $plugin,
-                                Container               $dic)
+    public function __construct(
+        MDCatalogue $md_catalogue,
+        MDFieldConfigRepository $repository,
+        MDPrefiller $prefiller,
+        UIFactory $ui_factory,
+        RefineryFactory $refinery_factory,
+        MDParser $MDParser,
+        ilPlugin $plugin,
+        Container $dic
+    )
     {
         $this->ui_factory = $ui_factory;
         $this->md_catalogue = $md_catalogue;
@@ -102,8 +103,10 @@ class MDFormItemBuilder
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements) {
             // TODO: visible for permission!
             $key = $this->prefixPostVar($md_field_config->getFieldId());
-            $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
-                $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
+            $form_elements[$key] = $this->buildFormElementForMDField(
+                $md_field_config,
+                $this->prefiller->getPrefillValue($md_field_config->getPrefill())
+            );
         });
         return $form_elements;
     }
@@ -114,8 +117,10 @@ class MDFormItemBuilder
         $MDFieldConfigARS = $this->md_conf_repository->getAll($as_admin);
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
-            $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
-                $existing_metadata->getField($md_field_config->getFieldId())->getValue());
+            $form_elements[$key] = $this->buildFormElementForMDField(
+                $md_field_config,
+                $existing_metadata->getField($md_field_config->getFieldId())->getValue()
+            );
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
@@ -126,13 +131,17 @@ class MDFormItemBuilder
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
-            return !in_array($fieldConfigAR->getFieldId(),
-                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]);
+            return !in_array(
+                $fieldConfigAR->getFieldId(),
+                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
+            );
         });
         array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
-            $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
-                $this->prefiller->getPrefillValue($md_field_config->getPrefill()));
+            $form_elements[$key] = $this->buildFormElementForMDField(
+                $md_field_config,
+                $this->prefiller->getPrefillValue($md_field_config->getPrefill())
+            );
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
@@ -143,13 +152,17 @@ class MDFormItemBuilder
         $form_elements = [];
         $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
             // start date is part of scheduling and location has a special input field
-            return !in_array($fieldConfigAR->getFieldId(),
-                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]);
+            return !in_array(
+                $fieldConfigAR->getFieldId(),
+                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
+            );
         });
         array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
-            $form_elements[$key] = $this->buildFormElementForMDField($md_field_config,
-                $existing_metadata->getField($md_field_config->getFieldId())->getValue());
+            $form_elements[$key] = $this->buildFormElementForMDField(
+                $md_field_config,
+                $existing_metadata->getField($md_field_config->getFieldId())->getValue()
+            );
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
             ->withAdditionalTransformation($this->transformation());
@@ -185,8 +198,10 @@ class MDFormItemBuilder
                 $field = $this->ui_factory->input()->field()->dateTime($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))->withUseTime(true);
                 break;
             default:
-                throw new xoctException(xoctException::INTERNAL_ERROR,
-                    'Unknown MDDataType: ' . $md_definition->getType()->getTitle());
+                throw new xoctException(
+                    xoctException::INTERNAL_ERROR,
+                    'Unknown MDDataType: ' . $md_definition->getType()->getTitle()
+                );
         }
         $field = $field
             ->withRequired($fieldConfigAR->isRequired())

@@ -12,9 +12,8 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  */
 class xoctSeriesWorkflowParameterTableGUI extends TableGUI
 {
-
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
     /**
      * @var xoctSeriesGUI
      */
@@ -111,7 +110,7 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $ilSelectInputGUI->setValue($row['value_admin']);
         $this->tpl->setVariable("VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
-        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", NULL);
+        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", null);
     }
 
 

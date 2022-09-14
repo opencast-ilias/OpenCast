@@ -24,10 +24,9 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  */
 class xoctSeriesAPI
 {
-
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
      * @var self
@@ -101,7 +100,7 @@ class xoctSeriesAPI
      * @throws xoctException
      * @throws xoctInternalApiException
      */
-    public function create(int $parent_ref_id, string $title, $additional_data = array()): ObjectSettings
+    public function create(int $parent_ref_id, string $title, $additional_data = []): ObjectSettings
     {
         if (!ilObjOpenCast::_getParentCourseOrGroup($parent_ref_id)) {
             throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
@@ -138,7 +137,7 @@ class xoctSeriesAPI
             /** @var PermissionTemplate $xoctPermissionTemplate */
             $xoctPermissionTemplate = PermissionTemplate::find($additional_data['permission_template_id']);
             $xoctPermissionTemplate->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
-        } elseif ($default_template = PermissionTemplate::where(array('is_default' => 1))->first()) {
+        } elseif ($default_template = PermissionTemplate::where(['is_default' => 1])->first()) {
             /** @var PermissionTemplate $default_template */
             $default_template->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
         }
@@ -238,13 +237,13 @@ class xoctSeriesAPI
     {
         $object = new ilObjOpenCast($ref_id);
         /** @var ObjectSettings $settings */
-        $settings = ObjectSettings::where(array('obj_id' => $object->getId()))->first();
+        $settings = ObjectSettings::where(['obj_id' => $object->getId()])->first();
         $series = $this->series_repository->find($settings->getSeriesIdentifier());
 
         $update_ilias_data = $update_opencast_data = false;
 
         // ilias data
-        foreach (array('online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'permission_allow_set_own') as $field) {
+        foreach (['online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'permission_allow_set_own'] as $field) {
             if (isset($data[$field])) {
                 $setter = 'set' . str_replace('_', '', $field);
                 $settings->$setter($data[$field]);
@@ -267,7 +266,7 @@ class xoctSeriesAPI
             $update_opencast_data = true;
         }
 
-        foreach (array('title', 'description') as $field) {
+        foreach (['title', 'description'] as $field) {
             if (isset($data[$field])) {
                 $series->getMetadata()->getField($field)->setValue($data[$field]);
                 $update_opencast_data = true;
@@ -275,10 +274,12 @@ class xoctSeriesAPI
         }
 
         if ($update_opencast_data) {
-            $this->series_repository->updateMetadata(new UpdateSeriesMetadataRequest($series->getIdentifier(),
+            $this->series_repository->updateMetadata(new UpdateSeriesMetadataRequest(
+                $series->getIdentifier(),
                 new UpdateSeriesMetadataRequestPayload(
                     $series->getMetadata()
-                )));
+                )
+            ));
             $object->updateObjectFromSeries($series->getMetadata());
         }
 

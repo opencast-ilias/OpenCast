@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 namespace srag\Plugins\Opencast\Model\Agent;
@@ -12,7 +13,6 @@ use DateTimeImmutable;
  */
 class Agent
 {
-
     /**
      * @var string
      */

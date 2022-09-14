@@ -19,16 +19,15 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctEventTableGUI extends ilTable2GUI
 {
-
     use DICTrait;
 
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-    const TBL_ID = 'tbl_xoct';
+    public const TBL_ID = 'tbl_xoct';
     /**
      * @var array
      */
-    protected $filter = array();
+    protected $filter = [];
     /**
      * @var ObjectSettings
      */
@@ -67,12 +66,14 @@ class xoctEventTableGUI extends ilTable2GUI
      * @throws DICException
      * @throws xoctException
      */
-    public function __construct(xoctEventGUI   $a_parent_obj,
-                                string         $a_parent_cmd,
-                                ObjectSettings $objectSettings,
-                                array          $md_fields,
-                                array          $data,
-                                string         $lang_key)
+    public function __construct(
+        xoctEventGUI $a_parent_obj,
+        string $a_parent_cmd,
+        ObjectSettings $objectSettings,
+        array $md_fields,
+        array $data,
+        string $lang_key
+    )
     {
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
@@ -99,7 +100,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->setDefaultOrderField('created_s');
 
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
-            $this->setExportFormats(array(self::EXPORT_CSV));
+            $this->setExportFormats([self::EXPORT_CSV]);
         }
     }
 
@@ -187,19 +188,19 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected function getAllColums()
     {
-        $columns = array(
-            'event_preview' => array(
+        $columns = [
+            'event_preview' => [
                 'selectable' => false,
-                'sort_field' => NULL,
+                'sort_field' => null,
                 'width' => '250px',
                 'lang_var' => 'event_preview'
-            ),
-            'event_clips' => array(
+            ],
+            'event_clips' => [
                 'selectable' => false,
-                'sort_field' => NULL,
+                'sort_field' => null,
                 'lang_var' => 'event_clips'
-            ),
-        );
+            ],
+        ];
 
         foreach ($this->md_fields as $md_field) {
             $columns[$md_field->getFieldId()] = [
@@ -210,21 +211,21 @@ class xoctEventTableGUI extends ilTable2GUI
         }
 
         $columns += [
-            'event_owner' => array(
+            'event_owner' => [
                 'selectable' => true,
                 'sort_field' => 'owner_username',
                 'default' => $this->getOwnerColDefault(),
                 'lang_var' => 'event_owner'
-            ),
-            'unprotected_link' => array(
+            ],
+            'unprotected_link' => [
                 'selectable' => false,
                 'sort_field' => 'unprotected_link',
                 'lang_var' => 'unprotected_link'
-            ),
-            'common_actions' => array(
+            ],
+            'common_actions' => [
                 'selectable' => false,
                 'lang_var' => 'common_actions'
-            ),
+            ],
         ];
 
         if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
@@ -243,7 +244,7 @@ class xoctEventTableGUI extends ilTable2GUI
     protected function getOwnerColDefault()
     {
         static $owner_visible;
-        if ($owner_visible !== NULL) {
+        if ($owner_visible !== null) {
             return $owner_visible;
         }
         $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->objectSettings->getPermissionPerClip());
@@ -286,7 +287,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $dropdown = self::dic()->ui()->factory()->dropdown()->standard($actions)
             ->withLabel(self::plugin()->translate('common_actions'));
 
-        $this->tpl->setVariable('ACTIONS',
+        $this->tpl->setVariable(
+            'ACTIONS',
             self::dic()->ui()->renderer()->renderAsync($dropdown)
         );
     }
@@ -312,7 +314,7 @@ class xoctEventTableGUI extends ilTable2GUI
                         }
                         break;
                     default:
-                        if ($value === NULL || $value === '' || $value === false) {
+                        if ($value === null || $value === '' || $value === false) {
                             continue 2;
                         }
                         $strpos = (strpos(strtolower($array[$field]), strtolower($value)) !== false);
@@ -355,10 +357,10 @@ class xoctEventTableGUI extends ilTable2GUI
                 $this->filter[$item->getPostVar()] = $item->getChecked();
                 break;
             case ($item instanceof ilDateDurationInputGUI):
-                $this->filter[$item->getPostVar()] = array(
+                $this->filter[$item->getPostVar()] = [
                     'start' => $item->getStart(),
                     'end' => $item->getEnd(),
-                );
+                ];
                 break;
             default:
                 $this->filter[$item->getPostVar()] = $item->getValue();
@@ -389,9 +391,9 @@ class xoctEventTableGUI extends ilTable2GUI
         $data = $this->getData();
         foreach ($data[0] as $k => $v) {
             switch ($k) {
-                case 'created_unix';
-                case 'start_unix';
-                case 'object';
+                case 'created_unix':
+                case 'start_unix':
+                case 'object':
                     continue 2;
             }
             $a_csv->addColumn($k);
@@ -406,12 +408,12 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected function fillRowCSV($a_csv, $a_set)
     {
-        $set = array();
+        $set = [];
         foreach ($a_set as $k => $value) {
             switch ($k) {
-                case 'created_unix';
-                case 'start_unix';
-                case 'object';
+                case 'created_unix':
+                case 'start_unix':
+                case 'object':
                     continue 2;
             }
 
@@ -427,17 +429,17 @@ class xoctEventTableGUI extends ilTable2GUI
     public function getSelectableColumns()
     {
         static $selectable_columns;
-        if ($selectable_columns !== NULL) {
+        if ($selectable_columns !== null) {
             return $selectable_columns;
         }
-        $selectable_columns = array();
+        $selectable_columns = [];
         foreach ($this->getAllColums() as $key => $col) {
             if ($col['selectable']) {
                 $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $col['text'];
-                $selectable_columns[$key] = array(
+                $selectable_columns[$key] = [
                     'txt' => $col_title,
                     'default' => isset($col['default']) ? $col['default'] : true,
-                );
+                ];
             }
         }
 
@@ -455,13 +457,13 @@ class xoctEventTableGUI extends ilTable2GUI
             }
             $selfields['event_owner'] = (bool)$visible;
             $usr_id = $rec['user_id'];
-            self::dic()->database()->update('table_properties', array(
-                'value' => array('text', serialize($selfields))
-            ), array(
-                'table_id' => array('text', $table_id),
-                'user_id' => array('integer', $usr_id),
-                'property' => array('text', 'selfields'),
-            ));
+            self::dic()->database()->update('table_properties', [
+                'value' => ['text', serialize($selfields)]
+            ], [
+                'table_id' => ['text', $table_id],
+                'user_id' => ['integer', $usr_id],
+                'property' => ['text', 'selfields'],
+            ]);
         }
     }
 
@@ -472,7 +474,4 @@ class xoctEventTableGUI extends ilTable2GUI
     {
         return $this->has_scheduled_events;
     }
-
 }
-
-?>

@@ -7,8 +7,6 @@ use xoctRequest;
 
 class PublicationAPIRepository implements PublicationRepository
 {
-
-
     /**
      * @var Cache
      */
@@ -19,7 +17,7 @@ class PublicationAPIRepository implements PublicationRepository
         $this->cache = $cache;
     }
 
-    public function find(string $identifier) : array
+    public function find(string $identifier): array
     {
         return $this->cache->get('event-pubs-' . $identifier)
             ?? $this->fetch($identifier);
