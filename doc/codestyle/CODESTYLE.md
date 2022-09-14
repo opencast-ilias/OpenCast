@@ -5,5 +5,5 @@ In general, we use the same Code-Style as the ILIAS-Project (see [README](https:
 While developing you can use php-cs-fixer with the configuration here: [php-cs-fixer-config.php](php-cs-fixer-config.php)
 
 ```bash
-./vendor/bin/php-cs-fixer fix --config doc/CodeStyle/php-cs-fixer-config.php PATH_TO_CODE
+./vendor/bin/php-cs-fixer fix --config doc/CodeStyle/php-cs-fixer-config.php [OPTIONAL_PATH_TO_CODE]
 ```
