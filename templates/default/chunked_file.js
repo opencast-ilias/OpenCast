@@ -74,12 +74,13 @@ il.UI.Input = il.UI.Input || {};
           let progressElement = file.previewElement.querySelector(".progress");
           let progressBarElement = file.previewElement.querySelector(".progress-bar");
           let number = Math.round(progress);
+
           if (number === 100 && bytesSent < file.size) {
             return;
           }
           if (progressBarElement && progressBarElement) {
             progressElement.style.display = "block";
-            if (number > myDropzone.progress_storage) {
+            if (number > this.progress_storage) {
               progressBarElement.textContent = number + "%";
               progressBarElement.style.width = number + "%";
             }
