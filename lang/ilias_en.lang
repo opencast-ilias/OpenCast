@@ -499,6 +499,7 @@ date_from#:#Date From
 date_to#:#Date To
 sender#:#Creator
 workflow_parameters#:#Workflow Parameters
+processing_settings#:#Processing settings
 default_values#:#Default Values
 default_value_member#:#Usage for Members
 default_value_admin#:#Usage for Admins

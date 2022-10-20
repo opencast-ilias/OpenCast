@@ -323,7 +323,7 @@ class SeriesWorkflowParameterRepository
 
     private function buildFormSection(array $items): Input
     {
-        return $this->ui_factory->input()->field()->section($items, 'Workflow Parameter')
+        return $this->ui_factory->input()->field()->section($items, $this->plugin->txt('processing_settings'))
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
                 $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
                 return $vs;
