@@ -9,7 +9,6 @@ namespace srag\Plugins\Opencast\Model\Publication;
  */
 class Media extends publicationMetadata
 {
-
     /**
      * @var bool
      */

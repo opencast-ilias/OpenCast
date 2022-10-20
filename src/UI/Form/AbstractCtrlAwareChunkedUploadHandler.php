@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace srag\Plugins\OpenCast\UI\Component\Input\Field;
 
@@ -17,8 +19,8 @@ abstract class AbstractCtrlAwareChunkedUploadHandler extends AbstractCtrlAwareUp
     protected $amount_of_chunks = 0;
     protected $chunk_id = '';
     protected $chunk_total_size = 0;
-    
-    protected function readChunkedInformation() : void
+
+    protected function readChunkedInformation(): void
     {
         $body = $this->http->request()->getParsedBody();
         $this->chunk_id = $body['dzuuid'] ?? '';
@@ -27,16 +29,15 @@ abstract class AbstractCtrlAwareChunkedUploadHandler extends AbstractCtrlAwareUp
         $this->chunk_total_size = (int) $body['dztotalfilesize'];
         $this->is_chunked = $this->chunk_id !== '';
     }
-    
-    public function executeCommand() : void
+
+    public function executeCommand(): void
     {
         $this->readChunkedInformation();
         parent::executeCommand();
     }
-    
-    public function supportsChunkedUploads() : bool
+
+    public function supportsChunkedUploads(): bool
     {
         return true;
     }
-    
 }

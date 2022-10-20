@@ -8,87 +8,86 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowParametersFormGUI extends PropertyFormGUI {
+class xoctWorkflowParametersFormGUI extends PropertyFormGUI
+{
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const PROPERTY_TITLE = 'setTitle';
+    public const PROPERTY_INFO = 'setInfo';
 
-	const PROPERTY_TITLE = 'setTitle';
-	const PROPERTY_INFO = 'setInfo';
+    public const F_OVERWRITE_SERIES_PARAMS = 'overwrite_series_params';
 
-	const F_OVERWRITE_SERIES_PARAMS = 'overwrite_series_params';
+    /**
+     * @var xoctWorkflowParameterGUI
+     */
+    protected $parent;
 
-	/**
-	 * @var xoctWorkflowParameterGUI
-	 */
-	protected $parent;
-
-	/**
-	 * @param string $key
-	 *
-	 * @return mixed|void
-	 */
-	protected function getValue(string $key) {
-
-	}
-
-	protected function initCommands() : void
+    /**
+     * @param string $key
+     *
+     * @return mixed|void
+     */
+    protected function getValue(string $key)
     {
-		$this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
-	}
+    }
 
-
-	protected function initFields() : void
+    protected function initCommands(): void
     {
-		$this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-			self::PROPERTY_TITLE => self::plugin()->translate(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
-			self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-			self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
-			self::PROPERTY_SUBITEMS => [
-				self::F_OVERWRITE_SERIES_PARAMS => [
-					self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-					self::PROPERTY_INFO => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS . '_info', 'config'),
-					self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-				]
-			]
-		];
-	}
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
+    }
 
 
-	/**
-	 *
-	 */
-	protected function initId() : void
+    protected function initFields(): void
     {
-	}
+        $this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
+            self::PROPERTY_TITLE => self::plugin()->translate(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
+            self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
+            self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
+            self::PROPERTY_SUBITEMS => [
+                self::F_OVERWRITE_SERIES_PARAMS => [
+                    self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
+                    self::PROPERTY_INFO => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS . '_info', 'config'),
+                    self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
+                ]
+            ]
+        ];
+    }
 
 
-	/**
-	 *
-	 */
-	protected function initTitle() : void
+    /**
+     *
+     */
+    protected function initId(): void
     {
-		$this->setTitle(self::plugin()->translate('settings', 'tab'));
-	}
+    }
 
 
-	/**
-	 * @param string $key
-	 * @param mixed  $value
-	 */
-	protected function storeValue(string $key, $value) : void
+    /**
+     *
+     */
+    protected function initTitle(): void
     {
-		switch ($key) {
-			case PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
-				PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
-				break;
-			case self::F_OVERWRITE_SERIES_PARAMS:
-				if ($value == true) {
-					$this->parent->setOverwriteSeriesParameter();
-				}
-				break;
-			default:
-				break;
-		}
-	}
+        $this->setTitle(self::plugin()->translate('settings', 'tab'));
+    }
 
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
+    protected function storeValue(string $key, $value): void
+    {
+        switch ($key) {
+            case PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
+                PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
+                break;
+            case self::F_OVERWRITE_SERIES_PARAMS:
+                if ($value == true) {
+                    $this->parent->setOverwriteSeriesParameter();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }

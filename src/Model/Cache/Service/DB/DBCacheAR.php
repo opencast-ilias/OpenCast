@@ -9,7 +9,7 @@ use ActiveRecord;
  */
 class DBCacheAR extends ActiveRecord
 {
-    const TABLE_NAME = 'xoct_cache';
+    public const TABLE_NAME = 'xoct_cache';
 
     /**
      * @var string
@@ -63,12 +63,12 @@ class DBCacheAR extends ActiveRecord
     {
         $this->expires = $expires;
     }
-    
+
 
     /**
      * @return string
      */
-    public function getIdentifier() : string
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
@@ -76,7 +76,7 @@ class DBCacheAR extends ActiveRecord
     /**
      * @return string
      */
-    public function getValue() : string
+    public function getValue(): string
     {
         return $this->value;
     }
@@ -94,5 +94,4 @@ class DBCacheAR extends ActiveRecord
     {
         return self::TABLE_NAME;
     }
-
 }

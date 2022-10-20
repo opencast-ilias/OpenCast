@@ -53,10 +53,12 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         if (!$is_admin) {
             $AR = $AR->where(['visible_for_permissions' => 'all']);
         }
-        return array_filter($AR->get(),
+        return array_filter(
+            $AR->get(),
             function (MDFieldConfigEventAR $ar) use ($MDCatalogue) {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
-            });
+            }
+        );
     }
 
     public function getArray(): array
@@ -93,7 +95,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
      * @return MDFieldConfigEventAR[]
      * @throws xoctException
      */
-    function getAllFilterable(bool $is_admin): array
+    public function getAllFilterable(bool $is_admin): array
     {
         $catalogue = $this->MDCatalogueFactory->event();
         return array_filter($this->getAll($is_admin), function (MDFieldConfigEventAR $fieldConfig) use ($catalogue) {

@@ -18,7 +18,7 @@ class SeriesParser
     }
 
 
-    public function parseAPIResponse(stdClass $data) : Series
+    public function parseAPIResponse(stdClass $data): Series
     {
         $series = new Series();
         $series->setIdentifier($data->identifier);
@@ -29,5 +29,4 @@ class SeriesParser
         }
         return $series;
     }
-
 }

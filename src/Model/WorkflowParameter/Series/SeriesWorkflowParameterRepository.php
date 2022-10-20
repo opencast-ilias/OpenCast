@@ -18,7 +18,6 @@ use ActiveRecord;
  */
 class SeriesWorkflowParameterRepository
 {
-
     /**
      * @var self
      */
@@ -40,9 +39,11 @@ class SeriesWorkflowParameterRepository
      */
     private $workflowParameterParser;
 
-    public function __construct(Factory                 $ui_factory,
-                                RefineryFactory         $refinery,
-                                WorkflowParameterParser $workflowParameterParser)
+    public function __construct(
+        Factory $ui_factory,
+        RefineryFactory $refinery,
+        WorkflowParameterParser $workflowParameterParser
+    )
     {
         $this->ui_factory = $ui_factory;
         $this->refinery = $refinery;
@@ -56,7 +57,7 @@ class SeriesWorkflowParameterRepository
      */
     public static function getInstance()
     {
-        if (self::$instance == NULL) {
+        if (self::$instance == null) {
             global $DIC;
             $self = new self(
                 $DIC->ui()->factory(),

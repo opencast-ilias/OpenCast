@@ -20,7 +20,6 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
  */
 class EventModals
 {
-
     /**
      * @var Modal
      */
@@ -53,7 +52,6 @@ class EventModals
         $this->dic = $dic;
         $this->workflow_repository = $workflow_repository;
         $this->plugin = $plugin;
-
     }
 
     public function initRepublish()
@@ -82,7 +80,6 @@ class EventModals
             $modal_republish = $this->dic->ui()->factory()->modal()->roundtrip(
                 $this->plugin->txt('event_republish'),
                 $this->dic->ui()->factory()->legacy($form->getHTML())
-
             )->withActionButtons([$submit_btn]);
             $this->setRepublishModal($modal_republish);
         }
@@ -123,7 +120,7 @@ class EventModals
      * @return RoundTrip
      * @throws ilTemplateException
      */
-    protected function buildReportingModal(string $cmd, string $title, string $body) : RoundTrip
+    protected function buildReportingModal(string $cmd, string $title, string $body): RoundTrip
     {
         $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->plugin->getDirectory());
 
@@ -143,7 +140,6 @@ class EventModals
         $modal = $this->dic->ui()->factory()->modal()->roundtrip(
             $title,
             $this->dic->ui()->factory()->legacy($tpl->get())
-
         )->withActionButtons([$submit_btn]);
 
         return $modal;
@@ -153,7 +149,7 @@ class EventModals
     /**
      * @return Component[]
      */
-    public function getAllComponents() : array
+    public function getAllComponents(): array
     {
         $return = [];
         if (!is_null($this->report_date_modal)) {

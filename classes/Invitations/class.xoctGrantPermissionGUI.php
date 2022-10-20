@@ -17,7 +17,6 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctGrantPermissionGUI extends xoctGUI
 {
-
     /**
      * @var Event
      */
@@ -72,10 +71,10 @@ class xoctGrantPermissionGUI extends xoctGUI
         $temp->setVariable('HEADER_INVITAIONS', self::plugin()->translate('invitations_header'));
         $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->translate('groups_available_participants_header'));
         $temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-        $temp->setVariable('LANGUAGE', json_encode(array(
+        $temp->setVariable('LANGUAGE', json_encode([
             'none_available' => self::plugin()->translate('invitations_none_available'),
             'invite_all' => self::plugin()->translate('invitations_invite_all')
-        )));
+        ]));
         self::dic()->ui()->mainTemplate()->setContent($temp->get());
     }
 
@@ -101,21 +100,21 @@ class xoctGrantPermissionGUI extends xoctGUI
         /**
          * @var $xoctUser xoctUser
          */
-        $xoctUsers = array();
+        $xoctUsers = [];
         $course_members_user_ids = $this->getCourseMembers();
         foreach ($course_members_user_ids as $user_id) {
             $xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
         }
         $active_invitations = PermissionGrant::getActiveInvitationsForEvent($this->event, $this->objectSettings->getPermissionAllowSetOwn());
-        $invited_user_ids = array();
+        $invited_user_ids = [];
         foreach ($active_invitations as $inv) {
             $invited_user_ids[] = $inv->getUserId();
         }
 
 
         $available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
-        $invited_users = array();
-        $available_users = array();
+        $invited_users = [];
+        $available_users = [];
         $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
         foreach ($available_user_ids as $user_id) {
             if ($user_id == self::dic()->user()->getId()) {
@@ -142,10 +141,10 @@ class xoctGrantPermissionGUI extends xoctGUI
         usort($invited_users, ['xoctGUI', 'compareStdClassByName']);
         usort($available_users, ['xoctGUI', 'compareStdClassByName']);
 
-        $arr = array(
+        $arr = [
             'invited' => $invited_users,
             'available' => $available_users,
-        );
+        ];
 
         $this->outJson($arr);
     }
@@ -165,10 +164,10 @@ class xoctGrantPermissionGUI extends xoctGUI
 
     protected function create()
     {
-        $obj = PermissionGrant::where(array(
+        $obj = PermissionGrant::where([
             'event_identifier' => $this->event->getIdentifier(),
             'user_id' => $_POST['id'],
-        ))->first();
+        ])->first();
         $new = false;
         if (!$obj instanceof PermissionGrant) {
             $obj = new PermissionGrant();
@@ -193,10 +192,10 @@ class xoctGrantPermissionGUI extends xoctGUI
     {
         $objects = [];
         foreach ($_POST['ids'] as $id) {
-            $obj = PermissionGrant::where(array(
+            $obj = PermissionGrant::where([
                 'event_identifier' => $this->event->getIdentifier(),
                 'user_id' => $id,
-            ))->first();
+            ])->first();
             $new = false;
             if (!$obj instanceof PermissionGrant) {
                 $obj = new PermissionGrant();
@@ -233,10 +232,10 @@ class xoctGrantPermissionGUI extends xoctGUI
 
     protected function delete()
     {
-        $obj = PermissionGrant::where(array(
+        $obj = PermissionGrant::where([
             'event_identifier' => $this->event->getIdentifier(),
             'user_id' => $_POST['id'],
-        ))->first();
+        ])->first();
         if ($obj instanceof PermissionGrant) {
             $obj->delete();
         }

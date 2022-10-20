@@ -9,12 +9,13 @@ use srag\Plugins\Opencast\Model\Report\Report;
  *
  * @ilCtrl_IsCalledBy xoctReportOverviewGUI : xoctMainGUI
  */
-class xoctReportOverviewGUI extends xoctGUI {
-
+class xoctReportOverviewGUI extends xoctGUI
+{
     /**
      *
      */
-    protected function index() {
+    protected function index()
+    {
         ilUtil::sendInfo(self::plugin()->translate('msg_reports_table'));
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         self::dic()->ui()->mainTemplate()->setContent($xoctReportOverviewTableGUI->getHTML());
@@ -23,7 +24,8 @@ class xoctReportOverviewGUI extends xoctGUI {
     /**
      *
      */
-    protected function applyFilter() {
+    protected function applyFilter()
+    {
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $xoctReportOverviewTableGUI->writeFilterToSession();
         $xoctReportOverviewTableGUI->resetOffset();
@@ -33,7 +35,8 @@ class xoctReportOverviewGUI extends xoctGUI {
     /**
      *
      */
-    protected function resetFilter() {
+    protected function resetFilter()
+    {
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $xoctReportOverviewTableGUI->resetOffset();
         $xoctReportOverviewTableGUI->resetFilter();
@@ -43,31 +46,36 @@ class xoctReportOverviewGUI extends xoctGUI {
     /**
      *
      */
-    protected function add() {
+    protected function add()
+    {
     }
 
     /**
      *
      */
-    protected function create() {
+    protected function create()
+    {
     }
 
     /**
      *
      */
-    protected function edit() {
+    protected function edit()
+    {
     }
 
     /**
      *
      */
-    protected function update() {
+    protected function update()
+    {
     }
 
     /**
      *
      */
-    protected function confirmDelete() {
+    protected function confirmDelete()
+    {
         foreach ($_POST['id'] as $id) {
             $report = Report::find($id);
             $report->delete();
@@ -79,7 +87,8 @@ class xoctReportOverviewGUI extends xoctGUI {
     /**
      *
      */
-    protected function delete() {
+    protected function delete()
+    {
         if (!is_array($_POST['id']) || empty($_POST['id'])) {
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         }
@@ -94,5 +103,4 @@ class xoctReportOverviewGUI extends xoctGUI {
         $ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
         self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
     }
-
 }

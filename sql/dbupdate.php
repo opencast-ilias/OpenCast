@@ -413,10 +413,12 @@ $DIC->database()->dropTable('xoct_system_account', false);
 // if count is 0 means we are first time installing. a default config will be loaded in that case
 if (\srag\Plugins\Opencast\Model\Config\PluginConfig::count() > 0) {
     \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
-            \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION,
-            \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT);
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION,
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
+    );
     \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
-            \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION_LIVE,
-            \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT);
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION_LIVE,
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
+    );
 }
 ?>

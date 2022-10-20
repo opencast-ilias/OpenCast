@@ -38,11 +38,13 @@ class SchedulingFormItemBuilder
      */
     private $agentApiRepository;
 
-    public function __construct(UIFactory        $ui_factory,
-                                RefineryFactory  $refinery_factory,
-                                SchedulingParser $schedulingParser,
-                                ilPlugin         $plugin,
-                                AgentRepository  $agentApiRepository)
+    public function __construct(
+        UIFactory $ui_factory,
+        RefineryFactory $refinery_factory,
+        SchedulingParser $schedulingParser,
+        ilPlugin $plugin,
+        AgentRepository $agentApiRepository
+    )
     {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
@@ -57,7 +59,8 @@ class SchedulingFormItemBuilder
             [
                 MDFieldDefinition::F_LOCATION => $this->buildSchedulingLocationInput(),
                 'scheduling' => $this->buildSchedulingInput()
-            ], 'Scheduling'
+            ],
+            'Scheduling'
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $vs['object'] = $this->schedulingParser->parseCreateFormData($vs);
             return $vs;
@@ -70,7 +73,8 @@ class SchedulingFormItemBuilder
         return $this->ui_factory->input()->field()->section(
             [
                 MDFieldDefinition::F_LOCATION => $this->buildSchedulingLocationInput($scheduling->getAgentId()),
-            ] + $this->buildEditSchedulingInputs($scheduling), 'Scheduling'
+            ] + $this->buildEditSchedulingInputs($scheduling),
+            'Scheduling'
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $vs['object'] = $this->schedulingParser->parseUpdateFormData($vs);
             return $vs;
@@ -110,7 +114,6 @@ class SchedulingFormItemBuilder
             'no_repeat' => $group_no_repeat,
             'repeat' => $group_repeat
         ], $this->plugin->txt('event_multiple'))->withRequired(true)->withValue('no_repeat');
-
     }
 
     /**

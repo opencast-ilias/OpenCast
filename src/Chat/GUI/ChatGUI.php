@@ -18,19 +18,19 @@ use srag\Plugins\Opencast\Chat\Model\TokenAR;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class ChatGUI {
+class ChatGUI
+{
+    use DICTrait;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
-	use DICTrait;
-	const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
-	/**
-	 * @var ChatroomAR
-	 */
-	private $token;
-	/**
-	 * @var ilTemplate
-	 */
-	private $template;
+    /**
+     * @var ChatroomAR
+     */
+    private $token;
+    /**
+     * @var ilTemplate
+     */
+    private $template;
 
 
     /**
@@ -39,19 +39,21 @@ class ChatGUI {
      * @param TokenAR $token
      *
      */
-	public function __construct(TokenAR $token) {
-		$this->token = $token;
-	}
+    public function __construct(TokenAR $token)
+    {
+        $this->token = $token;
+    }
 
 
-	/**
-	 * @param bool $async
-	 *
-	 * @return string
-	 * @throws DICException
-	 * @throws ilTemplateException
-	 */
-	public function render($async = false) {
+    /**
+     * @param bool $async
+     *
+     * @return string
+     * @throws DICException
+     * @throws ilTemplateException
+     */
+    public function render($async = false)
+    {
         $port = ConfigAR::getConfig(ConfigAR::C_PORT);
         $protocol = ConfigAR::getConfig(ConfigAR::C_PROTOCOL);
         $host = ConfigAR::getConfig(ConfigAR::C_HOST);
@@ -64,9 +66,9 @@ class ChatGUI {
         if (is_string($host) && $host !== '0.0.0.0') {
             $url .= '&host=' . $host;
         }
-		// TODO: get rid of self::plugin() to be independent
-		$template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
-		$template->setVariable('URL', $url);
+        // TODO: get rid of self::plugin() to be independent
+        $template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
+        $template->setVariable('URL', $url);
         $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');
         $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
@@ -76,7 +78,6 @@ class ChatGUI {
             $template->setVariable('CSS_PATH', $chat_css_path);
             $template->parseCurrentBlock();
         }
-		return $template->get();
-	}
-
+        return $template->get();
+    }
 }

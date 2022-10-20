@@ -13,20 +13,20 @@ use ilTemplateException;
 
 class ChunkedFileRenderer extends Renderer
 {
-    const TEMPLATES = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/';
-    const MB_IN_B = 1000 * 1000;
-    const MIB_F = 1.024;
-    
+    public const TEMPLATES = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/';
+    public const MB_IN_B = 1000 * 1000;
+    public const MIB_F = 1.024;
+
     /**
      * @var \ilOpenCastPlugin
      */
     protected $plugin;
-    
-    public function setPluginInstance(\ilOpenCastPlugin $plugin) : void
+
+    public function setPluginInstance(\ilOpenCastPlugin $plugin): void
     {
         $this->plugin = $plugin;
     }
-    
+
     /**
      * @param ResourceRegistry $registry
      * @return void|null
@@ -35,14 +35,14 @@ class ChunkedFileRenderer extends Renderer
     {
         $registry->register(self::TEMPLATES . 'chunked_file.js');
     }
-    
+
     /**
      * @param Component         $component
      * @param RendererInterface $default_renderer
      * @return string
      * @throws ilTemplateException
      */
-    public function render(Component $component, RendererInterface $default_renderer) : string
+    public function render(Component $component, RendererInterface $default_renderer): string
     {
         global $DIC;
         $tpl = new ilTemplateWrapper(
@@ -53,12 +53,12 @@ class ChunkedFileRenderer extends Renderer
                 true
             )
         );
-    
+
         // Support ILIAS 6 and 7
         if (method_exists($this, 'applyName')) {
             $this->applyName($component, $tpl);
         }
-        
+
         $settings = new \stdClass();
         $handler = $component->getUploadHandler();
         $settings->upload_url = $handler->getUploadURL();
@@ -68,7 +68,7 @@ class ChunkedFileRenderer extends Renderer
         $settings->accepted_files = implode(',', $component->getAcceptedMimeTypes());
         $settings->existing_file_ids = $component->getValue();
         $settings->existing_files = $handler->getInfoForExistingFiles($component->getValue() ?? []);
-        
+
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
         $settings->chunk_size = round($upload_limit / 2) * self::MIB_F;
@@ -80,12 +80,12 @@ class ChunkedFileRenderer extends Renderer
         } else {
             $settings->max_file_size = $component->getMaxFileFize() / self::MB_IN_B * self::MIB_F; // dropzone.js expects MiB
         }
-        
+
         $settings->max_file_size_text = sprintf(
             $this->txt('ui_file_input_invalid_size'),
             (string) round($settings->max_file_size, 3)
         );
-        
+
         /**
          * @var $component F\File
          */
@@ -97,10 +97,10 @@ class ChunkedFileRenderer extends Renderer
                 });";
             }
         );
-        
+
         $id = $this->bindJavaScript($component) ?? $this->createId();
         $tpl->setVariable("ID", $id);
-        
+
         $tpl->setVariable(
             'BUTTON',
             $default_renderer->render(
@@ -110,17 +110,17 @@ class ChunkedFileRenderer extends Renderer
                 )
             )
         );
-        
+
         $component = $component->withByline(
             $component->getByline() .
             '<br>' .
             $this->txt('file_notice') . ' ' . ($settings->max_file_size / self::MIB_F) . ' MB'
         );
-    
+
         if ($component->isDisabled()) {
             $tpl->setVariable("DISABLED", 'disabled="disabled"');
         }
-        
+
         // Support ILIAS 6 and 7
         if (method_exists($this, 'wrapInFormContext')) {
             return $this->wrapInFormContext($component, $tpl->get(), $id);
@@ -128,12 +128,11 @@ class ChunkedFileRenderer extends Renderer
             return $this->renderInputFieldWithContext($default_renderer, $tpl, $component);
         }
     }
-    
-    protected function getComponentInterfaceName() : array
+
+    protected function getComponentInterfaceName(): array
     {
         return [
             ChunkedFile::class,
         ];
     }
-    
 }

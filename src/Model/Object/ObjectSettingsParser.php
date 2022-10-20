@@ -6,7 +6,7 @@ use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 
 class ObjectSettingsParser
 {
-    public function parseFormData(array $data) : ObjectSettings
+    public function parseFormData(array $data): ObjectSettings
     {
         $objectSettings = new ObjectSettings();
         $objectSettings->setOnline($data[ObjectSettingsFormItemBuilder::F_OBJ_ONLINE]);

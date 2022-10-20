@@ -32,7 +32,7 @@ class ACLtoXML
     /**
      * @return string
      */
-    public function getXML() : string
+    public function getXML(): string
     {
         $xml_writer = new ilXMLWriter();
         $xml_writer->xmlHeader();
@@ -88,7 +88,6 @@ class ACLtoXML
 
                 $xml_writer->xmlEndTag('Rule');
             }
-
         }
 
         $xml_writer->xmlEndTag('Policy');

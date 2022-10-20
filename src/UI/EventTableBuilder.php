@@ -51,10 +51,12 @@ class EventTableBuilder
      */
     private $dic;
 
-    public function __construct(MDFieldConfigEventRepository $MDFieldConfigEventRepository,
-                                MDCatalogueFactory           $MDCatalogueFactory,
-                                EventRepository              $eventRepository,
-                                Container                    $dic)
+    public function __construct(
+        MDFieldConfigEventRepository $MDFieldConfigEventRepository,
+        MDCatalogueFactory $MDCatalogueFactory,
+        EventRepository $eventRepository,
+        Container $dic
+    )
     {
         $this->ui_factory = $dic->ui()->factory();
         $this->MDFieldConfigEventRepository = $MDFieldConfigEventRepository;
@@ -73,17 +75,24 @@ class EventTableBuilder
             $this->MDFieldConfigEventRepository->getAll(
                 ilObjOpenCastAccess::hasPermission('edit_videos')
             ),
-            $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
-                $objectSettings),
+            $this->applyFilter(
+                $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $objectSettings
+            ),
             $this->dic->language()->getLangKey()
         );
     }
 
     public function tiles($parent_gui, ObjectSettings $objectSettings): xoctEventTileGUI
     {
-        return new xoctEventTileGUI($parent_gui, $objectSettings,
-            $this->applyFilter($this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
-                $objectSettings));
+        return new xoctEventTileGUI(
+            $parent_gui,
+            $objectSettings,
+            $this->applyFilter(
+                $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $objectSettings
+            )
+        );
     }
 
     public function filter(string $form_action): Standard
@@ -143,7 +152,8 @@ class EventTableBuilder
             return ilObjOpenCastAccess::hasReadAccessOnEvent(
                 $event_object,
                 xoctUser::getInstance($this->dic->user()),
-                $objectSettings);
+                $objectSettings
+            );
         });
     }
 }

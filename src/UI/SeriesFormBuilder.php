@@ -24,11 +24,11 @@ use xoctException;
  */
 class SeriesFormBuilder
 {
-    const F_CHANNEL_TYPE = 'channel_type';
-    const EXISTING_NO = 1;
-    const EXISTING_YES = 2;
-    const F_CHANNEL_ID = 'channel_id';
-    const F_EXISTING_IDENTIFIER = 'existing_identifier';
+    public const F_CHANNEL_TYPE = 'channel_type';
+    public const EXISTING_NO = 1;
+    public const EXISTING_YES = 2;
+    public const F_CHANNEL_ID = 'channel_id';
+    public const F_EXISTING_IDENTIFIER = 'existing_identifier';
 
     /**
      * @var UIFactory
@@ -77,7 +77,7 @@ class SeriesFormBuilder
         $this->seriesRepository = $seriesRepository;
     }
 
-    public function create(string $form_action) : Standard
+    public function create(string $form_action): Standard
     {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
@@ -85,7 +85,6 @@ class SeriesFormBuilder
                 'series_type' => $this->buildSeriesSelectionSection(true),
                 'settings' => $this->objectSettingsFormItemBuilder->create()
             ]
-
         );
     }
 
@@ -94,7 +93,7 @@ class SeriesFormBuilder
         ObjectSettings $objectSettings,
         Series $series,
         bool $is_admin
-    ) : Standard {
+    ): Standard {
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             [
@@ -108,15 +107,18 @@ class SeriesFormBuilder
      * @return array
      * @throws xoctException
      */
-    private function getSeriesSelectOptions() : array
+    private function getSeriesSelectOptions(): array
     {
-        $existing_series = array();
+        $existing_series = [];
         $xoctUser = xoctUser::getInstance($this->dic->user());
         if (is_null($xoctUser->getUserRoleName()) !== true) {
             $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
             foreach ($user_series as $series) {
-                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr($series->getIdentifier(),
-                        -4, 4) . ')';
+                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr(
+                    $series->getIdentifier(),
+                    -4,
+                    4
+                ) . ')';
             }
             array_multisort($existing_series);
             return $existing_series;
@@ -124,7 +126,7 @@ class SeriesFormBuilder
         return [];
     }
 
-    private function txt(string $lang_var) : string
+    private function txt(string $lang_var): string
     {
         return $this->plugin->txt('series_' . $lang_var);
     }
@@ -134,20 +136,27 @@ class SeriesFormBuilder
      * @return Input
      * @throws xoctException
      */
-    private function buildSeriesSelectionSection(bool $is_admin) : Input
+    private function buildSeriesSelectionSection(bool $is_admin): Input
     {
         $existing_series = $this->getSeriesSelectOptions();
         $series_type = $this->ui_factory->input()->field()->switchableGroup([
             self::EXISTING_YES => $this->ui_factory->input()->field()->group([
-                self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select($this->txt(self::F_CHANNEL_ID),
-                    $existing_series)->withRequired(true)
+                self::F_CHANNEL_ID => $this->ui_factory->input()->field()->select(
+                    $this->txt(self::F_CHANNEL_ID),
+                    $existing_series
+                )->withRequired(true)
             ], $this->plugin->txt('yes')),
-            self::EXISTING_NO => $this->ui_factory->input()->field()->group($this->formItemBuilder->create_items($is_admin),
-                $this->plugin->txt('no'))
+            self::EXISTING_NO => $this->ui_factory->input()->field()->group(
+                $this->formItemBuilder->create_items($is_admin),
+                $this->plugin->txt('no')
+            )
         ], 'Existing Series')->withValue(self::EXISTING_NO);
-        return $this->ui_factory->input()->field()->section([self::F_EXISTING_IDENTIFIER => $series_type],
-            $this->plugin->txt(self::F_CHANNEL_TYPE))
-                                ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs
+        return $this->ui_factory->input()->field()->section(
+            [self::F_EXISTING_IDENTIFIER => $series_type],
+            $this->plugin->txt(self::F_CHANNEL_TYPE)
+        )
+                                ->withAdditionalTransformation($this->refinery->custom()->transformation(function (
+                                    $vs
                                 ) {
                                     if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
                                         $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];

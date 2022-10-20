@@ -12,8 +12,7 @@ use xoctRequest;
  */
 class LivePlayerDataBuilder extends PlayerDataBuilder
 {
-
-    public function buildStreamingData() : array
+    public function buildStreamingData(): array
     {
         $episode_json = xoctRequest::root()->episodeJson($this->event->getIdentifier())->get(
             [],
@@ -25,8 +24,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         $media_package = $episode_data['search-results']['result']['mediapackage'];
 
         $streams = [];
-        if(isset($media_package['media']['track'][0]))  // multi stream
-        {
+        if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
                 $role = strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE;
                 $streams[$role] = [

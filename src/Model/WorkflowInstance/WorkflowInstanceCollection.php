@@ -14,7 +14,6 @@ use xoctRequest;
  */
 class WorkflowInstanceCollection extends APIObject
 {
-
     /**
      * @var bool
      */
@@ -54,7 +53,7 @@ class WorkflowInstanceCollection extends APIObject
     {
         if ($data === null) {
             $data = json_decode(xoctRequest::root()->workflows()
-                ->parameter('filter', 'event_identifier:'.$this->getEventId())
+                ->parameter('filter', 'event_identifier:' . $this->getEventId())
                 ->get()) ?: new stdClass();
         }
         $this->loadFromStdClass($data);
@@ -64,7 +63,7 @@ class WorkflowInstanceCollection extends APIObject
     /**
      * @return string
      */
-    public function getEventId() : string
+    public function getEventId(): string
     {
         return $this->event_id;
     }
@@ -82,7 +81,7 @@ class WorkflowInstanceCollection extends APIObject
     /**
      * @return WorkflowInstance[]
      */
-    public function getWorkflows() : array
+    public function getWorkflows(): array
     {
         return $this->workflows;
     }
@@ -103,7 +102,7 @@ class WorkflowInstanceCollection extends APIObject
     /**
      * @return bool
      */
-    public function hasChanged() : bool
+    public function hasChanged(): bool
     {
         if ($this->has_changed) {
             return true;

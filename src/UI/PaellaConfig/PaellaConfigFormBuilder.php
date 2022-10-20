@@ -12,17 +12,16 @@ use ILIAS\UI\Factory;
 
 class PaellaConfigFormBuilder
 {
-
     // Paella Player Path
-    const F_PAELLA_PLAYER_OPTION = 'paella_player_option';
-    const F_PAELLA_PLAYER_DEFAULT = 'pp_default';
-    const F_PAELLA_PLAYER_FILE = 'pp_file';
-    const F_PAELLA_PLAYER_LINK = 'pp_link';
+    public const F_PAELLA_PLAYER_OPTION = 'paella_player_option';
+    public const F_PAELLA_PLAYER_DEFAULT = 'pp_default';
+    public const F_PAELLA_PLAYER_FILE = 'pp_file';
+    public const F_PAELLA_PLAYER_LINK = 'pp_link';
     // Paella Player live Path
-    const F_PAELLA_PLAYER_LIVE_OPTION = 'paella_player_live_option';
-    const F_PAELLA_PLAYER_LIVE_DEFAULT = 'pp_default';
-    const F_PAELLA_PLAYER_LIVE_FILE = 'pp_live_file';
-    const F_PAELLA_PLAYER_LIVE_LINK = 'pp_live_link';
+    public const F_PAELLA_PLAYER_LIVE_OPTION = 'paella_player_live_option';
+    public const F_PAELLA_PLAYER_LIVE_DEFAULT = 'pp_default';
+    public const F_PAELLA_PLAYER_LIVE_FILE = 'pp_live_file';
+    public const F_PAELLA_PLAYER_LIVE_LINK = 'pp_live_link';
 
     /**
      * @var ilPlugin
@@ -51,12 +50,16 @@ class PaellaConfigFormBuilder
 
     public function buildForm(string $form_action): Standard
     {
-        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(false,
+        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(
+            false,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION),
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_URL) ?? '');
-        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(true,
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_URL) ?? ''
+        );
+        $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(
+            true,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE),
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE) ?? '');
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE) ?? ''
+        );
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $inputs
@@ -92,10 +95,8 @@ class PaellaConfigFormBuilder
             . '" target="blank" download="' . $fileInfo['name'] . '">Download</a>';
     }
 
-    private function txt(string $string) : string
+    private function txt(string $string): string
     {
         return $this->plugin->txt('config_' . $string);
     }
-
-
 }

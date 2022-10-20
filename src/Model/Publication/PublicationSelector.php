@@ -25,13 +25,12 @@ use xoctSecureLink;
  */
 class PublicationSelector
 {
-
     use DICTrait;
-    const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
-    const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
-    const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
-    const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    public const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
+    public const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
+    public const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
+    public const THUMBNAIL_LIVE_RUNNING = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_live_running.png';
     /**
      * @var self[]
      */
@@ -117,7 +116,7 @@ class PublicationSelector
      */
     public function loadFromArray(array $publication_data)
     {
-        $publications = array();
+        $publications = [];
         foreach ($publication_data as $p_array) {
             $md = new Publication();
             if ($p_array instanceof stdClass) {
@@ -136,7 +135,7 @@ class PublicationSelector
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getPlayerPublications() : array
+    public function getPlayerPublications(): array
     {
         if (!isset($this->player_publications)) {
             $player_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER);
@@ -155,7 +154,7 @@ class PublicationSelector
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getDownloadPublications() : array
+    public function getDownloadPublications(): array
     {
         if (!isset($this->download_publications)) {
             $pubs = $this->getPublicationMetadataForUsage(
@@ -177,7 +176,8 @@ class PublicationSelector
      * @return DownloadDto[]
      * @throws xoctException
      */
-    public function getDownloadDtos(bool $with_urls = true) : array {
+    public function getDownloadDtos(bool $with_urls = true): array
+    {
         $download_publications = $this->getDownloadPublications();
         usort($download_publications, function ($pub1, $pub2) {
             /** @var $pub1 Publication|Media|Attachment */
@@ -190,7 +190,7 @@ class PublicationSelector
             }
             return 0;
         });
-        return array_map(function($pub, $i) use ($with_urls) {
+        return array_map(function ($pub, $i) use ($with_urls) {
             /** @var $pub Publication|Media|Attachment */
             $label = ($pub instanceof Media) ? $pub->getHeight() . 'p' :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
@@ -212,7 +212,7 @@ class PublicationSelector
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getPreviewPublications() : array
+    public function getPreviewPublications(): array
     {
         if (!isset($this->preview_publications)) {
             $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PREVIEW));
@@ -227,7 +227,7 @@ class PublicationSelector
      * @return Attachment[]
      * @throws xoctException
      */
-    public function getSegmentPublications() : array
+    public function getSegmentPublications(): array
     {
         if (!isset($this->segment_publications)) {
             $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_SEGMENTS));
@@ -336,7 +336,7 @@ class PublicationSelector
                 $media_objects = $annotation_publication instanceof Publication ? $annotation_publication->getMedia() : [$annotation_publication];
                 //TODO: Get all urls for all mediatypes and compress them to send by URL
                 foreach ($media_objects as $media_object) {
-                    if ($media_object->getMediatype() == "application/x-mpegURL"){
+                    if ($media_object->getMediatype() == "application/x-mpegURL") {
                         $media_url = $media_object->getUrl();
                     }
                 }
@@ -429,7 +429,7 @@ class PublicationSelector
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getPublicationMetadataForUsage($PublicationUsage) : array
+    public function getPublicationMetadataForUsage($PublicationUsage): array
     {
         if (!$PublicationUsage instanceof PublicationUsage) {
             return [];
@@ -514,7 +514,7 @@ class PublicationSelector
      *
      * @return bool
      */
-    protected function startsWith(string $haystack, string $needle) : bool
+    protected function startsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
 
@@ -528,7 +528,7 @@ class PublicationSelector
      *
      * @return bool
      */
-    protected function endsWith(string $haystack, string $needle) : bool
+    protected function endsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
         if ($length == 0) {
@@ -545,7 +545,7 @@ class PublicationSelector
      *
      * @return bool
      */
-    protected function checkFlavor(string $haystack, string $needle) : bool
+    protected function checkFlavor(string $haystack, string $needle): bool
     {
         return ($haystack == $needle)
             || ($this->startsWith($needle, '/') && $this->endsWith($haystack, $needle))
@@ -555,7 +555,7 @@ class PublicationSelector
     /**
      * @return Publication[]
      */
-    public function getPublications() : array
+    public function getPublications(): array
     {
         if (is_null($this->publications)) {
             $reference = $this->reference->getClosure();

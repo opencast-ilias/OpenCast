@@ -15,9 +15,8 @@ use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
  */
 class xoctConfGUI extends xoctGUI
 {
-
-    const CMD_PLAYER = 'player';
-    const CMD_UPDATE_PLAYER = 'updatePlayer';
+    public const CMD_PLAYER = 'player';
+    public const CMD_UPDATE_PLAYER = 'updatePlayer';
 
     /**
      * @var Renderer
