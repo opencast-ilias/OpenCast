@@ -1489,6 +1489,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Util\\Player\\StandardPlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/StandardPlayerDataBuilder.php',
         'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => __DIR__ . '/../..' . '/src/Util/Transformator/ACLtoXML.php',
         'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => __DIR__ . '/../..' . '/src/Util/Transformator/MetadataToXML.php',
+        'srag\\Plugins\\Opencast\\Util\\UpdateCheck' => __DIR__ . '/../..' . '/src/Util/UpdateCheck.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
         'xoctBase' => __DIR__ . '/../..' . '/classes/Request/class.xoctBase.php',
         'xoctChangeOwnerGUI' => __DIR__ . '/../..' . '/classes/Owner/class.xoctChangeOwnerGUI.php',

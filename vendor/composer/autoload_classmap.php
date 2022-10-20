@@ -1275,6 +1275,7 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\Player\\StandardPlayerDataBuilder' => $baseDir . '/src/Util/Player/StandardPlayerDataBuilder.php',
     'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => $baseDir . '/src/Util/Transformator/ACLtoXML.php',
     'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => $baseDir . '/src/Util/Transformator/MetadataToXML.php',
+    'srag\\Plugins\\Opencast\\Util\\UpdateCheck' => $baseDir . '/src/Util/UpdateCheck.php',
     'xoct' => $baseDir . '/classes/class.xoct.php',
     'xoctBase' => $baseDir . '/classes/Request/class.xoctBase.php',
     'xoctChangeOwnerGUI' => $baseDir . '/classes/Owner/class.xoctChangeOwnerGUI.php',

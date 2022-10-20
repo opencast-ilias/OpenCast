@@ -19,6 +19,7 @@ use srag\Plugins\Opencast\Model\UserSettings\UserSetting;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
+use srag\Plugins\Opencast\Util\UpdateCheck;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -56,9 +57,18 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->db = $DIC->database();
     }
 
-    /**
-     *
-     */
+    protected function beforeUpdate()
+    {
+        // Check Version
+        $check = new UpdateCheck($this->db);
+        if (!$check->isUpdatePossible()) {
+            throw new ilPluginException(
+                'You try to update from a incompatible version of the plugin, please read the infos here: LINK TO README.'
+            );
+        }
+        return true;
+    }
+
     protected function afterUpdate()
     {
         if (PluginConfig::count() == 0) {
