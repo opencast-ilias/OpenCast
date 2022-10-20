@@ -138,7 +138,7 @@ class ObjectSettingsFormItemBuilder
         ],
             $this->txt(self::F_PERMISSION_PER_CLIP),
             $this->txt(self::F_PERMISSION_PER_CLIP . '_info')
-        );
+        )->withValue(null);
 
         $inputs[self::F_MEMBER_UPLOAD] = $field_factory->checkbox(
             $this->txt(self::F_MEMBER_UPLOAD),

@@ -496,6 +496,7 @@ date_from#:#Datum Von
 date_to#:#Datum Bis
 sender#:#Verfasser
 workflow_parameters#:#Workflow Parameter
+processing_settings#:#Verarbeitungseinstellungen
 default_values#:#Standardwerte
 default_value_member#:#Verwendung Mitglieder
 default_value_admin#:#Verwendung Admins
