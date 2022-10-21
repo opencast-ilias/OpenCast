@@ -422,3 +422,22 @@ if (\srag\Plugins\Opencast\Model\Config\PluginConfig::count() > 0) {
     );
 }
 ?>
+<#37>
+<?php
+// Several users of the Opencast plugins for ILIAS decided in 2022 to continue
+// the development of the plugin themselves: https://github.com/opencast-ilias/OpenCast/
+// Therefore, besides this version, there is at least one other version of the
+// plugin. These are NOT compatible with each other. With this DB-Step we want
+// to have a possibility to check if exactly this step was executed once. Of
+// course, this does not give any special security to make sure that other versions
+// do not try to update to this version. But another puzzle piece we can use.
+/** @var $ilDB ilDBInterface */
+$ilDB->insert('xoct_config', [
+    'name' => ['text', 'version_check'],
+    'value' => ['text', '44ac530093a998b525b0a73ba536e64f03bbaff47446cf99e1a31d6a042a4549']
+]);
+$ilDB->update('il_plugin',
+    ['last_update_version' => ['text', '4.0.2-oc']],
+    ['plugin_id' => ['text', 'xoct']]
+);
+?>
