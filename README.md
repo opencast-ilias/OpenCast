@@ -18,7 +18,7 @@ Use Opencast in ILIAS LMS with a wide variety of features:
 
 ###Preconditions to update/migrate to v5.x and higher
 If you want to update to v5.x or higher of this plugin or migrate from other ILIAS plugins to v5.x or higher
-of this plugin for Opencast please check the following readme: [migration](../doc/migration.md).
+of this plugin for Opencast please check the following readme: [migration](./doc/migration.md).
 
 ### Installation
 Start at your ILIAS root directory
