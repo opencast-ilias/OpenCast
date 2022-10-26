@@ -63,7 +63,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $check = new UpdateCheck($this->db);
         if (!$check->isUpdatePossible()) {
             throw new ilPluginException(
-                'You try to update from a incompatible version of the plugin, please read the infos here: LINK TO README.'
+                'You try to update from a incompatible version of the plugin, please read the infos here: https://github.com/opencast-ilias/OpenCast/blob/main/doc/migration.md'
             );
         }
         return true;
