@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use ActiveRecord;
+use ilPlugin;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
@@ -324,7 +325,7 @@ class SeriesWorkflowParameterRepository
 
     private function buildFormSection(array $items): Input
     {
-        return $this->ui_factory->input()->field()->section($items, $this->plugin->txt('processing_settings'))
+        return $this->ui_factory->input()->field()->section($items, ilPlugin::lookupTxt("rep_robj", "xoct", "processing_settings"))
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
                 $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
                 return $vs;
