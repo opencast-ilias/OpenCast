@@ -94,6 +94,8 @@ config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
 config_std_roles#:#Standard roles
 config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
+config_role_user_actions#:#Additional ACL actions
+config_role_user_actions_info#:# If a user is granted permissions on a series in Opencast, these values are set as additional ACL actions (visible in Opencast in the tab "Permissions" in the column "Additional actions").
 config_api_base_info#:#e.g.: https://stable.opencast.org/api
 config_audio_allowed_info#:#Allows the upload of audio files.
 config_curl_username_info#:#User account in Opencast which will be used to communicate over the API (needs enough permissions in OC).

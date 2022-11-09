@@ -40,10 +40,17 @@ class ACLUtils
         if ($user->getUserRoleName() === null) {
             return new ACL([]);
         }
-
-        return new ACL([
+        $acl_list =  new ACL([
             new ACLEntry($user->getUserRoleName(), ACLEntry::WRITE, true),
             new ACLEntry($user->getUserRoleName(), ACLEntry::READ, true)]);
+
+        $additional_actions = PluginConfig::getConfig(PluginConfig::F_ROLE_USER_ACTIONS);
+        if ($additional_actions && !in_array('', $additional_actions)) {
+            foreach ($additional_actions as $action) {
+                $acl_list->add(new ACLEntry($user->getUserRoleName(), $action, true));
+            }
+        }
+        return $acl_list;
     }
 
     public function getOwnerRolesACL(xoctUser $user): ACL
