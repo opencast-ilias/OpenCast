@@ -412,16 +412,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
         }
 
-        if ($perm_tpl_id) {
+        if ($perm_tpl_id == '') {
+            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+        } else {
             $acl = PermissionTemplate::removeAllTemplatesFromAcls($acl);
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
-            $acl = $perm_tpl->addToAcls(
-                $acl,
-                !$settings->getStreamingOnly(),
-                $settings->getUseAnnotations()
-            );
         }
+        $acl = $perm_tpl->addToAcls(
+            $acl,
+            !$settings->getStreamingOnly(),
+            $settings->getUseAnnotations()
+        );
 
         // TODO: do we need contributor / organizer?
         if (!$series_id) {

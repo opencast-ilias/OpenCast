@@ -145,6 +145,65 @@ class PermissionTemplate extends ActiveRecord
      * @db_length           256
      */
     protected $additional_actions_annotate;
+    /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        integer
+     * @db_length           1
+     */
+    protected $added_role;
+
+    /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           256
+     */
+    protected $added_role_name;
+
+    /**
+     * @var Integer
+     *
+     * @db_has_field        true
+     * @db_fieldtype        integer
+     * @db_length           1
+     */
+    protected $added_role_read_access;
+    /**
+     * @var Integer
+     *
+     * @db_has_field        true
+     * @db_fieldtype        integer
+     * @db_length           1
+     */
+    protected $added_role_write_access;
+    /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           256
+     */
+    protected $added_role_acl_actions;
+    /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           256
+     */
+    protected $added_role_actions_download;
+    /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           256
+     */
+    protected $added_role_actions_annotate;
+
 
 
     public function create()
@@ -211,7 +270,7 @@ class PermissionTemplate extends ActiveRecord
         /** @var ACLEntry $existing_acl */
         $entries = $ACL->getEntries();
         foreach ($ACL->getEntries() as $key => $existing_acl) {
-            if ($existing_acl->getRole() == $this->getRole()) {
+            if ($existing_acl->getRole() == $this->getRole()|| $existing_acl->getRole() == $this->getAddedRoleName()) {
                 unset($entries[$key]);
             }
         }
@@ -253,6 +312,33 @@ class PermissionTemplate extends ActiveRecord
                 $entries[] = $this->constructAclForAction($additional_action);
             }
         }
+        if($this->getAddedRole()) {
+            $role_name = $this->getAddedRoleName();
+            if ($this->getAddedRoleRead()) {
+                $entries[] = $this->constructAclActionForRole(ACLEntry::READ, $role_name);
+            }
+
+            if ($this->getAddedRoleWrite()) {
+                $entries[] = $this->constructAclActionForRole(ACLEntry::WRITE, $role_name);
+            }
+
+            foreach (array_filter(explode(',', $this->getAddedRoleAclActions())) as $additional_action) {
+                $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
+            }
+
+            if ($with_download && $this->getAddedRoleActionsDownload()) {
+                foreach (explode(',', $this->getAddedRoleActionsDownload()) as $additional_action) {
+                    $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
+                }
+            }
+
+            if ($with_annotate && $this->getAddedRoleActionsAnnotate()) {
+                foreach (explode(',', $this->getAddedRoleActionsAnnotate()) as $additional_action) {
+                    $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
+                }
+
+            }
+        }
 
         return new ACL($entries);
     }
@@ -262,6 +348,9 @@ class PermissionTemplate extends ActiveRecord
         return new ACLEntry($this->getRole(), $action, true);
     }
 
+    protected function constructAclActionForRole($action, $role):ACLEntry {
+        return new ACLEntry($role, $action,true);
+    }
 
     /**
      * @return int
@@ -470,6 +559,116 @@ class PermissionTemplate extends ActiveRecord
     {
         $this->additional_actions_annotate = $additional_actions_annotate;
     }
+
+    /**
+     * @return String
+     */
+    public function getAddedRole() {
+        return $this->added_role;
+    }
+
+
+    /**
+     * @param String $added_role
+     */
+    public function setAddedRole($added_role) {
+        $this->added_role = $added_role;
+    }
+
+    /**
+     * @return String
+     */
+    public function getAddedRoleName() {
+        return $this->added_role_name;
+    }
+
+
+    /**
+     * @param String $added_role_name
+     */
+    public function setAddedRoleName($added_role_name) {
+        $this->added_role_name = $added_role_name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAddedRoleRead() {
+        return $this->added_role_read_access;
+    }
+
+
+    /**
+     * @param int $read
+     */
+    public function setAddedRoleRead($read) {
+        $this->added_role_read_access = $read;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getAddedRoleWrite() {
+        return $this->added_role_write_access;
+    }
+
+
+    /**
+     * @param int $write
+     */
+    public function setAddedRoleWrite($write) {
+        $this->added_role_write_access = $write;
+    }
+
+
+    /**
+     * @return String
+     */
+    public function getAddedRoleAclActions() {
+        return str_replace(' ', '', $this->added_role_acl_actions);
+    }
+
+
+    /**
+     * @param String $additional_acl_actions
+     */
+    public function setAddedRoleAclActions($additional_acl_actions) {
+        $this->added_role_acl_actions = $additional_acl_actions;
+    }
+
+
+    /**
+     * @return String
+     */
+    public function getAddedRoleActionsDownload() {
+        return $this->added_role_actions_download;
+    }
+
+
+    /**
+     * @param String $additional_actions_download
+     */
+    public function setAddedRoleActionsDownload($additional_actions_download) {
+        $this->added_role_actions_download = $additional_actions_download;
+    }
+
+
+    /**
+     * @return String
+     */
+    public function getAddedRoleActionsAnnotate() {
+        return $this->added_role_actions_annotate;
+    }
+
+
+    /**
+     * @param String $additional_actions_annotate
+     */
+    public function setAddedRoleActionsAnnotate($additional_actions_annotate) {
+        $this->added_role_actions_annotate = $additional_actions_annotate;
+    }
+
 
 
     /**

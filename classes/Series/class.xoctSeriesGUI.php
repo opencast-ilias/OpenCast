@@ -193,15 +193,19 @@ class xoctSeriesGUI extends xoctGUI
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
-        if ($perm_tpl_id) {
+        if ($perm_tpl_id == '') {
+            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+        } else {
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
-            $series->setAccessPolicies($perm_tpl->addToAcls(
-                $series->getAccessPolicies(),
-                !$objectSettings->getStreamingOnly(),
-                $objectSettings->getUseAnnotations()
-            ));
         }
+
+        $series->setAccessPolicies($perm_tpl->addToAcls(
+            $series->getAccessPolicies(),
+            !$objectSettings->getStreamingOnly(),
+            $objectSettings->getUseAnnotations()
+        ));
+
 
         /** @var Metadata $metadata */
         $metadata = $data['metadata']['object'];

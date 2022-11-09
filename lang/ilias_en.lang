@@ -493,6 +493,8 @@ perm_tpl_form_additional_actions_download#:#Additional Actions with active Downl
 perm_tpl_form_additional_actions_download_info#:#Additional ACL Actions which will be set for the above role when download is active (i.e. "Only Streaming" is inactive).
 perm_tpl_form_additional_actions_annotate#:#Additional Actions with active Annotate
 perm_tpl_form_additional_actions_annotate_info#:#Additional ACL Actions which will be set for the above role when annotate is active.
+perm_tpl_form_additional_role_actions#:#Additional role
+perm_tpl_form_additional_role_actions_info#:#Defines the role which will be set in Opencast (in addition to the role above, not mandatory).
 msg_date_report_sent#:#The report has been sent. You will receive a confirmation email when the modifications will be done.
 msg_quality_report_sent#:#The report has been sent. The support has been informed and will contact you.
 date_from#:#Date From

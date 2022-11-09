@@ -24,6 +24,14 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
     public const F_ADDITIONAL_ACL_ACTIONS = 'additional_acl_actions';
     public const F_ADDITIONAL_ACTIONS_DOWNLOAD = 'additional_actions_download';
     public const F_ADDITIONAL_ACTIONS_ANNOTATE = 'additional_actions_annotate';
+    public const F_ADDITIONAL_ROLE_ACTIONS = 'additional_role_actions';
+    const F_ADDED_ROLE = 'added_role';
+    const F_ADDED_ROLE_NAME = 'added_role_name';
+    const F_ADDED_ROLE_READ = 'added_role_read';
+    const F_ADDED_ROLE_WRITE = 'added_role_write';
+    const F_ADDED_ROLE_ACL_ACTIONS = 'added_role_acl_actions';
+    const F_ADDED_ROLE_ACTIONS_DOWNLOAD = 'added_role_actions_download';
+    const F_ADDED_ROLE_ACTIONS_ANNOTATE = 'added_role_actions_annotate';
 
     /**
      * @var  PermissionTemplate
@@ -109,6 +117,18 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE), self::F_ADDITIONAL_ACTIONS_ANNOTATE);
         $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
         $this->addItem($input);
+
+        $input = new ilCheckboxInputGUI($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS), self::F_ADDED_ROLE);
+        $input->setInfo($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS. '_info'));
+
+        //var_dump($input->getValue());exit;
+        if($input->getValue()){
+            $newRole = $this->addAdditionalRolePermission();
+            foreach($newRole as $field){
+                $input->addSubItem($field);
+            }
+        }
+        $this->addItem($input);
     }
 
     /**
@@ -128,6 +148,41 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->addCommandButton(xoctPermissionTemplateGUI::CMD_CANCEL, self::dic()->language()->txt(xoctPermissionTemplateGUI::CMD_CANCEL));
     }
 
+
+    /**
+     * @return void
+     */
+    protected function addAdditionalRolePermission() : array
+    {
+        $input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ADDED_ROLE_NAME);
+        $input->setInfo($this->txt(self::F_ROLE . '_info'));
+        $input->setRequired(true);
+        $array[] = $input;
+
+        $input = new ilCheckboxInputGUI($this->txt(self::F_READ), self::F_ADDED_ROLE_READ);
+        $input->setInfo($this->txt(self::F_READ . '_info'));
+        $array[] = $input;
+
+        $input = new ilCheckboxInputGUI($this->txt(self::F_WRITE), self::F_ADDED_ROLE_WRITE);
+        $input->setInfo($this->txt(self::F_WRITE . '_info'));
+        $array[] = $input;
+
+        $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACL_ACTIONS), self::F_ADDED_ROLE_ACL_ACTIONS);
+        $input->setInfo($this->txt(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
+        $array[] = $input;
+
+        $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD),
+            self::F_ADDED_ROLE_ACTIONS_DOWNLOAD);
+        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
+        $array[] = $input;
+
+        $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE),
+            self::F_ADDED_ROLE_ACTIONS_ANNOTATE);
+        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
+        $array[] = $input;
+
+        return $array;
+    }
     public function fillForm()
     {
         $array = [
@@ -142,6 +197,13 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             self::F_ADDITIONAL_ACL_ACTIONS => $this->object->getAdditionalAclActions(),
             self::F_ADDITIONAL_ACTIONS_DOWNLOAD => $this->object->getAdditionalActionsDownload(),
             self::F_ADDITIONAL_ACTIONS_ANNOTATE => $this->object->getAdditionalActionsAnnotate(),
+            self::F_ADDED_ROLE => $this->object->getAddedRole(),
+            self::F_ADDED_ROLE_NAME => $this->object->getAddedRoleName(),
+            self::F_ADDED_ROLE_READ => $this->object->getAddedRoleRead(),
+            self::F_ADDED_ROLE_WRITE => $this->object->getAddedRoleWrite(),
+            self::F_ADDED_ROLE_ACL_ACTIONS => $this->object->getAddedRoleAclActions(),
+            self::F_ADDED_ROLE_ACTIONS_DOWNLOAD => $this->object->getAddedRoleActionsDownload(),
+            self::F_ADDED_ROLE_ACTIONS_ANNOTATE => $this->object->getAddedRoleActionsAnnotate(),
         ];
 
         $this->setValuesByArray($array);
@@ -165,12 +227,33 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
         $this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
 
+
+        $this->object->setAddedRole($this->getInput(self::F_ADDED_ROLE));
+
+        if($this->getInput(self::F_ADDED_ROLE)){
+            $this->object->setAddedRoleName($this->getInput(self::F_ADDED_ROLE_NAME));
+            $this->object->setAddedRoleRead($this->getInput(self::F_ADDED_ROLE_READ));
+            $this->object->setAddedRoleWrite($this->getInput(self::F_ADDED_ROLE_WRITE));
+            $this->object->setAddedRoleAclActions($this->getInput(self::F_ADDED_ROLE_ACL_ACTIONS));
+            $this->object->setAddedRoleActionsDownload($this->getInput(self::F_ADDED_ROLE_ACTIONS_DOWNLOAD));
+            $this->object->setAddedRoleActionsAnnotate($this->getInput(self::F_ADDED_ROLE_ACTIONS_ANNOTATE));
+        }
+        else{
+            $this->object->setAddedRoleName(NULL);
+            $this->object->setAddedRoleRead(NULL);
+            $this->object->setAddedRoleWrite(NULL);
+            $this->object->setAddedRoleAclActions(NULL);
+            $this->object->setAddedRoleActionsDownload(NULL);
+            $this->object->setAddedRoleActionsAnnotate(NULL);
+        }
         // reset other default template(s) if this one is set as default
         if ($this->getInput(self::F_DEFAULT)) {
             foreach (PermissionTemplate::where(['is_default' => 1])->get() as $default_template) {
                 /** @var $default_template PermissionTemplate */
-                $default_template->setDefault(0);
-                $default_template->update();
+                if($default_template->getId() != $this->object->getId()) {
+                    $default_template->setDefault(0);
+                    $default_template->update();
+                }
             }
         }
 
