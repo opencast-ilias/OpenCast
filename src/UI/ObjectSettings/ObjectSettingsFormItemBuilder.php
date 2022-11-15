@@ -115,7 +115,7 @@ class ObjectSettingsFormItemBuilder
             ],
                 sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
-            );
+            )->withValue( null);
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
