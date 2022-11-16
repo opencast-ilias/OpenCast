@@ -151,13 +151,12 @@ class SeriesAPIRepository implements SeriesRepository
     {
         $series = $this->getOwnSeries($xoct_user);
         if (is_null($series)) {
+            $aclList = array_unique($this->ACLUtils->getStandardRolesACL()->merge($this->ACLUtils->getUserRolesACL($xoct_user)));
             $metadata = $this->metadataFactory->series();
             $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($this->getOwnSeriesTitle($xoct_user));
             $this->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
                 $metadata,
-                $this->ACLUtils->getStandardRolesACL()->merge(
-                    $this->ACLUtils->getUserRolesACL($xoct_user)
-                )
+                $aclList
             )));
         }
         return $series;
