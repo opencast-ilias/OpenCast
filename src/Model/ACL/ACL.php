@@ -55,7 +55,7 @@ class ACL implements JsonSerializable
     {
 
         foreach ($acl->getEntries() as $entry) {
-            if (!in_array($entry, $this->acl_entries, true)) {
+            if (!in_array($entry, $this->acl_entries)) {
                 $this->add($entry);
             }
         }
