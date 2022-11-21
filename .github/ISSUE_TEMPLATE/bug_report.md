@@ -30,6 +30,7 @@ If you have it please attach the relevant log.
  - ILIAS version: [e.g.  v7.6 2022-01-26]
  - PHP version: [e.g. PHP 7.4.3]
  - Plugin version: [e.g. 4.0.0]
+ - Opencast version [e.g 11.0.0]
  - Browser: [e.g. chrome, safari]
 
 **Additional context**
