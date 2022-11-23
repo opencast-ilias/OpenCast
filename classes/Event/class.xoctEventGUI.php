@@ -322,7 +322,8 @@ class xoctEventGUI extends xoctGUI
                 )
             );
         }
-        self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $filter_html . $html);
+        $intro_text = $this->createHyperlinks($this->getIntroTextHTML());
+        self::dic()->ui()->mainTemplate()->setContent($intro_text . $filter_html . $html);
     }
 
     /**
@@ -1247,6 +1248,23 @@ class xoctEventGUI extends xoctGUI
             $intro_text = $intro->get();
         }
         return $intro_text;
+    }
+
+    /**
+     * @param string $intro_text
+     * @return array
+     */
+    protected function createHyperlinks(string $intro_text) : string
+    {
+        if (str_contains($intro_text, "https://") || str_contains($intro_text, "http://")) {
+            preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
+            foreach ($urls[0] as $url) {
+
+                $replacement = "<a href='" . $url . "'>" . $url . "</a>";
+                $intro_text = str_replace($url, $replacement, $intro_text);
+            }
+        }
+        return  $intro_text;
     }
 
     protected function addCurrentUserToProducers(): void
