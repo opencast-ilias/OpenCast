@@ -10,7 +10,6 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
 use ActiveRecord;
-use ilPlugin;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
@@ -199,7 +198,7 @@ class SeriesWorkflowParameterRepository
      * @param bool $as_admin
      * @return Input
      */
-    public function getFormSectionForObjId(int $obj_id, bool $as_admin): ?Input
+    public function getFormSectionForObjId(int $obj_id, bool $as_admin, $workflow_section_title): ?Input
     {
         $items = [];
         foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
@@ -210,7 +209,7 @@ class SeriesWorkflowParameterRepository
         if (empty($items)) {
             return null;
         }
-        return $this->buildFormSection($items);
+        return $this->buildFormSection($items, $workflow_section_title);
     }
 
 
@@ -309,7 +308,7 @@ class SeriesWorkflowParameterRepository
      * TODO: refactor into a form builder
      * @return Input
      */
-    public function getGeneralFormSection(): ?Input
+    public function getGeneralFormSection($workflow_section_title): ?Input
     {
         $items = [];
         foreach ($this->getGeneralParametersInForm() as $id => $data) {
@@ -320,12 +319,12 @@ class SeriesWorkflowParameterRepository
         if (empty($items)) {
             return null;
         }
-        return $this->buildFormSection($items);
+        return $this->buildFormSection($items, $workflow_section_title);
     }
 
-    private function buildFormSection(array $items): Input
+    private function buildFormSection(array $items, string $workflow_section_title): Input
     {
-        return $this->ui_factory->input()->field()->section($items, ilPlugin::lookupTxt("rep_robj", "xoct", "processing_settings"))
+        return $this->ui_factory->input()->field()->section($items, $workflow_section_title)
             ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
                 $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
                 return $vs;
