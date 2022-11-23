@@ -29,6 +29,9 @@ class xoct
      */
     public static function getILIASVersion()
     {
+        if (self::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '6.999')) {
+            return self::ILIAS_7;
+        }
         if (self::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '5.4.999')) {
             return self::ILIAS_6;
         }
