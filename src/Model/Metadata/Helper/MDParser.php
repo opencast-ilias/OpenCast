@@ -54,6 +54,57 @@ class MDParser
 
         $catalogue = $this->catalogueFactory->event();
         $metadata = $this->metadataFactory->event();
+
+        return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
+    }
+
+    /**
+     * @param stdClass $data
+     * @return Metadata
+     * @throws \xoctException
+     */
+    public function getMetadataFromData($data) : Metadata
+    {
+        $md_needed = ["title",
+                      "subjects",
+                      "description",
+                      "language",
+                      "rightsHolder",
+                      "license",
+                      "isPartOf",
+                      "creator",
+                      "contributor",
+                      "startDate",
+                      "duration",
+                      "location",
+                      "source",
+                      "created",
+                      "publisher",
+                      "identifier"
+        ];
+
+        $catalogue = $this->catalogueFactory->event();
+        $metadata = $this->metadataFactory->event();
+        $fields = [];
+
+        foreach ($md_needed as $md) {
+
+            foreach ($data as $key => $entry) {
+
+                if ($key == $md ||
+                    $key == "presenter" && $md == "creator" ||
+                    $key == "is_part_of" && $md == "isPartOf" ||
+                    $key == "start" && $md == "startDate") {
+                    $field_data = (object) array(
+                        "id" => $md,
+                        "value" => $entry
+                    );
+                    if (!in_array($field_data, $fields)) {
+                        array_push($fields, $field_data);
+                    }
+                }
+            }
+        }
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
     }
 
@@ -114,9 +165,13 @@ class MDParser
                 $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
             case MDDataType::TYPE_TIME:
-            case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
+                return (string) $value;
+            case MDDataType::TYPE_TEXT_ARRAY:
+                if(!is_array($value)){
+                    return [$value];
+                }
             default:
                 return $value;
         }

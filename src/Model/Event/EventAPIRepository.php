@@ -127,7 +127,7 @@ class EventAPIRepository implements EventRepository
             $request->parameter('sort', $sort);
         }
 
-        $request->parameter('withmetadata', true)
+        $request->parameter('withmetadata', false)
             ->parameter('withacl', true)
             ->parameter('withpublications', true)
             ->parameter('withscheduling', true)

@@ -42,6 +42,8 @@ class EventParser
 
         if (isset($data->metadata)) {
             $event->setMetadata($this->MDParser->parseAPIResponseEvent($data->metadata));
+        }else {
+            $event->setMetadata($this->MDParser->getMetadataFromData($data));
         }
 
         if (isset($data->acl)) {
