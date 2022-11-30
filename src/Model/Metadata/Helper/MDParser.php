@@ -65,46 +65,48 @@ class MDParser
      */
     public function getMetadataFromData($data) : Metadata
     {
-        $md_needed = ["title",
-                      "subjects",
-                      "description",
-                      "language",
-                      "rightsHolder",
-                      "license",
-                      "isPartOf",
-                      "creator",
-                      "contributor",
-                      "startDate",
-                      "duration",
-                      "location",
-                      "source",
-                      "created",
-                      "publisher",
-                      "identifier"
-        ];
-
-        $catalogue = $this->catalogueFactory->event();
-        $metadata = $this->metadataFactory->event();
         $fields = [];
 
-        foreach ($md_needed as $md) {
-
-            foreach ($data as $key => $entry) {
-
-                if ($key == $md ||
-                    $key == "presenter" && $md == "creator" ||
-                    $key == "is_part_of" && $md == "isPartOf" ||
-                    $key == "start" && $md == "startDate") {
+        foreach ($data as $key => $entry) {
+            switch ($key) {
+                case "presenter":
                     $field_data = (object) array(
-                        "id" => $md,
+                        "id" => "creator",
                         "value" => $entry
                     );
-                    if (!in_array($field_data, $fields)) {
-                        array_push($fields, $field_data);
-                    }
-                }
+                    break;
+                case "creator":
+                    $field_data = (object) array(
+                        "id" => "publisher",
+                        "value" => $entry
+                    );
+                    break;
+                case "is_part_of":
+                    $field_data = (object) array(
+                        "id" => "isPartOf",
+                        "value" => $entry
+                    );
+                    break;
+                case "start":
+                    $field_data = (object) array(
+                        "id" => "startDate",
+                        "value" => $entry
+                    );
+                    break;
+                default:
+                    $field_data = (object) array(
+                        "id" => $key,
+                        "value" => $entry
+                    );
+
             }
+            if (!in_array($field_data, $fields)) {
+                array_push($fields, $field_data);
+            }
+
         }
+        $catalogue = $this->catalogueFactory->event();
+        $metadata = $this->metadataFactory->event();
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
     }
 
@@ -165,6 +167,9 @@ class MDParser
                 $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
             case MDDataType::TYPE_TIME:
+                if(is_int($value)){
+                    return date("H:i:s", $value);
+                }
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
                 return (string) $value;
