@@ -241,9 +241,7 @@ class EventFormBuilder
     {
         $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata, $as_admin)];
         $allow_edit_scheduling = (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA);
-        if ($allow_edit_scheduling) {
-            $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling);
-        }
+        $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling, $allow_edit_scheduling);
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,

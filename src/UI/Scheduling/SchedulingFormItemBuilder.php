@@ -60,7 +60,7 @@ class SchedulingFormItemBuilder
                 MDFieldDefinition::F_LOCATION => $this->buildSchedulingLocationInput(),
                 'scheduling' => $this->buildSchedulingInput()
             ],
-            'Scheduling'
+            $this->plugin->txt('event_scheduling')
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $vs['object'] = $this->schedulingParser->parseCreateFormData($vs);
             return $vs;
@@ -68,18 +68,19 @@ class SchedulingFormItemBuilder
             ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd());
     }
 
-    public function edit(Scheduling $scheduling): Input
+    public function edit(Scheduling $scheduling, bool $edit_allowed) : Input
     {
         return $this->ui_factory->input()->field()->section(
             [
                 MDFieldDefinition::F_LOCATION => $this->buildSchedulingLocationInput($scheduling->getAgentId()),
             ] + $this->buildEditSchedulingInputs($scheduling),
-            'Scheduling'
+            $this->plugin->txt('event_scheduling')
         )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
             $vs['object'] = $this->schedulingParser->parseUpdateFormData($vs);
             return $vs;
         }))->withAdditionalTransformation($this->buildConstraintStartAfterNow())
-            ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd());
+           ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd())
+           ->withDisabled(!$edit_allowed);
     }
 
     private function buildSchedulingInput(): Input
