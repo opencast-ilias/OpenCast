@@ -29,6 +29,7 @@ use srag\Plugins\Opencast\Model\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
 use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\UI\EventTableBuilder;
@@ -592,13 +593,28 @@ class xoctEventGUI extends xoctGUI
             $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance(self::dic()->user())),
             new Processing(
                 PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                $data['workflow_configuration']['object'] ?? new stdClass()
+                $data['workflow_configuration']['object'] ?? $this->getDefaultWorkflowParameters()
             ),
             xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
         )));
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
         ilUtil::sendSuccess($this->txt('msg_success'), true);
         self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+    }
+
+    public function getDefaultWorkflowParameters()
+    {
+        $WorkflowParameter = new WorkflowParameter();
+        $defaultParameter = new stdClass();
+        $admin = ilObjOpenCastAccess::hasPermission('edit_videos');
+        foreach ($WorkflowParameter::get() as $param) {
+            $defaultValue = $admin ? $param->getDefaultValueAdmin() : $param->getDefaultValueMember();
+            if ($defaultValue == WorkflowParameter::VALUE_ALWAYS_ACTIVE) {
+                $id = $param->getId();
+                $defaultParameter->$id = "true";
+            }
+        }
+        return $defaultParameter ;
     }
 
 
