@@ -228,8 +228,6 @@ class PermissionTemplate extends ActiveRecord
 
 
     /**
-     * @param array $ACL
-     *
      * @return PermissionTemplate|bool
      */
     public static function getTemplateForAcls(ACL $ACL)
@@ -283,7 +281,6 @@ class PermissionTemplate extends ActiveRecord
      * @param $with_download
      * @param $with_annotate
      *
-     * @return array
      */
     public function getAcls($with_download, $with_annotate): ACL
     {
@@ -560,116 +557,61 @@ class PermissionTemplate extends ActiveRecord
         $this->additional_actions_annotate = $additional_actions_annotate;
     }
 
-    /**
-     * @return String
-     */
-    public function getAddedRole() {
+    public function getAddedRole() : ?string {
         return $this->added_role;
     }
 
-
-    /**
-     * @param String $added_role
-     */
-    public function setAddedRole($added_role) {
+    public function setAddedRole(?string $added_role) {
         $this->added_role = $added_role;
     }
 
-    /**
-     * @return String
-     */
-    public function getAddedRoleName() {
+    public function getAddedRoleName() : ?string {
         return $this->added_role_name;
     }
 
-
-    /**
-     * @param String $added_role_name
-     */
-    public function setAddedRoleName($added_role_name) {
+    public function setAddedRoleName(?string $added_role_name) {
         $this->added_role_name = $added_role_name;
     }
 
-    /**
-     * @return int
-     */
-    public function getAddedRoleRead() {
+    public function getAddedRoleRead() : ?int {
         return $this->added_role_read_access;
     }
 
-
-    /**
-     * @param int $read
-     */
-    public function setAddedRoleRead($read) {
+    public function setAddedRoleRead(?int $read) {
         $this->added_role_read_access = $read;
     }
 
-
-    /**
-     * @return int
-     */
-    public function getAddedRoleWrite() {
+    public function getAddedRoleWrite() : ?int {
         return $this->added_role_write_access;
     }
 
-
-    /**
-     * @param int $write
-     */
-    public function setAddedRoleWrite($write) {
+    public function setAddedRoleWrite(?int $write) {
         $this->added_role_write_access = $write;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getAddedRoleAclActions() {
+    public function getAddedRoleAclActions() : ?string {
         return str_replace(' ', '', $this->added_role_acl_actions);
     }
 
-
-    /**
-     * @param String $additional_acl_actions
-     */
-    public function setAddedRoleAclActions($additional_acl_actions) {
+    public function setAddedRoleAclActions(?string $additional_acl_actions) {
         $this->added_role_acl_actions = $additional_acl_actions;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getAddedRoleActionsDownload() {
+    public function getAddedRoleActionsDownload() : ?string{
         return $this->added_role_actions_download;
     }
 
-
-    /**
-     * @param String $additional_actions_download
-     */
-    public function setAddedRoleActionsDownload($additional_actions_download) {
+    public function setAddedRoleActionsDownload(?string $additional_actions_download) {
         $this->added_role_actions_download = $additional_actions_download;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getAddedRoleActionsAnnotate() {
+    public function getAddedRoleActionsAnnotate() : ?string {
         return $this->added_role_actions_annotate;
     }
 
-
-    /**
-     * @param String $additional_actions_annotate
-     */
-    public function setAddedRoleActionsAnnotate($additional_actions_annotate) {
+    public function setAddedRoleActionsAnnotate(?string $additional_actions_annotate)  {
         $this->added_role_actions_annotate = $additional_actions_annotate;
     }
-
-
 
     /**
      * @return int

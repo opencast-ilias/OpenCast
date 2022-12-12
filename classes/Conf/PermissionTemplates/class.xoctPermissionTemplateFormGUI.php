@@ -121,7 +121,6 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $input = new ilCheckboxInputGUI($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS), self::F_ADDED_ROLE);
         $input->setInfo($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS. '_info'));
 
-        //var_dump($input->getValue());exit;
         if($input->getValue()){
             $newRole = $this->addAdditionalRolePermission();
             foreach($newRole as $field){
@@ -147,11 +146,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
         $this->addCommandButton(xoctPermissionTemplateGUI::CMD_CANCEL, self::dic()->language()->txt(xoctPermissionTemplateGUI::CMD_CANCEL));
     }
-
-
-    /**
-     * @return void
-     */
+    
     protected function addAdditionalRolePermission() : array
     {
         $input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ADDED_ROLE_NAME);
