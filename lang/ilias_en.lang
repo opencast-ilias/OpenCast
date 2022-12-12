@@ -211,6 +211,7 @@ event_msg_scheduled#:#Event(s) scheduled
 event_msg_scheduling_conflict#:#Event(s) could not be scheduled, due to an overlap with existing events:
 event_msg_scheduled_in_past#:#Scheduling error: The event has already ended.
 event_msg_end_before_start#:#Scheduling error: Schedule end has to be later than the start.
+event_scheduling#:#Scheduling
 event_multiple#:#Repeat Event
 event_multiple_start#:#Start Date
 event_multiple_start_time#:#Start Time
