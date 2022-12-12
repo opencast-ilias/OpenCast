@@ -41,7 +41,7 @@ class EventParser
         $event->setXoctEventAdditions(EventAdditionsAR::findOrGetInstance($identifier));
 
         if (isset($data->metadata)) {
-            $event->setMetadata($this->MDParser->parseAPIResponseEvent($data->metadata));
+            $event->setMetadata($this->MDParser->getMetadataFromResponse($data->metadata));
         }else {
             $event->setMetadata($this->MDParser->getMetadataFromData($data));
         }

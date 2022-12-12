@@ -37,7 +37,7 @@ class MDParser
     /**
      * @throws xoctException
      */
-    public function parseAPIResponseEvent(array $response): Metadata
+    public function getMetadataFromResponse(array $response): Metadata
     {
         foreach ($response as $d) {
             if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
@@ -51,16 +51,11 @@ class MDParser
                 'Metadata for event could not be loaded.'
             );
         }
-
-        $catalogue = $this->catalogueFactory->event();
-        $metadata = $this->metadataFactory->event();
-
-        return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
+        return $this->parseAPIResponseEvent($fields);
     }
 
     /**
      * @param stdClass $data
-     * @return Metadata
      * @throws \xoctException
      */
     public function getMetadataFromData($data) : Metadata
@@ -105,6 +100,11 @@ class MDParser
             }
 
         }
+        return $this->parseAPIResponseEvent($fields);
+    }
+
+    protected function parseAPIResponseEvent(array $fields) : Metadata
+    {
         $catalogue = $this->catalogueFactory->event();
         $metadata = $this->metadataFactory->event();
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
