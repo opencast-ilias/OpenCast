@@ -198,7 +198,7 @@ class SeriesWorkflowParameterRepository
      * @param bool $as_admin
      * @return Input
      */
-    public function getFormSectionForObjId(int $obj_id, bool $as_admin, $workflow_section_title): ?Input
+    public function getFormSectionForObjId(int $obj_id, bool $as_admin, string $workflow_section_title): ?Input
     {
         $items = [];
         foreach ($this->getParametersInFormForObjId($obj_id, $as_admin) as $id => $data) {
@@ -308,7 +308,7 @@ class SeriesWorkflowParameterRepository
      * TODO: refactor into a form builder
      * @return Input
      */
-    public function getGeneralFormSection($workflow_section_title): ?Input
+    public function getGeneralFormSection(string $workflow_section_title): ?Input
     {
         $items = [];
         foreach ($this->getGeneralParametersInForm() as $id => $data) {
