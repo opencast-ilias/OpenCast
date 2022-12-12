@@ -157,7 +157,7 @@ class MDParser
                 $field = new MetadataField($id, MDDataType::date());
                 /** @var DateTimeImmutable $value */
                 $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));
-                $time_field = $value ? $time_field->withValue($value->format('H:i:s')) : $time_field;
+                $time_field = $value ? $time_field->withValue($value->setTimezone(new DateTimeZone('GMT'))->format('H:i:s')) : $time_field;
                 $metadata->addField($time_field);
             } else {
                 $field = new MetadataField($id, $definition->getType());
