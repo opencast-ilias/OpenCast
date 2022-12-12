@@ -1250,25 +1250,19 @@ class xoctEventGUI extends xoctGUI
         return $intro_text;
     }
 
-    /**
-     * @param string $intro_text
-     * @return array
-     */
     protected function createHyperlinks(string $intro_text) : string
     {
-        if (str_contains($intro_text, "https://") || str_contains($intro_text, "http://") ||str_contains($intro_text, "www.")) {
-            preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
-            preg_match_all('#\bwww[.][^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls_www);
-            foreach ($urls[0] as $url) {
-                $replacement = "<a href='" . $url . "'>" . $url . "</a>";
-                $intro_text = str_replace($url, $replacement, $intro_text);
-            }
-            foreach ($urls_www[0] as $url) {
-                $replacement = "<a href='https://" . $url . "'>" . $url . "</a>";
-                $intro_text = str_replace($url, $replacement, $intro_text);
-            }
+        preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
+        preg_match_all('#\bwww[.][^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls_www);
+        foreach ($urls[0] as $url) {
+            $replacement = "<a href='" . $url . "'>" . $url . "</a>";
+            $intro_text = str_replace($url, $replacement, $intro_text);
         }
-        return  $intro_text;
+        foreach ($urls_www[0] as $url) {
+            $replacement = "<a href='https://" . $url . "'>" . $url . "</a>";
+            $intro_text = str_replace($url, $replacement, $intro_text);
+        }
+        return $intro_text;
     }
 
     protected function addCurrentUserToProducers(): void
