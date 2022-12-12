@@ -323,7 +323,8 @@ class xoctEventGUI extends xoctGUI
                 )
             );
         }
-        self::dic()->ui()->mainTemplate()->setContent($this->getIntroTextHTML() . $filter_html . $html);
+        $intro_text = $this->createHyperlinks($this->getIntroTextHTML());
+        self::dic()->ui()->mainTemplate()->setContent($intro_text . $filter_html . $html);
     }
 
     /**
@@ -1261,6 +1262,21 @@ class xoctEventGUI extends xoctGUI
             $intro = new ilTemplate('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html', '', true, true);
             $intro->setVariable('INTRO', nl2br($this->objectSettings->getIntroductionText()));
             $intro_text = $intro->get();
+        }
+        return $intro_text;
+    }
+
+    protected function createHyperlinks(string $intro_text) : string
+    {
+        preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
+        preg_match_all('#\bwww[.][^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls_www);
+        foreach ($urls[0] as $url) {
+            $replacement = "<a href='" . $url . "'>" . $url . "</a>";
+            $intro_text = str_replace($url, $replacement, $intro_text);
+        }
+        foreach ($urls_www[0] as $url) {
+            $replacement = "<a href='https://" . $url . "'>" . $url . "</a>";
+            $intro_text = str_replace($url, $replacement, $intro_text);
         }
         return $intro_text;
     }
