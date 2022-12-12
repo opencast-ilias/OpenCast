@@ -16,7 +16,7 @@ class ACL implements JsonSerializable
      */
     public function __construct(array $acl_entries = [])
     {
-        $this->acl_entries = $acl_entries;
+        $this->acl_entries = array_unique($acl_entries, SORT_REGULAR);
     }
 
     public static function fromResponse(array $response): self
@@ -53,9 +53,13 @@ class ACL implements JsonSerializable
 
     public function merge(ACL $acl): self
     {
+
         foreach ($acl->getEntries() as $entry) {
-            $this->add($entry);
+            if (!in_array($entry, $this->acl_entries)) {
+                $this->add($entry);
+            }
         }
+
         return $this;
     }
 
