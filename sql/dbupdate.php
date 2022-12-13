@@ -441,3 +441,7 @@ $ilDB->update('il_plugin',
     ['plugin_id' => ['text', 'xoct']]
 );
 ?>
+<#38>
+<?php
+srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+?>
