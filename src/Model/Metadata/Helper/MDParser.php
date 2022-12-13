@@ -37,7 +37,7 @@ class MDParser
     /**
      * @throws xoctException
      */
-    public function parseAPIResponseEvent(array $response): Metadata
+    public function getMetadataFromResponse(array $response): Metadata
     {
         foreach ($response as $d) {
             if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_EPISODES) {
@@ -51,7 +51,60 @@ class MDParser
                 'Metadata for event could not be loaded.'
             );
         }
+        return $this->parseAPIResponseEvent($fields);
+    }
 
+    /**
+     * @param stdClass $data
+     * @throws \xoctException
+     */
+    public function getMetadataFromData($data) : Metadata
+    {
+        $fields = [];
+
+        foreach ($data as $key => $entry) {
+            switch ($key) {
+                case "presenter":
+                    $field_data = (object) array(
+                        "id" => "creator",
+                        "value" => $entry
+                    );
+                    break;
+                case "creator":
+                    $field_data = (object) array(
+                        "id" => "publisher",
+                        "value" => $entry
+                    );
+                    break;
+                case "is_part_of":
+                    $field_data = (object) array(
+                        "id" => "isPartOf",
+                        "value" => $entry
+                    );
+                    break;
+                case "start":
+                    $field_data = (object) array(
+                        "id" => "startDate",
+                        "value" => $entry
+                    );
+                    break;
+                default:
+                    $field_data = (object) array(
+                        "id" => $key,
+                        "value" => $entry
+                    );
+
+            }
+            if (!in_array($field_data, $fields)) {
+                array_push($fields, $field_data);
+            }
+
+        }
+        return $this->parseAPIResponseEvent($fields);
+    }
+
+    protected function parseAPIResponseEvent(array $fields) : Metadata
+    {
         $catalogue = $this->catalogueFactory->event();
         $metadata = $this->metadataFactory->event();
         return $this->parseAPIResponseGeneric($fields, $metadata, $catalogue);
@@ -114,9 +167,16 @@ class MDParser
                 $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
             case MDDataType::TYPE_TIME:
-            case MDDataType::TYPE_TEXT_ARRAY:
+                if(is_int($value)){
+                    return date("H:i:s", $value);
+                }
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
+                return (string) $value;
+            case MDDataType::TYPE_TEXT_ARRAY:
+                if(!is_array($value)){
+                    return [$value];
+                }
             default:
                 return $value;
         }
