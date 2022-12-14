@@ -389,7 +389,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         /** @var string|false $series_id */
         $series_id = $additional_args['series_type']['channel_id'];
         /** @var bool $is_memberupload_enabled */
-        $is_memberupload_enabled = $additional_args['member_upload'];
+        $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
         /** @var int $perm_tpl_id */
         $perm_tpl_id = $additional_args['settings']['permission_template'];
 
