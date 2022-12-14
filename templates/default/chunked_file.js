@@ -80,7 +80,7 @@ il.UI.Input = il.UI.Input || {};
           }
           if (progressBarElement && progressBarElement) {
             progressElement.style.display = "block";
-            if (number > this.progress_storage) {
+            if (number >= this.progress_storage) {
               progressBarElement.textContent = number + "%";
               progressBarElement.style.width = number + "%";
             }
