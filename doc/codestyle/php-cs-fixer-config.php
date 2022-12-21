@@ -1,11 +1,11 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-                           ->in(array(
+                           ->in([
                                __DIR__ . '/../../classes',
                                __DIR__ . '/../../src',
                                __DIR__ . '/../../sql'
-                           ));
+                           ]);
 
 $config = new PhpCsFixer\Config();
 $config->setUsingCache(false);
