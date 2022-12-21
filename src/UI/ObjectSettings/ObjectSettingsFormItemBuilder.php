@@ -38,7 +38,7 @@ class ObjectSettingsFormItemBuilder
     public const F_DEFAULT_VIEW = 'default_view';
     public const F_VIEW_CHANGEABLE = 'view_changeable';
     public const F_CHAT_ACTIVE = 'chat_active';
-
+    public const F_OBJ_LICENSE = 'license';
 
     /**
      * @var UIFactory
@@ -82,8 +82,7 @@ class ObjectSettingsFormItemBuilder
         ObjectSettingsParser $objectSettingsParser,
         xoctFileUploadHandler $fileUploadHandler,
         ilPlugin $plugin
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
         $this->publicationUsageRepository = $publicationUsageRepository;
@@ -93,9 +92,30 @@ class ObjectSettingsFormItemBuilder
         $this->paellaStorageService = $this->fileUploadHandler->getUploadStorageService();
     }
 
+    protected function buildLicenseOptions(): array
+    {
+        // TODO: there is a prepared branch with an implementation to have this as a OC metadatum
+        $options = [
+            null => 'As defined in content',
+        ];
+        $licenses = PluginConfig::getConfig(PluginConfig::F_LICENSES);
+        if ($licenses !== null) {
+            foreach (explode("\n", $licenses) as $nl) {
+                $lic = explode("#", $nl);
+                if ($lic[0] && $lic[1]) {
+                    $options[$lic[0]] = $lic[1];
+                }
+            }
+        } else {
+            $options = [];
+        }
+        return $options;
+    }
+
     public function create(): Input
     {
         $field_factory = $this->ui_factory->input()->field();
+
         $inputs = [
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
@@ -108,6 +128,12 @@ class ObjectSettingsFormItemBuilder
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info')
             )
         ];
+
+        // License Options
+        if (count($license_options = $this->buildLicenseOptions()) > 1) {
+            $inputs[self::F_OBJ_LICENSE] = $field_factory->select($this->txt(self::F_OBJ_LICENSE), $license_options);
+        }
+
         if (PermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
                 [
@@ -115,7 +141,7 @@ class ObjectSettingsFormItemBuilder
             ],
                 sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
-            )->withValue( null);
+            )->withValue(null);
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
@@ -172,6 +198,12 @@ class ObjectSettingsFormItemBuilder
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info')
             )->withValue($objectSettings->isViewChangeable())
         ];
+
+        // License Options
+        if (count($license_options = $this->buildLicenseOptions()) > 1) {
+            $inputs[self::F_OBJ_LICENSE] = $field_factory->select($this->txt(self::F_OBJ_LICENSE), $license_options)
+                                                         ->withValue($objectSettings->getLicense() ?? '');
+        }
 
         if (PermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(

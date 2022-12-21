@@ -114,7 +114,9 @@ class SeriesFormBuilder
         if (is_null($xoctUser->getUserRoleName()) !== true) {
             $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
             foreach ($user_series as $series) {
-                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr(
+                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(
+                    MDFieldDefinition::F_TITLE
+                )->getValue() . ' (...' . substr(
                     $series->getIdentifier(),
                     -4,
                     4
@@ -151,21 +153,25 @@ class SeriesFormBuilder
                 $this->plugin->txt('no')
             )
         ], 'Existing Series')->withValue(self::EXISTING_NO);
-        return $this->ui_factory->input()->field()->section(
-            [self::F_EXISTING_IDENTIFIER => $series_type],
-            $this->plugin->txt(self::F_CHANNEL_TYPE)
-        )
-                                ->withAdditionalTransformation($this->refinery->custom()->transformation(function (
-                                    $vs
-                                ) {
-                                    if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
-                                        $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
-                                    } else {
-                                        $vs[self::F_CHANNEL_ID] = false;
-                                        $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries($vs[self::F_EXISTING_IDENTIFIER][1]);
-                                    }
-                                    unset($vs[self::F_EXISTING_IDENTIFIER]);
-                                    return $vs;
-                                }));
+        return $this->ui_factory->input()
+                                ->field()
+                                ->section(
+                                    [self::F_EXISTING_IDENTIFIER => $series_type],
+                                    $this->plugin->txt(self::F_CHANNEL_TYPE)
+                                )
+                                ->withAdditionalTransformation(
+                                    $this->refinery->custom()->transformation(function ($vs) {
+                                        if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
+                                            $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
+                                        } else {
+                                            $vs[self::F_CHANNEL_ID] = false;
+                                            $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries(
+                                                $vs[self::F_EXISTING_IDENTIFIER][1]
+                                            );
+                                        }
+                                        unset($vs[self::F_EXISTING_IDENTIFIER]);
+                                        return $vs;
+                                    })
+                                );
     }
 }

@@ -426,6 +426,33 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $te->setRows(5);
         $this->addItem($te);
 
+        $te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_LICENSES), PluginConfig::F_LICENSES);
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_LICENSES . '_info'));
+        $this->addItem($te);
+
+        $te = new ilTextAreaInputGUI($this->parent_gui->txt(PluginConfig::F_LICENSE_INFO), PluginConfig::F_LICENSE_INFO);
+        $te->setRequired(true);
+        $te->setUseRte(true);
+        $te->setRteTagSet("extended");
+        $te->disableButtons([
+            'charmap',
+            'undo',
+            'redo',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyfull',
+            'anchor',
+            'fullscreen',
+            'cut',
+            'copy',
+            'paste',
+            'pastetext',
+            'formatselect',
+        ]);
+        $te->setRows(5);
+        $this->addItem($te);
+
         // Terms of Use
         $terms = new ilCheckboxInputGUI($this->parent_gui->txt("accept_terms"), PluginConfig::F_ACCEPT_TERMS);
         $terms->setInfo($this->parent_gui->txt("accept_terms_info"));
@@ -465,7 +492,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
 
         $te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_ROLE_USER_ACTIONS), PluginConfig::F_ROLE_USER_ACTIONS);
-        $te->setInfo($this->parent_gui->txt(PluginConfig::F_ROLE_USER_ACTIONS. "_info"));
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_ROLE_USER_ACTIONS . "_info"));
         $te->setMulti(true);
         $this->addItem($te);
 

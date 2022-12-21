@@ -67,7 +67,7 @@ class ObjectSettings extends ActiveRecord
 
     public function create()
     {
-        if ($this->getObjId() === 0) {
+        if ($this->getObjId() !== 0) {
             $this->update();
         } else {
             parent::create();
@@ -237,6 +237,15 @@ class ObjectSettings extends ActiveRecord
      * @con_length    1
      */
     protected $chat_active = true;
+
+    /**
+     * @var string|null
+     *
+     * @con_has_field true
+     * @con_fieldtype text
+     * @con_length    4000
+     */
+    protected $license = null;
 
 
     public function getObjId(): int
@@ -473,6 +482,18 @@ class ObjectSettings extends ActiveRecord
     {
         return $this->paella_player_live_file_id ?? '';
     }
+
+    public function getLicense(): ?string
+    {
+        return $this->license;
+    }
+
+    public function setLicense(?string $license): void
+    {
+        $this->license = $license;
+    }
+
+
 
     /**
      * @param string $paella_player_live_file_id

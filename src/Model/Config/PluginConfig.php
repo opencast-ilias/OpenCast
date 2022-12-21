@@ -47,6 +47,8 @@ class PluginConfig extends ActiveRecord
     public const F_ROLE_USER_ACTIONS = 'role_user_actions';
     public const F_ROLE_OWNER_PREFIX = 'role_owner_prefix';
     public const F_IDENTIFIER_TO_UPPERCASE = 'identifier_to_uppercase';
+    public const F_LICENSE_INFO = 'license_info';
+    public const F_LICENSES = 'licenses';
     public const F_SIGN_ANNOTATION_LINKS = 'sign_annotation_links';
     public const F_ANNOTATION_TOKEN_SEC = 'annotation_token_security';
     public const F_SIGN_ANNOTATION_LINKS_TIME = 'sign_annotation_links_time';

@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
+use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 
 /**
  * User Interface class for example repository object.
@@ -413,7 +414,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         if ($perm_tpl_id == '') {
-            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+            $perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
         } else {
             $acl = PermissionTemplate::removeAllTemplatesFromAcls($acl);
             /** @var PermissionTemplate $perm_tpl */
@@ -439,6 +440,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $settings->setSeriesIdentifier($series_id);
         }
         $settings->setObjId($newObj->getId());
+        $settings->setLicense(
+            $additional_args['settings'][ObjectSettingsFormItemBuilder::F_LICENSE] ?? null
+        );
         $settings->create();
 
         if ($settings->getDuplicatesOnSystem()) {

@@ -15,6 +15,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
+use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 
 /**
  * Class xoctSeriesGUI
@@ -68,8 +69,7 @@ class xoctSeriesGUI extends xoctGUI
         SeriesRepository $seriesRepository,
         SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
         WorkflowParameterRepository $workflowParameterRepository
-    )
-    {
+    ) {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
@@ -188,13 +188,16 @@ class xoctSeriesGUI extends xoctGUI
         /** @var ObjectSettings $objectSettings */
         $objectSettings = $data['settings']['object'];
         $objectSettings->setObjId($this->getObjId());
+        $objectSettings->setLicense(
+            $data['settings'][ObjectSettingsFormItemBuilder::F_LICENSE] ?? null
+        );
         $objectSettings->setSeriesIdentifier($this->objectSettings->getSeriesIdentifier());
         $objectSettings->update();
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
         if ($perm_tpl_id == '') {
-            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+            $perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
         } else {
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
