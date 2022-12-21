@@ -71,7 +71,7 @@ class ChunkedFileRenderer extends Renderer
 
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
-        $settings->chunk_size = round($upload_limit / 2) * self::MIB_F;
+        $settings->chunk_size = min($upload_limit / 2, 20 * self::MB_IN_B); // we use 20MB as default chunk size which seems to be a good compromise for slow connections
         if (!$settings->chunked_upload) {
             $max_file_size = $component->getMaxFileFize() === -1
                 ? $upload_limit

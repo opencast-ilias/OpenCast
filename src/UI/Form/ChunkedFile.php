@@ -68,7 +68,7 @@ class ChunkedFile extends File
             },
             function ($txt, $value) {
                 return $txt("msg_no_files_selected");
-            },
+            }
         );
     }
 }
