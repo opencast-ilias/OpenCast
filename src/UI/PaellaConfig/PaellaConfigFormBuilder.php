@@ -70,15 +70,16 @@ class PaellaConfigFormBuilder
     {
         $f = $this->ui_factory->input()->field();
         $live_s = $live ? '_live' : '';
+
         return $f->switchableGroup([
-            PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT)),
+            PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT.$live_s)),
             PluginConfig::PAELLA_OPTION_URL => $f->group([
                 'url' => $f->text($this->plugin->txt('link'))
                     ->withByline($this->plugin->txt('pp_link_info'))
                     ->withRequired(true)
-                    ->withValue($url)
+                    ->withValue($url.$live_s)
             ], $this->plugin->txt('pp_url'))
-        ], $this->txt(self::F_PAELLA_PLAYER_OPTION . $live_s))
+        ], $this->txt(self::F_PAELLA_PLAYER_OPTION))
             ->withValue($option)
             ->withRequired(true);
     }

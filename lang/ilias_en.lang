@@ -388,6 +388,7 @@ series_links#:#Links
 config_paella_player_option#:#Paella Player Config for Video On Demand
 config_paella_player_option_live#:#Paella Player Config for Live Streams
 pp_default#:#Use <a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json"/>default config</a>
+pp_default_live#:#Use <a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json"/>default config</a>
 pp_file#:#Upload Config File
 pp_url#:#Remote URL
 pp_link_info#:#Please check if the player can successfully load the config file.

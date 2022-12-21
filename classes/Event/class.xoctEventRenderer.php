@@ -155,7 +155,7 @@ class xoctEventRenderer
      */
     public function getPlayerLinkHTML($button_type = 'btn-info')
     {
-        if ($this->isEventAccessible() && !is_null($this->event->publications()->getPlayerPublication())) {
+        if ($this->isEventAccessible() && (!is_null($this->event->publications()->getPlayerPublication())|| !is_null($this->event->publications()->getLivePublication()))) {
             $link_tpl = self::plugin()->template('default/tpl.player_link.html');
             $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->event->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);

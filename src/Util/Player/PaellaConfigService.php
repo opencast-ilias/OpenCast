@@ -26,7 +26,7 @@ class PaellaConfigService
     {
         $option = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE)
             : PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION);
-        $default_path = $live ? PluginConfig::PAELLA_DEFAULT_PATH : PluginConfig::PAELLA_DEFAULT_PATH;
+        $default_path = $live ? PluginConfig::PAELLA_DEFAULT_PATH_LIVE : PluginConfig::PAELLA_DEFAULT_PATH;
         switch ($option) {
             case PluginConfig::PAELLA_OPTION_URL:
                 $url = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE)
