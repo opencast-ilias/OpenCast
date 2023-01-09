@@ -73,7 +73,8 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
     public function storeFromArray(array $data): MDFieldConfigAR
     {
         $ar = MDFieldConfigSeriesAR::where(['field_id' => $data['field_id']])->first();
-        if (is_null($ar)) {
+        $is_new = $ar === null;
+        if ($is_new) {
             $ar = new MDFieldConfigSeriesAR();
             $ar->setSort($this->getNextSort());
         }
@@ -84,7 +85,12 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         $ar->setPrefill(new MDPrefillOption($data['prefill']));
         $ar->setReadOnly($data['read_only']);
         $ar->setRequired($data['required']);
-        $ar->create();
+        $ar->setValuesFromEditableString($data['values'] ?? '');
+        if ($is_new) {
+            $ar->create();
+        } else {
+            $ar->update();
+        }
         return $ar;
     }
 

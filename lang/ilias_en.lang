@@ -542,6 +542,8 @@ md_visible_for_permissions#:#Visible for
 md_required#:#Required
 md_read_only#:#Read-Only
 md_prefill#:#Prefilled with
+md_values#:#Possible values
+md_values_info#:#One Entry per line in the format "value%slabel".
 md_prefill_none#:#None
 md_prefill_username_creator#:#Username
 md_prefill_crs_title#:#Course Title

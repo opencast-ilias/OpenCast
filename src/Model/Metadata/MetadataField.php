@@ -78,6 +78,7 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT_LONG:
             case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TIME:
+            case MDDataType::TYPE_TEXT_SELECTION:
             return $this->getValue();
             case MDDataType::TYPE_DATETIME:
                 /** @var DateTimeImmutable|null $value */
@@ -96,6 +97,7 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TIME:
             case MDDataType::TYPE_TEXT_LONG:
+            case MDDataType::TYPE_TEXT_SELECTION:
                 return $this->getValue();
             case MDDataType::TYPE_TEXT_ARRAY:
                 return implode(', ', $this->getValue());

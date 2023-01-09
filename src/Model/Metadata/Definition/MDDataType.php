@@ -12,6 +12,7 @@ class MDDataType
     public const TYPE_DATETIME = 'datetime';
     public const TYPE_DATE = 'date';
     public const TYPE_TEXT_ARRAY = 'text_array';
+    public const TYPE_TEXT_SELECTION = 'text_selection';
     public const TYPE_TIME = 'time';
     private static $types = [
         self::TYPE_TEXT,
@@ -19,7 +20,8 @@ class MDDataType
         self::TYPE_TEXT_ARRAY,
         self::TYPE_DATETIME,
         self::TYPE_DATE,
-        self::TYPE_TIME
+        self::TYPE_TIME,
+        self::TYPE_TEXT_SELECTION,
     ];
 
     /**
@@ -50,6 +52,11 @@ class MDDataType
     public static function text_array(): self
     {
         return new self(self::TYPE_TEXT_ARRAY);
+    }
+
+    public static function text_selection(): self
+    {
+        return new self(self::TYPE_TEXT_SELECTION);
     }
 
     public static function text_long(): self
@@ -86,6 +93,7 @@ class MDDataType
     public function isValidValue($value): bool
     {
         switch ($this->getTitle()) {
+            case self::TYPE_TEXT_SELECTION:
             case self::TYPE_TEXT:
             case self::TYPE_TEXT_LONG:
                 return is_string($value);
@@ -100,7 +108,7 @@ class MDDataType
             default:
                 throw new xoctException(
                     xoctException::INTERNAL_ERROR,
-                    "invalid MDDataType: " . get_class($value)
+                    "invalid MDDataType for " . $this->getTitle()
                 );
         }
     }

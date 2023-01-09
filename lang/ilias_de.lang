@@ -540,6 +540,8 @@ md_visible_for_permissions#:#Sichbar für
 md_required#:#Verpflichtend
 md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
+md_values#:#Mögliche Werte
+md_values_info#:#Ein Eintrag pro Zeile in der Form "Wert%sBeschreibung"
 md_prefill_none#:#Leer
 md_prefill_username_creator#:#Benutzername
 md_prefill_crs_title#:#Kurstitel

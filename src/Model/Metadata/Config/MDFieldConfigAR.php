@@ -9,6 +9,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 {
     public const VISIBLE_ALL = 'all';
     public const VISIBLE_ADMIN = 'admin';
+    public const VALUE_SEPERATOR = "|||";
     /**
      * @var int
      *
@@ -93,11 +94,22 @@ abstract class MDFieldConfigAR extends ActiveRecord
      */
     protected $sort;
 
+    /**
+     * @var array
+     *
+     * @con_has_field    true
+     * @con_fieldtype    text
+     * @con_is_notnull   false
+     */
+    protected $values = [];
+
     public function sleep($field_name)
     {
         switch ($field_name) {
             case 'prefill':
                 return $this->prefill->getValue();
+             case 'values':
+                return json_encode($this->values);
             default:
                 return null;
         }
@@ -111,8 +123,14 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return new MDPrefillOption($field_value);
+            case 'values':
+                if (empty($field_value)) {
+                    return [];
+                }
+                $decoded = json_decode($field_value, true);
+                return is_array($decoded) ? $decoded : [];
             default:
-                return null;
+            return null;
         }
     }
 
@@ -247,5 +265,41 @@ abstract class MDFieldConfigAR extends ActiveRecord
     public function setSort(int $sort): void
     {
         $this->sort = $sort;
+    }
+
+    public function getValues(): array
+    {
+        return $this->values;
+    }
+
+    public function setValues(array $values): void
+    {
+        $this->values = $values;
+    }
+
+    public function getValuesAsEditableString(): string
+    {
+        $string = '';
+        foreach ($this->values as $key => $value) {
+            $string .= $key . self::VALUE_SEPERATOR . $value . "\n";
+        }
+
+        return $string;
+    }
+
+    public function setValuesFromEditableString(string $values)
+    {
+        $this->values = [];
+        if (empty($values)) {
+            return;
+        }
+        // normalize line endings
+        $values = str_replace("\r\n", "\n", $values);
+        foreach (explode("\n", $values) as $value) {
+            $value = explode(self::VALUE_SEPERATOR, $value);
+            if (count($value) === 2) {
+                $this->values[$value[0]] = $value[1];
+            }
+        }
     }
 }

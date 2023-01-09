@@ -436,7 +436,8 @@ $ilDB->insert('xoct_config', [
     'name' => ['text', 'version_check'],
     'value' => ['text', '44ac530093a998b525b0a73ba536e64f03bbaff47446cf99e1a31d6a042a4549']
 ]);
-$ilDB->update('il_plugin',
+$ilDB->update(
+    'il_plugin',
     ['last_update_version' => ['text', '4.0.2-oc']],
     ['plugin_id' => ['text', 'xoct']]
 );
@@ -444,4 +445,23 @@ $ilDB->update('il_plugin',
 <#38>
 <?php
 srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+?>
+<#39>
+<?php
+/** @var $ilDB ilDBInterface */
+
+$field_infos = [
+    'type' => 'clob',
+    'notnull' => false,
+    'default' => null
+];
+
+if (!$ilDB->tableColumnExists('xoct_md_field_event', 'values')) {
+    $ilDB->addTableColumn('xoct_md_field_event', 'values', $field_infos);
+}
+
+if (!$ilDB->tableColumnExists('xoct_md_field_series', 'values')) {
+    $ilDB->addTableColumn('xoct_md_field_series', 'values', $field_infos);
+}
+
 ?>
