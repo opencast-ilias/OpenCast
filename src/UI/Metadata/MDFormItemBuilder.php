@@ -214,11 +214,11 @@ class MDFormItemBuilder
         $field = $field
             ->withRequired($fieldConfigAR->isRequired())
             ->withDisabled($fieldConfigAR->isReadOnly());
-        return $value ? $field->withValue($this->formatValue($value, $md_definition)) : $field;
+        return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
 
 
-    private function formatValue($value, MDFieldDefinition $md_definition)
+    private function formatValue($value, MDFieldDefinition $md_definition, MDFieldConfigAR $fieldConfigAR)
     {
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_DATETIME:
@@ -227,6 +227,9 @@ class MDFormItemBuilder
             case MDDataType::TYPE_TEXT_ARRAY:
                 return is_array($value) ? implode(',', $value) : $value;
             case MDDataType::TYPE_TEXT_SELECTION:
+                if (!in_array($value, array_keys($fieldConfigAR->getValues()))) {
+                    return null;
+                }
                 return $value;
             default:
                 return $value;
