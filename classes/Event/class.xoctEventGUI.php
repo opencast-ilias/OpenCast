@@ -319,7 +319,7 @@ class xoctEventGUI extends xoctGUI
         if (xoct::isIlias7()) { // todo: remove when this is fixed https://mantis.ilias.de/view.php?id=32134
             $filter_html = $this->dic->ui()->renderer()->render(
                 $this->eventTableBuilder->filter(
-                    $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '', true)
+                    $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '')
                 )
             );
         }
