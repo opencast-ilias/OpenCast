@@ -74,8 +74,7 @@ class MDFormItemBuilder
         MDParser $MDParser,
         ilPlugin $plugin,
         Container $dic
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->md_catalogue = $md_catalogue;
         $this->prefiller = $prefiller;
@@ -114,9 +113,11 @@ class MDFormItemBuilder
     public function update_section(Metadata $existing_metadata, bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = $this->md_conf_repository->getAll($as_admin);
-        array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
+        $stored_field_configurations = $this->md_conf_repository->getAll($as_admin);
+
+        array_walk($stored_field_configurations, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
+
             $form_elements[$key] = $this->buildFormElementForMDField(
                 $md_field_config,
                 $existing_metadata->getField($md_field_config->getFieldId())->getValue()
@@ -182,7 +183,14 @@ class MDFormItemBuilder
                 $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
                     ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function (string $value) {
                         return explode(',', $value);
-                    }))->withValue(''); // can be removed if this is fixed: https://mantis.ilias.de/view.php?id=32104
+                    }));
+                break;
+            case MDDataType::TYPE_TEXT_SELECTION:
+                $field = $this->ui_factory->input()->field()->select(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey()),
+                    $fieldConfigAR->getValues()
+                )->withValue(null);
+
                 break;
             case MDDataType::TYPE_TEXT_LONG:
                 $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
@@ -206,11 +214,11 @@ class MDFormItemBuilder
         $field = $field
             ->withRequired($fieldConfigAR->isRequired())
             ->withDisabled($fieldConfigAR->isReadOnly());
-        return $value ? $field->withValue($this->formatValue($value, $md_definition)) : $field;
+        return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
 
 
-    private function formatValue($value, MDFieldDefinition $md_definition)
+    private function formatValue($value, MDFieldDefinition $md_definition, MDFieldConfigAR $fieldConfigAR)
     {
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_DATETIME:
@@ -218,6 +226,11 @@ class MDFormItemBuilder
                 return $value instanceof DateTimeImmutable ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s') : $value;
             case MDDataType::TYPE_TEXT_ARRAY:
                 return is_array($value) ? implode(',', $value) : $value;
+            case MDDataType::TYPE_TEXT_SELECTION:
+                if (!in_array($value, array_keys($fieldConfigAR->getValues()))) {
+                    return null;
+                }
+                return $value;
             default:
                 return $value;
         }

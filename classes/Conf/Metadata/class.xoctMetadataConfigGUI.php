@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
@@ -58,8 +59,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         MDCatalogueFactory $md_catalogue_factory,
         Container $dic,
         ilPlugin $plugin
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->ui_factory = self::dic()->ui()->factory();
         $this->renderer = self::dic()->ui()->renderer();
@@ -193,42 +193,86 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         self::dic()->ctrl()->setParameter($this, 'field_id', $field_id);
         $md_field_def = $this->getMetadataCatalogue()->getFieldById($field_id);
         $md_field_config = $this->repository->findByFieldId($field_id);
+        $fields = [
+            'field_id' => $this->ui_factory->input()->field()->text(
+                self::plugin()->translate('md_field_id')
+            )
+                                           ->withDisabled(true)
+                                           ->withValue($field_id)
+                                           ->withRequired(true),
+            'title_de' => $this->ui_factory->input()->field()->text(
+                self::plugin()->translate('md_title_de')
+            )
+                                           ->withRequired(true)
+                                           ->withValue(
+                                               $md_field_config ? $md_field_config->getTitle('de') : ''
+                                           ),
+            'title_en' => $this->ui_factory->input()->field()->text(
+                self::plugin()->translate('md_title_en')
+            )
+                                           ->withRequired(true)
+                                           ->withValue(
+                                               $md_field_config ? $md_field_config->getTitle('en') : ''
+                                           ),
+            'visible_for_permissions' => $this->ui_factory->input()->field()->select(
+                self::plugin()->translate('md_visible_for_permissions'),
+                [
+                    MDFieldConfigAR::VISIBLE_ALL => $this->plugin->txt('md_visible_all'),
+                    MDFieldConfigAR::VISIBLE_ADMIN => $this->plugin->txt('md_visible_admin')
+                ]
+            )->withRequired(true)
+                                                          ->withValue(
+                                                              $md_field_config ? $md_field_config->getVisibleForPermissions(
+                                                              ) : null
+                                                          ),
+            'required' => $this->ui_factory->input()->field()->checkbox(
+                self::plugin()->translate('md_required')
+            )
+                                           ->withDisabled(
+                                               $md_field_def->isRequired() || $md_field_def->isReadOnly()
+                                           )
+                                           ->withValue(
+                                               $md_field_def->isRequired(
+                                               ) || ($md_field_config && $md_field_config->isRequired())
+                                           ),
+            'read_only' => $this->ui_factory->input()->field()->checkbox(
+                self::plugin()->translate('md_read_only')
+            )
+                                            ->withDisabled($md_field_def->isReadOnly())
+                                            ->withValue(
+                                                $md_field_def->isReadOnly(
+                                                ) || ($md_field_config && $md_field_config->isReadOnly())
+                                            ),
+            'prefill' => $this->ui_factory->input()->field()->select(
+                self::plugin()->translate('md_prefill'),
+                $this->getPrefillOptions()
+            )
+                                          ->withRequired(true)
+                                          ->withDisabled($md_field_def->isReadOnly())
+                                          ->withValue(
+                                              $md_field_config ? $md_field_config->getPrefill()->getValue(
+                                              ) : MDPrefillOption::T_NONE
+                                          )
+        ];
+
+        if ($md_field_def->getType()->getTitle() === MDDataType::TYPE_TEXT_SELECTION) {
+            $fields['values'] = $this->ui_factory->input()->field()->textarea(
+                self::plugin()->translate('md_values'),
+                self::plugin()->translate('md_values_info', '', [MDFieldConfigAR::VALUE_SEPERATOR])
+            )->withValue(
+                $md_field_config ? $md_field_config->getValuesAsEditableString() : ''
+            )->withRequired(true)
+             ->withDisabled($md_field_def->isReadOnly());
+        }
+
         return $this->ui_factory->input()->container()->form()->standard(
             self::dic()->ctrl()->getFormAction($this, self::CMD_STORE),
             [
                 'fields' => $this->ui_factory->input()->field()->section(
-                    ['field_id' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_field_id'))
-                        ->withDisabled(true)
-                        ->withValue($field_id)
-                        ->withRequired(true),
-                        'title_de' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_de'))
-                            ->withRequired(true)
-                            ->withValue($md_field_config ? $md_field_config->getTitle('de') : ''),
-                        'title_en' => $this->ui_factory->input()->field()->text(self::plugin()->translate('md_title_en'))
-                            ->withRequired(true)
-                            ->withValue($md_field_config ? $md_field_config->getTitle('en') : ''),
-                        'visible_for_permissions' => $this->ui_factory->input()->field()->select(
-                            self::plugin()->translate('md_visible_for_permissions'),
-                            [MDFieldConfigAR::VISIBLE_ALL => $this->plugin->txt('md_visible_all'),
-                                MDFieldConfigAR::VISIBLE_ADMIN => $this->plugin->txt('md_visible_admin')]
-                        )->withRequired(true)
-                            ->withValue($md_field_config ? $md_field_config->getVisibleForPermissions() : null),
-                        'required' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_required'))
-                            ->withDisabled($md_field_def->isRequired() || $md_field_def->isReadOnly())
-                            ->withValue($md_field_def->isRequired() || ($md_field_config && $md_field_config->isRequired())),
-                        'read_only' => $this->ui_factory->input()->field()->checkbox(self::plugin()->translate('md_read_only'))
-                            ->withDisabled($md_field_def->isReadOnly())
-                            ->withValue($md_field_def->isReadOnly() || ($md_field_config && $md_field_config->isReadOnly())),
-                        'prefill' => $this->ui_factory->input()->field()->select(
-                            self::plugin()->translate('md_prefill'),
-                            $this->getPrefillOptions()
-                        )
-                            ->withRequired(true)
-                            ->withDisabled($md_field_def->isReadOnly())
-                            ->withValue($md_field_config ? $md_field_config->getPrefill()->getValue() : MDPrefillOption::T_NONE)
-                    ],
+                    $fields,
                     $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
-                )]
+                )
+            ]
         );
     }
 
