@@ -259,7 +259,8 @@ class OpencastDIC
                 $c['plugin'],
                 $c['paella_config_upload_handler'],
                 $c['paella_config_storage_service'],
-                $this->dic->ui()->factory()
+                $this->dic->ui()->factory(),
+                $this->dic->ui()->renderer()
             );
         });
     }

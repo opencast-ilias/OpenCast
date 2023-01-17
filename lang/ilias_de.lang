@@ -384,7 +384,8 @@ series_view_type_1#:#Kacheln
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config für Video-On-Demand
 config_paella_player_option_live#:#Paella Player Config für Live-Streams
-pp_default#:#<a target="_blank" href="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json"/>Standard-Config</a> verwenden
+pp_default_link#:#Standard-Config
+pp_default_string#:#Verwende die
 pp_file#:#Config-Datei hochladen
 pp_url#:#URL hinterlegen
 pp_link_info#:#Bitte überprüfen Sie durch einen Aufruf des Players, ob die Config erfolgreich geladen werden kann und das richtige Format hat.

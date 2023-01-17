@@ -33,8 +33,10 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                         "hls" => [
                             [
                                 "src" => $track['url'],
-                                "mimetype" => $track['mimetype'],
-                                "isLiveStream" => true
+                                "mimetype" => $track['mimetype']
+                                //"isLiveStream" => true
+                                //removed isLivestream so that the playback-bar and forward/backward-buttons show up in livestreams.
+                                //Otherwise the paellaplayer will not show these buttons in livestreams.
                             ]
                         ]
                     ]
@@ -48,8 +50,10 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                     "hls" => [
                         [
                             "src" => $track['url'],
-                            "mimetype" => $track['mimetype'],
-                            "isLiveStream" => true
+                            "mimetype" => $track['mimetype']
+                            //"isLiveStream" => true
+                            //removed isLivestream so that the playback-bar and forward/backward-buttons show up in livestreams.
+                            //Otherwise the paellaplayer will not show these buttons in livestreams.
                         ]
                     ]
                 ]

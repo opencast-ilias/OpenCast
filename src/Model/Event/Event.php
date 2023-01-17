@@ -346,7 +346,10 @@ class Event
 
     public function isScheduled(): bool
     {
-        return $this->getStatus() === 'EVENTS.EVENTS.STATUS.SCHEDULED';
+        return in_array($this->getStatus(), [
+            'EVENTS.EVENTS.STATUS.SCHEDULED',
+            "EVENTS.EVENTS.STATUS.RECORDING"
+        ]);
     }
 
     public function isLiveEvent(): bool
