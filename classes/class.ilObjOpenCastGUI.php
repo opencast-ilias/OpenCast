@@ -419,12 +419,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
         }
-        $acl = $perm_tpl->addToAcls(
-            $acl,
-            !$settings->getStreamingOnly(),
-            $settings->getUseAnnotations()
-        );
-
+        if ($perm_tpl) {
+            $acl = $perm_tpl->addToAcls(
+                $acl,
+                !$settings->getStreamingOnly(),
+                $settings->getUseAnnotations()
+            );
+        }
         // TODO: do we need contributor / organizer?
         if (!$series_id) {
             $series_id = $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
