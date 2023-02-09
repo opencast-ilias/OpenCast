@@ -101,8 +101,8 @@ class xoctEventAPI
 
         $scheduling = new Scheduling(
             $location,
-            $start instanceof DateTime ? DateTimeImmutable::createFromMutable($start) : new DateTimeImmutable($start),
-            $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end) : new DateTimeImmutable($end),
+            $start instanceof DateTime ? DateTimeImmutable::createFromMutable($start->setTimezone(new DateTimeZone('GMT'))) : new DateTimeImmutable($start),
+            $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end->setTimezone(new DateTimeZone('GMT'))) : new DateTimeImmutable($end),
             PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
         );
 
