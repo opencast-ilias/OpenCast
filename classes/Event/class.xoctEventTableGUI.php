@@ -98,7 +98,6 @@ class xoctEventTableGUI extends ilTable2GUI
             }
         }
         $this->initColumns();
-
         $this->setDefaultOrderField('startDate_s');
 
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
