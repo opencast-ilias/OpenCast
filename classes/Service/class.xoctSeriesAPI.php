@@ -130,6 +130,7 @@ class xoctSeriesAPI
         $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($title);
         $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->setValue($additional_data['description'] ?? '');
         $metadata->getField(MDFieldDefinition::F_LICENSE)->setValue($additional_data['license'] ?? '');
+        $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue([ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle()]);
 
         $acl = $this->aclUtils->getStandardRolesACL();
         if (isset($additional_data['permission_template_id'])) {
@@ -166,8 +167,6 @@ class xoctSeriesAPI
         foreach ($producers as $producer) {
             $acl->merge($this->aclUtils->getUserRolesACL($producer));
         }
-
-//        $series->addOrganizer(ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle(), true);
 
         $series_id = $this->series_repository->create(new CreateSeriesRequest(new CreateSeriesRequestPayload($metadata, $acl)));
 
