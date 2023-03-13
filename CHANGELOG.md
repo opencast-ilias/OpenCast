@@ -2,6 +2,8 @@
 
 ## [4.0.1]
 - Update Paella to version 6.5.6.
+- Improvement: change default order of events in series to start date.
+
 ## [4.0.0]
 - Feature: Completely configurable metadata fields for events and series, used in forms and tables. See Configuration Tab "Metadata".
 - Feature: Accept Terms of Use once per User, when creating an Event. See Configuration at "General" -> "Series".
