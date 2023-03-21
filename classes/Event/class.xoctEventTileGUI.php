@@ -68,7 +68,7 @@ class xoctEventTileGUI
         $this->limit = UserSettingsRepository::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
         $this->events = array_values(array_map(function ($item) {
             return $item['object'];
-        }, $data));
+        }, $this->sortData($data)));
     }
 
     /**
