@@ -1,8 +1,11 @@
 # Change Log
 
 ## [4.0.1]
+- Fix/Improvement: added more playbackrates in paella-config
 - Update Paella to version 6.5.6.
 - Improvement: change default order of events in series to start date.
+- Improvement: In TileView also use the same default order for events.
+
 
 ## [4.0.0]
 - Feature: Completely configurable metadata fields for events and series, used in forms and tables. See Configuration Tab "Metadata".
