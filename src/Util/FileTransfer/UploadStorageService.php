@@ -13,6 +13,7 @@ use ILIAS\FileUpload\Location;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use xoctUploadFile;
+use ILIAS\Filesystem\DTO\Metadata;
 
 class UploadStorageService
 {
@@ -69,7 +70,40 @@ class UploadStorageService
         }
         $dir = $this->idToDirPath($identifier);
         if ($this->fileSystem->hasDir($dir)) {
+            $this->deleteDirRecursive($dir);
+        }
+    }
+
+    private function deleteDirRecursive(string $dir): void
+    {
+        // the folders are sorted based on their path length to ensure that nested folders are deleted first
+        // thereby preventing any issues due to deletion attempts on no longer existing folders.
+        $folders = $this->fileSystem->finder()->in([$dir]);
+        $folders = $folders->directories();
+        $folders = $folders->sort(function (
+            Metadata $a,
+            Metadata $b
+        ): int {
+            return strlen($a->getPath()) - strlen($b->getPath());
+        });
+        $folders = $folders->reverseSorting();
+        $folders = $folders->getIterator();
+        $folders->rewind();
+        while ($folders->valid()) {
+            try {
+                $folder_match = $folders->current();
+                $path = $folder_match->getPath();
+                if ($folder_match->isDir()) {
+                    $this->fileSystem->deleteDir($path);
+                }
+                $folders->next();
+            } catch (\Throwable $t) {
+                $folders->next();
+            }
+        }
+        try {
             $this->fileSystem->deleteDir($dir);
+        } catch (\Throwable $t) {
         }
     }
 
