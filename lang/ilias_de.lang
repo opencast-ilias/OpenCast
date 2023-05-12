@@ -376,6 +376,8 @@ series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (si
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload durch Mitglieder
 series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
+series_existing_series#:#Bestehende Serie
+series_view_changeable#:#Ansicht änderbar
 series_video_portal_link#:#Link zur Serie in %s
 series_view_changeable#:#Ansicht änderbar
 series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht selbst zu wechseln.
