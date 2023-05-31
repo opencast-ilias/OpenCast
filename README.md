@@ -1,6 +1,6 @@
 # ILIAS-Plugin Opencast
 
-This version of the ILIAS plugin for Opencast is operated and developed collaboratively by a community. The University of Bern acts as coordinative maintainer (contact: info.ilub@unibe.ch). In this role, the University of Bern organizes monthly meetings, discusses ideas for further development with the community and refers to existing development companies for the implementation of these ideas.
+This version of the ILIAS plugin for Opencast is operated and developed collaboratively by a community (for mailing list see: https://opencast.org/communication/). The University of Bern acts as coordinative maintainer (contact: info.ilub@unibe.ch). In this role, the University of Bern organizes monthly meetings, discusses ideas for further development with the community and refers to existing development companies for the implementation of these ideas (see: https://opencast.org/webmeetings/).
 
 Use Opencast in ILIAS LMS with a wide variety of features:
 * create Opencast series as repository objects
