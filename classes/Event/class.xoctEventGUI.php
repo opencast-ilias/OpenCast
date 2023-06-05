@@ -765,6 +765,10 @@ class xoctEventGUI extends xoctGUI
      */
     public function opencaststudio()
     {
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+            ilUtil::sendFailure($this->txt('msg_no_access'), true);
+            $this->cancel();
+        }
         $this->addCurrentUserToProducers();
         // redirect to oc studio
         $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
@@ -784,7 +788,7 @@ class xoctEventGUI extends xoctGUI
         $studio_link .= '?upload.seriesId=' . $this->objectSettings->getSeriesIdentifier()
             . '&return.label=ILIAS'
             . '&return.target=' . urlencode($return_link);
-        header('Location:' . $studio_link);
+        self::dic()->ctrl()->redirectToURL($studio_link);
     }
 
 
@@ -806,7 +810,7 @@ class xoctEventGUI extends xoctGUI
 
         // redirect
         $cutting_link = $event->publications()->getCuttingLink();
-        header('Location: ' . $cutting_link);
+        self::dic()->ctrl()->redirectToURL($cutting_link);
     }
 
     /**
@@ -872,8 +876,7 @@ class xoctEventGUI extends xoctGUI
         $annotation_link = $event->publications()->getAnnotationLink(
             filter_input(INPUT_GET, 'ref_id', FILTER_SANITIZE_NUMBER_INT)
         );
-
-        header('Location: ' . $annotation_link);
+        self::dic()->ctrl()->redirectToURL($annotation_link);
     }
 
 
