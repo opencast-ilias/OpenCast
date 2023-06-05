@@ -379,6 +379,7 @@ series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads w
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload by members
 series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
+series_existing_series#:#Existing Series
 series_video_portal_link#:#Link to Series in %s
 series_view_changeable#:#View changeable
 series_view_changeable_info#:#The user has the possibility to change the view.

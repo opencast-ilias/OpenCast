@@ -150,7 +150,7 @@ class SeriesFormBuilder
                 $this->formItemBuilder->create_items($is_admin),
                 $this->plugin->txt('no')
             )
-        ], 'Existing Series')->withValue(self::EXISTING_NO);
+        ], $this->plugin->txt('series_existing_series'))->withValue(self::EXISTING_NO);
         return $this->ui_factory->input()->field()->section(
             [self::F_EXISTING_IDENTIFIER => $series_type],
             $this->plugin->txt(self::F_CHANNEL_TYPE)
