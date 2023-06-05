@@ -107,8 +107,8 @@ class EventTableBuilder
             array_map(function (MDFieldConfigEventAR $mdFieldConfig) {
                 return true;
             }, $mdFieldConfigs),
-            true,
-            true
+            false,
+            false
         );
     }
 
