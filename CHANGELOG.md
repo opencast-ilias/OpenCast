@@ -1,5 +1,24 @@
 # Change Log
 
+## [5.1.1]
+- Fix #107: filter is collapsed by default
+- Fix #133: add missing translation
+- Fix #156: fix links to annotation tool and opencast studio
+- Fix #131, #152, #140: remove metadata problems with "Creator" and "Contributor"
+- Fix #164, Fix #133, Fix #156, Fix #157
+
+## [5.1.0]
+- Improvement: change default order of events in series to start date.
+- Improvement: In TileView also use the same default order for events.
+- Fix/Improvement: Add course title as organizer, when creating a series over the API
+- Fix: Don't change Starttime when editing the metadata #141
+- Fix: use the correct timezone #60
+
+## [5.0.2]
+- Fix #85: Properly access the livestreams
+- Fix #108
+- Fix #128: License can be configured over metadata
+
 ## [4.0.1]
 - Fix/Improvement: added more playbackrates in paella-config
 - Update Paella to version 6.5.6.
