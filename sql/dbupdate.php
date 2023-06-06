@@ -465,3 +465,7 @@ if (!$ilDB->tableColumnExists('xoct_md_field_series', 'values')) {
 }
 
 ?>
+<#40>
+<?php
+$ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null');
+?>
