@@ -68,8 +68,7 @@ class xoctSeriesGUI extends xoctGUI
         SeriesRepository $seriesRepository,
         SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
         WorkflowParameterRepository $workflowParameterRepository
-    )
-    {
+    ) {
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
@@ -193,19 +192,22 @@ class xoctSeriesGUI extends xoctGUI
 
         $perm_tpl_id = $data['settings']['permission_template'];
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
-        if ($perm_tpl_id == '') {
-            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+        if (empty($perm_tpl_id)) {
+            $perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
         } else {
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
         }
 
-        $series->setAccessPolicies($perm_tpl->addToAcls(
-            $series->getAccessPolicies(),
-            !$objectSettings->getStreamingOnly(),
-            $objectSettings->getUseAnnotations()
-        ));
-
+        if ($perm_tpl instanceof PermissionTemplate) {
+            $series->setAccessPolicies(
+                $perm_tpl->addToAcls(
+                    $series->getAccessPolicies(),
+                    !$objectSettings->getStreamingOnly(),
+                    $objectSettings->getUseAnnotations()
+                )
+            );
+        }
 
         /** @var Metadata $metadata */
         $metadata = $data['metadata']['object'];

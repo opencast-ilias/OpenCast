@@ -8,6 +8,8 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 
 class UpdateSeriesMetadataRequestPayload implements JsonSerializable
 {
+    use SanitizeSeriesMetadata;
+
     /**
      * @var Metadata
      */
@@ -26,9 +28,10 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
         return $this->metadata;
     }
 
-
     public function jsonSerialize()
     {
+        $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
+
         // for some reason, label etc. are not allowed here (unlike for events)
         return ['metadata' => json_encode(array_map(function (MetadataField $field) {
             return $field->jsonSerialize();
