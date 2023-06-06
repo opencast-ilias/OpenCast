@@ -20,7 +20,7 @@ class MetadataField implements JsonSerializable
      */
     protected $id;
     /**
-     * @var T
+     * @var mixed
      */
     protected $value;
     /**

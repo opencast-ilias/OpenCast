@@ -6,7 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
 {
-    public static $files = array (
+    public static $files = [
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -16,19 +16,19 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
-    );
+    ];
 
-    public static $prefixLengthsPsr4 = array (
-        's' => 
-        array (
+    public static $prefixLengthsPsr4 = [
+        's' =>
+        [
             'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
             'srag\\LibrariesNamespaceChanger\\' => 31,
             'srag\\DataTableUI\\OpenCast\\' => 26,
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
-        ),
-        'S' => 
-        array (
+        ],
+        'S' =>
+        [
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php73\\' => 23,
@@ -49,177 +49,177 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'SebastianFeldmann\\Git\\' => 22,
             'SebastianFeldmann\\Cli\\' => 22,
             'SebastianFeldmann\\Camino\\' => 25,
-        ),
-        'P' => 
-        array (
+        ],
+        'P' =>
+        [
             'Psr\\Log\\' => 8,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpCsFixer\\' => 11,
-        ),
-        'D' => 
-        array (
+        ],
+        'D' =>
+        [
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
-        ),
-        'C' => 
-        array (
+        ],
+        'C' =>
+        [
             'Composer\\XdebugHandler\\' => 23,
             'Composer\\Semver\\' => 16,
             'Composer\\Pcre\\' => 14,
             'CaptainHook\\App\\' => 16,
-        ),
-    );
+        ],
+    ];
 
-    public static $prefixDirsPsr4 = array (
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
-        array (
+    public static $prefixDirsPsr4 = [
+        'srag\\LibraryLanguageInstaller\\OpenCast\\' =>
+        [
             0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
-        ),
-        'srag\\LibrariesNamespaceChanger\\' => 
-        array (
+        ],
+        'srag\\LibrariesNamespaceChanger\\' =>
+        [
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
-        ),
-        'srag\\DataTableUI\\OpenCast\\' => 
-        array (
+        ],
+        'srag\\DataTableUI\\OpenCast\\' =>
+        [
             0 => __DIR__ . '/..' . '/srag/datatable/src',
-        ),
-        'srag\\DIC\\OpenCast\\' => 
-        array (
+        ],
+        'srag\\DIC\\OpenCast\\' =>
+        [
             0 => __DIR__ . '/..' . '/srag/dic/src',
-        ),
-        'srag\\CustomInputGUIs\\OpenCast\\' => 
-        array (
+        ],
+        'srag\\CustomInputGUIs\\OpenCast\\' =>
+        [
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
-        ),
-        'Symfony\\Polyfill\\Php81\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Php81\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
-        ),
-        'Symfony\\Polyfill\\Php80\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Php80\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Polyfill\\Php73\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Php73\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
-        ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Mbstring\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
-        ),
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
-        ),
-        'Symfony\\Polyfill\\Ctype\\' => 
-        array (
+        ],
+        'Symfony\\Polyfill\\Ctype\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
-        ),
-        'Symfony\\Contracts\\Service\\' => 
-        array (
+        ],
+        'Symfony\\Contracts\\Service\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
-        ),
-        'Symfony\\Contracts\\EventDispatcher\\' => 
-        array (
+        ],
+        'Symfony\\Contracts\\EventDispatcher\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
-        ),
-        'Symfony\\Component\\String\\' => 
-        array (
+        ],
+        'Symfony\\Component\\String\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/string',
-        ),
-        'Symfony\\Component\\Stopwatch\\' => 
-        array (
+        ],
+        'Symfony\\Component\\Stopwatch\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/stopwatch',
-        ),
-        'Symfony\\Component\\Process\\' => 
-        array (
+        ],
+        'Symfony\\Component\\Process\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/process',
-        ),
-        'Symfony\\Component\\OptionsResolver\\' => 
-        array (
+        ],
+        'Symfony\\Component\\OptionsResolver\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
-        ),
-        'Symfony\\Component\\Finder\\' => 
-        array (
+        ],
+        'Symfony\\Component\\Finder\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/finder',
-        ),
-        'Symfony\\Component\\Filesystem\\' => 
-        array (
+        ],
+        'Symfony\\Component\\Filesystem\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/filesystem',
-        ),
-        'Symfony\\Component\\EventDispatcher\\' => 
-        array (
+        ],
+        'Symfony\\Component\\EventDispatcher\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
-        ),
-        'Symfony\\Component\\Console\\' => 
-        array (
+        ],
+        'Symfony\\Component\\Console\\' =>
+        [
             0 => __DIR__ . '/..' . '/symfony/console',
-        ),
-        'SebastianFeldmann\\Git\\' => 
-        array (
+        ],
+        'SebastianFeldmann\\Git\\' =>
+        [
             0 => __DIR__ . '/..' . '/sebastianfeldmann/git/src',
-        ),
-        'SebastianFeldmann\\Cli\\' => 
-        array (
+        ],
+        'SebastianFeldmann\\Cli\\' =>
+        [
             0 => __DIR__ . '/..' . '/sebastianfeldmann/cli/src',
-        ),
-        'SebastianFeldmann\\Camino\\' => 
-        array (
+        ],
+        'SebastianFeldmann\\Camino\\' =>
+        [
             0 => __DIR__ . '/..' . '/sebastianfeldmann/camino/src',
-        ),
-        'Psr\\Log\\' => 
-        array (
+        ],
+        'Psr\\Log\\' =>
+        [
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
-        ),
-        'Psr\\EventDispatcher\\' => 
-        array (
+        ],
+        'Psr\\EventDispatcher\\' =>
+        [
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
-        ),
-        'Psr\\Container\\' => 
-        array (
+        ],
+        'Psr\\Container\\' =>
+        [
             0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'Psr\\Cache\\' => 
-        array (
+        ],
+        'Psr\\Cache\\' =>
+        [
             0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
-        'PhpCsFixer\\' => 
-        array (
+        ],
+        'PhpCsFixer\\' =>
+        [
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
-        ),
-        'Doctrine\\Common\\Lexer\\' => 
-        array (
+        ],
+        'Doctrine\\Common\\Lexer\\' =>
+        [
             0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ),
-        'Doctrine\\Common\\Annotations\\' => 
-        array (
+        ],
+        'Doctrine\\Common\\Annotations\\' =>
+        [
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
-        ),
-        'Composer\\XdebugHandler\\' => 
-        array (
+        ],
+        'Composer\\XdebugHandler\\' =>
+        [
             0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
-        ),
-        'Composer\\Semver\\' => 
-        array (
+        ],
+        'Composer\\Semver\\' =>
+        [
             0 => __DIR__ . '/..' . '/composer/semver/src',
-        ),
-        'Composer\\Pcre\\' => 
-        array (
+        ],
+        'Composer\\Pcre\\' =>
+        [
             0 => __DIR__ . '/..' . '/composer/pcre/src',
-        ),
-        'CaptainHook\\App\\' => 
-        array (
+        ],
+        'CaptainHook\\App\\' =>
+        [
             0 => __DIR__ . '/..' . '/captainhook/captainhook/src',
-        ),
-    );
+        ],
+    ];
 
-    public static $classMap = array (
+    public static $classMap = [
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'CaptainHook\\App\\CH' => __DIR__ . '/..' . '/captainhook/captainhook/src/CH.php',
         'CaptainHook\\App\\Config' => __DIR__ . '/..' . '/captainhook/captainhook/src/Config.php',
@@ -1441,6 +1441,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingParser' => __DIR__ . '/../..' . '/src/Model/Scheduling/SchedulingParser.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequest' => __DIR__ . '/../..' . '/src/Model/Series/Request/CreateSeriesRequest.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequestPayload' => __DIR__ . '/../..' . '/src/Model/Series/Request/CreateSeriesRequestPayload.php',
+        'srag\\Plugins\\Opencast\\Model\\Series\\Request\\SanitizeSeriesMetadata' => __DIR__ . '/../..' . '/src/Model/Series/Request/SanitizeSeriesMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesACLRequest' => __DIR__ . '/../..' . '/src/Model/Series/Request/UpdateSeriesACLRequest.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesACLRequestPayload' => __DIR__ . '/../..' . '/src/Model/Series/Request/UpdateSeriesACLRequestPayload.php',
         'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesMetadataRequest' => __DIR__ . '/../..' . '/src/Model/Series/Request/UpdateSeriesMetadataRequest.php',
@@ -1543,7 +1544,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctWorkflowParameterTableGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
         'xoctWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
         'xoctWorkflowTableGUI' => __DIR__ . '/../..' . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-    );
+    ];
 
     public static function getInitializer(ClassLoader $loader)
     {
@@ -1551,7 +1552,6 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             $loader->prefixLengthsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$classMap;
-
         }, null, ClassLoader::class);
     }
 }

@@ -188,6 +188,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     parent::executeCommand();
                     break;
                 default:
+                    $this->ilias_dic->ctrl()->saveParameter($this, 'new_type');
                     // workaround for object deletion; 'parent::executeCommand()' shows the template and leads to "Headers already sent" error
                     if ($next_class == "" && $cmd == 'deleteObject') {
                         $this->deleteObject();
@@ -413,7 +414,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         if ($perm_tpl_id == '') {
-            $perm_tpl = PermissionTemplate::where(array('is_default' => 1))->first();
+            $perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
         } else {
             $acl = PermissionTemplate::removeAllTemplatesFromAcls($acl);
             /** @var PermissionTemplate $perm_tpl */

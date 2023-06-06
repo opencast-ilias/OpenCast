@@ -51,8 +51,7 @@ class SeriesAPIRepository implements SeriesRepository
         ACLUtils $ACLUtils,
         MetadataFactory $metadataFactory,
         MDParser $MDParser
-    )
-    {
+    ) {
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
@@ -86,8 +85,8 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function create(CreateSeriesRequest $request): ?string
     {
-        $response = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
-        return $response->identifier;
+        $payload = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
+        return $payload->identifier;
     }
 
     /**
@@ -97,8 +96,13 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function updateMetadata(UpdateSeriesMetadataRequest $request): void
     {
-        xoctRequest::root()->series($request->getIdentifier())->metadata()->parameter('type', 'dublincore/series')
-            ->put($request->getPayload()->jsonSerialize());
+        $payload = $request->getPayload()->jsonSerialize();
+        xoctRequest::root()
+                   ->series($request->getIdentifier())
+                   ->metadata()
+                   ->parameter('type', 'dublincore/series')
+                   ->put($payload);
+
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
@@ -128,7 +132,7 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = (array)json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]));
+            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]));
         } catch (ilException $e) {
             return [];
         }

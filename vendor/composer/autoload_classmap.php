@@ -5,7 +5,7 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return array(
+return [
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CaptainHook\\App\\CH' => $vendorDir . '/captainhook/captainhook/src/CH.php',
     'CaptainHook\\App\\Config' => $vendorDir . '/captainhook/captainhook/src/Config.php',
@@ -1227,6 +1227,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Scheduling\\SchedulingParser' => $baseDir . '/src/Model/Scheduling/SchedulingParser.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequest' => $baseDir . '/src/Model/Series/Request/CreateSeriesRequest.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\CreateSeriesRequestPayload' => $baseDir . '/src/Model/Series/Request/CreateSeriesRequestPayload.php',
+    'srag\\Plugins\\Opencast\\Model\\Series\\Request\\SanitizeSeriesMetadata' => $baseDir . '/src/Model/Series/Request/SanitizeSeriesMetadata.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesACLRequest' => $baseDir . '/src/Model/Series/Request/UpdateSeriesACLRequest.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesACLRequestPayload' => $baseDir . '/src/Model/Series/Request/UpdateSeriesACLRequestPayload.php',
     'srag\\Plugins\\Opencast\\Model\\Series\\Request\\UpdateSeriesMetadataRequest' => $baseDir . '/src/Model/Series/Request/UpdateSeriesMetadataRequest.php',
@@ -1329,4 +1330,4 @@ return array(
     'xoctWorkflowParameterTableGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
     'xoctWorkflowParametersFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
     'xoctWorkflowTableGUI' => $baseDir . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-);
+];

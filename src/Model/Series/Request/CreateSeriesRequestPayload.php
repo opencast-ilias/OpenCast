@@ -8,6 +8,8 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
 
 class CreateSeriesRequestPayload implements JsonSerializable
 {
+    use SanitizeSeriesMetadata;
+
     /**
      * @var Metadata
      */
@@ -46,6 +48,7 @@ class CreateSeriesRequestPayload implements JsonSerializable
 
     public function jsonSerialize()
     {
+        $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
         return [
             'metadata' => json_encode([$this->metadata->jsonSerialize()]),
             'acl' => json_encode($this->acl),
