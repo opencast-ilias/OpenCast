@@ -59,7 +59,7 @@ class EventModals
         if ($this->workflow_repository->anyWorkflowExists()) {
             $form = new ilPropertyFormGUI();
             $form->setFormAction($this->dic->ctrl()->getFormAction($this->parent_gui, "republish"));
-            $form->setId(uniqid('form'));
+            $form->setId(uniqid('form', true));
 
             $select = new ilSelectInputGUI($this->plugin->txt('workflow'), 'workflow_id');
             $select->setOptions($this->workflow_repository->getAllWorkflowsAsArray('id', 'title'));
@@ -124,7 +124,7 @@ class EventModals
     {
         $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->plugin->getDirectory());
 
-        $form_id = uniqid('form');
+        $form_id = uniqid('form', true);
         $tpl->setVariable('FORM_ID', $form_id);
         $tpl->setVariable('FORM_ACTION', $this->dic->ctrl()->getFormAction($this->parent_gui, $cmd));
         $tpl->setVariable('BODY', $body);

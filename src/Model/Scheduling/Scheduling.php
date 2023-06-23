@@ -48,8 +48,7 @@ class Scheduling implements JsonSerializable
         ?array $inputs = ['default'],
         ?int $duration = null,
         ?RRule $rrule = null
-    )
-    {
+    ) {
         $this->agent_id = $agent_id;
         $this->start = $start;
         $this->end = $end;
@@ -62,7 +61,7 @@ class Scheduling implements JsonSerializable
     /**
      * @return stdClass
      */
-    public function __toStdClass(): stdClass
+    public function toStdClass(): stdClass
     {
         $this->getStart()->setTimezone(new DateTimeZone('GMT'));
         $this->getEnd()->setTimezone(new DateTimeZone('GMT'));
@@ -157,6 +156,6 @@ class Scheduling implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->__toStdClass();
+        return $this->toStdClass();
     }
 }

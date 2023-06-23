@@ -282,7 +282,7 @@ class xoctUser
      */
     public static function getUserMapping()
     {
-        if (!in_array(self::$user_mapping, array_keys(self::$user_mapping_field_titles))) {
+        if (!array_key_exists(self::$user_mapping, self::$user_mapping_field_titles)) {
             throw new xoctException('invalid user mapping type, id = ' . self::$user_mapping);
         }
         return self::$user_mapping;

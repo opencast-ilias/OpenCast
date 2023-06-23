@@ -143,8 +143,7 @@ class xoctEventGUI extends xoctGUI
         PaellaConfigStorageService $paellaConfigStorageService,
         PaellaConfigServiceFactory $paellaConfigServiceFactory,
         Container $dic
-    )
-    {
+    ) {
         $this->objectSettings = $objectSettings;
         $this->parent_gui = $parent_gui;
         $this->event_repository = $event_repository;
@@ -1269,10 +1268,10 @@ class xoctEventGUI extends xoctGUI
         return $intro_text;
     }
 
-    protected function createHyperlinks(string $intro_text) : string
+    protected function createHyperlinks(string $intro_text): string
     {
-        preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
-        preg_match_all('#\bwww[.][^,\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls_www);
+        preg_match_all('#\bhttps?://[^,\s()<>]+(?:\([\w]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls);
+        preg_match_all('#\bwww[.][^,\s()<>]+(?:\([\w]+\)|([^[:punct:]\s]|/))#', $intro_text, $urls_www);
         foreach ($urls[0] as $url) {
             $replacement = "<a href='" . $url . "'>" . $url . "</a>";
             $intro_text = str_replace($url, $replacement, $intro_text);

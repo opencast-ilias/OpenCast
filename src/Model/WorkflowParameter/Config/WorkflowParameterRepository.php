@@ -75,6 +75,8 @@ class WorkflowParameterRepository
             ilUtil::sendFailure(self::plugin()->translate('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
             self::dic()->ctrl()->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
         }
+
+        return [];
     }
 
 

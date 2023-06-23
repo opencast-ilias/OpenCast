@@ -22,6 +22,7 @@ class xoctReportingModalGUI extends ilModalGUI
     protected $parent_gui;
     /**
      * xoctReportingFormGUI constructor.
+     * @noinspection MagicMethodsValidityInspection
      */
     public function __construct($parent_gui, $type)
     {

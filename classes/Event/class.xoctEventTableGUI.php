@@ -73,8 +73,7 @@ class xoctEventTableGUI extends ilTable2GUI
         array $md_fields,
         array $data,
         string $lang_key
-    )
-    {
+    ) {
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
         $this->lang_key = $lang_key;
@@ -452,8 +451,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $table_id = self::getGeneratedPrefix($obj_id);
         $query = self::dic()->database()->query("SELECT * FROM table_properties WHERE table_id = " . self::dic()->database()->quote($table_id, "text") . " AND property = 'selfields'");
         while ($rec = self::dic()->database()->fetchAssoc($query)) {
-            $selfields = unserialize($rec['value']);
-            if ($selfields['event_owner'] == $visible) {
+            $selfields = unserialize($rec['value'], ['allowed_classes' => false]);
+            if (isset($selfields['event_owner']) && $selfields['event_owner'] == $visible) {
                 continue;
             }
             $selfields['event_owner'] = (bool)$visible;

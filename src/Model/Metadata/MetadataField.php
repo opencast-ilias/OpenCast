@@ -89,6 +89,8 @@ class MetadataField implements JsonSerializable
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d') : '';
         }
+
+        return '';
     }
 
     public function toString(): string
@@ -110,6 +112,8 @@ class MetadataField implements JsonSerializable
                 $value = $this->getValue();
                 return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y') : '';
         }
+
+        return '';
     }
 
     /**

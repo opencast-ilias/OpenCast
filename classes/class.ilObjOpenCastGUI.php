@@ -609,7 +609,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $cgui->setCancel($this->ilias_dic->language()->txt("cancel"), "cancelDelete");
         $cgui->setConfirm($this->ilias_dic->language()->txt("confirm"), "confirmedDelete");
 
-        $form_name = "cgui_" . md5(uniqid());
+        $form_name = "cgui_" . md5(uniqid('', true));
         $cgui->setFormName($form_name);
 
         $deps = [];

@@ -38,7 +38,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     public function buildStreamingData(): array
     {
         $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium) {
-            return in_array($medium->getMediatype(), array_keys(self::$mimetype_mapping));
+            return array_key_exists($medium->getMediatype(), self::$mimetype_mapping);
         }));
 
         if (empty($media)) {

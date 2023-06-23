@@ -119,6 +119,8 @@ class xoctWorkflowTableGUI extends TableGUI
                 )->withLabel(self::dic()->language()->txt('actions'));
                 return self::output()->getHTML($actions);
         }
+
+        return '';
     }
 
     /**
