@@ -106,7 +106,7 @@ class ObjectSettingsFormItemBuilder
             self::F_VIEW_CHANGEABLE => $field_factory->checkbox(
                 $this->txt(self::F_VIEW_CHANGEABLE),
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info')
-            )
+            )->withValue(true),
         ];
         if (PermissionTemplate::count()) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
