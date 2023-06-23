@@ -82,8 +82,7 @@ class ObjectSettingsFormItemBuilder
         ObjectSettingsParser $objectSettingsParser,
         xoctFileUploadHandler $fileUploadHandler,
         ilPlugin $plugin
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
         $this->publicationUsageRepository = $publicationUsageRepository;
@@ -115,7 +114,7 @@ class ObjectSettingsFormItemBuilder
             ],
                 sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
-            )->withValue( null);
+            )->withValue(null);
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
