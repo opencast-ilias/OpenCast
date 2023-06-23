@@ -40,7 +40,7 @@ class UploadStorageService
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid();
+        $identifier = uniqid('', true);
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
         return $identifier;
     }
@@ -129,7 +129,7 @@ class UploadStorageService
 
     public function buildACLUploadFile(ACL $acl): xoctUploadFile
     {
-        $tmp_name = uniqid('tmp');
+        $tmp_name = uniqid('tmp', true);
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(

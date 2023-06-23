@@ -56,8 +56,7 @@ class EventTableBuilder
         MDCatalogueFactory $MDCatalogueFactory,
         EventRepository $eventRepository,
         Container $dic
-    )
-    {
+    ) {
         $this->ui_factory = $dic->ui()->factory();
         $this->MDFieldConfigEventRepository = $MDFieldConfigEventRepository;
         $this->ui_service = $dic->uiService();
@@ -129,6 +128,8 @@ class EventTableBuilder
             case MDDataType::date()->getTitle():
             case MDDataType::datetime()->getTitle():
             case MDDataType::time()->getTitle():
+                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
+            default:
                 return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
         }
     }

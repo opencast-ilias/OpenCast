@@ -92,14 +92,14 @@ class ACLUtils
     public function removeOwnerFromACL(ACL $acl): ACL
     {
         $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);
-        $ACLEntries = $acl->getEntries();
-        foreach ($ACLEntries as $i => $acl) {
-            if ((strpos($acl->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
-                && !in_array($acl->getRole(), $standard_roles)) {
-                unset($ACLEntries[$i]);
+        $acl_entries = $acl->getEntries();
+        foreach ($acl_entries as $i => $acl_entry) {
+            if ((strpos($acl_entry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
+                && !in_array($acl_entry->getRole(), $standard_roles)) {
+                unset($acl_entries[$i]);
             }
         }
-        return new ACL($ACLEntries);
+        return new ACL($acl_entries);
     }
 
     public function getOwnerAclOfEvent(Event $event): ACL

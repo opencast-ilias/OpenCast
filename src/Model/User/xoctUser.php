@@ -4,8 +4,6 @@ namespace srag\Plugins\Opencast\Model\User;
 
 use ilObjUser;
 use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctException;
 
@@ -69,7 +67,6 @@ class xoctUser
      */
     protected static $instances = [];
 
-
     /**
      * @return mixed
      */
@@ -82,7 +79,6 @@ class xoctUser
      * @param $role
      * @return int
      * @throws xoctException
-     * @throws DICException
      */
     public static function lookupUserIdForOwnerRole($role)
     {
@@ -98,9 +94,8 @@ class xoctUser
 
         $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $db->quote($matches[1], 'text');
         $set = $db->query($sql);
-        $data = $db->fetchObject($set);
 
-        return $data->usr_id;
+        return $db->fetchObject($set)->usr_id;
     }
 
     /**
@@ -150,27 +145,19 @@ class xoctUser
      */
     public function getNamePresentation($show_email = true)
     {
-        return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail() . ')' : '');
+        return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail(
+                ) . ')' : '');
     }
 
-
-    /**
-     * @return int
-     */
-    public function getIliasUserId()
+    public function getIliasUserId(): int
     {
-        return $this->ilias_user_id;
+        return (int) $this->ilias_user_id;
     }
 
-
-    /**
-     * @param int $ilias_user_id
-     */
-    public function setIliasUserId($ilias_user_id)
+    public function setIliasUserId(int $ilias_user_id): void
     {
         $this->ilias_user_id = $ilias_user_id;
     }
-
 
     /**
      * @return string
@@ -180,7 +167,6 @@ class xoctUser
         return $this->ext_id;
     }
 
-
     /**
      * @param string $ext_id
      */
@@ -188,7 +174,6 @@ class xoctUser
     {
         $this->ext_id = $ext_id;
     }
-
 
     /**
      * @return int
@@ -198,7 +183,6 @@ class xoctUser
         return $this->status;
     }
 
-
     /**
      * @param int $status
      */
@@ -206,7 +190,6 @@ class xoctUser
     {
         $this->status = $status;
     }
-
 
     /**
      * @return string
@@ -216,7 +199,6 @@ class xoctUser
         return $this->first_name;
     }
 
-
     /**
      * @param string $first_name
      */
@@ -225,7 +207,6 @@ class xoctUser
         $this->first_name = $first_name;
     }
 
-
     /**
      * @return string
      */
@@ -233,7 +214,6 @@ class xoctUser
     {
         return $this->email;
     }
-
 
     /**
      * @param string $email
@@ -267,7 +247,6 @@ class xoctUser
         return $this->last_name;
     }
 
-
     /**
      * @param string $last_name
      */
@@ -282,12 +261,11 @@ class xoctUser
      */
     public static function getUserMapping()
     {
-        if (!in_array(self::$user_mapping, array_keys(self::$user_mapping_field_titles))) {
+        if (!array_key_exists(self::$user_mapping, self::$user_mapping_field_titles)) {
             throw new xoctException('invalid user mapping type, id = ' . self::$user_mapping);
         }
         return self::$user_mapping;
     }
-
 
     /**
      * @param int $user_mapping
@@ -297,27 +275,29 @@ class xoctUser
         self::$user_mapping = $user_mapping;
     }
 
-
     /**
      * @return string
      */
     public function getIdentifier(): string
     {
-        return PluginConfig::getConfig(PluginConfig::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper($this->identifier) : $this->identifier;
+        return PluginConfig::getConfig(PluginConfig::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper(
+            $this->identifier
+        ) : $this->identifier;
     }
-
 
     /**
      * @return string
-     * @throws xoctException
      */
     public function getUserRoleName()
     {
         return $this->getIdentifier() ?
-            str_replace('{IDENTIFIER}', $this->getIdentifier(), PluginConfig::getConfig(PluginConfig::F_ROLE_USER_PREFIX))
+            str_replace(
+                '{IDENTIFIER}',
+                $this->getIdentifier(),
+                PluginConfig::getConfig(PluginConfig::F_ROLE_USER_PREFIX)
+            )
             : null;
     }
-
 
     /**
      * @return string
@@ -332,7 +312,6 @@ class xoctUser
 
         return str_replace('{IDENTIFIER}', $this->getIdentifier(), $prefix);
     }
-
 
     /**
      * @param string $identifier

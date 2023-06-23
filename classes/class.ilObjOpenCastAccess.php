@@ -434,25 +434,26 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         $DIC->rbac()->admin()->grantPermission($member_role_id, $ops_ids, $ref_id);
     }
 
-    /**
-     * @return int
-     */
-    public static function getParentId($get_ref_id = false, $ref_id = false)
+
+    public static function getParentId($get_ref_id = false, int $ref_id = null): ?int
     {
         global $DIC;
-        foreach ($DIC->repositoryTree()->getNodePath($ref_id ? $ref_id : $_GET['ref_id']) as $node) {
-            if ($node['type'] == 'crs' || $node['type'] == 'grp') {
-                $id = $node[$get_ref_id ? 'child' : 'obj_id'];
+        $parent_id = null;
+        $for_ref_id = $ref_id ?? $_GET['ref_id'] ?? 1;
+        foreach ($DIC->repositoryTree()->getNodePath($for_ref_id) as $node) {
+            if ($node['type'] ?? '' === 'crs' || $node['type']??'' === 'grp') {
+                $parent_id = $node[$get_ref_id ? 'child' : 'obj_id'];
+                break;
             }
         }
 
-        return $id;
+        return $parent_id;
     }
 
     /**
      * @return array
      */
-    public static function getAllParticipants()
+    public static function getAllParticipants(): array
     {
         return array_merge(self::getMembers(), self::getTutors(), self::getAdmins());
     }

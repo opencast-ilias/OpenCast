@@ -227,7 +227,7 @@ class MDFormItemBuilder
             case MDDataType::TYPE_TEXT_ARRAY:
                 return is_array($value) ? implode(',', $value) : $value;
             case MDDataType::TYPE_TEXT_SELECTION:
-                if (!in_array($value, array_keys($fieldConfigAR->getValues()))) {
+                if (!array_key_exists($value, $fieldConfigAR->getValues())) {
                     return null;
                 }
                 return $value;

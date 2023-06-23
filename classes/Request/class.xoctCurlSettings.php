@@ -44,37 +44,7 @@ class xoctCurlSettings
         $this->ip_v4 = $ip_v4;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isVerifyHost()
-    {
-        return $this->verify_host;
-    }
 
-    /**
-     * @param boolean $verify_host
-     */
-    public function setVerifyHost($verify_host)
-    {
-        $this->verify_host = $verify_host;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isVerifyPeer()
-    {
-        return $this->verify_peer;
-    }
-
-    /**
-     * @param boolean $verify_peer
-     */
-    public function setVerifyPeer($verify_peer)
-    {
-        $this->verify_peer = $verify_peer;
-    }
 
     /**
      * @return string

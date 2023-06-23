@@ -150,8 +150,6 @@ class PluginConfig extends ActiveRecord
         $xoctCurlSettings = new xoctCurlSettings();
         $xoctCurlSettings->setUsername(self::getConfig(self::F_CURL_USERNAME));
         $xoctCurlSettings->setPassword(self::getConfig(self::F_CURL_PASSWORD));
-        $xoctCurlSettings->setVerifyPeer(true);
-        $xoctCurlSettings->setVerifyHost(true);
         xoctCurl::init($xoctCurlSettings);
 
         //CACHE

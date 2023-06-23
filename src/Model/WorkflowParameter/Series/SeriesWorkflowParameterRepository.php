@@ -43,8 +43,7 @@ class SeriesWorkflowParameterRepository
         Factory $ui_factory,
         RefineryFactory $refinery,
         WorkflowParameterParser $workflowParameterParser
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery = $refinery;
         $this->workflowParameterParser = $workflowParameterParser;
@@ -150,8 +149,9 @@ class SeriesWorkflowParameterRepository
                 } else {
                     $preset = ($input->getDefaultValueMember() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 }
-                $parameter[$input->getParamId()] = [
-                    'title' => $input->xoct_workflow_param_title ?: $input->getParamId(),
+                $param_id = $input->getParamId();
+                $parameter[$param_id] = [
+                    'title' => $input->xoct_workflow_param_title ?? $param_id,
                     'preset' => $preset
                 ];
             }

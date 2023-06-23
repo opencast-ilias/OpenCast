@@ -13,8 +13,6 @@ class xoctCurl
     public static function init(xoctCurlSettings $xoctCurlSettings)
     {
         self::$ip_v4 = $xoctCurlSettings->isIpV4();
-        self::$verify_host = $xoctCurlSettings->isVerifyHost();
-        self::$verify_peer = $xoctCurlSettings->isVerifyHost();
         self::$username = $xoctCurlSettings->getUsername();
         self::$password = $xoctCurlSettings->getPassword();
     }
@@ -59,13 +57,6 @@ class xoctCurl
             }
             if ($this->getUsername() and $this->getPassword()) {
                 curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
-            }
-
-            if (!$this->isVerifyHost()) {
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            }
-            if (!$this->isVerifyPeer()) {
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             }
         }
 
@@ -201,14 +192,6 @@ class xoctCurl
      * @var string
      */
     protected static $password = '';
-    /**
-     * @var bool
-     */
-    protected static $verify_peer = true;
-    /**
-     * @var bool
-     */
-    protected static $verify_host = true;
     /**
      * @var string
      */

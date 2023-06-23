@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -62,16 +61,11 @@ class xoctChangeOwnerGUI extends xoctGUI
             $ctrl->getLinkTargetByClass(xoctEventGUI::class)
         );
         xoctWaiterGUI::loadLib();
-        $main_tpl->addCss($this->plugin)->getStyleSheetLocation('default/change_owner.css'));
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/change_owner.css'));
         $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/change_owner.js'));
         $ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
-    /**
-     * @throws DICException
-     * @throws ilTemplateException
-     * @throws xoctException
-     */
     protected function index()
     {
         $xoctUser = xoctUser::getInstance($this->user);
@@ -136,7 +130,8 @@ class xoctChangeOwnerGUI extends xoctGUI
         $available_user_ids = $this->getCourseMembers();
         $available_users = [];
         foreach ($available_user_ids as $user_id) {
-            if ($owner && $user_id == $owner->getIliasUserId()) {
+            $user_id = (int) $user_id;
+            if ($owner && $user_id === $owner->getIliasUserId()) {
                 continue;
             }
             $user = new stdClass();

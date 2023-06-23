@@ -58,52 +58,51 @@ class MDParser
      * @param stdClass $data
      * @throws \xoctException
      */
-    public function getMetadataFromData($data) : Metadata
+    public function getMetadataFromData($data): Metadata
     {
         $fields = [];
 
         foreach ($data as $key => $entry) {
             switch ($key) {
                 case "presenter":
-                    $field_data = (object) array(
+                    $field_data = (object) [
                         "id" => "creator",
                         "value" => $entry
-                    );
+                    ];
                     break;
                 case "creator":
-                    $field_data = (object) array(
+                    $field_data = (object) [
                         "id" => "publisher",
                         "value" => $entry
-                    );
+                    ];
                     break;
                 case "is_part_of":
-                    $field_data = (object) array(
+                    $field_data = (object) [
                         "id" => "isPartOf",
                         "value" => $entry
-                    );
+                    ];
                     break;
                 case "start":
-                    $field_data = (object) array(
+                    $field_data = (object) [
                         "id" => "startDate",
                         "value" => $entry
-                    );
+                    ];
                     break;
                 default:
-                    $field_data = (object) array(
+                    $field_data = (object) [
                         "id" => $key,
                         "value" => $entry
-                    );
+                    ];
 
             }
             if (!in_array($field_data, $fields)) {
-                array_push($fields, $field_data);
+                $fields[] = $field_data;
             }
-
         }
         return $this->parseAPIResponseEvent($fields);
     }
 
-    protected function parseAPIResponseEvent(array $fields) : Metadata
+    protected function parseAPIResponseEvent(array $fields): Metadata
     {
         $catalogue = $this->catalogueFactory->event();
         $metadata = $this->metadataFactory->event();
@@ -167,16 +166,18 @@ class MDParser
                 $tz = new DateTimeZone(ilTimeZone::_getDefaultTimeZone());
                 return new DateTimeImmutable($value, $tz);
             case MDDataType::TYPE_TIME:
-                if(is_int($value)){
+                if (is_int($value)) {
                     return date("H:i:s", $value);
                 }
+                // no break
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
                 return (string) $value;
             case MDDataType::TYPE_TEXT_ARRAY:
-                if(!is_array($value)){
+                if (!is_array($value)) {
                     return [$value];
                 }
+                // no break
             default:
                 return $value;
         }

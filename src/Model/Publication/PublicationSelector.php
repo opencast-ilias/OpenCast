@@ -447,9 +447,9 @@ class PublicationSelector
         $media = [];
         $attachments = [];
         foreach ($this->getPublications() as $publication) {
-            if ($publication->getChannel() == $PublicationUsage->getChannel()) {
-                $media = array_merge($media, $publication->getMedia());
-                $attachments = array_merge($attachments, $publication->getAttachments());
+            if ($publication->getChannel() === $PublicationUsage->getChannel()) {
+                $media += $publication->getMedia();
+                $attachments += $publication->getAttachments();
             }
         }
         $return = [];

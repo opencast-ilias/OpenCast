@@ -35,14 +35,26 @@ class xoctBase
     public function __construct()
     {
         $version = xoctRequest::root()->base()->version()->get();
-        $this->setApiVersion($version->default);
-        $this->setApiVersions($version->versions);
+        if (isset($version->default)) {
+            $this->setApiVersion($version->default);
+        }
+        if (isset($version->versions)) {
+            $this->setApiVersions($version->versions);
+        }
 
         $org = xoctRequest::root()->organization()->get();
-        $this->setOrganizationId($org->id);
-        $this->setOrganizationAnonymousRole($org->anonymousRole);
-        $this->setOrganizationAdminRole($org->adminRole);
-        $this->setOrganizationName($org->name);
+        if (isset($org->id)) {
+            $this->setOrganizationId($org->id);
+        }
+        if (isset($org->anonymousRole)) {
+            $this->setOrganizationAnonymousRole($org->anonymousRole);
+        }
+        if (isset($org->adminRole)) {
+            $this->setOrganizationAdminRole($org->adminRole);
+        }
+        if (isset($org->name)) {
+            $this->setOrganizationName($org->name);
+        }
     }
 
     /**
