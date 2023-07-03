@@ -502,9 +502,9 @@ class xoctEventRenderer
      * @throws DICException
      * @throws ilTemplateException
      */
-    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER')
+    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER', string $username = null)
     {
-        $this->insert($tpl, $variable, $this->getOwnerHTML(), $block_title);
+        $this->insert($tpl, $variable, $this->getOwnerHTML($username), $block_title);
     }
 
 
@@ -513,10 +513,13 @@ class xoctEventRenderer
      * @throws DICException
      * @throws ilTemplateException
      */
-    public function getOwnerHTML()
+    public function getOwnerHTML(string $owner_username = null): string
     {
         $owner_tpl = self::plugin()->template('default/tpl.event_owner.html');
-        $owner_tpl->setVariable('OWNER', $this->opencastDIC->acl_utils()->getOwnerUsernameOfEvent($this->event));
+        if ($owner_username === null) {
+            $owner_username = $this->opencastDIC->acl_utils()->getOwnerUsernameOfEvent($this->event);
+        }
+        $owner_tpl->setVariable('OWNER', $owner_username);
 
         if ($this->objectSettings instanceof ObjectSettings && $this->objectSettings->getPermissionPerClip()) {
             $owner_tpl->setCurrentBlock('invitations');

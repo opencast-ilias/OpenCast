@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use xoctException;
 use xoctRequest;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class EventRepository
@@ -41,8 +42,7 @@ class EventAPIRepository implements EventRepository
         Cache $cache,
         EventParser $eventParser,
         OpencastIngestService $ingestService
-    )
-    {
+    ) {
         $this->cache = $cache;
         $this->ingestService = $ingestService;
         $this->eventParser = $eventParser;
@@ -136,10 +136,20 @@ class EventAPIRepository implements EventRepository
         $data = json_decode($request->get($roles, $for_user)) ?: [];
         $return = [];
 
+        $this->opencastDIC = OpencastDIC::getInstance();
+
         foreach ($data as $d) {
             $event = $this->eventParser->parseAPIResponse($d, $d->identifier);
-            $return[] = $as_object ? $event : $event->getArrayForTable();
-            if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
+
+            if ($as_object === true) {
+                $return[] = $event;
+            } else {
+                $array_for_table = $event->getArrayForTable();
+                $array_for_table['owner_username'] = $this->opencastDIC->acl_utils()->getOwnerUsernameOfEvent($event);
+                $return[] = $array_for_table;
+            }
+
+            if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE], true)) {
                 $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
             }
         }

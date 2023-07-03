@@ -73,8 +73,7 @@ class xoctEventTableGUI extends ilTable2GUI
         array $md_fields,
         array $data,
         string $lang_key
-    )
-    {
+    ) {
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
         $this->lang_key = $lang_key;
@@ -172,7 +171,7 @@ class xoctEventTableGUI extends ilTable2GUI
         }
 
         if ($this->isColumsSelected('event_owner')) {
-            $renderer->insertOwner($this->tpl, 'generic', 'VALUE');
+            $renderer->insertOwner($this->tpl, 'generic', 'VALUE', $a_set['owner_username']);
         }
 
         if ($this->has_unprotected_links
