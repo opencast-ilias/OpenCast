@@ -59,12 +59,12 @@ class PaellaConfigFormBuilder
     {
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(
             false,
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION),
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION) ?? 'default',
             PluginConfig::getConfig(PluginConfig::F_PAELLA_URL) ?? ''
         );
         $inputs[self::F_PAELLA_PLAYER_LIVE_OPTION] = $this->getPaellaPlayerPathInput(
             true,
-            PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE),
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE) ?? 'default',
             PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE) ?? ''
         );
         return $this->ui_factory->input()->container()->form()->standard(
