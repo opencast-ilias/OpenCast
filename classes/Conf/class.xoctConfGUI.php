@@ -119,12 +119,27 @@ class xoctConfGUI extends xoctGUI
                 PluginConfig::set(PluginConfig::F_PAELLA_URL, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][1]['url']);
             }
         }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION])) {
-            $paella_player_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION][0];
-            PluginConfig::set(PluginConfig::F_PAELLA_OPTION_LIVE, $paella_player_option);
-            if ($paella_player_option === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(PluginConfig::F_PAELLA_URL_LIVE, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_OPTION][1]['url']);
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME])) {
+            $paella_player_theme = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][0];
+            PluginConfig::set(PluginConfig::F_PAELLA_THEME, $paella_player_theme);
+            if ($paella_player_theme === PluginConfig::PAELLA_OPTION_URL) {
+                PluginConfig::set(PluginConfig::F_PAELLA_THEME_URL, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][1]['url']);
             }
+        }
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME])) {
+            $paella_player_live_theme = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][0];
+            PluginConfig::set(PluginConfig::F_PAELLA_THEME_LIVE, $paella_player_live_theme);
+            if ($paella_player_live_theme === PluginConfig::PAELLA_OPTION_URL) {
+                PluginConfig::set(PluginConfig::F_PAELLA_THEME_URL_LIVE, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']);
+            }
+        }
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION])) {
+            $paella_fallback_captions_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION];
+            PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS, $paella_fallback_captions_option);
+        }
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION])) {
+            $paella_fallback_langs_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION];
+            PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_LANGS, $paella_fallback_langs_option);
         }
 
         self::dic()->ctrl()->redirect($this, self::CMD_PLAYER);

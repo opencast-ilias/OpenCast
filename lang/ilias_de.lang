@@ -385,7 +385,6 @@ series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config für Video-On-Demand
-config_paella_player_option_live#:#Paella Player Config für Live-Streams
 pp_default_link#:#Standard-Config
 pp_default_string#:#Verwende die
 pp_file#:#Config-Datei hochladen
@@ -576,3 +575,13 @@ object_settings#:#Einstellungen
 channel_type#:#Serie
 file#:#Datei
 link#:#URL
+publication_usage_type_captions#:#Captions
+publication_usage_type_captions_fallback#:#Captions Fallback
+config_livestream_type#:#Streaming Typ
+config_livestream_type_info#:#Verschiedene Streaming-Typen erzeugen unterschiedliche Playlist-Dateitypen und Informationen. Es ist wichtig, den unterstützten Streaming-Typ auszuwählen, um die Dateien und Informationen ordnungsgemäß verarbeiten zu können. Der Standardtyp ist auf HLS eingestellt.
+config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
+config_paella_player_fallback_captions_option_info#:#Standardmäßig wird die Sprache des Benutzerbrowsers für die Standardbeschriftung verwendet. Das Hinzufügen zusätzlicher Beschriftungen hier hilft dabei, bevorzugte Beschriftungen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
+config_paella_player_fallback_langs_option#:#Paella Player Sprachen (fallbacks)
+config_paella_player_fallback_langs_option_info#:#Die Standardsprache für den Paella-Player wird von der Browsersprache übernommen. Das Hinzufügen zusätzlicher Sprachen hier hilft dabei, bevorzugte Sprachen als Ausweichsprachen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
+config_paella_player_theme#:#Paella Player Theme
+config_paella_player_live_theme#:#Paella Player Theme (Livestream)

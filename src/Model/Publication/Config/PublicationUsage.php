@@ -30,6 +30,8 @@ class PublicationUsage extends ActiveRecord
     public const MD_TYPE_PUBLICATION_ITSELF = 0;
     public const SEARCH_KEY_FLAVOR = 'flavor';
     public const SEARCH_KEY_TAG = 'tag';
+    public const USAGE_CAPTIONS = 'captions';
+    public const USAGE_CAPTIONS_FALLBACK = 'captions_fallback';
     /**
      * @var array
      */
@@ -47,6 +49,8 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_PREVIEW,
             self::USAGE_LIVE_EVENT,
             self::USAGE_UNPROTECTED_LINK,
+            self::USAGE_CAPTIONS,
+            self::USAGE_CAPTIONS_FALLBACK,
         ];
 
 

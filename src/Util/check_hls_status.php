@@ -2,8 +2,6 @@
 /**
  * simple script to check http code of an url
  */
-
-
 function fetch(string $url): array
 {
     $ch = curl_init($url);
@@ -30,29 +28,47 @@ function fetch(string $url): array
     ];
 }
 
-function parsePlaylist(string $ts): array
+function parsePlaylist(string $body, string $livestream_type): array
 {
     // process the string
-    $pieces = explode("\n", $ts); // make an array out of curl return value
+    $pieces = explode("\n", $body); // make an array out of curl return value
     $pieces = array_map('trim', $pieces); // remove unnecessary space
-    $chunklists = array_filter($pieces, function (string $piece) { // pluck out ts urls
-       return strtolower(substr($piece, -3)) === '.ts';
+
+    $chunklists = array_filter($pieces, function (string $piece) use ($livestream_type) { // pluck out ts urls
+        $is_valid_chunk = false;
+        // By default considering HLS, which has ['.m3u8', '.m3u']
+        $playlist_exts = ['.m3u8', '.m3u'];
+        if ($livestream_type === 'mpegts') {
+            $playlist_exts = ['.ts'];
+        }
+        foreach ($playlist_exts as $ext) {
+            $len = strlen($ext) ;
+            if (strtolower(substr($piece, -($len))) === $ext) {
+                $is_valid_chunk = true;
+                break;
+            }
+        }
+        return $is_valid_chunk;
     });
     return $chunklists;
 }
 
 $url = urldecode(filter_input(INPUT_GET, 'url'));
+$livestream_type = filter_input(INPUT_GET, 'livestream_type');
 $response = fetch($url);
 $url = $response['effective_url'] ?? $url;
 $base_url = substr($url, 0, strrpos($url, '/') + 1);
+
+$ext_x_type = $livestream_type === 'hls' ? 'EXT-X-STREAM-INF' : 'EXT-X-MEDIA-SEQUENCE';
+
 // check playlist
-if (($response['httpCode'] !== 200) || (strpos($response['body'], 'EXT-X-MEDIA-SEQUENCE') === false)) {
+if (($response['httpCode'] !== 200) || (strpos($response['body'], $ext_x_type) === false)) {
     echo 'false';
     exit;
 }
 
 // check chunklists in m3u8 playlist (only one has to be accessible)
-foreach (parsePlaylist($response['body']) as $chunklist_url) {
+foreach (parsePlaylist($response['body'], $livestream_type) as $chunklist_url) {
     $url = (strpos($chunklist_url, 'http') === 0) ? $chunklist_url : ($base_url . $chunklist_url);
     $response = fetch($url);
     if ($response['httpCode'] === 200) {

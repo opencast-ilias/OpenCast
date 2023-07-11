@@ -56,6 +56,20 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             ]
         ];
         $data['frameList'] = $this->buildSegments($this->event);
+        $captions = $this->event->publications()->getCaptionPublications();
+        $data['captions'] = [];
+        foreach ($captions as $caption) {
+            list($type1, $type2) = explode('/', $caption->flavor, 2);
+            if ($type1 === 'captions') {
+                list($format, $lang) = explode('+', $type2, 2);
+                $data['captions'][] = [
+                    'lang' => $lang,
+                    'text' => $lang,
+                    'format' => $format,
+                    'url' => $caption->url
+                ];
+            }
+        }
 
         return $data;
     }

@@ -89,8 +89,6 @@ class xoctPlayerGUI extends xoctGUI
 
         $tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", true, true);
         $tpl->setVariable("TITLE", $event->getTitle());
-        $tpl->setVariable("PAELLA_PLAYER_FOLDER", self::plugin()->getPluginObject()->getDirectory()
-            . "/node_modules/paellaplayer/build/player");
         $tpl->setVariable("DATA", json_encode($data));
         $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
@@ -118,11 +116,20 @@ class xoctPlayerGUI extends xoctGUI
     protected function buildJSConfig(Event $event): stdClass
     {
         $js_config = new stdClass();
-        $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl($event->isLiveEvent());
+        $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl();
         $js_config->paella_config_file = $paella_config['url'];
+        $js_config->paella_config_livestream_type =  PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
+        $js_config->paella_config_resources_path = PluginConfig::PAELLA_RESOURCES_PATH;
+        $js_config->paella_config_fallback_captions = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS) ?? [];
+        $js_config->paella_config_fallback_langs = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [] ;
+
         $js_config->paella_config_info = $paella_config['info'];
         $js_config->paella_config_is_warning = $paella_config['warn'];
-        $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory() . "/node_modules/paellaplayer/build/player";
+
+        $paella_themes = $this->paellaConfigService->getPaellaPlayerThemeUrl($event->isLiveEvent());
+        $js_config->paella_theme = $paella_themes['theme_url'];
+        $js_config->paella_theme_live = $paella_themes['theme_live_url'];
+        $js_config->paella_theme_info = $paella_themes['info'];
 
         if ($event->isLiveEvent()) {
             $js_config->check_script_hls = self::plugin()->directory() . '/src/Util/check_hls_status.php'; // script to check live stream availability
