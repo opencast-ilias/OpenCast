@@ -385,6 +385,7 @@ series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config für Video-On-Demand
+config_paella_player_option_info#:#Basic INFO (TODO)
 pp_default_link#:#Standard-Config
 pp_default_string#:#Verwende die
 pp_file#:#Config-Datei hochladen
@@ -584,4 +585,6 @@ config_paella_player_fallback_captions_option_info#:#Standardmäßig wird die Sp
 config_paella_player_fallback_langs_option#:#Paella Player Sprachen (fallbacks)
 config_paella_player_fallback_langs_option_info#:#Die Standardsprache für den Paella-Player wird von der Browsersprache übernommen. Das Hinzufügen zusätzlicher Sprachen hier hilft dabei, bevorzugte Sprachen als Ausweichsprachen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
 config_paella_player_theme#:#Paella Player Theme
+config_paella_player_theme_info#:#Paella Player Theme INFO (TODO)
 config_paella_player_live_theme#:#Paella Player Theme (Livestream)
+config_paella_player_live_theme_info#:#Paella Player Theme (Livestream) INFO (TODO)

@@ -490,27 +490,6 @@
         "userTracking"
       ]
     },
-    "org.opencast.paella.matomo.userTrackingDataPlugin": {
-      "enabled": false,
-      "context": [
-          "userTracking"
-      ],
-      "server": "//matomo.server.com/",
-      "siteId": "1",
-      "matomoGlobalLoaded": false,
-      "cookieType": "tracking",
-      "logUserId": true,
-      "events": {
-          "category": "PaellaPlayer",
-          "action": "${event}",
-          "name": "${videoId}"
-      },
-      "customDimensions": {
-          "1": "${videoId}",
-          "2": "${metadata.series} - ${metadata.seriestitle}",
-          "3": "${metadata.presenters}"
-      }
-    },
     "es.upv.paella.liveStreamingProgressIndicator": {
       "enabled": true,
       "layer": "foreground",
