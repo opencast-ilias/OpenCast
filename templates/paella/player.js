@@ -1,9 +1,7 @@
 'use strict';
 import $ from "jquery";
 import { Paella } from 'paella-core';
-import { Events, bindEvent } from 'paella-core';
-import { setLanguage, getLanguage, translate } from 'paella-core';
-import { utils } from 'paella-core';
+import { Events } from 'paella-core';
 import getBasicPluginContext from 'paella-basic-plugins';
 import getSlidePluginContext from 'paella-slide-plugins';
 import getZoomPluginContext from 'paella-zoom-plugin';
@@ -371,5 +369,45 @@ export default {
                 }
             }
         }
+    },
+
+    testLivePaella: async function(containerId, configUrl, previewUrl, themeUrl, hlsUrl = '') {
+        if (hlsUrl === '') {
+            hlsUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+        }
+        this.data = {
+            streams: [
+                {
+                    content: 'presenter',
+                    sources: {
+                        hls: [
+                            {src: hlsUrl, mimetype: 'application/x-mpegURL'}
+                        ],
+                    },
+                }
+            ],
+            metadata: {title: 'test live', preview: previewUrl}
+        };
+        this.paella = new Paella(containerId, {
+            configUrl: configUrl,
+            getManifestUrl: noop,
+            getManifestFileUrl: noop,
+            loadVideoManifest: loadVideoManifestFunction,
+            customPluginContext: [
+                require.context('./plugins', true, /\.js/),
+                getBasicPluginContext(),
+                getSlidePluginContext(),
+                getZoomPluginContext(),
+                getUserTrackingPluginsContext()
+            ]
+        });
+        if (themeUrl != '') {
+            await this.paella.skin.loadSkin(themeUrl);
+        }
+        this.paella.loadManifest()
+        .then(() => {
+            console.log("Initialization done");
+        })
+        .catch(e => console.error(e));
     }
 }

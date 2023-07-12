@@ -5,30 +5,29 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name = "viewport" content = "user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
 	<title>Paella Engage Example</title>
-	<!--- Include this file to support Internet Explorer
-    <script type="text/javascript" src="javascript/polyfill.min.js"></script>
-    -->
-	<script type="text/javascript" src="./node_modules/paellaplayer/build/player/javascript/jquery.min.js"></script>
-	<script type="text/javascript" src="./node_modules/paellaplayer/build/player/javascript/lunr.min.js"></script>
-	<script type="text/javascript" src="./node_modules/paellaplayer/build/player/javascript/require.js"></script>
-	<script type="text/javascript" src="./node_modules/paellaplayer/build/player/javascript/paella_player_es2015.js"></script>
-	<!-- Include this file, instead paella_player_es2015, to support Internet Explorer
-        <script type="text/javascript" src="javascript/paella_player.js"></script>
-    -->
-
-	<link rel="stylesheet" href="./node_modules/paellaplayer/build/player/resources/bootstrap/css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
+	<script type="text/javascript" src="./templates/paella/paella-player.min.js?3"></script>
+	<style>
+		body {
+			margin: 0px;
+		}
+		#playerContainer {
+			font-family: roboto;
+			font-weight: 600;
+			width: 100vw;
+			height: 100vh;
+			left: 0px;
+			top: 0px;
+			position: relative;
+			overflow: hidden;
+		}
+	</style>
 </head>
 <body id="body" onload="
-paella.baseUrl = location.href.replace(/[^/]*$/, '') + 'node_modules/paellaplayer/build/player/';
-paella.lazyLoad('playerContainer',{
-		data: {
-			streams:[{
-				content: 'presenter',
-				sources: {hls: [{src:'https://multiplatform-f.akamaihd.net/i/multi/april11/sintel/sintel-hd_,512x288_450_b,640x360_700_b,768x432_1000_b,1024x576_1400_m,.mp4.csmil/master.m3u8',mimetype:'application/x-mpegURL',isLiveStream:true}]}}],
-				metadata:{title:'test live'}},
-		configUrl: '/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json'
-    });">
-<div id="playerContainer" style="display:block;width:100%">
+let configUrl = location.href.replace(/[^/]*$/, '') + 'js/paella_player/config.json';
+let previewUrl = location.href.replace(/[^/]*$/, '') + 'templates/images/thumbnail_live_running.png';
+let themeUrl = location.href.replace(/[^/]*$/, '') + 'templates/paella/default_theme/opencast_theme.json';
+xoctPaellaPlayer.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl);">
+<div id="playerContainer">
 </div>
 </body>
 </html>
