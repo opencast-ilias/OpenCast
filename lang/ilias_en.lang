@@ -387,6 +387,7 @@ series_view_type_0#:#List
 series_view_type_1#:#Tiles
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config for Video On Demand
+config_paella_player_option_info#:#Basic INFO (TODO)
 pp_default_link#:#default config
 pp_default_string#:#Use
 pp_file#:#Upload Config File
@@ -585,4 +586,6 @@ config_paella_player_fallback_captions_option_info#:#The user-browser language i
 config_paella_player_fallback_langs_option#:#Paella Player Languages (fallbacks)
 config_paella_player_fallback_langs_option_info#:#The default language for paella player is taken from the use-browser language, adding additional languages here helps to define preferred languages as fallbacks, prioritized based on the given order.
 config_paella_player_theme#:#Paella Player Theme
+config_paella_player_theme_info#:#Paella Player Theme INFO (TODO)
 config_paella_player_live_theme#:#Paella Player Theme (Livestream)
+config_paella_player_live_theme_info#:#Paella Player Theme (Livestream) INFO (TODO)

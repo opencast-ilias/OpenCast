@@ -117,6 +117,7 @@ class PaellaConfigFormBuilder
                     ->withValue($url)
             ], $this->plugin->txt('pp_url'))
         ], $this->txt($text))
+            ->withByline($this->txt($text . '_info'))
             ->withValue($option)
             ->withRequired($required);
     }
