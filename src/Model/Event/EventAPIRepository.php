@@ -10,7 +10,7 @@ use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use xoctException;
-use xoctRequest;
+use xoctOpencastApi;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -56,13 +56,15 @@ class EventAPIRepository implements EventRepository
 
     public function fetch(string $identifier): Event
     {
-        $data = json_decode(xoctRequest::root()->events($identifier)
-            ->parameter('withmetadata', true)
-            ->parameter('withacl', true)
-            ->parameter('withpublications', true)
-            ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS))
-            ->get());
+        $data = xoctOpencastApi::getApi()->eventsApi->get($identifier,
+            [
+                'withmetadata' => true,
+                'withacl' => true,
+                'withpublications' => true,
+                'withscheduling' => true,
+                'sign' => (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS),
+            ]
+        );
         $event = $this->eventParser->parseAPIResponse($data, $identifier);
         if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
             $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
@@ -72,7 +74,7 @@ class EventAPIRepository implements EventRepository
 
     public function delete(string $identifier): bool
     {
-        xoctRequest::root()->events($identifier)->delete();
+        xoctOpencastApi::getApi()->eventsApi->delete($identifier);
         foreach (PermissionGrant::where(['event_identifier' => $identifier])->get() as $invitation) {
             $invitation->delete();
         }
@@ -87,8 +89,19 @@ class EventAPIRepository implements EventRepository
         if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
             $this->ingestService->ingest($request);
         } else {
-            json_decode(xoctRequest::root()->events()
-                ->post($request->getPayload()->jsonSerialize()));
+            $payload = $request->getPayload()->jsonSerialize();
+            $presenter = null;
+            $presentation = $request->getPayload()->getPresentation()->getFileStream();
+            $audio = null;
+            $response = xoctOpencastApi::getApi()->eventsApi->create(
+                $payload['acl'],
+                $payload['metadata'],
+                $payload['processing'],
+                '', // Scheduling (here must be empty string)
+                $presenter,
+                $presentation,
+                $audio
+            );
         }
     }
 
@@ -106,34 +119,22 @@ class EventAPIRepository implements EventRepository
      */
     public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false)
     {
-        /**
-         * @var $event Event
-         */
-        $request = xoctRequest::root()->events();
-        if ($filter) {
-            $filter_string = '';
-            foreach ($filter as $k => $v) {
-                $filter_string .= $k . ':' . $v . ',';
-            }
-            $filter_string = rtrim($filter_string, ',');
-
-            $request->parameter('filter', $filter_string);
+        $params = [
+            'withmetadata' => false,
+            'withacl' => true,
+            'withpublications' => true,
+            'withscheduling' => true,
+            'sign' => (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS),
+            'offset' => $offset,
+            'limit' => $limit,
+        ];
+        if (!empty($filter)) {
+            $params['filter'] = $filter;
         }
-
-        $request->parameter('offset', $offset);
-        $request->parameter('limit', $limit);
-
-        if ($sort) {
-            $request->parameter('sort', $sort);
+        if (!empty($sort)) {
+            $params['sort'] = $sort;
         }
-
-        $request->parameter('withmetadata', false)
-            ->parameter('withacl', true)
-            ->parameter('withpublications', true)
-            ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
-
-        $data = json_decode($request->get($roles, $for_user)) ?: [];
+        $data = xoctOpencastApi::getApi()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
         $return = [];
 
         $this->opencastDIC = OpencastDIC::getInstance();
@@ -159,21 +160,34 @@ class EventAPIRepository implements EventRepository
 
     public function update(UpdateEventRequest $request): void
     {
-        xoctRequest::root()->events($request->getIdentifier())
-            ->post($request->getPayload()->jsonSerialize());
+        $payload = $request->getPayload()->jsonSerialize();
+
+        $response = xoctOpencastApi::getApi()->eventsApi->update(
+            $request->getIdentifier(),
+            $payload['acl'] ?? '',
+            $payload['metadata'] ?? '',
+            $payload['processing'] ?? '',
+            $payload['scheduling'] ?? '',
+        );
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
     public function schedule(ScheduleEventRequest $request): string
     {
-        $response = json_decode(xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()));
+        $payload = $request->getPayload()->jsonSerialize();
+        $response = xoctOpencastApi::getApi()->eventsApi->create(
+            $payload['acl'],
+            $payload['metadata'],
+            $payload['processing'],
+            $payload['scheduling']
+        );
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 
     public function updateACL(UpdateEventRequest $request): void
     {
-        xoctRequest::root()->events($request->getIdentifier())
-            ->acl()->put($request->getPayload()->jsonSerialize());
+        $payload = $request->getPayload()->jsonSerialize();
+        xoctOpencastApi::getApi()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 }

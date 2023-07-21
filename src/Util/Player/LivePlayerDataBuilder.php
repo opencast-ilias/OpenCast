@@ -3,7 +3,7 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use xoctRequest;
+use xoctOpencastApi;
 
 /**
  * Class LivePlayerDataBuilder
@@ -14,13 +14,13 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
 {
     public function buildStreamingData(): array
     {
-        $episode_json = xoctRequest::root()->episodeJson($this->event->getIdentifier())->get(
-            [],
-            '',
-            PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
+        $episode_data = xoctOpencastApi::getApi()->search->getEpisodes(
+            [
+                'id' => $this->event->getIdentifier()
+            ],
+            xoctOpencastApi::RETURN_ARRAY
         );
 
-        $episode_data = json_decode($episode_json, true);
         $media_package = $episode_data['search-results']['result']['mediapackage'];
 
         $streams = [];

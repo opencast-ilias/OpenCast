@@ -51,12 +51,16 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:description', [], $this->metadata->getField('description')->getValue());
         $xml_writer->xmlElement('dcterms:isPartOf', [], $this->metadata->getField('isPartOf')->getValue());
         $xml_writer->xmlElement('dcterms:source', [], $this->metadata->getField('source')->getValue());
-        $xml_writer->xmlElement('dcterms:creator', [], implode(',', $this->metadata->getField('creator')->getValue()));
+        $creator = $this->metadata->getField('creator')->getValue();
+        if (!empty($creator)) {
+            $creator = implode(',', $creator);
+        }
+        $xml_writer->xmlElement('dcterms:creator', [], $creator);
         $xml_writer->xmlElement('dcterms:spatial', [], $this->metadata->getField('location')->getValue());
         $xml_writer->xmlElement('dcterms:rightsHolder', [], $this->metadata->getField('rightsHolder')->getValue());
 
         $start_end_string_iso = (new ilDateTime(
-            strtotime($this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField('startTime')->getValue()),
+            strtotime($this->metadata->getField('startDate')->getValueFormatted() . ' ' . $this->metadata->getField('startTime')->getValueFormatted()),
             IL_CAL_UNIX
         )
         )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z');

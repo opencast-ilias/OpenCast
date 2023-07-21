@@ -146,4 +146,12 @@ class xoctUploadFile
     {
         $this->mime_type = $mime_type;
     }
+
+    /**
+     * @return resource filestream
+     */
+    public function getFileStream()
+    {
+        return fopen($this->getPath(), 'r');
+    }
 }

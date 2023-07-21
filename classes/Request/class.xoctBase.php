@@ -34,11 +34,11 @@ class xoctBase
 
     public function __construct()
     {
-        $version = xoctRequest::root()->base()->version()->get();
+        $version = xoctOpencastApi::getApi()->baseApi->getVersion();
         $this->setApiVersion($version->default);
         $this->setApiVersions($version->versions);
 
-        $org = xoctRequest::root()->organization()->get();
+        $org = xoctOpencastApi::getApi()->baseApi->getOrg();
         $this->setOrganizationId($org->id);
         $this->setOrganizationAnonymousRole($org->anonymousRole);
         $this->setOrganizationAdminRole($org->adminRole);

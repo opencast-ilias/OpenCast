@@ -1,7 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-
+use xoctOpencastApi;
 /**
  * Class xoctSecureLink
  *
@@ -41,7 +41,7 @@ class xoctSecureLink
 
         $ip = ($restict_ip) ? self::getClientIP() : null;
 
-        $data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
+        $data = xoctOpencastApi::getApi()->securityApi->sign($url, $valid_until, $ip);
 
         if ($data->error) {
             return '';

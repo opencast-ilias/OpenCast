@@ -38,6 +38,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\CustomInputGUIs\OneDrive\Waiter\Waiter;
+use xoctOpencastApi;
 
 /**
  * Class xoctEventGUI
@@ -995,18 +996,17 @@ class xoctEventGUI extends xoctGUI
                 ilUtil::sendFailure($this->txt('msg_no_access'), true);
                 $this->cancel();
             }
-            $request = [
-                'event_identifier' => $event_id,
-                'workflow_definition_identifier' => $workflow->getWorkflowId(),
-            ];
-            $params = [];
+            $configurations = [];
             foreach (array_filter(explode(',', $workflow->getParameters())) as $param) {
-                $params[$param] = 'true';
+                $configurations[$param] = 'true';
             }
-            if (!empty($params)) {
-                $request['configuration'] = json_encode($params);
-            }
-            xoctRequest::root()->workflows()->post($request);
+            $workflow_instance = xoctOpencastApi::getApi()->workflowsApi->run(
+                $event_id,
+                $workflow->getWorkflowId(),
+                $configurations,
+                true,
+                true
+            );
             ilUtil::sendSuccess($this->txt('msg_republish_started'), true);
             self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
         } else {
@@ -1093,10 +1093,7 @@ class xoctEventGUI extends xoctGUI
     private function unpublish(Event $event)
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        xoctRequest::root()->workflows()->post([
-            'workflow_definition_identifier' => $workflow,
-            'event_identifier' => $event->getIdentifier()
-        ]);
+        $workflow_instance = xoctOpencastApi::getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
         return true;
     }
 

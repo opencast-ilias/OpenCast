@@ -17,7 +17,7 @@ use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
 use xoctException;
-use xoctRequest;
+use xoctOpencastApi;
 
 /**
  * Opencast Event Object
