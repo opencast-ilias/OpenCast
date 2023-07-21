@@ -23,12 +23,14 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.0",
+    "elan-ev/opencast-api": "^1.3",
     "srag/custominputguis": ">=0.1.0",
     "srag/datatable": ">=0.1.0",
     "srag/dic": ">=0.1.0",
     "srag/librariesnamespacechanger": ">=0.1.0"
   },
   "autoload": {
+    "exclude-from-classmap": ["vendor/guzzlehttp/", "vendor/ralouphie/", "vendor/psr/http-message", "vendor/psr/http-factory", "vendor/psr/http-client"],
     "classmap": [
       "./classes/",
       "./src/"

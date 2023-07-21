@@ -14,7 +14,10 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
     );
 
@@ -53,10 +56,24 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'P' => 
         array (
             'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpCsFixer\\' => 11,
+        ),
+        'O' => 
+        array (
+            'OpencastApi\\Rest\\' => 17,
+            'OpencastApi\\Mock\\' => 17,
+            'OpencastApi\\' => 12,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
         ),
         'D' => 
         array (
@@ -177,6 +194,15 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
         'Psr\\EventDispatcher\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
@@ -192,6 +218,30 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'PhpCsFixer\\' => 
         array (
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
+        ),
+        'OpencastApi\\Rest\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
+        ),
+        'OpencastApi\\Mock\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
+        ),
+        'OpencastApi\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
@@ -414,6 +464,28 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'ILIAS\\UI\\Implementation\\Component\\Input\\Field\\ChunkedFileRenderer' => __DIR__ . '/../..' . '/src/UI/Form/ChunkedFileRenderer.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'OpencastApi\\Mock\\OcMockHanlder' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock/OcMockHanlder.php',
+        'OpencastApi\\Opencast' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Opencast.php',
+        'OpencastApi\\Rest\\OcAgentsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcAgentsApi.php',
+        'OpencastApi\\Rest\\OcBaseApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcBaseApi.php',
+        'OpencastApi\\Rest\\OcCaptureAdmin' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcCaptureAdmin.php',
+        'OpencastApi\\Rest\\OcEventAdminNg' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcEventAdminNg.php',
+        'OpencastApi\\Rest\\OcEventsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcEventsApi.php',
+        'OpencastApi\\Rest\\OcGroupsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcGroupsApi.php',
+        'OpencastApi\\Rest\\OcIngest' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcIngest.php',
+        'OpencastApi\\Rest\\OcListProvidersApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcListProvidersApi.php',
+        'OpencastApi\\Rest\\OcRecordings' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRecordings.php',
+        'OpencastApi\\Rest\\OcRest' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRest.php',
+        'OpencastApi\\Rest\\OcRestClient' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRestClient.php',
+        'OpencastApi\\Rest\\OcSearch' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSearch.php',
+        'OpencastApi\\Rest\\OcSecurityApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSecurityApi.php',
+        'OpencastApi\\Rest\\OcSeries' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSeries.php',
+        'OpencastApi\\Rest\\OcSeriesApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSeriesApi.php',
+        'OpencastApi\\Rest\\OcServices' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcServices.php',
+        'OpencastApi\\Rest\\OcStatisticsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcStatisticsApi.php',
+        'OpencastApi\\Rest\\OcSysinfo' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSysinfo.php',
+        'OpencastApi\\Rest\\OcWorkflow' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflow.php',
+        'OpencastApi\\Rest\\OcWorkflowsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflowsApi.php',
         'PhpCsFixer\\AbstractDoctrineAnnotationFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/AbstractDoctrineAnnotationFixer.php',
         'PhpCsFixer\\AbstractFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/AbstractFixer.php',
         'PhpCsFixer\\AbstractFopenFlagFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/AbstractFopenFlagFixer.php',
