@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\WorkflowInstance;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
 use xoctException;
-use xoctRequest;
+use xoctOpencastApi;
 
 /**
  * Class xoctWorkflowCollection
@@ -43,18 +43,26 @@ class WorkflowInstanceCollection extends APIObject
 
     /**
      * @throws xoctException
+     * @deprecated since OpencastApi v1.3 because this endpoint is removed from Opencast Verison 12.x, we should no longer support it here.
      */
     public function read(stdClass $data = null): void
     {
-        if (!$data instanceof \stdClass) {
-            $data = json_decode(
-                xoctRequest::root()->workflows()
-                           ->parameter('filter', 'event_identifier:' . $this->getEventId())
-                           ->get(),
-                null,
-                512,
-                JSON_THROW_ON_ERROR
-            ) ?: new stdClass();
+        if ($data === null) {
+            $data = new stdClass();
+            $opencast_api = xoctOpencastApi::getApi();
+            $opencast_version = $opencast_api->sysinfo->getVersion()->version;
+            // A deep check to avoid error in advance.
+            // workflows get all endpoint is removed from Opencast Verison 12.x and in OpencastApi v1.3 is flagged depricated.
+            if (version_compare($opencastversion, '12.0.0', '<') && method_exists($opencast_api->workflowsApi, 'getAll')) {
+                $workflow_instance = $opencast_api->workflowsApi->getAll([
+                    'filter' => [
+                        'event_identifier' => $this->getEventId()
+                    ]
+                ]);
+                if (!empty($workflow_instance)) {
+                    $data = $workflow_instance;
+                }
+            }
         }
         $this->loadFromStdClass($data);
     }

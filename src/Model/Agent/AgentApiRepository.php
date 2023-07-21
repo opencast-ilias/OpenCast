@@ -2,7 +2,8 @@
 
 namespace srag\Plugins\Opencast\Model\Agent;
 
-use xoctRequest;
+use Exception;
+use xoctOpencastApi;
 
 class AgentApiRepository implements AgentRepository
 {
@@ -18,7 +19,7 @@ class AgentApiRepository implements AgentRepository
 
     public function findAll(): array
     {
-        $data = json_decode(xoctRequest::root()->agents()->get(), null, 512, JSON_THROW_ON_ERROR);
+        $data = xoctOpencastApi::getApi()->agentsApi->getAll();
         return $this->agentParser->parseApiResponse($data);
     }
 }

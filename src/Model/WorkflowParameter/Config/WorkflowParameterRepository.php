@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoctConfGUI;
 use xoctException;
-use xoctRequest;
+use xoctOpencastApi;
 use xoctWorkflowParameterGUI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
@@ -70,29 +70,18 @@ class WorkflowParameterRepository
     public function loadParametersFromAPI(): array
     {
         PluginConfig::setApiSettings();
-        $workflow_id = PluginConfig::getConfig(PluginConfig::F_WORKFLOW);
-        if (!$workflow_id) {
+        $workflow_definition_id = PluginConfig::getConfig(PluginConfig::F_WORKFLOW);
+        if (!$workflow_definition_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = json_decode(
-            xoctRequest::root()->workflowDefinition($workflow_id)->parameter('withconfigurationpanel', 'true')->get(),
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
+        $response = xoctOpencastApi::getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, xoctOpencastApi::RETURN_ARRAY);
 
         if ($response == false) {
-            throw new xoctException(
-                xoctException::INTERNAL_ERROR,
-                "Couldn't fetch workflow information for workflow '$workflow_id'."
-            );
+            throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_definition_id'.");
         }
 
         if (!isset($response['configuration_panel'])) {
-            throw new xoctException(
-                xoctException::INTERNAL_ERROR,
-                'No configuration panel found for workflow with id = ' . $workflow_id
-            );
+            throw new xoctException(xoctException::INTERNAL_ERROR, 'No configuration panel found for workflow with id = ' . $workflow_definition_id);
         }
 
         try {

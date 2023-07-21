@@ -18,7 +18,7 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use xoctRequest;
+use xoctOpencastApi;
 
 class SeriesAPIRepository implements SeriesRepository
 {
@@ -67,12 +67,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function fetch(string $identifier): Series
     {
-        $data = json_decode(
-            xoctRequest::root()->series($identifier)->parameter('withacl', true)->get(),
-            null,
-            512,
-            JSON_THROW_ON_ERROR
-        );
+        $data = xoctOpencastApi::getApi()->seriesApi->get($identifier, true);
         $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
@@ -84,24 +79,18 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = json_decode(
-            xoctRequest::root()->series($identifier)->metadata()->get(),
-            null,
-            512,
-            JSON_THROW_ON_ERROR
-        ) ?? [];
+        $data = xoctOpencastApi::getApi()->seriesApi->getMetadata($identifier) ?? [];
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
     {
-        $payload = json_decode(
-            xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()),
-            null,
-            512,
-            JSON_THROW_ON_ERROR
+        $payload = $request->getPayload()->jsonSerialize();
+        $created_series = xoctOpencastApi::getApi()->seriesApi->create(
+            $payload['metadata'],
+            $payload['acl'],
         );
-        return $payload->identifier;
+        return $created_series->identifier;
     }
 
     /**
@@ -110,11 +99,10 @@ class SeriesAPIRepository implements SeriesRepository
     public function updateMetadata(UpdateSeriesMetadataRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        xoctRequest::root()
-                   ->series($request->getIdentifier())
-                   ->metadata()
-                   ->parameter('type', 'dublincore/series')
-                   ->put($payload);
+        xoctOpencastApi::getApi()->seriesApi->updateMetadata(
+            $request->getIdentifier(),
+            $payload['metadata']
+        );
 
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
@@ -124,8 +112,11 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function updateACL(UpdateSeriesACLRequest $request): void
     {
-        xoctRequest::root()->series($request->getIdentifier())->acl()
-                   ->put($request->getPayload()->jsonSerialize());
+        $payload = $request->getPayload()->jsonSerialize();
+        xoctOpencastApi::getApi()->seriesApi->updateAcl(
+            $request->getIdentifier(),
+            $payload['acl']
+        );
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
@@ -142,14 +133,11 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = (array) json_decode(
-                xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get(
-                    [$user_string]
-                ),
-                null,
-                512,
-                JSON_THROW_ON_ERROR
-            );
+            $data = xoctOpencastApi::getApi()->seriesApi->runWithRoles([$user_string])->getAll([
+                'onlyWithWriteAccess' => true,
+                'withacl' => true,
+                'limit' => 5000
+            ]);
         } catch (ilException $e) {
             return [];
         }
@@ -192,15 +180,16 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function getOwnSeries(xoctUser $xoct_user): ?Series
     {
-        $existing = xoctRequest::root()->series()->parameter(
-            'filter',
-            'title:' . $this->getOwnSeriesTitle($xoct_user)
-        )->parameter('withacl', 'true')->get();
-        $existing = json_decode($existing, true, 512, JSON_THROW_ON_ERROR);
+        $existing = xoctOpencastApi::getApi()->seriesApi->getAll([
+            'filter' => [
+                'title' => $this->getOwnSeriesTitle($xoct_user)
+            ],
+            'withacl' => true,
+        ]);
         if (empty($existing)) {
             return null;
         }
-        $series = $this->seriesParser->parseAPIResponse((object) $existing[0]);
+        $series = $this->seriesParser->parseAPIResponse(reset($existing));
         $series->getAccessPolicies()->merge(
             $this->ACLUtils->getUserRolesACL($xoct_user)
         );

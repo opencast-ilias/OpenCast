@@ -34,7 +34,7 @@ class xoctBase
 
     public function __construct()
     {
-        $version = xoctRequest::root()->base()->version()->get();
+        $version = xoctOpencastApi::getApi()->baseApi->getVersion();
         if (isset($version->default)) {
             $this->setApiVersion($version->default);
         }
@@ -42,7 +42,7 @@ class xoctBase
             $this->setApiVersions($version->versions);
         }
 
-        $org = xoctRequest::root()->organization()->get();
+        $org = xoctOpencastApi::getApi()->baseApi->getOrg();
         if (isset($org->id)) {
             $this->setOrganizationId($org->id);
         }

@@ -12,6 +12,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
+use xoctException;
+use xoctOpencastApi;
 
 /**
  * Opencast Event Object
