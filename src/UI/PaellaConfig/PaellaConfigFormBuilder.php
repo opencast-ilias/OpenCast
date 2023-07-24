@@ -24,6 +24,9 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_THEME_DEFAULT = 'pp_default';
     public const F_PAELLA_PLAYER_THEME_FILE = 'pp_file';
     public const F_PAELLA_PLAYER_THEME_LINK = 'pp_file';
+
+    // Preview fallback.
+    public const F_PAELLA_PLAYER_PREVIEW_FALLBACK = 'paella_player_preview_fallback';
     // Paella Player Caption Settings
     public const F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION = 'paella_player_fallback_captions_option';
     // Paella Player language Settings
@@ -83,6 +86,14 @@ class PaellaConfigFormBuilder
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL_LIVE) ?? '',
             self::F_PAELLA_PLAYER_LIVE_THEME,
             true
+        );
+
+        $inputs[self::F_PAELLA_PLAYER_PREVIEW_FALLBACK] = $this->generateSwichableGroupWithUrl(
+            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_PREVIEW)),
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
+            PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL) ?? '',
+            self::F_PAELLA_PLAYER_PREVIEW_FALLBACK,
+            false
         );
 
         $availableLanguages = $this->getAvailablePlayerLanguages();

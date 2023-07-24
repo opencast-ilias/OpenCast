@@ -118,6 +118,10 @@ class PluginConfig extends ActiveRecord
     public const PAELLA_LANG_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella/lang';
     public const PAELLA_DEFAULT_THEME = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella/default_theme/opencast_theme.json';
     public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella/default_theme/opencast_live_theme.json';
+
+    public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';
+    public const F_PAELLA_PREVIEW_FALLBACK_URL = 'paella_config_preview_fallback_url';
+    public const PAELLA_DEFAULT_PREVIEW = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/default_preview.png';
     /**
      * @var array
      */

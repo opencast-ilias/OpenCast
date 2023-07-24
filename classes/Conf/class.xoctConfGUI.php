@@ -133,6 +133,13 @@ class xoctConfGUI extends xoctGUI
                 PluginConfig::set(PluginConfig::F_PAELLA_THEME_URL_LIVE, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']);
             }
         }
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK])) {
+            $paella_player_preview_fallback = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][0];
+            PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK, $paella_player_preview_fallback);
+            if ($paella_player_preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
+                PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][1]['url']);
+            }
+        }
         if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION])) {
             $paella_fallback_captions_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION];
             PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS, $paella_fallback_captions_option);

@@ -131,6 +131,8 @@ class xoctPlayerGUI extends xoctGUI
         $js_config->paella_theme_live = $paella_themes['theme_live_url'];
         $js_config->paella_theme_info = $paella_themes['info'];
 
+        $js_config->paella_preview_fallback = $this->paellaConfigService->getPaellaPlayerPreviewFallback();
+
         if ($event->isLiveEvent()) {
             $js_config->check_script_hls = self::plugin()->directory() . '/src/Util/check_hls_status.php'; // script to check live stream availability
             $js_config->is_live_stream = true;

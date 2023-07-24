@@ -98,6 +98,24 @@ class PaellaConfigService
         return $result;
     }
 
+    /**
+     * @return string preview fallback url
+     */
+    public function getPaellaPlayerPreviewFallback()
+    {
+        $preview_fallback_http_path = ILIAS_HTTP_PATH . PluginConfig::PAELLA_DEFAULT_PREVIEW;
+        $preview_fallback = PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK);
+        $url = $preview_fallback_http_path;
+        if ($preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
+            $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL);
+            $reachable = $this->checkUrlReachable($url);
+            if (!$reachable) {
+                xoctLog::getInstance()->writeWarning('url for paella preview fallback unreachable: ' . $url);
+            }
+        }
+        return $url;
+    }
+
     public function checkUrlReachable(string $url): bool
     {
         $file_headers = @get_headers($url);

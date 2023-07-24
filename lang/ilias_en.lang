@@ -589,3 +589,5 @@ config_paella_player_theme#:#Paella Player Theme
 config_paella_player_theme_info#:#Paella Player Theme INFO (TODO)
 config_paella_player_live_theme#:#Paella Player Theme (Livestream)
 config_paella_player_live_theme_info#:#Paella Player Theme (Livestream) INFO (TODO)
+config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
+config_paella_player_preview_fallback_info#:#Paella Player Preview (fallback) (TODO)...

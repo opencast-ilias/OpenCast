@@ -25,6 +25,7 @@ export default {
         paella_config_fallback_captions: '',
         paella_config_fallback_langs: '',
         paella_config_info: '',
+        paella_preview_fallback: '',
         paella_config_is_warning: false,
         is_live_stream: false,
         event_start: 0,
@@ -78,7 +79,23 @@ export default {
         } , false);
     },
 
+    checkPreview: async function() {
+        let preview = this.data?.metadata?.preview;
+        if (preview) {
+            var http = new XMLHttpRequest();
+            http.open('GET', preview, false);
+            http.send();
+            let accessible = http.status != 403 && http.status != 404;
+            if (!accessible && this.config?.paella_preview_fallback) {
+                this.data.metadata.preview = this.config.paella_preview_fallback;
+            }
+        } else {
+            this.data.metadata.preview = this.config.paella_preview_fallback;
+        }
+    },
+
     initPaella: function() {
+        this.checkPreview();
         this.paella = new Paella('playerContainer', {
             configResourcesUrl: this.config.paella_config_resources_path,
             configUrl: this.config.paella_config_file,
