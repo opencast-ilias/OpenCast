@@ -56,10 +56,8 @@ class PaellaConfigService
     {
         $default_theme = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME);
         $default_theme_live = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_LIVE);
-        $default_theme_path = PluginConfig::PAELLA_DEFAULT_THEME;
-        $default_theme_live_path = PluginConfig::PAELLA_DEFAULT_THEME_LIVE;
-        $default_theme_url = ILIAS_HTTP_PATH . '/' . $default_theme_path;
-        $default_theme_live_url = ILIAS_HTTP_PATH . '/' . $default_theme_live_path;
+        $default_theme_url = PluginConfig::PAELLA_DEFAULT_THEME;
+        $default_theme_live_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE;
 
         $result = [
             'theme_url' => $default_theme_url,
