@@ -105,7 +105,7 @@ class xoctPlayerGUI extends xoctGUI
         if ($this->isChatVisible()) {
             $this->initChat($event, $tpl);
         } else {
-            $tpl->setVariable("STYLE_SHEET_LOCATION", ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
+            $tpl->setVariable("STYLE_SHEET_LOCATION", self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player.css");
         }
 
         setcookie('lastProfile', null, -1);
@@ -164,8 +164,7 @@ class xoctPlayerGUI extends xoctGUI
         $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->objectSettings->getObjId());
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
-                "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . ltrim(self::plugin()->getPluginObject()->getDirectory(), '.') . "/templates/default/player_w_chat.css"
+                "STYLE_SHEET_LOCATION", self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->objectSettings->getObjId());
             $public_name = self::dic()->user()->hasPublicProfile() ?
@@ -178,7 +177,7 @@ class xoctPlayerGUI extends xoctGUI
             // show chat history for past live events
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . ltrim(self::plugin()->getPluginObject()->getDirectory(), '.') . "/templates/default/player_w_chat.css"
+                self::plugin()->getPluginObject()->getDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
