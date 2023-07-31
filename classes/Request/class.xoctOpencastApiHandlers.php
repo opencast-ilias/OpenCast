@@ -1,14 +1,10 @@
 <?php
 
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
-use xoctLog;
 
 /**
  * Class xoctOpencastApiHandlers

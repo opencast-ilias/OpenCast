@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Util\Player;
 
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctOpencastApi;
 
 /**

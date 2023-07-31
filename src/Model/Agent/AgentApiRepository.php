@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Agent;
 
-use Exception;
 use xoctOpencastApi;
 
 class AgentApiRepository implements AgentRepository

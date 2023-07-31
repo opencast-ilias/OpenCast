@@ -1,7 +1,6 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use xoctOpencastApi;
 
 /**
  * Class xoctSecureLink
