@@ -57,6 +57,7 @@ export default {
         this.data = data;
         this.config = config;
         this.config.user_default_language = navigator?.language?.substring(0,2);
+        // this.compileCaptions();
         this.initPaella();
         if (this.config.is_live_stream === true) {
             this.hasWorkingStream().then(stream_available => {
@@ -77,6 +78,21 @@ export default {
             let scroll_height = e.data;
             $('#srchat_iframe').attr('height', scroll_height + 'px');
         } , false);
+    },
+
+    compileCaptions: function() {
+        if (this.data?.captions) {
+            for (const captionIndex in this.data.captions) {
+                let lang = this.data.captions[captionIndex].lang;
+                let text = new Intl.DisplayNames([this.config.user_default_language], {type: 'language'}).of(lang);
+                if (text) {
+                    if (this.data.captions[captionIndex]?.text) {
+                        text = text + ' - ' + this.data.captions[captionIndex].text;
+                    }
+                    this.data.captions[captionIndex].text = text;
+                }
+            }
+        }
     },
 
     checkPreview: async function() {
