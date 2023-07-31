@@ -1,7 +1,4 @@
 <?php
-use xoctLog;
-use xoctException;
-use xoctOpencastApi;
 /**
  * Class xoctOpencastApiDecorateProxy
  * This is a decorative proxy to be wrapped around each OpencastApi Service to handle responses for ILIAS OpenCast Plugin.

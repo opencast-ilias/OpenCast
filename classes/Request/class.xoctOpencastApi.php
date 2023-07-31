@@ -1,8 +1,5 @@
 <?php
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use xoctOpencastApiHandlers;
-use xoctOpencastApiDecorateProxy;
-use xoctLog;
 /**
  * Class xoctOpencastApi
  * This class integrates Opencast PHP Library into xoct.

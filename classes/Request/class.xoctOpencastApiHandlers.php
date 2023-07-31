@@ -7,7 +7,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\TransferStats;
-use xoctLog;
 /**
  * Class xoctOpencastApiHandlers
  * This class is used to provide middlewares and handlers for OpencastApi Client
