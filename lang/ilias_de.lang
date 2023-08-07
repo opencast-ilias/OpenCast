@@ -79,6 +79,7 @@ config_sign_player_links_overwrite_default#:#Benutze Aufzeichnungsdauer als Daue
 config_sign_player_links_additional_time_percent#:#Zusätzliche Zeit
 config_sign_player_links_additional_time_percent_info#:#Wieviel zusätzliche Zeit soll der Gültigkeit der Signatur in Prozent, abhängig von der Dauer, hinzugefügt werden?
 config_sign_player_links_with_ip#:#Für Client-IP signieren
+config_sign_player_links_mp4#:#Für ".mp4" Dateien signieren
 config_sign_download_links#:#Downloadlink signieren
 config_sign_download_links_info#:#Downloadlinks sind für den Benutzer nicht sichtbar, da der Download via ILIAS-Server getätigt wird.
 config_sign_download_links_time#:#Gültigkeit in Sekunden

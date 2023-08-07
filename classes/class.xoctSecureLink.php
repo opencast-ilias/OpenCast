@@ -44,6 +44,8 @@ class xoctSecureLink
         $data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
 
         if ($data->error) {
+            // We would only be able to log it here as error to avoid further confilicts.
+            xoctLog::getInstance()->write("[Error]: Signing link ($url) failed: {$data->error}", xoctLog::DEBUG_LEVEL_1);
             return '';
         }
         self::$cache[$url] = $data->url;
@@ -95,6 +97,11 @@ class xoctSecureLink
             $duration_in_seconds = $duration / 1000;
             $additional_time_percent = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
             $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+        }
+        $url_path = parse_url($url, PHP_URL_PATH);
+        $extension = pathinfo($url_path, PATHINFO_EXTENSION);
+        if ($extension === 'mp4' && !PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_MP4)) {
+            return $url;
         }
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP));
     }
