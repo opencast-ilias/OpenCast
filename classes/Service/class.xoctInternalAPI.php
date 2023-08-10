@@ -18,7 +18,6 @@ class xoctInternalAPI
      */
     protected static $instance;
 
-
     /**
      * xoctInternalAPI constructor.
      */
@@ -26,7 +25,6 @@ class xoctInternalAPI
     {
         PluginConfig::setApiSettings();
     }
-
 
     /**
      * @return xoctInternalAPI
@@ -39,7 +37,6 @@ class xoctInternalAPI
         return self::$instance;
     }
 
-
     /**
      * @return xoctSeriesAPI
      */
@@ -47,7 +44,6 @@ class xoctInternalAPI
     {
         return xoctSeriesAPI::getInstance();
     }
-
 
     /**
      * @return xoctEventAPI

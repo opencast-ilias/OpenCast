@@ -38,27 +38,27 @@ class xoctWorkflowTableGUI extends TableGUI
 
     public function __construct($parent, $parent_cmd, WorkflowRepository $workflow_repository)
     {
+        global $DIC;
+        $ui = $DIC->ui();
         $this->workflow_repository = $workflow_repository;
-        $this->factory = self::dic()->ui()->factory();
-        $this->renderer = self::dic()->ui()->renderer();
+        $this->factory = $ui->factory();
+        $this->renderer = $ui->renderer();
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
         $this->setDescription(self::plugin()->translate('msg_workflows_info'));
     }
 
-
     /**
      * @throws DICException
      */
     protected function initColumns(): void
     {
-        $this->addColumn(self::dic()->language()->txt('id'));
-        $this->addColumn(self::dic()->language()->txt('title'));
+        $this->addColumn($this->lng->txt('id'));
+        $this->addColumn($this->lng->txt('title'));
         $this->addColumn(self::plugin()->translate('parameters'));
-        $this->addColumn(self::dic()->language()->txt('actions'), '', '', true);
+        $this->addColumn($this->lng->txt('actions'), '', '', true);
     }
-
 
     public function getHTML()
     {
@@ -68,7 +68,6 @@ class xoctWorkflowTableGUI extends TableGUI
         }
         return $html;
     }
-
 
     /**
      * @inheritDoc
@@ -91,11 +90,11 @@ class xoctWorkflowTableGUI extends TableGUI
             case 'parameters':
                 return $row->getParameters();
             case 'actions':
-                self::dic()->ctrl()->setParameter($this->parent_obj, 'workflow_id', $row->getId());
+                $this->ctrl->setParameter($this->parent_obj, 'workflow_id', $row->getId());
                 $delete_modal = $this->factory->modal()->interruptive(
-                    self::dic()->language()->txt('delete'),
+                    $this->lng->txt('delete'),
                     $this->txt('msg_confirm_delete_workflow'),
-                    self::dic()->ctrl()->getFormAction($this->parent_obj, xoctWorkflowGUI::CMD_DELETE)
+                    $this->ctrl->getFormAction($this->parent_obj, xoctWorkflowGUI::CMD_DELETE)
                 )->withAffectedItems(
                     [
                         $this->factory->modal()->interruptiveItem(
@@ -108,15 +107,15 @@ class xoctWorkflowTableGUI extends TableGUI
                 $actions = $this->factory->dropdown()->standard(
                     [
                         $this->factory->button()->shy(
-                            self::dic()->language()->txt('edit'),
-                            self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctWorkflowGUI::CMD_EDIT)
+                            $this->lng->txt('edit'),
+                            $this->ctrl->getLinkTarget($this->parent_obj, xoctWorkflowGUI::CMD_EDIT)
                         ),
                         $this->factory->button()->shy(
-                            self::dic()->language()->txt('delete'),
+                            $this->lng->txt('delete'),
                             $delete_modal->getShowSignal()
                         )
                     ]
-                )->withLabel(self::dic()->language()->txt('actions'));
+                )->withLabel($this->lng->txt('actions'));
                 return self::output()->getHTML($actions);
         }
     }
@@ -128,13 +127,12 @@ class xoctWorkflowTableGUI extends TableGUI
     protected function getSelectableColumns2(): array
     {
         return [
-            ['txt' => self::dic()->language()->txt('id'), 'id' => 'id'],
-            ['txt' => self::dic()->language()->txt('title'), 'id' => 'title'],
+            ['txt' => $this->lng->txt('id'), 'id' => 'id'],
+            ['txt' => $this->lng->txt('title'), 'id' => 'title'],
             ['txt' => self::plugin()->translate('parameters'), 'id' => 'parameters'],
-            ['txt' => self::dic()->language()->txt('actions'), 'id' => 'actions']
+            ['txt' => $this->lng->txt('actions'), 'id' => 'actions']
         ];
     }
-
 
     /**
      * @param string $col
@@ -146,7 +144,6 @@ class xoctWorkflowTableGUI extends TableGUI
         return true;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -154,7 +151,6 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         $this->setData($this->workflow_repository->getAllWorkflows());
     }
-
 
     /**
      * @inheritDoc
@@ -164,7 +160,6 @@ class xoctWorkflowTableGUI extends TableGUI
         // TODO: Implement initFilterFields() method.
     }
 
-
     /**
      * @inheritDoc
      */
@@ -172,7 +167,6 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         // TODO: Implement initId() method.
     }
-
 
     /**
      * @inheritDoc

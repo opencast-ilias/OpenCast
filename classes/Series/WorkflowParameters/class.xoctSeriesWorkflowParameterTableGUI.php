@@ -23,7 +23,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      */
     private $workflowParameterRepository;
 
-
     /**
      * xoctSeriesWorkflowParameterTableGUI constructor.
      *
@@ -42,13 +41,12 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      */
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, self::dic()->language()->txt('save'));
+        $this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
     }
-
 
     /**
      * @param string $column
-     * @param array $row
+     * @param array  $row
      * @param        $format
      *
      * @return string
@@ -64,7 +62,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         return strval($column);
     }
 
-
     /**
      * @return array
      */
@@ -73,15 +70,14 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         return [];
     }
 
-
     /**
      *
      */
     protected function initColumns(): void
     {
-        $this->addColumn(self::dic()->language()->txt("id"));
-        $this->addColumn(self::dic()->language()->txt("title"));
-        $this->addColumn(self::dic()->language()->txt("type"));
+        $this->addColumn($this->lng->txt("id"));
+        $this->addColumn($this->lng->txt("title"));
+        $this->addColumn($this->lng->txt("type"));
         $this->addColumn(self::plugin()->translate("value_member"));
         $this->addColumn(self::plugin()->translate("value_admin"));
         $this->addColumn('', '', '', true);
@@ -104,24 +100,25 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $ilSelectInputGUI->setValue($row['value_member']);
         $this->tpl->setVariable("VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
-
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][value_admin]');
         $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['value_admin']);
         $this->tpl->setVariable("VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
-        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", null);
+        $this->ctrl->setParameter($this->parent_obj, "xhfp_content", null);
     }
-
 
     /**
      *
      */
     protected function initData(): void
     {
-        $this->setData(SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id')->where(['obj_id' => $this->parent_obj->getObjId()])->getArray());
+        $this->setData(
+            SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id')->where(
+                ['obj_id' => $this->parent_obj->getObjId()]
+            )->getArray()
+        );
     }
-
 
     /**
      *
@@ -130,14 +127,12 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
     {
     }
 
-
     /**
      *
      */
     protected function initId(): void
     {
     }
-
 
     /**
      *

@@ -1,6 +1,7 @@
 <?php
 
 use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctGUI
@@ -10,7 +11,6 @@ use srag\DIC\OpenCast\DICTrait;
  */
 abstract class xoctGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const CMD_STANDARD = 'index';
@@ -23,20 +23,38 @@ abstract class xoctGUI
     public const CMD_DELETE = 'delete';
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
+    /**
+     * @var \ilCtrlInterface
+     */
+    protected $ctrl;
 
+    public function __construct()
+    {
+        global $DIC;
+        $this->ctrl = $DIC->ctrl();
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
+    }
 
     public function executeCommand()
     {
-        $nextClass = self::dic()->ctrl()->getNextClass();
+        $nextClass = $this->ctrl->getNextClass();
 
         switch ($nextClass) {
             default:
-                $cmd = self::dic()->ctrl()->getCmd(self::CMD_STANDARD);
+                $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
                 $this->performCommand($cmd);
                 break;
         }
     }
-
 
     /**
      * @param $cmd
@@ -46,33 +64,24 @@ abstract class xoctGUI
         $this->{$cmd}();
     }
 
-
     abstract protected function index();
-
 
     abstract protected function add();
 
-
     abstract protected function create();
-
 
     abstract protected function edit();
 
-
     abstract protected function update();
-
 
     abstract protected function confirmDelete();
 
-
     abstract protected function delete();
-
 
     protected function cancel()
     {
-        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
-
 
     /**
      * @param $a

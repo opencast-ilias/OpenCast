@@ -31,7 +31,17 @@ class xoctMainGUI extends xoctGUI
     public const SUBTAB_GROUPS_ROLES = 'groups_roles';
     public const SUBTAB_SECURITY = 'security';
     public const SUBTAB_ADVANCED = 'advanced';
+    /**
+     * @var \ilTabsGUI
+     */
+    private $tabs;
 
+    public function __construct()
+    {
+        global $DIC;
+        parent::__construct();
+        $this->tabs = $DIC->tabs();
+    }
 
     /**
      * @throws DICException
@@ -40,121 +50,175 @@ class xoctMainGUI extends xoctGUI
     public function executeCommand()
     {
         global $DIC;
-        $nextClass = self::dic()->ctrl()->getNextClass();
+        $nextClass = $this->ctrl->getNextClass();
 
-        self::dic()->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_' . self::TAB_SETTINGS), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->tabs()->addTab(self::TAB_WORKFLOWS, self::plugin()->translate('tab_' . self::TAB_WORKFLOWS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowGUI::class));
-        self::dic()->tabs()->addTab(self::TAB_WORKFLOW_PARAMETERS, self::plugin()->translate('tab_' . self::TAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTargetByClass(xoctWorkflowParameterGUI::class));
-        self::dic()->tabs()->addTab(self::TAB_PUBLICATION_USAGE, self::plugin()->translate('tab_'
-            . self::TAB_PUBLICATION_USAGE), self::dic()->ctrl()->getLinkTarget(new xoctPublicationUsageGUI()));
-        self::dic()->tabs()->addTab(self::TAB_METADATA, self::plugin()->translate('tab_' . self::TAB_METADATA), self::dic()->ctrl()->getLinkTarget(new xoctMetadataConfigRouterGUI()));
-        self::dic()->tabs()->addTab(self::TAB_VIDEO_PORTAL, self::plugin()->translate('tab_' . self::TAB_VIDEO_PORTAL), self::dic()->ctrl()->getLinkTarget(new xoctPermissionTemplateGUI()));
-        self::dic()->tabs()->addTab(self::TAB_EXPORT, self::plugin()->translate('tab_' . self::TAB_EXPORT), self::dic()->ctrl()->getLinkTarget(new xoctConfExportGUI()));
-        self::dic()->tabs()->addTab(self::TAB_REPORTS, self::plugin()->translate('tab_' . self::TAB_REPORTS), self::dic()->ctrl()->getLinkTarget(new xoctReportOverviewGUI()));
+        $this->tabs->addTab(
+            self::TAB_SETTINGS,
+            $this->plugin->txt('tab_' . self::TAB_SETTINGS),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->tabs->addTab(
+            self::TAB_WORKFLOWS,
+            $this->plugin->txt('tab_' . self::TAB_WORKFLOWS),
+            $this->ctrl->getLinkTargetByClass(xoctWorkflowGUI::class)
+        );
+        $this->tabs->addTab(
+            self::TAB_WORKFLOW_PARAMETERS,
+            $this->plugin->txt('tab_' . self::TAB_WORKFLOW_PARAMETERS),
+            $this->ctrl->getLinkTargetByClass(xoctWorkflowParameterGUI::class)
+        );
+        $this->tabs->addTab(
+            self::TAB_PUBLICATION_USAGE,
+            $this->plugin->txt(
+                'tab_'
+                . self::TAB_PUBLICATION_USAGE
+            ),
+            $this->ctrl->getLinkTarget(new xoctPublicationUsageGUI())
+        );
+        $this->tabs->addTab(
+            self::TAB_METADATA,
+            $this->plugin->txt('tab_' . self::TAB_METADATA),
+            $this->ctrl->getLinkTarget(new xoctMetadataConfigRouterGUI())
+        );
+        $this->tabs->addTab(
+            self::TAB_VIDEO_PORTAL,
+            $this->plugin->txt('tab_' . self::TAB_VIDEO_PORTAL),
+            $this->ctrl->getLinkTarget(new xoctPermissionTemplateGUI())
+        );
+        $this->tabs->addTab(
+            self::TAB_EXPORT,
+            $this->plugin->txt('tab_' . self::TAB_EXPORT),
+            $this->ctrl->getLinkTarget(new xoctConfExportGUI())
+        );
+        $this->tabs->addTab(
+            self::TAB_REPORTS,
+            $this->plugin->txt('tab_' . self::TAB_REPORTS),
+            $this->ctrl->getLinkTarget(new xoctReportOverviewGUI())
+        );
 
         $opencast_dic = OpencastDIC::getInstance();
         switch ($nextClass) {
             case strtolower(xoctPublicationUsageGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_PUBLICATION_USAGE);
+                $this->tabs->activateTab(self::TAB_PUBLICATION_USAGE);
                 $xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
-                self::dic()->ctrl()->forwardCommand($xoctPublicationUsageGUI);
+                $this->ctrl->forwardCommand($xoctPublicationUsageGUI);
                 break;
             case strtolower(xoctPermissionTemplateGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_VIDEO_PORTAL);
+                $this->tabs->activateTab(self::TAB_VIDEO_PORTAL);
                 $xoctPermissionTemplateGUI = new xoctPermissionTemplateGUI();
-                self::dic()->ctrl()->forwardCommand($xoctPermissionTemplateGUI);
+                $this->ctrl->forwardCommand($xoctPermissionTemplateGUI);
                 break;
             case strtolower(xoctConfExportGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_EXPORT);
+                $this->tabs->activateTab(self::TAB_EXPORT);
                 $xoctConfExportGUI = new xoctConfExportGUI();
-                self::dic()->ctrl()->forwardCommand($xoctConfExportGUI);
+                $this->ctrl->forwardCommand($xoctConfExportGUI);
                 break;
             case strtolower(xoctReportOverviewGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_REPORTS);
+                $this->tabs->activateTab(self::TAB_REPORTS);
                 $xoctReportOverviewGUI = new xoctReportOverviewGUI();
-                self::dic()->ctrl()->forwardCommand($xoctReportOverviewGUI);
+                $this->ctrl->forwardCommand($xoctReportOverviewGUI);
                 break;
             case strtolower(xoctWorkflowGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_WORKFLOWS);
+                $this->tabs->activateTab(self::TAB_WORKFLOWS);
                 $xoctWorkflowGUI = new xoctWorkflowGUI($opencast_dic->workflow_repository());
-                self::dic()->ctrl()->forwardCommand($xoctWorkflowGUI);
+                $this->ctrl->forwardCommand($xoctWorkflowGUI);
                 break;
             case strtolower(xoctWorkflowParameterGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_WORKFLOW_PARAMETERS);
+                $this->tabs->activateTab(self::TAB_WORKFLOW_PARAMETERS);
                 $xoctWorkflowParameterGUI = new xoctWorkflowParameterGUI(
                     $opencast_dic->workflow_parameter_conf_repository(),
                     $opencast_dic->workflow_parameter_series_repository()
                 );
-                self::dic()->ctrl()->forwardCommand($xoctWorkflowParameterGUI);
+                $this->ctrl->forwardCommand($xoctWorkflowParameterGUI);
                 break;
             case strtolower(xoctMetadataConfigRouterGUI::class):
-                self::dic()->tabs()->activateTab(self::TAB_METADATA);
+                $this->tabs->activateTab(self::TAB_METADATA);
                 $xoctMetadataConfigGUI = new xoctMetadataConfigRouterGUI();
-                self::dic()->ctrl()->forwardCommand($xoctMetadataConfigGUI);
+                $this->ctrl->forwardCommand($xoctMetadataConfigGUI);
                 break;
             default:
-                self::dic()->tabs()->activateTab(self::TAB_SETTINGS);
+                $this->tabs->activateTab(self::TAB_SETTINGS);
                 $this->setSubTabs();
                 $xoctConfGUI = new xoctConfGUI(
                     $DIC->ui()->renderer(),
-                    $DIC->ctrl(),
                     $opencast_dic->paella_config_upload_handler(),
                     $opencast_dic->paella_config_form_builder()
                 );
-                self::dic()->ctrl()->forwardCommand($xoctConfGUI);
+                $this->ctrl->forwardCommand($xoctConfGUI);
                 break;
         }
     }
 
     protected function setSubTabs()
     {
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_API, self::plugin()->translate('subtab_' . self::SUBTAB_API), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_EVENTS);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_EVENTS, self::plugin()->translate('subtab_' . self::SUBTAB_EVENTS), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_PLAYER);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_PLAYER, self::plugin()->translate('subtab_' . self::SUBTAB_PLAYER), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class, 'player'));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_TOU, self::plugin()->translate('eula'), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_GROUPS_ROLES, self::plugin()->translate('subtab_' . self::SUBTAB_GROUPS_ROLES), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_SECURITY, self::plugin()->translate('subtab_' . self::SUBTAB_SECURITY), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_ADVANCED, self::plugin()->translate('subtab_' . self::SUBTAB_ADVANCED), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
-        self::dic()->ctrl()->clearParametersByClass(xoctConfGUI::class);
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_API);
+        $this->tabs->addSubTab(
+            self::SUBTAB_API,
+            $this->plugin->txt('subtab_' . self::SUBTAB_API),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_EVENTS);
+        $this->tabs->addSubTab(
+            self::SUBTAB_EVENTS,
+            $this->plugin->txt('subtab_' . self::SUBTAB_EVENTS),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_PLAYER);
+        $this->tabs->addSubTab(
+            self::SUBTAB_PLAYER,
+            $this->plugin->txt('subtab_' . self::SUBTAB_PLAYER),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class, 'player')
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
+        $this->tabs->addSubTab(
+            self::SUBTAB_TOU,
+            $this->plugin->txt('eula'),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_GROUPS_ROLES);
+        $this->tabs->addSubTab(
+            self::SUBTAB_GROUPS_ROLES,
+            $this->plugin->txt('subtab_' . self::SUBTAB_GROUPS_ROLES),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SECURITY);
+        $this->tabs->addSubTab(
+            self::SUBTAB_SECURITY,
+            $this->plugin->txt('subtab_' . self::SUBTAB_SECURITY),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
+        $this->tabs->addSubTab(
+            self::SUBTAB_ADVANCED,
+            $this->plugin->txt('subtab_' . self::SUBTAB_ADVANCED),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
+        );
+        $this->ctrl->clearParametersByClass(xoctConfGUI::class);
     }
-
 
     protected function index()
     {
     }
 
-
     protected function add()
     {
     }
-
 
     protected function create()
     {
     }
 
-
     protected function edit()
     {
     }
-
 
     protected function update()
     {
     }
 
-
     protected function confirmDelete()
     {
     }
-
 
     protected function delete()
     {

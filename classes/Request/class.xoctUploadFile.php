@@ -25,7 +25,6 @@ class xoctUploadFile
         return $inst;
     }
 
-
     /**
      * @return CURLFile
      */
@@ -36,7 +35,6 @@ class xoctUploadFile
 
         return $CURLFile;
     }
-
 
     /**
      * @var string
@@ -75,7 +73,6 @@ class xoctUploadFile
         $this->path = $path;
     }
 
-
     /**
      * @return string
      */
@@ -83,7 +80,6 @@ class xoctUploadFile
     {
         return $this->title;
     }
-
 
     /**
      * @param string $title
@@ -93,7 +89,6 @@ class xoctUploadFile
         $this->title = $title;
     }
 
-
     /**
      * @return int
      */
@@ -101,7 +96,6 @@ class xoctUploadFile
     {
         return $this->file_size;
     }
-
 
     /**
      * @param int $file_size
@@ -111,7 +105,6 @@ class xoctUploadFile
         $this->file_size = $file_size;
     }
 
-
     /**
      * @return string
      */
@@ -119,7 +112,6 @@ class xoctUploadFile
     {
         return $this->post_var;
     }
-
 
     /**
      * @param string $post_var
@@ -129,7 +121,6 @@ class xoctUploadFile
         $this->post_var = $post_var;
     }
 
-
     /**
      * @return string
      */
@@ -137,7 +128,6 @@ class xoctUploadFile
     {
         return $this->mime_type;
     }
-
 
     /**
      * @param string $mime_type

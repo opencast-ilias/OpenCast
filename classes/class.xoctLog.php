@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctLog
  * TODO: initialize and make available in OpencastDIC
@@ -23,7 +24,6 @@ class xoctLog extends ilLog
      */
     protected static $log_level = self::DEBUG_DEACTIVATED;
 
-
     /**
      * @param $log_level
      */
@@ -31,7 +31,6 @@ class xoctLog extends ilLog
     {
         self::$log_level = $log_level;
     }
-
 
     /**
      * @param $log_level
@@ -43,13 +42,12 @@ class xoctLog extends ilLog
         return $log_level <= self::$log_level;
     }
 
-
     /**
      * @return xoctLog
      */
     public static function getInstance()
     {
-        if (! isset(self::$instance)) {
+        if (!isset(self::$instance)) {
             if (ILIAS_LOG_DIR === "php:/" && ILIAS_LOG_FILE === "stdout") {
                 // Fix Docker-ILIAS log
                 self::$instance = new self(ILIAS_LOG_DIR, ILIAS_LOG_FILE);
@@ -60,7 +58,6 @@ class xoctLog extends ilLog
 
         return self::$instance;
     }
-
 
     /**
      * @param      $a_msg
@@ -73,7 +70,6 @@ class xoctLog extends ilLog
         }
     }
 
-
     public function writeTrace()
     {
         try {
@@ -83,7 +79,6 @@ class xoctLog extends ilLog
         }
     }
 
-
     /**
      * @return mixed
      */
@@ -91,7 +86,6 @@ class xoctLog extends ilLog
     {
         return ILIAS_LOG_DIR;
     }
-
 
     /**
      * @return string
@@ -106,7 +100,6 @@ class xoctLog extends ilLog
         }
     }
 
-
     /**
      * @return string
      */
@@ -116,7 +109,6 @@ class xoctLog extends ilLog
 
         return $log->getLogDir() . '/' . $log->getLogFile();
     }
-
 
     /**
      * @return int

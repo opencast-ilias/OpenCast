@@ -369,4 +369,9 @@ class OpencastDIC
     {
         $this->container[$service_identifier] = $value;
     }
+
+    public function plugin(): ilOpenCastPlugin
+    {
+        return $this->container['plugin'];
+    }
 }

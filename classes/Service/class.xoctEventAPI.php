@@ -54,7 +54,6 @@ class xoctEventAPI
         $this->workflow_param_repository = $opencastDIC->workflow_parameter_series_repository();
     }
 
-
     public static function getInstance(): self
     {
         if (!self::$instance) {
@@ -63,7 +62,6 @@ class xoctEventAPI
         return self::$instance;
     }
 
-
     /**
      * possible additional data:
      *
@@ -71,12 +69,12 @@ class xoctEventAPI
      *  presenters => text
      *  workflow_parameters => array(text => int)
      *
-     * @param String $series_id
-     * @param String $title
+     * @param String          $series_id
+     * @param String          $title
      * @param String|DateTime $start
      * @param String|DateTime $end
-     * @param String $location
-     * @param array $additional_data
+     * @param String          $location
+     * @param array           $additional_data
      *
      * @return Event
      * @throws xoctException
@@ -101,11 +99,16 @@ class xoctEventAPI
 
         $scheduling = new Scheduling(
             $location,
-            $start instanceof DateTime ? DateTimeImmutable::createFromMutable($start->setTimezone(new DateTimeZone('GMT'))) : new DateTimeImmutable($start),
-            $end instanceof DateTime ? DateTimeImmutable::createFromMutable($end->setTimezone(new DateTimeZone('GMT'))) : new DateTimeImmutable($end),
-            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
+            $start instanceof DateTime ? DateTimeImmutable::createFromMutable(
+                $start->setTimezone(new DateTimeZone('GMT'))
+            ) : new DateTimeImmutable($start),
+            $end instanceof DateTime ? DateTimeImmutable::createFromMutable(
+                $end->setTimezone(new DateTimeZone('GMT'))
+            ) : new DateTimeImmutable($end),
+            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(
+                PluginConfig::F_SCHEDULE_CHANNEL
+            )
         );
-
 
         $workflow_parameters = $this->workflow_param_repository->getGeneralAutomaticallySetParameters();
         if (is_array($additional_data['workflow_parameters'])) {
@@ -116,19 +119,21 @@ class xoctEventAPI
         }, $workflow_parameters);
         $processing = new Processing(
             PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-            (object)$workflow_parameters
+            (object) $workflow_parameters
         );
 
         $acl = $this->acl_utils->getStandardRolesACL();
 
-        $this->event_repository->schedule(new ScheduleEventRequest(
-            new ScheduleEventRequestPayload(
-                $metadata->withoutEmptyFields(),
-                $acl,
-                $scheduling,
-                $processing
+        $this->event_repository->schedule(
+            new ScheduleEventRequest(
+                new ScheduleEventRequestPayload(
+                    $metadata->withoutEmptyFields(),
+                    $acl,
+                    $scheduling,
+                    $processing
+                )
             )
-        ));
+        );
 
         $event = new Event();
         $event->setMetadata($metadata);
@@ -142,7 +147,6 @@ class xoctEventAPI
         return $this->event_repository->find($event_id);
     }
 
-
     /**
      * possible data:
      *
@@ -155,7 +159,7 @@ class xoctEventAPI
      *  online => bool
      *
      * @param String $event_id
-     * @param array $data
+     * @param array  $data
      *
      * @return Event
      */
@@ -192,23 +196,26 @@ class xoctEventAPI
         }
 
         if (count($data)) { // this prevents an update, if only 'online' has changed
-            $this->event_repository->update(new UpdateEventRequest($event_id, new UpdateEventRequestPayload(
-                $metadata,
-                null,
-                $scheduling
-            )));
+            $this->event_repository->update(
+                new UpdateEventRequest(
+                    $event_id,
+                    new UpdateEventRequestPayload(
+                        $metadata,
+                        null,
+                        $scheduling
+                    )
+                )
+            );
         }
 
         return $event;
     }
-
 
     public function delete($event_id): bool
     {
         $this->event_repository->delete($event_id);
         return true;
     }
-
 
     /**
      * @param array $filter

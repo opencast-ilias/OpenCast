@@ -12,20 +12,32 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctConfExportGUI extends xoctGUI
 {
+    /**
+     * @var \ilToolbarGUI
+     */
+    protected $toolbar;
+
+    public function __construct()
+    {
+        global $DIC;
+        parent::__construct();
+        $this->toolbar = $DIC->toolbar();
+    }
+
     protected function index()
     {
         $b = ilLinkButton::getInstance();
         $b->setCaption('rep_robj_xoct_admin_export');
-        $b->setUrl(self::dic()->ctrl()->getLinkTarget($this, 'export'));
-        self::dic()->toolbar()->addButtonInstance($b);
-        self::dic()->toolbar()->addSpacer();
-        self::dic()->toolbar()->addSeparator();
-        self::dic()->toolbar()->addSpacer();
+        $b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
+        $this->toolbar->addButtonInstance($b);
+        $this->toolbar->addSpacer();
+        $this->toolbar->addSeparator();
+        $this->toolbar->addSpacer();
 
-        self::dic()->toolbar()->setFormAction(self::dic()->ctrl()->getLinkTarget($this, 'import'), true);
+        $this->toolbar->setFormAction($this->ctrl->getLinkTarget($this, 'import'), true);
         $import = new ilFileInputGUI('xoct_import', 'xoct_import');
-        self::dic()->toolbar()->addInputItem($import);
-        self::dic()->toolbar()->addFormButton(self::plugin()->translate('admin_import'), 'import');
+        $this->toolbar->addInputItem($import);
+        $this->toolbar->addFormButton($this->plugin->txt('admin_import'), 'import');
     }
 
     /**
@@ -48,31 +60,25 @@ class xoctConfExportGUI extends xoctGUI
         exit;
     }
 
-
     protected function add()
     {
     }
-
 
     protected function create()
     {
     }
 
-
     protected function edit()
     {
     }
-
 
     protected function update()
     {
     }
 
-
     protected function confirmDelete()
     {
     }
-
 
     protected function delete()
     {

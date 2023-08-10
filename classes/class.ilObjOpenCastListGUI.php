@@ -20,7 +20,6 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -28,12 +27,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
      */
     public $plugin;
 
-
     public function initType()
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
-
 
     /**
      * @return string
@@ -43,13 +40,11 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         return 'ilObjOpenCastGUI';
     }
 
-
     /**
      * @return array
      */
     public function initCommands()
     {
-
         // Always set
         $this->timings_enabled = true;
         $this->subscribe_enabled = true;
@@ -80,7 +75,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         return $commands;
     }
 
-
     public function insertDeleteCommand()
     {
         if ($this->std_cmd_only) {
@@ -90,9 +84,9 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         if (is_object($this->getContainerObject()) and
             $this->getContainerObject() instanceof ilAdministrationCommandHandling) {
             if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-                self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
-                $cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
-                $this->insertCommand($cmd_link, self::dic()->language()->txt("delete"));
+                $this->ctrl->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
+                $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
+                $this->insertCommand($cmd_link, $this->lng->txt("delete"));
                 $this->adm_commands_included = true;
                 return true;
             }
@@ -100,16 +94,16 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
 
         if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-            self::dic()->ctrl()->setParameterByClass(
+            $this->ctrl->setParameterByClass(
                 "ilObjOpenCastGUI",
                 "ref_id",
                 $this->container_obj->object->getRefId()
             );
-            self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
-            $cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
+            $this->ctrl->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
+            $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
             $this->insertCommand(
                 $cmd_link,
-                self::dic()->language()->txt("delete"),
+                $this->lng->txt("delete"),
                 "",
                 ""
             );
@@ -117,12 +111,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
     }
 
-
     protected function getObject()
     {
         return new ilObjOpenCast($this->ref_id);
     }
-
 
     /**
      * @param bool $get_exceoptions
@@ -143,7 +135,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
         return $objectSettings;
     }
-
 
     /**
      * Get item properties
@@ -184,7 +175,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         return $props;
     }
 
-
     /**
      * get all alert properties
      *
@@ -193,7 +183,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
     public function getAlertProperties()
     {
         $alert = [];
-        foreach ((array)$this->getCustomProperties([]) as $prop) {
+        foreach ((array) $this->getCustomProperties([]) as $prop) {
             if ($prop['alert'] == true) {
                 $alert[] = $prop;
             }
@@ -201,7 +191,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
         return $alert;
     }
-
 
     /**
      * @param $unix_timestamp
@@ -211,6 +200,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
     public static function format_date_time($unix_timestamp)
     {
+        global $DIC;
+        $language = $DIC->language();
         $now = time();
         $today = $now - $now % (60 * 60 * 24);
         $yesterday = $today - 60 * 60 * 24;
@@ -220,10 +211,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
             $date = date('d. M Y', $unix_timestamp);
         } elseif ($unix_timestamp < $today) {
             // given date yesterday
-            $date = self::dic()->language()->txt('yesterday');
+            $date = $language->txt('yesterday');
         } else {
             // given date is today
-            $date = self::dic()->language()->txt('today');
+            $date = $language->txt('today');
         }
 
         return $date . ', ' . date('H:i', $unix_timestamp);

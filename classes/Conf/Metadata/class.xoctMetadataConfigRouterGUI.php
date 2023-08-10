@@ -8,17 +8,40 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class xoctMetadataConfigRouterGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const SUBTAB_EVENTS = 'events';
     public const SUBTAB_SERIES = 'series';
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
+    /**
+     * @var \ilTabsGUI
+     */
+    private $tabs;
+    /**
+     * @var OpencastDIC
+     */
+    private $container;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
+    public function __construct()
+    {
+        global $DIC;
+        $this->ctrl = $DIC->ctrl();
+        $this->tabs = $DIC->tabs();
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
+    }
 
     public function executeCommand()
     {
         global $DIC;
-        $nextClass = self::dic()->ctrl()->getNextClass();
+        $nextClass = $this->ctrl->getNextClass();
 
         $opencast_dic = OpencastDIC::getInstance();
         switch ($nextClass) {
@@ -27,10 +50,9 @@ class xoctMetadataConfigRouterGUI
                 $gui = new xoctSeriesMetadataConfigGUI(
                     $opencast_dic->metadata()->confRepositorySeries(),
                     $opencast_dic->metadata()->catalogueFactory(),
-                    $DIC,
-                    ilOpenCastPlugin::getInstance()
+                    $DIC
                 );
-                self::dic()->ctrl()->forwardCommand($gui);
+                $this->ctrl->forwardCommand($gui);
                 break;
             case strtolower(xoctEventMetadataConfigGUI::class):
             default:
@@ -38,26 +60,25 @@ class xoctMetadataConfigRouterGUI
                 $gui = new xoctEventMetadataConfigGUI(
                     $opencast_dic->metadata()->confRepositoryEvent(),
                     $opencast_dic->metadata()->catalogueFactory(),
-                    $DIC,
-                    ilOpenCastPlugin::getInstance()
+                    $DIC
                 );
-                self::dic()->ctrl()->forwardCommand($gui);
+                $this->ctrl->forwardCommand($gui);
                 break;
         }
     }
 
     private function setSubTabs(string $active_subtab)
     {
-        self::dic()->tabs()->addSubTab(
+        $this->tabs->addSubTab(
             self::SUBTAB_EVENTS,
-            self::plugin()->translate('subtab_' . self::SUBTAB_EVENTS),
-            self::dic()->ctrl()->getLinkTargetByClass(xoctEventMetadataConfigGUI::class)
+            $this->plugin->txt('subtab_' . self::SUBTAB_EVENTS),
+            $this->ctrl->getLinkTargetByClass(xoctEventMetadataConfigGUI::class)
         );
-        self::dic()->tabs()->addSubTab(
+        $this->tabs->addSubTab(
             self::SUBTAB_SERIES,
-            self::plugin()->translate('subtab_' . self::SUBTAB_SERIES),
-            self::dic()->ctrl()->getLinkTargetByClass(xoctSeriesMetadataConfigGUI::class)
+            $this->plugin->txt('subtab_' . self::SUBTAB_SERIES),
+            $this->ctrl->getLinkTargetByClass(xoctSeriesMetadataConfigGUI::class)
         );
-        self::dic()->tabs()->activateSubTab($active_subtab);
+        $this->tabs->activateSubTab($active_subtab);
     }
 }

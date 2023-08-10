@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctBase
  *
@@ -31,7 +32,6 @@ class xoctBase
      */
     protected $organization_name = '';
 
-
     public function __construct()
     {
         $version = xoctRequest::root()->base()->version()->get();
@@ -45,7 +45,6 @@ class xoctBase
         $this->setOrganizationName($org->name);
     }
 
-
     /**
      * @return string
      */
@@ -53,7 +52,6 @@ class xoctBase
     {
         return $this->api_version;
     }
-
 
     /**
      * @param string $api_version
@@ -63,7 +61,6 @@ class xoctBase
         $this->api_version = $api_version;
     }
 
-
     /**
      * @return array
      */
@@ -71,7 +68,6 @@ class xoctBase
     {
         return $this->api_versions;
     }
-
 
     /**
      * @param array $api_versions
@@ -81,7 +77,6 @@ class xoctBase
         $this->api_versions = $api_versions;
     }
 
-
     /**
      * @return string
      */
@@ -89,7 +84,6 @@ class xoctBase
     {
         return $this->organization_id;
     }
-
 
     /**
      * @param string $organization_id
@@ -99,7 +93,6 @@ class xoctBase
         $this->organization_id = $organization_id;
     }
 
-
     /**
      * @return string
      */
@@ -107,7 +100,6 @@ class xoctBase
     {
         return $this->organization_name;
     }
-
 
     /**
      * @param string $organization_name
@@ -117,7 +109,6 @@ class xoctBase
         $this->organization_name = $organization_name;
     }
 
-
     /**
      * @return string
      */
@@ -125,7 +116,6 @@ class xoctBase
     {
         return $this->organization_anonymous_role;
     }
-
 
     /**
      * @param string $organization_anonymous_role
@@ -135,7 +125,6 @@ class xoctBase
         $this->organization_anonymous_role = $organization_anonymous_role;
     }
 
-
     /**
      * @return string
      */
@@ -143,7 +132,6 @@ class xoctBase
     {
         return $this->organization_admin_role;
     }
-
 
     /**
      * @param string $organization_admin_role

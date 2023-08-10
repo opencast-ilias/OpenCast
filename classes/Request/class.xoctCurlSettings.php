@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctCurlSettings
  *
@@ -27,7 +28,6 @@ class xoctCurlSettings
      */
     protected $password = null;
 
-
     /**
      * @return boolean
      */
@@ -35,7 +35,6 @@ class xoctCurlSettings
     {
         return $this->ip_v4;
     }
-
 
     /**
      * @param boolean $ip_v4
@@ -45,7 +44,6 @@ class xoctCurlSettings
         $this->ip_v4 = $ip_v4;
     }
 
-
     /**
      * @return boolean
      */
@@ -53,7 +51,6 @@ class xoctCurlSettings
     {
         return $this->verify_host;
     }
-
 
     /**
      * @param boolean $verify_host
@@ -63,7 +60,6 @@ class xoctCurlSettings
         $this->verify_host = $verify_host;
     }
 
-
     /**
      * @return boolean
      */
@@ -71,7 +67,6 @@ class xoctCurlSettings
     {
         return $this->verify_peer;
     }
-
 
     /**
      * @param boolean $verify_peer
@@ -81,7 +76,6 @@ class xoctCurlSettings
         $this->verify_peer = $verify_peer;
     }
 
-
     /**
      * @return string
      */
@@ -89,7 +83,6 @@ class xoctCurlSettings
     {
         return $this->username;
     }
-
 
     /**
      * @param string $username
@@ -99,7 +92,6 @@ class xoctCurlSettings
         $this->username = $username;
     }
 
-
     /**
      * @return string
      */
@@ -107,7 +99,6 @@ class xoctCurlSettings
     {
         return $this->password;
     }
-
 
     /**
      * @param string $password

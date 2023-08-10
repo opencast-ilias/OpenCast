@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctRequestSettings
  *
@@ -16,7 +17,6 @@ class xoctRequestSettings
      */
     protected $api_version = '';
 
-
     /**
      * @return string
      */
@@ -24,7 +24,6 @@ class xoctRequestSettings
     {
         return $this->api_base;
     }
-
 
     /**
      * @param string $api_base
@@ -34,7 +33,6 @@ class xoctRequestSettings
         $this->api_base = $api_base;
     }
 
-
     /**
      * @return string
      */
@@ -42,7 +40,6 @@ class xoctRequestSettings
     {
         return $this->api_version;
     }
-
 
     /**
      * @param string $api_version

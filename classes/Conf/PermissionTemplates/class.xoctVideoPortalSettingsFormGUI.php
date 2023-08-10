@@ -10,7 +10,6 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -26,7 +25,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
      */
     protected $subtab_active;
 
-
     /**
      * @param $parent_gui
      */
@@ -37,34 +35,37 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
         $this->initForm();
     }
 
-
     /**
      *
      */
     protected function initForm()
     {
         $this->setTarget('_top');
-        $this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
+        $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('general'));
         $this->addItem($h);
 
-
         // VIDEO PORTAL TITLE
-        $te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_TITLE), PluginConfig::F_VIDEO_PORTAL_TITLE);
+        $te = new ilTextInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_TITLE),
+            PluginConfig::F_VIDEO_PORTAL_TITLE
+        );
 //        $te->setInfo($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
         $te->setRequired(true);
         $this->addItem($te);
 
         // VIDEO PORTAL LINK
-        $te = new ilTextInputGUI($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK), PluginConfig::F_VIDEO_PORTAL_LINK);
+        $te = new ilTextInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK),
+            PluginConfig::F_VIDEO_PORTAL_LINK
+        );
         $te->setInfo($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
     }
-
 
     /**
      *
@@ -73,7 +74,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     {
         $this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
     }
-
 
     /**
      *
@@ -86,7 +86,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
         }
         $this->setValuesByArray($array);
     }
-
 
     /**
      * @param $item
@@ -107,7 +106,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
         }
     }
 
-
     /**
      * @return bool
      */
@@ -123,7 +121,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
 
         return true;
     }
-
 
     /**
      * @param $item
@@ -141,7 +138,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
         }
     }
 
-
     /**
      * @param $item
      *
@@ -151,7 +147,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     {
         return !$item instanceof ilFormSectionHeaderGUI and !$item instanceof ilMultiSelectInputGUI;
     }
-
 
     /**
      * @param $item

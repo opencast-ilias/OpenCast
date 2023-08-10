@@ -34,7 +34,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 {
     use DataTableUITrait;
-    use DICTrait;
 
     public const PLUGIN_CLASS_NAME = self::class;
 
@@ -44,7 +43,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
      * @var ilDBInterface
      */
     protected $db;
-
 
     /**
      *
@@ -102,12 +100,10 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return true;
     }
 
-
     /**
      * @var ilOpenCastPlugin
      */
     protected static $cache;
-
 
     /**
      * @return ilOpenCastPlugin
@@ -121,7 +117,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return self::$cache;
     }
 
-
     /**
      * @return string
      */
@@ -133,11 +128,5 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     public function allowCopy()
     {
         return true;
-    }
-
-    public function updateLanguages($a_lang_keys = null)
-    {
-        parent::updateLanguages($a_lang_keys);
-        self::dataTableUI()->installLanguages(self::plugin());
     }
 }

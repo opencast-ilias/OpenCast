@@ -15,7 +15,6 @@ class xoctSecureLink
      */
     protected static $cache = [];
 
-
     /**
      * @param       $url
      *
@@ -51,7 +50,6 @@ class xoctSecureLink
         return $data->url;
     }
 
-
     /**
      * @param $url
      *
@@ -64,7 +62,6 @@ class xoctSecureLink
         $valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
     }
-
 
     /**
      * @param $url
@@ -79,7 +76,6 @@ class xoctSecureLink
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP));
     }
 
-
     /**
      * @param   $url
      *
@@ -93,12 +89,16 @@ class xoctSecureLink
         $valid_until = null;
         if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT) && $duration > 0) {
             $duration_in_seconds = $duration / 1000;
-            $additional_time_percent = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-            $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+            $additional_time_percent = PluginConfig::getConfig(
+                PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT
+            ) / 100;
+            $valid_until = gmdate(
+                "Y-m-d\TH:i:s\Z",
+                time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent
+            );
         }
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP));
     }
-
 
     /**
      * @param $url

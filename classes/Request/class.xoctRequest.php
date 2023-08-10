@@ -15,6 +15,7 @@ class xoctRequest
      * @var bool
      */
     private $rest_api;
+
     /**
      * @param xoctRequestSettings $xoctRequestSettings
      */
@@ -23,11 +24,8 @@ class xoctRequest
         self::$base = $xoctRequestSettings->getApiBase();
     }
 
-
-
-
     /**
-     * @param array $roles
+     * @param array  $roles
      *
      * @param string $as_user
      * @param string $base_url
@@ -53,7 +51,6 @@ class xoctRequest
 
         return $responseBody;
     }
-
 
     /**
      * @param array  $post_data
@@ -83,7 +80,6 @@ class xoctRequest
         return $xoctCurl->getResponseBody();
     }
 
-
     /**
      * @param array            $post_data
      * @param xoctUploadFile[] $files
@@ -94,8 +90,13 @@ class xoctRequest
      *
      * @return string
      */
-    public function postFiles(array $post_data, array $files, array $roles = [], string $as_user = '', string $base_url = '')
-    {
+    public function postFiles(
+        array $post_data,
+        array $files,
+        array $roles = [],
+        string $as_user = '',
+        string $base_url = ''
+    ) {
         $xoctCurl = new xoctCurl();
         $xoctCurl->setUrl($this->getUrl($base_url));
         $xoctCurl->setPostFields($post_data);
@@ -119,7 +120,6 @@ class xoctRequest
 
         return $xoctCurl->getResponseBody();
     }
-
 
     /**
      * @param array  $post_data
@@ -147,7 +147,6 @@ class xoctRequest
         return $xoctCurl->getResponseBody();
     }
 
-
     /**
      * @return string
      */
@@ -159,7 +158,6 @@ class xoctRequest
 
         return $xoctCurl->getResponseBody();
     }
-
 
     /**
      * @return xoctRequest
@@ -179,8 +177,7 @@ class xoctRequest
         }
     }
 
-
-    public const BRANCH_OTHER = - 1;
+    public const BRANCH_OTHER = -1;
     public const BRANCH_SERIES = 1;
     public const BRANCH_EVENTS = 2;
     public const BRANCH_BASE = 3;
@@ -209,7 +206,6 @@ class xoctRequest
      * @var array
      */
     protected $parameters = [];
-
 
     /**
      * @param string $base
@@ -262,7 +258,7 @@ class xoctRequest
     public function events($identifier = '')
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_EVENTS ]);
+        $this->checkBranch([self::BRANCH_EVENTS]);
         $this->branch = self::BRANCH_EVENTS;
         $this->addPart('events');
         if ($identifier) {
@@ -272,13 +268,12 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return $this
      */
     public function publications($publication_id = '')
     {
-        $this->checkBranch([ self::BRANCH_EVENTS ]);
+        $this->checkBranch([self::BRANCH_EVENTS]);
         $this->addPart('publications');
         if ($publication_id) {
             $this->addPart($publication_id);
@@ -300,7 +295,7 @@ class xoctRequest
     public function series($series_id = '')
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_SERIES ]);
+        $this->checkBranch([self::BRANCH_SERIES]);
         $this->branch = self::BRANCH_SERIES;
         $this->addPart('series');
 //        $this->parameter('withacl', true);
@@ -319,7 +314,7 @@ class xoctRequest
     public function groups($group_id = '')
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_GROUPS ]);
+        $this->checkBranch([self::BRANCH_GROUPS]);
         $this->branch = self::BRANCH_GROUPS;
         $this->addPart('groups');
         if ($group_id) {
@@ -328,7 +323,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * @param string $workflow_id
@@ -339,7 +333,7 @@ class xoctRequest
     public function workflows($workflow_id = '')
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_WORKFLOWS ]);
+        $this->checkBranch([self::BRANCH_WORKFLOWS]);
         $this->branch = self::BRANCH_WORKFLOWS;
         $this->addPart('workflows');
         if ($workflow_id) {
@@ -348,7 +342,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * @param string $definition_id
@@ -359,7 +352,7 @@ class xoctRequest
     public function workflowDefinition($definition_id = '')
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_WORKFLOW_DEFINITIONS ]);
+        $this->checkBranch([self::BRANCH_WORKFLOW_DEFINITIONS]);
         $this->branch = self::BRANCH_WORKFLOW_DEFINITIONS;
         $this->addPart('workflow-definitions');
         if ($definition_id) {
@@ -369,19 +362,17 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return $this
      * @throws xoctException
      */
     public function members()
     {
-        $this->checkBranch([ self::BRANCH_GROUPS ]);
+        $this->checkBranch([self::BRANCH_GROUPS]);
         $this->addPart('members');
 
         return $this;
     }
-
 
     /**
      * @return $this
@@ -415,7 +406,6 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return $this
      */
@@ -443,32 +433,30 @@ class xoctRequest
      */
     public function base()
     {
-        $this->checkBranch([ self::BRANCH_BASE ]);
+        $this->checkBranch([self::BRANCH_BASE]);
         $this->checkRoot();
         $this->branch = self::BRANCH_BASE;
 
         return $this;
     }
 
-
     /**
      * @return $this
      */
     public function version()
     {
-        $this->checkBranch([ self::BRANCH_BASE ]);
+        $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('version');
 
         return $this;
     }
-
 
     /**
      * @return $this
      */
     public function organization()
     {
-        $this->checkBranch([ self::BRANCH_BASE ]);
+        $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('info');
         $this->addPart('organization');
 
@@ -489,13 +477,12 @@ class xoctRequest
     public function security()
     {
         $this->checkRoot();
-        $this->checkBranch([ self::BRANCH_SECURITY ]);
+        $this->checkBranch([self::BRANCH_SECURITY]);
         $this->branch = self::BRANCH_SECURITY;
         $this->addPart('security');
 
         return $this;
     }
-
 
     /**
      * @param      $url
@@ -509,9 +496,9 @@ class xoctRequest
      */
     public function sign($url, $valid_until = null, $ip = null)
     {
-        $this->checkBranch([ self::BRANCH_SECURITY ]);
+        $this->checkBranch([self::BRANCH_SECURITY]);
         $this->addPart('sign');
-        $data = [ 'url' => $url ];
+        $data = ['url' => $url];
 
         if ($valid_until) {
             $data['valid-until'] = $valid_until;
@@ -524,14 +511,13 @@ class xoctRequest
         return $this->post($data);
     }
 
-
     /**
      * @return $this
      * @throws xoctException
      */
     public function agents()
     {
-        $this->checkBranch([ self::BRANCH_BASE ]);
+        $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('agents');
 
         return $this;
@@ -543,7 +529,7 @@ class xoctRequest
      */
     public function scheduling()
     {
-        $this->checkBranch([ self::BRANCH_EVENTS ]);
+        $this->checkBranch([self::BRANCH_EVENTS]);
 
         if (xoct::isApiVersionGreaterThan('v1.1.0')) {
             $this->addPart('scheduling');
@@ -553,7 +539,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * @return $this
@@ -568,7 +553,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * @param string $service_type
@@ -600,7 +584,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * Start a workflow
@@ -636,7 +619,6 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return $this
      * @throws xoctException
@@ -649,7 +631,6 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return $this
      * @throws xoctException
@@ -661,7 +642,6 @@ class xoctRequest
 
         return $this;
     }
-
 
     /**
      * @return $this
@@ -687,7 +667,6 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @param $part
      */
@@ -695,7 +674,6 @@ class xoctRequest
     {
         $this->parts[] = $part;
     }
-
 
     /**
      * @return array
@@ -705,7 +683,6 @@ class xoctRequest
         return $this->parts;
     }
 
-
     /**
      * @param array $parts
      */
@@ -713,7 +690,6 @@ class xoctRequest
     {
         $this->parts = $parts;
     }
-
 
     /**
      * @return string
@@ -723,7 +699,6 @@ class xoctRequest
         return $this->rest_api ? rtrim(self::$base, '/api') : self::$base;
     }
 
-
     /**
      * @param string $base
      */
@@ -731,7 +706,6 @@ class xoctRequest
     {
         self::$base = $base;
     }
-
 
     /**
      * @return array
@@ -741,7 +715,6 @@ class xoctRequest
         return $this->parameters;
     }
 
-
     /**
      * @param array $parameters
      */
@@ -749,7 +722,6 @@ class xoctRequest
     {
         $this->parameters = $parameters;
     }
-
 
     /**
      * @param $key
@@ -769,7 +741,6 @@ class xoctRequest
         return $this;
     }
 
-
     /**
      * @return int
      */
@@ -778,7 +749,6 @@ class xoctRequest
         return $this->branch;
     }
 
-
     /**
      * @param int $branch
      */
@@ -786,7 +756,6 @@ class xoctRequest
     {
         $this->branch = $branch;
     }
-
 
     /**
      * @param array $supported_branches
@@ -800,7 +769,6 @@ class xoctRequest
             throw new xoctException(xoctException::API_CALL_UNSUPPORTED);
         }
     }
-
 
     /**
      * @throws xoctException

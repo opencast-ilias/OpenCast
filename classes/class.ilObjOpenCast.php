@@ -1,6 +1,7 @@
 <?php
 
 require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/vendor/srag/dic/src/DICTrait.php');
+
 use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -18,7 +19,6 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
  */
 class ilObjOpenCast extends ilObjectPlugin
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -26,22 +26,25 @@ class ilObjOpenCast extends ilObjectPlugin
      */
     protected $object;
     public const DEV = false;
-
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
 
     /**
      * @param int $a_ref_id
      */
     public function __construct($a_ref_id = 0)
     {
+        global $DIC;
+        $this->ctrl = $DIC->ctrl();
         parent::__construct($a_ref_id);
     }
-
 
     final public function initType()
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
-
 
     public function doCreate()
     {
@@ -50,7 +53,7 @@ class ilObjOpenCast extends ilObjectPlugin
     public function updateObjectFromSeries(Metadata $metadata)
     {
         PluginConfig::setApiSettings();
-        if (self::dic()->ctrl()->isAsynch()) {
+        if ($this->ctrl->isAsynch()) {
             // don't update title/description on async calls
             return;
         }
@@ -64,11 +67,9 @@ class ilObjOpenCast extends ilObjectPlugin
         }
     }
 
-
     public function doUpdate()
     {
     }
-
 
     public function doDelete()
     {
@@ -85,11 +86,10 @@ class ilObjOpenCast extends ilObjectPlugin
         }
     }
 
-
     /**
      * @param ilObjOpenCast $new_obj
      * @param               $a_target_id
-     * @param null $a_copy_id
+     * @param null          $a_copy_id
      *
      * @return bool|void
      */
@@ -130,6 +130,7 @@ class ilObjOpenCast extends ilObjectPlugin
      */
     public static function _getParentCourseOrGroup($ref_id)
     {
+        global $DIC;
         static $crs_or_grp_object;
         if (!is_array($crs_or_grp_object)) {
             $crs_or_grp_object = [];
@@ -147,7 +148,7 @@ class ilObjOpenCast extends ilObjectPlugin
                 $crs_or_grp_object[$ref_id] = false;
                 return $crs_or_grp_object[$ref_id];
             }
-            $ref_id = self::dic()->repositoryTree()->getParentId($ref_id);
+            $ref_id = $DIC->repositoryTree()->getParentId($ref_id);
         }
 
         $crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
@@ -159,15 +160,21 @@ class ilObjOpenCast extends ilObjectPlugin
      */
     public static function _getCourseOrGroupRole()
     {
+        global $DIC;
+        $user = $DIC->user();
+        $rbac_review = $DIC->rbac()->review();
         $crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
 
-        if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultAdminRole())) {
+        if ($rbac_review->isAssigned($user->getId(), $crs_or_group->getDefaultAdminRole())) {
             return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';
         }
-        if (self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultMemberRole())) {
+        if ($rbac_review->isAssigned($user->getId(), $crs_or_group->getDefaultMemberRole())) {
             return $crs_or_group instanceof ilObjCourse ? 'Kursmitglied' : 'Gruppenmitglied';
         }
-        if (($crs_or_group instanceof ilObjCourse) && self::dic()->rbac()->review()->isAssigned(self::dic()->user()->getId(), $crs_or_group->getDefaultTutorRole())) {
+        if (($crs_or_group instanceof ilObjCourse) && $rbac_review->isAssigned(
+            $user->getId(),
+            $crs_or_group->getDefaultTutorRole()
+        )) {
             return 'Kurstutor';
         }
 

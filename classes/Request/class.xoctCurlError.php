@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctCurlError
  *
@@ -88,7 +89,6 @@ class xoctCurlError
         88 => 'CURLE_CHUNK_FAILED'
     ];
 
-
     /**
      * @param $ch
      */
@@ -98,7 +98,6 @@ class xoctCurlError
         $this->setErrorText(curl_error($ch));
     }
 
-
     /**
      * @return string
      */
@@ -106,7 +105,6 @@ class xoctCurlError
     {
         return self::$error_codes[$this->getErrorNr()] . ': ' . $this->getErrorText();
     }
-
 
     /**
      * @var int
@@ -117,7 +115,6 @@ class xoctCurlError
      */
     protected $error_text = '';
 
-
     /**
      * @return int
      */
@@ -125,7 +122,6 @@ class xoctCurlError
     {
         return $this->error_nr;
     }
-
 
     /**
      * @param int $error_nr
@@ -135,7 +131,6 @@ class xoctCurlError
         $this->error_nr = $error_nr;
     }
 
-
     /**
      * @return string
      */
@@ -143,7 +138,6 @@ class xoctCurlError
     {
         return $this->error_text;
     }
-
 
     /**
      * @param string $error_text

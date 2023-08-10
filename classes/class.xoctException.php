@@ -36,7 +36,6 @@ class xoctException extends Exception
         self::NO_STREAMING_DATA => 'No streaming data found.',
     ];
 
-
     /**
      * @param string $code
      * @param string $additional_message

@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 /**
  * Class xoctChangeOwnerGUI
  *
- * @author Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Theodor Truffer <tt@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy xoctChangeOwnerGUI: ilObjOpenCastGUI
  */
@@ -34,21 +34,38 @@ class xoctChangeOwnerGUI extends xoctGUI
      * @var EventRepository
      */
     private $event_repository;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
     public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
     {
+        global $DIC;
+        parent::__construct();
+        $tabs = $DIC->tabs();
+        $ctrl = $DIC->ctrl();
+        $main_tpl = $DIC->ui()->mainTemplate();
+        $this->user = $DIC->user();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->objectSettings = $objectSettings;
         $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
         $this->event_repository = $event_repository;
-        self::dic()->tabs()->clearTargets();
-        self::dic()->tabs()->setBackTarget(self::plugin()->getPluginObject()->txt('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
+        $tabs->clearTargets();
+        $tabs->setBackTarget(
+            $this->plugin->txt('tab_back'),
+            $ctrl->getLinkTargetByClass(xoctEventGUI::class)
+        );
         xoctWaiterGUI::loadLib();
-        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.css'));
-        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/change_owner.js'));
-        self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
+        $main_tpl->addCss($this->plugin)->getStyleSheetLocation('default/change_owner.css'));
+        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/change_owner.js'));
+        $ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
-
 
     /**
      * @throws DICException
@@ -57,26 +74,39 @@ class xoctChangeOwnerGUI extends xoctGUI
      */
     protected function index()
     {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
+        $xoctUser = xoctUser::getInstance($this->user);
+        if (!ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_SHARE_EVENT,
+            $this->event,
+            $xoctUser,
+            $this->objectSettings
+        )) {
             ilUtil::sendFailure('Access denied', true);
-            self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
+            $this->ctrl->redirectByClass(xoctEventGUI::class);
         }
-        $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.change_owner.html', false, false);
+        $temp = $this->plugin->getTemplate('default/tpl.change_owner.html', false, false);
         $temp->setVariable('PREVIEW', $this->event->publications()->getThumbnailUrl());
         $temp->setVariable('VIDEO_TITLE', $this->event->getTitle());
-        $temp->setVariable('L_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter'));
-        $temp->setVariable('PH_FILTER', self::plugin()->getPluginObject()->txt('groups_participants_filter_placeholder'));
-        $temp->setVariable('HEADER_OWNER', self::plugin()->getPluginObject()->txt('current_owner_header'));
-        $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->getPluginObject()->txt('groups_available_participants_header'));
-        $temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-        $temp->setVariable('LANGUAGE', json_encode([
-            'none_available' => self::plugin()->getPluginObject()->txt('invitations_none_available'),
-            'only_one_owner' => self::plugin()->getPluginObject()->txt('owner_only_one_owner')
-        ]));
-        self::dic()->ui()->mainTemplate()->setContent($temp->get());
+        $temp->setVariable('L_FILTER', $this->plugin->txt('groups_participants_filter'));
+        $temp->setVariable(
+            'PH_FILTER',
+            $this->plugin->txt('groups_participants_filter_placeholder')
+        );
+        $temp->setVariable('HEADER_OWNER', $this->plugin->txt('current_owner_header'));
+        $temp->setVariable(
+            'HEADER_PARTICIPANTS_AVAILABLE',
+            $this->plugin->txt('groups_available_participants_header')
+        );
+        $temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
+        $temp->setVariable(
+            'LANGUAGE',
+            json_encode([
+                'none_available' => $this->plugin->txt('invitations_none_available'),
+                'only_one_owner' => $this->plugin->txt('owner_only_one_owner')
+            ])
+        );
+        $this->main_tpl->setContent($temp->get());
     }
-
 
     /**
      * @param $data
@@ -88,14 +118,12 @@ class xoctChangeOwnerGUI extends xoctGUI
         exit;
     }
 
-
     /**
      *
      */
     protected function add()
     {
     }
-
 
     /**
      *
@@ -128,7 +156,6 @@ class xoctChangeOwnerGUI extends xoctGUI
         $this->outJson($arr);
     }
 
-
     protected function getCourseMembers(): array
     {
         $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
@@ -151,10 +178,12 @@ class xoctChangeOwnerGUI extends xoctGUI
                 xoctUser::getInstance($user_id)
             )
         );
-        $this->event_repository->updateACL(new UpdateEventRequest(
-            $this->event->getIdentifier(),
-            new UpdateEventRequestPayload(null, $this->event->getAcl())
-        ));
+        $this->event_repository->updateACL(
+            new UpdateEventRequest(
+                $this->event->getIdentifier(),
+                new UpdateEventRequestPayload(null, $this->event->getAcl())
+            )
+        );
     }
 
     /**
@@ -163,12 +192,13 @@ class xoctChangeOwnerGUI extends xoctGUI
     protected function removeOwner()
     {
         $this->event->setAcl($this->ACLUtils->removeOwnerFromACL($this->event->getAcl()));
-        $this->event_repository->updateACL(new UpdateEventRequest(
-            $this->event->getIdentifier(),
-            new UpdateEventRequestPayload(null, $this->event->getAcl())
-        ));
+        $this->event_repository->updateACL(
+            new UpdateEventRequest(
+                $this->event->getIdentifier(),
+                new UpdateEventRequestPayload(null, $this->event->getAcl())
+            )
+        );
     }
-
 
     /**
      *
@@ -177,14 +207,12 @@ class xoctChangeOwnerGUI extends xoctGUI
     {
     }
 
-
     /**
      *
      */
     protected function edit()
     {
     }
-
 
     /**
      *
@@ -193,14 +221,12 @@ class xoctChangeOwnerGUI extends xoctGUI
     {
     }
 
-
     /**
      *
      */
     protected function confirmDelete()
     {
     }
-
 
     /**
      *

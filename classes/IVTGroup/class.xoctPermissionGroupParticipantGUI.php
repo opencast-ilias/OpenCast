@@ -18,17 +18,27 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         self::CMD_CREATE,
         self::CMD_DELETE
     ];
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
 
     public function __construct(?ObjectSettings $objectSettings = null)
     {
+        global $DIC;
+        $tabs = $DIC->tabs();
+        $main_tpl = $DIC->ui()->mainTemplate();
+        $this->ctrl = $DIC->ctrl();
         if ($objectSettings instanceof ObjectSettings) {
             $this->objectSettings = $objectSettings;
         } else {
             $this->objectSettings = new ObjectSettings();
         }
-        self::dic()->tabs()->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
+        $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
         xoctWaiterGUI::loadLib();
-        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js'));
+        $main_tpl->addJavaScript(
+            self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js')
+        );
     }
 
     /**
@@ -43,7 +53,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         }
         if (!$access) {
             ilUtil::sendFailure('No access.');
-            self::dic()->ctrl()->redirectByClass('xoctEventGUI');
+            $this->ctrl->redirectByClass('xoctEventGUI');
         }
         parent::performCommand($cmd);
     }
@@ -58,11 +68,9 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         exit;
     }
 
-
     protected function index()
     {
     }
-
 
     protected function getAvailable()
     {
@@ -70,9 +78,16 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         /**
          * @var $xoctGroupParticipant PermissionGroupParticipant
          */
-        foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id'], $_GET['group_id']) as $xoctGroupParticipant) {
+        foreach (
+            PermissionGroupParticipant::getAvailable(
+                $_GET['ref_id'],
+                $_GET['group_id']
+            ) as $xoctGroupParticipant
+        ) {
             $stdClass = $xoctGroupParticipant->__asStdClass();
-            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(ilObjOpenCastAccess::hasWriteAccess());
+            $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(
+                ilObjOpenCastAccess::hasWriteAccess()
+            );
             $data[] = $stdClass;
         }
 
@@ -80,7 +95,6 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
 
         $this->outJson($data);
     }
-
 
     protected function getPerGroup()
     {
@@ -92,7 +106,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         /**
          * @var $xoctGroupParticipant PermissionGroupParticipant
          */
-        foreach (PermissionGroupParticipant::where([ 'group_id' => $group_id ])->get() as $xoctGroupParticipant) {
+        foreach (PermissionGroupParticipant::where(['group_id' => $group_id])->get() as $xoctGroupParticipant) {
             $stdClass = $xoctGroupParticipant->__asStdClass();
             $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
             $data[] = $stdClass;
@@ -103,11 +117,9 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         $this->outJson($data);
     }
 
-
     protected function add()
     {
     }
-
 
     protected function create()
     {
@@ -121,21 +133,17 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         $this->outJson(true);
     }
 
-
     protected function edit()
     {
     }
-
 
     protected function update()
     {
     }
 
-
     protected function confirmDelete()
     {
     }
-
 
     protected function delete()
     {

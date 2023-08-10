@@ -1,6 +1,5 @@
 <?php
 
-use ILIAS\UI\Component\Input\Field\UploadHandler;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -61,6 +60,22 @@ class xoctSeriesGUI extends xoctGUI
      * @var WorkflowParameterRepository
      */
     private $workflowParameterRepository;
+    /**
+     * @var \ilTabsGUI
+     */
+    private $tabs;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
+    /**
+     * @var \ILIAS\DI\UIServices
+     */
+    private $ui;
+    /**
+     * @var \ILIAS\HTTP\Services
+     */
+    private $http;
 
     public function __construct(
         ilObjOpenCast $object,
@@ -69,6 +84,12 @@ class xoctSeriesGUI extends xoctGUI
         SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
         WorkflowParameterRepository $workflowParameterRepository
     ) {
+        global $DIC;
+        parent::__construct();
+        $this->tabs = $DIC->tabs();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
+        $this->ui = $DIC->ui();
+        $this->http = $DIC->http();
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
@@ -77,23 +98,21 @@ class xoctSeriesGUI extends xoctGUI
         $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
-
     /**
      *
      */
     public function executeCommand()
     {
         if (!ilObjOpenCastAccess::hasWriteAccess()) {
-            self::dic()->ctrl()->redirectByClass('xoctEventGUI');
+            $this->ctrl->redirectByClass('xoctEventGUI');
         }
-        self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
+        $this->tabs->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
         $this->setSubTabs();
-        switch (self::dic()->ctrl()->getNextClass()) {
+        switch ($this->ctrl->getNextClass()) {
             default:
                 parent::executeCommand();
         }
     }
-
 
     /**
      *
@@ -101,12 +120,20 @@ class xoctSeriesGUI extends xoctGUI
     protected function setSubTabs()
     {
         if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
-            self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
-            self::dic()->ctrl()->setParameter($this, 'cmd', self::CMD_EDIT_GENERAL);
-            self::dic()->tabs()->addSubTab(self::SUBTAB_GENERAL, self::plugin()->translate('subtab_' . self::SUBTAB_GENERAL), self::dic()->ctrl()->getLinkTarget($this));
-            self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_WORKFLOW_PARAMETERS);
-            self::dic()->ctrl()->setParameter($this, 'cmd', self::CMD_EDIT_WORKFLOW_PARAMS);
-            self::dic()->tabs()->addSubTab(self::SUBTAB_WORKFLOW_PARAMETERS, self::plugin()->translate('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS), self::dic()->ctrl()->getLinkTarget($this));
+            $this->ctrl->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
+            $this->ctrl->setParameter($this, 'cmd', self::CMD_EDIT_GENERAL);
+            $this->tabs->addSubTab(
+                self::SUBTAB_GENERAL,
+                self::plugin()->translate('subtab_' . self::SUBTAB_GENERAL),
+                $this->ctrl->getLinkTarget($this)
+            );
+            $this->ctrl->setParameter($this, 'subtab_active', self::SUBTAB_WORKFLOW_PARAMETERS);
+            $this->ctrl->setParameter($this, 'cmd', self::CMD_EDIT_WORKFLOW_PARAMS);
+            $this->tabs->addSubTab(
+                self::SUBTAB_WORKFLOW_PARAMETERS,
+                self::plugin()->translate('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS),
+                $this->ctrl->getLinkTarget($this)
+            );
         }
     }
 
@@ -115,9 +142,8 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected function index()
     {
-        self::dic()->tabs()->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+        $this->tabs->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
     }
-
 
     /**
      * @throws Exception
@@ -143,16 +169,15 @@ class xoctSeriesGUI extends xoctGUI
         if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
         }
-        self::dic()->tabs()->activateSubTab(self::SUBTAB_GENERAL);
+        $this->tabs->activateSubTab(self::SUBTAB_GENERAL);
         $form = $this->seriesFormBuilder->update(
-            self::dic()->ctrl()->getFormAction($this, self::CMD_UPDATE_GENERAL),
+            $this->ctrl->getFormAction($this, self::CMD_UPDATE_GENERAL),
             $this->objectSettings,
             $series,
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
-        self::dic()->ui()->mainTemplate()->setContent(self::dic()->ui()->renderer()->render($form));
+        $this->main_tpl->setContent($this->ui->renderer()->render($form));
     }
-
 
     /**
      * @throws xoctException
@@ -172,15 +197,15 @@ class xoctSeriesGUI extends xoctGUI
     {
         $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
         $form = $this->seriesFormBuilder->update(
-            self::dic()->ctrl()->getFormAction($this),
+            $this->ctrl->getFormAction($this),
             $this->objectSettings,
             $series,
             ilObjOpenCastAccess::hasPermission('edit_videos')
         )
-            ->withRequest(self::dic()->http()->request());
+                                        ->withRequest($this->http->request());
         $data = $form->getData();
         if (!$data) {
-            self::dic()->ui()->mainTemplate()->setContent(self::dic()->ui()->renderer()->render($form));
+            $this->main_tpl->setContent($this->ui->renderer()->render($form));
             return;
         }
 
@@ -211,22 +236,25 @@ class xoctSeriesGUI extends xoctGUI
 
         /** @var Metadata $metadata */
         $metadata = $data['metadata']['object'];
-        $this->seriesRepository->updateMetadata(new UpdateSeriesMetadataRequest(
-            $this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesMetadataRequestPayload($metadata)
-        ));
-        $this->seriesRepository->updateACL(new UpdateSeriesACLRequest(
-            $this->objectSettings->getSeriesIdentifier(),
-            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
-        ));
+        $this->seriesRepository->updateMetadata(
+            new UpdateSeriesMetadataRequest(
+                $this->objectSettings->getSeriesIdentifier(),
+                new UpdateSeriesMetadataRequestPayload($metadata)
+            )
+        );
+        $this->seriesRepository->updateACL(
+            new UpdateSeriesACLRequest(
+                $this->objectSettings->getSeriesIdentifier(),
+                new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+            )
+        );
 
         $this->object->updateObjectFromSeries($metadata);
 
         $this->objectSettings->updateAllDuplicates($metadata);
         ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
-        self::dic()->ctrl()->redirect($this, self::CMD_EDIT_GENERAL);
+        $this->ctrl->redirect($this, self::CMD_EDIT_GENERAL);
     }
-
 
     /**
      * @return void
@@ -239,27 +267,43 @@ class xoctSeriesGUI extends xoctGUI
         if ($this->objectSettings->getDuplicatesOnSystem()) {
             ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
         }
-        self::dic()->tabs()->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
+        $this->tabs->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
-        $xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI($this, self::CMD_EDIT_WORKFLOW_PARAMS, $this->workflowParameterRepository);
-        self::dic()->ui()->mainTemplate()->setContent($xoctSeriesFormGUI->getHTML());
+        $xoctSeriesFormGUI = new xoctSeriesWorkflowParameterTableGUI(
+            $this,
+            self::CMD_EDIT_WORKFLOW_PARAMS,
+            $this->workflowParameterRepository
+        );
+        $this->main_tpl->setContent($xoctSeriesFormGUI->getHTML());
     }
-
 
     /**
      * @throws DICException
      */
     protected function updateWorkflowParameters()
     {
-        foreach (filter_input(INPUT_POST, 'workflow_parameter', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $param_id => $value) {
+        foreach (
+            filter_input(
+                INPUT_POST,
+                'workflow_parameter',
+                FILTER_DEFAULT,
+                FILTER_REQUIRE_ARRAY
+            ) as $param_id => $value
+        ) {
             $value_admin = $value['value_admin'];
             $value_member = $value['value_member'];
-            if (in_array($value_member, WorkflowParameter::$possible_values) && in_array($value_admin, WorkflowParameter::$possible_values)) {
-                SeriesWorkflowParameterRepository::getByObjAndParamId($this->getObjId(), $param_id)->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
+            if (in_array($value_member, WorkflowParameter::$possible_values) && in_array(
+                $value_admin,
+                WorkflowParameter::$possible_values
+            )) {
+                SeriesWorkflowParameterRepository::getByObjAndParamId(
+                    $this->getObjId(),
+                    $param_id
+                )->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
             }
         }
         ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
-        self::dic()->ctrl()->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
+        $this->ctrl->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
     }
 
     /**
@@ -267,9 +311,8 @@ class xoctSeriesGUI extends xoctGUI
      */
     protected function cancel()
     {
-        self::dic()->ctrl()->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
+        $this->ctrl->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
     }
-
 
     /**
      * @return int
@@ -291,14 +334,12 @@ class xoctSeriesGUI extends xoctGUI
     {
     }
 
-
     /**
      *
      */
     protected function create()
     {
     }
-
 
     /**
      *
@@ -307,14 +348,12 @@ class xoctSeriesGUI extends xoctGUI
     {
     }
 
-
     /**
      *
      */
     protected function delete()
     {
     }
-
 
     /**
      *

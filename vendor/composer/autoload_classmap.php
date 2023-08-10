@@ -5,7 +5,7 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return [
+return array(
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CaptainHook\\App\\CH' => $vendorDir . '/captainhook/captainhook/src/CH.php',
     'CaptainHook\\App\\Config' => $vendorDir . '/captainhook/captainhook/src/Config.php',
@@ -1160,6 +1160,8 @@ return [
     'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => $baseDir . '/src/Chat/Model/Token.php',
     'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => $baseDir . '/src/Chat/Model/TokenAR.php',
     'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => $baseDir . '/src/DI/OpencastDIC.php',
+    'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => $baseDir . '/src/LegacyHelpers/OutputTrait.php',
+    'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => $baseDir . '/src/LegacyHelpers/TranslatorTrait.php',
     'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => $baseDir . '/src/Model/ACL/ACL.php',
     'srag\\Plugins\\Opencast\\Model\\ACL\\ACLEntry' => $baseDir . '/src/Model/ACL/ACLEntry.php',
     'srag\\Plugins\\Opencast\\Model\\ACL\\ACLParser' => $baseDir . '/src/Model/ACL/ACLParser.php',
@@ -1330,4 +1332,4 @@ return [
     'xoctWorkflowParameterTableGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
     'xoctWorkflowParametersFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
     'xoctWorkflowTableGUI' => $baseDir . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-];
+);
