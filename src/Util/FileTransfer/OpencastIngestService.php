@@ -67,7 +67,7 @@ class OpencastIngestService
      */
     private function getIngestNodeURL(): string
     {
-        $nodes = json_decode(xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(), true);
+        $nodes = json_decode(xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($nodes)
             || !isset($nodes['services'])
             || !isset($nodes['services']['service'])

@@ -64,7 +64,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
     protected function outJson($data)
     {
         header('Content-type: application/json');
-        echo json_encode($data);
+        echo json_encode($data, JSON_THROW_ON_ERROR);
         exit;
     }
 

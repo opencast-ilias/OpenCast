@@ -188,10 +188,7 @@ class PublicationSelector
             /** @var $pub1 Publication|Media|Attachment */
             /** @var $pub2 Publication|Media|Attachment */
             if ($pub1 instanceof Media && $pub2 instanceof Media) {
-                if ($pub1->getHeight() == $pub2->getHeight()) {
-                    return 0;
-                }
-                return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
+                return $pub2->getHeight() <=> $pub1->getHeight();
             }
             return 0;
         });
@@ -321,6 +318,8 @@ class PublicationSelector
      */
     public function getAnnotationLink(int $ref_id = 0)
     {
+        $media_object = null;
+        $media_url = null;
         if (!isset($this->annotation_url)) {
             $annotation_publication = $this->getAnnotationPublication();
             if (is_null($annotation_publication)) {

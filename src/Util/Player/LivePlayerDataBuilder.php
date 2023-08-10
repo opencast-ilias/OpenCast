@@ -20,7 +20,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
         );
 
-        $episode_data = json_decode($episode_json, true);
+        $episode_data = json_decode($episode_json, true, 512, JSON_THROW_ON_ERROR);
         $media_package = $episode_data['search-results']['result']['mediapackage'];
 
         $streams = [];

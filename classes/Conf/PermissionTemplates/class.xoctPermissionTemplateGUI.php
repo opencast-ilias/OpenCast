@@ -57,7 +57,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
     {
         $this->setSubTabs();
 
-        $this->subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : self::SUBTAB_GENERAL;
+        $this->subtab_active = $_GET['subtab_active'] ?: self::SUBTAB_GENERAL;
         $this->tabs->setSubTabActive($this->subtab_active);
         $this->ctrl->saveParameter($this, 'subtab_active');
         switch ($this->subtab_active) {

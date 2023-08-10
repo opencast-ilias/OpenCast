@@ -14,6 +14,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 
 /**
  * Class xoctEventRenderer
@@ -22,7 +23,7 @@ use srag\Plugins\Opencast\UI\Modal\EventModals;
  */
 class xoctEventRenderer
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use TranslatorTrait;
     public const LANG_MODULE = 'event';
     /**
      * @var ilOpenCastPlugin
@@ -184,7 +185,7 @@ class xoctEventRenderer
             $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
             $link_tpl->setVariable(
                 'LINK_TEXT',
-                $this->plugin->txt($this->event->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE)
+                $this->plugin->txt($this->event->isLiveEvent() ? self::LANG_MODULE . '_player_live' : self::LANG_MODULE . '_player')
             );
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
             $link_tpl->setVariable('PREVIEW_LINK', $this->getPreviewLink());
@@ -290,7 +291,7 @@ class xoctEventRenderer
                 }, $download_dtos);
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
-                )->withLabel($this->plugin->txt('download', self::LANG_MODULE));
+                )->withLabel($this->plugin->txt(self::LANG_MODULE . '_download'));
                 return $this->ui->renderer()->renderAsync($dropdown);
             } else {
                 $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
@@ -298,7 +299,7 @@ class xoctEventRenderer
                 $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
                 $link_tpl->setVariable('TARGET', '_self');
                 $link_tpl->setVariable('BUTTON_TYPE', $button_type);
-                $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt('download', self::LANG_MODULE));
+                $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt(self::LANG_MODULE . '_download'));
                 $link_tpl->setVariable('LINK_URL', $link);
 
                 return $link_tpl->get();
@@ -346,7 +347,7 @@ class xoctEventRenderer
             $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
             $link_tpl->setVariable('TARGET', '_blank');
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
-            $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt('annotate', self::LANG_MODULE));
+            $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt(self::LANG_MODULE . '_annotate'));
             $link_tpl->setVariable('LINK_URL', $annotations_link);
 
             return $link_tpl->get();
@@ -446,7 +447,7 @@ class xoctEventRenderer
 
             $state_tpl->setVariable(
                 'STATE',
-                $this->plugin->txt(
+                $this->translate(
                     'state_' . strtolower($processing_state) . $suffix,
                     self::LANG_MODULE,
                     $placeholders

@@ -280,7 +280,7 @@ class xoctEventGUI extends xoctGUI
             'xoctEvent.init(\'' . json_encode([
                 'msg_link_copied' => $this->plugin->txt('msg_link_copied'),
                 'tooltip_copy_link' => $this->plugin->txt('tooltip_copy_link')
-            ]) . '\');'
+            ], JSON_THROW_ON_ERROR) . '\');'
         );
 
         // add "add" button
@@ -342,6 +342,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function index()
     {
+        $filter_html = null;
         ilChangeEvent::_recordReadEvent(
             $this->parent_gui->object->getType(),
             $this->parent_gui->object->getRefId(),
@@ -773,7 +774,7 @@ class xoctEventGUI extends xoctGUI
     private function checkAndShowConflictMessage(xoctException $e): bool
     {
         if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
-            $conflicts = json_decode(substr($e->getMessage(), 10), true);
+            $conflicts = json_decode(substr($e->getMessage(), 10), true, 512, JSON_THROW_ON_ERROR);
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
@@ -1086,7 +1087,7 @@ class xoctEventGUI extends xoctGUI
                 $params[$param] = 'true';
             }
             if (!empty($params)) {
-                $request['configuration'] = json_encode($params);
+                $request['configuration'] = json_encode($params, JSON_THROW_ON_ERROR);
             }
             xoctRequest::root()->workflows()->post($request);
             ilUtil::sendSuccess($this->txt('msg_republish_started'), true);

@@ -80,7 +80,7 @@ class PermissionGroup extends ActiveRecord
         self::loadGroupIdsForSeriesId($series_identifier);
         $group_ids = self::$series_id_to_groups_map[$series_identifier];
 
-        if (count($group_ids) == 0) {
+        if ((is_countable($group_ids) ? count($group_ids) : 0) == 0) {
             return [];
         }
 

@@ -45,7 +45,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             throw new xoctException(xoctException::NO_STREAMING_DATA);
         }
 
-        list($duration, $streams) = $this->buildStreams($media);
+        [$duration, $streams] = $this->buildStreams($media);
 
         $data = [
             "streams" => array_values($streams),

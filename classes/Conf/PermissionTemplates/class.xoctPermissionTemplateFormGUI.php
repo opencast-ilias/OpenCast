@@ -57,7 +57,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->object = $xoctPermissionTemplate;
         $this->parent_gui = $parent_gui;
         $ctrl->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
-        $this->is_new = ($this->object->getId() == '');
+        $this->is_new = ($this->object->getId() == 0);
         $this->initForm();
     }
 
@@ -168,6 +168,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
     protected function addAdditionalRolePermission(): array
     {
+        $array = [];
         $input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ADDED_ROLE_NAME);
         $input->setInfo($this->txt(self::F_ROLE . '_info'));
         $input->setRequired(true);

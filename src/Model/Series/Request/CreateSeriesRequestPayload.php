@@ -50,8 +50,8 @@ class CreateSeriesRequestPayload implements JsonSerializable
     {
         $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
         return [
-            'metadata' => json_encode([$this->metadata->jsonSerialize()]),
-            'acl' => json_encode($this->acl),
+            'metadata' => json_encode([$this->metadata->jsonSerialize()], JSON_THROW_ON_ERROR),
+            'acl' => json_encode($this->acl, JSON_THROW_ON_ERROR),
         ];
     }
 }

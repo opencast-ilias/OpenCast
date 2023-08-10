@@ -636,7 +636,7 @@ class xoctCurl
 
         // generate safe boundary
         do {
-            $boundary = "---------------------" . md5(mt_rand() . microtime());
+            $boundary = "---------------------" . md5(random_int(0, mt_getrandmax()) . microtime());
         } while (preg_grep("/{$boundary}/", $body));
 
         // add boundary for each parameters

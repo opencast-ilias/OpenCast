@@ -98,7 +98,7 @@ class xoctConfGUI extends xoctGUI
     /**
      *
      */
-    public function index()
+    protected function index()
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
         $subtab_active = $_GET['subtab_active'] ?: xoctMainGUI::SUBTAB_API;
@@ -162,7 +162,7 @@ class xoctConfGUI extends xoctGUI
     protected function update()
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
-        $subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : xoctMainGUI::SUBTAB_API;
+        $subtab_active = $_GET['subtab_active'] ?: xoctMainGUI::SUBTAB_API;
         $xoctConfFormGUI = new xoctConfFormGUI($this, $subtab_active);
         $xoctConfFormGUI->setValuesByPost();
         if ($xoctConfFormGUI->saveObject()) {

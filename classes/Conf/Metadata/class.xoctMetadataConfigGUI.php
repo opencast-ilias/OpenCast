@@ -277,7 +277,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         if ($md_field_def->getType()->getTitle() === MDDataType::TYPE_TEXT_SELECTION) {
             $fields['values'] = $this->ui_factory->input()->field()->textarea(
                 $this->plugin->txt('md_values'),
-                $this->plugin->txt('md_values_info', '', [MDFieldConfigAR::VALUE_SEPERATOR])
+                $this->plugin->txt('md_values_info')
             )->withValue(
                 $md_field_config ? $md_field_config->getValuesAsEditableString() : ''
             )->withRequired(true)

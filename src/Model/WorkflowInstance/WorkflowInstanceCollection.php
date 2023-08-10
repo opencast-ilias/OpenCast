@@ -54,7 +54,7 @@ class WorkflowInstanceCollection extends APIObject
         if ($data === null) {
             $data = json_decode(xoctRequest::root()->workflows()
                 ->parameter('filter', 'event_identifier:' . $this->getEventId())
-                ->get()) ?: new stdClass();
+                ->get(), null, 512, JSON_THROW_ON_ERROR) ?: new stdClass();
         }
         $this->loadFromStdClass($data);
     }

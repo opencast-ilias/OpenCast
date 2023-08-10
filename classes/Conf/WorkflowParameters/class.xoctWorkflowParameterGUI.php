@@ -86,12 +86,12 @@ class xoctWorkflowParameterGUI extends xoctGUI
     {
         $this->tabs->addSubTab(
             self::SUBTAB_PARAMETERS,
-            $this->plugin->txt(self::SUBTAB_PARAMETERS, 'subtab'),
+            $this->plugin->txt(self::SUBTAB_PARAMETERS),
             $this->ctrl->getLinkTarget($this, self::CMD_STANDARD)
         );
         $this->tabs->addSubTab(
             self::SUBTAB_SETTINGS,
-            $this->plugin->txt(self::SUBTAB_SETTINGS, 'subtab'),
+            $this->plugin->txt(self::SUBTAB_SETTINGS),
             $this->ctrl->getLinkTarget($this, self::CMD_SHOW_FORM)
         );
     }

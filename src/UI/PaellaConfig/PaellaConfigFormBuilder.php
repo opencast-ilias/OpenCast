@@ -57,6 +57,7 @@ class PaellaConfigFormBuilder
 
     public function buildForm(string $form_action): Standard
     {
+        $inputs = [];
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->getPaellaPlayerPathInput(
             false,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION),

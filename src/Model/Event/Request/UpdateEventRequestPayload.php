@@ -32,8 +32,7 @@ class UpdateEventRequestPayload implements JsonSerializable
         ?ACL $acl = null,
         ?Scheduling $scheduling = null,
         ?Processing $processing = null
-    )
-    {
+    ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->scheduling = $scheduling;
@@ -45,16 +44,16 @@ class UpdateEventRequestPayload implements JsonSerializable
     {
         $data = [];
         if (!is_null($this->metadata)) {
-            $data['metadata'] = json_encode([$this->metadata->jsonSerialize()]);
+            $data['metadata'] = json_encode([$this->metadata->jsonSerialize()], JSON_THROW_ON_ERROR);
         }
         if (!is_null($this->acl)) {
-            $data['acl'] = json_encode($this->acl);
+            $data['acl'] = json_encode($this->acl, JSON_THROW_ON_ERROR);
         }
         if (!is_null($this->scheduling)) {
-            $data['scheduling'] = json_encode($this->scheduling);
+            $data['scheduling'] = json_encode($this->scheduling, JSON_THROW_ON_ERROR);
         }
         if (!is_null($this->processing)) {
-            $data['processing'] = json_encode($this->processing);
+            $data['processing'] = json_encode($this->processing, JSON_THROW_ON_ERROR);
         }
         return $data;
     }

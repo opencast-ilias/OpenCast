@@ -131,7 +131,7 @@ trait OutputTrait
             case ($value instanceof \stdClass):
             case ($value === null):
             case ($value instanceof \JsonSerializable):
-                $value = json_encode($value);
+                $value = json_encode($value, JSON_THROW_ON_ERROR);
 
                 header("Content-Type: application/json; charset=utf-8");
 

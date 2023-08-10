@@ -67,7 +67,7 @@ class ConfigAR extends ActiveRecord
     public static function set($name, $value)
     {
         $obj = new self($name);
-        $obj->setValue(json_encode($value));
+        $obj->setValue(json_encode($value, JSON_THROW_ON_ERROR));
 
         if (self::where([ 'name' => $name ])->hasSets()) {
             $obj->update();

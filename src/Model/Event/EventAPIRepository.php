@@ -62,7 +62,7 @@ class EventAPIRepository implements EventRepository
             ->parameter('withpublications', true)
             ->parameter('withscheduling', true)
             ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS))
-            ->get());
+            ->get(), null, 512, JSON_THROW_ON_ERROR);
         $event = $this->eventParser->parseAPIResponse($data, $identifier);
         if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
             $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
@@ -88,7 +88,7 @@ class EventAPIRepository implements EventRepository
             $this->ingestService->ingest($request);
         } else {
             json_decode(xoctRequest::root()->events()
-                ->post($request->getPayload()->jsonSerialize()));
+                ->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
         }
     }
 
@@ -133,7 +133,7 @@ class EventAPIRepository implements EventRepository
             ->parameter('withscheduling', true)
             ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
 
-        $data = json_decode($request->get($roles, $for_user)) ?: [];
+        $data = json_decode($request->get($roles, $for_user), null, 512, JSON_THROW_ON_ERROR) ?: [];
         $return = [];
 
         $this->opencastDIC = OpencastDIC::getInstance();
@@ -166,7 +166,7 @@ class EventAPIRepository implements EventRepository
 
     public function schedule(ScheduleEventRequest $request): string
     {
-        $response = json_decode(xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()));
+        $response = json_decode(xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 

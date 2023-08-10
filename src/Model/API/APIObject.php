@@ -38,7 +38,7 @@ abstract class APIObject
      */
     public static function find(string $identifier)
     {
-        $class_name = get_called_class();
+        $class_name = static::class;
         $key = $class_name . '-' . $identifier;
         if (self::$cache[$key] instanceof $class_name) {
             return self::$cache[$key];
@@ -67,7 +67,7 @@ abstract class APIObject
      */
     public static function findOrLoadFromStdClass(string $identifier, stdClass $stdClass)
     {
-        $class_name = get_called_class();
+        $class_name = static::class;
         $key = $class_name . '-' . $identifier;
         if (self::$cache[$key] instanceof $class_name) {
             return self::$cache[$key];
@@ -97,7 +97,7 @@ abstract class APIObject
      */
     public static function removeFromCache(string $identifier)
     {
-        $class_name = get_called_class();
+        $class_name = static::class;
         $key = $class_name . '-' . $identifier;
         self::$cache[$key] = null;
         xoctLog::getInstance()->write('CACHE: removed from cache: ' . $key, xoctLog::DEBUG_LEVEL_1);

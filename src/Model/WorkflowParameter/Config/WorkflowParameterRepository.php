@@ -80,7 +80,7 @@ class WorkflowParameterRepository
         if (!$workflow_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = json_decode(xoctRequest::root()->workflowDefinition($workflow_id)->parameter('withconfigurationpanel', 'true')->get(), true);
+        $response = json_decode(xoctRequest::root()->workflowDefinition($workflow_id)->parameter('withconfigurationpanel', 'true')->get(), true, 512, JSON_THROW_ON_ERROR);
 
         if ($response == false) {
             throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_id'.");
@@ -170,6 +170,7 @@ class WorkflowParameterRepository
      */
     public function createOrUpdate($id, $title, $type, $default_value_member = 0, $default_value_admin = 0)
     {
+        $is_new = null;
         if (!WorkflowParameter::where(['id' => $id])->hasSets()) {
             $is_new = true;
         }

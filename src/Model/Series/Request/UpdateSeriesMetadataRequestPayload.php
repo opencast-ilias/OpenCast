@@ -35,6 +35,6 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
         // for some reason, label etc. are not allowed here (unlike for events)
         return ['metadata' => json_encode(array_map(function (MetadataField $field) {
             return $field->jsonSerialize();
-        }, $this->metadata->getFields()))];
+        }, $this->metadata->getFields()), JSON_THROW_ON_ERROR)];
     }
 }

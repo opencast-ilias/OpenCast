@@ -32,8 +32,7 @@ class ScheduleEventRequestPayload implements JsonSerializable
         ACL $acl = null,
         Scheduling $scheduling = null,
         Processing $processing = null
-    )
-    {
+    ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->scheduling = $scheduling;
@@ -44,10 +43,10 @@ class ScheduleEventRequestPayload implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'metadata' => json_encode([$this->metadata->jsonSerialize()]),
-            'acl' => json_encode($this->acl),
-            'scheduling' => json_encode($this->scheduling->jsonSerialize()),
-            'processing' => json_encode($this->processing)
+            'metadata' => json_encode([$this->metadata->jsonSerialize()], JSON_THROW_ON_ERROR),
+            'acl' => json_encode($this->acl, JSON_THROW_ON_ERROR),
+            'scheduling' => json_encode($this->scheduling->jsonSerialize(), JSON_THROW_ON_ERROR),
+            'processing' => json_encode($this->processing, JSON_THROW_ON_ERROR)
         ];
     }
 }

@@ -67,7 +67,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function fetch(string $identifier): Series
     {
-        $data = json_decode(xoctRequest::root()->series($identifier)->parameter('withacl', true)->get());
+        $data = json_decode(xoctRequest::root()->series($identifier)->parameter('withacl', true)->get(), null, 512, JSON_THROW_ON_ERROR);
         $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
@@ -79,13 +79,13 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = json_decode(xoctRequest::root()->series($identifier)->metadata()->get()) ?? [];
+        $data = json_decode(xoctRequest::root()->series($identifier)->metadata()->get(), null, 512, JSON_THROW_ON_ERROR) ?? [];
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
     {
-        $payload = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()));
+        $payload = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
         return $payload->identifier;
     }
 
@@ -132,7 +132,7 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]));
+            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]), null, 512, JSON_THROW_ON_ERROR);
         } catch (ilException $e) {
             return [];
         }
@@ -173,7 +173,7 @@ class SeriesAPIRepository implements SeriesRepository
             'filter',
             'title:' . $this->getOwnSeriesTitle($xoct_user)
         )->parameter('withacl', 'true')->get();
-        $existing = json_decode($existing, true);
+        $existing = json_decode($existing, true, 512, JSON_THROW_ON_ERROR);
         if (empty($existing)) {
             return null;
         }

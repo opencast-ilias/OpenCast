@@ -27,7 +27,7 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
         $streams = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
-            list($hls_url, $dash_url) = $this->buildStreamingUrls($medium, $event_id, $duration);
+            [$hls_url, $dash_url] = $this->buildStreamingUrls($medium, $event_id, $duration);
 
             $role = $medium->getRole() !== Media::ROLE_PRESENTATION ? self::ROLE_MASTER : self::ROLE_SLAVE;
             $streams[$role] = [

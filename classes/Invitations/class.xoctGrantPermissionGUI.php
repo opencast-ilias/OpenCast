@@ -96,7 +96,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             json_encode([
                 'none_available' => $this->plugin->txt('invitations_none_available'),
                 'invite_all' => $this->plugin->txt('invitations_invite_all')
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
         $this->main_tpl->setContent($temp->get());
     }
@@ -107,7 +107,7 @@ class xoctGrantPermissionGUI extends xoctGUI
     protected function outJson($data)
     {
         header('Content-type: application/json');
-        echo json_encode($data);
+        echo json_encode($data, JSON_THROW_ON_ERROR);
         exit;
     }
 
@@ -230,7 +230,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             }
             $objects[] = $obj->__asStdClass();
         }
-        $this->outJson(json_encode($objects));
+        $this->outJson(json_encode($objects, JSON_THROW_ON_ERROR));
     }
 
     protected function edit()

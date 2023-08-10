@@ -25,7 +25,7 @@ class PublicationAPIRepository implements PublicationRepository
 
     public function fetch(string $identifier): array
     {
-        $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());
+        $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get(), null, 512, JSON_THROW_ON_ERROR);
         $publications = [];
         foreach ($data as $d) {
             $p = new Publication();

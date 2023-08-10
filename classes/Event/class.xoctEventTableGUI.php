@@ -110,7 +110,9 @@ class xoctEventTableGUI extends ilTable2GUI
             'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
         );
         $this->setFormAction($ctrl->getFormAction($a_parent_obj));
-        $data = array_filter($data, $this->filterPermissions());
+        $data = array_filter($data, $this->filterPermissions() ?? function ($v, $k): bool {
+            return !empty($v);
+        }, $this->filterPermissions() === null ? ARRAY_FILTER_USE_BOTH : 0);
         $this->setData($data);
         foreach ($data as $item) {
             /** @var Event $event */
@@ -158,7 +160,7 @@ class xoctEventTableGUI extends ilTable2GUI
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function fillRow($a_set)
+    protected function fillRow($a_set)
     {
         /**
          * @var $event        Event
@@ -453,7 +455,7 @@ class xoctEventTableGUI extends ilTable2GUI
                 $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = [
                     'txt' => $col_title,
-                    'default' => isset($col['default']) ? $col['default'] : true,
+                    'default' => $col['default'] ?? true,
                 ];
             }
         }
@@ -473,7 +475,7 @@ class xoctEventTableGUI extends ilTable2GUI
             ) . " AND property = 'selfields'"
         );
         while ($rec = $db->fetchAssoc($query)) {
-            $selfields = unserialize($rec['value']);
+            $selfields = unserialize($rec['value'], ['allowed_classes' => false]);
             if ($selfields['event_owner'] == $visible) {
                 continue;
             }

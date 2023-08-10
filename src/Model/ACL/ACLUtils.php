@@ -94,7 +94,7 @@ class ACLUtils
         $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);
         $acl_entries = $acl->getEntries();
         foreach ($acl_entries as $i => $acl_entry) {
-            if ((strpos($acl_entry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
+            if ((strpos($acl_entry->getRole(), (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
                 && !in_array($acl_entry->getRole(), $standard_roles)) {
                 unset($acl_entries[$i]);
             }
@@ -117,7 +117,7 @@ class ACLUtils
 
     public function isOwnerRole(ACLEntry $ACLEntry): bool
     {
-        return strpos($ACLEntry->getRole(), str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false;
+        return strpos($ACLEntry->getRole(), (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false;
     }
 
     public function isUserOwnerOfEvent(xoctUser $user, Event $event): bool

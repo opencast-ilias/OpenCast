@@ -97,7 +97,7 @@ class xoctChangeOwnerGUI extends xoctGUI
             json_encode([
                 'none_available' => $this->plugin->txt('invitations_none_available'),
                 'only_one_owner' => $this->plugin->txt('owner_only_one_owner')
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
         $this->main_tpl->setContent($temp->get());
     }
@@ -108,7 +108,7 @@ class xoctChangeOwnerGUI extends xoctGUI
     protected function outJson($data)
     {
         header('Content-type: application/json');
-        echo json_encode($data);
+        echo json_encode($data, JSON_THROW_ON_ERROR);
         exit;
     }
 

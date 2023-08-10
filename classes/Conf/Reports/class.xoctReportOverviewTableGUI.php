@@ -63,6 +63,8 @@ class xoctReportOverviewTableGUI extends TableGUI
      */
     protected function initData(): void
     {
+        $filter_date_from = null;
+        $filter_date_to = null;
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */

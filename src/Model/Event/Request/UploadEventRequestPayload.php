@@ -32,8 +32,7 @@ class UploadEventRequestPayload
         ACL $acl,
         Processing $processing,
         xoctUploadFile $presentation
-    )
-    {
+    ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->processing = $processing;
@@ -76,10 +75,10 @@ class UploadEventRequestPayload
     public function jsonSerialize()
     {
         return [
-            'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()]),
-            'acl' => json_encode($this->acl),
+            'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()], JSON_THROW_ON_ERROR),
+            'acl' => json_encode($this->acl, JSON_THROW_ON_ERROR),
             'presentation' => $this->presentation->getCURLFile(),
-            'processing' => json_encode($this->processing)
+            'processing' => json_encode($this->processing, JSON_THROW_ON_ERROR)
         ];
     }
 }

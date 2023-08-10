@@ -66,7 +66,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
      *
      * @throws DICException
      */
-    public function fillRow($a_set)
+    protected function fillRow($a_set)
     {
         /**
          * @var $PublicationUsage PublicationUsage

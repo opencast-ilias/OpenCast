@@ -99,8 +99,8 @@ class xoctPlayerGUI extends xoctGUI
             self::plugin()->getPluginObject()->getDirectory()
             . "/node_modules/paellaplayer/build/player"
         );
-        $tpl->setVariable("DATA", json_encode($data));
-        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
+        $tpl->setVariable("DATA", json_encode($data, JSON_THROW_ON_ERROR));
+        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event), JSON_THROW_ON_ERROR));
 
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
@@ -125,7 +125,7 @@ class xoctPlayerGUI extends xoctGUI
             );
         }
 
-        setcookie('lastProfile', null, -1);
+        setcookie('lastProfile', null, ['expires' => -1]);
         echo $tpl->get();
         exit();
     }
