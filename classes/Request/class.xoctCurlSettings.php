@@ -22,11 +22,11 @@ class xoctCurlSettings
     /**
      * @var string
      */
-    protected $username = null;
+    protected $username;
     /**
      * @var string
      */
-    protected $password = null;
+    protected $password;
 
     /**
      * @return boolean
@@ -39,12 +39,10 @@ class xoctCurlSettings
     /**
      * @param boolean $ip_v4
      */
-    public function setIpV4($ip_v4)
+    public function setIpV4($ip_v4): void
     {
         $this->ip_v4 = $ip_v4;
     }
-
-
 
     /**
      * @return string
@@ -57,7 +55,7 @@ class xoctCurlSettings
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
@@ -73,7 +71,7 @@ class xoctCurlSettings
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         $this->password = $password;
     }

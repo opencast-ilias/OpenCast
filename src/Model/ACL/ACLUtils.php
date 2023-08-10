@@ -11,15 +11,12 @@ class ACLUtils
 {
     /**
      * A combination of standard roles, user roles and owner roles. Used on newly created objects.
-     *
-     * @param xoctUser $user
-     * @return ACL
      */
     public function getBaseACLForUser(xoctUser $user): ACL
     {
         return $this->getOwnerRolesACL($user)
-            ->merge($this->getUserRolesACL($user))
-            ->merge($this->getStandardRolesACL());
+                    ->merge($this->getUserRolesACL($user))
+                    ->merge($this->getStandardRolesACL());
     }
 
     public function getStandardRolesACL(): ACL
@@ -40,9 +37,10 @@ class ACLUtils
         if ($user->getUserRoleName() === null) {
             return new ACL([]);
         }
-        $acl_list =  new ACL([
+        $acl_list = new ACL([
             new ACLEntry($user->getUserRoleName(), ACLEntry::WRITE, true),
-            new ACLEntry($user->getUserRoleName(), ACLEntry::READ, true)]);
+            new ACLEntry($user->getUserRoleName(), ACLEntry::READ, true)
+        ]);
 
         $additional_actions = PluginConfig::getConfig(PluginConfig::F_ROLE_USER_ACTIONS);
         if ($additional_actions) {
@@ -61,8 +59,10 @@ class ACLUtils
             return new ACL();
         }
         return new ACL(
-            [new ACLEntry($user->getOwnerRoleName(), ACLEntry::READ, true),
-                new ACLEntry($user->getOwnerRoleName(), ACLEntry::WRITE, true)]
+            [
+                new ACLEntry($user->getOwnerRoleName(), ACLEntry::READ, true),
+                new ACLEntry($user->getOwnerRoleName(), ACLEntry::WRITE, true)
+            ]
         );
     }
 
@@ -70,10 +70,10 @@ class ACLUtils
     {
         $acl = $this->getOwnerAclOfEvent($event);
         $entries = $acl->getEntries();
-        if (!empty($entries)) {
+        if ($entries !== []) {
             $first_entry = array_shift($entries);
             $usr_id = xoctUser::lookupUserIdForOwnerRole($first_entry->getRole());
-            if ($usr_id) {
+            if ($usr_id !== 0) {
                 return xoctUser::getInstance(new ilObjUser($usr_id));
             }
         }
@@ -83,7 +83,7 @@ class ACLUtils
     public function getOwnerUsernameOfEvent(Event $event)
     {
         $owner = $this->getOwnerOfEvent($event);
-        if (!$owner) {
+        if (!$owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser) {
             return $event->getMetadata()->getField('rightsHolder')->getValue() ?: '&nbsp';
         }
         return $owner->getNamePresentation();
@@ -94,7 +94,10 @@ class ACLUtils
         $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);
         $acl_entries = $acl->getEntries();
         foreach ($acl_entries as $i => $acl_entry) {
-            if ((strpos($acl_entry->getRole(), (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false)
+            if ((strpos(
+                $acl_entry->getRole(),
+                (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())
+            ) !== false)
                 && !in_array($acl_entry->getRole(), $standard_roles)) {
                 unset($acl_entries[$i]);
             }
@@ -104,25 +107,30 @@ class ACLUtils
 
     public function getOwnerAclOfEvent(Event $event): ACL
     {
-        return new ACL(array_filter($event->getAcl()->getEntries(), function (ACLEntry $entry) {
-            return $this->isOwnerRole($entry);
-        }));
+        return new ACL(
+            array_filter($event->getAcl()->getEntries(), function (ACLEntry $entry): bool {
+                return $this->isOwnerRole($entry);
+            })
+        );
     }
 
     public function changeOwner(ACL $ACL, xoctUser $owner): ACL
     {
         return $this->removeOwnerFromACL($ACL)
-            ->merge($this->getOwnerRolesACL($owner));
+                    ->merge($this->getOwnerRolesACL($owner));
     }
 
     public function isOwnerRole(ACLEntry $ACLEntry): bool
     {
-        return strpos($ACLEntry->getRole(), (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())) !== false;
+        return strpos(
+            $ACLEntry->getRole(),
+            (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())
+        ) !== false;
     }
 
     public function isUserOwnerOfEvent(xoctUser $user, Event $event): bool
     {
         $owner = $this->getOwnerOfEvent($event);
-        return !is_null($owner) && ($owner->getIliasUserId() == $user->getIliasUserId());
+        return !is_null($owner) && ($owner->getIliasUserId() === $user->getIliasUserId());
     }
 }

@@ -12,23 +12,19 @@ class UpdateSeriesACLRequestPayload implements JsonSerializable
      */
     private $ACL;
 
-    /**
-     * @param ACL $ACL
-     */
     public function __construct(ACL $ACL)
     {
         $this->ACL = $ACL;
     }
 
-    /**
-     * @return ACL
-     */
     public function getACL(): ACL
     {
         return $this->ACL;
     }
 
-
+    /**
+     * @return array{acl: string}
+     */
     public function jsonSerialize()
     {
         return ['acl' => json_encode($this->ACL, JSON_THROW_ON_ERROR)];

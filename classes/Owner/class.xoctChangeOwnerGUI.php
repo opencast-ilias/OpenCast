@@ -104,6 +104,7 @@ class xoctChangeOwnerGUI extends xoctGUI
 
     /**
      * @param $data
+     * @return never
      */
     protected function outJson($data)
     {
@@ -122,10 +123,13 @@ class xoctChangeOwnerGUI extends xoctGUI
     /**
      *
      */
-    public function getAll()
+    public function getAll(): void
     {
         $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
-        $owner_data = $owner ? ['id' => $owner->getIliasUserId(), 'name' => $owner->getNamePresentation()] : [];
+        $owner_data = $owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser ? ['id' => $owner->getIliasUserId(),
+                                                                                      'name' => $owner->getNamePresentation(
+                                                                                      )
+        ] : [];
 
         $available_user_ids = $this->getCourseMembers();
         $available_users = [];

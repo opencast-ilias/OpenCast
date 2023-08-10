@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -26,10 +25,6 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected $objectSettings;
     /**
-     * @var EventRepository
-     */
-    private $event_repository;
-    /**
      * @var ACLUtils
      */
     private $ACLUtils;
@@ -51,7 +46,6 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->user = $DIC->user();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->objectSettings = $objectSettings;
-        $this->event_repository = $event_repository;
         $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
         $tabs->clearTargets();
@@ -103,6 +97,7 @@ class xoctGrantPermissionGUI extends xoctGUI
 
     /**
      * @param $data
+     * @return never
      */
     protected function outJson($data)
     {
@@ -115,7 +110,7 @@ class xoctGrantPermissionGUI extends xoctGUI
     {
     }
 
-    public function getAll()
+    public function getAll(): void
     {
         /**
          * @var $xoctUser xoctUser
@@ -171,10 +166,7 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->outJson($arr);
     }
 
-    /**
-     * @return array
-     */
-    protected function getCourseMembers()
+    protected function getCourseMembers(): array
     {
         $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
         $p = $parent->getMembersObject();

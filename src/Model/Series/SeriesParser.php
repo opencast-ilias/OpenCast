@@ -17,7 +17,6 @@ class SeriesParser
         $this->ACLParser = $ACLParser;
     }
 
-
     public function parseAPIResponse(stdClass $data): Series
     {
         $series = new Series();

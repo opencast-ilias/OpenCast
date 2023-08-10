@@ -35,7 +35,7 @@ trait OutputTrait
     public function getHTML($value): string
     {
         global $DIC;
-        $plugin_object = \ilOpenCastPlugin::getInstance();
+        \ilOpenCastPlugin::getInstance();
 
         if (is_array($value)) {
             $html = "";
@@ -51,11 +51,8 @@ trait OutputTrait
 
                 // Component instance
                 case ($value instanceof Component):
-                    if ($DIC->ctrl()->isAsynch()) {
-                        $html = $DIC->ui()->renderer()->renderAsync($value);
-                    } else {
-                        $html = $DIC->ui()->renderer()->render($value);
-                    }
+                    $html = $DIC->ctrl()->isAsynch() ? $DIC->ui()->renderer()->renderAsync($value) : $DIC->ui(
+                    )->renderer()->render($value);
                     break;
 
                 // ilTable2GUI instance
@@ -81,11 +78,10 @@ trait OutputTrait
                 // Not supported!
                 default:
                     throw new Exception("Class " . get_class($value) . " is not supported for output!");
-                    break;
             }
         }
 
-        return strval($html);
+        return (string) $html;
     }
 
     /**
@@ -125,7 +121,7 @@ trait OutputTrait
         switch (true) {
             case (is_string($value)):
             case (is_int($value)):
-            case (is_double($value)):
+            case (is_float($value)):
             case (is_bool($value)):
             case (is_array($value)):
             case ($value instanceof \stdClass):

@@ -2,7 +2,6 @@
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 
 /**

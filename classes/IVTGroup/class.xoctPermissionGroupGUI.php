@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
@@ -26,10 +25,6 @@ class xoctPermissionGroupGUI extends xoctGUI
      */
     private $objectSettings;
     /**
-     * @var \ilCtrlInterface
-     */
-    private $ctrl;
-    /**
      * @var \ilGlobalTemplateInterface
      */
     private $main_tpl;
@@ -37,9 +32,9 @@ class xoctPermissionGroupGUI extends xoctGUI
     public function __construct(?ObjectSettings $objectSettings = null)
     {
         global $DIC;
+        parent::__construct();
         $tabs = $DIC->tabs();
         $main_tpl = $DIC->ui()->mainTemplate();
-        $this->ctrl = $DIC->ctrl();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         if ($objectSettings instanceof ObjectSettings) {
             $this->objectSettings = $objectSettings;
@@ -121,6 +116,7 @@ class xoctPermissionGroupGUI extends xoctGUI
 
     /**
      * @param $data
+     * @return never
      */
     protected function outJson($data)
     {
@@ -133,7 +129,7 @@ class xoctPermissionGroupGUI extends xoctGUI
     {
     }
 
-    public function getAll()
+    public function getAll(): void
     {
         $arr = [];
         foreach (PermissionGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
@@ -148,7 +144,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         $this->outJson($arr);
     }
 
-    public function getParticipants()
+    public function getParticipants(): void
     {
         $data = [];
         /**
@@ -166,6 +162,9 @@ class xoctPermissionGroupGUI extends xoctGUI
         $this->outJson($data);
     }
 
+    /**
+     * @return never
+     */
     protected function create()
     {
         $obj = new PermissionGroup();

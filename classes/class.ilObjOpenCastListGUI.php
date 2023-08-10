@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
@@ -20,6 +19,31 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 {
+    /**
+     * @var bool
+     */
+    public $subscribe_enabled;
+    /**
+     * @var bool
+     */
+    public $payment_enabled;
+    /**
+     * @var bool
+     */
+    public $link_enabled;
+    /**
+     * @var bool
+     */
+    public $delete_enabled;
+    /**
+     * @var bool
+     */
+    public $cut_enabled;
+    /**
+     * @var bool
+     */
+    public $adm_commands_included;
+    public $container_obj;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -27,23 +51,17 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
      */
     public $plugin;
 
-    public function initType()
+    public function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
 
-    /**
-     * @return string
-     */
-    public function getGuiClass()
+    public function getGuiClass(): string
     {
         return 'ilObjOpenCastGUI';
     }
 
-    /**
-     * @return array
-     */
-    public function initCommands()
+    public function initCommands(): array
     {
         // Always set
         $this->timings_enabled = true;
@@ -59,7 +77,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         $this->cut_enabled = true;
         $this->copy_enabled = true;
 
-        $commands = [
+        return [
             [
                 'permission' => 'read',
                 'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT,
@@ -71,8 +89,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
                 'lang_var' => 'edit'
             ]
         ];
-
-        return $commands;
     }
 
     public function insertDeleteCommand()
@@ -81,8 +97,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
             return;
         }
 
-        if (is_object($this->getContainerObject()) and
-            $this->getContainerObject() instanceof ilAdministrationCommandHandling) {
+        if (is_object($this->getContainerObject()) && $this->getContainerObject(
+            ) instanceof ilAdministrationCommandHandling) {
             if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
                 $this->ctrl->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
                 $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
@@ -111,7 +127,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
     }
 
-    protected function getObject()
+    protected function getObject(): \ilObjOpenCast
     {
         return new ilObjOpenCast($this->ref_id);
     }
@@ -177,10 +193,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
     /**
      * get all alert properties
-     *
-     * @return array
      */
-    public function getAlertProperties()
+    public function getAlertProperties(): array
     {
         $alert = [];
         foreach ((array) $this->getCustomProperties([]) as $prop) {
@@ -198,7 +212,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
      * @return string formatted date
      */
 
-    public static function format_date_time($unix_timestamp)
+    public static function format_date_time($unix_timestamp): string
     {
         global $DIC;
         $language = $DIC->language();

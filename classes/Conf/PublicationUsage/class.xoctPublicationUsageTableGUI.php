@@ -1,7 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\DI\OpencastDIC;
@@ -36,8 +34,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     protected $repository;
 
     /**
-     * @param xoctPublicationUsageGUI $a_parent_obj
-     * @param string                  $a_parent_cmd
+     * @param string $a_parent_cmd
      */
     public function __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd)
     {
@@ -106,8 +103,6 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     }
 
     /**
-     * @param PublicationUsage $xoctPublicationUsage
-     *
      * @throws DICException
      */
     protected function addActionMenu(PublicationUsage $xoctPublicationUsage)
@@ -148,10 +143,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     {
         $this->addFilterItem($item);
         $item->readFromSession();
-        if ($item instanceof ilCheckboxInputGUI) {
-            $this->filter[$item->getPostVar()] = $item->getChecked();
-        } else {
-            $this->filter[$item->getPostVar()] = $item->getValue();
-        }
+        $this->filter[$item->getPostVar()] = $item instanceof ilCheckboxInputGUI ? $item->getChecked(
+        ) : $item->getValue();
     }
 }

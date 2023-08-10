@@ -3,7 +3,6 @@
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -198,7 +197,7 @@ class xoctEventGUI extends xoctGUI
      * @throws ilCtrlException
      * @throws xoctException
      */
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $nextClass = $this->ctrl->getNextClass();
 
@@ -389,7 +388,7 @@ class xoctEventGUI extends xoctGUI
         $this->initViewSwitcherHTML('list');
 
         if (isset($_GET[xoctEventTableGUI::getGeneratedPrefix($this->getObjId()) . '_xpt'])
-            || !empty($_POST)
+            || $_POST !== []
             || PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY)) {
             // load table synchronously
             return $this->getTableGUI();
@@ -533,14 +532,15 @@ class xoctEventGUI extends xoctGUI
 
     /**
      * ajax call
+     * @return never
      */
-    public function asyncGetTableGUI()
+    public function asyncGetTableGUI(): void
     {
         echo $this->getTableGUI();
         exit();
     }
 
-    public function getTableGUI()
+    public function getTableGUI(): string
     {
         $modals_html = $this->getModalsHTML();
         $xoctEventTableGUI = $this->eventTableBuilder->table($this, self::CMD_STANDARD, $this->objectSettings);
@@ -564,15 +564,15 @@ class xoctEventGUI extends xoctGUI
 
     /**
      * ajax call
+     * @return never
      */
-    public function asyncGetTilesGUI()
+    public function asyncGetTilesGUI(): void
     {
         echo $this->getTilesGUI();
         exit();
     }
 
     /**
-     * @return string
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
@@ -673,7 +673,7 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    public function getDefaultWorkflowParameters()
+    public function getDefaultWorkflowParameters(): \stdClass
     {
         $WorkflowParameter = new WorkflowParameter();
         $defaultParameter = new stdClass();
@@ -767,8 +767,6 @@ class xoctEventGUI extends xoctGUI
     }
 
     /**
-     * @param xoctException $e
-     * @return bool
      * @throws xoctException
      */
     private function checkAndShowConflictMessage(xoctException $e): bool
@@ -839,7 +837,7 @@ class xoctEventGUI extends xoctGUI
     /**
      *
      */
-    public function opencaststudio()
+    public function opencaststudio(): void
     {
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
             ilUtil::sendFailure($this->txt('msg_no_access'), true);
@@ -870,7 +868,7 @@ class xoctEventGUI extends xoctGUI
     /**
      *
      */
-    public function cut()
+    public function cut(): void
     {
         $xoctUser = xoctUser::getInstance($this->user);
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
@@ -891,15 +889,15 @@ class xoctEventGUI extends xoctGUI
     /**
      * @throws xoctException
      */
-    public function download()
+    public function download(): void
     {
         $event_id = filter_input(INPUT_GET, 'event_id', FILTER_SANITIZE_STRING);
         $publication_id = filter_input(INPUT_GET, 'pub_id', FILTER_SANITIZE_STRING);
         $event = $this->event_repository->find($event_id);
         $download_publications = $event->publications()->getDownloadPublications();
         if ($publication_id) {
-            $publication = array_filter($download_publications, function ($publication) use ($publication_id) {
-                return $publication->getId() == $publication_id;
+            $publication = array_filter($download_publications, function ($publication) use ($publication_id): bool {
+                return $publication->getId() === $publication_id;
             });
             $publication = array_shift($publication);
         } else {
@@ -937,7 +935,7 @@ class xoctEventGUI extends xoctGUI
     /**
      * @throws xoctException
      */
-    public function annotate()
+    public function annotate(): void
     {
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
 
@@ -956,7 +954,7 @@ class xoctEventGUI extends xoctGUI
     /**
      *
      */
-    public function setOnline()
+    public function setOnline(): void
     {
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
         $event->getXoctEventAdditions()->setIsOnline(true);
@@ -967,7 +965,7 @@ class xoctEventGUI extends xoctGUI
     /**
      *
      */
-    public function setOffline()
+    public function setOffline(): void
     {
         $event = $this->event_repository->find($_GET[self::IDENTIFIER]);
         $event->getXoctEventAdditions()->setIsOnline(false);
@@ -1086,7 +1084,7 @@ class xoctEventGUI extends xoctGUI
             foreach (array_filter(explode(',', $workflow->getParameters())) as $param) {
                 $params[$param] = 'true';
             }
-            if (!empty($params)) {
+            if ($params !== []) {
                 $request['configuration'] = json_encode($params, JSON_THROW_ON_ERROR);
             }
             xoctRequest::root()->workflows()->post($request);
@@ -1174,10 +1172,9 @@ class xoctEventGUI extends xoctGUI
     }
 
     /**
-     * @return bool
      * @throws xoctException
      */
-    private function unpublish(Event $event)
+    private function unpublish(Event $event): bool
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
         xoctRequest::root()->workflows()->post([
@@ -1250,11 +1247,9 @@ class xoctEventGUI extends xoctGUI
     }
 
     /**
-     * @param Event $event
      * @param       $message
-     * @return string
      */
-    protected function getQualityReportMessage(Event $event, $message)
+    protected function getQualityReportMessage(Event $event, $message): string
     {
         $link = ilLink::_getStaticLink(
             $_GET['ref_id'],
@@ -1264,8 +1259,7 @@ class xoctEventGUI extends xoctGUI
         $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
         $crs_grp_role = ilObjOpenCast::_getCourseOrGroupRole();
-        $mail_body =
-            "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
+        return "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
             . "Es gab eine neue Meldung im Bereich «Qualitätsprobleme melden». <br><br>"
             . "<b>Benutzer/in:</b> " . $this->user->getLogin() . ", " . $this->user->getEmail() . " <br>"
             . "<b>Rolle im ILIAS-Kurs:</b> $crs_grp_role <br><br>"
@@ -1278,20 +1272,17 @@ class xoctEventGUI extends xoctGUI
             . "<hr>"
             . nl2br($message) . "<br>"
             . "<hr>";
-        return $mail_body;
     }
 
     /**
      * @param $message
-     * @return string
      */
-    protected function getDateReportMessage($message)
+    protected function getDateReportMessage($message): string
     {
         $link = ilLink::_getStaticLink($_GET['ref_id'], ilOpenCastPlugin::PLUGIN_ID);
         $link = '<a href="' . $link . '">' . $link . '</a>';
         $series = xoctInternalAPI::getInstance()->series()->read($_GET['ref_id']);
-        $mail_body =
-            "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
+        return "Dies ist eine automatische Benachrichtigung des ILIAS Opencast Plugins <br><br>"
             . "Es gab eine neue Meldung im Bereich «geplante Termine anpassen». <br><br>"
             . "<b>Benutzer/in:</b> " . $this->user->getLogin() . ", " . $this->user->getEmail() . " <br><br>"
             . "<b>Opencast Serie in ILIAS:</b> $link<br>"
@@ -1301,13 +1292,11 @@ class xoctEventGUI extends xoctGUI
             . "<hr>"
             . nl2br($message) . "<br>"
             . "<hr>";
-        return $mail_body;
     }
 
     /**
      * @param $key
      *
-     * @return string
      * @throws DICException
      */
     public function txt($key): string
@@ -1315,16 +1304,12 @@ class xoctEventGUI extends xoctGUI
         return $this->plugin->txt('event_' . $key);
     }
 
-    /**
-     * @return int
-     */
-    public function getObjId()
+    public function getObjId(): int
     {
         return $this->objectSettings->getObjId();
     }
 
     /**
-     * @return EventModals
      * @throws DICException
      * @throws ilTemplateException
      */
@@ -1353,7 +1338,8 @@ class xoctEventGUI extends xoctGUI
     protected function getIntroTextHTML()
     {
         $intro_text = '';
-        if ($this->objectSettings->getIntroductionText()) {
+        if ($this->objectSettings->getIntroductionText() !== '' && $this->objectSettings->getIntroductionText(
+            ) !== '0') {
             $intro = new ilTemplate(
                 './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html',
                 '',

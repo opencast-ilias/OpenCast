@@ -5,8 +5,6 @@ namespace srag\Plugins\Opencast\Util\Transformator;
 use ilDateTime;
 use ilXmlWriter;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use DateTimeZone;
-use Exception;
 
 /**
  * Class MetadataToXML
@@ -23,29 +21,22 @@ class MetadataToXML
      */
     protected $metadata;
 
-
     /**
      * MetadataToXML constructor.
-     *
-     * @param Metadata $metadata
      */
     public function __construct(Metadata $metadata)
     {
         $this->metadata = $metadata;
     }
 
-
-    /**
-     * @return string
-     */
     public function getXML(): string
     {
         $xml_writer = new ilXMLWriter();
         $xml_writer->xmlHeader();
         $xml_writer->xmlStartTag('dublincore', [
-            'xmlns'         => 'http://www.opencastproject.org/xsd/1.0/dublincore/',
+            'xmlns' => 'http://www.opencastproject.org/xsd/1.0/dublincore/',
             'xmlns:dcterms' => 'http://purl.org/dc/terms/',
-            'xmlns:xsi'     => 'http://www.w3.org/2001/XMLSchema-instance'
+            'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance'
         ]);
         $xml_writer->xmlElement('dcterms:title', [], $this->metadata->getField('title')->getValue());
         $xml_writer->xmlElement('dcterms:description', [], $this->metadata->getField('description')->getValue());
@@ -56,7 +47,11 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:rightsHolder', [], $this->metadata->getField('rightsHolder')->getValue());
 
         $start_end_string_iso = (new ilDateTime(
-            strtotime($this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField('startTime')->getValue()),
+            strtotime(
+                $this->metadata->getField('startDate')->getValue() . ' ' . $this->metadata->getField(
+                    'startTime'
+                )->getValue()
+            ),
             IL_CAL_UNIX
         )
         )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z');

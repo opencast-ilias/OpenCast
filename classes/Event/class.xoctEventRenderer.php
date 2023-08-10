@@ -3,8 +3,6 @@
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -24,6 +22,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 class xoctEventRenderer
 {
     use TranslatorTrait;
+
     public const LANG_MODULE = 'event';
     /**
      * @var ilOpenCastPlugin
@@ -82,10 +81,7 @@ class xoctEventRenderer
         $this->renderer = $ui->renderer();
     }
 
-    /**
-     * @param EventModals $modals
-     */
-    public static function initModals(EventModals $modals)
+    public static function initModals(EventModals $modals): void
     {
         self::$modals = $modals;
     }
@@ -96,7 +92,7 @@ class xoctEventRenderer
      * @param        $value       string
      * @param string $block_title string
      */
-    public function insert(&$tpl, $variable, $value, $block_title = '')
+    public function insert(&$tpl, $variable, $value, $block_title = ''): void
     {
         if ($block_title) {
             $tpl->setCurrentBlock($block_title);
@@ -116,7 +112,7 @@ class xoctEventRenderer
      *
      * @throws xoctException
      */
-    public function insertPreviewImage(&$tpl, $block_title = 'preview_image', $variable = 'PREVIEW_IMAGE')
+    public function insertPreviewImage(&$tpl, $block_title = 'preview_image', $variable = 'PREVIEW_IMAGE'): void
     {
         $this->insert($tpl, $variable, $this->getPreviewImageHTML(), $block_title);
     }
@@ -133,10 +129,7 @@ class xoctEventRenderer
         return $preview_image_tpl->get();
     }
 
-    /**
-     * @return string
-     */
-    public function getPreviewLink()
+    public function getPreviewLink(): string
     {
         return 'data-preview_link="' . $this->event->getIdentifier() . '"';
     }
@@ -162,7 +155,7 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
+    public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
     {
         if ($player_link_html = $this->getPlayerLinkHTML($button_type)) {
             $this->insert($tpl, $variable, $player_link_html, $block_title);
@@ -185,7 +178,9 @@ class xoctEventRenderer
             $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
             $link_tpl->setVariable(
                 'LINK_TEXT',
-                $this->plugin->txt($this->event->isLiveEvent() ? self::LANG_MODULE . '_player_live' : self::LANG_MODULE . '_player')
+                $this->plugin->txt(
+                    $this->event->isLiveEvent() ? self::LANG_MODULE . '_player_live' : self::LANG_MODULE . '_player'
+                )
             );
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
             $link_tpl->setVariable('PREVIEW_LINK', $this->getPreviewLink());
@@ -205,9 +200,6 @@ class xoctEventRenderer
         }
     }
 
-    /**
-     * @return string
-     */
     public function getInternalPlayerLink(): string
     {
         $this->ctrl->clearParametersByClass(xoctEventGUI::class);
@@ -239,10 +231,7 @@ class xoctEventRenderer
         return $modal;
     }
 
-    /**
-     * @return string
-     */
-    public function getModalLink()
+    public function getModalLink(): string
     {
         return 'data-toggle="modal" data-target="#modal_' . $this->event->getIdentifier() . '"';
     }
@@ -257,8 +246,12 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
-    {
+    public function insertDownloadLink(
+        &$tpl,
+        $block_title = 'link',
+        $variable = 'LINK',
+        $button_type = 'btn-info'
+    ): void {
         if ($download_link_html = $this->getDownloadLinkHTML($button_type)) {
             $this->insert($tpl, $variable, $download_link_html, $block_title);
         }
@@ -275,13 +268,13 @@ class xoctEventRenderer
     public function getDownloadLinkHTML($button_type = 'btn_info')
     {
         $download_dtos = $this->event->publications()->getDownloadDtos(false);
-        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
+        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && ($download_dtos !== [])) {
             if ($this->objectSettings instanceof ObjectSettings && $this->objectSettings->getStreamingOnly()) {
                 return '';
             }
             $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
             if ($multi) {
-                $items = array_map(function ($dto) {
+                $items = array_map(function ($dto): \ILIAS\UI\Component\Link\Standard {
                     $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
                     $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
                     return $this->factory->link()->standard(
@@ -319,8 +312,12 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
-    {
+    public function insertAnnotationLink(
+        &$tpl,
+        $block_title = 'link',
+        $variable = 'LINK',
+        $button_type = 'btn-info'
+    ): void {
         if ($annotation_link_html = $this->getAnnotationLinkHTML($button_type)) {
             $this->insert($tpl, $variable, $annotation_link_html, $block_title);
         }
@@ -364,7 +361,7 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE')
+    public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE'): void
     {
         $this->insert($tpl, $variable, $this->getTitleHTML(), $block_title);
     }
@@ -377,23 +374,17 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertDescription(&$tpl, $block_title = 'description', $variable = 'DESCRIPTION')
+    public function insertDescription(&$tpl, $block_title = 'description', $variable = 'DESCRIPTION'): void
     {
         $this->insert($tpl, $variable, $this->getDescriptionHTML(), $block_title);
     }
 
-    /**
-     * @return string
-     */
-    public function getTitleHTML()
+    public function getTitleHTML(): string
     {
         return $this->event->getTitle();
     }
 
-    /**
-     * @return string
-     */
-    public function getDescriptionHTML()
+    public function getDescriptionHTML(): string
     {
         return $this->event->getDescription();
     }
@@ -406,7 +397,7 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE')
+    public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE'): void
     {
         if ($state_html = $this->getStateHTML()) {
             $this->insert($tpl, $variable, $state_html, $block_title);
@@ -465,7 +456,7 @@ class xoctEventRenderer
      * @param string $block_title
      * @param string $variable
      */
-    public function insertPresenter(&$tpl, $block_title = 'presenter', $variable = 'PRESENTER')
+    public function insertPresenter(&$tpl, $block_title = 'presenter', $variable = 'PRESENTER'): void
     {
         $this->insert($tpl, $variable, $this->getPresenterHTML(), $block_title);
     }
@@ -483,15 +474,12 @@ class xoctEventRenderer
      * @param string $block_title
      * @param string $variable
      */
-    public function insertLocation(&$tpl, $block_title = 'location', $variable = 'LOCATION')
+    public function insertLocation(&$tpl, $block_title = 'location', $variable = 'LOCATION'): void
     {
         $this->insert($tpl, $variable, $this->getLocationHTML(), $block_title);
     }
 
-    /**
-     * @return string
-     */
-    public function getLocationHTML()
+    public function getLocationHTML(): string
     {
         return $this->event->getLocation();
     }
@@ -502,32 +490,26 @@ class xoctEventRenderer
      * @param string $variable
      * @param string $format
      */
-    public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i')
+    public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i'): void
     {
         $this->insert($tpl, $variable, $this->getStartHTML($format), $block_title);
     }
 
     /**
      * @param string $format
-     * @return string
      */
-    public function getStartHTML($format = 'd.m.Y - H:i')
+    public function getStartHTML($format = 'd.m.Y - H:i'): string
     {
         return $this->event->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format(
             $format
         );
     }
 
-    /**
-     * @param ilTemplate $tpl
-     * @param string     $block_title
-     * @param string     $variable
-     */
     public function insertUnprotectedLink(
         ilTemplate &$tpl,
         string $block_title = 'unprotected_link',
         string $variable = 'UNPROTECTED_LINK'
-    ) {
+    ): void {
         $link_tpl = $this->plugin->getTemplate('default/tpl.event_link.html');
         $link = $this->event->publications()->getUnprotectedLink() ?: '';
         $link_tpl->setVariable('URL', $link);
@@ -542,13 +524,12 @@ class xoctEventRenderer
      * @throws DICException
      * @throws ilTemplateException
      */
-    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER', string $username = null)
+    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER', string $username = null): void
     {
         $this->insert($tpl, $variable, $this->getOwnerHTML($username), $block_title);
     }
 
     /**
-     * @return string
      * @throws DICException
      * @throws ilTemplateException
      */
@@ -572,10 +553,7 @@ class xoctEventRenderer
         return $owner_tpl->get();
     }
 
-    /**
-     * @return bool
-     */
-    protected function isEventAccessible()
+    protected function isEventAccessible(): bool
     {
         $processing_state = $this->event->getProcessingState();
 

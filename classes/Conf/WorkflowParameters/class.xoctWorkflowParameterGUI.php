@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
@@ -54,9 +53,6 @@ class xoctWorkflowParameterGUI extends xoctGUI
      */
     private $language;
 
-    /**
-     * @param WorkflowParameterRepository $workflowParameterRepository
-     */
     public function __construct(
         WorkflowParameterRepository $workflowParameterRepository,
         SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository
@@ -161,7 +157,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
     {
         try {
             $params = $this->workflowParameterRepository->loadParametersFromAPI();
-            if (!count($params)) {
+            if ($params === []) {
                 ilUtil::sendFailure($this->plugin->txt('msg_no_params_found'), true);
                 $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
             }
@@ -216,10 +212,10 @@ class xoctWorkflowParameterGUI extends xoctGUI
         }
 
         // create/delete the series settings
-        if (count($to_delete_ids)) {
+        if ($to_delete_ids !== []) {
             $this->seriesWorkflowParameterRepository->deleteParamsForAllObjectsById($to_delete_ids);
         }
-        if (count($to_create_ids)) {
+        if ($to_create_ids !== []) {
             $this->seriesWorkflowParameterRepository->createParamsForAllObjects($to_create);
         }
 
@@ -371,7 +367,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
     /**
      *
      */
-    public function setOverwriteSeriesParameter()
+    public function setOverwriteSeriesParameter(): void
     {
         $this->overwrite_series_parameters = true;
     }

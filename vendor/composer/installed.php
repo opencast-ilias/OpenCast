@@ -3,7 +3,7 @@
         'name' => 'studer-raimann.ch/opencast',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2fc77421dddec85e6beb0f39ddd502512a1568c6',
+        'reference' => '55e0eb28ce253e8f5f677f79fb280a74c6dac88f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -211,7 +211,7 @@
         'studer-raimann.ch/opencast' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2fc77421dddec85e6beb0f39ddd502512a1568c6',
+            'reference' => '55e0eb28ce253e8f5f677f79fb280a74c6dac88f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

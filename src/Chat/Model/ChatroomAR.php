@@ -15,7 +15,6 @@ class ChatroomAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_room';
 
-
     /**
      * @param $event_id
      * @param $obj_id
@@ -42,13 +41,12 @@ class ChatroomAR extends ActiveRecord
      */
     public static function findBy($event_id, $obj_id)
     {
-        $chatroom = self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
-        return $chatroom;
+        return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
     }
 
     /**
      * @param $event_id string
-     * @param $obj_id int
+     * @param $obj_id   int
      * @return bool
      */
     public static function chatroomExists($event_id, $obj_id)
@@ -56,10 +54,7 @@ class ChatroomAR extends ActiveRecord
         return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->hasSets();
     }
 
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -95,7 +90,6 @@ class ChatroomAR extends ActiveRecord
      */
     protected $obj_id;
 
-
     /**
      * @return int
      */
@@ -104,15 +98,13 @@ class ChatroomAR extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return string
@@ -122,15 +114,13 @@ class ChatroomAR extends ActiveRecord
         return $this->event_id;
     }
 
-
     /**
      * @param string $event_id
      */
-    public function setEventId($event_id)
+    public function setEventId($event_id): void
     {
         $this->event_id = $event_id;
     }
-
 
     /**
      * @return int
@@ -140,11 +130,10 @@ class ChatroomAR extends ActiveRecord
         return $this->obj_id;
     }
 
-
     /**
      * @param int $obj_id
      */
-    public function setObjId($obj_id)
+    public function setObjId($obj_id): void
     {
         $this->obj_id = $obj_id;
     }

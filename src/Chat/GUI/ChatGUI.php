@@ -5,8 +5,6 @@ namespace srag\Plugins\Opencast\Chat\GUI;
 use ilOpenCastPlugin;
 use ilTemplate;
 use ilTemplateException;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
@@ -31,18 +29,15 @@ class ChatGUI
      */
     private $template;
 
-
     /**
      * ChatGUI constructor.
      *
-     * @param TokenAR $token
      *
      */
     public function __construct(TokenAR $token)
     {
         $this->token = $token;
     }
-
 
     /**
      * @param bool $async
@@ -68,7 +63,10 @@ class ChatGUI
         // TODO: get rid of self::plugin() to be independent
         $template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
         $template->setVariable('URL', $url);
-        $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');
+        $template->setVariable(
+            'REFRESH_ICON',
+            self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png'
+        );
         $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             $this->template->addCss($chat_css_path);

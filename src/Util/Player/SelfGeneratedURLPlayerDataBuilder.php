@@ -54,9 +54,6 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
     }
 
     /**
-     * @param Media $medium
-     * @param string    $event_id
-     * @param int       $duration
      * @return string[]
      * @throws xoctException
      */

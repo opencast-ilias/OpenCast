@@ -108,7 +108,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
         switch ($field_name) {
             case 'prefill':
                 return $this->prefill->getValue();
-             case 'values':
+            case 'values':
                 return json_encode($this->values, JSON_THROW_ON_ERROR);
             default:
                 return null;
@@ -130,38 +130,26 @@ abstract class MDFieldConfigAR extends ActiveRecord
                 $decoded = json_decode($field_value, true, 512, JSON_THROW_ON_ERROR);
                 return is_array($decoded) ? $decoded : [];
             default:
-            return null;
+                return null;
         }
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldId(): string
     {
         return $this->field_id;
     }
 
-    /**
-     * @param string $field_id
-     */
-    public function setFieldId(string $field_id)
+    public function setFieldId(string $field_id): void
     {
         $this->field_id = $field_id;
     }
@@ -177,17 +165,11 @@ abstract class MDFieldConfigAR extends ActiveRecord
         }
     }
 
-    /**
-     * @param string $title_de
-     */
     public function setTitleDe(string $title_de): void
     {
         $this->title_de = $title_de;
     }
 
-    /**
-     * @param string $title_en
-     */
     public function setTitleEn(string $title_en): void
     {
         $this->title_en = $title_en;
@@ -198,70 +180,46 @@ abstract class MDFieldConfigAR extends ActiveRecord
         return $this->visible_for_permissions;
     }
 
-    public function setVisibleForPermissions(string $visible_for_permissions)
+    public function setVisibleForPermissions(string $visible_for_permissions): void
     {
         $this->visible_for_permissions = $visible_for_permissions;
     }
 
-    /**
-     * @return bool
-     */
     public function isRequired(): bool
     {
         return $this->required;
     }
 
-    /**
-     * @param bool $required
-     */
-    public function setRequired(bool $required)
+    public function setRequired(bool $required): void
     {
         $this->required = $required;
     }
 
-    /**
-     * @return bool
-     */
     public function isReadOnly(): bool
     {
         return $this->read_only;
     }
 
-    /**
-     * @param bool $read_only
-     */
-    public function setReadOnly(bool $read_only)
+    public function setReadOnly(bool $read_only): void
     {
         $this->read_only = $read_only;
     }
 
-    /**
-     * @return MDPrefillOption
-     */
     public function getPrefill(): MDPrefillOption
     {
         return $this->prefill;
     }
 
-    /**
-     * @param MDPrefillOption $prefill
-     */
-    public function setPrefill(MDPrefillOption $prefill)
+    public function setPrefill(MDPrefillOption $prefill): void
     {
         $this->prefill = $prefill;
     }
 
-    /**
-     * @return int
-     */
     public function getSort(): int
     {
         return $this->sort;
     }
 
-    /**
-     * @param int $sort
-     */
     public function setSort(int $sort): void
     {
         $this->sort = $sort;
@@ -287,7 +245,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
         return $string;
     }
 
-    public function setValuesFromEditableString(string $values)
+    public function setValuesFromEditableString(string $values): void
     {
         $this->values = [];
         if (empty($values)) {

@@ -68,7 +68,7 @@ class xoctBase
     /**
      * @param string $api_version
      */
-    public function setApiVersion($api_version)
+    public function setApiVersion($api_version): void
     {
         $this->api_version = $api_version;
     }
@@ -84,7 +84,7 @@ class xoctBase
     /**
      * @param array $api_versions
      */
-    public function setApiVersions($api_versions)
+    public function setApiVersions($api_versions): void
     {
         $this->api_versions = $api_versions;
     }
@@ -100,7 +100,7 @@ class xoctBase
     /**
      * @param string $organization_id
      */
-    public function setOrganizationId($organization_id)
+    public function setOrganizationId($organization_id): void
     {
         $this->organization_id = $organization_id;
     }
@@ -116,7 +116,7 @@ class xoctBase
     /**
      * @param string $organization_name
      */
-    public function setOrganizationName($organization_name)
+    public function setOrganizationName($organization_name): void
     {
         $this->organization_name = $organization_name;
     }
@@ -132,7 +132,7 @@ class xoctBase
     /**
      * @param string $organization_anonymous_role
      */
-    public function setOrganizationAnonymousRole($organization_anonymous_role)
+    public function setOrganizationAnonymousRole($organization_anonymous_role): void
     {
         $this->organization_anonymous_role = $organization_anonymous_role;
     }
@@ -148,7 +148,7 @@ class xoctBase
     /**
      * @param string $organization_admin_role
      */
-    public function setOrganizationAdminRole($organization_admin_role)
+    public function setOrganizationAdminRole($organization_admin_role): void
     {
         $this->organization_admin_role = $organization_admin_role;
     }

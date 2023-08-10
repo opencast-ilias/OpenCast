@@ -20,21 +20,26 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return Metadata
-     */
     public function getMetadata(): Metadata
     {
         return $this->metadata;
     }
 
+    /**
+     * @return array{metadata: string}
+     */
     public function jsonSerialize()
     {
         $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
 
         // for some reason, label etc. are not allowed here (unlike for events)
-        return ['metadata' => json_encode(array_map(function (MetadataField $field) {
-            return $field->jsonSerialize();
-        }, $this->metadata->getFields()), JSON_THROW_ON_ERROR)];
+        return [
+            'metadata' => json_encode(
+                array_map(function (MetadataField $field): array {
+                    return $field->jsonSerialize();
+                }, $this->metadata->getFields()),
+                JSON_THROW_ON_ERROR
+            )
+        ];
     }
 }

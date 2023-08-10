@@ -19,7 +19,7 @@ class xoctReportOverviewTableGUI extends TableGUI
      * @param $parent xoctReportOverviewGUI
      * @param $parent_cmd
      */
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, string $parent_cmd)
     {
         global $DIC;
         $language = $DIC->language();
@@ -29,9 +29,7 @@ class xoctReportOverviewTableGUI extends TableGUI
     }
 
     /**
-     * @param string $column
-     * @param array  $row
-     * @param bool   $format
+     * @param array $row
      *
      * @return string|void
      */
@@ -39,9 +37,6 @@ class xoctReportOverviewTableGUI extends TableGUI
     {
     }
 
-    /**
-     * @return array
-     */
     protected function getSelectableColumns2(): array
     {
         return [];
@@ -93,7 +88,7 @@ class xoctReportOverviewTableGUI extends TableGUI
             $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail(
                 $value['user_id']
             );
-            if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
+            if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
                 unset($data[$key]);
             } else {
                 $filtered[] = $value;

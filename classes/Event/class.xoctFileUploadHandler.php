@@ -126,9 +126,6 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         return $infos;
     }
 
-    /**
-     * @return UploadStorageService
-     */
     public function getUploadStorageService(): UploadStorageService
     {
         return $this->uploadStorageService;

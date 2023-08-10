@@ -4,7 +4,6 @@ use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 
@@ -36,7 +35,7 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected $renderer;
 
-    public function __construct($parent, $parent_cmd, WorkflowRepository $workflow_repository)
+    public function __construct($parent, string $parent_cmd, WorkflowRepository $workflow_repository)
     {
         global $DIC;
         $ui = $DIC->ui();
@@ -74,9 +73,7 @@ class xoctWorkflowTableGUI extends TableGUI
      *
      * @param     $column
      * @param     $row WorkflowAR
-     * @param int $format
      *
-     * @return string
      * @throws DICException
      * @throws ilTemplateException
      */
@@ -138,8 +135,6 @@ class xoctWorkflowTableGUI extends TableGUI
 
     /**
      * @param string $col
-     *
-     * @return bool
      */
     public function isColumnSelected($col): bool
     {

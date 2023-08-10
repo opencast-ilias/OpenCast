@@ -31,7 +31,6 @@ class Token
         $this->token = $token;
     }
 
-
     /**
      * @return string
      */

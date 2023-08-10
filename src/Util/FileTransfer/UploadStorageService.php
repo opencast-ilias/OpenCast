@@ -35,7 +35,6 @@ class UploadStorageService
     }
 
     /**
-     * @param UploadResult $uploadResult
      * @return string identifier
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
@@ -108,8 +107,6 @@ class UploadStorageService
     }
 
     /**
-     * @param string $identifier
-     * @param int    $fileSizeUnit
      * @return array{path: string, size: DataSize, name: string, mimeType: string}
      * @throws FileNotFoundException
      * @throws IOException

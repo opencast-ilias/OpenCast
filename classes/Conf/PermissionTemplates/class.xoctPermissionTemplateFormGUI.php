@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 
 /**
@@ -47,7 +46,6 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
     /**
      * @param xoctPermissionTemplateGUI $parent_gui
-     * @param PermissionTemplate        $xoctPermissionTemplate
      */
     public function __construct($parent_gui, PermissionTemplate $xoctPermissionTemplate)
     {
@@ -127,7 +125,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $input = new ilCheckboxInputGUI($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS), self::F_ADDED_ROLE);
         $input->setInfo($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS . '_info'));
 
-        if ($input->getValue()) {
+        if ($input->getValue() !== '' && $input->getValue() !== '0') {
             $newRole = $this->addAdditionalRolePermission();
             foreach ($newRole as $field) {
                 $input->addSubItem($field);
@@ -203,7 +201,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         return $array;
     }
 
-    public function fillForm()
+    public function fillForm(): void
     {
         $array = [
             self::F_DEFAULT => $this->object->isDefault(),
@@ -229,7 +227,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->setValuesByArray($array);
     }
 
-    public function saveForm()
+    public function saveForm(): bool
     {
         if (!$this->checkInput()) {
             return false;
@@ -249,7 +247,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
         $this->object->setAddedRole($this->getInput(self::F_ADDED_ROLE));
 
-        if ($this->getInput(self::F_ADDED_ROLE)) {
+        if ($this->getInput(self::F_ADDED_ROLE) !== '' && $this->getInput(self::F_ADDED_ROLE) !== '0') {
             $this->object->setAddedRoleName($this->getInput(self::F_ADDED_ROLE_NAME));
             $this->object->setAddedRoleRead($this->getInput(self::F_ADDED_ROLE_READ));
             $this->object->setAddedRoleWrite($this->getInput(self::F_ADDED_ROLE_WRITE));
@@ -265,7 +263,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             $this->object->setAddedRoleActionsAnnotate(null);
         }
         // reset other default template(s) if this one is set as default
-        if ($this->getInput(self::F_DEFAULT)) {
+        if ($this->getInput(self::F_DEFAULT) !== '' && $this->getInput(self::F_DEFAULT) !== '0') {
             foreach (PermissionTemplate::where(['is_default' => 1])->get() as $default_template) {
                 /** @var $default_template PermissionTemplate */
                 if ($default_template->getId() != $this->object->getId()) {

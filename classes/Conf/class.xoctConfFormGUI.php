@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 
@@ -80,7 +79,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
     /**
      *
      */
-    public function fillForm()
+    public function fillForm(): void
     {
         $array = [];
         foreach ($this->getItems() as $item) {
@@ -95,7 +94,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      *
      * @internal param $key
      */
-    private function getValuesForItem($item, &$array)
+    private function getValuesForItem($item, &$array): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
@@ -108,10 +107,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function saveObject()
+    public function saveObject(): bool
     {
         if (!$this->checkInput()) {
             return false;
@@ -127,7 +123,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
     /**
      * @param $item
      */
-    private function saveValueForItem($item)
+    private function saveValueForItem($item): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
@@ -142,12 +138,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI
 
     /**
      * @param $item
-     *
-     * @return bool
      */
-    public static function checkForSubItem($item)
+    public static function checkForSubItem($item): bool
     {
-        return !$item instanceof ilFormSectionHeaderGUI and !$item instanceof ilMultiSelectInputGUI;
+        return !$item instanceof ilFormSectionHeaderGUI && !$item instanceof ilMultiSelectInputGUI;
     }
 
     /**
@@ -460,7 +454,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->addItem($ri);
     }
 
-    private function initToUSection()
+    private function initToUSection(): void
     {
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('eula'));

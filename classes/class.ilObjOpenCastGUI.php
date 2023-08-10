@@ -4,8 +4,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -32,6 +30,7 @@ use srag\Plugins\Opencast\UI\LegacyFormWrapper;
  */
 class ilObjOpenCastGUI extends ilObjectPluginGUI
 {
+    public $creation_mode;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const CMD_SHOW_CONTENT = 'showContent';
@@ -63,7 +62,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     private $ilias_dic;
 
-    private function cleanUpDBCache()
+    private function cleanUpDBCache(): void
     {
         if (PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE) == PluginConfig::CACHE_DATABASE) {
             $bm = microtime(true);
@@ -82,10 +81,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->plugin = $this->opencast_dic->plugin();
     }
 
-    /**
-     * @return string
-     */
-    final public function getType()
+    final public function getType(): string
     {
         return ilOpenCastPlugin::PLUGIN_ID;
     }
@@ -93,12 +89,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     /**
      * @param $cmd
      */
-    public function performCommand($cmd)
+    public function performCommand($cmd): void
     {
         $this->{$cmd}();
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $this->checkPermission('read');
         try {
@@ -207,9 +203,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->cleanUpDBCache();
     }
 
-    /**
-     * @return ilObjOpenCast
-     */
     public function getObject(): ilObjOpenCast
     {
         return $this->object ?: new ilObjOpenCast();
@@ -237,27 +230,20 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->ilias_dic->ctrl()->redirectByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT);
     }
 
-    /**
-     * @return string
-     */
-    public function getAfterCreationCmd()
+    public function getAfterCreationCmd(): string
+    {
+        return self::CMD_SHOW_CONTENT;
+    }
+
+    public function getStandardCmd(): string
     {
         return self::CMD_SHOW_CONTENT;
     }
 
     /**
-     * @return string
-     */
-    public function getStandardCmd()
-    {
-        return self::CMD_SHOW_CONTENT;
-    }
-
-    /**
-     * @return bool
      * @throws DICException
      */
-    protected function setTabs()
+    protected function setTabs(): bool
     {
         /**
          * @var $objectSettings ObjectSettings
@@ -293,7 +279,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI())
             );
         }
-        if ($this->ilias_dic->user()->getId() == 6 and ilObjOpenCast::DEV) {
+        if ($this->ilias_dic->user()->getId() == 6 && ilObjOpenCast::DEV) {
             $this->ilias_dic->tabs()->addTab(
                 'migrate_event',
                 $this->plugin->txt('tab_migrate_event'),
@@ -328,7 +314,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return true;
     }
 
-    private function showEula()
+    private function showEula(): void
     {
         $this->tabs_gui->activateTab("eula");
         $this->tpl->setContent(PluginConfig::getConfig(PluginConfig::F_EULA));
@@ -336,12 +322,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     /**
      * @param string $a_new_type
-     * @return array
      * @throws DICException
      * @throws arException
      * @throws xoctException
      */
-    protected function initCreationForms($a_new_type)
+    protected function initCreationForms($a_new_type): array
     {
         if (!ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
             ilUtil::sendFailure($this->plugin->txt('msg_creation_failed'), true);
@@ -356,7 +341,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @param string     $type
      * @param bool|false $from_post
      */
-    public function initCreateForm($type, $from_post = false)
+    public function initCreateForm($type, $from_post = false): \srag\Plugins\Opencast\UI\LegacyFormWrapper
     {
         return new LegacyFormWrapper(
             $this->ilias_dic->ui()->renderer()->render(
@@ -377,7 +362,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @throws arException
      * @throws xoctException
      */
-    public function save()
+    public function save(): void
     {
         $creation_form = $this->buildUIForm()->withRequest($this->ilias_dic->http()->request());
         $data = $creation_form->getData();
@@ -393,11 +378,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @param ilObject $newObj
      * @throws DICException
      * @throws xoctException
      */
-    public function afterSave(ilObject $newObj)
+    public function afterSave(ilObject $newObj): void
     {
         global $DIC;
         /**
@@ -524,7 +508,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->object->getTitle()
                 );
             }
-            require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
             $list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpenCastPlugin::PLUGIN_ID);
             /**
              * @var $list_gui ilObjOpenCastListGUI
@@ -544,7 +527,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     /**
      * show information screen
      */
-    public function infoScreen()
+    public function infoScreen(): void
     {
         /**
          * @var $objectSettings ObjectSettings
@@ -555,7 +538,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->initHeader(false);
         $this->checkPermission("visible");
 
-        include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
         $info = new ilInfoScreenGUI($this);
         $info->enablePrivateNotes();
         $objectSettings = ObjectSettings::find($this->obj_id);
@@ -581,9 +563,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $info->addSection($this->plugin->txt('series_links'));
             $info->addProperty(
                 $this->plugin->txt(
-                    'series_video_portal_link',
-                    '',
-                    [PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)]
+                    'series_video_portal_link'
                 ),
                 $objectSettings->getVideoPortalLink()
             );
@@ -603,7 +583,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      *
      * @param bool $a_error
      */
-    public function deleteObject($a_error = false)
+    public function deleteObject($a_error = false): void
     {
         if ($_GET["item_ref_id"] != "") {
             $_POST["id"] = [$_GET["item_ref_id"]];
@@ -626,7 +606,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
      */
-    public function showDeleteConfirmation($a_ids, $a_supress_message = false)
+    public function showDeleteConfirmation($a_ids, $a_supress_message = false): bool
     {
         if (!is_array($a_ids) || count($a_ids) == 0) {
             ilUtil::sendFailure($this->ilias_dic->language()->txt("no_checkbox"), true);
@@ -635,15 +615,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         // Remove duplicate entries
-        $a_ids = array_unique((array) $a_ids);
+        $a_ids = array_unique($a_ids);
 
-        include_once("./Services/Utilities/classes/class.ilConfirmationGUI.php");
         $cgui = new ilConfirmationGUI();
 
         if (!$a_supress_message) {
             $msg = $this->ilias_dic->language()->txt("info_delete_sure");
 
-            if (!$this->ilias_dic->settings()->get('enable_trash')) {
+            if ($this->ilias_dic->settings()->get('enable_trash') === '' || $this->ilias_dic->settings()->get(
+                'enable_trash'
+            ) === '0') {
                 $msg .= "<br/>" . $this->ilias_dic->language()->txt("info_delete_warning_no_trash");
             }
 
@@ -675,8 +656,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
         $deps_html = "";
 
-        if (is_array($deps) && count($deps) > 0) {
-            include_once("./Services/Repository/classes/class.ilRepDependenciesTableGUI.php");
+        if (is_array($deps) && $deps !== []) {
             $tab = new ilRepDependenciesTableGUI($deps);
             $deps_html = "<br/><br/>" . $tab->getHTML();
         }
@@ -734,14 +714,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
             $tpl->setVariable("TXT_INTRO", $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_intro"));
 
-            if ($may_delete_any) {
+            if ($may_delete_any !== 0) {
                 $tpl->setVariable(
                     "TXT_INSTRUCTION",
                     $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_instruction")
                 );
             }
 
-            if ($items) {
+            if ($items !== []) {
                 $var_name = "mref_id[]";
 
                 foreach ($items as $item) {
@@ -781,7 +761,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 }
             }
 
-            if ($counter) {
+            if ($counter !== 0) {
                 $tpl->setCurrentBlock("add_info");
                 $tpl->setVariable(
                     "TXT_ADDITIONAL_INFO",
@@ -803,9 +783,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected function buildPath($ref_ids)
     {
-        include_once 'Services/Link/classes/class.ilLink.php';
-
-        if (!count($ref_ids)) {
+        if ($ref_ids === []) {
             return false;
         }
 

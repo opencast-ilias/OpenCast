@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -78,7 +77,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     /**
      *
      */
-    public function fillForm()
+    public function fillForm(): void
     {
         $array = [];
         foreach ($this->getItems() as $item) {
@@ -93,7 +92,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
      *
      * @internal param $key
      */
-    private function getValuesForItem($item, &$array)
+    private function getValuesForItem($item, &$array): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
@@ -106,10 +105,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function saveObject()
+    public function saveObject(): bool
     {
         if (!$this->checkInput()) {
             return false;
@@ -125,7 +121,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     /**
      * @param $item
      */
-    private function saveValueForItem($item)
+    private function saveValueForItem($item): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
@@ -140,12 +136,10 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
 
     /**
      * @param $item
-     *
-     * @return bool
      */
-    public static function checkForSubItem($item)
+    public static function checkForSubItem($item): bool
     {
-        return !$item instanceof ilFormSectionHeaderGUI and !$item instanceof ilMultiSelectInputGUI;
+        return !$item instanceof ilFormSectionHeaderGUI && !$item instanceof ilMultiSelectInputGUI;
     }
 
     /**

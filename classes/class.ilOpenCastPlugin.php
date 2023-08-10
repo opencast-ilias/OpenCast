@@ -1,7 +1,8 @@
 <?php
 
+require_once __DIR__ . "/../vendor/autoload.php";
+
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
@@ -20,8 +21,6 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Util\UpdateCheck;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * OpenCast repository object plugin
@@ -55,7 +54,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->db = $DIC->database();
     }
 
-    protected function beforeUpdate()
+    protected function beforeUpdate(): bool
     {
         // Check Version
         $check = new UpdateCheck($this->db);
@@ -74,10 +73,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function uninstallCustom()
+    protected function uninstallCustom(): bool
     {
         $this->db->dropTable(PermissionGrant::TABLE_NAME, false);
         $this->db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
@@ -117,15 +113,12 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return self::$cache;
     }
 
-    /**
-     * @return string
-     */
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return self::PLUGIN_NAME;
     }
 
-    public function allowCopy()
+    public function allowCopy(): bool
     {
         return true;
     }

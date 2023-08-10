@@ -27,7 +27,7 @@ class xoctLog extends ilLog
     /**
      * @param $log_level
      */
-    public static function init($log_level)
+    public static function init($log_level): void
     {
         self::$log_level = $log_level;
     }
@@ -63,7 +63,7 @@ class xoctLog extends ilLog
      * @param      $a_msg
      * @param null $log_level
      */
-    public function write($a_msg, $log_level = null)
+    public function write($a_msg, $log_level = null): void
     {
         if (self::relevant($log_level)) {
             parent::write($a_msg);
@@ -100,10 +100,7 @@ class xoctLog extends ilLog
         }
     }
 
-    /**
-     * @return string
-     */
-    public static function getFullPath()
+    public static function getFullPath(): string
     {
         $log = self::getInstance();
 

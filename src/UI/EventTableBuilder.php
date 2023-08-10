@@ -96,14 +96,20 @@ class EventTableBuilder
 
     public function filter(string $form_action): Standard
     {
-        $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable(ilObjOpenCastAccess::hasPermission('edit_videos'));
+        $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable(
+            ilObjOpenCastAccess::hasPermission('edit_videos')
+        );
         return $this->ui_service->filter()->standard(
             'xoct_event_table',
             $form_action,
-            array_column(array_map(function (MDFieldConfigEventAR $mdFieldConfig) {
-                return [$mdFieldConfig->getFieldId(), $this->mdFieldConfigToFilterItem($mdFieldConfig)];
-            }, $mdFieldConfigs), 1, 0),
-            array_map(function (MDFieldConfigEventAR $mdFieldConfig) {
+            array_column(
+                array_map(function (MDFieldConfigEventAR $mdFieldConfig): array {
+                    return [$mdFieldConfig->getFieldId(), $this->mdFieldConfigToFilterItem($mdFieldConfig)];
+                }, $mdFieldConfigs),
+                1,
+                0
+            ),
+            array_map(function (MDFieldConfigEventAR $mdFieldConfig): bool {
                 return true;
             }, $mdFieldConfigs),
             false,
@@ -128,7 +134,6 @@ class EventTableBuilder
             case MDDataType::date()->getTitle():
             case MDDataType::datetime()->getTitle():
             case MDDataType::time()->getTitle():
-                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
             default:
                 return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
         }
@@ -140,12 +145,12 @@ class EventTableBuilder
             return $events;
         }
         $filters = $this->filterData();
-        return array_filter($events, function (array $event) use ($filters, $objectSettings) {
+        return array_filter($events, function (array $event) use ($filters, $objectSettings): bool {
             $event_object = $event['object'];
             foreach ($filters as $key => $value) {
                 /** @var Event $event_object */
                 $md_value = $event_object->getMetadata()->getField($key)->toString();
-                if (strpos(strtolower($md_value), strtolower($value)) === false) {
+                if (stripos($md_value, strtolower($value)) === false) {
                     return false;
                 }
             }

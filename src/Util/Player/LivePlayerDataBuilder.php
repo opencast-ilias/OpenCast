@@ -12,6 +12,9 @@ use xoctRequest;
  */
 class LivePlayerDataBuilder extends PlayerDataBuilder
 {
+    /**
+     * @return array{streams: array<int, array{content: string, sources: array{hls: array<int, array{src: mixed, mimetype: mixed}>}}>, metadata: array{title: string}}
+     */
     public function buildStreamingData(): array
     {
         $episode_json = xoctRequest::root()->episodeJson($this->event->getIdentifier())->get(

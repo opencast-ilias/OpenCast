@@ -1,9 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class xoctMainGUI
@@ -47,7 +44,7 @@ class xoctMainGUI extends xoctGUI
      * @throws DICException
      * @throws ilCtrlException
      */
-    public function executeCommand()
+    public function executeCommand(): void
     {
         global $DIC;
         $nextClass = $this->ctrl->getNextClass();

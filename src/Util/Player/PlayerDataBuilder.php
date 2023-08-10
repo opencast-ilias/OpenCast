@@ -22,7 +22,6 @@ abstract class PlayerDataBuilder
 
     /**
      * PlayerDataBuilder constructor.
-     * @param Event $event
      */
     public function __construct(Event $event)
     {
@@ -30,7 +29,6 @@ abstract class PlayerDataBuilder
     }
 
     /**
-     * @return array
      * @throws xoctException
      */
     abstract public function buildStreamingData(): array;

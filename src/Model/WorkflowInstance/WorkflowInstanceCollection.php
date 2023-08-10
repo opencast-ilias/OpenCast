@@ -27,11 +27,9 @@ class WorkflowInstanceCollection extends APIObject
      */
     protected $workflows;
 
-
     /**
      * xoctWorkflow constructor.
      *
-     * @param string $event_id
      *
      * @throws xoctException
      */
@@ -43,40 +41,33 @@ class WorkflowInstanceCollection extends APIObject
         }
     }
 
-
     /**
-     * @param stdClass $data
-     *
      * @throws xoctException
      */
-    public function read(stdClass $data = null)
+    public function read(stdClass $data = null): void
     {
-        if ($data === null) {
-            $data = json_decode(xoctRequest::root()->workflows()
-                ->parameter('filter', 'event_identifier:' . $this->getEventId())
-                ->get(), null, 512, JSON_THROW_ON_ERROR) ?: new stdClass();
+        if (!$data instanceof \stdClass) {
+            $data = json_decode(
+                xoctRequest::root()->workflows()
+                           ->parameter('filter', 'event_identifier:' . $this->getEventId())
+                           ->get(),
+                null,
+                512,
+                JSON_THROW_ON_ERROR
+            ) ?: new stdClass();
         }
         $this->loadFromStdClass($data);
     }
 
-
-    /**
-     * @return string
-     */
     public function getEventId(): string
     {
         return $this->event_id;
     }
 
-
-    /**
-     * @param string $event_id
-     */
-    public function setEventId(string $event_id)
+    public function setEventId(string $event_id): void
     {
         $this->event_id = $event_id;
     }
-
 
     /**
      * @return WorkflowInstance[]
@@ -86,22 +77,17 @@ class WorkflowInstanceCollection extends APIObject
         return $this->workflows;
     }
 
-
     /**
      * @param WorkflowInstance[] $workflows
      */
-    public function setWorkflows(array $workflows)
+    public function setWorkflows(array $workflows): void
     {
-        if ($this->workflows != $workflows) {
+        if ($this->workflows !== $workflows) {
             $this->has_changed = true;
         }
         $this->workflows = $workflows;
     }
 
-
-    /**
-     * @return bool
-     */
     public function hasChanged(): bool
     {
         if ($this->has_changed) {
@@ -116,11 +102,7 @@ class WorkflowInstanceCollection extends APIObject
         return false;
     }
 
-
-    /**
-     * @param bool $has_changed
-     */
-    public function setHasChanged(bool $has_changed)
+    public function setHasChanged(bool $has_changed): void
     {
         $this->has_changed = $has_changed;
     }

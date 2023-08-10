@@ -30,33 +30,21 @@ class Series
      */
     protected $theme;
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @param string $identifier
-     */
     public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @return ACL
-     */
     public function getAccessPolicies(): ACL
     {
         return $this->access_policies;
     }
 
-    /**
-     * @param ACL $access_policies
-     */
     public function setAccessPolicies(ACL $access_policies): void
     {
         $this->access_policies = $access_policies;
@@ -75,17 +63,11 @@ class Series
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return int
-     */
     public function getTheme(): int
     {
         return $this->theme;
     }
 
-    /**
-     * @param int $theme
-     */
     public function setTheme(int $theme): void
     {
         $this->theme = $theme;
@@ -100,9 +82,6 @@ class Series
         return $template ? $template->getId() : 0;
     }
 
-    /**
-     * @return bool
-     */
     public function isPublishedOnVideoPortal(): bool
     {
         $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());

@@ -20,14 +20,10 @@ class SeriesWorkflowParameter extends ActiveRecord
     public const VALUE_SHOW_IN_FORM = WorkflowParameter::VALUE_SHOW_IN_FORM;
     public const VALUE_SHOW_IN_FORM_PRESET = WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET;
 
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var integer
@@ -78,7 +74,6 @@ class SeriesWorkflowParameter extends ActiveRecord
      */
     protected $value_admin;
 
-
     /**
      * @return int
      */
@@ -86,7 +81,6 @@ class SeriesWorkflowParameter extends ActiveRecord
     {
         return $this->id;
     }
-
 
     /**
      * @param int $id
@@ -100,7 +94,6 @@ class SeriesWorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
     /**
      * @return int
      */
@@ -108,7 +101,6 @@ class SeriesWorkflowParameter extends ActiveRecord
     {
         return $this->obj_id;
     }
-
 
     /**
      * @param int $obj_id
@@ -122,7 +114,6 @@ class SeriesWorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
     /**
      * @return string
      */
@@ -130,7 +121,6 @@ class SeriesWorkflowParameter extends ActiveRecord
     {
         return $this->param_id;
     }
-
 
     /**
      * @param string $param_id
@@ -144,15 +134,10 @@ class SeriesWorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
-    /**
-     * @return int
-     */
-    public function getDefaultValueMember()
+    public function getDefaultValueMember(): int
     {
         return (int) $this->value_member;
     }
-
 
     /**
      * @param int $value_member
@@ -166,15 +151,10 @@ class SeriesWorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
-    /**
-     * @return int
-     */
-    public function getDefaultValueAdmin()
+    public function getDefaultValueAdmin(): int
     {
         return (int) $this->value_admin;
     }
-
 
     /**
      * @param int $value_admin

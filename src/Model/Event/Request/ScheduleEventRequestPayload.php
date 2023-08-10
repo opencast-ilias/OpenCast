@@ -39,7 +39,9 @@ class ScheduleEventRequestPayload implements JsonSerializable
         $this->processing = $processing;
     }
 
-
+    /**
+     * @return array{metadata: string, acl: string, scheduling: string, processing: string}
+     */
     public function jsonSerialize()
     {
         return [

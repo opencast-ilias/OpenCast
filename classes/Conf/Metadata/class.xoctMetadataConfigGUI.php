@@ -4,7 +4,6 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
@@ -86,7 +85,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     /**
      * @throws xoctException
      */
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
         if (!in_array($cmd, self::$available_commands)) {
@@ -110,7 +109,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             );
         }
         $this->ctrl->clearParameters($this);
-        if (count($items)) {
+        if ($items !== []) {
             $this->toolbar->addComponent(
                 $this->ui->factory()->dropdown()->standard(
                     $items
@@ -189,10 +188,10 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function getAvailableMetadataFields(): array
     {
-        $already_configured = array_map(function (MDFieldConfigAR $md_config) {
+        $already_configured = array_map(function (MDFieldConfigAR $md_config): string {
             return $md_config->getFieldId();
         }, $this->repository->getAll(false));
-        $available_total = array_map(function (MDFieldDefinition $md_field_def) {
+        $available_total = array_map(function (MDFieldDefinition $md_field_def): string {
             return $md_field_def->getId();
         }, $this->getMetadataCatalogue()->getFieldDefinitions());
         return array_diff($available_total, $already_configured);
@@ -201,9 +200,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     abstract protected function getMetadataCatalogue(): MDCatalogue;
 
     /**
-     * @param string $field_id
      * @param string $cmd
-     * @return Standard
      * @throws DICException
      * @throws xoctException
      */
@@ -224,14 +221,18 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             )
                                            ->withRequired(true)
                                            ->withValue(
-                                               $md_field_config ? $md_field_config->getTitle('de') : ''
+                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                                   'de'
+                                               ) : ''
                                            ),
             'title_en' => $this->ui_factory->input()->field()->text(
                 $this->plugin->txt('md_title_en')
             )
                                            ->withRequired(true)
                                            ->withValue(
-                                               $md_field_config ? $md_field_config->getTitle('en') : ''
+                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                                   'en'
+                                               ) : ''
                                            ),
             'visible_for_permissions' => $this->ui_factory->input()->field()->select(
                 $this->plugin->txt('md_visible_for_permissions'),
@@ -241,7 +242,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 ]
             )->withRequired(true)
                                                           ->withValue(
-                                                              $md_field_config ? $md_field_config->getVisibleForPermissions(
+                                                              $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getVisibleForPermissions(
                                                               ) : null
                                                           ),
             'required' => $this->ui_factory->input()->field()->checkbox(
@@ -269,8 +270,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                                           ->withRequired(true)
                                           ->withDisabled($md_field_def->isReadOnly())
                                           ->withValue(
-                                              $md_field_config ? $md_field_config->getPrefill()->getValue(
-                                              ) : MDPrefillOption::T_NONE
+                                              $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getPrefill(
+                                              )->getValue() : MDPrefillOption::T_NONE
                                           )
         ];
 
@@ -279,7 +280,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $this->plugin->txt('md_values'),
                 $this->plugin->txt('md_values_info')
             )->withValue(
-                $md_field_config ? $md_field_config->getValuesAsEditableString() : ''
+                $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getValuesAsEditableString(
+                ) : ''
             )->withRequired(true)
                                                  ->withDisabled($md_field_def->isReadOnly());
         }
@@ -289,7 +291,9 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             [
                 'fields' => $this->ui_factory->input()->field()->section(
                     $fields,
-                    $this->plugin->txt('md_conf_form_' . ($md_field_config ? 'edit' : 'create'))
+                    $this->plugin->txt(
+                        'md_conf_form_' . ($md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? 'edit' : 'create')
+                    )
                 )
             ]
         );

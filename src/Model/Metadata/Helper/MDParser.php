@@ -33,7 +33,6 @@ class MDParser
         $this->metadataFactory = $metadataFactory;
     }
 
-
     /**
      * @throws xoctException
      */
@@ -93,7 +92,6 @@ class MDParser
                         "id" => $key,
                         "value" => $entry
                     ];
-
             }
             if (!in_array($field_data, $fields)) {
                 $fields[] = $field_data;
@@ -145,17 +143,18 @@ class MDParser
                 $key = array_search($fieldDefinition->getId(), array_column($fields, 'id'));
                 $field = $fields[$key];
             }
-            $metadata->addField((new MetadataField(
-                $field->id,
-                $fieldDefinition->getType()
-            ))->withValue($this->formatMDValueFromAPIResponse($field->value, $fieldDefinition->getType())));
+            $metadata->addField(
+                (new MetadataField(
+                    $field->id,
+                    $fieldDefinition->getType()
+                ))->withValue($this->formatMDValueFromAPIResponse($field->value, $fieldDefinition->getType()))
+            );
         }
         return $metadata;
     }
 
     /**
      * @param $value
-     * @param MDDataType $dataType
      * @return DateTime|mixed
      * @throws Exception
      */
@@ -169,7 +168,7 @@ class MDParser
                 if (is_int($value)) {
                     return date("H:i:s", $value);
                 }
-                // no break
+            // no break
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
                 return (string) $value;
@@ -177,15 +176,13 @@ class MDParser
                 if (!is_array($value)) {
                     return [$value];
                 }
-                // no break
+            // no break
             default:
                 return $value;
         }
     }
 
     /**
-     * @param array $data
-     * @return Metadata
      * @throws xoctException
      */
     public function parseFormDataEvent(array $data): Metadata
@@ -204,10 +201,12 @@ class MDParser
 
     private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
-        foreach (array_filter($data, function ($key) {
-            return strpos($key, 'md_') === 0;
-        }, ARRAY_FILTER_USE_KEY)
-                 as $id => $value) {
+        foreach (
+            array_filter($data, function ($key): bool {
+                return strpos($key, 'md_') === 0;
+            }, ARRAY_FILTER_USE_KEY)
+            as $id => $value
+        ) {
             $id = substr($id, 3);
             $definition = $catalogue->getFieldById($id);
             if ($definition->isReadOnly()) {
@@ -216,9 +215,10 @@ class MDParser
             if ($id == MDFieldDefinition::F_START_DATE) {
                 // start date must be split up into startDate and startTime for the OC api
                 $field = new MetadataField($id, MDDataType::date());
-                /** @var DateTimeImmutable $value */
                 $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));
-                $time_field = $value ? $time_field->withValue($value->setTimezone(new DateTimeZone('GMT'))->format('H:i:s')) : $time_field;
+                $time_field = $value ? $time_field->withValue(
+                    $value->setTimezone(new DateTimeZone('GMT'))->format('H:i:s')
+                ) : $time_field;
                 $metadata->addField($time_field);
             } else {
                 $field = new MetadataField($id, $definition->getType());
@@ -227,9 +227,11 @@ class MDParser
             if ($value && $definition->getType()->getTitle() === MDDataType::TYPE_TEXT_ARRAY && !is_array($value)) {
                 $value = explode(',', $value);
             }
-            $metadata->addField($value ? $field->withValue(
-                $value
-            ) : $field);
+            $metadata->addField(
+                $value ? $field->withValue(
+                    $value
+                ) : $field
+            );
         }
         return $metadata;
     }

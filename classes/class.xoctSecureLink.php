@@ -40,7 +40,12 @@ class xoctSecureLink
 
         $ip = ($restict_ip) ? self::getClientIP() : null;
 
-        $data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
+        $data = json_decode(
+            xoctRequest::root()->security()->sign($url, $valid_until, $ip),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        );
 
         if ($data->error) {
             return '';

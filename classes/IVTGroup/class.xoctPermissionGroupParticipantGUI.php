@@ -12,23 +12,23 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 class xoctPermissionGroupParticipantGUI extends xoctGUI
 {
     /**
+     * @var \srag\Plugins\Opencast\Model\Object\ObjectSettings
+     */
+    public $objectSettings;
+    /**
      * @var array
      */
     protected static $admin_commands = [
         self::CMD_CREATE,
         self::CMD_DELETE
     ];
-    /**
-     * @var \ilCtrlInterface
-     */
-    private $ctrl;
 
     public function __construct(?ObjectSettings $objectSettings = null)
     {
         global $DIC;
+        parent::__construct();
         $tabs = $DIC->tabs();
         $main_tpl = $DIC->ui()->mainTemplate();
-        $this->ctrl = $DIC->ctrl();
         if ($objectSettings instanceof ObjectSettings) {
             $this->objectSettings = $objectSettings;
         } else {
@@ -60,6 +60,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
 
     /**
      * @param $data
+     * @return never
      */
     protected function outJson($data)
     {
@@ -123,7 +124,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
 
     protected function create()
     {
-        if (!$_POST['user_id'] or !$_POST['group_id']) {
+        if (!$_POST['user_id'] || !$_POST['group_id']) {
             $this->outJson(false);
         }
         $xoctGroupParticipant = new PermissionGroupParticipant();

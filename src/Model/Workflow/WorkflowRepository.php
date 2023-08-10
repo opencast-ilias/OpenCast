@@ -11,9 +11,6 @@ namespace srag\Plugins\Opencast\Model\Workflow;
  */
 interface WorkflowRepository
 {
-    /**
-     * @return bool
-     */
     public function anyWorkflowExists(): bool;
 
     /**
@@ -24,24 +21,11 @@ interface WorkflowRepository
     /**
      * @param null $key
      * @param null $values
-     *
-     * @return array
      */
     public function getAllWorkflowsAsArray($key = null, $values = null): array;
 
-    /**
-     * @param string $workflow_id
-     * @param string $title
-     * @param string $parameters
-     * @param int $id
-     */
     public function store(string $workflow_id, string $title, string $parameters, int $id = 0);
 
-    /**
-     * @param string $workflow_id
-     *
-     * @return bool
-     */
     public function exists(string $workflow_id): bool;
 
     /**
@@ -50,13 +34,11 @@ interface WorkflowRepository
     public function delete($id);
 
     /**
-     * @param string $workflow_id
      * @return WorkflowAR|null
      */
     public function getByWorkflowId(string $workflow_id);
 
     /**
-     * @param int $id
      * @return WorkflowAR|null
      */
     public function getById(int $id);

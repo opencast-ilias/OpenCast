@@ -76,7 +76,6 @@ class xoctEventAPI
      * @param String          $location
      * @param array           $additional_data
      *
-     * @return Event
      * @throws xoctException
      */
     public function create(
@@ -112,9 +111,9 @@ class xoctEventAPI
 
         $workflow_parameters = $this->workflow_param_repository->getGeneralAutomaticallySetParameters();
         if (is_array($additional_data['workflow_parameters'])) {
-            $workflow_parameters = $workflow_parameters + $additional_data['workflow_parameters'];
+            $workflow_parameters += $additional_data['workflow_parameters'];
         }
-        $workflow_parameters = array_map(function ($value) {
+        $workflow_parameters = array_map(function ($value): string {
             return $value == 1 ? 'true' : 'false';
         }, $workflow_parameters);
         $processing = new Processing(
@@ -160,8 +159,6 @@ class xoctEventAPI
      *
      * @param String $event_id
      * @param array  $data
-     *
-     * @return Event
      */
     public function update(string $event_id, array $data): Event
     {
@@ -195,7 +192,7 @@ class xoctEventAPI
             }
         }
 
-        if (count($data)) { // this prevents an update, if only 'online' has changed
+        if ($data !== []) { // this prevents an update, if only 'online' has changed
             $this->event_repository->update(
                 new UpdateEventRequest(
                     $event_id,
@@ -211,16 +208,13 @@ class xoctEventAPI
         return $event;
     }
 
-    public function delete($event_id): bool
+    public function delete(string $event_id): bool
     {
         $this->event_repository->delete($event_id);
         return true;
     }
 
     /**
-     * @param array $filter
-     *
-     * @return array
      * @throws xoctException
      */
     public function filter(array $filter): array

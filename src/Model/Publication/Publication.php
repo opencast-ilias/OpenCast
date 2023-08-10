@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
-use stdClass;
 
 /**
  * Class publication
@@ -18,32 +17,20 @@ class Publication extends APIObject
     public function __construct($id = '')
     {
         $this->setId($id);
-        if ($id) {
+        if ($id !== '' && $id !== '0') {
             $this->read();
         }
     }
 
-
-    public function read()
+    public function read(): void
     {
     }
-
-
-    /**
-     * @param \stdClass $class
-     * @throws \xoctException
-     */
-    public function loadFromStdClass(stdClass $class)
-    {
-        parent::loadFromStdClass($class);
-    }
-
 
     /**
      * @param $array
      * @throws \xoctException
      */
-    public function loadFromArray(array $array)
+    public function loadFromArray(array $array): void
     {
         parent::loadFromArray($array);
         $attachments = [];
@@ -62,7 +49,6 @@ class Publication extends APIObject
         }
         $this->setMedia($medias);
     }
-
 
     /**
      * @var string
@@ -89,7 +75,6 @@ class Publication extends APIObject
      */
     protected $attachments;
 
-
     /**
      * @return string
      */
@@ -98,15 +83,13 @@ class Publication extends APIObject
         return $this->url;
     }
 
-
     /**
      * @param string $url
      */
-    public function setUrl($url)
+    public function setUrl($url): void
     {
         $this->url = $url;
     }
-
 
     /**
      * @return string
@@ -116,15 +99,13 @@ class Publication extends APIObject
         return $this->id;
     }
 
-
     /**
      * @param string $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return string
@@ -134,15 +115,13 @@ class Publication extends APIObject
         return $this->channel;
     }
 
-
     /**
      * @param string $channel
      */
-    public function setChannel($channel)
+    public function setChannel($channel): void
     {
         $this->channel = $channel;
     }
-
 
     /**
      * @return string
@@ -152,15 +131,13 @@ class Publication extends APIObject
         return $this->mediatype;
     }
 
-
     /**
      * @param string $mediatype
      */
-    public function setMediatype($mediatype)
+    public function setMediatype($mediatype): void
     {
         $this->mediatype = $mediatype;
     }
-
 
     /**
      * @return Media[]
@@ -170,15 +147,13 @@ class Publication extends APIObject
         return $this->media;
     }
 
-
     /**
      * @param Media[] $media
      */
-    public function setMedia($media)
+    public function setMedia($media): void
     {
         $this->media = $media;
     }
-
 
     /**
      * @return Attachment[]
@@ -188,11 +163,10 @@ class Publication extends APIObject
         return $this->attachments;
     }
 
-
     /**
      * @param Attachment[] $attachments
      */
-    public function setAttachments($attachments)
+    public function setAttachments($attachments): void
     {
         $this->attachments = $attachments;
     }

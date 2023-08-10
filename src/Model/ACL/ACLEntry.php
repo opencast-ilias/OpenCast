@@ -16,7 +16,6 @@ class ACLEntry implements JsonSerializable
     public const WRITE = 'write';
     public const READ = 'read';
 
-
     /**
      * @var string
      */
@@ -30,18 +29,12 @@ class ACLEntry implements JsonSerializable
      */
     public $allow = false;
 
-    /**
-     * @param string $role
-     * @param string $action
-     * @param bool $allow
-     */
     public function __construct(string $role, string $action, bool $allow)
     {
         $this->role = $role;
         $this->action = $action;
         $this->allow = $allow;
     }
-
 
     public static function fromArray(array $data): self
     {
@@ -56,15 +49,13 @@ class ACLEntry implements JsonSerializable
         return $this->allow;
     }
 
-
     /**
      * @param boolean $allow
      */
-    public function setAllow($allow)
+    public function setAllow($allow): void
     {
         $this->allow = $allow;
     }
-
 
     /**
      * @return string
@@ -74,15 +65,13 @@ class ACLEntry implements JsonSerializable
         return $this->action;
     }
 
-
     /**
      * @param string $action
      */
-    public function setAction($action)
+    public function setAction($action): void
     {
         $this->action = $action;
     }
-
 
     /**
      * @return string
@@ -92,15 +81,17 @@ class ACLEntry implements JsonSerializable
         return $this->role;
     }
 
-
     /**
      * @param string $role
      */
-    public function setRole($role)
+    public function setRole($role): void
     {
         $this->role = $role;
     }
 
+    /**
+     * @return array{role: string, action: string, allow: bool}
+     */
     public function jsonSerialize()
     {
         return [

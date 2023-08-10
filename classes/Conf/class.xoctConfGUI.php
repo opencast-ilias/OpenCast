@@ -45,11 +45,6 @@ class xoctConfGUI extends xoctGUI
      */
     private $http;
 
-    /**
-     * @param Renderer                $renderer
-     * @param UploadHandler           $fileUploadHandler
-     * @param PaellaConfigFormBuilder $paellConfigFormBuilder
-     */
     public function __construct(
         Renderer $renderer,
         UploadHandler $fileUploadHandler,
@@ -65,7 +60,7 @@ class xoctConfGUI extends xoctGUI
         $this->paellConfigFormBuilder = $paellConfigFormBuilder;
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $nextClass = $this->ctrl->getNextClass();
 
@@ -91,7 +86,7 @@ class xoctConfGUI extends xoctGUI
         bool $plugin = true,
         string $lang = "",
         string $default = "MISSING %s"
-    ) {
+    ): string {
         return $this->translate('config_' . $key, $module, $placeholders, $plugin, $lang, $default);
     }
 

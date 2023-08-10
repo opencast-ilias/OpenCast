@@ -22,6 +22,7 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class EventAPIRepository implements EventRepository
 {
+    public $opencastDIC;
     public const CACHE_PREFIX = 'event-';
 
     /**
@@ -36,7 +37,6 @@ class EventAPIRepository implements EventRepository
      * @var EventParser
      */
     private $eventParser;
-
 
     public function __construct(
         Cache $cache,
@@ -56,13 +56,18 @@ class EventAPIRepository implements EventRepository
 
     public function fetch(string $identifier): Event
     {
-        $data = json_decode(xoctRequest::root()->events($identifier)
-            ->parameter('withmetadata', true)
-            ->parameter('withacl', true)
-            ->parameter('withpublications', true)
-            ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS))
-            ->get(), null, 512, JSON_THROW_ON_ERROR);
+        $data = json_decode(
+            xoctRequest::root()->events($identifier)
+                       ->parameter('withmetadata', true)
+                       ->parameter('withacl', true)
+                       ->parameter('withpublications', true)
+                       ->parameter('withscheduling', true)
+                       ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS))
+                       ->get(),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        );
         $event = $this->eventParser->parseAPIResponse($data, $identifier);
         if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
             $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
@@ -87,30 +92,41 @@ class EventAPIRepository implements EventRepository
         if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
             $this->ingestService->ingest($request);
         } else {
-            json_decode(xoctRequest::root()->events()
-                ->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
+            json_decode(
+                xoctRequest::root()->events()
+                           ->post($request->getPayload()->jsonSerialize()),
+                null,
+                512,
+                JSON_THROW_ON_ERROR
+            );
         }
     }
 
     /**
-     * @param array $filter
      * @param string $for_user
-     * @param array $roles
-     * @param int $offset
-     * @param int $limit
+     * @param array  $roles
+     * @param int    $offset
+     * @param int    $limit
      * @param string $sort
-     * @param bool $as_object
+     * @param bool   $as_object
      *
-     * @return Event[] | array
+     * @return \srag\Plugins\Opencast\Model\Event\Event[]|mixed[][]
      * @throws xoctException
      */
-    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false)
-    {
+    public function getFiltered(
+        array $filter,
+        $for_user = '',
+        $roles = [],
+        $offset = 0,
+        $limit = 1000,
+        $sort = '',
+        $as_object = false
+    ): array {
         /**
          * @var $event Event
          */
         $request = xoctRequest::root()->events();
-        if ($filter) {
+        if ($filter !== []) {
             $filter_string = '';
             foreach ($filter as $k => $v) {
                 $filter_string .= $k . ':' . $v . ',';
@@ -123,15 +139,15 @@ class EventAPIRepository implements EventRepository
         $request->parameter('offset', $offset);
         $request->parameter('limit', $limit);
 
-        if ($sort) {
+        if ($sort !== '' && $sort !== '0') {
             $request->parameter('sort', $sort);
         }
 
         $request->parameter('withmetadata', false)
-            ->parameter('withacl', true)
-            ->parameter('withpublications', true)
-            ->parameter('withscheduling', true)
-            ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
+                ->parameter('withacl', true)
+                ->parameter('withpublications', true)
+                ->parameter('withscheduling', true)
+                ->parameter('sign', (bool) PluginConfig::getConfig(PluginConfig::F_PRESIGN_LINKS));
 
         $data = json_decode($request->get($roles, $for_user), null, 512, JSON_THROW_ON_ERROR) ?: [];
         $return = [];
@@ -141,7 +157,7 @@ class EventAPIRepository implements EventRepository
         foreach ($data as $d) {
             $event = $this->eventParser->parseAPIResponse($d, $d->identifier);
 
-            if ($as_object === true) {
+            if ($as_object) {
                 $return[] = $event;
             } else {
                 $array_for_table = $event->getArrayForTable();
@@ -160,20 +176,25 @@ class EventAPIRepository implements EventRepository
     public function update(UpdateEventRequest $request): void
     {
         xoctRequest::root()->events($request->getIdentifier())
-            ->post($request->getPayload()->jsonSerialize());
+                   ->post($request->getPayload()->jsonSerialize());
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
     public function schedule(ScheduleEventRequest $request): string
     {
-        $response = json_decode(xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode(
+            xoctRequest::root()->events()->post($request->getPayload()->jsonSerialize()),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        );
         return is_array($response) ? $response[0]->identifier : $response->identifier;
     }
 
     public function updateACL(UpdateEventRequest $request): void
     {
         xoctRequest::root()->events($request->getIdentifier())
-            ->acl()->put($request->getPayload()->jsonSerialize());
+                   ->acl()->put($request->getPayload()->jsonSerialize());
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 }

@@ -7,10 +7,7 @@
  */
 class xoctCurl
 {
-    /**
-     * @param xoctCurlSettings $xoctCurlSettings
-     */
-    public static function init(xoctCurlSettings $xoctCurlSettings)
+    public static function init(xoctCurlSettings $xoctCurlSettings): void
     {
         self::$ip_v4 = $xoctCurlSettings->isIpV4();
         self::$username = $xoctCurlSettings->getUsername();
@@ -22,25 +19,25 @@ class xoctCurl
      */
     protected static $r_no = 1;
 
-    public function get()
+    public function get(): void
     {
         $this->setRequestType(self::REQ_TYPE_GET);
         $this->execute();
     }
 
-    public function put()
+    public function put(): void
     {
         $this->setRequestType(self::REQ_TYPE_PUT);
         $this->execute();
     }
 
-    public function post()
+    public function post(): void
     {
         $this->setRequestType(self::REQ_TYPE_POST);
         $this->execute();
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->setRequestType(self::REQ_TYPE_DELETE);
         $this->execute();
@@ -55,7 +52,7 @@ class xoctCurl
             if (self::$ip_v4) {
                 curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
             }
-            if ($this->getUsername() and $this->getPassword()) {
+            if ($this->getUsername() && $this->getPassword()) {
                 curl_setopt($ch, CURLOPT_USERPWD, $this->getUsername() . ':' . $this->getPassword());
             }
         }
@@ -66,7 +63,7 @@ class xoctCurl
 
         $this->prepare($ch);
 
-        if ($this->getRequestContentType()) {
+        if ($this->getRequestContentType() !== '' && $this->getRequestContentType() !== '0') {
             $this->addHeader('Content-Type: ' . $this->getRequestContentType());
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
@@ -114,19 +111,14 @@ class xoctCurl
             switch ($this->getResponseStatus()) {
                 case 403:
                     throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig);
-                    break;
                 case 401:
                     throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS);
-                    break;
                 case 404:
                     throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig);
-                    break;
                 case 409:
                     throw new xoctException(xoctException::API_CALL_STATUS_409, $resp_orig);
-                    break;
                 default:
                     throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig);
-                    break;
             }
         }
         //		curl_close($ch);
@@ -175,7 +167,7 @@ class xoctCurl
     /**
      * @var xoctCurlError
      */
-    protected $response_error = null;
+    protected $response_error;
     /**
      * @var string
      */
@@ -203,10 +195,8 @@ class xoctCurl
 
     /**
      * @param $ch
-     *
-     * @return string
      */
-    public static function getErrorText($ch)
+    public static function getErrorText($ch): string
     {
         $xoctCurlError = new xoctCurlError($ch);
 
@@ -224,7 +214,7 @@ class xoctCurl
     /**
      * @param boolean $ip_v4
      */
-    public static function setIpV4($ip_v4)
+    public static function setIpV4($ip_v4): void
     {
         self::$ip_v4 = $ip_v4;
     }
@@ -240,7 +230,7 @@ class xoctCurl
     /**
      * @param string $url
      */
-    public function setUrl($url)
+    public function setUrl($url): void
     {
         $this->url = $url;
     }
@@ -256,7 +246,7 @@ class xoctCurl
     /**
      * @param boolean $verify_host
      */
-    public function setVerifyHost($verify_host)
+    public function setVerifyHost($verify_host): void
     {
         self::$verify_host = $verify_host;
     }
@@ -272,7 +262,7 @@ class xoctCurl
     /**
      * @param boolean $verify_peer
      */
-    public function setVerifyPeer($verify_peer)
+    public function setVerifyPeer($verify_peer): void
     {
         self::$verify_peer = $verify_peer;
     }
@@ -288,7 +278,7 @@ class xoctCurl
     /**
      * @param string $request_type
      */
-    public function setRequestType($request_type)
+    public function setRequestType($request_type): void
     {
         $this->request_type = $request_type;
     }
@@ -296,7 +286,7 @@ class xoctCurl
     /**
      * @param $string
      */
-    public function addHeader($string)
+    public function addHeader($string): void
     {
         $this->headers[] = $string;
     }
@@ -312,7 +302,7 @@ class xoctCurl
     /**
      * @param array $headers
      */
-    public function setHeaders($headers)
+    public function setHeaders($headers): void
     {
         $this->headers = $headers;
     }
@@ -328,7 +318,7 @@ class xoctCurl
     /**
      * @param string $response_body
      */
-    public function setResponseBody($response_body)
+    public function setResponseBody($response_body): void
     {
         $this->response_body = $response_body;
     }
@@ -344,7 +334,7 @@ class xoctCurl
     /**
      * @param string $response_mime_type
      */
-    public function setResponseMimeType($response_mime_type)
+    public function setResponseMimeType($response_mime_type): void
     {
         $this->response_mime_type = $response_mime_type;
     }
@@ -360,7 +350,7 @@ class xoctCurl
     /**
      * @param string $response_content_size
      */
-    public function setResponseContentSize($response_content_size)
+    public function setResponseContentSize($response_content_size): void
     {
         $this->response_content_size = $response_content_size;
     }
@@ -376,7 +366,7 @@ class xoctCurl
     /**
      * @param int $response_status
      */
-    public function setResponseStatus($response_status)
+    public function setResponseStatus($response_status): void
     {
         $this->response_status = $response_status;
     }
@@ -392,7 +382,7 @@ class xoctCurl
     /**
      * @param xoctCurlError $response_error
      */
-    public function setResponseError($response_error)
+    public function setResponseError($response_error): void
     {
         $this->response_error = $response_error;
     }
@@ -408,7 +398,7 @@ class xoctCurl
     /**
      * @param string $put_file_path
      */
-    public function setPutFilePath($put_file_path)
+    public function setPutFilePath($put_file_path): void
     {
         $this->put_file_path = $put_file_path;
     }
@@ -440,7 +430,7 @@ class xoctCurl
     /**
      * @param array $post_fields
      */
-    public function setPostFields($post_fields)
+    public function setPostFields($post_fields): void
     {
         $this->post_fields = $post_fields;
     }
@@ -449,7 +439,7 @@ class xoctCurl
      * @param $key
      * @param $value
      */
-    public function addPostField($key, $value)
+    public function addPostField($key, $value): void
     {
         $this->post_fields[$key] = $value;
     }
@@ -465,7 +455,7 @@ class xoctCurl
     /**
      * @param string $username
      */
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         self::$username = $username;
     }
@@ -481,7 +471,7 @@ class xoctCurl
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         self::$password = $password;
     }
@@ -497,7 +487,7 @@ class xoctCurl
     /**
      * @param string $request_content_type
      */
-    public function setRequestContentType($request_content_type)
+    public function setRequestContentType($request_content_type): void
     {
         $this->request_content_type = $request_content_type;
     }
@@ -513,15 +503,12 @@ class xoctCurl
     /**
      * @param xoctUploadFile[] $files
      */
-    public function setFiles($files)
+    public function setFiles($files): void
     {
         $this->files = $files;
     }
 
-    /**
-     * @param xoctUploadFile $xoctUploadFile
-     */
-    public function addFile(xoctUploadFile $xoctUploadFile)
+    public function addFile(xoctUploadFile $xoctUploadFile): void
     {
         $this->files[] = $xoctUploadFile;
     }
@@ -544,7 +531,7 @@ class xoctCurl
     protected function preparePost($ch)
     {
         curl_getinfo($ch, CURLINFO_HEADER_OUT);
-        if (count($this->getFiles()) > 0) {
+        if ($this->getFiles() !== []) {
             curl_getinfo($ch, CURLOPT_SAFE_UPLOAD);
             foreach ($this->getFiles() as $file) {
                 $this->addPostField($file->getPostVar(), $file->getCURLFile());
@@ -640,7 +627,7 @@ class xoctCurl
         } while (preg_grep("/{$boundary}/", $body));
 
         // add boundary for each parameters
-        array_walk($body, function (&$part) use ($boundary) {
+        array_walk($body, function (&$part) use ($boundary): void {
             $part = "--{$boundary}\r\n{$part}";
         });
 

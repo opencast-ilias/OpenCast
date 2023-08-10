@@ -98,10 +98,7 @@ class xoctCurlError
         $this->setErrorText(curl_error($ch));
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return self::$error_codes[$this->getErrorNr()] . ': ' . $this->getErrorText();
     }
@@ -126,7 +123,7 @@ class xoctCurlError
     /**
      * @param int $error_nr
      */
-    public function setErrorNr($error_nr)
+    public function setErrorNr($error_nr): void
     {
         $this->error_nr = $error_nr;
     }
@@ -142,7 +139,7 @@ class xoctCurlError
     /**
      * @param string $error_text
      */
-    public function setErrorText($error_text)
+    public function setErrorText($error_text): void
     {
         $this->error_text = $error_text;
     }

@@ -38,8 +38,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     }
 
     /**
-     * @param string $key
-     *
      * @return mixed|void
      */
     protected function getValue(string $key)
@@ -115,9 +113,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
         $this->setTitle($this->lng->txt('edit'));
     }
 
-    /**
-     * @return bool
-     */
     public function storeForm(): bool
     {
         if (!$this->storeFormCheck()) {
@@ -136,8 +131,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     }
 
     /**
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function storeValue(string $key, $value): void
     {

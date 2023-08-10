@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -38,7 +37,7 @@ class xoctMetadataConfigRouterGUI
         $this->plugin = $this->container->plugin();
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
         global $DIC;
         $nextClass = $this->ctrl->getNextClass();
@@ -67,7 +66,7 @@ class xoctMetadataConfigRouterGUI
         }
     }
 
-    private function setSubTabs(string $active_subtab)
+    private function setSubTabs(string $active_subtab): void
     {
         $this->tabs->addSubTab(
             self::SUBTAB_EVENTS,

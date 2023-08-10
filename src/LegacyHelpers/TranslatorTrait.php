@@ -48,21 +48,15 @@ trait TranslatorTrait
         if ($plugin) {
             $lng->loadLanguageModule($plugin_object->getPrefix());
 
-            if ($lng->exists($plugin_object->getPrefix() . "_" . $key)) {
-                $txt = $lng->txt($plugin_object->getPrefix() . "_" . $key);
-            } else {
-                $txt = "";
-            }
+            $txt = $lng->exists($plugin_object->getPrefix() . "_" . $key) ? $lng->txt(
+                $plugin_object->getPrefix() . "_" . $key
+            ) : "";
         } else {
             if (!empty($module)) {
                 $lng->loadLanguageModule($module);
             }
 
-            if ($lng->exists($key)) {
-                $txt = $lng->txt($key);
-            } else {
-                $txt = "";
-            }
+            $txt = $lng->exists($key) ? $lng->txt($key) : "";
         }
 
         if (!(empty($txt) || $txt === "MISSING" || strpos($txt, "MISSING ") === 0)) {
@@ -70,7 +64,9 @@ trait TranslatorTrait
                 $txt = vsprintf($txt, $placeholders);
             } catch (\Exception $ex) {
                 throw new \Exception(
-                    "Please use the placeholders feature and not direct `sprintf` or `vsprintf` in your code!"
+                    "Please use the placeholders feature and not direct `sprintf` or `vsprintf` in your code!",
+                    $ex->getCode(),
+                    $ex
                 );
             }
         } elseif ($default !== null) {
@@ -78,12 +74,12 @@ trait TranslatorTrait
                 $txt = sprintf($default, $key);
             } catch (\Exception $ex) {
                 throw new \Exception(
-                    "Please use only one placeholder in the default text for the key!"
+                    "Please use only one placeholder in the default text for the key!",
+                    $ex->getCode(),
+                    $ex
                 );
             }
         }
-
-        $txt = strval($txt);
 
         return str_replace("\\n", "\n", $txt);
     }

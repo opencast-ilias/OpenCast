@@ -14,13 +14,12 @@ class WorkflowDBRepository implements WorkflowRepository
         return WorkflowAR::get();
     }
 
-
     public function getAllWorkflowsAsArray($key = null, $values = null): array
     {
         return WorkflowAR::getArray($key, $values);
     }
 
-    public function store(string $workflow_id, string $title, string $parameters, int $id = 0)
+    public function store(string $workflow_id, string $title, string $parameters, int $id = 0): void
     {
         /** @var WorkflowAR $workflow */
         $workflow = new WorkflowAR($id == 0 ? null : $id);
@@ -30,19 +29,15 @@ class WorkflowDBRepository implements WorkflowRepository
         $workflow->store();
     }
 
-
     public function exists(string $workflow_id): bool
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->hasSets();
     }
 
-
-    public function delete($id)
+    public function delete($id): void
     {
         $workflow = WorkflowAR::find($id);
-        if (!is_null($workflow)) {
-            $workflow->delete();
-        }
+        $workflow->delete();
     }
 
     public function getByWorkflowId(string $workflow_id)

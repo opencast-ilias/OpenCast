@@ -17,25 +17,18 @@ class PermissionGroup extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_group';
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @param $id
@@ -50,7 +43,6 @@ class PermissionGroup extends ActiveRecord
 
         return self::where(['serie_id' => $id])->orderBy('title')->get();
     }
-
 
     /**
      * @var array
@@ -68,10 +60,8 @@ class PermissionGroup extends ActiveRecord
      */
     protected $id = 0;
 
-
     /**
      * @param          $series_identifier
-     * @param xoctUser $xoctUser
      *
      * @return PermissionGroupParticipant[]
      */
@@ -84,15 +74,16 @@ class PermissionGroup extends ActiveRecord
             return [];
         }
 
-        $my_groups = PermissionGroupParticipant::where(['user_id' => $xoctUser->getIliasUserId(),])->where(['group_id' => $group_ids])
-            ->getArray(null, 'group_id');
+        $my_groups = PermissionGroupParticipant::where(['user_id' => $xoctUser->getIliasUserId(),])->where(
+            ['group_id' => $group_ids]
+        )
+                                               ->getArray(null, 'group_id');
         if (count($my_groups) == 0) {
             return [];
         }
 
         return PermissionGroupParticipant::where(['group_id' => $my_groups])->get();
     }
-
 
     /**
      * @param $series_identifier
@@ -114,7 +105,6 @@ class PermissionGroup extends ActiveRecord
             self::$series_id_to_groups_map[$series_identifier] = $array;
         }
     }
-
 
     /**
      * @var int
@@ -149,8 +139,7 @@ class PermissionGroup extends ActiveRecord
      */
     protected $user_count = 0;
 
-
-    public function delete()
+    public function delete(): void
     {
         /**
          * @var $gp PermissionGroupParticipant
@@ -161,7 +150,6 @@ class PermissionGroup extends ActiveRecord
         parent::delete();
     }
 
-
     /**
      * @return int
      */
@@ -170,15 +158,13 @@ class PermissionGroup extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return int
@@ -188,15 +174,13 @@ class PermissionGroup extends ActiveRecord
         return $this->serie_id;
     }
 
-
     /**
      * @param int $serie_id
      */
-    public function setSerieId($serie_id)
+    public function setSerieId($serie_id): void
     {
         $this->serie_id = $serie_id;
     }
-
 
     /**
      * @return string
@@ -206,7 +190,6 @@ class PermissionGroup extends ActiveRecord
         return $this->getTitle();
     }
 
-
     /**
      * @return string
      */
@@ -215,15 +198,13 @@ class PermissionGroup extends ActiveRecord
         return $this->title;
     }
 
-
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
-
 
     /**
      * @return string
@@ -233,15 +214,13 @@ class PermissionGroup extends ActiveRecord
         return $this->description;
     }
 
-
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
-
 
     /**
      * @return int
@@ -251,11 +230,10 @@ class PermissionGroup extends ActiveRecord
         return $this->status;
     }
 
-
     /**
      * @param int $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }

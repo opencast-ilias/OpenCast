@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -101,17 +100,14 @@ class xoctSeriesGUI extends xoctGUI
     /**
      *
      */
-    public function executeCommand()
+    public function executeCommand(): void
     {
         if (!ilObjOpenCastAccess::hasWriteAccess()) {
             $this->ctrl->redirectByClass('xoctEventGUI');
         }
         $this->tabs->activateTab(ilObjOpenCastGUI::TAB_SETTINGS);
         $this->setSubTabs();
-        switch ($this->ctrl->getNextClass()) {
-            default:
-                parent::executeCommand();
-        }
+        parent::executeCommand();
     }
 
     /**
@@ -314,10 +310,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->ctrl->redirectByClass('xoctEventGUI', xoctEventGUI::CMD_STANDARD);
     }
 
-    /**
-     * @return int
-     */
-    public function getObjId()
+    public function getObjId(): int
     {
         return $this->objectSettings->getObjId();
     }

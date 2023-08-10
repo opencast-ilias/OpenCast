@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 
@@ -45,7 +44,7 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function index()
     {
-        if (count($this->repository->getMissingUsageIds()) > 0) {
+        if ($this->repository->getMissingUsageIds() !== []) {
             $b = ilLinkButton::getInstance();
             $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID));
@@ -143,10 +142,9 @@ class xoctPublicationUsageGUI extends xoctGUI
     /**
      * @param $key
      *
-     * @return string
      * @throws DICException
      */
-    public function txt($key)
+    public function txt($key): string
     {
         return $this->plugin->txt('publication_usage_' . $key);
     }

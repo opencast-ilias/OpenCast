@@ -51,6 +51,7 @@ class xoctConfExportGUI extends xoctGUI
 
     /**
      *
+     * @return never
      */
     protected function export()
     {

@@ -65,7 +65,7 @@ class xoctReportingModalGUI extends ilModalGUI
     }
 
     /**
-     * @return ilModalGUI|void
+     * @return never
      * @throws ilException
      */
     public static function getInstance()
@@ -89,7 +89,7 @@ class xoctReportingModalGUI extends ilModalGUI
         );
         $tpl->setVariable('FORM_ACTION', $this->ctrl->getFormAction($this->parent_gui));
 
-        if (count($this->getButtons()) > 0) {
+        if ($this->getButtons() !== []) {
             foreach ($this->getButtons() as $b) {
                 $tpl->setCurrentBlock("button");
                 $tpl->setVariable("BUTTON", $b->render());

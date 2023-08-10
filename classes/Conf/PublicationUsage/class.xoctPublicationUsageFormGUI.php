@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 
 /**
@@ -11,6 +10,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
  */
 class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 {
+    public $is_new;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const F_USAGE_ID = 'usage_id';
@@ -125,7 +125,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
     /**
      *
      */
-    public function fillForm()
+    public function fillForm(): void
     {
         $array = [
             self::F_USAGE_ID => $this->object->getUsageId(),
@@ -144,10 +144,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 
     /**
      * returns whether checkinput was successful or not.
-     *
-     * @return bool
      */
-    public function fillObject()
+    public function fillObject(): bool
     {
         if (!$this->checkInput()) {
             return false;
@@ -169,7 +167,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
     /**
      * @return bool|string
      */
-    public function saveObject()
+    public function saveObject(): bool
     {
         if (!$this->fillObject()) {
             return false;

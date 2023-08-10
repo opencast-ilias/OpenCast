@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Chat\GUI\ChatGUI;
 use srag\Plugins\Opencast\Chat\GUI\ChatHistoryGUI;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
@@ -42,10 +41,6 @@ class xoctPlayerGUI extends xoctGUI
      */
     private $event_repository;
     /**
-     * @var PaellaConfigStorageService
-     */
-    private $paellaConfigStorageService;
-    /**
      * @var PaellaConfigService
      */
     private $paellaConfigService;
@@ -65,7 +60,6 @@ class xoctPlayerGUI extends xoctGUI
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
-        $this->paellaConfigStorageService = $paellaConfigStorageService;
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
     }
 
@@ -74,7 +68,7 @@ class xoctPlayerGUI extends xoctGUI
      * @throws arException
      * @throws ilTemplateException
      */
-    public function streamVideo()
+    public function streamVideo(): void
     {
         $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
         if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
@@ -150,9 +144,6 @@ class xoctPlayerGUI extends xoctGUI
         return $js_config;
     }
 
-    /**
-     * @return bool
-     */
     protected function isChatVisible(): bool
     {
         return !filter_input(INPUT_GET, 'force_no_chat')
@@ -161,8 +152,6 @@ class xoctPlayerGUI extends xoctGUI
     }
 
     /**
-     * @param Event      $event
-     * @param ilTemplate $tpl
      * @throws DICException
      * @throws arException
      * @throws ilTemplateException

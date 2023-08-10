@@ -1,7 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
-
 /**
  * Class xoctWaiterGUI
  *
@@ -24,7 +22,7 @@ class xoctWaiterGUI
     /**
      *
      */
-    public static function loadLib()
+    public static function loadLib(): void
     {
         global $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
@@ -42,7 +40,7 @@ class xoctWaiterGUI
     /**
      * @param string $type
      */
-    public static function initJS($type = 'waiter')
+    public static function initJS($type = 'waiter'): void
     {
         global $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
@@ -57,7 +55,7 @@ class xoctWaiterGUI
     /**
      * @param $dom_selector_string
      */
-    public static function addListener($dom_selector_string)
+    public static function addListener($dom_selector_string): void
     {
         global $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
@@ -68,7 +66,7 @@ class xoctWaiterGUI
     /**
      * @param $dom_selector_string
      */
-    public static function addLinkOverlay($dom_selector_string)
+    public static function addLinkOverlay($dom_selector_string): void
     {
         global $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
@@ -76,7 +74,7 @@ class xoctWaiterGUI
         $main_tpl->addOnLoadCode($code);
     }
 
-    public static function show()
+    public static function show(): void
     {
         global $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();

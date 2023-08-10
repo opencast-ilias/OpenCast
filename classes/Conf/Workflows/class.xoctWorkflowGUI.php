@@ -2,7 +2,6 @@
 
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
@@ -73,9 +72,6 @@ class xoctWorkflowGUI extends xoctGUI
     }
 
     /**
-     * @param WorkflowAR $workflow
-     *
-     * @return Standard
      * @throws DICException
      */
     protected function getForm(WorkflowAR $workflow = null): Standard

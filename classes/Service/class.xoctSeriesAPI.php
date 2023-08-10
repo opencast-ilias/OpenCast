@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -59,9 +58,6 @@ class xoctSeriesAPI
         $this->aclUtils = $opencastDIC->acl_utils();
     }
 
-    /**
-     * @return xoctSeriesAPI
-     */
     public static function getInstance(): self
     {
         if (!self::$instance) {
@@ -91,7 +87,6 @@ class xoctSeriesAPI
      * @param string $title
      * @param array  $additional_data
      *
-     * @return ObjectSettings
      * @throws xoctException
      * @throws xoctInternalApiException
      */
@@ -209,7 +204,7 @@ class xoctSeriesAPI
      * @param      $ref_id
      * @param bool $delete_opencast_series
      */
-    public function delete($ref_id, $delete_opencast_series)
+    public function delete($ref_id, $delete_opencast_series): void
     {
         $object = new ilObjOpenCast($ref_id);
         if ($delete_opencast_series) {

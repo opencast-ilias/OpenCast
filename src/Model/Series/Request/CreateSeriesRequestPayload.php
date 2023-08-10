@@ -20,8 +20,6 @@ class CreateSeriesRequestPayload implements JsonSerializable
     private $acl;
 
     /**
-     * @param Metadata $metadata
-     * @param ACL $acl
      * @param int $theme
      */
     public function __construct(Metadata $metadata, ACL $acl)
@@ -30,22 +28,19 @@ class CreateSeriesRequestPayload implements JsonSerializable
         $this->acl = $acl;
     }
 
-    /**
-     * @return Metadata
-     */
     public function getMetadata(): Metadata
     {
         return $this->metadata;
     }
 
-    /**
-     * @return ACL
-     */
     public function getAcl(): ACL
     {
         return $this->acl;
     }
 
+    /**
+     * @return array{metadata: string, acl: string}
+     */
     public function jsonSerialize()
     {
         $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values

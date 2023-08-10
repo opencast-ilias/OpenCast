@@ -25,10 +25,7 @@ class xoctUploadFile
         return $inst;
     }
 
-    /**
-     * @return CURLFile
-     */
-    public function getCURLFile()
+    public function getCURLFile(): \CURLFile
     {
         // opencast doesn't like mimetype and name for some reason
         $CURLFile = new CURLFile($this->getPath());
@@ -57,17 +54,11 @@ class xoctUploadFile
      */
     protected $mime_type = '';
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     */
     public function setPath(string $path): void
     {
         $this->path = $path;
@@ -84,7 +75,7 @@ class xoctUploadFile
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -100,7 +91,7 @@ class xoctUploadFile
     /**
      * @param int $file_size
      */
-    public function setFileSize($file_size)
+    public function setFileSize($file_size): void
     {
         $this->file_size = $file_size;
     }
@@ -116,7 +107,7 @@ class xoctUploadFile
     /**
      * @param string $post_var
      */
-    public function setPostVar($post_var)
+    public function setPostVar($post_var): void
     {
         $this->post_var = $post_var;
     }
@@ -132,7 +123,7 @@ class xoctUploadFile
     /**
      * @param string $mime_type
      */
-    public function setMimeType($mime_type)
+    public function setMimeType($mime_type): void
     {
         $this->mime_type = $mime_type;
     }

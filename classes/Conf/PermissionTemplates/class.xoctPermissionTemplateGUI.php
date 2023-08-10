@@ -43,7 +43,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $this->language = $DIC->language();
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
 
@@ -204,10 +204,8 @@ class xoctPermissionTemplateGUI extends xoctGUI
 
     /**
      * @param $key
-     *
-     * @return string
      */
-    public function txt($key)
+    public function txt($key): string
     {
         return $this->plugin->txt('config_' . $key);
     }

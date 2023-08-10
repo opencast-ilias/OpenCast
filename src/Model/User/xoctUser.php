@@ -114,10 +114,9 @@ class xoctUser
     }
 
     /**
-     * @param int $ilias_user_id
      * @throws xoctException
      */
-    protected function __construct($ilias_user_id = 6)
+    protected function __construct(int $ilias_user_id = 6)
     {
         $user = new ilObjUser($ilias_user_id);
         $this->setIliasUserId($ilias_user_id);
@@ -141,9 +140,8 @@ class xoctUser
 
     /**
      * @param bool $show_email
-     * @return string
      */
-    public function getNamePresentation($show_email = true)
+    public function getNamePresentation($show_email = true): string
     {
         return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail(
                 ) . ')' : '');
@@ -170,7 +168,7 @@ class xoctUser
     /**
      * @param string $ext_id
      */
-    public function setExtId($ext_id)
+    public function setExtId($ext_id): void
     {
         $this->ext_id = $ext_id;
     }
@@ -186,7 +184,7 @@ class xoctUser
     /**
      * @param int $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
@@ -202,7 +200,7 @@ class xoctUser
     /**
      * @param string $first_name
      */
-    public function setFirstName($first_name)
+    public function setFirstName($first_name): void
     {
         $this->first_name = $first_name;
     }
@@ -218,23 +216,17 @@ class xoctUser
     /**
      * @param string $email
      */
-    public function setEmail($email)
+    public function setEmail($email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @param string $login
-     */
-    public function setLogin(string $login) /*: void*/
+    public function setLogin(string $login): void /*: void*/
     {
         $this->login = $login;
     }
@@ -250,7 +242,7 @@ class xoctUser
     /**
      * @param string $last_name
      */
-    public function setLastName($last_name)
+    public function setLastName($last_name): void
     {
         $this->last_name = $last_name;
     }
@@ -270,14 +262,11 @@ class xoctUser
     /**
      * @param int $user_mapping
      */
-    public static function setUserMapping($user_mapping)
+    public static function setUserMapping($user_mapping): void
     {
         self::$user_mapping = $user_mapping;
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return PluginConfig::getConfig(PluginConfig::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper(
@@ -290,7 +279,7 @@ class xoctUser
      */
     public function getUserRoleName()
     {
-        return $this->getIdentifier() ?
+        return $this->getIdentifier() !== '' && $this->getIdentifier() !== '0' ?
             str_replace(
                 '{IDENTIFIER}',
                 $this->getIdentifier(),
@@ -299,12 +288,9 @@ class xoctUser
             : null;
     }
 
-    /**
-     * @return string
-     */
     public function getOwnerRoleName(): ?string
     {
-        if (!$this->getIdentifier()) {
+        if ($this->getIdentifier() === '' || $this->getIdentifier() === '0') {
             return null;
         }
 
@@ -316,7 +302,7 @@ class xoctUser
     /**
      * @param string $identifier
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }

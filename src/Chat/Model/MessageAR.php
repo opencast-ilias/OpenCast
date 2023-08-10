@@ -15,11 +15,7 @@ class MessageAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_message';
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -73,7 +69,6 @@ class MessageAR extends ActiveRecord
      */
     protected $sent_at;
 
-
     /**
      * @return int
      */
@@ -82,15 +77,13 @@ class MessageAR extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return int
@@ -100,15 +93,13 @@ class MessageAR extends ActiveRecord
         return $this->chat_room_id;
     }
 
-
     /**
      * @param int $chat_room_id
      */
-    public function setChatRoomId($chat_room_id)
+    public function setChatRoomId($chat_room_id): void
     {
         $this->chat_room_id = $chat_room_id;
     }
-
 
     /**
      * @return int
@@ -118,15 +109,13 @@ class MessageAR extends ActiveRecord
         return $this->usr_id;
     }
 
-
     /**
      * @param int $usr_id
      */
-    public function setUsrId($usr_id)
+    public function setUsrId($usr_id): void
     {
         $this->usr_id = $usr_id;
     }
-
 
     /**
      * @return string
@@ -136,15 +125,13 @@ class MessageAR extends ActiveRecord
         return $this->message;
     }
 
-
     /**
      * @param string $message
      */
-    public function setMessage($message)
+    public function setMessage($message): void
     {
         $this->message = $message;
     }
-
 
     /**
      * @return string
@@ -154,11 +141,10 @@ class MessageAR extends ActiveRecord
         return $this->sent_at;
     }
 
-
     /**
      * @param string $sent_at
      */
-    public function setSentAt($sent_at)
+    public function setSentAt($sent_at): void
     {
         $this->sent_at = $sent_at;
     }

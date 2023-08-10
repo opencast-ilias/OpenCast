@@ -2,10 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\API;
 
-use DateTime;
-use ilStr;
-use ReflectionClass;
-use ReflectionException;
 use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use stdClass;
 use xoctException;
@@ -30,10 +26,7 @@ abstract class APIObject
      */
     protected $loaded = false;
 
-
     /**
-     * @param string $identifier
-     *
      * @return APIObject
      */
     public static function find(string $identifier)
@@ -57,10 +50,8 @@ abstract class APIObject
         return $instance;
     }
 
-
     /**
      * @param          $identifier
-     * @param stdClass $stdClass
      *
      * @return APIObject
      * @throws xoctException
@@ -91,11 +82,10 @@ abstract class APIObject
         return $instance;
     }
 
-
     /**
      * @param $identifier
      */
-    public static function removeFromCache(string $identifier)
+    public static function removeFromCache(string $identifier): void
     {
         $class_name = static::class;
         $key = $class_name . '-' . $identifier;
@@ -104,12 +94,10 @@ abstract class APIObject
         CacheFactory::getInstance()->delete($key);
     }
 
-
     /**
      * @param            $identifier
-     * @param APIObject  $object
      */
-    public static function cache(string $identifier, APIObject $object)
+    public static function cache(string $identifier, APIObject $object): void
     {
         $class_name = get_class($object);
         $key = $class_name . '-' . $identifier;
@@ -118,29 +106,22 @@ abstract class APIObject
         CacheFactory::getInstance()->set($key, $object, self::CACHE_TTL);
     }
 
-
-
-
     /**
      * @param $class
      *
      * @throws xoctException
      */
-    public function loadFromStdClass(stdClass $class)
+    public function loadFromStdClass(stdClass $class): void
     {
-        if (!$class instanceof stdClass) {
-            throw new xoctException(xoctException::API_CALL_STATUS_500);
-        }
         $array = (array) $class;
         $this->loadFromArray($array);
         $this->setLoaded(true);
     }
 
-
     /**
      * @param $array
      */
-    public function loadFromArray(array $array)
+    public function loadFromArray(array $array): void
     {
         foreach ($array as $k => $v) {
             $this->{$this->mapKey($k)} = $this->wakeup($k, $v);
@@ -148,7 +129,6 @@ abstract class APIObject
         $this->afterObjectLoad();
         $this->setLoaded(true);
     }
-
 
     /**
      * @param $key
@@ -160,24 +140,15 @@ abstract class APIObject
         return $key;
     }
 
-
-    /**
-     * @return boolean
-     */
     public function isLoaded(): bool
     {
         return (bool) $this->loaded;
     }
 
-
-    /**
-     * @param boolean $loaded
-     */
-    public function setLoaded(bool $loaded)
+    public function setLoaded(bool $loaded): void
     {
         $this->loaded = $loaded;
     }
-
 
     /**
      * @param $fieldname
@@ -190,7 +161,6 @@ abstract class APIObject
         return $value;
     }
 
-
     /**
      * @param $fieldname
      * @param $value
@@ -201,7 +171,6 @@ abstract class APIObject
     {
         return $value;
     }
-
 
     protected function afterObjectLoad()
     {

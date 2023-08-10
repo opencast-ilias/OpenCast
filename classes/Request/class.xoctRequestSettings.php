@@ -28,7 +28,7 @@ class xoctRequestSettings
     /**
      * @param string $api_base
      */
-    public function setApiBase($api_base)
+    public function setApiBase($api_base): void
     {
         $this->api_base = $api_base;
     }
@@ -44,7 +44,7 @@ class xoctRequestSettings
     /**
      * @param string $api_version
      */
-    public function setApiVersion($api_version)
+    public function setApiVersion($api_version): void
     {
         $this->api_version = $api_version;
     }

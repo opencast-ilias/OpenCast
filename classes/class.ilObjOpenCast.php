@@ -1,8 +1,5 @@
 <?php
 
-require_once('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/vendor/srag/dic/src/DICTrait.php');
-
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -41,16 +38,16 @@ class ilObjOpenCast extends ilObjectPlugin
         parent::__construct($a_ref_id);
     }
 
-    final public function initType()
+    final public function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
 
-    public function doCreate()
+    public function doCreate(): void
     {
     }
 
-    public function updateObjectFromSeries(Metadata $metadata)
+    public function updateObjectFromSeries(Metadata $metadata): void
     {
         PluginConfig::setApiSettings();
         if ($this->ctrl->isAsynch()) {
@@ -67,11 +64,11 @@ class ilObjOpenCast extends ilObjectPlugin
         }
     }
 
-    public function doUpdate()
+    public function doUpdate(): void
     {
     }
 
-    public function doDelete()
+    public function doDelete(): void
     {
         $opencast_dic = OpencastDIC::getInstance();
         /** @var ObjectSettings $objectSettings */

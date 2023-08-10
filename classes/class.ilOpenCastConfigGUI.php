@@ -1,9 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use srag\DIC\OpenCast\DICTrait;
-
 /**
  * ilOpenCastConfigGUI
  *
@@ -13,7 +9,6 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class ilOpenCastConfigGUI extends ilPluginConfigGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     /**
      * @var \ilCtrlInterface
      */
@@ -40,7 +35,7 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
         $this->tabs = $DIC->tabs();
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $_GET["ctype"]);
         $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "cname", $_GET["cname"]);
@@ -75,7 +70,7 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
         }
     }
 
-    public function performCommand($cmd)
+    public function performCommand($cmd): void
     {
     }
 }

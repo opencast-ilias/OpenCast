@@ -23,8 +23,6 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     protected $parent;
 
     /**
-     * @param string $key
-     *
      * @return mixed|void
      */
     protected function getValue(string $key)
@@ -74,8 +72,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     }
 
     /**
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function storeValue(string $key, $value): void
     {

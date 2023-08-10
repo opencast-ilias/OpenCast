@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -44,16 +43,11 @@ abstract class xoctGUI
         $this->plugin = $this->container->plugin();
     }
 
-    public function executeCommand()
+    public function executeCommand(): void
     {
-        $nextClass = $this->ctrl->getNextClass();
-
-        switch ($nextClass) {
-            default:
-                $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
-                $this->performCommand($cmd);
-                break;
-        }
+        $this->ctrl->getNextClass();
+        $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
+        $this->performCommand($cmd);
     }
 
     /**

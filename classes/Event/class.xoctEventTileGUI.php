@@ -59,10 +59,6 @@ class xoctEventTileGUI
      */
     protected $limit;
     /**
-     * @var array
-     */
-    private $data;
-    /**
      * @var \ilLanguage
      */
     private $language;
@@ -193,13 +189,11 @@ class xoctEventTileGUI
                 break;
         }
 
-        $events = ilUtil::sortArray(
+        return ilUtil::sortArray(
             $events,
             $order,
             $direction
         );
-
-        return $events;
     }
 
     /**

@@ -14,9 +14,6 @@ class OpencastIngestService
      */
     private $uploadStorageService;
 
-    /**
-     * @param UploadStorageService $uploadStorageService
-     */
     public function __construct(UploadStorageService $uploadStorageService)
     {
         $this->uploadStorageService = $uploadStorageService;
@@ -62,12 +59,16 @@ class OpencastIngestService
     }
 
     /**
-     * @return string
      * @throws xoctException
      */
     private function getIngestNodeURL(): string
     {
-        $nodes = json_decode(xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(), true, 512, JSON_THROW_ON_ERROR);
+        $nodes = json_decode(
+            xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
         if (!is_array($nodes)
             || !isset($nodes['services'])
             || !isset($nodes['services']['service'])
@@ -83,7 +84,7 @@ class OpencastIngestService
                 $available_hosts[] = $node['host'];
             }
         }
-        if (count($available_hosts) === 0) {
+        if ($available_hosts === []) {
             throw new xoctException(xoctException::API_CALL_STATUS_500, 'no available ingest nodes found');
         }
         return array_rand(array_flip($available_hosts));

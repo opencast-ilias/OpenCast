@@ -35,11 +35,7 @@ class Agent
     private $status;
 
     /**
-     * @param string $agent_id
      * @param string[] $inputs
-     * @param DateTimeImmutable $update
-     * @param string $url
-     * @param string $status
      */
     public function __construct(string $agent_id, string $status, array $inputs, DateTimeImmutable $update, string $url)
     {
@@ -50,9 +46,6 @@ class Agent
         $this->url = $url;
     }
 
-    /**
-     * @return string
-     */
     public function getAgentId(): string
     {
         return $this->agent_id;
@@ -66,25 +59,16 @@ class Agent
         return $this->inputs;
     }
 
-    /**
-     * @return DateTimeImmutable
-     */
     public function getUpdate(): DateTimeImmutable
     {
         return $this->update;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;

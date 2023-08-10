@@ -11,18 +11,12 @@ namespace srag\Plugins\Opencast\Model\Publication\Config;
  */
 class PublicationUsageRepository
 {
-    /**
-     * @param string $usage
-     * @return bool
-     */
     public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
     }
 
     /**
-     * @param string $usage
-     *
      * @return PublicationUsage|null
      */
     public function getUsage(string $usage)
@@ -30,34 +24,21 @@ class PublicationUsageRepository
         return PublicationUsage::find($usage) ?: PublicationUsageDefault::getDefaultUsage($usage);
     }
 
-
-    /**
-     * @return array
-     */
     public function getMissingUsageIds(): array
     {
-        $missing = array_diff(PublicationUsage::$usage_ids, $this->getArray(null, 'usage_id'));
-
-        return $missing;
+        return array_diff(PublicationUsage::$usage_ids, $this->getArray(null, 'usage_id'));
     }
-
 
     /**
      * @param null $key
      * @param null $values
-     *
-     * @return array
      */
     public function getArray($key = null, $values = null): array
     {
         return PublicationUsage::getArray($key, $values);
     }
 
-
-    /**
-     * @param string $usage
-     */
-    public function delete(string $usage)
+    public function delete(string $usage): void
     {
         $usage = $this->getUsage($usage);
         if (!is_null($usage)) {
@@ -65,18 +46,6 @@ class PublicationUsageRepository
         }
     }
 
-
-    /**
-     * @param string $usage
-     * @param string $title
-     * @param string $description
-     * @param string $channel
-     * @param int    $md_type
-     * @param string $search_key
-     * @param string $flavor
-     * @param string $tag
-     * @param bool   $allow_multiple
-     */
     public function store(
         string $usage,
         string $title,
@@ -87,7 +56,7 @@ class PublicationUsageRepository
         string $flavor = '',
         string $tag = '',
         bool $allow_multiple = false
-    ) {
+    ): void {
         /** @var PublicationUsage $usage */
         $usage = PublicationUsage::findOrGetInstance($usage);
         $usage->setTitle($title);

@@ -22,7 +22,6 @@ interface SeriesRepository
     public function fetch(string $identifier): Series;
 
     /**
-     * @param CreateSeriesRequest $request
      * @return ?string series identifier
      */
     public function create(CreateSeriesRequest $request): ?string;
@@ -31,30 +30,21 @@ interface SeriesRepository
 
     public function updateACL(UpdateSeriesACLRequest $request): void;
 
-
     /**
      * @return Series[]
      */
     public function getAllForUser(string $user_string): array;
 
     /**
-     * @param xoctUser $xoct_user
-     *
-     * @return Series
      * @throws xoctException
      */
     public function getOrCreateOwnSeries(xoctUser $xoct_user): Series;
 
     /**
-     * @param xoctUser $xoct_user
      * @return Series|null
      * @throws xoctException
      */
     public function getOwnSeries(xoctUser $xoct_user);
 
-    /**
-     * @param xoctUser $xoct_user
-     * @return string
-     */
     public function getOwnSeriesTitle(xoctUser $xoct_user): string;
 }

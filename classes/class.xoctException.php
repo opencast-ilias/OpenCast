@@ -46,7 +46,7 @@ class xoctException extends Exception
         if (isset(self::$messages[$code])) {
             $message = self::$messages[$code];
         }
-        if ($additional_message) {
+        if ($additional_message !== '' && $additional_message !== '0') {
             $message .= ': ' . $additional_message;
         }
         parent::__construct($message, $code);

@@ -39,7 +39,6 @@ class UpdateEventRequestPayload implements JsonSerializable
         $this->processing = $processing;
     }
 
-
     public function jsonSerialize()
     {
         $data = [];

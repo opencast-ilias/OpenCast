@@ -67,7 +67,12 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function fetch(string $identifier): Series
     {
-        $data = json_decode(xoctRequest::root()->series($identifier)->parameter('withacl', true)->get(), null, 512, JSON_THROW_ON_ERROR);
+        $data = json_decode(
+            xoctRequest::root()->series($identifier)->parameter('withacl', true)->get(),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        );
         $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
@@ -79,19 +84,27 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = json_decode(xoctRequest::root()->series($identifier)->metadata()->get(), null, 512, JSON_THROW_ON_ERROR) ?? [];
+        $data = json_decode(
+            xoctRequest::root()->series($identifier)->metadata()->get(),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        ) ?? [];
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
     {
-        $payload = json_decode(xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()), null, 512, JSON_THROW_ON_ERROR);
+        $payload = json_decode(
+            xoctRequest::root()->series()->post($request->getPayload()->jsonSerialize()),
+            null,
+            512,
+            JSON_THROW_ON_ERROR
+        );
         return $payload->identifier;
     }
 
     /**
-     * @param UpdateSeriesMetadataRequest $request
-     * @return void
      * @throws xoctException
      */
     public function updateMetadata(UpdateSeriesMetadataRequest $request): void
@@ -107,21 +120,18 @@ class SeriesAPIRepository implements SeriesRepository
     }
 
     /**
-     * @param UpdateSeriesACLRequest $request
-     * @return void
      * @throws xoctException
      */
     public function updateACL(UpdateSeriesACLRequest $request): void
     {
         xoctRequest::root()->series($request->getIdentifier())->acl()
-            ->put($request->getPayload()->jsonSerialize());
+                   ->put($request->getPayload()->jsonSerialize());
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 
     /**
      * Warning: Doesn't load all metadata, only the title, since it's currently used only for selection dropdowns
      *
-     * @param string $user_string
      * @return array|Series[]
      * @throws xoctException
      */
@@ -132,14 +142,23 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = (array) json_decode(xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get([$user_string]), null, 512, JSON_THROW_ON_ERROR);
+            $data = (array) json_decode(
+                xoctRequest::root()->series()->parameter('limit', 5000)->parameter('withacl', true)->get(
+                    [$user_string]
+                ),
+                null,
+                512,
+                JSON_THROW_ON_ERROR
+            );
         } catch (ilException $e) {
             return [];
         }
         foreach ($data as $d) {
             try {
                 $metadata = $this->metadataFactory->series();
-                $metadata->addField((new MetadataField(MDFieldDefinition::F_TITLE, MDDataType::text()))->withValue($d->title));
+                $metadata->addField(
+                    (new MetadataField(MDFieldDefinition::F_TITLE, MDDataType::text()))->withValue($d->title)
+                );
                 $d->metadata = $metadata;
                 $return[] = $this->seriesParser->parseAPIResponse($d);
             } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
@@ -157,12 +176,16 @@ class SeriesAPIRepository implements SeriesRepository
         if (is_null($series)) {
             $metadata = $this->metadataFactory->series();
             $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($this->getOwnSeriesTitle($xoct_user));
-            $this->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
-                $metadata,
-                $this->ACLUtils->getStandardRolesACL()->merge(
-                    $this->ACLUtils->getUserRolesACL($xoct_user)
+            $this->create(
+                new CreateSeriesRequest(
+                    new CreateSeriesRequestPayload(
+                        $metadata,
+                        $this->ACLUtils->getStandardRolesACL()->merge(
+                            $this->ACLUtils->getUserRolesACL($xoct_user)
+                        )
+                    )
                 )
-            )));
+            );
         }
         return $series;
     }
@@ -181,10 +204,12 @@ class SeriesAPIRepository implements SeriesRepository
         $series->getAccessPolicies()->merge(
             $this->ACLUtils->getUserRolesACL($xoct_user)
         );
-        $this->updateACL(new UpdateSeriesACLRequest(
-            $series->getIdentifier(),
-            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
-        ));
+        $this->updateACL(
+            new UpdateSeriesACLRequest(
+                $series->getIdentifier(),
+                new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+            )
+        );
         return $series;
     }
 
