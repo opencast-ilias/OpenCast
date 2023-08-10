@@ -15,6 +15,7 @@ use xoctConfGUI;
 use xoctException;
 use xoctRequest;
 use xoctWorkflowParameterGUI;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctWorkflowParameterRepository
@@ -23,13 +24,20 @@ use xoctWorkflowParameterGUI;
  */
 class WorkflowParameterRepository
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
      * @var self
      */
     protected static $instance;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    private $container;
     /**
      * @var array
      */
@@ -38,12 +46,25 @@ class WorkflowParameterRepository
      * @var SeriesWorkflowParameterRepository
      */
     protected $seriesWorkflowParameterRepository;
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
+    /**
+     * @var \ilDBInterface
+     */
+    private $db;
 
     /**
      * @param SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository
      */
     public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
+        global $DIC;
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
+        $this->ctrl = $DIC->ctrl();
+        $this->db = $DIC->database();
         $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
     }
 
@@ -72,8 +93,8 @@ class WorkflowParameterRepository
         try {
             return $this->parseConfigurationPanelHTML($response['configuration_panel']);
         } catch (ilException $e) {
-            ilUtil::sendFailure(self::plugin()->translate('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
-            self::dic()->ctrl()->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
+            ilUtil::sendFailure($this->plugin->txt('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
+            $this->ctrl->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
         }
     }
 
@@ -174,10 +195,10 @@ class WorkflowParameterRepository
         /** @var WorkflowParameter $xoctWorkflowParameter */
         foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
             $sql = 'UPDATE ' . SeriesWorkflowParameter::TABLE_NAME .
-                ' SET value_member = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueMember(), 'integer') . ', ' .
-                ' value_admin = ' . self::dic()->database()->quote($xoctWorkflowParameter->getDefaultValueAdmin(), 'integer') .
-                ' WHERE param_id = ' . self::dic()->database()->quote($xoctWorkflowParameter->getId(), 'text');
-            self::dic()->database()->query($sql);
+                ' SET value_member = ' . $this->db->quote($xoctWorkflowParameter->getDefaultValueMember(), 'integer') . ', ' .
+                ' value_admin = ' . $this->db->quote($xoctWorkflowParameter->getDefaultValueAdmin(), 'integer') .
+                ' WHERE param_id = ' . $this->db->quote($xoctWorkflowParameter->getId(), 'text');
+            $this->db->query($sql);
         }
     }
 
@@ -190,7 +211,7 @@ class WorkflowParameterRepository
     {
         $options = [];
         foreach (WorkflowParameter::$possible_values as $value) {
-            $options[$value] = self::plugin()->translate('workflow_parameter_value_' . $value, 'config');
+            $options[$value] = $this->plugin->txt('config_workflow_parameter_value_' . $value);
         }
         return $options;
     }

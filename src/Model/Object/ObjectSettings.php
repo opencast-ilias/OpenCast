@@ -19,7 +19,6 @@ use xoctException;
  */
 class ObjectSettings extends ActiveRecord
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const TABLE_NAME = 'xoct_data';
@@ -80,6 +79,7 @@ class ObjectSettings extends ActiveRecord
      */
     public function getDuplicatesOnSystem(): array
     {
+        global $DIC; // we cannot add DIC to the constructor because of the ActiveRecord
         if (!$this->getObjId() || !$this->getSeriesIdentifier()) {
             return [];
         }
@@ -94,9 +94,9 @@ class ObjectSettings extends ActiveRecord
         foreach ($duplicates_ar->get() as $oc) {
             /** @var ObjectSettings $oc */
             if ($oc->getObjId() != $this->getObjId()) {
-                $query = "SELECT ref_id FROM object_reference" . " WHERE deleted is null and obj_id = " . self::dic()->database()->quote($oc->getObjId(), "integer");
-                $set = self::dic()->database()->query($query);
-                $rec = self::dic()->database()->fetchAssoc($set);
+                $query = "SELECT ref_id FROM object_reference" . " WHERE deleted is null and obj_id = " . $DIC->database()->quote($oc->getObjId(), "integer");
+                $set = $DIC->database()->query($query);
+                $rec = $DIC->database()->fetchAssoc($set);
 
                 if ($rec['ref_id']) {
                     $duplicates_ids[] = $rec['ref_id'];
@@ -319,7 +319,7 @@ class ObjectSettings extends ActiveRecord
 
     public function getIntroductionText(): string
     {
-        return $this->intro_text;
+        return $this->intro_text ?? '';
     }
 
 

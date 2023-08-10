@@ -25,7 +25,6 @@ use xoctSecureLink;
  */
 class PublicationSelector
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
     public const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
@@ -96,6 +95,10 @@ class PublicationSelector
         PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
         PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
     ];
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
 
     /**
      * PublicationSelector constructor.
@@ -104,6 +107,8 @@ class PublicationSelector
      */
     public function __construct(Event $event)
     {
+        global $DIC;
+        $this->user = $DIC->user();
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
     }
@@ -331,7 +336,7 @@ class PublicationSelector
             }
 
             if ($ref_id > 0 && PluginConfig::getConfig(PluginConfig::F_ANNOTATION_TOKEN_SEC)) {
-                $xoctUser = xoctUser::getInstance(self::dic()->user());
+                $xoctUser = xoctUser::getInstance($this->user);
                 // Get Media URL
                 $media_objects = $annotation_publication instanceof Publication ? $annotation_publication->getMedia() : [$annotation_publication];
                 //TODO: Get all urls for all mediatypes and compress them to send by URL

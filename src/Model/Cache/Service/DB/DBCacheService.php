@@ -50,7 +50,11 @@ class DBCacheService extends ilGlobalCacheService
 
     public function serialize($value)
     {
-        return serialize($value);
+        try {
+            return serialize($value);
+        } catch (\Throwable $ex) {
+            return false;
+        }
     }
 
     public function exists($key)

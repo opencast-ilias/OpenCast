@@ -20,7 +20,6 @@ use srag\Plugins\Opencast\Chat\Model\TokenAR;
  */
 class ChatGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -72,7 +71,7 @@ class ChatGUI
         $template->setVariable('REFRESH_ICON', self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png');
         $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
-            self::dic()->ui()->mainTemplate()->addCss($chat_css_path);
+            $this->template->addCss($chat_css_path);
         } else {
             $template->setCurrentBlock('css');
             $template->setVariable('CSS_PATH', $chat_css_path);

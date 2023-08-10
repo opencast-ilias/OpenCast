@@ -19,13 +19,16 @@ use srag\Plugins\Opencast\Chat\Model\MessageAR;
  */
 class ChatHistoryGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
      * @var integer
      */
     private $chat_room_id;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
 
     /**
@@ -35,6 +38,8 @@ class ChatHistoryGUI
      */
     public function __construct($chat_room_id)
     {
+        global $DIC;
+        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->chat_room_id = $chat_room_id;
     }
 
@@ -68,7 +73,7 @@ class ChatHistoryGUI
 
         $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
-            self::dic()->ui()->mainTemplate()->addCss($chat_css_path);
+            $this->main_tpl->addCss($chat_css_path);
         } else {
             $template->setCurrentBlock('css');
             $template->setVariable('CSS_PATH', $chat_css_path);

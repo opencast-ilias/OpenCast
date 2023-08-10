@@ -17,8 +17,6 @@ use xoctException;
  */
 class xoctUser
 {
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const MAP_EMAIL = 1;
@@ -88,6 +86,8 @@ class xoctUser
      */
     public static function lookupUserIdForOwnerRole($role)
     {
+        global $DIC;
+        $db = $DIC->database();
         if (!$role) {
             return null;
         }
@@ -96,9 +96,9 @@ class xoctUser
 
         preg_match("/" . $regex . "/uism", $role, $matches);
 
-        $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . self::dic()->database()->quote($matches[1], 'text');
-        $set = self::dic()->database()->query($sql);
-        $data = self::dic()->database()->fetchObject($set);
+        $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $db->quote($matches[1], 'text');
+        $set = $db->query($sql);
+        $data = $db->fetchObject($set);
 
         return $data->usr_id;
     }
