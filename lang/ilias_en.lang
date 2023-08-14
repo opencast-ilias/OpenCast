@@ -331,7 +331,7 @@ publication_usage_search_key#:#Search Key
 publication_usage_search_key_info#:#The media/attachments will be search for the specified flavor/tag.
 publication_usage_tag#:#Tag
 publication_usage_allow_multiple#:#Allow multiple
-publication_usage_allow_multiple_info#:#If active and multiple media/attachments can be found for the given flavor/tag, all of them will be offered to download.
+publication_usage_allow_multiple_info#:#If active and multiple media/attachments can be found for the given flavor/tag, all of them in a form of dropdown list will be offered to download. In this case the Publication Group <b>would NOT</b> be effective.
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel
@@ -577,3 +577,39 @@ object_settings#:#Settings
 channel_type#:#Series
 file#:#File
 link#:#URL
+subtab_publication_usage#:#Publication Usage
+subtab_publication_sub_usage#:#Publication Sub-Usage
+subtab_publication_groups#:#Publication Groups
+publication_usage_msg_success_sub#:#Sub-Usage Saved
+publication_usage_select_sub_usage_id#:#Sub-Usage
+publication_usage_select_sub_usage_id_desc#:#Select from already configured usage channels to provide sub-usages for.
+publication_usage_parent_usage_id#:#Parent Usage
+publication_usage_sub_not_found#:#Sub-Usage not found
+publication_usage_sub_not_allowed#:#Sub-usage is not allowed for this parent usage
+publication_usage_sub#:#Sub
+publication_usage_display_name#:#Display Name
+publication_usage_display_name_info#:#The display name (max %s chars) to be shown to the users, and it can be localized by adding a string id (pu_display_name_%s) to the plugin languages.
+publication_usage_group_id#:#Publication Group
+publication_usage_add_new_group#:#Add new group
+publication_usage_group_name#:#Name
+publication_usage_group_th#:#Group
+publication_usage_group_display_name#:#Display Name
+publication_usage_group_display_name_info#:#The display name (max %s chars) to be shown to the users, and it can be localized by adding a string id (pug_display_name_%s) to the plugin languages.
+publication_usage_group_description#:#Description
+publication_usage_group_not_found#:#Group not found!
+publication_usage_mediatype#:#Mediatype(s)
+publication_usage_mediatype_info#:#An optional comma-separated list of media types to be extracted from the publication, e.g. "video/mp4, application/x-mpegURL"
+publication_usage_ignore_object_settings#:#Ignore Object Settings
+publication_usage_ignore_object_settings_info#:#The applied settings on the series object regarding to this publication would have no effect and will be ignored.
+publication_usage_create_sub#:#Create Sub-Usage
+publication_usage_delete_sub#:#Delete Sub-Usage
+publication_usage_edit_sub#:#Edit Sub-Usage
+publication_usage_add_new_sub#:#Add new Sub-Usage
+pug_display_name_default#:#More
+publication_usage_confirm_delete_text_sub#:#Are you sure you want to delete this publication sub-usage?
+publication_usage_table_title_sub_usage#:#Publication Sub-usages
+publication_usage_table_title_usage#:#Publication Usages
+publication_usage_table_title_usage_group#:#Publication Groups
+publication_usage_create_group#:#Create Group
+publication_usage_edit_group#:#Edit Group
+publication_usage_confirm_delete_text_group#:#Are you sure you want to delete this publication group?

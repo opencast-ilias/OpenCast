@@ -11,6 +11,8 @@ use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use stdClass;
 use xoctException;
@@ -51,6 +53,10 @@ class PublicationSelector
      * @var PublicationUsageRepository
      */
     protected $publication_usage_repository;
+    /**
+     * @var PublicationSubUsageRepository
+     */
+    protected $publication_sub_usage_repository;
     /**
      * @var Publication[]|Media[]|Attachment[]
      */
@@ -106,6 +112,7 @@ class PublicationSelector
     {
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
+        $this->publication_sub_usage_repository = new PublicationSubUsageRepository();
     }
 
 
@@ -157,9 +164,16 @@ class PublicationSelector
     public function getDownloadPublications(): array
     {
         if (!isset($this->download_publications)) {
-            $pubs = $this->getPublicationMetadataForUsage(
-                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD)
-            );
+            $pubs = [];
+            $download_pub_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD);
+            $download_pub_sub_usages = $this->publication_sub_usage_repository->convertSubsToUsage(PublicationUsage::USAGE_DOWNLOAD);
+            $download_usages = array_merge([$download_pub_usage], $download_pub_sub_usages);
+            foreach ($download_usages as $download_usage) {
+                $usage_pubs = $this->getPublicationMetadataForUsage($download_usage);
+                if (!empty($usage_pubs)) {
+                    $pubs = array_merge($usage_pubs, $pubs);
+                }
+            }
             if (empty($pubs)) {
                 $pubs = $this->getPublicationMetadataForUsage(
                     $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK)
@@ -173,7 +187,8 @@ class PublicationSelector
 
     /**
      * @param bool $with_urls
-     * @return DownloadDto[]
+     * @return array $categorized_dtos dtos array with format:
+     *      $categorized_dtos[{USAGE TYPE: org/sub}][{usage id (string) or usage sub id (int)}][$downloadDto]
      * @throws xoctException
      */
     public function getDownloadDtos(bool $with_urls = true): array
@@ -190,21 +205,30 @@ class PublicationSelector
             }
             return 0;
         });
-        return array_map(function ($pub, $i) use ($with_urls) {
-            /** @var $pub Publication|Media|Attachment */
-            $label = ($pub instanceof Media) ? $pub->getHeight() . 'p' :
+
+        $categorized_dtos = [];
+        foreach ($download_publications as $index => $pub) {
+            $i = ($index + 1);
+            $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight() . 'p' : 'Download ' . $i) :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
-            return new DownloadDto(
+            $downloadDto = new DownloadDto(
                 $pub->getId(),
-                $label,
+                trim($label),
                 $with_urls ?
                     (PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ?
                         xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl())
                     : ''
             );
-        }, $download_publications, array_keys($download_publications));
+            if ($pub->usage_type === PublicationUsage::USAGE_TYPE_SUB) {
+                $categorized_dtos[PublicationUsage::USAGE_TYPE_SUB][$pub->usage_id][] = $downloadDto;
+            } else {
+                $categorized_dtos[PublicationUsage::USAGE_TYPE_ORG][$pub->usage_id][] = $downloadDto;
+            }
+        }
+
+        return $categorized_dtos;
     }
 
 
@@ -434,6 +458,8 @@ class PublicationSelector
         if (!$PublicationUsage instanceof PublicationUsage) {
             return [];
         }
+        $usage_type = property_exists($PublicationUsage, 'is_sub') ? PublicationUsage::USAGE_TYPE_SUB : PublicationUsage::USAGE_TYPE_ORG;
+        $usage_id = property_exists($PublicationUsage, 'sub_id') ? $PublicationUsage->sub_id : $PublicationUsage->getUsageId();
         /**
          * @var $PublicationUsage       PublicationUsage
          * @var $attachment             Attachment
@@ -447,6 +473,17 @@ class PublicationSelector
                 $attachments = array_merge($attachments, $publication->getAttachments());
             }
         }
+        // Adding the usage and sub usage flags to both attachments and media.
+        $attachments = array_map(function($attachment) use ($usage_type, $usage_id) {
+            $attachment->usage_type = $usage_type;
+            $attachment->usage_id = $usage_id;
+            return $attachment;
+        }, $attachments);
+        $media = array_map(function($medium) use ($usage_type, $usage_id) {
+            $medium->usage_type = $usage_type;
+            $medium->usage_id = $usage_id;
+            return $medium;
+        }, $media);
         $return = [];
         switch ($PublicationUsage->getMdType()) {
             case PublicationUsage::MD_TYPE_ATTACHMENT:
@@ -454,12 +491,18 @@ class PublicationSelector
                     switch ($PublicationUsage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
                             if ($this->checkFlavor($attachment->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $return[] = $attachment;
+                                $result = $this->checkMediaTypes($attachment, $PublicationUsage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
                             if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
-                                $return[] = $attachment;
+                                $result = $this->checkMediaTypes($attachment, $PublicationUsage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                     }
@@ -470,12 +513,18 @@ class PublicationSelector
                     switch ($PublicationUsage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
                             if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $return[] = $medium;
+                                $result = $this->checkMediaTypes($medium, $PublicationUsage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
                             if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
-                                $return[] = $medium;
+                                $result = $this->checkMediaTypes($medium, $PublicationUsage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                     }
@@ -484,7 +533,9 @@ class PublicationSelector
             case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
                 foreach ($this->getPublications() as $publication) {
                     if ($publication->getChannel() == $PublicationUsage->getChannel()) {
-                        $return[] = $publication;
+                        $publication->usage_type = $usage_type;
+                        $publication->usage_id = $usage_id;
+                        $return[] = clone $publication;
                     }
                 }
                 break;
@@ -567,5 +618,24 @@ class PublicationSelector
     public function setReference(SerializableClosure $reference)
     {
         $this->reference = $reference;
+    }
+
+    /**
+     * Returns the publication if the media type matches the usage media type, null otherwise.
+     * @param publicationMetadata $publicationType
+     * @param PublicationUsage $publicationUsage
+     *
+     * @return publicationMetadata|null
+     */
+    private function checkMediaTypes(publicationMetadata $publicationType, PublicationUsage $publicationUsage): ?publicationMetadata
+    {
+        $media_types = $publicationUsage->getArrayMediaTypes();
+        if (empty($media_types)) {
+            return $publicationType;
+        }
+        if (in_array($publicationType->getMediatype(), $media_types)) {
+            return $publicationType;
+        }
+        return null;
     }
 }

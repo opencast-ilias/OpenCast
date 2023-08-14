@@ -3,64 +3,17 @@
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
+use xoctException;
 
 /**
- * Class PublicationUsage
+ * Class PublicationSubUsage
  *
- * @author Fabian Schmid <fs@studer-raimann.ch>
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
-class PublicationUsage extends ActiveRecord
+class PublicationSubUsage extends ActiveRecord
 {
-    public const TABLE_NAME = 'xoct_publication_usage';
-    public const USAGE_ANNOTATE = 'annotate';
-    public const USAGE_PLAYER = 'player';
-    public const USAGE_THUMBNAIL = 'thumbnail';
-    public const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
-    public const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
-    public const USAGE_DOWNLOAD = 'download';
-    public const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
-    public const USAGE_CUTTING = 'cutting';
-    public const USAGE_SEGMENTS = 'segments';
-    public const USAGE_PREVIEW = 'preview';
-    public const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
-    public const USAGE_LIVE_EVENT = 'live_event';
-    public const USAGE_UNPROTECTED_LINK = 'unprotected_link';
-    public const MD_TYPE_ATTACHMENT = 1;
-    public const MD_TYPE_MEDIA = 2;
-    public const MD_TYPE_PUBLICATION_ITSELF = 0;
-    public const SEARCH_KEY_FLAVOR = 'flavor';
-    public const SEARCH_KEY_TAG = 'tag';
-    public const DISPLAY_NAME_LANG_MODULE = 'pu_display_name';
-    public const USAGE_TYPE_ORG = 'org';
-    public const USAGE_TYPE_SUB = 'sub';
-    /**
-     * @var array
-     */
-    public static $usage_ids
-        = [
-            self::USAGE_ANNOTATE,
-            self::USAGE_PLAYER,
-            self::USAGE_THUMBNAIL,
-            self::USAGE_THUMBNAIL_FALLBACK,
-            self::USAGE_THUMBNAIL_FALLBACK_2,
-            self::USAGE_DOWNLOAD,
-            self::USAGE_DOWNLOAD_FALLBACK,
-            self::USAGE_CUTTING,
-            self::USAGE_SEGMENTS,
-            self::USAGE_PREVIEW,
-            self::USAGE_LIVE_EVENT,
-            self::USAGE_UNPROTECTED_LINK,
-        ];
-
-    /**
-     * INFO: the capability can be used for other usages, but it needs to be implemented when needed.
-     * @var array
-     */
-    public static $sub_allowed_usage_ids
-        = [
-            self::USAGE_DOWNLOAD
-        ];
-
+    public const TABLE_NAME = 'xoct_pub_sub_usage';
+    public const DISPLAY_NAME_LANG_MODULE = 'pus_display_name';
 
     /**
      * @return string
@@ -82,15 +35,26 @@ class PublicationUsage extends ActiveRecord
 
 
     /**
-     * @var string
+     * @var int
      *
+     * @con_has_field  true
+     * @con_fieldtype  integer
+     * @con_length     4
+     * @con_is_notnull true
      * @con_is_primary true
      * @con_is_unique  true
+     * @con_sequence   true
+     */
+    protected $id;
+    /**
+     * @var string
+     *
      * @con_has_field  true
      * @con_fieldtype  text
      * @con_length     64
+     * @con_is_notnull true
      */
-    protected $usage_id = '';
+    protected $parent_usage_id = '';
     /**
      * @var string
      *
@@ -198,20 +162,38 @@ class PublicationUsage extends ActiveRecord
 
 
     /**
-     * @return string
+     * @return int
      */
-    public function getUsageId(): string
+    public function getId(): int
     {
-        return $this->usage_id ?? '';
+        return intval($this->id);
     }
 
 
     /**
-     * @param string $usage_id
+     * @param int $id
      */
-    public function setUsageId($usage_id)
+    public function setId($id)
     {
-        $this->usage_id = $usage_id;
+        $this->id = $id;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getParentUsageId(): string
+    {
+        return $this->parent_usage_id;
+    }
+
+
+    /**
+     * @param string $parent_usage_id
+     */
+    public function setParentUsageId($parent_usage_id)
+    {
+        $this->parent_usage_id = $parent_usage_id;
     }
 
 
@@ -269,7 +251,7 @@ class PublicationUsage extends ActiveRecord
     }
 
     /**
-     * @return ?int
+     * @return int|null
      */
     public function getGroupId(): ?int
     {
@@ -306,7 +288,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return boolean
      */
-    public function isStatus()
+    public function isStatus(): bool
     {
         return $this->status;
     }
@@ -449,5 +431,29 @@ class PublicationUsage extends ActiveRecord
     public function setIgnoreObjectSettings(bool $ignore_object_setting)
     {
         $this->ignore_object_setting = $ignore_object_setting;
+    }
+
+    /**
+     * Create the object, but we check if it is allowed!
+     * @throws xoctException
+     */
+    public function create()
+    {
+        if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
+            throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());
+        }
+        parent::create();
+    }
+
+    /**
+     * Updates the object, but we check if it is allowed!
+     * @throws xoctException
+     */
+    public function update()
+    {
+        if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
+            throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());
+        }
+        parent::update();
     }
 }

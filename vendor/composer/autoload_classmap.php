@@ -5,7 +5,7 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return [
+return array(
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CaptainHook\\App\\CH' => $vendorDir . '/captainhook/captainhook/src/CH.php',
     'CaptainHook\\App\\Config' => $vendorDir . '/captainhook/captainhook/src/Config.php',
@@ -1212,8 +1212,12 @@ return [
     'srag\\Plugins\\Opencast\\Model\\PerVideoPermission\\PermissionGroupParticipant' => $baseDir . '/src/Model/PerVideoPermission/PermissionGroupParticipant.php',
     'srag\\Plugins\\Opencast\\Model\\PermissionTemplate\\PermissionTemplate' => $baseDir . '/src/Model/PermissionTemplate/PermissionTemplate.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Attachment' => $baseDir . '/src/Model/Publication/Attachment.php',
+    'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationSubUsage' => $baseDir . '/src/Model/Publication/Config/PublicationSubUsage.php',
+    'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationSubUsageRepository' => $baseDir . '/src/Model/Publication/Config/PublicationSubUsageRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsage' => $baseDir . '/src/Model/Publication/Config/PublicationUsage.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageDefault' => $baseDir . '/src/Model/Publication/Config/PublicationUsageDefault.php',
+    'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroup' => $baseDir . '/src/Model/Publication/Config/PublicationUsageGroup.php',
+    'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroupRepository' => $baseDir . '/src/Model/Publication/Config/PublicationUsageGroupRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => $baseDir . '/src/Model/Publication/Config/PublicationUsageRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Media' => $baseDir . '/src/Model/Publication/Media.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Publication' => $baseDir . '/src/Model/Publication/Publication.php',
@@ -1308,6 +1312,10 @@ return [
     'xoctPermissionTemplateGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateGUI.php',
     'xoctPermissionTemplateTableGUI' => $baseDir . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateTableGUI.php',
     'xoctPlayerGUI' => $baseDir . '/classes/Player/class.xoctPlayerGUI.php',
+    'xoctPublicationGroupFormGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationGroupFormGUI.php',
+    'xoctPublicationGroupTableGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationGroupTableGUI.php',
+    'xoctPublicationSubUsageFormGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationSubUsageFormGUI.php',
+    'xoctPublicationSubUsageTableGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationSubUsageTableGUI.php',
     'xoctPublicationUsageFormGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageFormGUI.php',
     'xoctPublicationUsageGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php',
     'xoctPublicationUsageTableGUI' => $baseDir . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageTableGUI.php',
@@ -1330,4 +1338,4 @@ return [
     'xoctWorkflowParameterTableGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
     'xoctWorkflowParametersFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
     'xoctWorkflowTableGUI' => $baseDir . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-];
+);

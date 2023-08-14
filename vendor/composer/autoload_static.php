@@ -6,7 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
 {
-    public static $files = [
+    public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -16,19 +16,19 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
-    ];
+    );
 
-    public static $prefixLengthsPsr4 = [
-        's' =>
-        [
+    public static $prefixLengthsPsr4 = array (
+        's' => 
+        array (
             'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
             'srag\\LibrariesNamespaceChanger\\' => 31,
             'srag\\DataTableUI\\OpenCast\\' => 26,
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
-        ],
-        'S' =>
-        [
+        ),
+        'S' => 
+        array (
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php73\\' => 23,
@@ -49,177 +49,177 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'SebastianFeldmann\\Git\\' => 22,
             'SebastianFeldmann\\Cli\\' => 22,
             'SebastianFeldmann\\Camino\\' => 25,
-        ],
-        'P' =>
-        [
+        ),
+        'P' => 
+        array (
             'Psr\\Log\\' => 8,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpCsFixer\\' => 11,
-        ],
-        'D' =>
-        [
+        ),
+        'D' => 
+        array (
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
-        ],
-        'C' =>
-        [
+        ),
+        'C' => 
+        array (
             'Composer\\XdebugHandler\\' => 23,
             'Composer\\Semver\\' => 16,
             'Composer\\Pcre\\' => 14,
             'CaptainHook\\App\\' => 16,
-        ],
-    ];
+        ),
+    );
 
-    public static $prefixDirsPsr4 = [
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' =>
-        [
+    public static $prefixDirsPsr4 = array (
+        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
+        array (
             0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
-        ],
-        'srag\\LibrariesNamespaceChanger\\' =>
-        [
+        ),
+        'srag\\LibrariesNamespaceChanger\\' => 
+        array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
-        ],
-        'srag\\DataTableUI\\OpenCast\\' =>
-        [
+        ),
+        'srag\\DataTableUI\\OpenCast\\' => 
+        array (
             0 => __DIR__ . '/..' . '/srag/datatable/src',
-        ],
-        'srag\\DIC\\OpenCast\\' =>
-        [
+        ),
+        'srag\\DIC\\OpenCast\\' => 
+        array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
-        ],
-        'srag\\CustomInputGUIs\\OpenCast\\' =>
-        [
+        ),
+        'srag\\CustomInputGUIs\\OpenCast\\' => 
+        array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
-        ],
-        'Symfony\\Polyfill\\Php81\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Php81\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
-        ],
-        'Symfony\\Polyfill\\Php80\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ],
-        'Symfony\\Polyfill\\Php73\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Php73\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
-        ],
-        'Symfony\\Polyfill\\Mbstring\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ],
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
-        ],
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
-        ],
-        'Symfony\\Polyfill\\Ctype\\' =>
-        [
+        ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
-        ],
-        'Symfony\\Contracts\\Service\\' =>
-        [
+        ),
+        'Symfony\\Contracts\\Service\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
-        ],
-        'Symfony\\Contracts\\EventDispatcher\\' =>
-        [
+        ),
+        'Symfony\\Contracts\\EventDispatcher\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
-        ],
-        'Symfony\\Component\\String\\' =>
-        [
+        ),
+        'Symfony\\Component\\String\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/string',
-        ],
-        'Symfony\\Component\\Stopwatch\\' =>
-        [
+        ),
+        'Symfony\\Component\\Stopwatch\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/stopwatch',
-        ],
-        'Symfony\\Component\\Process\\' =>
-        [
+        ),
+        'Symfony\\Component\\Process\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/process',
-        ],
-        'Symfony\\Component\\OptionsResolver\\' =>
-        [
+        ),
+        'Symfony\\Component\\OptionsResolver\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
-        ],
-        'Symfony\\Component\\Finder\\' =>
-        [
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/finder',
-        ],
-        'Symfony\\Component\\Filesystem\\' =>
-        [
+        ),
+        'Symfony\\Component\\Filesystem\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/filesystem',
-        ],
-        'Symfony\\Component\\EventDispatcher\\' =>
-        [
+        ),
+        'Symfony\\Component\\EventDispatcher\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
-        ],
-        'Symfony\\Component\\Console\\' =>
-        [
+        ),
+        'Symfony\\Component\\Console\\' => 
+        array (
             0 => __DIR__ . '/..' . '/symfony/console',
-        ],
-        'SebastianFeldmann\\Git\\' =>
-        [
+        ),
+        'SebastianFeldmann\\Git\\' => 
+        array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/git/src',
-        ],
-        'SebastianFeldmann\\Cli\\' =>
-        [
+        ),
+        'SebastianFeldmann\\Cli\\' => 
+        array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/cli/src',
-        ],
-        'SebastianFeldmann\\Camino\\' =>
-        [
+        ),
+        'SebastianFeldmann\\Camino\\' => 
+        array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/camino/src',
-        ],
-        'Psr\\Log\\' =>
-        [
+        ),
+        'Psr\\Log\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
-        ],
-        'Psr\\EventDispatcher\\' =>
-        [
+        ),
+        'Psr\\EventDispatcher\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
-        ],
-        'Psr\\Container\\' =>
-        [
+        ),
+        'Psr\\Container\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/container/src',
-        ],
-        'Psr\\Cache\\' =>
-        [
+        ),
+        'Psr\\Cache\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
-        ],
-        'PhpCsFixer\\' =>
-        [
+        ),
+        'PhpCsFixer\\' => 
+        array (
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
-        ],
-        'Doctrine\\Common\\Lexer\\' =>
-        [
+        ),
+        'Doctrine\\Common\\Lexer\\' => 
+        array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ],
-        'Doctrine\\Common\\Annotations\\' =>
-        [
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
-        ],
-        'Composer\\XdebugHandler\\' =>
-        [
+        ),
+        'Composer\\XdebugHandler\\' => 
+        array (
             0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
-        ],
-        'Composer\\Semver\\' =>
-        [
+        ),
+        'Composer\\Semver\\' => 
+        array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
-        ],
-        'Composer\\Pcre\\' =>
-        [
+        ),
+        'Composer\\Pcre\\' => 
+        array (
             0 => __DIR__ . '/..' . '/composer/pcre/src',
-        ],
-        'CaptainHook\\App\\' =>
-        [
+        ),
+        'CaptainHook\\App\\' => 
+        array (
             0 => __DIR__ . '/..' . '/captainhook/captainhook/src',
-        ],
-    ];
+        ),
+    );
 
-    public static $classMap = [
+    public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'CaptainHook\\App\\CH' => __DIR__ . '/..' . '/captainhook/captainhook/src/CH.php',
         'CaptainHook\\App\\Config' => __DIR__ . '/..' . '/captainhook/captainhook/src/Config.php',
@@ -1426,8 +1426,12 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\PerVideoPermission\\PermissionGroupParticipant' => __DIR__ . '/../..' . '/src/Model/PerVideoPermission/PermissionGroupParticipant.php',
         'srag\\Plugins\\Opencast\\Model\\PermissionTemplate\\PermissionTemplate' => __DIR__ . '/../..' . '/src/Model/PermissionTemplate/PermissionTemplate.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Attachment' => __DIR__ . '/../..' . '/src/Model/Publication/Attachment.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationSubUsage' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationSubUsage.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationSubUsageRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationSubUsageRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsage' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsage.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageDefault' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageDefault.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroup' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageGroup.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroupRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageGroupRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Media' => __DIR__ . '/../..' . '/src/Model/Publication/Media.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Publication' => __DIR__ . '/../..' . '/src/Model/Publication/Publication.php',
@@ -1522,6 +1526,10 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctPermissionTemplateGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateGUI.php',
         'xoctPermissionTemplateTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PermissionTemplates/class.xoctPermissionTemplateTableGUI.php',
         'xoctPlayerGUI' => __DIR__ . '/../..' . '/classes/Player/class.xoctPlayerGUI.php',
+        'xoctPublicationGroupFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationGroupFormGUI.php',
+        'xoctPublicationGroupTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationGroupTableGUI.php',
+        'xoctPublicationSubUsageFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationSubUsageFormGUI.php',
+        'xoctPublicationSubUsageTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationSubUsageTableGUI.php',
         'xoctPublicationUsageFormGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageFormGUI.php',
         'xoctPublicationUsageGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageGUI.php',
         'xoctPublicationUsageTableGUI' => __DIR__ . '/../..' . '/classes/Conf/PublicationUsage/class.xoctPublicationUsageTableGUI.php',
@@ -1544,7 +1552,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'xoctWorkflowParameterTableGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
         'xoctWorkflowParametersFormGUI' => __DIR__ . '/../..' . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
         'xoctWorkflowTableGUI' => __DIR__ . '/../..' . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-    ];
+    );
 
     public static function getInitializer(ClassLoader $loader)
     {
@@ -1552,6 +1560,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             $loader->prefixLengthsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$classMap;
+
         }, null, ClassLoader::class);
     }
 }

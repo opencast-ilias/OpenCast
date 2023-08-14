@@ -32,6 +32,10 @@ class xoctMainGUI extends xoctGUI
     public const SUBTAB_SECURITY = 'security';
     public const SUBTAB_ADVANCED = 'advanced';
 
+    public const SUBTAB_PUBLICATION_USAGE = 'publication_usage';
+    public const SUBTAB_PUBLICATION_SUB_USAGE = 'publication_sub_usage';
+    public const SUBTAB_PUBLICATION_GROUPS = 'publication_groups';
+
 
     /**
      * @throws DICException
@@ -56,6 +60,7 @@ class xoctMainGUI extends xoctGUI
         switch ($nextClass) {
             case strtolower(xoctPublicationUsageGUI::class):
                 self::dic()->tabs()->activateTab(self::TAB_PUBLICATION_USAGE);
+                $this->setPublicationSubTabs();
                 $xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
                 self::dic()->ctrl()->forwardCommand($xoctPublicationUsageGUI);
                 break;
@@ -123,6 +128,17 @@ class xoctMainGUI extends xoctGUI
         self::dic()->ctrl()->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_ADVANCED);
         self::dic()->tabs()->addSubTab(self::SUBTAB_ADVANCED, self::plugin()->translate('subtab_' . self::SUBTAB_ADVANCED), self::dic()->ctrl()->getLinkTargetByClass(xoctConfGUI::class));
         self::dic()->ctrl()->clearParametersByClass(xoctConfGUI::class);
+    }
+
+    protected function setPublicationSubTabs()
+    {
+        self::dic()->ctrl()->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_USAGE);
+        self::dic()->tabs()->addSubTab(self::SUBTAB_PUBLICATION_USAGE, self::plugin()->translate('subtab_' . self::SUBTAB_PUBLICATION_USAGE), self::dic()->ctrl()->getLinkTargetByClass(xoctPublicationUsageGUI::class));
+        self::dic()->ctrl()->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_SUB_USAGE);
+        self::dic()->tabs()->addSubTab(self::SUBTAB_PUBLICATION_SUB_USAGE, self::plugin()->translate('subtab_' . self::SUBTAB_PUBLICATION_SUB_USAGE), self::dic()->ctrl()->getLinkTargetByClass(xoctPublicationUsageGUI::class));
+        self::dic()->ctrl()->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_GROUPS);
+        self::dic()->tabs()->addSubTab(self::SUBTAB_PUBLICATION_GROUPS, self::plugin()->translate('subtab_' . self::SUBTAB_PUBLICATION_GROUPS), self::dic()->ctrl()->getLinkTargetByClass(xoctPublicationUsageGUI::class));
+        self::dic()->ctrl()->clearParametersByClass(xoctPublicationUsageGUI::class);
     }
 
 

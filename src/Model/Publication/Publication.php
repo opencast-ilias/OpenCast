@@ -88,6 +88,14 @@ class Publication extends APIObject
      * @var Attachment[]
      */
     protected $attachments;
+    /**
+     * @var string
+     */
+    public $usage_type;
+    /**
+     * @var string
+     */
+    public $usage_id;
 
 
     /**

@@ -207,3 +207,8 @@ div.modal-body form .ilFormFooter {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
 }
+
+.std .btn-group-vertical .dropdown .btn {
+	width: 100%;
+	text-align: center;
+}

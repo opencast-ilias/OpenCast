@@ -469,3 +469,12 @@ if (!$ilDB->tableColumnExists('xoct_md_field_series', 'values')) {
 <?php
 $ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null');
 ?>
+<#41>
+<?php
+// Introducing PublicationUsageGroup for grouping PublicationUsage.
+\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup::updateDB();
+// Introducing PublicationSubUsage as for sub usages.
+\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::updateDB();
+// Add display name and groupd id to PublicationUsage.
+\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+?>

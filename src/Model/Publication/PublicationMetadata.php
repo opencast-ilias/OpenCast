@@ -60,6 +60,14 @@ class publicationMetadata extends APIObject
      * @var array
      */
     public $tags;
+    /**
+     * @var string
+     */
+    public $usage_type;
+    /**
+     * @var string
+     */
+    public $usage_id;
 
 
     public function getId(): string
