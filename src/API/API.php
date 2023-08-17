@@ -25,7 +25,7 @@ interface API
      * Gets the static OpencastRestClient instance.
      * @return OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
-    public static function getRestClient(): OcRestClient;
+    public static function rest(): OcRestClient;
 
     /**
      * Toggle the ingest service of OpencastAPI instance.

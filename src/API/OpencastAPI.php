@@ -88,7 +88,7 @@ class OpencastAPI implements API
      * Gets the static OpencastRestClient instance.
      * @return \OpencastApi\Rest\OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
-    public static function getRestClient(): \OpencastApi\Rest\OcRestClient
+    public static function rest(): \OpencastApi\Rest\OcRestClient
     {
         if (!self::$opencastRestClient) {
             PluginConfig::setApiSettings();
