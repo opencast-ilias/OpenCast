@@ -4,6 +4,7 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Event\Event;
 use xoctException;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class StreamingDataBuilder
@@ -14,6 +15,10 @@ abstract class PlayerDataBuilder
 {
     public const ROLE_MASTER = "presenter";
     public const ROLE_SLAVE = "presentation";
+    /**
+     * @var API
+     */
+    protected $api;
 
     /**
      * @var Event
@@ -25,6 +30,8 @@ abstract class PlayerDataBuilder
      */
     public function __construct(Event $event)
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->event = $event;
     }
 

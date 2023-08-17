@@ -1,6 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctGUI
@@ -23,6 +24,10 @@ abstract class xoctGUI
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
     /**
+     * @var API
+     */
+    protected $api;
+    /**
      * @var ilOpenCastPlugin
      */
     protected $plugin;
@@ -37,7 +42,8 @@ abstract class xoctGUI
 
     public function __construct()
     {
-        global $DIC;
+        global $DIC, $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->ctrl = $DIC->ctrl();
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();

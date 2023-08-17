@@ -1,6 +1,7 @@
 <?php
 
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctBase
@@ -9,6 +10,10 @@ use srag\Plugins\Opencast\API\OpencastAPI;
  */
 class xoctBase
 {
+    /**
+     * @var API
+     */
+    protected $api;
     /**
      * @var array
      */
@@ -36,7 +41,9 @@ class xoctBase
 
     public function __construct()
     {
-        $version = OpencastAPI::getApi()->baseApi->getVersion();
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
+        $version = $this->api->getApi()->baseApi->getVersion();
         if (isset($version->default)) {
             $this->setApiVersion($version->default);
         }
@@ -44,7 +51,7 @@ class xoctBase
             $this->setApiVersions($version->versions);
         }
 
-        $org = OpencastAPI::getApi()->baseApi->getOrg();
+        $org = $this->api->getApi()->baseApi->getOrg();
         if (isset($org->id)) {
             $this->setOrganizationId($org->id);
         }

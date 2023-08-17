@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctSecureLink
@@ -25,9 +26,11 @@ class xoctSecureLink
      *
      * @return mixed
      * @throws xoctException
+     * @deperecated we should get rid of static methods
      */
     protected static function sign($url, $valid_until = null, $restict_ip = false)
     {
+        global $opencastContainer;
         if (strpos($url, 'policy=') !== false && strpos($url, 'signature=') !== false) {
             // already signed, e.g. when presigning is active
             return $url;
@@ -41,7 +44,7 @@ class xoctSecureLink
 
         $ip = ($restict_ip) ? self::getClientIP() : null;
 
-        $data = OpencastAPI::getApi()->securityApi->sign($url, $valid_until, $ip);
+        $data = $opencastContainer[API::class]->getApi()->securityApi->sign($url, $valid_until, $ip);
 
         if ($data->error) {
             return '';

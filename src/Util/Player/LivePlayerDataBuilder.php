@@ -16,7 +16,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
      */
     public function buildStreamingData(): array
     {
-        $episode_data = OpencastAPI::getApi()->search->getEpisodes(
+        $episode_data = $this->api->getApi()->search->getEpisodes(
             [
                 'id' => $this->event->getIdentifier()
             ],

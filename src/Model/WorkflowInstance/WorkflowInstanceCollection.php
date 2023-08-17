@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
 use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctWorkflowCollection
@@ -14,6 +15,10 @@ use srag\Plugins\Opencast\API\OpencastAPI;
  */
 class WorkflowInstanceCollection extends APIObject
 {
+    /**
+     * @var API
+     */
+    protected $api;
     /**
      * @var bool
      */
@@ -35,6 +40,8 @@ class WorkflowInstanceCollection extends APIObject
      */
     public function __construct(string $event_id = '')
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->event_id = $event_id;
         if ($event_id !== '') {
             $this->read();
@@ -49,7 +56,7 @@ class WorkflowInstanceCollection extends APIObject
     {
         if ($data === null) {
             $data = new stdClass();
-            $opencast_api = OpencastAPI::getApi();
+            $opencast_api = $this->api->getApi();
             $opencast_version = $opencast_api->sysinfo->getVersion()->version;
             // A deep check to avoid error in advance.
             // workflows get all endpoint is removed from Opencast Verison 12.x and in OpencastAPI v1.3 is flagged depricated.

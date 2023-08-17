@@ -158,13 +158,6 @@ class PluginConfig extends ActiveRecord
         // LOG
         xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
-        // Opencast API
-        OpencastAPI::init(
-            self::getConfig(self::F_API_BASE),
-            self::getConfig(self::F_CURL_USERNAME),
-            self::getConfig(self::F_CURL_PASSWORD),
-            self::getConfig(self::F_API_VERSION)
-        );
         // USER
         xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN);
     }

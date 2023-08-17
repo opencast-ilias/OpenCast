@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctGroup
@@ -14,6 +15,10 @@ use srag\Plugins\Opencast\API\OpencastAPI;
  */
 class Group extends APIObject
 {
+    /**
+     * @var API
+     */
+    protected $api;
     /**
      * @var String
      */
@@ -48,6 +53,8 @@ class Group extends APIObject
      */
     public function __construct(string $identifier = '')
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         if ($identifier !== '' && $identifier !== '0') {
             $this->setIdentifier($identifier);
             $this->read();
@@ -59,7 +66,7 @@ class Group extends APIObject
      */
     protected function read()
     {
-        $data = OpencastAPI::getApi()->groupsApi->get($this->getIdentifier());
+        $data = $this->api->getApi()->groupsApi->get($this->getIdentifier());
         if (!empty($data)) {
             $this->loadFromStdClass($data);
         }
@@ -92,7 +99,7 @@ class Group extends APIObject
         }
 
         if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            OpencastAPI::getApi()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
+            $this->api->getApi()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
             $this->members[] = $xoctUser;
 
             return true;

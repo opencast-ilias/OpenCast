@@ -21,6 +21,9 @@ namespace srag\Plugins\Opencast\Container;
 
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\Config;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\API\Handlers;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -53,12 +56,18 @@ final class Init
         );
 
         // Plugin Dependencies
-        $opencast_container->glue(API::class, function () {
-            return new OpencastAPI();
+        $opencast_container->glue(Config::class, function () use ($opencast_container) {
+            return new Config(
+                Handlers::getHandlerStack(),
+                PluginConfig::getConfig(PluginConfig::F_API_BASE),
+                PluginConfig::getConfig(PluginConfig::F_CURL_USERNAME),
+                PluginConfig::getConfig(PluginConfig::F_CURL_PASSWORD),
+                PluginConfig::getConfig(PluginConfig::F_API_VERSION)
+            );
         });
 
         $opencast_container->glue(API::class, function () use ($opencast_container) {
-            return new OpencastAPI($opencast_container['config']);
+            return new OpencastAPI($opencast_container[Config::class]);
         });
 
         return self::$container = $opencast_container;

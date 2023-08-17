@@ -15,6 +15,7 @@ use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
 use xoctWorkflowParameterGUI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctWorkflowParameterRepository
@@ -38,6 +39,10 @@ class WorkflowParameterRepository
      */
     private $container;
     /**
+     * @var API
+     */
+    protected $api;
+    /**
      * @var array
      */
     protected $parameters;
@@ -57,6 +62,8 @@ class WorkflowParameterRepository
     public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
         global $DIC;
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
         $this->ctrl = $DIC->ctrl();
@@ -74,7 +81,7 @@ class WorkflowParameterRepository
         if (!$workflow_definition_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = OpencastAPI::getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
+        $response = $this->api->getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
 
         if ($response == false) {
             throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_definition_id'.");

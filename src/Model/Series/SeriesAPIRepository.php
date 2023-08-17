@@ -19,6 +19,7 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 class SeriesAPIRepository implements SeriesRepository
 {
@@ -44,6 +45,10 @@ class SeriesAPIRepository implements SeriesRepository
      * @var MDParser
      */
     private $MDParser;
+    /**
+     * @var API
+     */
+    protected $api;
 
     public function __construct(
         Cache $cache,
@@ -52,6 +57,8 @@ class SeriesAPIRepository implements SeriesRepository
         MetadataFactory $metadataFactory,
         MDParser $MDParser
     ) {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->cache = $cache;
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
@@ -67,7 +74,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function fetch(string $identifier): Series
     {
-        $data = OpencastAPI::getApi()->seriesApi->get($identifier, true);
+        $data = $this->api->getApi()->seriesApi->get($identifier, true);
         $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
@@ -79,14 +86,14 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = OpencastAPI::getApi()->seriesApi->getMetadata($identifier) ?? [];
+        $data = $this->api->getApi()->seriesApi->getMetadata($identifier) ?? [];
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $created_series = OpencastAPI::getApi()->seriesApi->create(
+        $created_series = $this->api->getApi()->seriesApi->create(
             $payload['metadata'],
             $payload['acl'],
         );
@@ -99,7 +106,7 @@ class SeriesAPIRepository implements SeriesRepository
     public function updateMetadata(UpdateSeriesMetadataRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        OpencastAPI::getApi()->seriesApi->updateMetadata(
+        $this->api->getApi()->seriesApi->updateMetadata(
             $request->getIdentifier(),
             $payload['metadata']
         );
@@ -113,7 +120,7 @@ class SeriesAPIRepository implements SeriesRepository
     public function updateACL(UpdateSeriesACLRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        OpencastAPI::getApi()->seriesApi->updateAcl(
+        $this->api->getApi()->seriesApi->updateAcl(
             $request->getIdentifier(),
             $payload['acl']
         );
@@ -133,7 +140,7 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = OpencastAPI::getApi()->seriesApi->runWithRoles([$user_string])->getAll([
+            $data = $this->api->getApi()->seriesApi->runWithRoles([$user_string])->getAll([
                 'onlyWithWriteAccess' => true,
                 'withacl' => true,
                 'limit' => 5000
@@ -180,7 +187,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function getOwnSeries(xoctUser $xoct_user): ?Series
     {
-        $existing = OpencastAPI::getApi()->seriesApi->getAll([
+        $existing = $this->api->getApi()->seriesApi->getAll([
             'filter' => [
                 'title' => $this->getOwnSeriesTitle($xoct_user)
             ],

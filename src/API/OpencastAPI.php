@@ -22,15 +22,6 @@ class OpencastAPI implements API
      */
     public const RETURN_ARRAY = 'return_array_flag';
 
-    /**
-     * @var array configuration parameters
-     */
-    protected static $config;
-
-    /**
-     * @var array configuration parameters
-     */
-    protected static $engage_config = [];
 
     /**
      * @var \OpencastApi\Opencast instance
@@ -40,45 +31,28 @@ class OpencastAPI implements API
      * @var \OpencastApi\Opencast instance
      */
     public static $opencastRestClient;
-
     /**
-     * Initializes the class statics.
-     *
-     * @param string $api_url         The API Url
-     * @param string $api_username    The API Username
-     * @param string $api_password    The API Password
-     * @param string $api_version     The API Version
-     * @param int    $timeout         The request timeout miliseconds (OPTIONAL) (default 0)
-     * @param int    $connect_timeout The connection timeout miliseconds (OPTIONAL) (default 0)
+     * @var array
      */
-    public static function init(
-        string $api_url,
-        string $api_username,
-        string $api_password,
-        string $api_version = '',
-        int $timeout = 0,
-        int $connect_timeout = 0
-    ):void {
-        $handler_stack = Handlers::getHandlerStack();
-        self::$config = [
-            'url' => rtrim(rtrim($api_url, '/'), '/api'),
-            'username' => $api_username,
-            'password' => $api_password,
-            'version' => $api_version,
-            'timeout' => ($timeout > 0 ? (intval($timeout) / 1000) : $timeout),
-            'connect_timeout' => ($connect_timeout > 0 ? (intval($connect_timeout) / 1000) : $connect_timeout),
-            'handler' => $handler_stack
-        ];
+    private $config;
+    /**
+     * @var array
+     */
+    private $engage_config;
 
-        self::$engage_config = self::$config;
-        if ($presentation_node_url = PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)) {
-            self::$engage_config['url'] = $presentation_node_url;
-        }
+    public function __construct(Config $config)
+    {
+        $this->config = $config->getConfig();
+        $this->engage_config = $config->getEngageConfig();
+        $this->init();
+    }
 
+    private function init(): void
+    {
         // By default we don't need to activate ingest, hence we pass false to decorate services.
         // We deal with ingest on demand!
-        self::$opencastApi = self::decorateApiServicesForXoct(false);
-        self::$opencastRestClient = new \OpencastApi\Rest\OcRestClient(self::$config);
+        self::$opencastApi = $this->decorateApiServicesForXoct(false);
+        self::$opencastRestClient = new \OpencastApi\Rest\OcRestClient($this->config);
     }
 
     /**
@@ -86,9 +60,9 @@ class OpencastAPI implements API
      * @param bool $activate_ingest whether to activate ingest service or not.
      * @return \OpencastApi\Opencast $opencastApi customised instance of \OpencastAPI\Opencast
      */
-    private static function decorateApiServicesForXoct(bool $activate_ingest = false): \OpencastApi\Opencast
+    private function decorateApiServicesForXoct(bool $activate_ingest = false): \OpencastApi\Opencast
     {
-        $decorated_opencast_api = new \OpencastApi\Opencast(self::$config, self::$engage_config, $activate_ingest);
+        $decorated_opencast_api = new \OpencastApi\Opencast($this->config, $this->engage_config, $activate_ingest);
         $class_vars = get_object_vars($decorated_opencast_api);
         foreach ($class_vars as $name => $value) {
             $decorated_opencast_api->{$name} = new DecorateProxy($decorated_opencast_api->{$name});
@@ -127,7 +101,7 @@ class OpencastAPI implements API
      * Toggle the ingest service of OpencastAPI instance.
      * @param bool $activate whether to toggle the ingest service
      */
-    public static function activateIngest(bool $activate):void
+    public static function activateIngest(bool $activate): void
     {
         if ($activate === true && !property_exists(self::$opencastApi, 'ingest')) {
             self::$opencastApi = self::decorateApiServicesForXoct($activate);

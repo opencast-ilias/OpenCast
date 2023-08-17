@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 class OpencastIngestService
 {
@@ -13,9 +14,15 @@ class OpencastIngestService
      * @var UploadStorageService
      */
     private $uploadStorageService;
+    /**
+     * @var API
+     */
+    protected $api;
 
     public function __construct(UploadStorageService $uploadStorageService)
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->uploadStorageService = $uploadStorageService;
     }
 
@@ -29,31 +36,31 @@ class OpencastIngestService
         $payload = $uploadEventRequest->getPayload();
 
         // create media package
-        $media_package = OpencastAPI::getApi()->ingest->createMediaPackage();
+        $media_package = $this->api->getApi()->ingest->createMediaPackage();
 
         // Metadata
-        $media_package = OpencastAPI::getApi()->ingest->addDCCatalog(
+        $media_package = $this->api->getApi()->ingest->addDCCatalog(
             $media_package,
             (new MetadataToXML($payload->getMetadata()))->getXML(),
             'dublincore/episode'
         );
 
         // ACLs (as attachment)
-        $media_package = OpencastAPI::getApi()->ingest->addAttachment(
+        $media_package = $this->api->getApi()->ingest->addAttachment(
             $media_package,
             'security/xacml+episode',
             $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
         );
 
         // track
-        $media_package = OpencastAPI::getApi()->ingest->addTrack(
+        $media_package = $this->api->getApi()->ingest->addTrack(
             $media_package,
             'presentation/source',
             $payload->getPresentation()->getFileStream()
         );
 
         // ingest
-        $media_package = OpencastAPI::getApi()->ingest->ingest(
+        $media_package = $this->api->getApi()->ingest->ingest(
             $media_package,
             $payload->getProcessing()->getWorkflow()
         );

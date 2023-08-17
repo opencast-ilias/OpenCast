@@ -5,7 +5,7 @@
 $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
-return array(
+return [
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CaptainHook\\App\\CH' => $vendorDir . '/captainhook/captainhook/src/CH.php',
     'CaptainHook\\App\\Config' => $vendorDir . '/captainhook/captainhook/src/Config.php',
@@ -1174,6 +1174,7 @@ return array(
     'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => $baseDir . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
     'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\Loader' => $baseDir . '/src/UI/Form/Loader.php',
     'srag\\Plugins\\Opencast\\API\\API' => $baseDir . '/src/API/API.php',
+    'srag\\Plugins\\Opencast\\API\\Config' => $baseDir . '/src/API/Config.php',
     'srag\\Plugins\\Opencast\\API\\DecorateProxy' => $baseDir . '/src/API/DecorateProxy.php',
     'srag\\Plugins\\Opencast\\API\\Handlers' => $baseDir . '/src/API/Handlers.php',
     'srag\\Plugins\\Opencast\\API\\OpencastAPI' => $baseDir . '/src/API/OpencastAPI.php',
@@ -1360,4 +1361,4 @@ return array(
     'xoctWorkflowParameterTableGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParameterTableGUI.php',
     'xoctWorkflowParametersFormGUI' => $baseDir . '/classes/Conf/WorkflowParameters/class.xoctWorkflowParametersFormGUI.php',
     'xoctWorkflowTableGUI' => $baseDir . '/classes/Conf/Workflows/class.xoctWorkflowTableGUI.php',
-);
+];

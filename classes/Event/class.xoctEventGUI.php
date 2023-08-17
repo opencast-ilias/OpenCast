@@ -170,6 +170,7 @@ class xoctEventGUI extends xoctGUI
     ) {
         global $DIC;
         parent::__construct();
+
         $this->user = $DIC->user();
         $this->tabs = $DIC->tabs();
         $this->main_tpl = $DIC->ui()->mainTemplate();
@@ -1082,7 +1083,7 @@ class xoctEventGUI extends xoctGUI
                 $configurations[$param] = 'true';
             }
 
-            $workflow_instance = OpencastAPI::getApi()->workflowsApi->run(
+            $workflow_instance = $this->api->getApi()->workflowsApi->run(
                 $event_id,
                 $workflow->getWorkflowId(),
                 $configurations,
@@ -1179,7 +1180,7 @@ class xoctEventGUI extends xoctGUI
     private function unpublish(Event $event): bool
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        $workflow_instance = OpencastAPI::getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
+        $workflow_instance = $this->api->getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
         return true;
     }
 

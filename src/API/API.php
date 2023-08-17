@@ -15,15 +15,6 @@ use OpencastApi\Rest\OcRestClient;
  */
 interface API
 {
-    public static function init(
-        string $api_url,
-        string $api_username,
-        string $api_password,
-        string $api_version = '',
-        int $timeout = 0,
-        int $connect_timeout = 0
-    ): void;
-
     /**
      * Gets the static OpencastAPI instance.
      * @return Opencast $opencastApi instance of \OpencastAPI\Opencast
