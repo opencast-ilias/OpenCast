@@ -236,8 +236,10 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
             $xoctPublicationUsage->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue);
             $xoctPublicationUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue);
-            $xoctPublicationUsage->setMediaType($node->getElementsByTagName('mediatype')->item(0)->nodeValue);
-            $xoctPublicationUsage->setIgnoreObjectSettings($node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue);
+            $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue;
+            $xoctPublicationUsage->setMediaType($mediatype ?? '');
+            $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
+            $xoctPublicationUsage->setIgnoreObjectSettings($ignore_object_setting);
 
             if (!PublicationUsage::where(['usage_id' => $xoctPublicationUsage->getUsageId()])->hasSets()) {
                 $xoctPublicationUsage->create();
@@ -270,8 +272,10 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationSubUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue);
-            $xoctPublicationSubUsage->setMediaType($node->getElementsByTagName('mediatype')->item(0)->nodeValue);
-            $xoctPublicationSubUsage->setIgnoreObjectSettings($node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue);
+            $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue;
+            $xoctPublicationSubUsage->setMediaType($mediatype ?? '');
+            $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
+            $xoctPublicationSubUsage->setIgnoreObjectSettings($ignore_object_setting);
             $xoctPublicationSubUsage->create();
         }
 
