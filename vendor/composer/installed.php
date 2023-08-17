@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'studer-raimann.ch/opencast',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'd9ced07e62ec165590e2ee46bebde0ec23dbccea',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -299,9 +299,9 @@
             'dev_requirement' => false,
         ),
         'studer-raimann.ch/opencast' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'd9ced07e62ec165590e2ee46bebde0ec23dbccea',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
