@@ -21,6 +21,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Util\UpdateCheck;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * OpenCast repository object plugin
@@ -32,8 +33,6 @@ use srag\Plugins\Opencast\Util\UpdateCheck;
  */
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 {
-    use DataTableUITrait;
-
     public const PLUGIN_CLASS_NAME = self::class;
 
     public const PLUGIN_ID = 'xoct';
@@ -52,6 +51,14 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
         global $DIC;
         $this->db = $DIC->database();
+    }
+
+    protected function init(): void
+    {
+        // we create the Opencast Container here and
+        global $DIC;
+        global $opencastContainer;
+        $opencastContainer = Init::init($DIC);
     }
 
     protected function beforeUpdate(): bool

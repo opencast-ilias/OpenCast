@@ -47,6 +47,9 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use xoctFileUploadHandler;
 
+/**
+ * @deperecated use srag\Plugins\Opencast\Container\Container instead
+ */
 class OpencastDIC
 {
     use Singleton;
