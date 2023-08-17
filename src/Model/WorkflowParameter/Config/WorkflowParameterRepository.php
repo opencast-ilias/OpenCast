@@ -81,7 +81,7 @@ class WorkflowParameterRepository
         if (!$workflow_definition_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = $this->api->getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
+        $response = $this->api->routes()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
 
         if ($response == false) {
             throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_definition_id'.");

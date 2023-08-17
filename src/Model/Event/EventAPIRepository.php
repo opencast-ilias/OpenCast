@@ -63,7 +63,7 @@ class EventAPIRepository implements EventRepository
 
     public function fetch(string $identifier): Event
     {
-        $data = $this->api->getApi()->eventsApi->get(
+        $data = $this->api->routes()->eventsApi->get(
             $identifier,
             [
                 'withmetadata' => true,
@@ -82,7 +82,7 @@ class EventAPIRepository implements EventRepository
 
     public function delete(string $identifier): bool
     {
-        $this->api->getApi()->eventsApi->delete($identifier);
+        $this->api->routes()->eventsApi->delete($identifier);
         foreach (PermissionGrant::where(['event_identifier' => $identifier])->get() as $invitation) {
             $invitation->delete();
         }
@@ -101,7 +101,7 @@ class EventAPIRepository implements EventRepository
             $presenter = null;
             $presentation = $request->getPayload()->getPresentation()->getFileStream();
             $audio = null;
-            $response = $this->api->getApi()->eventsApi->create(
+            $response = $this->api->routes()->eventsApi->create(
                 $payload['acl'],
                 $payload['metadata'],
                 $payload['processing'],
@@ -141,7 +141,7 @@ class EventAPIRepository implements EventRepository
         if (!empty($sort)) {
             $params['sort'] = $sort;
         }
-        $data = $this->api->getApi()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
+        $data = $this->api->routes()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
         $return = [];
 
         $this->opencastDIC = OpencastDIC::getInstance();
@@ -169,7 +169,7 @@ class EventAPIRepository implements EventRepository
     {
         $payload = $request->getPayload()->jsonSerialize();
 
-        $response = $this->api->getApi()->eventsApi->update(
+        $response = $this->api->routes()->eventsApi->update(
             $request->getIdentifier(),
             $payload['acl'] ?? '',
             $payload['metadata'] ?? '',
@@ -182,7 +182,7 @@ class EventAPIRepository implements EventRepository
     public function schedule(ScheduleEventRequest $request): string
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $response = $this->api->getApi()->eventsApi->create(
+        $response = $this->api->routes()->eventsApi->create(
             $payload['acl'],
             $payload['metadata'],
             $payload['processing'],
@@ -194,7 +194,7 @@ class EventAPIRepository implements EventRepository
     public function updateACL(UpdateEventRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $this->api->getApi()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
+        $this->api->routes()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 }

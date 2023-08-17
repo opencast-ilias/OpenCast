@@ -1083,7 +1083,7 @@ class xoctEventGUI extends xoctGUI
                 $configurations[$param] = 'true';
             }
 
-            $workflow_instance = $this->api->getApi()->workflowsApi->run(
+            $workflow_instance = $this->api->routes()->workflowsApi->run(
                 $event_id,
                 $workflow->getWorkflowId(),
                 $configurations,
@@ -1180,7 +1180,7 @@ class xoctEventGUI extends xoctGUI
     private function unpublish(Event $event): bool
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        $workflow_instance = $this->api->getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
+        $workflow_instance = $this->api->routes()->workflowsApi->run($event->getIdentifier(), $workflow);
         return true;
     }
 

@@ -25,7 +25,7 @@ class AgentApiRepository implements AgentRepository
 
     public function findAll(): array
     {
-        $data = $this->api::getApi()->agentsApi->getAll();
+        $data = $this->api::routes()->agentsApi->getAll();
         return $this->agentParser->parseApiResponse($data);
     }
 }

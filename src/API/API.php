@@ -19,7 +19,7 @@ interface API
      * Gets the static OpencastAPI instance.
      * @return Opencast $opencastApi instance of \OpencastAPI\Opencast
      */
-    public static function getApi(): Opencast;
+    public static function routes(): Opencast;
 
     /**
      * Gets the static OpencastRestClient instance.

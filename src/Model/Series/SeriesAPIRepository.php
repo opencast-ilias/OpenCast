@@ -74,7 +74,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function fetch(string $identifier): Series
     {
-        $data = $this->api->getApi()->seriesApi->get($identifier, true);
+        $data = $this->api->routes()->seriesApi->get($identifier, true);
         $data->metadata = $this->fetchMD($identifier);
         $series = $this->seriesParser->parseAPIResponse($data);
         $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
@@ -86,14 +86,14 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = $this->api->getApi()->seriesApi->getMetadata($identifier) ?? [];
+        $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $created_series = $this->api->getApi()->seriesApi->create(
+        $created_series = $this->api->routes()->seriesApi->create(
             $payload['metadata'],
             $payload['acl'],
         );
@@ -106,7 +106,7 @@ class SeriesAPIRepository implements SeriesRepository
     public function updateMetadata(UpdateSeriesMetadataRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $this->api->getApi()->seriesApi->updateMetadata(
+        $this->api->routes()->seriesApi->updateMetadata(
             $request->getIdentifier(),
             $payload['metadata']
         );
@@ -120,7 +120,7 @@ class SeriesAPIRepository implements SeriesRepository
     public function updateACL(UpdateSeriesACLRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $this->api->getApi()->seriesApi->updateAcl(
+        $this->api->routes()->seriesApi->updateAcl(
             $request->getIdentifier(),
             $payload['acl']
         );
@@ -140,7 +140,7 @@ class SeriesAPIRepository implements SeriesRepository
         }
         $return = [];
         try {
-            $data = $this->api->getApi()->seriesApi->runWithRoles([$user_string])->getAll([
+            $data = $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
                 'onlyWithWriteAccess' => true,
                 'withacl' => true,
                 'limit' => 5000
@@ -187,7 +187,7 @@ class SeriesAPIRepository implements SeriesRepository
 
     public function getOwnSeries(xoctUser $xoct_user): ?Series
     {
-        $existing = $this->api->getApi()->seriesApi->getAll([
+        $existing = $this->api->routes()->seriesApi->getAll([
             'filter' => [
                 'title' => $this->getOwnSeriesTitle($xoct_user)
             ],

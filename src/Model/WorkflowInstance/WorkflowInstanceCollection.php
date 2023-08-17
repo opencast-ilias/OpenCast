@@ -56,7 +56,7 @@ class WorkflowInstanceCollection extends APIObject
     {
         if ($data === null) {
             $data = new stdClass();
-            $opencast_api = $this->api->getApi();
+            $opencast_api = $this->api->routes();
             $opencast_version = $opencast_api->sysinfo->getVersion()->version;
             // A deep check to avoid error in advance.
             // workflows get all endpoint is removed from Opencast Verison 12.x and in OpencastAPI v1.3 is flagged depricated.

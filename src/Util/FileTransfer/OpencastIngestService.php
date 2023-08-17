@@ -36,31 +36,31 @@ class OpencastIngestService
         $payload = $uploadEventRequest->getPayload();
 
         // create media package
-        $media_package = $this->api->getApi()->ingest->createMediaPackage();
+        $media_package = $this->api->routes()->ingest->createMediaPackage();
 
         // Metadata
-        $media_package = $this->api->getApi()->ingest->addDCCatalog(
+        $media_package = $this->api->routes()->ingest->addDCCatalog(
             $media_package,
             (new MetadataToXML($payload->getMetadata()))->getXML(),
             'dublincore/episode'
         );
 
         // ACLs (as attachment)
-        $media_package = $this->api->getApi()->ingest->addAttachment(
+        $media_package = $this->api->routes()->ingest->addAttachment(
             $media_package,
             'security/xacml+episode',
             $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
         );
 
         // track
-        $media_package = $this->api->getApi()->ingest->addTrack(
+        $media_package = $this->api->routes()->ingest->addTrack(
             $media_package,
             'presentation/source',
             $payload->getPresentation()->getFileStream()
         );
 
         // ingest
-        $media_package = $this->api->getApi()->ingest->ingest(
+        $media_package = $this->api->routes()->ingest->ingest(
             $media_package,
             $payload->getProcessing()->getWorkflow()
         );

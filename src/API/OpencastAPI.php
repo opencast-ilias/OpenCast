@@ -75,7 +75,7 @@ class OpencastAPI implements API
      * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
      * @return \OpencastApi\Opencast $opencastApi instance of \OpencastAPI\Opencast
      */
-    public static function getApi(): \OpencastApi\Opencast
+    public static function routes(): \OpencastApi\Opencast
     {
         if (!self::$opencastApi) {
             PluginConfig::setApiSettings();

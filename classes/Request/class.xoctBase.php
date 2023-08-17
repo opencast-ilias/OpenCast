@@ -43,7 +43,7 @@ class xoctBase
     {
         global $opencastContainer;
         $this->api = $opencastContainer[API::class];
-        $version = $this->api->getApi()->baseApi->getVersion();
+        $version = $this->api->routes()->baseApi->getVersion();
         if (isset($version->default)) {
             $this->setApiVersion($version->default);
         }
@@ -51,7 +51,7 @@ class xoctBase
             $this->setApiVersions($version->versions);
         }
 
-        $org = $this->api->getApi()->baseApi->getOrg();
+        $org = $this->api->routes()->baseApi->getOrg();
         if (isset($org->id)) {
             $this->setOrganizationId($org->id);
         }

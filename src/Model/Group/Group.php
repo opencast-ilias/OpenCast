@@ -66,7 +66,7 @@ class Group extends APIObject
      */
     protected function read()
     {
-        $data = $this->api->getApi()->groupsApi->get($this->getIdentifier());
+        $data = $this->api->routes()->groupsApi->get($this->getIdentifier());
         if (!empty($data)) {
             $this->loadFromStdClass($data);
         }
@@ -99,7 +99,7 @@ class Group extends APIObject
         }
 
         if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            $this->api->getApi()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
+            $this->api->routes()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
             $this->members[] = $xoctUser;
 
             return true;

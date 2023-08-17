@@ -32,7 +32,7 @@ class PublicationAPIRepository implements PublicationRepository
 
     public function fetch(string $identifier): array
     {
-        $data = $this->api->getApi()->eventsApi->getPublications($identifier);
+        $data = $this->api->routes()->eventsApi->getPublications($identifier);
         $publications = [];
         foreach ($data as $d) {
             $p = new Publication();
