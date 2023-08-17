@@ -10,7 +10,7 @@ use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use xoctException;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -56,7 +56,7 @@ class EventAPIRepository implements EventRepository
 
     public function fetch(string $identifier): Event
     {
-        $data = xoctOpencastApi::getApi()->eventsApi->get(
+        $data = OpencastAPI::getApi()->eventsApi->get(
             $identifier,
             [
                 'withmetadata' => true,
@@ -75,7 +75,7 @@ class EventAPIRepository implements EventRepository
 
     public function delete(string $identifier): bool
     {
-        xoctOpencastApi::getApi()->eventsApi->delete($identifier);
+        OpencastAPI::getApi()->eventsApi->delete($identifier);
         foreach (PermissionGrant::where(['event_identifier' => $identifier])->get() as $invitation) {
             $invitation->delete();
         }
@@ -94,7 +94,7 @@ class EventAPIRepository implements EventRepository
             $presenter = null;
             $presentation = $request->getPayload()->getPresentation()->getFileStream();
             $audio = null;
-            $response = xoctOpencastApi::getApi()->eventsApi->create(
+            $response = OpencastAPI::getApi()->eventsApi->create(
                 $payload['acl'],
                 $payload['metadata'],
                 $payload['processing'],
@@ -134,7 +134,7 @@ class EventAPIRepository implements EventRepository
         if (!empty($sort)) {
             $params['sort'] = $sort;
         }
-        $data = xoctOpencastApi::getApi()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
+        $data = OpencastAPI::getApi()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
         $return = [];
 
         $this->opencastDIC = OpencastDIC::getInstance();
@@ -162,7 +162,7 @@ class EventAPIRepository implements EventRepository
     {
         $payload = $request->getPayload()->jsonSerialize();
 
-        $response = xoctOpencastApi::getApi()->eventsApi->update(
+        $response = OpencastAPI::getApi()->eventsApi->update(
             $request->getIdentifier(),
             $payload['acl'] ?? '',
             $payload['metadata'] ?? '',
@@ -175,7 +175,7 @@ class EventAPIRepository implements EventRepository
     public function schedule(ScheduleEventRequest $request): string
     {
         $payload = $request->getPayload()->jsonSerialize();
-        $response = xoctOpencastApi::getApi()->eventsApi->create(
+        $response = OpencastAPI::getApi()->eventsApi->create(
             $payload['acl'],
             $payload['metadata'],
             $payload['processing'],
@@ -187,7 +187,7 @@ class EventAPIRepository implements EventRepository
     public function updateACL(UpdateEventRequest $request): void
     {
         $payload = $request->getPayload()->jsonSerialize();
-        xoctOpencastApi::getApi()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
+        OpencastAPI::getApi()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
         $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
     }
 }

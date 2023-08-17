@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use xoctConfGUI;
 use xoctException;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 use xoctWorkflowParameterGUI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
@@ -74,7 +74,7 @@ class WorkflowParameterRepository
         if (!$workflow_definition_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = xoctOpencastApi::getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, xoctOpencastApi::RETURN_ARRAY);
+        $response = OpencastAPI::getApi()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
 
         if ($response == false) {
             throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_definition_id'.");

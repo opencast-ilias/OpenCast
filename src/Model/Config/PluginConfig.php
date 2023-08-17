@@ -16,7 +16,7 @@ use xoctCurlSettings;
 use xoctLog;
 use xoctRequest;
 use xoctRequestSettings;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 /**
  * Class xoctConf
@@ -159,7 +159,7 @@ class PluginConfig extends ActiveRecord
         xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
         // Opencast API
-        xoctOpencastApi::init(
+        OpencastAPI::init(
             self::getConfig(self::F_API_BASE),
             self::getConfig(self::F_CURL_USERNAME),
             self::getConfig(self::F_CURL_PASSWORD),

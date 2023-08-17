@@ -1,22 +1,24 @@
 <?php
 
+namespace srag\Plugins\Opencast\API;
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
- * Class xoctOpencastApi
+ * Class srag\Plugins\Opencast\API\OpencastAPI
  * This class integrates Opencast PHP Library into xoct.
  *
  * @copyright  2023 Farbod Zamani Boroujeni, ELAN e.V.
- * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
+ * @author     Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
-class xoctOpencastApi
+class OpencastAPI implements API
 {
     /**
      * A flag indicating whether to return the value as array to each call from this class.
-     * By default, response body of each call from OpencastApi is returned as stdClass object.
-     * Therefore, this makes it possible to have returned values as array instead, by passing 'xoctOpencastApi::RETURN_ARRAY' as the last argument to each method call.
+     * By default, response body of each call from OpencastAPI is returned as stdClass object.
+     * Therefore, this makes it possible to have returned values as array instead, by passing 'srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY' as the last argument to each method call.
      * Usage example:
-     * $array_data = xoctOpencastApi::getApi()->search->getEpisodes(['id' => $this->event->getIdentifier()], xoctOpencastApi::RETURN_ARRAY);
+     * $array_data = srag\Plugins\Opencast\API\OpencastAPI::getApi()->search->getEpisodes(['id' => $this->event->getIdentifier()], srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY);
      */
     public const RETURN_ARRAY = 'return_array_flag';
 
@@ -42,12 +44,12 @@ class xoctOpencastApi
     /**
      * Initializes the class statics.
      *
-     * @param string $api_url The API Url
-     * @param string $api_username The API Username
-     * @param string $api_password The API Password
-     * @param string $api_version The API Version
-     * @param int $timeout The request timeout miliseconds (OPTIONAL) (default 0)
-     * @param int $connect_timeout The connection timeout miliseconds (OPTIONAL) (default 0)
+     * @param string $api_url         The API Url
+     * @param string $api_username    The API Username
+     * @param string $api_password    The API Password
+     * @param string $api_version     The API Version
+     * @param int    $timeout         The request timeout miliseconds (OPTIONAL) (default 0)
+     * @param int    $connect_timeout The connection timeout miliseconds (OPTIONAL) (default 0)
      */
     public static function init(
         string $api_url,
@@ -56,9 +58,8 @@ class xoctOpencastApi
         string $api_version = '',
         int $timeout = 0,
         int $connect_timeout = 0
-    )
-    {
-        $handler_stack = xoctOpencastApiHandlers::getHandlerStack();
+    ):void {
+        $handler_stack = Handlers::getHandlerStack();
         self::$config = [
             'url' => rtrim(rtrim($api_url, '/'), '/api'),
             'username' => $api_username,
@@ -83,22 +84,22 @@ class xoctOpencastApi
     /**
      * It decorates the services provided by Opencast Api class to be customised for xoct specifically.
      * @param bool $activate_ingest whether to activate ingest service or not.
-     * @return \OpencastApi\Opencast $opencastApi customised instance of \OpencastApi\Opencast
+     * @return \OpencastApi\Opencast $opencastApi customised instance of \OpencastAPI\Opencast
      */
     private static function decorateApiServicesForXoct(bool $activate_ingest = false): \OpencastApi\Opencast
     {
         $decorated_opencast_api = new \OpencastApi\Opencast(self::$config, self::$engage_config, $activate_ingest);
         $class_vars = get_object_vars($decorated_opencast_api);
         foreach ($class_vars as $name => $value) {
-            $decorated_opencast_api->{$name} = new xoctOpencastApiDecorateProxy($decorated_opencast_api->{$name});
+            $decorated_opencast_api->{$name} = new DecorateProxy($decorated_opencast_api->{$name});
         }
         return $decorated_opencast_api;
     }
 
     /**
-     * Gets the static OpencastApi instance.
-     * @param bool $new Whether to return the static OpencastApi instance or create a new one.
-     * @return \OpencastApi\Opencast $opencastApi instance of \OpencastApi\Opencast
+     * Gets the static OpencastAPI instance.
+     * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
+     * @return \OpencastApi\Opencast $opencastApi instance of \OpencastAPI\Opencast
      */
     public static function getApi(): \OpencastApi\Opencast
     {
@@ -111,7 +112,7 @@ class xoctOpencastApi
 
     /**
      * Gets the static OpencastRestClient instance.
-     * @return \OpencastApi\Rest\OcRestClient $opencastRestClient instance of \OpencastApi\Rest\OcRestClient
+     * @return \OpencastApi\Rest\OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
     public static function getRestClient(): \OpencastApi\Rest\OcRestClient
     {
@@ -123,10 +124,10 @@ class xoctOpencastApi
     }
 
     /**
-     * Toggle the ingest service of OpencastApi instance.
+     * Toggle the ingest service of OpencastAPI instance.
      * @param bool $activate whether to toggle the ingest service
      */
-    public static function activateIngest(bool $activate)
+    public static function activateIngest(bool $activate):void
     {
         if ($activate === true && !property_exists(self::$opencastApi, 'ingest')) {
             self::$opencastApi = self::decorateApiServicesForXoct($activate);

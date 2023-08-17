@@ -1,12 +1,18 @@
 <?php
+
+namespace srag\Plugins\Opencast\API;
+
+use xoctLog;
+use xoctException;
+
 /**
- * Class xoctOpencastApiDecorateProxy
- * This is a decorative proxy to be wrapped around each OpencastApi Service to handle responses for ILIAS OpenCast Plugin.
+ * Class srag\Plugins\Opencast\API\DecorateProxy
+ * This is a decorative proxy to be wrapped around each OpencastAPI Service to handle responses for ILIAS OpenCast Plugin.
  *
  * @copyright  2023 Farbod Zamani Boroujeni, ELAN e.V.
- * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
+ * @author     Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
-class xoctOpencastApiDecorateProxy
+class DecorateProxy
 {
     public function __construct($object)
     {
@@ -17,8 +23,8 @@ class xoctOpencastApiDecorateProxy
     {
         // Prepare everything before calling the original method.
         $return_array = false;
-        if (in_array(xoctOpencastApi::RETURN_ARRAY, $args, true)) {
-            $index = array_search(xoctOpencastApi::RETURN_ARRAY, $args, true);
+        if (in_array(OpencastAPI::RETURN_ARRAY, $args, true)) {
+            $index = array_search(OpencastAPI::RETURN_ARRAY, $args, true);
             if ($index !== false) {
                 $return_array = true;
                 unset($args[$index]);
@@ -44,7 +50,6 @@ class xoctOpencastApiDecorateProxy
             $origin['req_origin'] = $response['origin'];
         }
 
-
         // Digest the response to adapt with ILIAS OpenCast environment.
         return $this->digestResponse($response, $origin, $return_array);
     }
@@ -62,7 +67,6 @@ class xoctOpencastApiDecorateProxy
             xoctLog::getInstance()->write('Origin Method:' . $origin['method'], xoctLog::DEBUG_LEVEL_3);
             $args = is_array($origin['args']) ? json_encode($origin['args']) : (string) $origin['args'];
             xoctLog::getInstance()->write('Origin Args:' . $args, xoctLog::DEBUG_LEVEL_3);
-
 
             $resp_orig_text = (new \ReflectionClass($origin['class']))->getShortName() . ' -> ' . $origin['method'];
 

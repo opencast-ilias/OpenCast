@@ -5,7 +5,7 @@ namespace srag\Plugins\Opencast\Model\Group;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 /**
  * Class xoctGroup
@@ -59,7 +59,7 @@ class Group extends APIObject
      */
     protected function read()
     {
-        $data = xoctOpencastApi::getApi()->groupsApi->get($this->getIdentifier());
+        $data = OpencastAPI::getApi()->groupsApi->get($this->getIdentifier());
         if (!empty($data)) {
             $this->loadFromStdClass($data);
         }
@@ -92,7 +92,7 @@ class Group extends APIObject
         }
 
         if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            xoctOpencastApi::getApi()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
+            OpencastAPI::getApi()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
             $this->members[] = $xoctUser;
 
             return true;

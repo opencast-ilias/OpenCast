@@ -3,7 +3,7 @@
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use srag\Plugins\Opencast\Model\Cache\Cache;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 class PublicationAPIRepository implements PublicationRepository
 {
@@ -25,7 +25,7 @@ class PublicationAPIRepository implements PublicationRepository
 
     public function fetch(string $identifier): array
     {
-        $data = xoctOpencastApi::getApi()->eventsApi->getPublications($identifier);
+        $data = OpencastAPI::getApi()->eventsApi->getPublications($identifier);
         $publications = [];
         foreach ($data as $d) {
             $p = new Publication();

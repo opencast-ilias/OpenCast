@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Agent;
 
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 class AgentApiRepository implements AgentRepository
 {
@@ -18,7 +18,7 @@ class AgentApiRepository implements AgentRepository
 
     public function findAll(): array
     {
-        $data = xoctOpencastApi::getApi()->agentsApi->getAll();
+        $data = OpencastAPI::getApi()->agentsApi->getAll();
         return $this->agentParser->parseApiResponse($data);
     }
 }

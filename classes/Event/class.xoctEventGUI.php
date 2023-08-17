@@ -37,6 +37,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\CustomInputGUIs\OneDrive\Waiter\Waiter;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 /**
  * Class xoctEventGUI
@@ -1081,7 +1082,7 @@ class xoctEventGUI extends xoctGUI
                 $configurations[$param] = 'true';
             }
 
-            $workflow_instance = xoctOpencastApi::getApi()->workflowsApi->run(
+            $workflow_instance = OpencastAPI::getApi()->workflowsApi->run(
                 $event_id,
                 $workflow->getWorkflowId(),
                 $configurations,
@@ -1178,7 +1179,7 @@ class xoctEventGUI extends xoctGUI
     private function unpublish(Event $event): bool
     {
         $workflow = PluginConfig::getConfig(PluginConfig::F_WORKFLOW_UNPUBLISH);
-        $workflow_instance = xoctOpencastApi::getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
+        $workflow_instance = OpencastAPI::getApi()->workflowsApi->run($event->getIdentifier(), $workflow);
         return true;
     }
 
