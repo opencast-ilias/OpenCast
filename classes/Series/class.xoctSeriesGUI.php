@@ -120,14 +120,14 @@ class xoctSeriesGUI extends xoctGUI
             $this->ctrl->setParameter($this, 'cmd', self::CMD_EDIT_GENERAL);
             $this->tabs->addSubTab(
                 self::SUBTAB_GENERAL,
-                self::plugin()->translate('subtab_' . self::SUBTAB_GENERAL),
+                $this->plugin->txt('subtab_' . self::SUBTAB_GENERAL),
                 $this->ctrl->getLinkTarget($this)
             );
             $this->ctrl->setParameter($this, 'subtab_active', self::SUBTAB_WORKFLOW_PARAMETERS);
             $this->ctrl->setParameter($this, 'cmd', self::CMD_EDIT_WORKFLOW_PARAMS);
             $this->tabs->addSubTab(
                 self::SUBTAB_WORKFLOW_PARAMETERS,
-                self::plugin()->translate('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS),
+                $this->plugin->txt('subtab_' . self::SUBTAB_WORKFLOW_PARAMETERS),
                 $this->ctrl->getLinkTarget($this)
             );
         }
@@ -163,7 +163,7 @@ class xoctSeriesGUI extends xoctGUI
 
         $this->object->updateObjectFromSeries($series->getMetadata());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
+            ilUtil::sendInfo($this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_GENERAL);
         $form = $this->seriesFormBuilder->update(
@@ -248,7 +248,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->object->updateObjectFromSeries($metadata);
 
         $this->objectSettings->updateAllDuplicates($metadata);
-        ilUtil::sendSuccess(self::plugin()->translate('series_saved'), true);
+        ilUtil::sendSuccess($this->plugin->txt('series_saved'), true);
         $this->ctrl->redirect($this, self::CMD_EDIT_GENERAL);
     }
 
@@ -261,7 +261,7 @@ class xoctSeriesGUI extends xoctGUI
     {
         $this->seriesWorkflowParameterRepository->syncAvailableParameters($this->getObjId());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo(self::plugin()->translate('series_has_duplicates'));
+            ilUtil::sendInfo($this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
@@ -298,7 +298,7 @@ class xoctSeriesGUI extends xoctGUI
                 )->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
             }
         }
-        ilUtil::sendSuccess(self::plugin()->translate('msg_success'), true);
+        ilUtil::sendSuccess($this->plugin->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
     }
 

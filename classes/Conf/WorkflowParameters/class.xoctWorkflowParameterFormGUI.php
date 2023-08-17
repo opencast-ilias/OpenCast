@@ -20,6 +20,10 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     public const F_TYPE = 'type';
     public const F_DEFAULT_VALUE_MEMBER = 'default_value_member';
     public const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
 
     /**
      * @var WorkflowParameter
@@ -32,6 +36,7 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
 
     public function __construct($parent, WorkflowParameterRepository $workflowParameterRepository, $param_id = '')
     {
+        $this->plugin = ilOpenCastPlugin::getInstance();
         $this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
         $this->workflowParameterRepository = $workflowParameterRepository;
         parent::__construct($parent);
@@ -81,14 +86,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
                 ]
             ],
             self::F_DEFAULT_VALUE_MEMBER => [
-                self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_MEMBER),
+                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_MEMBER),
                 self::PROPERTY_CLASS => ilSelectInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
                 self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
             ],
             self::F_DEFAULT_VALUE_ADMIN => [
-                self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_ADMIN),
+                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_ADMIN),
                 self::PROPERTY_CLASS => ilSelectInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),

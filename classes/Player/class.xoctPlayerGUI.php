@@ -56,6 +56,7 @@ class xoctPlayerGUI extends xoctGUI
         ?ObjectSettings $objectSettings = null
     ) {
         global $DIC;
+        parent::__construct();
         $this->user = $DIC->user();
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
@@ -86,11 +87,11 @@ class xoctPlayerGUI extends xoctGUI
             exit;
         }
 
-        $tpl = self::plugin()->getPluginObject()->getTemplate("paella_player.html", true, true);
+        $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
         $tpl->setVariable("TITLE", $event->getTitle());
         $tpl->setVariable(
             "PAELLA_PLAYER_FOLDER",
-            self::plugin()->getPluginObject()->getDirectory()
+            $this->plugin->getDirectory()
             . "/node_modules/paellaplayer/build/player"
         );
         $tpl->setVariable("DATA", json_encode($data, JSON_THROW_ON_ERROR));
@@ -114,7 +115,7 @@ class xoctPlayerGUI extends xoctGUI
         } else {
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory(
+                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
                 ) . "/templates/default/player.css"
             );
         }
@@ -131,7 +132,7 @@ class xoctPlayerGUI extends xoctGUI
         $js_config->paella_config_file = $paella_config['url'];
         $js_config->paella_config_info = $paella_config['info'];
         $js_config->paella_config_is_warning = $paella_config['warn'];
-        $js_config->paella_player_folder = self::plugin()->getPluginObject()->getDirectory(
+        $js_config->paella_player_folder = $this->plugin->getDirectory(
             ) . "/node_modules/paellaplayer/build/player";
 
         if ($event->isLiveEvent()) {
@@ -162,7 +163,7 @@ class xoctPlayerGUI extends xoctGUI
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory(
+                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
                 ) . "/templates/default/player_w_chat.css"
             );
             $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->objectSettings->getObjId());
@@ -176,7 +177,7 @@ class xoctPlayerGUI extends xoctGUI
             // show chat history for past live events
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . self::plugin()->getPluginObject()->getDirectory(
+                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
                 ) . "/templates/default/player_w_chat.css"
             );
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());

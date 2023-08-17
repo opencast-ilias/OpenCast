@@ -6,6 +6,7 @@ use ILIAS\UI\Renderer;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -14,6 +15,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
  */
 class xoctWorkflowTableGUI extends TableGUI
 {
+    use TranslatorTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const LANG_MODULE = 'workflow';
@@ -45,7 +47,7 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
-        $this->setDescription(self::plugin()->translate('msg_workflows_info'));
+        $this->setDescription($this->translate('msg_workflows_info'));
     }
 
     /**
@@ -55,7 +57,7 @@ class xoctWorkflowTableGUI extends TableGUI
     {
         $this->addColumn($this->lng->txt('id'));
         $this->addColumn($this->lng->txt('title'));
-        $this->addColumn(self::plugin()->translate('parameters'));
+        $this->addColumn($this->translate('parameters'));
         $this->addColumn($this->lng->txt('actions'), '', '', true);
     }
 
@@ -128,7 +130,7 @@ class xoctWorkflowTableGUI extends TableGUI
         return [
             ['txt' => $this->lng->txt('id'), 'id' => 'id'],
             ['txt' => $this->lng->txt('title'), 'id' => 'title'],
-            ['txt' => self::plugin()->translate('parameters'), 'id' => 'parameters'],
+            ['txt' => $this->translate('parameters'), 'id' => 'parameters'],
             ['txt' => $this->lng->txt('actions'), 'id' => 'actions']
         ];
     }
@@ -171,6 +173,6 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected function initTitle(): void
     {
-        $this->setTitle(self::plugin()->translate('table_title', self::LANG_MODULE));
+        $this->setTitle($this->translate('table_title', self::LANG_MODULE));
     }
 }

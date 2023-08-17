@@ -15,6 +15,11 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
     /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    protected $lng;
+    /**
      * @var xoctSeriesGUI
      */
     protected $parent_obj;
@@ -31,6 +36,9 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      */
     public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
+        global $DIC;
+        $this->plugin = ilOpenCastPlugin::getInstance();
+        $this->lng = $DIC->language();
         parent::__construct($parent, $parent_cmd);
         $this->setEnableNumInfo(false);
         $this->workflowParameterRepository = $workflowParameterRepository;
@@ -69,8 +77,8 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $this->addColumn($this->lng->txt("id"));
         $this->addColumn($this->lng->txt("title"));
         $this->addColumn($this->lng->txt("type"));
-        $this->addColumn(self::plugin()->translate("value_member"));
-        $this->addColumn(self::plugin()->translate("value_admin"));
+        $this->addColumn($this->plugin->txt("value_member"));
+        $this->addColumn($this->plugin->txt("value_admin"));
         $this->addColumn('', '', '', true);
     }
 

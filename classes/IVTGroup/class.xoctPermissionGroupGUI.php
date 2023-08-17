@@ -76,17 +76,17 @@ class xoctPermissionGroupGUI extends xoctGUI
             'IS_ADMIN',
             (int) ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS)
         );
-        $temp->setVariable('HEADER_GROUPS', self::plugin()->translate('groups_header'));
-        $temp->setVariable('HEADER_PARTICIPANTS', self::plugin()->translate('groups_participants_header'));
+        $temp->setVariable('HEADER_GROUPS', $this->plugin->txt('groups_header'));
+        $temp->setVariable('HEADER_PARTICIPANTS', $this->plugin->txt('groups_participants_header'));
         $temp->setVariable(
             'HEADER_PARTICIPANTS_AVAILABLE',
-            self::plugin()->translate('groups_available_participants_header')
+            $this->plugin->txt('groups_available_participants_header')
         );
-        $temp->setVariable('L_GROUP_NAME', self::plugin()->translate('groups_new'));
-        $temp->setVariable('PH_GROUP_NAME', self::plugin()->translate('groups_new_placeholder'));
-        $temp->setVariable('L_FILTER', self::plugin()->translate('groups_participants_filter'));
-        $temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));
-        $temp->setVariable('BUTTON_GROUP_NAME', self::plugin()->translate('groups_new_button'));
+        $temp->setVariable('L_GROUP_NAME', $this->plugin->txt('groups_new'));
+        $temp->setVariable('PH_GROUP_NAME', $this->plugin->txt('groups_new_placeholder'));
+        $temp->setVariable('L_FILTER', $this->plugin->txt('groups_participants_filter'));
+        $temp->setVariable('PH_FILTER', $this->plugin->txt('groups_participants_filter_placeholder'));
+        $temp->setVariable('BUTTON_GROUP_NAME', $this->plugin->txt('groups_new_button'));
         $temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
         $temp->setVariable(
             'GP_BASE_URL',
@@ -95,18 +95,18 @@ class xoctPermissionGroupGUI extends xoctGUI
         $temp->setVariable(
             'GROUP_LANGUAGE',
             json_encode([
-                'no_title' => self::plugin()->translate('group_alert_no_title'),
-                'delete_group' => self::plugin()->translate('group_alert_delete_group'),
-                'none_available' => self::plugin()->translate('group_none_available')
+                'no_title' => $this->plugin->txt('group_alert_no_title'),
+                'delete_group' => $this->plugin->txt('group_alert_delete_group'),
+                'none_available' => $this->plugin->txt('group_none_available')
             ], JSON_THROW_ON_ERROR)
         );
         $temp->setVariable(
             'PARTICIPANTS_LANGUAGE',
             json_encode([
-                'delete_participant' => self::plugin()->translate('group_delete_participant'),
-                'select_group' => self::plugin()->translate('group_select_group'),
-                'none_available' => self::plugin()->translate('group_none_available'),
-                'none_available_all' => self::plugin()->translate('group_none_available_all'),
+                'delete_participant' => $this->plugin->txt('group_delete_participant'),
+                'select_group' => $this->plugin->txt('group_select_group'),
+                'none_available' => $this->plugin->txt('group_none_available'),
+                'none_available_all' => $this->plugin->txt('group_none_available_all'),
 
             ], JSON_THROW_ON_ERROR)
         );
