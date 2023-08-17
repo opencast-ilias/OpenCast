@@ -26,11 +26,11 @@ class OpencastAPI implements API
     /**
      * @var \OpencastApi\Opencast instance
      */
-    public static $opencastApi;
+    private $api;
     /**
-     * @var \OpencastApi\Opencast instance
+     * @var \OpencastApi\Rest\OcRestClient instance
      */
-    public static $opencastRestClient;
+    public $rest;
     /**
      * @var array
      */
@@ -51,8 +51,8 @@ class OpencastAPI implements API
     {
         // By default we don't need to activate ingest, hence we pass false to decorate services.
         // We deal with ingest on demand!
-        self::$opencastApi = $this->decorateApiServicesForXoct(false);
-        self::$opencastRestClient = new \OpencastApi\Rest\OcRestClient($this->config);
+        $this->api = $this->decorateApiServicesForXoct(false);
+        $this->rest = new \OpencastApi\Rest\OcRestClient($this->config);
     }
 
     /**
@@ -75,38 +75,30 @@ class OpencastAPI implements API
      * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
      * @return \OpencastApi\Opencast $opencastApi instance of \OpencastAPI\Opencast
      */
-    public static function routes(): \OpencastApi\Opencast
+    public function routes(): \OpencastApi\Opencast
     {
-        if (!self::$opencastApi) {
-            PluginConfig::setApiSettings();
-        }
-
-        return self::$opencastApi;
+        return $this->api;
     }
 
     /**
      * Gets the static OpencastRestClient instance.
      * @return \OpencastApi\Rest\OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
-    public static function rest(): \OpencastApi\Rest\OcRestClient
+    public function rest(): \OpencastApi\Rest\OcRestClient
     {
-        if (!self::$opencastRestClient) {
-            PluginConfig::setApiSettings();
-        }
-
-        return self::$opencastRestClient;
+        return $this->rest;
     }
 
     /**
      * Toggle the ingest service of OpencastAPI instance.
      * @param bool $activate whether to toggle the ingest service
      */
-    public static function activateIngest(bool $activate): void
+    public function activateIngest(bool $activate): void
     {
         if ($activate === true && !property_exists(self::$opencastApi, 'ingest')) {
-            self::$opencastApi = self::decorateApiServicesForXoct($activate);
+            $this->api = $this->decorateApiServicesForXoct($activate);
         } elseif ($activate === false && property_exists(self::$opencastApi, 'ingest')) {
-            self::$opencastApi = self::decorateApiServicesForXoct($activate);
+            $this->api = $this->decorateApiServicesForXoct($activate);
         }
     }
 }

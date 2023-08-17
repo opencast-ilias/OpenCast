@@ -19,17 +19,17 @@ interface API
      * Gets the static OpencastAPI instance.
      * @return Opencast $opencastApi instance of \OpencastAPI\Opencast
      */
-    public static function routes(): Opencast;
+    public function routes(): Opencast;
 
     /**
      * Gets the static OpencastRestClient instance.
      * @return OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
-    public static function rest(): OcRestClient;
+    public function rest(): OcRestClient;
 
     /**
      * Toggle the ingest service of OpencastAPI instance.
      * @param bool $activate whether to toggle the ingest service
      */
-    public static function activateIngest(bool $activate): void;
+    public function activateIngest(bool $activate): void;
 }

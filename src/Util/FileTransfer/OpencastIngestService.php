@@ -32,7 +32,7 @@ class OpencastIngestService
     public function ingest(UploadEventRequest $uploadEventRequest): void
     {
         // We need to activate OpencastAPI Ingest.
-        OpencastAPI::activateIngest(true);
+        $this->api->activateIngest(true);
         $payload = $uploadEventRequest->getPayload();
 
         // create media package
@@ -66,6 +66,6 @@ class OpencastIngestService
         );
 
         // When we are done, we deactivate the ingest to keep everything clean.
-        OpencastAPI::activateIngest(false);
+        $this->api->activateIngest(false);
     }
 }
