@@ -12,7 +12,8 @@ use ILIAS\FileUpload\Handler\ilCtrlAwareUploadHandler;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-abstract class AbstractCtrlAwareChunkedUploadHandler extends AbstractCtrlAwareUploadHandler implements ilCtrlAwareUploadHandler
+abstract class AbstractCtrlAwareChunkedUploadHandler extends AbstractCtrlAwareUploadHandler implements
+    ilCtrlAwareUploadHandler
 {
     protected $is_chunked = false;
     protected $chunk_index = 0;

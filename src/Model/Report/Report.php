@@ -7,7 +7,6 @@ use ilException;
 use ilMail;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoct;
-use const ANONYMOUS_USER_ID;
 
 /**
  * Class xoctReport
@@ -22,10 +21,7 @@ class Report extends ActiveRecord
     public const TYPE_DATE = 1;
     public const TYPE_QUALITY = 2;
 
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::DB_TABLE;
     }
@@ -34,7 +30,7 @@ class Report extends ActiveRecord
      * @param bool $omit_send_mail
      * @throws ilException
      */
-    public function create($omit_send_mail = false)
+    public function create($omit_send_mail = false): void
     {
         $this->setCreatedAt(date('Y-m-d H:i:s', time()));
         parent::create();
@@ -144,7 +140,6 @@ class Report extends ActiveRecord
      * @con_is_notnull   true
      */
     protected $message = "";
-
 
     /**
      * @return int

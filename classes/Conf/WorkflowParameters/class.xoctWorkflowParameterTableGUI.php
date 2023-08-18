@@ -18,7 +18,6 @@ class xoctWorkflowParameterTableGUI extends TableGUI
      */
     private $workflowParameterRepository;
 
-
     public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
         parent::__construct($parent, $parent_cmd);
@@ -26,57 +25,41 @@ class xoctWorkflowParameterTableGUI extends TableGUI
         $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
-
     /**
      *
      */
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_TABLE, self::dic()->language()->txt('save'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_TABLE, $this->lng->txt('save'));
     }
-
 
     /**
      * @inheritdoc
      */
     protected function initColumns(): void
     {
-        $this->addColumn(self::dic()->language()->txt("id"));
-        $this->addColumn(self::dic()->language()->txt("title"));
-        $this->addColumn(self::dic()->language()->txt("type"));
+        $this->addColumn($this->lng->txt("id"));
+        $this->addColumn($this->lng->txt("title"));
+        $this->addColumn($this->lng->txt("type"));
         $this->addColumn(self::plugin()->translate("default_value_member"));
         $this->addColumn(self::plugin()->translate("default_value_admin"));
         $this->addColumn('', '', '', true);
     }
 
-
     /**
-     * @param string $column
-     * @param array $row
+     * @param array  $row
      * @param        $format
      *
-     * @return string
      */
     protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
     {
-        switch ($column) {
-            default:
-                $column = $row[$column];
-                break;
-        }
-
-        return strval($column);
+        $column = $row[$column];
     }
 
-
-    /**
-     * @return array
-     */
     protected function getSelectableColumns2(): array
     {
         return [];
     }
-
 
     /**
      *
@@ -86,14 +69,12 @@ class xoctWorkflowParameterTableGUI extends TableGUI
         $this->setData(WorkflowParameter::getArray());
     }
 
-
     /**
      *
      */
     protected function initFilterFields(): void
     {
     }
-
 
     /**
      *
@@ -102,7 +83,6 @@ class xoctWorkflowParameterTableGUI extends TableGUI
     {
     }
 
-
     /**
      * @throws \srag\DIC\OpenCast\Exception\DICException
      */
@@ -110,7 +90,6 @@ class xoctWorkflowParameterTableGUI extends TableGUI
     {
         $this->setTitle(self::plugin()->translate('workflow_parameters'));
     }
-
 
     /**
      * @param array $row
@@ -129,25 +108,32 @@ class xoctWorkflowParameterTableGUI extends TableGUI
         $ilSelectInputGUI->setValue($row['default_value_member']);
         $this->tpl->setVariable("DEFAULT_VALUE_MEMBER", $ilSelectInputGUI->getToolbarHTML());
 
-
         $ilSelectInputGUI = new ilSelectInputGUI('', 'workflow_parameter[' . $row['id'] . '][default_value_admin]');
         $ilSelectInputGUI->setOptions($this->workflowParameterRepository->getSelectionOptions());
         $ilSelectInputGUI->setValue($row['default_value_admin']);
         $this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
         $actions = new ilAdvancedSelectionListGUI();
-        $actions->setListTitle(self::dic()->language()->txt("actions"));
+        $actions->setListTitle($this->lng->txt("actions"));
 
-        self::dic()->ctrl()->setParameterByClass(xoctWorkflowParameterGUI::class, 'param_id', $row["id"]);
+        $this->ctrl->setParameterByClass(xoctWorkflowParameterGUI::class, 'param_id', $row["id"]);
 
-        $actions->addItem(self::dic()->language()->txt("edit"), "", self::dic()->ctrl()
-            ->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_EDIT));
+        $actions->addItem(
+            $this->lng->txt("edit"),
+            "",
+            $this->ctrl
+                ->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_EDIT)
+        );
 
-        $actions->addItem(self::dic()->language()->txt("delete"), "", self::dic()->ctrl()
-            ->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_DELETE));
+        $actions->addItem(
+            $this->lng->txt("delete"),
+            "",
+            $this->ctrl
+                ->getLinkTarget($this->parent_obj, xoctWorkflowParameterGUI::CMD_DELETE)
+        );
 
         $this->tpl->setVariable("ACTIONS", self::output()->getHTML($actions));
 
-        self::dic()->ctrl()->setParameter($this->parent_obj, "xhfp_content", null);
+        $this->ctrl->setParameter($this->parent_obj, "xhfp_content", null);
     }
 }

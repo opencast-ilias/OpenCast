@@ -38,7 +38,6 @@ class xoctException extends Exception
         self::NO_STREAMING_DATA => 'No streaming data found.',
     ];
 
-
     /**
      * @param string $code
      * @param string $additional_message
@@ -49,7 +48,7 @@ class xoctException extends Exception
         if (isset(self::$messages[$code])) {
             $message = self::$messages[$code];
         }
-        if ($additional_message) {
+        if ($additional_message !== '' && $additional_message !== '0') {
             $message .= ': ' . $additional_message;
         }
         parent::__construct($message, $code);

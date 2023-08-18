@@ -21,21 +21,22 @@ class UserSettingsRepository
     public const DEFAULT_VIEW_TYPE = self::VIEW_TYPE_LIST;
     public const DEFAULT_TILE_LIMIT = 12;
 
-
     /**
      * @param $user_id
      * @param $ref_id
      * @param $view_type
      */
-    public static function changeViewType($user_id, $ref_id, $view_type)
+    public static function changeViewType($user_id, $ref_id, $view_type): void
     {
-        $xoctUserSetting = UserSetting::where(['ref_id' => $ref_id, 'user_id' => $user_id, 'name' => self::S_VIEW_TYPE])->first();
+        $xoctUserSetting = UserSetting::where(
+            ['ref_id' => $ref_id, 'user_id' => $user_id, 'name' => self::S_VIEW_TYPE]
+        )->first();
         $xoctUserSetting = $xoctUserSetting ?: new UserSetting();
         $xoctUserSetting->setUserId($user_id)
-            ->setRefId($ref_id)
-            ->setValue($view_type)
-            ->setName(self::S_VIEW_TYPE)
-            ->store();
+                        ->setRefId($ref_id)
+                        ->setValue($view_type)
+                        ->setName(self::S_VIEW_TYPE)
+                        ->store();
     }
 
     /**
@@ -46,7 +47,9 @@ class UserSettingsRepository
     public static function getViewTypeForUser($user_id, $ref_id)
     {
         /** @var UserSetting $xoctUserSetting */
-        $xoctUserSetting = UserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_VIEW_TYPE])->first();
+        $xoctUserSetting = UserSetting::where(
+            ['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_VIEW_TYPE]
+        )->first();
         /** @var ObjectSettings $objectSettings */
         $objectSettings = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
         if (!$objectSettings->isViewChangeable() || !$xoctUserSetting) {
@@ -61,26 +64,29 @@ class UserSettingsRepository
      * @param $ref_id
      * @param $limit
      */
-    public static function changeTileLimit($user_id, $ref_id, $limit)
+    public static function changeTileLimit($user_id, $ref_id, $limit): void
     {
-        $xoctUserSetting = UserSetting::where(['ref_id' => $ref_id, 'user_id' => $user_id, 'name' => self::S_TILE_LIMIT])->first();
+        $xoctUserSetting = UserSetting::where(
+            ['ref_id' => $ref_id, 'user_id' => $user_id, 'name' => self::S_TILE_LIMIT]
+        )->first();
         $xoctUserSetting = $xoctUserSetting ?: new UserSetting();
         $xoctUserSetting->setUserId($user_id)
-            ->setRefId($ref_id)
-            ->setValue($limit)
-            ->setName(self::S_TILE_LIMIT)
-            ->store();
+                        ->setRefId($ref_id)
+                        ->setValue($limit)
+                        ->setName(self::S_TILE_LIMIT)
+                        ->store();
     }
 
     /**
      * @param $user_id
      * @param $ref_id
-     * @return int
      */
-    public static function getTileLimitForUser($user_id, $ref_id)
+    public static function getTileLimitForUser($user_id, $ref_id): int
     {
         /** @var UserSetting $xoctUserSetting */
-        $xoctUserSetting = UserSetting::where(['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_TILE_LIMIT])->first();
-        return (int)($xoctUserSetting ? $xoctUserSetting->getValue() : self::DEFAULT_TILE_LIMIT);
+        $xoctUserSetting = UserSetting::where(
+            ['user_id' => $user_id, 'ref_id' => $ref_id, 'name' => self::S_TILE_LIMIT]
+        )->first();
+        return (int) ($xoctUserSetting ? $xoctUserSetting->getValue() : self::DEFAULT_TILE_LIMIT);
     }
 }

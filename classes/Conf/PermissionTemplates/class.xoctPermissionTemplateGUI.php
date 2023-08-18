@@ -7,7 +7,7 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 /**
  * Class xoctPermissionTemplateGUI
  *
- * @author  Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Theodor Truffer <tt@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy xoctPermissionTemplateGUI: xoctMainGUI
  */
@@ -21,14 +21,34 @@ class xoctPermissionTemplateGUI extends xoctGUI
     public const CMD_UPDATE_TEMPLATE = 'updateTemplate';
 
     protected $subtab_active;
+    /**
+     * @var \ilTabsGUI
+     */
+    private $tabs;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
+    /**
+     * @var \ilLanguage
+     */
+    private $language;
 
-    public function executeCommand()
+    public function __construct()
     {
-        self::dic()->ctrl()->saveParameter($this, 'subtab_active');
+        global $DIC;
+        parent::__construct();
+        $this->tabs = $DIC->tabs();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
+        $this->language = $DIC->language();
+    }
+
+    public function executeCommand(): void
+    {
+        $this->ctrl->saveParameter($this, 'subtab_active');
 
         parent::executeCommand();
     }
-
 
     /**
      *
@@ -37,22 +57,21 @@ class xoctPermissionTemplateGUI extends xoctGUI
     {
         $this->setSubTabs();
 
-        $this->subtab_active = $_GET['subtab_active'] ? $_GET['subtab_active'] : self::SUBTAB_GENERAL;
-        self::dic()->tabs()->setSubTabActive($this->subtab_active);
-        self::dic()->ctrl()->saveParameter($this, 'subtab_active');
+        $this->subtab_active = $_GET['subtab_active'] ?: self::SUBTAB_GENERAL;
+        $this->tabs->setSubTabActive($this->subtab_active);
+        $this->ctrl->saveParameter($this, 'subtab_active');
         switch ($this->subtab_active) {
             case self::SUBTAB_GENERAL:
                 $xoctVideoPortalSettingsFormGUI = new xoctVideoPortalSettingsFormGUI($this);
                 $xoctVideoPortalSettingsFormGUI->fillForm();
-                self::dic()->ui()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
+                $this->main_tpl->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
                 break;
             case self::SUBTAB_PERMISSION_TEMPLATES:
                 $xoctPermissionTemplateTableGUI = new xoctPermissionTemplateTableGUI($this);
-                self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateTableGUI->getHTML());
+                $this->main_tpl->setContent($xoctPermissionTemplateTableGUI->getHTML());
                 break;
         }
     }
-
 
     /**
      *
@@ -60,9 +79,8 @@ class xoctPermissionTemplateGUI extends xoctGUI
     protected function add()
     {
         $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
-        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+        $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
-
 
     /**
      *
@@ -72,21 +90,23 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
         $xoctPermissionTemplateFormGUI->setValuesByPost();
         if ($xoctPermissionTemplateFormGUI->saveForm()) {
-            ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
-            self::dic()->ctrl()->redirect($this);
+            ilUtil::sendSuccess($this->plugin->txt('config_msg_success'), true);
+            $this->ctrl->redirect($this);
         }
-        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+        $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
-
 
     /**
      *
      */
     protected function edit()
     {
-        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, PermissionTemplate::find($_GET[self::IDENTIFIER]));
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI(
+            $this,
+            PermissionTemplate::find($_GET[self::IDENTIFIER])
+        );
         $xoctPermissionTemplateFormGUI->fillForm();
-        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+        $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
 
     /**
@@ -98,35 +118,44 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $xoctVideoPortalSettingsFormGUI->setValuesByPost();
         if ($xoctVideoPortalSettingsFormGUI->saveObject()) {
             ilUtil::sendSuccess($this->txt('msg_success'), true);
-            self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+            $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
-        self::dic()->ui()->mainTemplate()->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
+        $this->main_tpl->setContent($xoctVideoPortalSettingsFormGUI->getHTML());
     }
-
 
     /**
      *
      */
     protected function updateTemplate()
     {
-        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, PermissionTemplate::find($_GET[self::IDENTIFIER]));
+        $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI(
+            $this,
+            PermissionTemplate::find($_GET[self::IDENTIFIER])
+        );
         $xoctPermissionTemplateFormGUI->setValuesByPost();
         if ($xoctPermissionTemplateFormGUI->saveForm()) {
-            ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('config_msg_success'), true);
-            self::dic()->ctrl()->redirect($this);
+            ilUtil::sendSuccess($this->plugin->txt('config_msg_success'), true);
+            $this->ctrl->redirect($this);
         }
-        self::dic()->ui()->mainTemplate()->setContent($xoctPermissionTemplateFormGUI->getHTML());
+        $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
 
     protected function setSubTabs()
     {
-        self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_GENERAL, self::plugin()->getPluginObject()->txt('subtab_' . self::SUBTAB_GENERAL), self::dic()->ctrl()->getLinkTarget($this));
-        self::dic()->ctrl()->setParameter($this, 'subtab_active', self::SUBTAB_PERMISSION_TEMPLATES);
-        self::dic()->tabs()->addSubTab(self::SUBTAB_PERMISSION_TEMPLATES, self::plugin()->getPluginObject()->txt('subtab_' . self::SUBTAB_PERMISSION_TEMPLATES), self::dic()->ctrl()->getLinkTarget($this));
-        self::dic()->ctrl()->clearParameters($this);
+        $this->ctrl->setParameter($this, 'subtab_active', self::SUBTAB_GENERAL);
+        $this->tabs->addSubTab(
+            self::SUBTAB_GENERAL,
+            $this->plugin->txt('subtab_' . self::SUBTAB_GENERAL),
+            $this->ctrl->getLinkTarget($this)
+        );
+        $this->ctrl->setParameter($this, 'subtab_active', self::SUBTAB_PERMISSION_TEMPLATES);
+        $this->tabs->addSubTab(
+            self::SUBTAB_PERMISSION_TEMPLATES,
+            $this->plugin->txt('subtab_' . self::SUBTAB_PERMISSION_TEMPLATES),
+            $this->ctrl->getLinkTarget($this)
+        );
+        $this->ctrl->clearParameters($this);
     }
-
 
     /**
      *
@@ -136,27 +165,25 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $tpl_id = $_POST['tpl_id'];
         $template = PermissionTemplate::find($tpl_id);
         $template->delete();
-        ilUtil::sendSuccess(self::plugin()->getPluginObject()->txt('msg_success'), true);
-        self::dic()->ctrl()->redirect($this, self::CMD_STANDARD);
+        ilUtil::sendSuccess($this->plugin->txt('msg_success'), true);
+        $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
-
 
     /**
      *
      */
     protected function delete()
     {
-        ilUtil::sendQuestion(self::plugin()->getPluginObject()->txt('msg_confirm_delete_perm_template'));
+        ilUtil::sendQuestion($this->plugin->txt('msg_confirm_delete_perm_template'));
         $tpl_id = $_GET['tpl_id'];
         $template = PermissionTemplate::find($tpl_id);
         $ilConfirmationGUI = new ilConfirmationGUI();
-        $ilConfirmationGUI->setFormAction(self::dic()->ctrl()->getFormAction($this));
+        $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
         $ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
-        $ilConfirmationGUI->addButton(self::dic()->language()->txt('delete'), self::CMD_CONFIRM);
-        $ilConfirmationGUI->addButton(self::dic()->language()->txt('cancel'), self::CMD_STANDARD);
-        self::dic()->ui()->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+        $ilConfirmationGUI->addButton($this->language->txt('delete'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->addButton($this->language->txt('cancel'), self::CMD_STANDARD);
+        $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
-
 
     /**
      * ajax
@@ -177,11 +204,9 @@ class xoctPermissionTemplateGUI extends xoctGUI
 
     /**
      * @param $key
-     *
-     * @return string
      */
-    public function txt($key)
+    public function txt($key): string
     {
-        return self::plugin()->getPluginObject()->txt('config_' . $key);
+        return $this->plugin->txt('config_' . $key);
     }
 }

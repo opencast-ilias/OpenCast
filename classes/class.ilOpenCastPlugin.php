@@ -1,7 +1,8 @@
 <?php
 
+require_once __DIR__ . "/../vendor/autoload.php";
+
 use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
@@ -20,8 +21,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Util\UpdateCheck;
-
-require_once __DIR__ . '/../vendor/autoload.php';
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * OpenCast repository object plugin
@@ -33,9 +33,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
  */
 class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 {
-    use DataTableUITrait;
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = self::class;
 
     public const PLUGIN_ID = 'xoct';
@@ -44,7 +41,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
      * @var ilDBInterface
      */
     protected $db;
-
 
     /**
      *
@@ -57,7 +53,15 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->db = $DIC->database();
     }
 
-    protected function beforeUpdate()
+    protected function init(): void
+    {
+        // we create the Opencast Container here and
+        global $DIC;
+        global $opencastContainer;
+        $opencastContainer = Init::init($DIC);
+    }
+
+    protected function beforeUpdate(): bool
     {
         // Check Version
         $check = new UpdateCheck($this->db);
@@ -76,10 +80,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function uninstallCustom()
+    protected function uninstallCustom(): bool
     {
         $this->db->dropTable(PermissionGrant::TABLE_NAME, false);
         $this->db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
@@ -102,12 +103,10 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return true;
     }
 
-
     /**
      * @var ilOpenCastPlugin
      */
     protected static $cache;
-
 
     /**
      * @return ilOpenCastPlugin
@@ -121,23 +120,13 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return self::$cache;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return self::PLUGIN_NAME;
     }
 
-    public function allowCopy()
+    public function allowCopy(): bool
     {
         return true;
-    }
-
-    public function updateLanguages($a_lang_keys = null)
-    {
-        parent::updateLanguages($a_lang_keys);
-        self::dataTableUI()->installLanguages(self::plugin());
     }
 }

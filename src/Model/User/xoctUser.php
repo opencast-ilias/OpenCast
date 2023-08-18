@@ -4,8 +4,6 @@ namespace srag\Plugins\Opencast\Model\User;
 
 use ilObjUser;
 use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctException;
 
@@ -17,8 +15,6 @@ use xoctException;
  */
 class xoctUser
 {
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const MAP_EMAIL = 1;
@@ -71,7 +67,6 @@ class xoctUser
      */
     protected static $instances = [];
 
-
     /**
      * @return mixed
      */
@@ -84,10 +79,11 @@ class xoctUser
      * @param $role
      * @return int
      * @throws xoctException
-     * @throws DICException
      */
     public static function lookupUserIdForOwnerRole($role)
     {
+        global $DIC;
+        $db = $DIC->database();
         if (!$role) {
             return null;
         }
@@ -96,11 +92,10 @@ class xoctUser
 
         preg_match("/" . $regex . "/uism", $role, $matches);
 
-        $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . self::dic()->database()->quote($matches[1], 'text');
-        $set = self::dic()->database()->query($sql);
-        $data = self::dic()->database()->fetchObject($set);
+        $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $db->quote($matches[1], 'text');
+        $set = $db->query($sql);
 
-        return $data->usr_id;
+        return $db->fetchObject($set)->usr_id;
     }
 
     /**
@@ -119,10 +114,9 @@ class xoctUser
     }
 
     /**
-     * @param int $ilias_user_id
      * @throws xoctException
      */
-    protected function __construct($ilias_user_id = 6)
+    protected function __construct(int $ilias_user_id = 6)
     {
         $user = new ilObjUser($ilias_user_id);
         $this->setIliasUserId($ilias_user_id);
@@ -146,31 +140,22 @@ class xoctUser
 
     /**
      * @param bool $show_email
-     * @return string
      */
-    public function getNamePresentation($show_email = true)
+    public function getNamePresentation($show_email = true): string
     {
-        return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail() . ')' : '');
+        return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail(
+                ) . ')' : '');
     }
 
-
-    /**
-     * @return int
-     */
-    public function getIliasUserId()
+    public function getIliasUserId(): int
     {
-        return $this->ilias_user_id;
+        return (int) $this->ilias_user_id;
     }
 
-
-    /**
-     * @param int $ilias_user_id
-     */
-    public function setIliasUserId($ilias_user_id)
+    public function setIliasUserId(int $ilias_user_id): void
     {
         $this->ilias_user_id = $ilias_user_id;
     }
-
 
     /**
      * @return string
@@ -180,15 +165,13 @@ class xoctUser
         return $this->ext_id;
     }
 
-
     /**
      * @param string $ext_id
      */
-    public function setExtId($ext_id)
+    public function setExtId($ext_id): void
     {
         $this->ext_id = $ext_id;
     }
-
 
     /**
      * @return int
@@ -198,15 +181,13 @@ class xoctUser
         return $this->status;
     }
 
-
     /**
      * @param int $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
-
 
     /**
      * @return string
@@ -216,15 +197,13 @@ class xoctUser
         return $this->first_name;
     }
 
-
     /**
      * @param string $first_name
      */
-    public function setFirstName($first_name)
+    public function setFirstName($first_name): void
     {
         $this->first_name = $first_name;
     }
-
 
     /**
      * @return string
@@ -234,27 +213,20 @@ class xoctUser
         return $this->email;
     }
 
-
     /**
      * @param string $email
      */
-    public function setEmail($email)
+    public function setEmail($email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return string
-     */
     public function getLogin(): string
     {
         return $this->login;
     }
 
-    /**
-     * @param string $login
-     */
-    public function setLogin(string $login) /*: void*/
+    public function setLogin(string $login): void /*: void*/
     {
         $this->login = $login;
     }
@@ -267,11 +239,10 @@ class xoctUser
         return $this->last_name;
     }
 
-
     /**
      * @param string $last_name
      */
-    public function setLastName($last_name)
+    public function setLastName($last_name): void
     {
         $this->last_name = $last_name;
     }
@@ -282,49 +253,44 @@ class xoctUser
      */
     public static function getUserMapping()
     {
-        if (!in_array(self::$user_mapping, array_keys(self::$user_mapping_field_titles))) {
+        if (!array_key_exists(self::$user_mapping, self::$user_mapping_field_titles)) {
             throw new xoctException('invalid user mapping type, id = ' . self::$user_mapping);
         }
         return self::$user_mapping;
     }
 
-
     /**
      * @param int $user_mapping
      */
-    public static function setUserMapping($user_mapping)
+    public static function setUserMapping($user_mapping): void
     {
         self::$user_mapping = $user_mapping;
     }
 
-
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
-        return PluginConfig::getConfig(PluginConfig::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper($this->identifier) : $this->identifier;
+        return PluginConfig::getConfig(PluginConfig::F_IDENTIFIER_TO_UPPERCASE) ? strtoupper(
+            $this->identifier
+        ) : $this->identifier;
     }
-
 
     /**
      * @return string
-     * @throws xoctException
      */
     public function getUserRoleName()
     {
-        return $this->getIdentifier() ?
-            str_replace('{IDENTIFIER}', $this->getIdentifier(), PluginConfig::getConfig(PluginConfig::F_ROLE_USER_PREFIX))
+        return $this->getIdentifier() !== '' && $this->getIdentifier() !== '0' ?
+            str_replace(
+                '{IDENTIFIER}',
+                $this->getIdentifier(),
+                PluginConfig::getConfig(PluginConfig::F_ROLE_USER_PREFIX)
+            )
             : null;
     }
 
-
-    /**
-     * @return string
-     */
     public function getOwnerRoleName(): ?string
     {
-        if (!$this->getIdentifier()) {
+        if ($this->getIdentifier() === '' || $this->getIdentifier() === '0') {
             return null;
         }
 
@@ -333,11 +299,10 @@ class xoctUser
         return str_replace('{IDENTIFIER}', $this->getIdentifier(), $prefix);
     }
 
-
     /**
      * @param string $identifier
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }

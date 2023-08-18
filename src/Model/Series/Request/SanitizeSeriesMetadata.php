@@ -4,7 +4,10 @@ namespace srag\Plugins\Opencast\Model\Series\Request;
 
 trait SanitizeSeriesMetadata
 {
-    public function saniziteMetadataFields(array $metadata_fields)
+    /**
+     * @return array{metadata: string}
+     */
+    public function saniziteMetadataFields(array $metadata_fields): array
     {
         $metadata = [];
         // array_map is not suitable here, since it return an array with indices which fail on the API
@@ -24,7 +27,7 @@ trait SanitizeSeriesMetadata
         }
 
         return [
-            'metadata' => json_encode($metadata)
+            'metadata' => json_encode($metadata, JSON_THROW_ON_ERROR)
         ];
     }
 }

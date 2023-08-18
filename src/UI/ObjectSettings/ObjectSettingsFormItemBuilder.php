@@ -14,8 +14,6 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
-use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
-use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use xoctFileUploadHandler;
 
 class ObjectSettingsFormItemBuilder
@@ -38,7 +36,6 @@ class ObjectSettingsFormItemBuilder
     public const F_DEFAULT_VIEW = 'default_view';
     public const F_VIEW_CHANGEABLE = 'view_changeable';
     public const F_CHAT_ACTIVE = 'chat_active';
-
 
     /**
      * @var UIFactory
@@ -64,17 +61,7 @@ class ObjectSettingsFormItemBuilder
      * @var xoctFileUploadHandler
      */
     private $fileUploadHandler;
-    /**
-     * @var UploadStorageService
-     */
-    private $paellaStorageService;
 
-    /**
-     * @param UIFactory $ui_factory
-     * @param RefineryFactory $refinery_factory
-     * @param PublicationUsageRepository $publicationUsageRepository
-     * @param ilPlugin $plugin
-     */
     public function __construct(
         UIFactory $ui_factory,
         RefineryFactory $refinery_factory,
@@ -89,7 +76,6 @@ class ObjectSettingsFormItemBuilder
         $this->plugin = $plugin;
         $this->objectSettingsParser = $objectSettingsParser;
         $this->fileUploadHandler = $fileUploadHandler;
-        $this->paellaStorageService = $this->fileUploadHandler->getUploadStorageService();
     }
 
     public function create(): Input
@@ -99,20 +85,27 @@ class ObjectSettingsFormItemBuilder
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
             self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_LIST),
-                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_TILES),
+                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt(
+                    'view_type_' . UserSettingsRepository::VIEW_TYPE_LIST
+                ),
+                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt(
+                    'view_type_' . UserSettingsRepository::VIEW_TYPE_TILES
+                ),
             ])->withRequired(true),
             self::F_VIEW_CHANGEABLE => $field_factory->checkbox(
                 $this->txt(self::F_VIEW_CHANGEABLE),
                 $this->txt(self::F_VIEW_CHANGEABLE . '_info')
             )->withValue(true),
         ];
-        if (PermissionTemplate::count()) {
+        if (PermissionTemplate::count() !== 0) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
                 [
-                $this->getPermissionTemplateRadioInput()
-            ],
-                sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
+                    $this->getPermissionTemplateRadioInput()
+                ],
+                sprintf(
+                    $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL),
+                    PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)
+                ),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
             )->withValue(null);
         }
@@ -130,11 +123,11 @@ class ObjectSettingsFormItemBuilder
 
         $inputs[self::F_PERMISSION_PER_CLIP] = $field_factory->optionalGroup(
             [
-            self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox(
-                $this->txt(self::F_PERMISSION_ALLOW_SET_OWN),
-                $this->txt(self::F_PERMISSION_ALLOW_SET_OWN . '_info')
-            )
-        ],
+                self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox(
+                    $this->txt(self::F_PERMISSION_ALLOW_SET_OWN),
+                    $this->txt(self::F_PERMISSION_ALLOW_SET_OWN . '_info')
+                )
+            ],
             $this->txt(self::F_PERMISSION_PER_CLIP),
             $this->txt(self::F_PERMISSION_PER_CLIP . '_info')
         )->withValue(null);
@@ -144,27 +137,36 @@ class ObjectSettingsFormItemBuilder
             $this->txt(self::F_MEMBER_UPLOAD . '_info')
         );
 
-
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
-            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
-                $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
-                if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
-                    $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][0];
-                    unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
-                }
-                return $vs;
-            }));
+                             ->withAdditionalTransformation(
+                                 $this->refinery_factory->custom()->transformation(function ($vs) {
+                                     $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
+                                     if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
+                                         $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][0];
+                                         unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
+                                     }
+                                     return $vs;
+                                 })
+                             );
     }
 
     public function update(ObjectSettings $objectSettings, Series $series): Input
     {
         $field_factory = $this->ui_factory->input()->field();
         $inputs = [
-            self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE))->withValue($objectSettings->isOnline()),
-            self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue($objectSettings->getIntroductionText()),
+            self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE))->withValue(
+                $objectSettings->isOnline()
+            ),
+            self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue(
+                $objectSettings->getIntroductionText()
+            ),
             self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_LIST),
-                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt('view_type_' . UserSettingsRepository::VIEW_TYPE_TILES),
+                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt(
+                    'view_type_' . UserSettingsRepository::VIEW_TYPE_LIST
+                ),
+                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt(
+                    'view_type_' . UserSettingsRepository::VIEW_TYPE_TILES
+                ),
             ])->withRequired(true)->withValue($objectSettings->getDefaultView()),
             self::F_VIEW_CHANGEABLE => $field_factory->checkbox(
                 $this->txt(self::F_VIEW_CHANGEABLE),
@@ -172,21 +174,29 @@ class ObjectSettingsFormItemBuilder
             )->withValue($objectSettings->isViewChangeable())
         ];
 
-        if (PermissionTemplate::count()) {
+        if (PermissionTemplate::count() !== 0) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
                 [
-                self::F_PUBLISH_ON_VIDEO_PORTAL => $this->getPermissionTemplateRadioInput()
-            ],
-                sprintf($this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL), PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)),
+                    self::F_PUBLISH_ON_VIDEO_PORTAL => $this->getPermissionTemplateRadioInput()
+                ],
+                sprintf(
+                    $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL),
+                    PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)
+                ),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
             )
-                ->withValue($series->isPublishedOnVideoPortal() ?
-                    [self::F_PUBLISH_ON_VIDEO_PORTAL => $series->getPermissionTemplateId()] : null);
+                                                                     ->withValue(
+                                                                         $series->isPublishedOnVideoPortal() ?
+                                                                             [
+                                                                                 self::F_PUBLISH_ON_VIDEO_PORTAL => $series->getPermissionTemplateId(
+                                                                                 )
+                                                                             ] : null
+                                                                     );
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
             $inputs[self::F_USE_ANNOTATIONS] = $field_factory->checkbox($this->txt(self::F_USE_ANNOTATIONS))
-                ->withValue($objectSettings->getUseAnnotations());
+                                                             ->withValue($objectSettings->getUseAnnotations());
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_DOWNLOAD)) {
@@ -198,17 +208,21 @@ class ObjectSettingsFormItemBuilder
 
         $inputs[self::F_PERMISSION_PER_CLIP] = $field_factory->optionalGroup(
             [
-            self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox(
-                $this->txt(self::F_PERMISSION_ALLOW_SET_OWN),
-                $this->txt(self::F_PERMISSION_ALLOW_SET_OWN . '_info')
-            )
-        ],
+                self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox(
+                    $this->txt(self::F_PERMISSION_ALLOW_SET_OWN),
+                    $this->txt(self::F_PERMISSION_ALLOW_SET_OWN . '_info')
+                )
+            ],
             $this->txt(self::F_PERMISSION_PER_CLIP),
             $this->txt(self::F_PERMISSION_PER_CLIP . '_info')
         )
-            ->withValue($objectSettings->getPermissionPerClip() ?
-                [self::F_PERMISSION_ALLOW_SET_OWN => $objectSettings->getPermissionAllowSetOwn()] : null);
-
+                                                             ->withValue(
+                                                                 $objectSettings->getPermissionPerClip() ?
+                                                                     [
+                                                                         self::F_PERMISSION_ALLOW_SET_OWN => $objectSettings->getPermissionAllowSetOwn(
+                                                                         )
+                                                                     ] : null
+                                                             );
 
         if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)) {
             $inputs[self::F_CHAT_ACTIVE] = $this->ui_factory->input()->field()->checkbox(
@@ -218,17 +232,17 @@ class ObjectSettingsFormItemBuilder
         }
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
-            ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
-                $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
-                if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
-                    $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][self::F_PUBLISH_ON_VIDEO_PORTAL];
-                    unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
-                }
-                return $vs;
-            }));
+                             ->withAdditionalTransformation(
+                                 $this->refinery_factory->custom()->transformation(function ($vs) {
+                                     $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
+                                     if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
+                                         $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][self::F_PUBLISH_ON_VIDEO_PORTAL];
+                                         unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
+                                     }
+                                     return $vs;
+                                 })
+                             );
     }
-
-
 
     private function getPermissionTemplateRadioInput(): Input
     {

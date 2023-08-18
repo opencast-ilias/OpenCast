@@ -8,7 +8,7 @@ use ActiveRecord;
  * Class EventAR
  * @package srag\Plugins\Opencast\Chat
  *
- * @author Theodor Truffer <tt@studer-raimann.ch>
+ * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
 class EventAR extends ActiveRecord
 {
@@ -17,11 +17,7 @@ class EventAR extends ActiveRecord
     public const EVENT_ID_USER_JOINED = 1;
     public const EVENT_ID_USER_LEFT = 2;
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -74,7 +70,6 @@ class EventAR extends ActiveRecord
      */
     protected $sent_at;
 
-
     /**
      * @return int
      */
@@ -83,15 +78,13 @@ class EventAR extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return int
@@ -101,15 +94,13 @@ class EventAR extends ActiveRecord
         return $this->chat_room_id;
     }
 
-
     /**
      * @param int $chat_room_id
      */
-    public function setChatRoomId($chat_room_id)
+    public function setChatRoomId($chat_room_id): void
     {
         $this->chat_room_id = $chat_room_id;
     }
-
 
     /**
      * @return int
@@ -119,31 +110,23 @@ class EventAR extends ActiveRecord
         return $this->subject_id;
     }
 
-
     /**
      * @param int $subject_id
      */
-    public function setSubjectId($subject_id)
+    public function setSubjectId($subject_id): void
     {
         $this->subject_id = $subject_id;
     }
 
-    /**
-     * @return int
-     */
     public function getEventTypeId(): int
     {
         return $this->event_type_id;
     }
 
-    /**
-     * @param int $event_type_id
-     */
-    public function setEventTypeId(int $event_type_id)
+    public function setEventTypeId(int $event_type_id): void
     {
         $this->event_type_id = $event_type_id;
     }
-
 
     /**
      * @return string
@@ -153,11 +136,10 @@ class EventAR extends ActiveRecord
         return $this->sent_at;
     }
 
-
     /**
      * @param string $sent_at
      */
-    public function setSentAt($sent_at)
+    public function setSentAt($sent_at): void
     {
         $this->sent_at = $sent_at;
     }

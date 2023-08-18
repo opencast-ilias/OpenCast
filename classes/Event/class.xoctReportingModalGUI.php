@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -10,7 +9,6 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctReportingModalGUI extends ilModalGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const REPORTING_TYPE_DATE = 1;
@@ -21,14 +19,23 @@ class xoctReportingModalGUI extends ilModalGUI
      */
     protected $parent_gui;
     /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
+
+    /**
      * xoctReportingFormGUI constructor.
+     * @noinspection MagicMethodsValidityInspection
      */
     public function __construct($parent_gui, $type)
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
+        $this->ctrl = $DIC->ctrl();
         $this->parent_gui = $parent_gui;
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+        $main_tpl->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
         $send_button->setCaption('send');
@@ -57,16 +64,14 @@ class xoctReportingModalGUI extends ilModalGUI
         }
     }
 
-
     /**
-     * @return ilModalGUI|void
+     * @return never
      * @throws ilException
      */
     public static function getInstance()
     {
         throw new ilException('Do not use this method, please use the constructor instead.');
     }
-
 
     /**
      * @return string
@@ -76,10 +81,15 @@ class xoctReportingModalGUI extends ilModalGUI
     public function getHTML()
     {
         // only the following two lines differ from the parent method
-        $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, self::plugin()->getPluginObject()->getDirectory());
-        $tpl->setVariable('FORM_ACTION', self::dic()->ctrl()->getFormAction($this->parent_gui));
+        $tpl = new ilTemplate(
+            "tpl.reporting_modal.html",
+            true,
+            true,
+            self::plugin()->getPluginObject()->getDirectory()
+        );
+        $tpl->setVariable('FORM_ACTION', $this->ctrl->getFormAction($this->parent_gui));
 
-        if (count($this->getButtons()) > 0) {
+        if ($this->getButtons() !== []) {
             foreach ($this->getButtons() as $b) {
                 $tpl->setCurrentBlock("button");
                 $tpl->setVariable("BUTTON", $b->render());

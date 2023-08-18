@@ -38,8 +38,7 @@ class MDConfigTable extends ilTable2GUI
         Container $dic,
         ilPlugin $plugin,
         array $data
-    )
-    {
+    ) {
         $this->parent = $parent;
         $this->plugin = $plugin;
         $this->dic = $dic;
@@ -60,7 +59,9 @@ class MDConfigTable extends ilTable2GUI
     private function initJS(): void
     {
         xoctWaiterGUI::initJS();
-        $this->dic->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . '/templates/default/sortable.js');
+        $this->dic->ui()->mainTemplate()->addJavaScript(
+            $this->plugin->getDirectory() . '/templates/default/sortable.js'
+        );
         $base_link = $this->dic->ctrl()->getLinkTarget($this->parent, 'reorder', '', true);
         $this->dic->ui()->mainTemplate()->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
     }
@@ -89,7 +90,7 @@ class MDConfigTable extends ilTable2GUI
         parent::fillRow($a_set);
     }
 
-    protected function buildActions($a_set)
+    protected function buildActions($a_set): string
     {
         $this->dic->ctrl()->setParameter($this->parent_obj, 'field_id', $a_set['field_id']);
         $actions = [
@@ -114,8 +115,8 @@ class MDConfigTable extends ilTable2GUI
         )->withOnClick($delete_modal->getShowSignal());
         return $this->dic->ui()->renderer()->render(
             $this->dic->ui()->factory()->dropdown()->standard([
-                $actions
-            ])->withLabel($this->dic->language()->txt('actions'))
+                    $actions
+                ])->withLabel($this->dic->language()->txt('actions'))
         ) . (isset($delete_modal) ? $this->dic->ui()->renderer()->render($delete_modal) : '');
     }
 }

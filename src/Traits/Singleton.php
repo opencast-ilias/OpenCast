@@ -9,7 +9,6 @@ trait Singleton
      */
     protected static $instance;
 
-
     /**
      * @return self
      */

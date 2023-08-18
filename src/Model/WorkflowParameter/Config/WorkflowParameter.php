@@ -29,14 +29,10 @@ class WorkflowParameter extends ActiveRecord
         self::VALUE_SHOW_IN_FORM_PRESET
     ];
 
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @return $this
@@ -46,7 +42,6 @@ class WorkflowParameter extends ActiveRecord
         parent::create();
         return $this;
     }
-
 
     /**
      * @var string
@@ -93,7 +88,6 @@ class WorkflowParameter extends ActiveRecord
      */
     protected $default_value_admin = self::VALUE_IGNORE;
 
-
     /**
      * @return string
      */
@@ -101,7 +95,6 @@ class WorkflowParameter extends ActiveRecord
     {
         return $this->id;
     }
-
 
     /**
      * @param $id
@@ -114,7 +107,6 @@ class WorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
     /**
      * @return string
      */
@@ -122,7 +114,6 @@ class WorkflowParameter extends ActiveRecord
     {
         return $this->title;
     }
-
 
     /**
      * @param $title
@@ -135,7 +126,6 @@ class WorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
     /**
      * @return string
      */
@@ -143,7 +133,6 @@ class WorkflowParameter extends ActiveRecord
     {
         return $this->type;
     }
-
 
     /**
      * @param $type
@@ -156,15 +145,10 @@ class WorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
-    /**
-     * @return integer
-     */
-    public function getDefaultValueMember()
+    public function getDefaultValueMember(): int
     {
         return (int) $this->default_value_member;
     }
-
 
     /**
      * @param integer $default_value_member
@@ -177,15 +161,10 @@ class WorkflowParameter extends ActiveRecord
         return $this;
     }
 
-
-    /**
-     * @return int
-     */
-    public function getDefaultValueAdmin()
+    public function getDefaultValueAdmin(): int
     {
         return (int) $this->default_value_admin;
     }
-
 
     /**
      * @param int $default_value_admin

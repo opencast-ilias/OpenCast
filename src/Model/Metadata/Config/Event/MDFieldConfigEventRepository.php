@@ -16,16 +16,12 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
      */
     private $MDCatalogueFactory;
 
-    /**
-     * @param MDCatalogueFactory $MDCatalogueFactory
-     */
     public function __construct(MDCatalogueFactory $MDCatalogueFactory)
     {
         $this->MDCatalogueFactory = $MDCatalogueFactory;
     }
 
     /**
-     * @param bool $is_admin
      * @return MDFieldConfigEventAR[]
      * @throws Exception
      */
@@ -55,7 +51,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            function (MDFieldConfigEventAR $ar) use ($MDCatalogue) {
+            function (MDFieldConfigEventAR $ar) use ($MDCatalogue): bool {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
             }
         );
@@ -98,10 +94,13 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
     public function getAllFilterable(bool $is_admin): array
     {
         $catalogue = $this->MDCatalogueFactory->event();
-        return array_filter($this->getAll($is_admin), function (MDFieldConfigEventAR $fieldConfig) use ($catalogue) {
-            return $catalogue->getFieldById($fieldConfig->getFieldId())
-                ->getType()->isFilterable();
-        });
+        return array_filter(
+            $this->getAll($is_admin),
+            function (MDFieldConfigEventAR $fieldConfig) use ($catalogue): bool {
+                return $catalogue->getFieldById($fieldConfig->getFieldId())
+                             ->getType()->isFilterable();
+            }
+        );
     }
 
     private function getNextSort(): int

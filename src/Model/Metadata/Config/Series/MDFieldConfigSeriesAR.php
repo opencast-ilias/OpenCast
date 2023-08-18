@@ -8,7 +8,7 @@ class MDFieldConfigSeriesAR extends MDFieldConfigAR
 {
     public const TABLE_NAME = 'xoct_md_field_series';
 
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }

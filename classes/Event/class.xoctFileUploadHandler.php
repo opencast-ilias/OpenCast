@@ -38,8 +38,7 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         string $upload_url = '',
         string $file_info_url = '',
         string $file_removal_url = ''
-    )
-    {
+    ) {
         parent::__construct();
         $this->uploadStorageService = $uploadStorageService;
         $this->upload_url = $upload_url;
@@ -61,7 +60,6 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
     {
         return $this->file_removal_url ?: $this->ctrl->getLinkTargetByClass([static::class], self::CMD_REMOVE);
     }
-
 
     /**
      * @throws IllegalStateException
@@ -128,9 +126,6 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         return $infos;
     }
 
-    /**
-     * @return UploadStorageService
-     */
     public function getUploadStorageService(): UploadStorageService
     {
         return $this->uploadStorageService;

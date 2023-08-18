@@ -125,7 +125,6 @@ class EventFormBuilder
      */
     private $dic;
 
-
     public function __construct(
         UIFactory $ui_factory,
         RefineryFactory $refinery_factory,
@@ -151,11 +150,8 @@ class EventFormBuilder
     }
 
     /**
-     * @param string $form_action
-     * @param bool $with_terms_of_use
-     * @param int $obj_id set if the context is a repository object, to use the object level configuration
+     * @param int  $obj_id   set if the context is a repository object, to use the object level configuration
      * @param bool $as_admin set if the context is a repository object, to use the object level configuration
-     * @return Form
      */
     public function upload(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
     {
@@ -167,7 +163,7 @@ class EventFormBuilder
             $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix())
         )->withRequired(true);
         // Upload Limit
-        $configured_upload_limit =  (int)PluginConfig::getConfig(PluginConfig::F_CURL_MAX_UPLOADSIZE);
+        $configured_upload_limit = (int) PluginConfig::getConfig(PluginConfig::F_CURL_MAX_UPLOADSIZE);
         $upload_limit = $configured_upload_limit > 0
             ? $configured_upload_limit * self::MB_IN_B
             : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MB_IN_B;
@@ -177,7 +173,7 @@ class EventFormBuilder
                                  ->withMaxFileSize($upload_limit)
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
-                                         function ($file) use ($upload_storage_service) {
+                                         function ($file) use ($upload_storage_service): array {
                                              $id = $file[0];
                                              return $upload_storage_service->getFileInfo($id);
                                          }
@@ -193,8 +189,12 @@ class EventFormBuilder
             $this->plugin->txt('file')
         );
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection( $this->plugin->txt('processing_settings'))
-            : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin, $this->plugin->txt('processing_settings'));
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            : $this->workflowParameterRepository->getFormSectionForObjId(
+                $obj_id,
+                $as_admin,
+                $this->plugin->txt('processing_settings')
+            );
         $inputs = [
             'file' => $file_section,
             'metadata' => $this->formItemBuilder->create_section($as_admin),
@@ -219,11 +219,19 @@ class EventFormBuilder
         );
     }
 
-    public function schedule(string $form_action, bool $with_terms_of_use, int $obj_id = 0, bool $as_admin = false): Form
-    {
+    public function schedule(
+        string $form_action,
+        bool $with_terms_of_use,
+        int $obj_id = 0,
+        bool $as_admin = false
+    ): Form {
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection( $this->plugin->txt('processing_settings'))
-            : $this->workflowParameterRepository->getFormSectionForObjId($obj_id, $as_admin, $this->plugin->txt('processing_settings'));
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            : $this->workflowParameterRepository->getFormSectionForObjId(
+                $obj_id,
+                $as_admin,
+                $this->plugin->txt('processing_settings')
+            );
         $inputs = [
             'metadata' => $this->formItemBuilder->schedule_section($as_admin),
             'scheduling' => $this->schedulingFormItemBuilder->create()
@@ -240,25 +248,35 @@ class EventFormBuilder
         );
     }
 
-    public function update_scheduled(string $form_action, Metadata $metadata, Scheduling $scheduling, bool $as_admin): Form
-    {
+    public function update_scheduled(
+        string $form_action,
+        Metadata $metadata,
+        Scheduling $scheduling,
+        bool $as_admin
+    ): Form {
         $inputs = ['metadata' => $this->formItemBuilder->update_scheduled_section($metadata, $as_admin)];
-        $allow_edit_scheduling = (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA);
+        $allow_edit_scheduling = (PluginConfig::getConfig(
+            PluginConfig::F_SCHEDULED_METADATA_EDITABLE
+        ) == PluginConfig::ALL_METADATA);
         $inputs['scheduling'] = $this->schedulingFormItemBuilder->edit($scheduling, $allow_edit_scheduling);
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
             $inputs
-        )->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
-            $date_field = new MetadataField(MDFieldDefinition::F_START_DATE, MDDataType::datetime());
-            $date_field->setValue($vs['scheduling'] ["start_date_time"]);
-            $vs['metadata']['object']->addField($date_field);
+        )->withAdditionalTransformation(
+            $this->refinery_factory->custom()->constraint(function ($vs) {
+                $date_field = new MetadataField(MDFieldDefinition::F_START_DATE, MDDataType::datetime());
+                $date_field->setValue($vs['scheduling'] ["start_date_time"]);
+                $vs['metadata']['object']->addField($date_field);
 
-            $time_field = new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time());
-            $time_field->setValue($vs['scheduling'] ["start_date_time"]->setTimeZone(new DateTimeZone('utc'))->format('H:i:s'));
-            $vs['metadata']['object']->addField($time_field);
-            return $vs;
-        }, \xoctException::INTERNAL_ERROR));
+                $time_field = new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time());
+                $time_field->setValue(
+                    $vs['scheduling'] ["start_date_time"]->setTimeZone(new DateTimeZone('utc'))->format('H:i:s')
+                );
+                $vs['metadata']['object']->addField($time_field);
+                return $vs;
+            }, \xoctException::INTERNAL_ERROR)
+        );
     }
 
     private function buildTermsOfUseSection(): Input
@@ -268,11 +286,13 @@ class EventFormBuilder
                 $this->plugin->txt('event_accept_eula'),
                 PluginConfig::getConfig(PluginConfig::F_EULA)
             )
-                ->withRequired(true)
-                ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
-                    // must be checked (required-functionality doesn't guarantee that)
-                    return $vs;
-                }, $this->plugin->txt('event_error_alert_accpet_terms_of_use')))
+                                                    ->withRequired(true)
+                                                    ->withAdditionalTransformation(
+                                                        $this->refinery_factory->custom()->constraint(function ($vs) {
+                                                            // must be checked (required-functionality doesn't guarantee that)
+                                                            return $vs;
+                                                        }, $this->plugin->txt('event_error_alert_accpet_terms_of_use'))
+                                                    )
         ], $this->plugin->txt('event_accept_eula'));
     }
 

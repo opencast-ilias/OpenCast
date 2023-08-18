@@ -22,7 +22,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
+        's' =>
         array (
             'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
             'srag\\LibrariesNamespaceChanger\\' => 31,
@@ -30,7 +30,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
         ),
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -53,7 +53,7 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'SebastianFeldmann\\Cli\\' => 22,
             'SebastianFeldmann\\Camino\\' => 25,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
@@ -63,24 +63,24 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
             'Psr\\Cache\\' => 10,
             'PhpCsFixer\\' => 11,
         ),
-        'O' => 
+        'O' =>
         array (
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'G' => 
+        'G' =>
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'D' => 
+        'D' =>
         array (
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
         ),
-        'C' => 
+        'C' =>
         array (
             'Composer\\XdebugHandler\\' => 23,
             'Composer\\Semver\\' => 16,
@@ -90,180 +90,180 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     );
 
     public static $prefixDirsPsr4 = array (
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
+        'srag\\LibraryLanguageInstaller\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
         ),
-        'srag\\LibrariesNamespaceChanger\\' => 
+        'srag\\LibrariesNamespaceChanger\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DataTableUI\\OpenCast\\' => 
+        'srag\\DataTableUI\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/datatable/src',
         ),
-        'srag\\DIC\\OpenCast\\' => 
+        'srag\\DIC\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\OpenCast\\' => 
+        'srag\\CustomInputGUIs\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
-        'Symfony\\Polyfill\\Php81\\' => 
+        'Symfony\\Polyfill\\Php81\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Php73\\' => 
+        'Symfony\\Polyfill\\Php73\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
         ),
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
         ),
-        'Symfony\\Polyfill\\Ctype\\' => 
+        'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Contracts\\Service\\' => 
+        'Symfony\\Contracts\\Service\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/service-contracts',
         ),
-        'Symfony\\Contracts\\EventDispatcher\\' => 
+        'Symfony\\Contracts\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
         ),
-        'Symfony\\Component\\String\\' => 
+        'Symfony\\Component\\String\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/string',
         ),
-        'Symfony\\Component\\Stopwatch\\' => 
+        'Symfony\\Component\\Stopwatch\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/stopwatch',
         ),
-        'Symfony\\Component\\Process\\' => 
+        'Symfony\\Component\\Process\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/process',
         ),
-        'Symfony\\Component\\OptionsResolver\\' => 
+        'Symfony\\Component\\OptionsResolver\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/options-resolver',
         ),
-        'Symfony\\Component\\Finder\\' => 
+        'Symfony\\Component\\Finder\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/finder',
         ),
-        'Symfony\\Component\\Filesystem\\' => 
+        'Symfony\\Component\\Filesystem\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/filesystem',
         ),
-        'Symfony\\Component\\EventDispatcher\\' => 
+        'Symfony\\Component\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
         ),
-        'Symfony\\Component\\Console\\' => 
+        'Symfony\\Component\\Console\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
-        'SebastianFeldmann\\Git\\' => 
+        'SebastianFeldmann\\Git\\' =>
         array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/git/src',
         ),
-        'SebastianFeldmann\\Cli\\' => 
+        'SebastianFeldmann\\Cli\\' =>
         array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/cli/src',
         ),
-        'SebastianFeldmann\\Camino\\' => 
+        'SebastianFeldmann\\Camino\\' =>
         array (
             0 => __DIR__ . '/..' . '/sebastianfeldmann/camino/src',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' => 
+        'Psr\\Http\\Client\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'Psr\\EventDispatcher\\' => 
+        'Psr\\EventDispatcher\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/event-dispatcher/src',
         ),
-        'Psr\\Container\\' => 
+        'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Cache\\' => 
+        'Psr\\Cache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
-        'PhpCsFixer\\' => 
+        'PhpCsFixer\\' =>
         array (
             0 => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src',
         ),
-        'OpencastApi\\Rest\\' => 
+        'OpencastApi\\Rest\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' => 
+        'OpencastApi\\Mock\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' => 
+        'OpencastApi\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'GuzzleHttp\\Psr7\\' => 
+        'GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
+        'GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
+        'GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Doctrine\\Common\\Lexer\\' => 
+        'Doctrine\\Common\\Lexer\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
         ),
-        'Doctrine\\Common\\Annotations\\' => 
+        'Doctrine\\Common\\Annotations\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
         ),
-        'Composer\\XdebugHandler\\' => 
+        'Composer\\XdebugHandler\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/xdebug-handler/src',
         ),
-        'Composer\\Semver\\' => 
+        'Composer\\Semver\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
         ),
-        'Composer\\Pcre\\' => 
+        'Composer\\Pcre\\' =>
         array (
             0 => __DIR__ . '/..' . '/composer/pcre/src',
         ),
-        'CaptainHook\\App\\' => 
+        'CaptainHook\\App\\' =>
         array (
             0 => __DIR__ . '/..' . '/captainhook/captainhook/src',
         ),
@@ -1437,6 +1437,11 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\LibraryLanguageInstaller\\OpenCast\\LibraryLanguageInstaller' => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src/LibraryLanguageInstaller.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => __DIR__ . '/../..' . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\Loader' => __DIR__ . '/../..' . '/src/UI/Form/Loader.php',
+        'srag\\Plugins\\Opencast\\API\\API' => __DIR__ . '/../..' . '/src/API/API.php',
+        'srag\\Plugins\\Opencast\\API\\Config' => __DIR__ . '/../..' . '/src/API/Config.php',
+        'srag\\Plugins\\Opencast\\API\\DecorateProxy' => __DIR__ . '/../..' . '/src/API/DecorateProxy.php',
+        'srag\\Plugins\\Opencast\\API\\Handlers' => __DIR__ . '/../..' . '/src/API/Handlers.php',
+        'srag\\Plugins\\Opencast\\API\\OpencastAPI' => __DIR__ . '/../..' . '/src/API/OpencastAPI.php',
         'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatGUI' => __DIR__ . '/../..' . '/src/Chat/GUI/ChatGUI.php',
         'srag\\Plugins\\Opencast\\Chat\\GUI\\ChatHistoryGUI' => __DIR__ . '/../..' . '/src/Chat/GUI/ChatHistoryGUI.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\ChatroomAR' => __DIR__ . '/../..' . '/src/Chat/Model/ChatroomAR.php',
@@ -1445,7 +1450,11 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Chat\\Model\\MessageAR' => __DIR__ . '/../..' . '/src/Chat/Model/MessageAR.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\Token' => __DIR__ . '/../..' . '/src/Chat/Model/Token.php',
         'srag\\Plugins\\Opencast\\Chat\\Model\\TokenAR' => __DIR__ . '/../..' . '/src/Chat/Model/TokenAR.php',
+        'srag\\Plugins\\Opencast\\Container\\Container' => __DIR__ . '/../..' . '/src/Container/Container.php',
+        'srag\\Plugins\\Opencast\\Container\\Init' => __DIR__ . '/../..' . '/src/Container/Init.php',
         'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => __DIR__ . '/../..' . '/src/DI/OpencastDIC.php',
+        'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/OutputTrait.php',
+        'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/TranslatorTrait.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/ACL/ACL.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACLEntry' => __DIR__ . '/../..' . '/src/Model/ACL/ACLEntry.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACLParser' => __DIR__ . '/../..' . '/src/Model/ACL/ACLParser.php',

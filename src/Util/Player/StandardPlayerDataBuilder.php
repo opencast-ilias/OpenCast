@@ -32,20 +32,22 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     ];
 
     /**
-     * @return array
+     * @return array{streams: mixed[], metadata: array{title: string, duration: mixed, preview: string}, frameList: mixed[]}
      * @throws xoctException
      */
     public function buildStreamingData(): array
     {
-        $media = array_values(array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium) {
-            return in_array($medium->getMediatype(), array_keys(self::$mimetype_mapping));
-        }));
+        $media = array_values(
+            array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium): bool {
+                return array_key_exists($medium->getMediatype(), self::$mimetype_mapping);
+            })
+        );
 
-        if (empty($media)) {
+        if ($media === []) {
             throw new xoctException(xoctException::NO_STREAMING_DATA);
         }
 
-        list($duration, $streams) = $this->buildStreams($media);
+        [$duration, $streams] = $this->buildStreams($media);
 
         $data = [
             "streams" => array_values($streams),
@@ -62,7 +64,6 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
     /**
      * @param Media[] $media
-     * @return array
      * @throws xoctException
      */
     protected function buildStreams(array $media): array
@@ -84,7 +85,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         }
 
         foreach ($sources as $role => $source) {
-            if (!empty($source)) {
+            if ($source !== []) {
                 $streams[] = [
                     "content" => self::$role_mapping[$role],
                     "sources" => $source
@@ -97,8 +98,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
     /**
      * @param     $medium
-     * @param int $duration
-     * @return array
+     * @return array{src: mixed, mimetype: mixed, res: array{w: mixed, h: mixed}}
      * @throws xoctException
      */
     private function buildSource($medium, int $duration): array
@@ -118,17 +118,14 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param Event $event
-     *
-     * @return array
      * @throws xoctException
      */
     protected function buildSegments(Event $event): array
     {
         $frameList = [];
         $segments = $event->publications()->getSegmentPublications();
-        if (count($segments) > 0) {
-            $segments = array_reduce($segments, function (array &$segments, Attachment $segment) {
+        if ($segments !== []) {
+            $segments = array_reduce($segments, function (array &$segments, Attachment $segment): array {
                 if (!isset($segments[$segment->getRef()])) {
                     $segments[$segment->getRef()] = [];
                 }
@@ -138,61 +135,63 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             }, []);
 
             ksort($segments);
-            $frameList = array_values(array_map(function (array $segment) {
-                if (PluginConfig::getConfig(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
-                    /**
-                     * @var Attachment[] $segment
-                     */
-                    $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
-                    $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
-                    if ($high === null || $low === null) {
-                        $high = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
-                        $low = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+            $frameList = array_values(
+                array_map(function (array $segment) {
+                    if (PluginConfig::getConfig(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
+                        /**
+                         * @var Attachment[] $segment
+                         */
+                        $high = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_HIGHRES];
+                        $low = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW_LOWRES];
+                        if ($high === null || $low === null) {
+                            $high = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_HIGHRES];
+                            $low = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES];
+                        }
+
+                        $time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
+                        $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+                        $time = $time->getTimestamp();
+
+                        $high_url = $high->getUrl();
+                        $low_url = $low->getUrl();
+                        if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
+                            $high_url = xoctSecureLink::signThumbnail($high_url);
+                            $low_url = xoctSecureLink::signThumbnail($low_url);
+                        }
+
+                        return [
+                            "id" => "frame_" . $time,
+                            "mimetype" => $high->getMediatype(),
+                            "time" => $time,
+                            "url" => $high_url,
+                            "thumb" => $low_url
+                        ];
+                    } else {
+                        $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
+
+                        if ($preview === null) {
+                            $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
+                        }
+
+                        $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
+                        $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+                        $time = $time->getTimestamp();
+
+                        $url = $preview->getUrl();
+                        if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
+                            $url = xoctSecureLink::signThumbnail($url);
+                        }
+
+                        return [
+                            "id" => "frame_" . $time,
+                            "mimetype" => $preview->getMediatype(),
+                            "time" => $time,
+                            "url" => $url,
+                            "thumb" => $url
+                        ];
                     }
-
-                    $time = substr($high->getRef(), strpos($high->getRef(), ";time=") + 7, 8);
-                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-                    $time = $time->getTimestamp();
-
-                    $high_url = $high->getUrl();
-                    $low_url = $low->getUrl();
-                    if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
-                        $high_url = xoctSecureLink::signThumbnail($high_url);
-                        $low_url = xoctSecureLink::signThumbnail($low_url);
-                    }
-
-                    return [
-                        "id"       => "frame_" . $time,
-                        "mimetype" => $high->getMediatype(),
-                        "time"     => $time,
-                        "url"      => $high_url,
-                        "thumb"    => $low_url
-                    ];
-                } else {
-                    $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
-
-                    if ($preview === null) {
-                        $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
-                    }
-
-                    $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
-                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-                    $time = $time->getTimestamp();
-
-                    $url = $preview->getUrl();
-                    if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
-                        $url = xoctSecureLink::signThumbnail($url);
-                    }
-
-                    return [
-                        "id"       => "frame_" . $time,
-                        "mimetype" => $preview->getMediatype(),
-                        "time"     => $time,
-                        "url"      => $url,
-                        "thumb"    => $url
-                    ];
-                }
-            }, $segments));
+                }, $segments)
+            );
         }
 
         return $frameList;

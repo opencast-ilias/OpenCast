@@ -19,7 +19,6 @@ class ACLtoXML
      */
     protected $acl;
 
-
     /**
      * ACLtoXML constructor.
      */
@@ -28,10 +27,6 @@ class ACLtoXML
         $this->acl = $acl;
     }
 
-
-    /**
-     * @return string
-     */
     public function getXML(): string
     {
         $xml_writer = new ilXMLWriter();

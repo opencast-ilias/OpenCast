@@ -43,11 +43,6 @@ class Metadata implements JsonSerializable
      */
     protected $fields = [];
 
-    /**
-     * @param MDCatalogue $md_catalogue
-     * @param string $title
-     * @param string $flavor
-     */
     public function __construct(MDCatalogue $md_catalogue, string $title, string $flavor)
     {
         $this->md_catalogue = $md_catalogue;
@@ -55,17 +50,13 @@ class Metadata implements JsonSerializable
         $this->flavor = $flavor;
     }
 
-
     /**
-     * @param string $field_name
-     *
-     * @return MetadataField
      * @throws xoctException
      */
     public function getField(string $field_name): MetadataField
     {
         foreach ($this->getFields() as $field) {
-            if ($field->getId() == $field_name) {
+            if ($field->getId() === $field_name) {
                 return $field;
             }
         }
@@ -75,16 +66,13 @@ class Metadata implements JsonSerializable
         return $field;
     }
 
-
     /**
      * @param $field_name
-     *
-     * @return bool
      */
     public function removeField(string $field_name): bool
     {
         foreach ($this->getFields() as $i => $field) {
-            if ($field->getId() == $field_name) {
+            if ($field->getId() === $field_name) {
                 unset($this->fields[$i]);
                 sort($this->fields);
 
@@ -95,16 +83,11 @@ class Metadata implements JsonSerializable
         return false;
     }
 
-
-    /**
-     * @param MetadataField $metadataField
-     */
-    public function addField(MetadataField $metadataField)
+    public function addField(MetadataField $metadataField): void
     {
         $this->fields[] = $metadataField;
         sort($this->fields);
     }
-
 
     /**
      * @return string
@@ -114,15 +97,13 @@ class Metadata implements JsonSerializable
         return $this->flavor;
     }
 
-
     /**
      * @param string $flavor
      */
-    public function setFlavor($flavor)
+    public function setFlavor($flavor): void
     {
         $this->flavor = $flavor;
     }
-
 
     /**
      * @return string
@@ -132,15 +113,13 @@ class Metadata implements JsonSerializable
         return $this->title;
     }
 
-
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
-
 
     /**
      * @return MetadataField[]
@@ -150,11 +129,10 @@ class Metadata implements JsonSerializable
         return $this->fields;
     }
 
-
     /**
      * @param MetadataField[] $fields
      */
-    public function setFields($fields)
+    public function setFields($fields): void
     {
         $this->fields = $fields;
     }
@@ -162,10 +140,12 @@ class Metadata implements JsonSerializable
     public function withoutEmptyFields(): self
     {
         $clone = clone $this;
-        $clone->fields = array_values(array_filter($clone->fields, function (MetadataField $field) {
-            // no nulls, no empty strings, no empty arrays
-            return (bool) $field->getValue();
-        }));
+        $clone->fields = array_values(
+            array_filter($clone->fields, function (MetadataField $field): bool {
+                // no nulls, no empty strings, no empty arrays
+                return (bool) $field->getValue();
+            })
+        );
         return $clone;
     }
 
@@ -174,7 +154,7 @@ class Metadata implements JsonSerializable
         $std_class = new stdClass();
         $std_class->label = $this->getTitle();
         $std_class->flavor = $this->getFlavor();
-        $std_class->fields = array_map(function (MetadataField $field) {
+        $std_class->fields = array_map(function (MetadataField $field): array {
             return $field->jsonSerialize();
         }, $this->getFields());
         return $std_class;

@@ -16,7 +16,7 @@ use xoctCurlSettings;
 use xoctLog;
 use xoctRequest;
 use xoctRequestSettings;
-use xoctOpencastApi;
+use srag\Plugins\Opencast\API\OpencastAPI;
 
 /**
  * Class xoctConf
@@ -125,34 +125,25 @@ class PluginConfig extends ActiveRecord
         self::F_GROUP_PRODUCERS,
     ];
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    public static function setApiSettings()
+    public static function setApiSettings(): void
     {
         // CURL
         $xoctCurlSettings = new xoctCurlSettings();
         $xoctCurlSettings->setUsername(self::getConfig(self::F_CURL_USERNAME));
         $xoctCurlSettings->setPassword(self::getConfig(self::F_CURL_PASSWORD));
-        $xoctCurlSettings->setVerifyPeer(true);
-        $xoctCurlSettings->setVerifyHost(true);
         xoctCurl::init($xoctCurlSettings);
 
         //CACHE
@@ -175,13 +166,10 @@ class PluginConfig extends ActiveRecord
             self::getConfig(self::F_API_VERSION)
         );
         // USER
-        xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ? self::getConfig(self::F_USER_MAPPING) : xoctUser::MAP_LOGIN);
+        xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN);
     }
 
-    /**
-     * @param string $xml_file_path
-     */
-    public static function importFromXML(string $xml_file_path)
+    public static function importFromXML(string $xml_file_path): void
     {
         $domxml = new DOMDocument('1.0', 'UTF-8');
         $domxml->loadXML(file_get_contents($xml_file_path));
@@ -194,7 +182,12 @@ class PluginConfig extends ActiveRecord
             $name = $node->getElementsByTagName('name')->item(0)->nodeValue;
             $value = $node->getElementsByTagName('value')->item(0)->nodeValue;
             if ($name) {
-                $value = (is_array(json_decode($value))) ? json_decode($value) : $value;
+                $value = (is_array(json_decode($value, null, 512, JSON_THROW_ON_ERROR))) ? json_decode(
+                    $value,
+                    null,
+                    512,
+                    JSON_THROW_ON_ERROR
+                ) : $value;
                 PluginConfig::set($name, $value);
             }
         }
@@ -212,8 +205,12 @@ class PluginConfig extends ActiveRecord
             $xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($id);
             $xoctWorkflowParameter->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
             $xoctWorkflowParameter->setType($node->getElementsByTagName('type')->item(0)->nodeValue);
-            $xoctWorkflowParameter->setDefaultValueMember($node->getElementsByTagName('default_value_member')->item(0)->nodeValue);
-            $xoctWorkflowParameter->setDefaultValueAdmin($node->getElementsByTagName('default_value_admin')->item(0)->nodeValue);
+            $xoctWorkflowParameter->setDefaultValueMember(
+                $node->getElementsByTagName('default_value_member')->item(0)->nodeValue
+            );
+            $xoctWorkflowParameter->setDefaultValueAdmin(
+                $node->getElementsByTagName('default_value_admin')->item(0)->nodeValue
+            );
 
             if (!WorkflowParameter::where(['id' => $xoctWorkflowParameter->getId()])->hasSets()) {
                 $xoctWorkflowParameter->create();
@@ -238,7 +235,9 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsage->setChannel($node->getElementsByTagName('channel')->item(0)->nodeValue);
             $xoctPublicationUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
             $xoctPublicationUsage->setTag($node->getElementsByTagName('tag')->item(0)->nodeValue ?: '');
-            $xoctPublicationUsage->setSearchKey($node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor');
+            $xoctPublicationUsage->setSearchKey(
+                $node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor'
+            );
             $xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
 
             if (!PublicationUsage::where(['usage_id' => $xoctPublicationUsage->getUsageId()])->hasSets()) {
@@ -249,9 +248,6 @@ class PluginConfig extends ActiveRecord
         }
     }
 
-    /**
-     * @return string
-     */
     public static function getXMLExport(): string
     {
         $opencast_plugin = ilOpenCastPlugin::getInstance();
@@ -275,7 +271,7 @@ class PluginConfig extends ActiveRecord
             $xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
             //			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
             $value = PluginConfig::getConfig($xoctConf->getName());
-            $value = is_array($value) ? json_encode($value) : $value;
+            $value = is_array($value) ? json_encode($value, JSON_THROW_ON_ERROR) : $value;
             $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
         }
 
@@ -286,11 +282,21 @@ class PluginConfig extends ActiveRecord
          */
         foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
             $xml_xoctPU = $xml_xoctWorkflowParameters->appendChild(new DOMElement('xoct_workflow_parameter'));
-            $xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getId()));
-            $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getTitle()));
-            $xml_xoctPU->appendChild(new DOMElement('type'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getType()));
-            $xml_xoctPU->appendChild(new DOMElement('default_value_member'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueMember()));
-            $xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin()));
+            $xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(
+                new DOMCdataSection($xoctWorkflowParameter->getId())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(
+                new DOMCdataSection($xoctWorkflowParameter->getTitle())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('type'))->appendChild(
+                new DOMCdataSection($xoctWorkflowParameter->getType())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('default_value_member'))->appendChild(
+                new DOMCdataSection($xoctWorkflowParameter->getDefaultValueMember())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(
+                new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin())
+            );
         }
 
         // xoctPublicationUsages
@@ -300,14 +306,30 @@ class PluginConfig extends ActiveRecord
          */
         foreach (PublicationUsage::get() as $xoctPublicationUsage) {
             $xml_xoctPU = $xml_xoctPublicationUsages->appendChild(new DOMElement('xoct_publication_usage'));
-            $xml_xoctPU->appendChild(new DOMElement('usage_id'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getUsageId()));
-            $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getTitle()));
-            $xml_xoctPU->appendChild(new DOMElement('description'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getDescription()));
-            $xml_xoctPU->appendChild(new DOMElement('channel'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getChannel()));
-            $xml_xoctPU->appendChild(new DOMElement('flavor'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getFlavor()));
-            $xml_xoctPU->appendChild(new DOMElement('tag'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getTag()));
-            $xml_xoctPU->appendChild(new DOMElement('search_key'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getSearchKey()));
-            $xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(new DOMCdataSection($xoctPublicationUsage->getMdType()));
+            $xml_xoctPU->appendChild(new DOMElement('usage_id'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getUsageId())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getTitle())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('description'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getDescription())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('channel'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getChannel())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('flavor'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getFlavor())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('tag'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getTag())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('search_key'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getSearchKey())
+            );
+            $xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->getMdType())
+            );
         }
 
         return $domxml->saveXML();
@@ -326,17 +348,14 @@ class PluginConfig extends ActiveRecord
      */
     protected $ar_safe_read = false;
 
-    /**
-     * @return bool
-     */
-    public static function isConfigUpToDate()
+    public static function isConfigUpToDate(): bool
     {
         return self::getConfig(self::F_CONFIG_VERSION) == self::CONFIG_VERSION;
     }
 
-    public static function load()
+    public static function load(): void
     {
-        $null = parent::get();
+        parent::get();
     }
 
     /**
@@ -347,8 +366,12 @@ class PluginConfig extends ActiveRecord
     {
         if (!self::$cache_loaded[$name]) {
             $obj = new self($name);
-            self::$cache[$name] = json_decode($obj->getValue());
-            self::$cache_loaded[$name] = true;
+            try {
+                self::$cache[$name] = json_decode($obj->getValue(), null, 512, JSON_THROW_ON_ERROR);
+                self::$cache_loaded[$name] = true;
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         return self::$cache[$name];
@@ -358,7 +381,7 @@ class PluginConfig extends ActiveRecord
      * @param $name
      * @param $value
      */
-    public static function set($name, $value)
+    public static function set($name, $value): void
     {
         $obj = new self($name);
 
@@ -371,7 +394,7 @@ class PluginConfig extends ActiveRecord
             ToUManager::resetForInstance();
             $obj->setValue("");
         } else {
-            $obj->setValue(json_encode($value));
+            $obj->setValue(json_encode($value, JSON_THROW_ON_ERROR));
         }
         if (self::where(['name' => $name])->hasSets()) {
             $obj->update();
@@ -402,7 +425,7 @@ class PluginConfig extends ActiveRecord
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -418,7 +441,7 @@ class PluginConfig extends ActiveRecord
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }

@@ -22,7 +22,6 @@ class MDPrefillOption
     private $value;
 
     /**
-     * @param string|null $value
      * @throws xoctException
      */
     public function __construct(?string $value)
@@ -51,9 +50,6 @@ class MDPrefillOption
         return new self(self::T_NONE);
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;

@@ -3,10 +3,7 @@
 namespace srag\Plugins\Opencast\Model\Event;
 
 use DateTimeImmutable;
-use ilObjUser;
 use srag\Plugins\Opencast\Model\ACL\ACL;
-use srag\Plugins\Opencast\Model\ACL\ACLEntry;
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
@@ -14,10 +11,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\PublicationSelector;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
-use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowInstance\WorkflowInstanceCollection;
-use xoctException;
-use xoctOpencastApi;
 
 /**
  * Opencast Event Object
@@ -65,7 +59,7 @@ class Event
     /**
      * @var EventAdditionsAR
      */
-    protected $xoctEventAdditions = null;
+    protected $xoctEventAdditions;
     /**
      * @var string
      */
@@ -100,20 +94,15 @@ class Event
      */
     protected $workflows;
 
-
     /**
      * @var bool
      */
     protected $processing_state_init = false;
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
     }
-
 
     public function setStatus(string $status): void
     {
@@ -122,12 +111,20 @@ class Event
 
     public function getArrayForTable(): array
     {
-        $array = array_column(array_map(function (MetadataField $mf) {
-            return [$mf->getId(), $mf->toString()];
-        }, $this->getMetadata()->getFields()), 1, 0);
-        $sortable = array_column(array_map(function (MetadataField $mf) {
-            return [$mf->getId() . '_s', $mf->getValueFormatted()];
-        }, $this->getMetadata()->getFields()), 1, 0);
+        $array = array_column(
+            array_map(function (MetadataField $mf): array {
+                return [$mf->getId(), $mf->toString()];
+            }, $this->getMetadata()->getFields()),
+            1,
+            0
+        );
+        $sortable = array_column(
+            array_map(function (MetadataField $mf): array {
+                return [$mf->getId() . '_s', $mf->getValueFormatted()];
+            }, $this->getMetadata()->getFields()),
+            1,
+            0
+        );
         $array['object'] = $this;
         return $array + $sortable;
     }
@@ -135,9 +132,9 @@ class Event
     /**
      *
      */
-    public function loadWorkflows()
+    public function loadWorkflows(): void
     {
-        if ($this->getIdentifier()) {
+        if ($this->getIdentifier() !== '' && $this->getIdentifier() !== '0') {
             $this->workflows = new WorkflowInstanceCollection($this->getIdentifier());
         } else {
             $this->workflows = new WorkflowInstanceCollection();
@@ -147,7 +144,7 @@ class Event
     protected function initProcessingState(): void
     {
         // todo: think this over
-        if (!$this->getIdentifier()) {
+        if ($this->getIdentifier() === '' || $this->getIdentifier() === '0') {
             return;
         }
         if ($this->processing_state_init) {
@@ -177,9 +174,13 @@ class Event
                 if ($this->status == 'EVENTS.EVENTS.STATUS.RECORDING') {
                     $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_RUNNING : self::STATE_RECORDING);
                 } elseif (!$this->getXoctEventAdditions()->getIsOnline()) {
-                    $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_OFFLINE : self::STATE_SCHEDULED_OFFLINE);
+                    $this->setProcessingState(
+                        $this->isLiveEvent() ? self::STATE_LIVE_OFFLINE : self::STATE_SCHEDULED_OFFLINE
+                    );
                 } else {
-                    $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_SCHEDULED : self::STATE_SCHEDULED);
+                    $this->setProcessingState(
+                        $this->isLiveEvent() ? self::STATE_LIVE_SCHEDULED : self::STATE_SCHEDULED
+                    );
                 }
                 break;
         }
@@ -191,7 +192,6 @@ class Event
     {
         return $this->getMetadata()->getField('startDate')->getValue();
     }
-
 
     /**
      * this should only be called on scheduled events
@@ -262,7 +262,6 @@ class Event
         return $this->processing_state;
     }
 
-
     public function setProcessingState(string $processing_state): void
     {
         $this->processing_state = $processing_state;
@@ -278,9 +277,6 @@ class Event
         return $this->metadata;
     }
 
-    /**
-     * @return PublicationSelector
-     */
     public function publications(): PublicationSelector
     {
         if (!$this->publications) {

@@ -5,9 +5,7 @@ namespace ILIAS\UI\Implementation\Component\Input\Field;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Render\ilTemplateWrapper;
 use ILIAS\UI\Implementation\Render\ResourceRegistry;
-use ILIAS\UI\Implementation\Render\Template;
 use ILIAS\UI\Renderer as RendererInterface;
-use stdClass;
 use ilTemplate;
 use ilTemplateException;
 
@@ -27,19 +25,12 @@ class ChunkedFileRenderer extends Renderer
         $this->plugin = $plugin;
     }
 
-    /**
-     * @param ResourceRegistry $registry
-     * @return void|null
-     */
-    public function registerResources(ResourceRegistry $registry)
+    public function registerResources(ResourceRegistry $registry): void
     {
         $registry->register(self::TEMPLATES . 'chunked_file.js');
     }
 
     /**
-     * @param Component         $component
-     * @param RendererInterface $default_renderer
-     * @return string
      * @throws ilTemplateException
      */
     public function render(Component $component, RendererInterface $default_renderer): string
@@ -71,14 +62,21 @@ class ChunkedFileRenderer extends Renderer
 
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
-        $settings->chunk_size = min($upload_limit / 2, 20 * self::MB_IN_B); // we use 20MB as default chunk size which seems to be a good compromise for slow connections
+        $settings->chunk_size = min(
+            $upload_limit / 2,
+            20 * self::MB_IN_B
+        ); // we use 20MB as default chunk size which seems to be a good compromise for slow connections
         if (!$settings->chunked_upload) {
             $max_file_size = $component->getMaxFileFize() === -1
                 ? $upload_limit
                 : $component->getMaxFileFize();
-            $settings->max_file_size = min($max_file_size, $upload_limit) / self::MB_IN_B * self::MIB_F ; // dropzone.js expects MiB
+            $settings->max_file_size = min(
+                $max_file_size,
+                $upload_limit
+            ) / self::MB_IN_B * self::MIB_F; // dropzone.js expects MiB
         } else {
-            $settings->max_file_size = $component->getMaxFileFize() / self::MB_IN_B * self::MIB_F; // dropzone.js expects MiB
+            $settings->max_file_size = $component->getMaxFileFize(
+                ) / self::MB_IN_B * self::MIB_F; // dropzone.js expects MiB
         }
 
         $settings->max_file_size_text = sprintf(
@@ -91,7 +89,7 @@ class ChunkedFileRenderer extends Renderer
          */
         $component = $component->withAdditionalOnLoadCode(
             function ($id) use ($settings) {
-                $settings = json_encode($settings);
+                $settings = json_encode($settings, JSON_THROW_ON_ERROR);
                 return "$(document).ready(function() {
                     il.UI.Input.chunkedFile.init('$id', '{$settings}');
                 });";

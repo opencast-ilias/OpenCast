@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -26,30 +25,37 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected $objectSettings;
     /**
-     * @var EventRepository
-     */
-    private $event_repository;
-    /**
      * @var ACLUtils
      */
     private $ACLUtils;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
     public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
     {
+        global $DIC;
+        parent::__construct();
+        $tabs = $DIC->tabs();
+        $main_tpl = $DIC->ui()->mainTemplate();
+        $this->user = $DIC->user();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->objectSettings = $objectSettings;
-        $this->event_repository = $event_repository;
         $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
-        self::dic()->tabs()->clearTargets();
+        $tabs->clearTargets();
 
-
-        self::dic()->tabs()->setBackTarget(self::plugin()->translate('tab_back'), self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class));
+        $tabs->setBackTarget($this->plugin->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));
         xoctWaiterGUI::loadLib();
-        self::dic()->ui()->mainTemplate()->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.css'));
-        self::dic()->ui()->mainTemplate()->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/invitations.js'));
-        self::dic()->ctrl()->saveParameter($this, xoctEventGUI::IDENTIFIER);
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/invitations.css'));
+        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/invitations.js'));
+        $this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
-
 
     /**
      * @throws DICException
@@ -58,44 +64,53 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected function index()
     {
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
+        $xoctUser = xoctUser::getInstance($this->user);
+        if (!ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_SHARE_EVENT,
+            $this->event,
+            $xoctUser,
+            $this->objectSettings
+        )) {
             ilUtil::sendFailure('Access denied', true);
-            self::dic()->ctrl()->redirectByClass(xoctEventGUI::class);
+            $this->ctrl->redirectByClass(xoctEventGUI::class);
         }
-        $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.invitations.html', false, false);
+        $temp = $this->plugin->getTemplate('default/tpl.invitations.html', false, false);
         $temp->setVariable('PREVIEW', $this->event->publications()->getThumbnailUrl());
         $temp->setVariable('VIDEO_TITLE', $this->event->getTitle());
-        $temp->setVariable('L_FILTER', self::plugin()->translate('groups_participants_filter'));
-        $temp->setVariable('PH_FILTER', self::plugin()->translate('groups_participants_filter_placeholder'));
-        $temp->setVariable('HEADER_INVITAIONS', self::plugin()->translate('invitations_header'));
-        $temp->setVariable('HEADER_PARTICIPANTS_AVAILABLE', self::plugin()->translate('groups_available_participants_header'));
-        $temp->setVariable('BASE_URL', (self::dic()->ctrl()->getLinkTarget($this, '', '', true)));
-        $temp->setVariable('LANGUAGE', json_encode([
-            'none_available' => self::plugin()->translate('invitations_none_available'),
-            'invite_all' => self::plugin()->translate('invitations_invite_all')
-        ]));
-        self::dic()->ui()->mainTemplate()->setContent($temp->get());
+        $temp->setVariable('L_FILTER', $this->plugin->txt('groups_participants_filter'));
+        $temp->setVariable('PH_FILTER', $this->plugin->txt('groups_participants_filter_placeholder'));
+        $temp->setVariable('HEADER_INVITAIONS', $this->plugin->txt('invitations_header'));
+        $temp->setVariable(
+            'HEADER_PARTICIPANTS_AVAILABLE',
+            $this->plugin->txt('groups_available_participants_header')
+        );
+        $temp->setVariable('BASE_URL', ($this->ctrl->getLinkTarget($this, '', '', true)));
+        $temp->setVariable(
+            'LANGUAGE',
+            json_encode([
+                'none_available' => $this->plugin->txt('invitations_none_available'),
+                'invite_all' => $this->plugin->txt('invitations_invite_all')
+            ], JSON_THROW_ON_ERROR)
+        );
+        $this->main_tpl->setContent($temp->get());
     }
-
 
     /**
      * @param $data
+     * @return never
      */
     protected function outJson($data)
     {
         header('Content-type: application/json');
-        echo json_encode($data);
+        echo json_encode($data, JSON_THROW_ON_ERROR);
         exit;
     }
-
 
     protected function add()
     {
     }
 
-
-    public function getAll()
+    public function getAll(): void
     {
         /**
          * @var $xoctUser xoctUser
@@ -105,19 +120,21 @@ class xoctGrantPermissionGUI extends xoctGUI
         foreach ($course_members_user_ids as $user_id) {
             $xoctUsers[$user_id] = xoctUser::getInstance(new ilObjUser($user_id));
         }
-        $active_invitations = PermissionGrant::getActiveInvitationsForEvent($this->event, $this->objectSettings->getPermissionAllowSetOwn());
+        $active_invitations = PermissionGrant::getActiveInvitationsForEvent(
+            $this->event,
+            $this->objectSettings->getPermissionAllowSetOwn()
+        );
         $invited_user_ids = [];
         foreach ($active_invitations as $inv) {
             $invited_user_ids[] = $inv->getUserId();
         }
-
 
         $available_user_ids = array_diff($course_members_user_ids, $invited_user_ids);
         $invited_users = [];
         $available_users = [];
         $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
         foreach ($available_user_ids as $user_id) {
-            if ($user_id == self::dic()->user()->getId()) {
+            if ($user_id == $this->user->getId()) {
                 continue;
             }
             if ($owner && $user_id == $owner->getIliasUserId()) {
@@ -149,18 +166,13 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->outJson($arr);
     }
 
-
-    /**
-     * @return array
-     */
-    protected function getCourseMembers()
+    protected function getCourseMembers(): array
     {
         $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
         $p = $parent->getMembersObject();
 
         return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
     }
-
 
     protected function create()
     {
@@ -175,7 +187,7 @@ class xoctGrantPermissionGUI extends xoctGUI
         }
         $obj->setEventIdentifier($this->event->getIdentifier());
         $obj->setUserId($_POST['id']);
-        $obj->setOwnerId(self::dic()->user()->getId());
+        $obj->setOwnerId($this->user->getId());
         if ($new) {
             $obj->create();
         } else {
@@ -183,7 +195,6 @@ class xoctGrantPermissionGUI extends xoctGUI
         }
         $this->outJson($obj->__asStdClass());
     }
-
 
     /**
      *
@@ -203,7 +214,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             }
             $obj->setEventIdentifier($this->event->getIdentifier());
             $obj->setUserId($id);
-            $obj->setOwnerId(self::dic()->user()->getId());
+            $obj->setOwnerId($this->user->getId());
             if ($new) {
                 $obj->create();
             } else {
@@ -211,24 +222,20 @@ class xoctGrantPermissionGUI extends xoctGUI
             }
             $objects[] = $obj->__asStdClass();
         }
-        $this->outJson(json_encode($objects));
+        $this->outJson(json_encode($objects, JSON_THROW_ON_ERROR));
     }
-
 
     protected function edit()
     {
     }
 
-
     protected function update()
     {
     }
 
-
     protected function confirmDelete()
     {
     }
-
 
     protected function delete()
     {
