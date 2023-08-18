@@ -17,7 +17,7 @@ interface API
 {
     /**
      * Gets the static OpencastAPI instance.
-     * @return Opencast $opencastApi instance of \OpencastAPI\Opencast
+     * @return Opencast $api instance of \OpencastAPI\Opencast
      */
     public function routes(): Opencast;
 

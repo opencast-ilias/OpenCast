@@ -119,6 +119,9 @@ class xoctUser
     protected function __construct(int $ilias_user_id = 6)
     {
         $user = new ilObjUser($ilias_user_id);
+        if (is_null($user->getLogin())) {
+            return;
+        }
         $this->setIliasUserId($ilias_user_id);
         $this->setExtId($user->getExternalAccount());
         $this->setFirstName($user->getFirstname());
@@ -226,7 +229,7 @@ class xoctUser
         return $this->login;
     }
 
-    public function setLogin(string $login): void /*: void*/
+    public function setLogin(string $login): void
     {
         $this->login = $login;
     }

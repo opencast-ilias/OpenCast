@@ -58,7 +58,7 @@ class OpencastAPI implements API
     /**
      * It decorates the services provided by Opencast Api class to be customised for xoct specifically.
      * @param bool $activate_ingest whether to activate ingest service or not.
-     * @return \OpencastApi\Opencast $opencastApi customised instance of \OpencastAPI\Opencast
+     * @return \OpencastApi\Opencast $api customised instance of \OpencastAPI\Opencast
      */
     private function decorateApiServicesForXoct(bool $activate_ingest = false): \OpencastApi\Opencast
     {
@@ -73,7 +73,7 @@ class OpencastAPI implements API
     /**
      * Gets the static OpencastAPI instance.
      * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
-     * @return \OpencastApi\Opencast $opencastApi instance of \OpencastAPI\Opencast
+     * @return \OpencastApi\Opencast $api instance of \OpencastAPI\Opencast
      */
     public function routes(): \OpencastApi\Opencast
     {
@@ -95,9 +95,9 @@ class OpencastAPI implements API
      */
     public function activateIngest(bool $activate): void
     {
-        if ($activate === true && !property_exists(self::$opencastApi, 'ingest')) {
+        if ($activate === true && !property_exists($this->api, 'ingest')) {
             $this->api = $this->decorateApiServicesForXoct($activate);
-        } elseif ($activate === false && property_exists(self::$opencastApi, 'ingest')) {
+        } elseif ($activate === false && property_exists($this->api, 'ingest')) {
             $this->api = $this->decorateApiServicesForXoct($activate);
         }
     }

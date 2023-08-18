@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Agent;
 
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 
 class AgentApiRepository implements AgentRepository
@@ -25,7 +24,7 @@ class AgentApiRepository implements AgentRepository
 
     public function findAll(): array
     {
-        $data = $this->api::routes()->agentsApi->getAll();
+        $data = $this->api->routes()->agentsApi->getAll();
         return $this->agentParser->parseApiResponse($data);
     }
 }

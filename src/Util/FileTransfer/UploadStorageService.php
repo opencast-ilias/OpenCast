@@ -126,7 +126,7 @@ class UploadStorageService
 
     public function buildACLUploadFile(ACL $acl): xoctUploadFile
     {
-        $tmp_name = uniqid('tmp', true);
+        $tmp_name = uniqid('tmp', false);
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(
