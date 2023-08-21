@@ -20,15 +20,10 @@ class ConfigAR extends ActiveRecord
     public const C_PROTOCOL = 'protocol';
     public const C_HOST = 'host';
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var array
@@ -59,23 +54,21 @@ class ConfigAR extends ActiveRecord
         return self::$cache[$name];
     }
 
-
     /**
      * @param $name
      * @param $value
      */
-    public static function set($name, $value)
+    public static function set($name, $value): void
     {
         $obj = new self($name);
         $obj->setValue(json_encode($value));
 
-        if (self::where([ 'name' => $name ])->hasSets()) {
+        if (self::where(['name' => $name])->hasSets()) {
             $obj->update();
         } else {
             $obj->create();
         }
     }
-
 
     /**
      * @var string
@@ -97,15 +90,13 @@ class ConfigAR extends ActiveRecord
      */
     protected $value;
 
-
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
-
 
     /**
      * @return string
@@ -115,15 +106,13 @@ class ConfigAR extends ActiveRecord
         return $this->name;
     }
 
-
     /**
      * @param string $value
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $this->value = $value;
     }
-
 
     /**
      * @return string

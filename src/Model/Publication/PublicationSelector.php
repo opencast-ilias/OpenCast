@@ -5,7 +5,6 @@ namespace srag\Plugins\Opencast\Model\Publication;
 use ilObjOpenCastAccess;
 use ilOpenCastPlugin;
 use Opis\Closure\SerializableClosure;
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -25,7 +24,6 @@ use xoctSecureLink;
  */
 class PublicationSelector
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
     public const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
@@ -100,25 +98,28 @@ class PublicationSelector
      * @var Publication[]|Media[]|Attachment[]
      */
     protected $caption_publications;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
 
     /**
      * PublicationSelector constructor.
-     *
-     * @param Event $event
      */
     public function __construct(Event $event)
     {
+        global $DIC;
+        $this->user = $DIC->user();
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
     }
-
 
     /**
      * @param stdClass[] $publication_data
      *
      * @throws xoctException
      */
-    public function loadFromArray(array $publication_data)
+    public function loadFromArray(array $publication_data): void
     {
         $publications = [];
         foreach ($publication_data as $p_array) {
@@ -134,25 +135,22 @@ class PublicationSelector
         $this->publications = $publications;
     }
 
-
     /**
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getPlayerPublications(): array
     {
-        if (!isset($this->player_publications)) {
+        if ($this->player_publications === null) {
             $player_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PLAYER);
             if (PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER)) {   // force media for internal player
                 $player_usage->setMdType(PublicationUsage::MD_TYPE_MEDIA);
             }
-            $pubs = $this->getPublicationMetadataForUsage($player_usage);
-            $this->player_publications = $pubs;
+            $this->player_publications = $this->getPublicationMetadataForUsage($player_usage);
         }
 
         return $this->player_publications;
     }
-
 
     /**
      * @return Publication[]|Media[]|Attachment[]
@@ -160,11 +158,11 @@ class PublicationSelector
      */
     public function getDownloadPublications(): array
     {
-        if (!isset($this->download_publications)) {
+        if ($this->download_publications === null) {
             $pubs = $this->getPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD)
             );
-            if (empty($pubs)) {
+            if ($pubs === []) {
                 $pubs = $this->getPublicationMetadataForUsage(
                     $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK)
                 );
@@ -176,25 +174,21 @@ class PublicationSelector
     }
 
     /**
-     * @param bool $with_urls
      * @return DownloadDto[]
      * @throws xoctException
      */
     public function getDownloadDtos(bool $with_urls = true): array
     {
         $download_publications = $this->getDownloadPublications();
-        usort($download_publications, function ($pub1, $pub2) {
+        usort($download_publications, function ($pub1, $pub2): int {
             /** @var $pub1 Publication|Media|Attachment */
             /** @var $pub2 Publication|Media|Attachment */
             if ($pub1 instanceof Media && $pub2 instanceof Media) {
-                if ($pub1->getHeight() == $pub2->getHeight()) {
-                    return 0;
-                }
-                return ($pub1->getHeight() > $pub2->getHeight()) ? -1 : 1;
+                return $pub2->getHeight() <=> $pub1->getHeight();
             }
             return 0;
         });
-        return array_map(function ($pub, $i) use ($with_urls) {
+        return array_map(function ($pub, $i) use ($with_urls): \srag\Plugins\Opencast\Model\DTO\DownloadDto {
             /** @var $pub Publication|Media|Attachment */
             $label = ($pub instanceof Media) ? $pub->getHeight() . 'p' :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
@@ -211,21 +205,20 @@ class PublicationSelector
         }, $download_publications, array_keys($download_publications));
     }
 
-
     /**
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getPreviewPublications(): array
     {
-        if (!isset($this->preview_publications)) {
-            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PREVIEW));
-            $this->preview_publications = $pubs;
+        if ($this->preview_publications === null) {
+            $this->preview_publications = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_PREVIEW)
+            );
         }
 
         return $this->preview_publications;
     }
-
 
     /**
      * @return Attachment[]
@@ -233,22 +226,26 @@ class PublicationSelector
      */
     public function getSegmentPublications(): array
     {
-        if (!isset($this->segment_publications)) {
-            $pubs = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_SEGMENTS));
-            $this->segment_publications = $pubs;
+        if ($this->segment_publications === null) {
+            $this->segment_publications = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_SEGMENTS)
+            );
         }
 
         return $this->segment_publications;
     }
-
 
     /**
      * @return null|string
      */
     public function getCuttingLink()
     {
-        if (!isset($this->cutting_url)) {
-            $url = str_replace('{event_id}', $this->event->getIdentifier(), PluginConfig::getConfig(PluginConfig::F_EDITOR_LINK));
+        if ($this->cutting_url === null) {
+            $url = str_replace(
+                '{event_id}',
+                $this->event->getIdentifier(),
+                PluginConfig::getConfig(PluginConfig::F_EDITOR_LINK)
+            );
             if (!$url) {
                 $xoctPublication = $this->getFirstPublicationMetadataForUsage(
                     $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CUTTING)
@@ -258,7 +255,8 @@ class PublicationSelector
             if (!$url) {
                 $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
                 $base = str_replace('/api', '', $base);
-                $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier() . '/tools/editor';
+                $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier(
+                    ) . '/tools/editor';
             }
 
             $this->cutting_url = $url;
@@ -284,7 +282,7 @@ class PublicationSelector
      */
     public function getPlayerLink()
     {
-        if (!isset($this->player_url)) {
+        if ($this->player_url === null) {
             $url = $this->getPlayerPublication()->getUrl();
 
             if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) {
@@ -307,7 +305,7 @@ class PublicationSelector
     public function getLivePublication()
     {
         $livePublicationUsage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_LIVE_EVENT);
-        return $livePublicationUsage ? $this->getFirstPublicationMetadataForUsage(
+        return $livePublicationUsage instanceof \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage ? $this->getFirstPublicationMetadataForUsage(
             $livePublicationUsage
         ) : null;
     }
@@ -320,7 +318,9 @@ class PublicationSelector
      */
     public function getAnnotationLink(int $ref_id = 0)
     {
-        if (!isset($this->annotation_url)) {
+        $media_object = null;
+        $media_url = null;
+        if ($this->annotation_url === null) {
             $annotation_publication = $this->getAnnotationPublication();
             if (is_null($annotation_publication)) {
                 $this->annotation_url = '';
@@ -335,9 +335,10 @@ class PublicationSelector
             }
 
             if ($ref_id > 0 && PluginConfig::getConfig(PluginConfig::F_ANNOTATION_TOKEN_SEC)) {
-                $xoctUser = xoctUser::getInstance(self::dic()->user());
+                $xoctUser = xoctUser::getInstance($this->user);
                 // Get Media URL
-                $media_objects = $annotation_publication instanceof Publication ? $annotation_publication->getMedia() : [$annotation_publication];
+                $media_objects = $annotation_publication instanceof Publication ? $annotation_publication->getMedia(
+                ) : [$annotation_publication];
                 //TODO: Get all urls for all mediatypes and compress them to send by URL
                 foreach ($media_objects as $media_object) {
                     if ($media_object->getMediatype() == "application/x-mpegURL") {
@@ -375,8 +376,10 @@ class PublicationSelector
      */
     public function getUnprotectedLink()
     {
-        if (!isset($this->unprotected_link)) {
-            $publication = $this->getFirstPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_UNPROTECTED_LINK));
+        if ($this->unprotected_link === null) {
+            $publication = $this->getFirstPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_UNPROTECTED_LINK)
+            );
             $this->unprotected_link = is_null($publication) ? null : $publication->getUrl();
         }
         return $this->unprotected_link;
@@ -404,13 +407,13 @@ class PublicationSelector
         }
 
         foreach (self::$thumbnail_publication_usages as $usage) {
-            $xoctPublication = $this->getFirstPublicationMetadataForUsage(
+            $publication = $this->getFirstPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage($usage)
             );
-            if (is_null($xoctPublication)) {
+            if ($publication === null) {
                 continue;
             }
-            $url = $xoctPublication->getUrl();
+            $url = $publication->getUrl();
             if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
                 $this->thumbnail_url = xoctSecureLink::signThumbnail($url);
             } else {
@@ -419,13 +422,12 @@ class PublicationSelector
             break;
         }
 
-        if (!$this->thumbnail_url) {
+        if (empty($this->thumbnail_url)) {
             $this->thumbnail_url = self::NO_PREVIEW;
         }
 
         return $this->thumbnail_url;
     }
-
 
     /**
      * @param $PublicationUsage
@@ -446,9 +448,9 @@ class PublicationSelector
         $media = [];
         $attachments = [];
         foreach ($this->getPublications() as $publication) {
-            if ($publication->getChannel() == $PublicationUsage->getChannel()) {
-                $media = array_merge($media, $publication->getMedia());
-                $attachments = array_merge($attachments, $publication->getAttachments());
+            if ($publication->getChannel() === $PublicationUsage->getChannel()) {
+                $media += $publication->getMedia();
+                $attachments += $publication->getAttachments();
             }
         }
         $return = [];
@@ -487,7 +489,7 @@ class PublicationSelector
                 break;
             case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
                 foreach ($this->getPublications() as $publication) {
-                    if ($publication->getChannel() == $PublicationUsage->getChannel()) {
+                    if ($publication->getChannel() === $PublicationUsage->getChannel()) {
                         $return[] = $publication;
                     }
                 }
@@ -511,13 +513,6 @@ class PublicationSelector
         return count($metadata) ? array_shift($metadata) : null;
     }
 
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     *
-     * @return bool
-     */
     protected function startsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
@@ -525,13 +520,6 @@ class PublicationSelector
         return (substr($haystack, 0, $length) === $needle);
     }
 
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     *
-     * @return bool
-     */
     protected function endsWith(string $haystack, string $needle): bool
     {
         $length = strlen($needle);
@@ -542,16 +530,9 @@ class PublicationSelector
         return (substr($haystack, -$length) === $needle);
     }
 
-
-    /**
-     * @param string $haystack
-     * @param string $needle
-     *
-     * @return bool
-     */
     protected function checkFlavor(string $haystack, string $needle): bool
     {
-        return ($haystack == $needle)
+        return ($haystack === $needle)
             || ($this->startsWith($needle, '/') && $this->endsWith($haystack, $needle))
             || ($this->endsWith($needle, '/') && $this->startsWith($haystack, $needle));
     }
@@ -568,7 +549,7 @@ class PublicationSelector
         return $this->publications;
     }
 
-    public function setReference(SerializableClosure $reference)
+    public function setReference(SerializableClosure $reference): void
     {
         $this->reference = $reference;
     }

@@ -44,8 +44,7 @@ class SchedulingFormItemBuilder
         SchedulingParser $schedulingParser,
         ilPlugin $plugin,
         AgentRepository $agentApiRepository
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery_factory = $refinery_factory;
         $this->schedulingParser = $schedulingParser;
@@ -61,42 +60,48 @@ class SchedulingFormItemBuilder
                 'scheduling' => $this->buildSchedulingInput()
             ],
             $this->plugin->txt('event_scheduling')
-        )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
-            $vs['object'] = $this->schedulingParser->parseCreateFormData($vs);
-            return $vs;
-        }))->withAdditionalTransformation($this->buildConstraintStartAfterNow())
-            ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd());
+        )->withAdditionalTransformation(
+            $this->refinery_factory->custom()->transformation(function ($vs) {
+                $vs['object'] = $this->schedulingParser->parseCreateFormData($vs);
+                return $vs;
+            })
+        )->withAdditionalTransformation($this->buildConstraintStartAfterNow())
+                                ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd());
     }
 
-    public function edit(Scheduling $scheduling, bool $edit_allowed) : Input
+    public function edit(Scheduling $scheduling, bool $edit_allowed): Input
     {
         return $this->ui_factory->input()->field()->section(
             [
                 MDFieldDefinition::F_LOCATION => $this->buildSchedulingLocationInput($scheduling->getAgentId()),
             ] + $this->buildEditSchedulingInputs($scheduling),
             $this->plugin->txt('event_scheduling')
-        )->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function ($vs) {
-            $vs['object'] = $this->schedulingParser->parseUpdateFormData($vs);
-            return $vs;
-        }))->withAdditionalTransformation($this->buildConstraintStartAfterNow())
-           ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd())
-           ->withDisabled(!$edit_allowed);
+        )->withAdditionalTransformation(
+            $this->refinery_factory->custom()->transformation(function ($vs) {
+                $vs['object'] = $this->schedulingParser->parseUpdateFormData($vs);
+                return $vs;
+            })
+        )->withAdditionalTransformation($this->buildConstraintStartAfterNow())
+                                ->withAdditionalTransformation($this->buildConstraintStartBeforeEnd())
+                                ->withDisabled(!$edit_allowed);
     }
 
     private function buildSchedulingInput(): Input
     {
         $group_no_repeat = $this->ui_factory->input()->field()->group([
             'start_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_start'))
-                ->withUseTime(true)->withRequired(true),
+                                                  ->withUseTime(true)->withRequired(true),
             'end_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_end'))
-                ->withUseTime(true)->withRequired(true),
+                                                ->withUseTime(true)->withRequired(true),
         ], $this->plugin->txt('no'));
         $group_repeat = $this->ui_factory->input()->field()->group([
             'start_date' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_start'))
-                ->withUseTime(false)->withRequired(true),
+                                             ->withUseTime(false)->withRequired(true),
             'end_date' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_end'))
-                ->withUseTime(false)->withRequired(true),
-            'weekdays' => $this->ui_factory->input()->field()->multiSelect($this->plugin->txt('event_multiple_weekdays'), [
+                                           ->withUseTime(false)->withRequired(true),
+            'weekdays' => $this->ui_factory->input()->field()->multiSelect(
+                $this->plugin->txt('event_multiple_weekdays'),
+                [
                 'MO' => $this->plugin->txt('monday'),
                 'TU' => $this->plugin->txt('tuesday'),
                 'WE' => $this->plugin->txt('wednesday'),
@@ -104,11 +109,14 @@ class SchedulingFormItemBuilder
                 'FR' => $this->plugin->txt('friday'),
                 'SA' => $this->plugin->txt('saturday'),
                 'SU' => $this->plugin->txt('sunday'),
-            ])->withRequired(true),
-            'start_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_start_time'))
-                ->withTimeOnly(true)->withRequired(true),
+            ]
+            )->withRequired(true),
+            'start_time' => $this->ui_factory->input()->field()->dateTime(
+                $this->plugin->txt('event_multiple_start_time')
+            )
+                                             ->withTimeOnly(true)->withRequired(true),
             'end_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_multiple_end_time'))
-                ->withTimeOnly(true)->withRequired(true),
+                                           ->withTimeOnly(true)->withRequired(true),
         ], $this->plugin->txt('yes'));
 
         return $this->ui_factory->input()->field()->switchableGroup([
@@ -124,11 +132,19 @@ class SchedulingFormItemBuilder
     {
         return [
             'start_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_start'))
-                ->withUseTime(true)->withRequired(true)
-                ->withValue($scheduling->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s')),
+                                                  ->withUseTime(true)->withRequired(true)
+                                                  ->withValue(
+                                                      $scheduling->getStart()->setTimezone(
+                                                          new DateTimeZone(ilTimeZone::_getDefaultTimeZone())
+                                                      )->format('Y-m-d H:i:s')
+                                                  ),
             'end_date_time' => $this->ui_factory->input()->field()->dateTime($this->plugin->txt('event_end'))
-                ->withUseTime(true)->withRequired(true)
-                ->withValue($scheduling->getEnd()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s')),
+                                                ->withUseTime(true)->withRequired(true)
+                                                ->withValue(
+                                                    $scheduling->getEnd()->setTimezone(
+                                                        new DateTimeZone(ilTimeZone::_getDefaultTimeZone())
+                                                    )->format('Y-m-d H:i:s')
+                                                ),
         ];
     }
 
@@ -136,16 +152,19 @@ class SchedulingFormItemBuilder
     {
         $options = [];
         $agents = $this->agentApiRepository->findAll();
-        array_walk($agents, function (Agent $agent) use (&$options) {
+        array_walk($agents, function (Agent $agent) use (&$options): void {
             $options[$agent->getAgentId()] = $agent->getAgentId();
         });
-        $input = $this->ui_factory->input()->field()->select($this->plugin->txt('event_location'), $options)->withRequired(true);
-        return $location ? $input->withValue($location) : $input;
+        $input = $this->ui_factory->input()->field()->select(
+            $this->plugin->txt('event_location'),
+            $options
+        )->withRequired(true);
+        return $location !== '' && $location !== '0' ? $input->withValue($location) : $input;
     }
 
     private function buildConstraintStartBeforeEnd(): Constraint
     {
-        return $this->refinery_factory->custom()->constraint(function ($vs) {
+        return $this->refinery_factory->custom()->constraint(function ($vs): bool {
             /** @var Scheduling $scheduling */
             $scheduling = $vs['object'];
             return $scheduling->getStart()->getTimestamp() < $scheduling->getEnd()->getTimestamp();
@@ -154,7 +173,7 @@ class SchedulingFormItemBuilder
 
     private function buildConstraintStartAfterNow(): Constraint
     {
-        return $this->refinery_factory->custom()->constraint(function ($vs) {
+        return $this->refinery_factory->custom()->constraint(function ($vs): bool {
             /** @var Scheduling $scheduling */
             $scheduling = $vs['object'];
             return $scheduling->getStart()->getTimestamp() > time();

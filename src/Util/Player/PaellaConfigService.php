@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use xoctLog;
 
 class PaellaConfigService
@@ -117,9 +116,6 @@ class PaellaConfigService
     public function checkUrlReachable(string $url): bool
     {
         $file_headers = @get_headers($url);
-        if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
-            return false;
-        }
-        return true;
+        return $file_headers && $file_headers[0] != 'HTTP/1.1 404 Not Found';
     }
 }

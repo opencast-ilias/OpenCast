@@ -23,8 +23,6 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     protected $parent;
 
     /**
-     * @param string $key
-     *
      * @return mixed|void
      */
     protected function getValue(string $key)
@@ -33,26 +31,30 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
 
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, self::dic()->language()->txt('save'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, $this->lng->txt('save'));
     }
-
 
     protected function initFields(): void
     {
         $this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-            self::PROPERTY_TITLE => self::plugin()->translate(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, 'config'),
+            self::PROPERTY_TITLE => self::plugin()->translate(
+                PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES,
+                'config'
+            ),
             self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
             self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
             self::PROPERTY_SUBITEMS => [
                 self::F_OVERWRITE_SERIES_PARAMS => [
                     self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-                    self::PROPERTY_INFO => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS . '_info', 'config'),
+                    self::PROPERTY_INFO => self::plugin()->translate(
+                        self::F_OVERWRITE_SERIES_PARAMS . '_info',
+                        'config'
+                    ),
                     self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
                 ]
             ]
         ];
     }
-
 
     /**
      *
@@ -60,7 +62,6 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     protected function initId(): void
     {
     }
-
 
     /**
      *
@@ -70,10 +71,8 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
         $this->setTitle(self::plugin()->translate('settings', 'tab'));
     }
 
-
     /**
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function storeValue(string $key, $value): void
     {

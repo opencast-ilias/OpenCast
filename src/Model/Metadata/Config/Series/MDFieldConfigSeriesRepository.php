@@ -14,16 +14,12 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
     /** @var MDCatalogueFactory */
     private $MDCatalogueFactory;
 
-    /**
-     * @param MDCatalogueFactory $MDCatalogueFactory
-     */
     public function __construct(MDCatalogueFactory $MDCatalogueFactory)
     {
         $this->MDCatalogueFactory = $MDCatalogueFactory;
     }
 
     /**
-     * @param bool $is_admin
      * @return MDFieldConfigSeriesAR[]
      * @throws Exception
      */
@@ -53,7 +49,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue) {
+            function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue): bool {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
             }
         );
@@ -66,8 +62,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
 
     public function findByFieldId(string $field_id): ?MDFieldConfigAR
     {
-        $ar = MDFieldConfigSeriesAR::where(['field_id' => $field_id])->first();
-        return $ar;
+        return MDFieldConfigSeriesAR::where(['field_id' => $field_id])->first();
     }
 
     public function storeFromArray(array $data): MDFieldConfigAR

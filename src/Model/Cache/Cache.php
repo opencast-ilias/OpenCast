@@ -12,7 +12,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use xoctLog;
 
 /**
- * @author Theodor Truffer <theo@fluxlabs.ch>
+ * @author  Theodor Truffer <theo@fluxlabs.ch>
  * @version 1.0.0
  */
 class Cache extends ilGlobalCache
@@ -28,7 +28,6 @@ class Cache extends ilGlobalCache
     protected static $active_components = [
         self::COMP_PREFIX,
     ];
-
 
     /**
      * @return Cache
@@ -62,13 +61,12 @@ class Cache extends ilGlobalCache
         self::setOverrideActive(true);
     }
 
-
     protected function initCachingService(): void
     {
         /**
          * @var $ilGlobalCacheService ilGlobalCacheService
          */
-        if (!$this->getComponent()) {
+        if ($this->getComponent() === '' || $this->getComponent() === '0') {
             $this->setComponent(ilOpenCastPlugin::PLUGIN_NAME);
         }
 
@@ -94,7 +92,6 @@ class Cache extends ilGlobalCache
         $this->setActive(in_array($this->getComponent(), self::getActiveComponents()));
     }
 
-
     /**
      * Checks if live voting is able to use the global cache.
      *
@@ -108,7 +105,6 @@ class Cache extends ilGlobalCache
             return PluginConfig::CACHE_DISABLED;
         }
     }
-
 
     /**
      * @param $service_type
@@ -132,7 +128,6 @@ class Cache extends ilGlobalCache
         }
     }
 
-
     /**
      * @return array
      */
@@ -140,7 +135,6 @@ class Cache extends ilGlobalCache
     {
         return self::$active_components;
     }
-
 
     /**
      * @param bool $complete
@@ -157,12 +151,11 @@ class Cache extends ilGlobalCache
         return parent::flush(true);
     }
 
-
     /**
      * @param $key
      *
-     * @throws RuntimeException
      * @return bool
+     * @throws RuntimeException
      */
     public function delete($key)
     {
@@ -174,7 +167,6 @@ class Cache extends ilGlobalCache
         return parent::delete($key);
     }
 
-
     /**
      * @return bool
      */
@@ -182,7 +174,6 @@ class Cache extends ilGlobalCache
     {
         return self::isOverrideActive();
     }
-
 
     /**
      * @return boolean
@@ -192,15 +183,13 @@ class Cache extends ilGlobalCache
         return self::$override_active;
     }
 
-
     /**
      * @param boolean $override_active
      */
-    public static function setOverrideActive($override_active)
+    public static function setOverrideActive($override_active): void
     {
         self::$override_active = $override_active;
     }
-
 
     /**
      * @param      $key
@@ -221,7 +210,6 @@ class Cache extends ilGlobalCache
 
         return $return;
     }
-
 
     /**
      * @param $key

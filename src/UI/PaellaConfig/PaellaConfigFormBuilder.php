@@ -36,10 +36,6 @@ class PaellaConfigFormBuilder
      */
     private $plugin;
     /**
-     * @var UploadHandler
-     */
-    private $fileUploadHandler;
-    /**
      * @var PaellaConfigStorageService
      */
     private $paellaStorageService;
@@ -53,10 +49,14 @@ class PaellaConfigFormBuilder
      */
     private $ui_renderer;
 
-    public function __construct(ilPlugin $plugin, UploadHandler $fileUploadHandler, PaellaConfigStorageService $paellaStorageService, Factory $ui_factory, Renderer $ui_renderer)
-    {
+    public function __construct(
+        ilPlugin $plugin,
+        UploadHandler $fileUploadHandler,
+        PaellaConfigStorageService $paellaStorageService,
+        Factory $ui_factory,
+        Renderer $ui_renderer
+    ) {
         $this->plugin = $plugin;
-        $this->fileUploadHandler = $fileUploadHandler;
         $this->paellaStorageService = $paellaStorageService;
         $this->ui_factory = $ui_factory;
         $this->ui_renderer = $ui_renderer;
@@ -64,6 +64,7 @@ class PaellaConfigFormBuilder
 
     public function buildForm(string $form_action): Standard
     {
+        $inputs = [];
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_PATH)),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
@@ -121,12 +122,15 @@ class PaellaConfigFormBuilder
         $f = $this->ui_factory->input()->field();
         return $f->switchableGroup([
             PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt("pp_default_string") . " " . $link),
-            PluginConfig::PAELLA_OPTION_URL => $f->group([
-                'url' => $f->text($this->plugin->txt('link'))
-                    ->withByline($this->plugin->txt('pp_link_info'))
-                    ->withRequired(true)
-                    ->withValue($url)
-            ], $this->plugin->txt('pp_url'))
+            PluginConfig::PAELLA_OPTION_URL => $f->group(
+                [
+                    'url' => $f->text($this->plugin->txt('link'))
+                                ->withByline($this->plugin->txt('pp_link_info'))
+                                ->withRequired(true)
+                                ->withValue($url)
+                ],
+                $this->plugin->txt('pp_url')
+            )
         ], $this->txt($text))
             ->withByline($this->txt($text . '_info'))
             ->withValue($option)

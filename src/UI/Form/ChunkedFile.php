@@ -2,8 +2,6 @@
 
 namespace ILIAS\UI\Implementation\Component\Input\Field;
 
-use ILIAS\UI\Implementation\Component\Input\Field\File;
-use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\Data\Factory as DataFactory;
 use ILIAS\Refinery\Factory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
@@ -60,11 +58,11 @@ class ChunkedFile extends File
         return false;
     }
 
-    protected function getConstraintForRequirement()
+    protected function getConstraintForRequirement(): \ILIAS\Refinery\Custom\Constraint
     {
         return $this->refinery->custom()->constraint(
-            function ($value) {
-                return (is_array($value) && count($value) > 0);
+            function ($value): bool {
+                return (is_array($value) && $value !== []);
             },
             function ($txt, $value) {
                 return $txt("msg_no_files_selected");

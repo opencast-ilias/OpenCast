@@ -20,6 +20,10 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     public const F_TYPE = 'type';
     public const F_DEFAULT_VALUE_MEMBER = 'default_value_member';
     public const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
 
     /**
      * @var WorkflowParameter
@@ -30,34 +34,29 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
      */
     private $workflowParameterRepository;
 
-
     public function __construct($parent, WorkflowParameterRepository $workflowParameterRepository, $param_id = '')
     {
+        $this->plugin = ilOpenCastPlugin::getInstance();
         $this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
         $this->workflowParameterRepository = $workflowParameterRepository;
         parent::__construct($parent);
     }
 
-
     /**
-     * @param string $key
-     *
      * @return mixed|void
      */
     protected function getValue(string $key)
     {
     }
 
-
     /**
      *
      */
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, self::dic()->language()->txt('save'));
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_CANCEL, self::dic()->language()->txt('cancel'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, $this->lng->txt('save'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_CANCEL, $this->lng->txt('cancel'));
     }
-
 
     /**
      *
@@ -66,19 +65,19 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     {
         $this->fields = [
             self::F_ID => [
-                self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_ID),
+                self::PROPERTY_TITLE => $this->lng->txt(self::F_ID),
                 self::PROPERTY_CLASS => ilTextInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getId()
             ],
             self::F_TITLE => [
-                self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_TITLE),
+                self::PROPERTY_TITLE => $this->lng->txt(self::F_TITLE),
                 self::PROPERTY_CLASS => ilTextInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getTitle()
             ],
             self::F_TYPE => [
-                self::PROPERTY_TITLE => self::dic()->language()->txt(self::F_TYPE),
+                self::PROPERTY_TITLE => $this->lng->txt(self::F_TYPE),
                 self::PROPERTY_CLASS => ilSelectInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getType(),
@@ -87,14 +86,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
                 ]
             ],
             self::F_DEFAULT_VALUE_MEMBER => [
-                self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_MEMBER),
+                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_MEMBER),
                 self::PROPERTY_CLASS => ilSelectInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
                 self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
             ],
             self::F_DEFAULT_VALUE_ADMIN => [
-                self::PROPERTY_TITLE => self::plugin()->translate(self::F_DEFAULT_VALUE_ADMIN),
+                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_ADMIN),
                 self::PROPERTY_CLASS => ilSelectInputGUI::class,
                 self::PROPERTY_REQUIRED => true,
                 self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),
@@ -104,7 +103,6 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
         ];
     }
 
-
     /**
      *
      */
@@ -112,19 +110,14 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     {
     }
 
-
     /**
      *
      */
     protected function initTitle(): void
     {
-        $this->setTitle(self::dic()->language()->txt('edit'));
+        $this->setTitle($this->lng->txt('edit'));
     }
 
-
-    /**
-     * @return bool
-     */
     public function storeForm(): bool
     {
         if (!$this->storeFormCheck()) {
@@ -142,10 +135,8 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
         return true;
     }
 
-
     /**
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function storeValue(string $key, $value): void
     {

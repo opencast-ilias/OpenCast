@@ -18,25 +18,18 @@ class PermissionTemplate extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_perm_template';
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var int
@@ -204,14 +197,11 @@ class PermissionTemplate extends ActiveRecord
      */
     protected $added_role_actions_annotate;
 
-
-
-    public function create()
+    public function create(): void
     {
         $this->setSort(self::count() + 1);
         parent::create();
     }
-
 
     public static function removeAllTemplatesFromAcls(ACL $ACL): ACL
     {
@@ -225,7 +215,6 @@ class PermissionTemplate extends ActiveRecord
         }
         return $ACL;
     }
-
 
     /**
      * @return PermissionTemplate|bool
@@ -243,7 +232,8 @@ class PermissionTemplate extends ActiveRecord
         /** @var PermissionTemplate $perm_tpl */
         foreach (self::get() as $perm_tpl) {
             $entry = $acls_formatted[$perm_tpl->getRole()];
-            if ($entry && (isset($entry[ACLEntry::READ]) == (bool)$perm_tpl->getRead()) && (isset($entry[ACLEntry::WRITE]) == (bool)$perm_tpl->getWrite())) {
+            if ($entry && (isset($entry[ACLEntry::READ]) === (bool) $perm_tpl->getRead(
+                    )) && (isset($entry[ACLEntry::WRITE]) === (bool) $perm_tpl->getWrite())) {
                 foreach (array_filter(explode(',', $perm_tpl->getAdditionalAclActions())) as $action) {
                     if (!$entry[trim($action)]) {
                         continue 2;
@@ -265,17 +255,16 @@ class PermissionTemplate extends ActiveRecord
 
     public function removeFromAcls(ACL $ACL): ACL
     {
-        /** @var ACLEntry $existing_acl */
         $entries = $ACL->getEntries();
         foreach ($ACL->getEntries() as $key => $existing_acl) {
-            if ($existing_acl->getRole() == $this->getRole()|| $existing_acl->getRole() == $this->getAddedRoleName()) {
+            if ($existing_acl->getRole() === $this->getRole() || $existing_acl->getRole() == $this->getAddedRoleName(
+                )) {
                 unset($entries[$key]);
             }
         }
         $ACL->setEntries($entries);
         return $ACL;
     }
-
 
     /**
      * @param $with_download
@@ -286,11 +275,11 @@ class PermissionTemplate extends ActiveRecord
     {
         $entries = [];
 
-        if ($this->getRead()) {
+        if ($this->getRead() !== 0) {
             $entries[] = $this->constructAclForAction(ACLEntry::READ);
         }
 
-        if ($this->getWrite()) {
+        if ($this->getWrite() !== 0) {
             $entries[] = $this->constructAclForAction(ACLEntry::WRITE);
         }
 
@@ -309,7 +298,7 @@ class PermissionTemplate extends ActiveRecord
                 $entries[] = $this->constructAclForAction($additional_action);
             }
         }
-        if($this->getAddedRole()) {
+        if ($this->getAddedRole()) {
             $role_name = $this->getAddedRoleName();
             if ($this->getAddedRoleRead()) {
                 $entries[] = $this->constructAclActionForRole(ACLEntry::READ, $role_name);
@@ -333,7 +322,6 @@ class PermissionTemplate extends ActiveRecord
                 foreach (explode(',', $this->getAddedRoleActionsAnnotate()) as $additional_action) {
                     $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
                 }
-
             }
         }
 
@@ -345,8 +333,9 @@ class PermissionTemplate extends ActiveRecord
         return new ACLEntry($this->getRole(), $action, true);
     }
 
-    protected function constructAclActionForRole($action, $role):ACLEntry {
-        return new ACLEntry($role, $action,true);
+    protected function constructAclActionForRole($action, $role): ACLEntry
+    {
+        return new ACLEntry($role, $action, true);
     }
 
     /**
@@ -357,15 +346,13 @@ class PermissionTemplate extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return String
@@ -375,7 +362,6 @@ class PermissionTemplate extends ActiveRecord
         global $DIC;
         return $DIC->user()->getLanguage() == 'de' ? $this->title_de : $this->title_en;
     }
-
 
     /**
      * @return String
@@ -388,7 +374,7 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @param String $title_de
      */
-    public function setTitleDE($title_de)
+    public function setTitleDE($title_de): void
     {
         $this->title_de = $title_de;
     }
@@ -404,7 +390,7 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @param String $title_en
      */
-    public function setTitleEN($title_en)
+    public function setTitleEN($title_en): void
     {
         $this->title_en = $title_en;
     }
@@ -429,7 +415,7 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @param String $info_de
      */
-    public function setInfoDE($info_de)
+    public function setInfoDE($info_de): void
     {
         $this->info_de = $info_de;
     }
@@ -445,7 +431,7 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @param String $info_en
      */
-    public function setInfoEN($info_en)
+    public function setInfoEN($info_en): void
     {
         $this->info_en = $info_en;
     }
@@ -458,15 +444,13 @@ class PermissionTemplate extends ActiveRecord
         return $this->role;
     }
 
-
     /**
      * @param String $role
      */
-    public function setRole($role)
+    public function setRole($role): void
     {
         $this->role = $role;
     }
-
 
     /**
      * @return int
@@ -476,15 +460,13 @@ class PermissionTemplate extends ActiveRecord
         return $this->read_access;
     }
 
-
     /**
      * @param int $read
      */
-    public function setRead($read)
+    public function setRead($read): void
     {
         $this->read_access = $read;
     }
-
 
     /**
      * @return int
@@ -494,33 +476,26 @@ class PermissionTemplate extends ActiveRecord
         return $this->write_access;
     }
 
-
     /**
      * @param int $write
      */
-    public function setWrite($write)
+    public function setWrite($write): void
     {
         $this->write_access = $write;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getAdditionalAclActions()
+    public function getAdditionalAclActions(): string
     {
         return str_replace(' ', '', $this->additional_acl_actions);
     }
 
-
     /**
      * @param String $additional_acl_actions
      */
-    public function setAdditionalAclActions($additional_acl_actions)
+    public function setAdditionalAclActions($additional_acl_actions): void
     {
         $this->additional_acl_actions = $additional_acl_actions;
     }
-
 
     /**
      * @return String
@@ -530,15 +505,13 @@ class PermissionTemplate extends ActiveRecord
         return $this->additional_actions_download;
     }
 
-
     /**
      * @param String $additional_actions_download
      */
-    public function setAdditionalActionsDownload($additional_actions_download)
+    public function setAdditionalActionsDownload($additional_actions_download): void
     {
         $this->additional_actions_download = $additional_actions_download;
     }
-
 
     /**
      * @return String
@@ -548,68 +521,81 @@ class PermissionTemplate extends ActiveRecord
         return $this->additional_actions_annotate;
     }
 
-
     /**
      * @param String $additional_actions_annotate
      */
-    public function setAdditionalActionsAnnotate($additional_actions_annotate)
+    public function setAdditionalActionsAnnotate($additional_actions_annotate): void
     {
         $this->additional_actions_annotate = $additional_actions_annotate;
     }
 
-    public function getAddedRole() : ?string {
+    public function getAddedRole(): ?string
+    {
         return $this->added_role;
     }
 
-    public function setAddedRole(?string $added_role) {
+    public function setAddedRole(?string $added_role): void
+    {
         $this->added_role = $added_role;
     }
 
-    public function getAddedRoleName() : ?string {
+    public function getAddedRoleName(): ?string
+    {
         return $this->added_role_name;
     }
 
-    public function setAddedRoleName(?string $added_role_name) {
+    public function setAddedRoleName(?string $added_role_name): void
+    {
         $this->added_role_name = $added_role_name;
     }
 
-    public function getAddedRoleRead() : ?int {
+    public function getAddedRoleRead(): ?int
+    {
         return $this->added_role_read_access;
     }
 
-    public function setAddedRoleRead(?int $read) {
+    public function setAddedRoleRead(?int $read): void
+    {
         $this->added_role_read_access = $read;
     }
 
-    public function getAddedRoleWrite() : ?int {
+    public function getAddedRoleWrite(): ?int
+    {
         return $this->added_role_write_access;
     }
 
-    public function setAddedRoleWrite(?int $write) {
+    public function setAddedRoleWrite(?int $write): void
+    {
         $this->added_role_write_access = $write;
     }
 
-    public function getAddedRoleAclActions() : ?string {
+    public function getAddedRoleAclActions(): ?string
+    {
         return str_replace(' ', '', $this->added_role_acl_actions);
     }
 
-    public function setAddedRoleAclActions(?string $additional_acl_actions) {
+    public function setAddedRoleAclActions(?string $additional_acl_actions): void
+    {
         $this->added_role_acl_actions = $additional_acl_actions;
     }
 
-    public function getAddedRoleActionsDownload() : ?string{
+    public function getAddedRoleActionsDownload(): ?string
+    {
         return $this->added_role_actions_download;
     }
 
-    public function setAddedRoleActionsDownload(?string $additional_actions_download) {
+    public function setAddedRoleActionsDownload(?string $additional_actions_download): void
+    {
         $this->added_role_actions_download = $additional_actions_download;
     }
 
-    public function getAddedRoleActionsAnnotate() : ?string {
+    public function getAddedRoleActionsAnnotate(): ?string
+    {
         return $this->added_role_actions_annotate;
     }
 
-    public function setAddedRoleActionsAnnotate(?string $additional_actions_annotate)  {
+    public function setAddedRoleActionsAnnotate(?string $additional_actions_annotate): void
+    {
         $this->added_role_actions_annotate = $additional_actions_annotate;
     }
 
@@ -621,11 +607,10 @@ class PermissionTemplate extends ActiveRecord
         return $this->sort;
     }
 
-
     /**
      * @param int $sort
      */
-    public function setSort($sort)
+    public function setSort($sort): void
     {
         $this->sort = $sort;
     }
@@ -641,7 +626,7 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @param int $default
      */
-    public function setDefault($default)
+    public function setDefault($default): void
     {
         $this->is_default = $default;
     }

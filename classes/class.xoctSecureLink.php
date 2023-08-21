@@ -1,6 +1,8 @@
 <?php
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctSecureLink
@@ -15,7 +17,6 @@ class xoctSecureLink
      */
     protected static $cache = [];
 
-
     /**
      * @param       $url
      *
@@ -25,9 +26,11 @@ class xoctSecureLink
      *
      * @return mixed
      * @throws xoctException
+     * @deperecated we should get rid of static methods
      */
     protected static function sign($url, $valid_until = null, $restict_ip = false)
     {
+        global $opencastContainer;
         if (strpos($url, 'policy=') !== false && strpos($url, 'signature=') !== false) {
             // already signed, e.g. when presigning is active
             return $url;
@@ -41,7 +44,7 @@ class xoctSecureLink
 
         $ip = ($restict_ip) ? self::getClientIP() : null;
 
-        $data = json_decode(xoctRequest::root()->security()->sign($url, $valid_until, $ip));
+        $data = $opencastContainer[API::class]->routes()->securityApi->sign($url, $valid_until, $ip);
 
         if ($data->error) {
             return '';
@@ -50,7 +53,6 @@ class xoctSecureLink
 
         return $data->url;
     }
-
 
     /**
      * @param $url
@@ -65,7 +67,6 @@ class xoctSecureLink
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
     }
 
-
     /**
      * @param $url
      *
@@ -78,7 +79,6 @@ class xoctSecureLink
         $valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP));
     }
-
 
     /**
      * @param   $url
@@ -93,12 +93,16 @@ class xoctSecureLink
         $valid_until = null;
         if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT) && $duration > 0) {
             $duration_in_seconds = $duration / 1000;
-            $additional_time_percent = PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT) / 100;
-            $valid_until = gmdate("Y-m-d\TH:i:s\Z", time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent);
+            $additional_time_percent = PluginConfig::getConfig(
+                PluginConfig::F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT
+            ) / 100;
+            $valid_until = gmdate(
+                "Y-m-d\TH:i:s\Z",
+                time() + $duration_in_seconds + $duration_in_seconds * $additional_time_percent
+            );
         }
         return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS_WITH_IP));
     }
-
 
     /**
      * @param $url

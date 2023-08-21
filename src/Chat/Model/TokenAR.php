@@ -20,11 +20,10 @@ class TokenAR extends ActiveRecord
      */
     public const TOKEN_VALIDITY = 60 * 60;
 
-
     /**
      * @param $chat_room_id int
-     * @param $usr_id int
-     * @param $public_name string
+     * @param $usr_id       int
+     * @param $public_name  string
      *
      * @return $this
      */
@@ -41,16 +40,10 @@ class TokenAR extends ActiveRecord
         return $self;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
-
 
     /**
      * @var int
@@ -113,7 +106,6 @@ class TokenAR extends ActiveRecord
      */
     protected $valid_until_unix;
 
-
     /**
      * @return int
      */
@@ -130,7 +122,6 @@ class TokenAR extends ActiveRecord
         return $this->chat_room_id;
     }
 
-
     /**
      * @return int
      */
@@ -138,7 +129,6 @@ class TokenAR extends ActiveRecord
     {
         return $this->usr_id;
     }
-
 
     /**
      * @return string
@@ -148,8 +138,6 @@ class TokenAR extends ActiveRecord
         return $this->public_name;
     }
 
-
-
     /**
      * @return Token
      */
@@ -158,7 +146,6 @@ class TokenAR extends ActiveRecord
         return $this->token;
     }
 
-
     /**
      * @return int
      */
@@ -166,8 +153,6 @@ class TokenAR extends ActiveRecord
     {
         return $this->valid_until_unix;
     }
-
-
 
     /**
      * @param $field_name
@@ -183,7 +168,6 @@ class TokenAR extends ActiveRecord
                 return null;
         }
     }
-
 
     /**
      * @param $field_name

@@ -32,14 +32,12 @@ class UpdateEventRequestPayload implements JsonSerializable
         ?ACL $acl = null,
         ?Scheduling $scheduling = null,
         ?Processing $processing = null
-    )
-    {
+    ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->scheduling = $scheduling;
         $this->processing = $processing;
     }
-
 
     public function jsonSerialize()
     {

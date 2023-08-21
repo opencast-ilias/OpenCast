@@ -28,17 +28,12 @@ class MetadataField implements JsonSerializable
      */
     private $type;
 
-    /**
-     * @return MDDataType
-     */
     public function getType(): MDDataType
     {
         return $this->type;
     }
 
     /**
-     * @param string $id
-     * @param MDDataType $type
      * @throws xoctException
      */
     public function __construct(string $id, MDDataType $type)
@@ -79,16 +74,22 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_TEXT_ARRAY:
             case MDDataType::TYPE_TIME:
             case MDDataType::TYPE_TEXT_SELECTION:
-            return $this->getValue();
+                return $this->getValue();
             case MDDataType::TYPE_DATETIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d\TH:i:s\Z') : '';
+                return $value instanceof \DateTimeImmutable ? $value->setTimezone(new DateTimeZone('utc'))->format(
+                    'Y-m-d\TH:i:s\Z'
+                ) : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone('utc'))->format('Y-m-d') : '';
+                return $value instanceof \DateTimeImmutable ? $value->setTimezone(new DateTimeZone('utc'))->format(
+                    'Y-m-d'
+                ) : '';
         }
+
+        return '';
     }
 
     public function toString(): string
@@ -104,12 +105,18 @@ class MetadataField implements JsonSerializable
             case MDDataType::TYPE_DATETIME:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y H:i:s') : '';
+                return $value instanceof \DateTimeImmutable ? $value->setTimezone(
+                    new DateTimeZone(ilTimeZone::_getDefaultTimeZone())
+                )->format('d.m.Y H:i:s') : '';
             case MDDataType::TYPE_DATE:
                 /** @var DateTimeImmutable|null $value */
                 $value = $this->getValue();
-                return $value ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('d.m.Y') : '';
+                return $value instanceof \DateTimeImmutable ? $value->setTimezone(
+                    new DateTimeZone(ilTimeZone::_getDefaultTimeZone())
+                )->format('d.m.Y') : '';
         }
+
+        return '';
     }
 
     /**
@@ -140,11 +147,6 @@ class MetadataField implements JsonSerializable
         return $clone;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     protected function fixPercentCharacter(string $string): string
     {
         // Bug in OpenCast server? The server think the JSON body is url encoded, but % is valid in JSON

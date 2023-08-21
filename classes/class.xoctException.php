@@ -19,6 +19,7 @@ class xoctException extends Exception
     public const API_CALL_STATUS_404 = 404;
     public const API_CALL_STATUS_409 = 409;
     public const API_CALL_BAD_CREDENTIALS = 401;
+    public const API_CALL_BAD_REQUEST = 400;
     /**
      * @var array
      */
@@ -28,6 +29,7 @@ class xoctException extends Exception
         self::API_CALL_STATUS_403 => 'Access denied',
         self::API_CALL_STATUS_404 => 'Not Found',
         self::API_CALL_STATUS_409 => 'Conflict',
+        self::API_CALL_BAD_REQUEST => 'Bad Request / False Request Params',
         self::OBJECT_WRONG_PARENT => 'OpenCast-Object have to be in courses',
         self::API_CREATION_FAILED => 'The response from the OpenCast-Server was wrong. The series has not been created on the server. Please delete the ILIAS-Object.',
         self::NO_USER_MAPPING => 'Your user-account cannot communicate with the OpenCast-Server. please contact your system administrator.',
@@ -35,7 +37,6 @@ class xoctException extends Exception
         self::INTERNAL_ERROR => 'A plugin-internal error occured.',
         self::NO_STREAMING_DATA => 'No streaming data found.',
     ];
-
 
     /**
      * @param string $code
@@ -47,7 +48,7 @@ class xoctException extends Exception
         if (isset(self::$messages[$code])) {
             $message = self::$messages[$code];
         }
-        if ($additional_message) {
+        if ($additional_message !== '' && $additional_message !== '0') {
             $message .= ': ' . $additional_message;
         }
         parent::__construct($message, $code);

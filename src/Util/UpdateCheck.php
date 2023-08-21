@@ -17,6 +17,7 @@ class UpdateCheck
             throw new \Exception('Could not find plugin.php');
         }
         include $this->path_to_plugin_php; // read the infos from plugin.php
+        /** @noinspection IssetArgumentExistenceInspection */
         if (isset($version_check)) {
             $this->version_check_string = $version_check;
         }

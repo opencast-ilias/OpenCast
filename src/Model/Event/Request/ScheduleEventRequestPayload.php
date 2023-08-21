@@ -32,15 +32,16 @@ class ScheduleEventRequestPayload implements JsonSerializable
         ACL $acl = null,
         Scheduling $scheduling = null,
         Processing $processing = null
-    )
-    {
+    ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->scheduling = $scheduling;
         $this->processing = $processing;
     }
 
-
+    /**
+     * @return array{metadata: string, acl: string, scheduling: string, processing: string}
+     */
     public function jsonSerialize()
     {
         return [

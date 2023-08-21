@@ -13,10 +13,7 @@ class UserSetting extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_user_setting';
 
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -24,12 +21,12 @@ class UserSetting extends ActiveRecord
     /**
      * @var integer
      *
-     * @con_has_field  true
-     * @con_fieldtype  integer
-     * @con_length     8
+     * @con_has_field     true
+     * @con_fieldtype     integer
+     * @con_length        8
      * @con_is_primary    true
-     * @con_sequence   true
-     * @con_is_notnull true
+     * @con_sequence      true
+     * @con_is_notnull    true
      */
     protected $id;
     /**
@@ -123,16 +120,12 @@ class UserSetting extends ActiveRecord
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
      * @return UserSetting
      */
     public function setName(string $name)

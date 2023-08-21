@@ -19,20 +19,16 @@ class PaellaConfigStorageService extends UploadStorageService
     protected $dic;
 
     /**
-     * @param UploadResult $uploadResult
      * @return string identifier
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid('oc_');
+        $identifier = uniqid('oc_', true);
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::WEB);
         return $identifier;
     }
 
-
     /**
-     * @param string $identifier
-     * @param int $fileSizeUnit
      * @return array{path: string, size: DataSize, name: string, mimeType: string}
      * @throws FileNotFoundException
      * @throws IOException
@@ -51,8 +47,10 @@ class PaellaConfigStorageService extends UploadStorageService
     {
         // ilUtil::getWebspaceDir is deprecated, but I didn't find out how else to get an absolute path, which we need
         // for the paella player
-        return ilWACSignedPath::signFile(ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR
-            . $this->idToFileMetadata($identifier)->getPath());
+        return ilWACSignedPath::signFile(
+            ilUtil::getWebspaceDir() . DIRECTORY_SEPARATOR
+            . $this->idToFileMetadata($identifier)->getPath()
+        );
     }
 
     public function getFileAsBase64(string $identifier): string

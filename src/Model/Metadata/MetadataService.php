@@ -21,7 +21,6 @@ class MetadataService
         $this->container = $container;
     }
 
-
     public function catalogueFactory(): MDCatalogueFactory
     {
         return $this->container['md_catalogue_factory'];

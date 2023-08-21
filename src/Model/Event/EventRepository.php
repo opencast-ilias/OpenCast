@@ -26,18 +26,25 @@ interface EventRepository
     public function upload(UploadEventRequest $request): void;
 
     /**
-     * @param array $filter
      * @param string $for_user
-     * @param array $roles
-     * @param int $offset
-     * @param int $limit
+     * @param array  $roles
+     * @param int    $offset
+     * @param int    $limit
      * @param string $sort
-     * @param bool $as_object
+     * @param bool   $as_object
      *
      * @return Event[] | array
      * @throws xoctException
      */
-    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false);
+    public function getFiltered(
+        array $filter,
+        $for_user = '',
+        $roles = [],
+        $offset = 0,
+        $limit = 1000,
+        $sort = '',
+        $as_object = false
+    );
 
     public function update(UpdateEventRequest $request): void;
 

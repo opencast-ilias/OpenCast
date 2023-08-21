@@ -16,8 +16,7 @@ class UpdateEventRequest
     public function __construct(
         string $identifier,
         UpdateEventRequestPayload $payload
-    )
-    {
+    ) {
         $this->identifier = $identifier;
         $this->payload = $payload;
     }

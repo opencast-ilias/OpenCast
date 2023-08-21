@@ -5,7 +5,8 @@ namespace srag\Plugins\Opencast\Model\Group;
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use xoctRequest;
+use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class xoctGroup
@@ -14,6 +15,10 @@ use xoctRequest;
  */
 class Group extends APIObject
 {
+    /**
+     * @var API
+     */
+    protected $api;
     /**
      * @var String
      */
@@ -43,64 +48,58 @@ class Group extends APIObject
      */
     protected $description = '';
 
-
     /**
-     * @param string $identifier
-     *
      * @throws xoctException
      */
     public function __construct(string $identifier = '')
     {
-        if ($identifier) {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
+        if ($identifier !== '' && $identifier !== '0') {
             $this->setIdentifier($identifier);
             $this->read();
         }
     }
-
 
     /**
      * @throws xoctException
      */
     protected function read()
     {
-        $data = json_decode(xoctRequest::root()->groups($this->getIdentifier())->get());
+        $data = $this->api->routes()->groupsApi->get($this->getIdentifier());
         if (!empty($data)) {
             $this->loadFromStdClass($data);
         }
     }
 
-
     /**
      * objects xoctUser or uniqueIds as string possible
      *
-     * @param array $xoctUsers
      *
      * @throws xoctException
      */
-    public function addMembers(array $xoctUsers)
+    public function addMembers(array $xoctUsers): void
     {
         foreach ($xoctUsers as $xoctUser) {
             $this->addMember($xoctUser);
         }
     }
 
-
     /**
      * object xoctUser or uniqueId as string possible
      *
      * @param $xoctUser xoctUser|string
      *
-     * @return bool
      * @throws xoctException
      */
-    public function addMember($xoctUser)
+    public function addMember($xoctUser): bool
     {
         if ($xoctUser instanceof xoctUser) {
             $xoctUser = $xoctUser->getIdentifier();
         }
 
         if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            xoctRequest::root()->groups($this->getIdentifier())->members()->post(['member' => $xoctUser]);
+            $this->api->routes()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
             $this->members[] = $xoctUser;
 
             return true;
@@ -131,12 +130,10 @@ class Group extends APIObject
             case 'members':
             case 'roles':
                 return explode(',', $value);
-                break;
             default:
                 return $value;
         }
     }
-
 
     /**
      * @param $fieldname
@@ -155,28 +152,16 @@ class Group extends APIObject
         }
     }
 
-
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier(string $identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }
 
-
-    /**
-     * @return string
-     */
     public function getRole(): string
     {
         return $this->role;
@@ -189,10 +174,6 @@ class Group extends APIObject
     //	public function setRole($role) {
     //		$this->role = $role;
     //	}
-
-    /**
-     * @return string
-     */
     public function getOrganization(): string
     {
         return $this->organization;
@@ -205,10 +186,6 @@ class Group extends APIObject
     //	public function setOrganization($organization) {
     //		$this->organization = $organization;
     //	}
-
-    /**
-     * @return array
-     */
     public function getRoles(): array
     {
         return (array) $this->roles;
@@ -221,28 +198,16 @@ class Group extends APIObject
     //	public function setRoles($roles) {
     //		$this->roles = $roles;
     //	}
-
-    /**
-     * @return array
-     */
     public function getMembers(): array
     {
         return (array) $this->members;
     }
 
-
-    /**
-     * @param array $members
-     */
-    public function setMembers(array $members)
+    public function setMembers(array $members): void
     {
         $this->members = $members;
     }
 
-
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -255,10 +220,6 @@ class Group extends APIObject
     //	public function setName($name) {
     //		$this->name = $name;
     //	}
-
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;

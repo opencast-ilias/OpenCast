@@ -25,9 +25,6 @@ class DownloadDto
 
     /**
      * DownloadDto constructor.
-     * @param string $publication_id
-     * @param string $resolution
-     * @param string $url
      */
     public function __construct(string $publication_id, string $resolution, string $url = '')
     {
@@ -36,25 +33,16 @@ class DownloadDto
         $this->url = $url;
     }
 
-    /**
-     * @return string
-     */
     public function getPublicationId(): string
     {
         return $this->publication_id;
     }
 
-    /**
-     * @return string
-     */
     public function getResolution(): string
     {
         return $this->resolution;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;

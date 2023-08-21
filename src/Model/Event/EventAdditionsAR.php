@@ -11,47 +11,38 @@ class EventAdditionsAR extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_event_additions';
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     public function update()
     {
-        if (!$this->getId()) {
+        if ($this->getId() === '' || $this->getId() === '0') {
             return false;
         }
-        if (!self::where([ 'id' => $this->getId() ])->hasSets()) {
+        if (!self::where(['id' => $this->getId()])->hasSets()) {
             $this->create();
         } else {
             parent::update();
         }
     }
 
-
     public function create()
     {
-        if (!$this->getId()) {
+        if ($this->getId() === '' || $this->getId() === '0') {
             return false;
         }
         parent::create();
     }
-
 
     /**
      * @var string
@@ -74,7 +65,6 @@ class EventAdditionsAR extends ActiveRecord
      */
     protected $is_online = true;
 
-
     /**
      * @return string
      */
@@ -83,15 +73,13 @@ class EventAdditionsAR extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param string $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return boolean
@@ -101,11 +89,10 @@ class EventAdditionsAR extends ActiveRecord
         return $this->is_online;
     }
 
-
     /**
      * @param boolean $is_online
      */
-    public function setIsOnline($is_online)
+    public function setIsOnline($is_online): void
     {
         $this->is_online = $is_online;
     }

@@ -16,7 +16,7 @@ class LegacyFormWrapper extends ilPropertyFormGUI
     private $html;
 
     /**
-     * @param string $html
+     * @noinspection MagicMethodsValidityInspection
      */
     public function __construct(string $html)
     {

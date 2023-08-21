@@ -36,7 +36,7 @@ class ToUManager
     }
 
     // ToDo: Remove default value for instance
-    public static function setToUAccepted(int $user_id, int $instance_id = 0)
+    public static function setToUAccepted(int $user_id, int $instance_id = 0): void
     {
         /** @var AcceptedToU $ar */
         if ($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) {
@@ -48,7 +48,7 @@ class ToUManager
     }
 
     // ToDo: Remove default value for instance
-    public static function resetForInstance(int $instance_id = 0)
+    public static function resetForInstance(int $instance_id = 0): void
     {
         if ($array = AcceptedToU::where(["oc_instance_id" => $instance_id])->get()) {
             /** @var AcceptedToU $ar */

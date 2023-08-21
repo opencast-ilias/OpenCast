@@ -25,18 +25,13 @@ class xoctUploadFile
         return $inst;
     }
 
-
-    /**
-     * @return CURLFile
-     */
-    public function getCURLFile()
+    public function getCURLFile(): \CURLFile
     {
         // opencast doesn't like mimetype and name for some reason
         $CURLFile = new CURLFile($this->getPath());
 
         return $CURLFile;
     }
-
 
     /**
      * @var string
@@ -59,22 +54,15 @@ class xoctUploadFile
      */
     protected $mime_type = '';
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     */
     public function setPath(string $path): void
     {
         $this->path = $path;
     }
-
 
     /**
      * @return string
@@ -84,15 +72,13 @@ class xoctUploadFile
         return $this->title;
     }
 
-
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
-
 
     /**
      * @return int
@@ -102,15 +88,13 @@ class xoctUploadFile
         return $this->file_size;
     }
 
-
     /**
      * @param int $file_size
      */
-    public function setFileSize($file_size)
+    public function setFileSize($file_size): void
     {
         $this->file_size = $file_size;
     }
-
 
     /**
      * @return string
@@ -120,15 +104,13 @@ class xoctUploadFile
         return $this->post_var;
     }
 
-
     /**
      * @param string $post_var
      */
-    public function setPostVar($post_var)
+    public function setPostVar($post_var): void
     {
         $this->post_var = $post_var;
     }
-
 
     /**
      * @return string
@@ -138,12 +120,19 @@ class xoctUploadFile
         return $this->mime_type;
     }
 
-
     /**
      * @param string $mime_type
      */
-    public function setMimeType($mime_type)
+    public function setMimeType($mime_type): void
     {
         $this->mime_type = $mime_type;
+    }
+
+    /**
+     * @return resource filestream
+     */
+    public function getFileStream()
+    {
+        return fopen($this->getPath(), 'r');
     }
 }

@@ -53,7 +53,6 @@ class ACL implements JsonSerializable
 
     public function merge(ACL $acl): self
     {
-
         foreach ($acl->getEntries() as $entry) {
             if (!in_array($entry, $this->acl_entries)) {
                 $this->add($entry);
