@@ -89,7 +89,7 @@ class ChunkedFileRenderer extends Renderer
          */
         $component = $component->withAdditionalOnLoadCode(
             function ($id) use ($settings) {
-                $settings = json_encode($settings, JSON_THROW_ON_ERROR);
+                $settings = json_encode($settings);
                 return "$(document).ready(function() {
                     il.UI.Input.chunkedFile.init('$id', '{$settings}');
                 });";

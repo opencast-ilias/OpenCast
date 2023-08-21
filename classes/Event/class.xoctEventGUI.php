@@ -281,7 +281,7 @@ class xoctEventGUI extends xoctGUI
             'xoctEvent.init(\'' . json_encode([
                 'msg_link_copied' => $this->plugin->txt('msg_link_copied'),
                 'tooltip_copy_link' => $this->plugin->txt('tooltip_copy_link')
-            ], JSON_THROW_ON_ERROR) . '\');'
+            ]) . '\');'
         );
 
         // add "add" button
@@ -774,7 +774,7 @@ class xoctEventGUI extends xoctGUI
     private function checkAndShowConflictMessage(xoctException $e): bool
     {
         if ($e->getCode() == xoctException::API_CALL_STATUS_409) {
-            $conflicts = json_decode(substr($e->getMessage(), 10), true, 512, JSON_THROW_ON_ERROR);
+            $conflicts = json_decode(substr($e->getMessage(), 10), true);
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(

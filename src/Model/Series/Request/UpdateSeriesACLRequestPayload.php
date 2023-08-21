@@ -27,6 +27,6 @@ class UpdateSeriesACLRequestPayload implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        return ['acl' => json_encode($this->ACL, JSON_THROW_ON_ERROR)];
+        return ['acl' => json_encode($this->ACL)];
     }
 }

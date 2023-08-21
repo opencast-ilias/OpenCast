@@ -175,12 +175,9 @@ class PluginConfig extends ActiveRecord
             $name = $node->getElementsByTagName('name')->item(0)->nodeValue;
             $value = $node->getElementsByTagName('value')->item(0)->nodeValue;
             if ($name) {
-                $value = (is_array(json_decode($value, null, 512, JSON_THROW_ON_ERROR))) ? json_decode(
-                    $value,
-                    null,
-                    512,
-                    JSON_THROW_ON_ERROR
-                ) : $value;
+                $value = (is_array(json_decode($value)))
+                    ? json_decode($value)
+                    : $value;
                 PluginConfig::set($name, $value);
             }
         }
@@ -264,7 +261,7 @@ class PluginConfig extends ActiveRecord
             $xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
             //			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
             $value = PluginConfig::getConfig($xoctConf->getName());
-            $value = is_array($value) ? json_encode($value, JSON_THROW_ON_ERROR) : $value;
+            $value = is_array($value) ? json_encode($value) : $value;
             $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
         }
 
@@ -360,7 +357,7 @@ class PluginConfig extends ActiveRecord
         if (!self::$cache_loaded[$name]) {
             $obj = new self($name);
             try {
-                self::$cache[$name] = json_decode($obj->getValue(), null, 512, JSON_THROW_ON_ERROR);
+                self::$cache[$name] = json_decode($obj->getValue());
                 self::$cache_loaded[$name] = true;
             } catch (\Exception $e) {
                 return null;
@@ -387,7 +384,7 @@ class PluginConfig extends ActiveRecord
             ToUManager::resetForInstance();
             $obj->setValue("");
         } else {
-            $obj->setValue(json_encode($value, JSON_THROW_ON_ERROR));
+            $obj->setValue(json_encode($value));
         }
         if (self::where(['name' => $name])->hasSets()) {
             $obj->update();

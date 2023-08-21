@@ -65,10 +65,10 @@ class UploadEventRequestPayload
     public function jsonSerialize(): array
     {
         return [
-            'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()], JSON_THROW_ON_ERROR),
-            'acl' => json_encode($this->acl, JSON_THROW_ON_ERROR),
+            'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()]),
+            'acl' => json_encode($this->acl),
             'presentation' => $this->presentation->getCURLFile(),
-            'processing' => json_encode($this->processing, JSON_THROW_ON_ERROR)
+            'processing' => json_encode($this->processing)
         ];
     }
 }

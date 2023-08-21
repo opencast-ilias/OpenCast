@@ -109,7 +109,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
             case 'prefill':
                 return $this->prefill->getValue();
             case 'values':
-                return json_encode($this->values, JSON_THROW_ON_ERROR);
+                return json_encode($this->values);
             default:
                 return null;
         }
@@ -127,7 +127,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
                 if (empty($field_value)) {
                     return [];
                 }
-                $decoded = json_decode($field_value, true, 512, JSON_THROW_ON_ERROR);
+                $decoded = json_decode($field_value, true);
                 return is_array($decoded) ? $decoded : [];
             default:
                 return null;

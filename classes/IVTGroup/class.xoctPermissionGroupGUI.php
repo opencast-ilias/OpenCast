@@ -98,7 +98,7 @@ class xoctPermissionGroupGUI extends xoctGUI
                 'no_title' => $this->plugin->txt('group_alert_no_title'),
                 'delete_group' => $this->plugin->txt('group_alert_delete_group'),
                 'none_available' => $this->plugin->txt('group_none_available')
-            ], JSON_THROW_ON_ERROR)
+            ])
         );
         $temp->setVariable(
             'PARTICIPANTS_LANGUAGE',
@@ -108,7 +108,7 @@ class xoctPermissionGroupGUI extends xoctGUI
                 'none_available' => $this->plugin->txt('group_none_available'),
                 'none_available_all' => $this->plugin->txt('group_none_available_all'),
 
-            ], JSON_THROW_ON_ERROR)
+            ])
         );
 
         $this->main_tpl->setContent($temp->get());
@@ -121,7 +121,7 @@ class xoctPermissionGroupGUI extends xoctGUI
     protected function outJson($data)
     {
         header('Content-type: application/json');
-        echo json_encode($data, JSON_THROW_ON_ERROR);
+        echo json_encode($data);
         exit;
     }
 

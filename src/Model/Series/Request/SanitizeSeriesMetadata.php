@@ -27,7 +27,7 @@ trait SanitizeSeriesMetadata
         }
 
         return [
-            'metadata' => json_encode($metadata, JSON_THROW_ON_ERROR)
+            'metadata' => json_encode($metadata)
         ];
     }
 }

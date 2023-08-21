@@ -37,8 +37,7 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
             'metadata' => json_encode(
                 array_map(function (MetadataField $field): array {
                     return $field->jsonSerialize();
-                }, $this->metadata->getFields()),
-                JSON_THROW_ON_ERROR
+                }, $this->metadata->getFields())
             )
         ];
     }

@@ -43,16 +43,16 @@ class UpdateEventRequestPayload implements JsonSerializable
     {
         $data = [];
         if (!is_null($this->metadata)) {
-            $data['metadata'] = json_encode([$this->metadata->jsonSerialize()], JSON_THROW_ON_ERROR);
+            $data['metadata'] = json_encode([$this->metadata->jsonSerialize()]);
         }
         if (!is_null($this->acl)) {
-            $data['acl'] = json_encode($this->acl, JSON_THROW_ON_ERROR);
+            $data['acl'] = json_encode($this->acl);
         }
         if (!is_null($this->scheduling)) {
-            $data['scheduling'] = json_encode($this->scheduling, JSON_THROW_ON_ERROR);
+            $data['scheduling'] = json_encode($this->scheduling);
         }
         if (!is_null($this->processing)) {
-            $data['processing'] = json_encode($this->processing, JSON_THROW_ON_ERROR);
+            $data['processing'] = json_encode($this->processing);
         }
         return $data;
     }

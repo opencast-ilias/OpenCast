@@ -94,8 +94,8 @@ class xoctPlayerGUI extends xoctGUI
             $this->plugin->getDirectory()
             . "/node_modules/paellaplayer/build/player"
         );
-        $tpl->setVariable("DATA", json_encode($data, JSON_THROW_ON_ERROR));
-        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event), JSON_THROW_ON_ERROR));
+        $tpl->setVariable("DATA", json_encode($data));
+        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
