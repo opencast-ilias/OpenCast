@@ -59,10 +59,10 @@ final class Init
         $opencast_container->glue(Config::class, function () use ($opencast_container) {
             return new Config(
                 Handlers::getHandlerStack(),
-                PluginConfig::getConfig(PluginConfig::F_API_BASE),
-                PluginConfig::getConfig(PluginConfig::F_CURL_USERNAME),
-                PluginConfig::getConfig(PluginConfig::F_CURL_PASSWORD),
-                PluginConfig::getConfig(PluginConfig::F_API_VERSION)
+                PluginConfig::getConfig(PluginConfig::F_API_BASE) ?? 'https://stable.opencast.org/api',
+                PluginConfig::getConfig(PluginConfig::F_CURL_USERNAME) ?? 'admin',
+                PluginConfig::getConfig(PluginConfig::F_CURL_PASSWORD) ?? 'opencast',
+                PluginConfig::getConfig(PluginConfig::F_API_VERSION) ?? '1.9.0'
             );
         });
 
