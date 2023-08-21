@@ -44,7 +44,7 @@ class xoctSecureLink
 
         $ip = ($restict_ip) ? self::getClientIP() : null;
 
-        $data = $opencastContainer[API::class]->getApi()->securityApi->sign($url, $valid_until, $ip);
+        $data = $opencastContainer[API::class]->routes()->securityApi->sign($url, $valid_until, $ip);
 
         if ($data->error) {
             return '';

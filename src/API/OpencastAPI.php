@@ -18,7 +18,7 @@ class OpencastAPI implements API
      * By default, response body of each call from OpencastAPI is returned as stdClass object.
      * Therefore, this makes it possible to have returned values as array instead, by passing 'srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY' as the last argument to each method call.
      * Usage example:
-     * $array_data = srag\Plugins\Opencast\API\OpencastAPI::getApi()->search->getEpisodes(['id' => $this->event->getIdentifier()], srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY);
+     * $array_data = $opencastContainer[API::class]->routes()->search->getEpisodes(['id' => $this->event->getIdentifier()], srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY);
      */
     public const RETURN_ARRAY = 'return_array_flag';
 
