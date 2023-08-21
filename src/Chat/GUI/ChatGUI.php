@@ -28,6 +28,10 @@ class ChatGUI
      * @var ilTemplate
      */
     private $template;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * ChatGUI constructor.
@@ -36,6 +40,8 @@ class ChatGUI
      */
     public function __construct(TokenAR $token)
     {
+        global $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->token = $token;
     }
 
@@ -60,14 +66,14 @@ class ChatGUI
         if (is_string($host) && $host !== '0.0.0.0') {
             $url .= '&host=' . $host;
         }
-        // TODO: get rid of self::plugin() to be independent
-        $template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/iframe.html', true, true);
+
+        $template = new ilTemplate($this->plugin->getDirectory() . '/src/Chat/GUI/templates/iframe.html', true, true);
         $template->setVariable('URL', $url);
         $template->setVariable(
             'REFRESH_ICON',
-            self::plugin()->directory() . '/src/Chat/node/public/images/refresh_icon.png'
+            $this->plugin->getDirectory() . '/src/Chat/node/public/images/refresh_icon.png'
         );
-        $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
+        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             $this->template->addCss($chat_css_path);
         } else {

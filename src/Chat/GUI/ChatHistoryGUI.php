@@ -27,6 +27,10 @@ class ChatHistoryGUI
      * @var \ilGlobalTemplateInterface
      */
     private $main_tpl;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * ChatHistoryGUI constructor.
@@ -35,8 +39,9 @@ class ChatHistoryGUI
      */
     public function __construct($chat_room_id)
     {
-        global $DIC;
-        $this->main_tpl = $DIC->ui()->mainTemplate();
+        global $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
+        $this->main_tpl = $opencastContainer->ilias()->ui()->mainTemplate();
         $this->chat_room_id = $chat_room_id;
     }
 
@@ -50,8 +55,7 @@ class ChatHistoryGUI
      */
     public function render($async = false)
     {
-        // TODO: get rid of self::plugin() to be independent
-        $template = new ilTemplate(self::plugin()->directory() . '/src/Chat/GUI/templates/history.html', true, true);
+        $template = new ilTemplate($this->plugin->getDirectory() . '/src/Chat/GUI/templates/history.html', true, true);
         $users = [];
         foreach (
             MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message
@@ -73,7 +77,7 @@ class ChatHistoryGUI
             $template->parseCurrentBlock();
         }
 
-        $chat_css_path = self::plugin()->directory() . '/src/Chat/node/public/css/chat.css';
+        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             $this->main_tpl->addCss($chat_css_path);
         } else {

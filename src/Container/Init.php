@@ -55,6 +55,14 @@ final class Init
             }
         );
 
+        // Plugin Instance
+        $opencast_container->glue(
+            \ilOpenCastPlugin::class,
+            static function () {
+                return \ilOpenCastPlugin::getInstance();
+            }
+        );
+
         // Plugin Dependencies
         $opencast_container->glue(Config::class, function () use ($opencast_container) {
             return new Config(
