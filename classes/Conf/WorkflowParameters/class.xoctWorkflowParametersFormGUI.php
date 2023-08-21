@@ -2,6 +2,7 @@
 
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 
 /**
  * Class xoctWorkflowParametersFormGUI
@@ -10,6 +11,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctWorkflowParametersFormGUI extends PropertyFormGUI
 {
+    use TranslatorTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const PROPERTY_TITLE = 'setTitle';
@@ -37,7 +39,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     protected function initFields(): void
     {
         $this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-            self::PROPERTY_TITLE => self::plugin()->translate(
+            self::PROPERTY_TITLE => $this->translate(
                 PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES,
                 'config'
             ),
@@ -45,8 +47,8 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
             self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
             self::PROPERTY_SUBITEMS => [
                 self::F_OVERWRITE_SERIES_PARAMS => [
-                    self::PROPERTY_TITLE => self::plugin()->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-                    self::PROPERTY_INFO => self::plugin()->translate(
+                    self::PROPERTY_TITLE => $this->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
+                    self::PROPERTY_INFO => $this->translate(
                         self::F_OVERWRITE_SERIES_PARAMS . '_info',
                         'config'
                     ),
@@ -68,7 +70,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
      */
     protected function initTitle(): void
     {
-        $this->setTitle(self::plugin()->translate('settings', 'tab'));
+        $this->setTitle($this->translate('settings', 'tab'));
     }
 
     /**

@@ -3,6 +3,7 @@
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+use srag\Plugins\Opencast\Container\Container;
 
 /**
  * Class xoctWorkflowParameterTableGUI
@@ -17,10 +18,22 @@ class xoctWorkflowParameterTableGUI extends TableGUI
      * @var WorkflowParameterRepository
      */
     private $workflowParameterRepository;
+    /**
+     * @var ilLanguage
+     */
+    private $lng;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
+        global /** @var Container  $opencastContainer */
+        $DIC, $opencastContainer;
         parent::__construct($parent, $parent_cmd);
+        $this->lng = $DIC->language();
+        $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         $this->setEnableNumInfo(false);
         $this->workflowParameterRepository = $workflowParameterRepository;
     }
@@ -41,8 +54,8 @@ class xoctWorkflowParameterTableGUI extends TableGUI
         $this->addColumn($this->lng->txt("id"));
         $this->addColumn($this->lng->txt("title"));
         $this->addColumn($this->lng->txt("type"));
-        $this->addColumn(self::plugin()->translate("default_value_member"));
-        $this->addColumn(self::plugin()->translate("default_value_admin"));
+        $this->addColumn($this->plugin->txt("default_value_member"));
+        $this->addColumn($this->plugin->txt("default_value_admin"));
         $this->addColumn('', '', '', true);
     }
 
@@ -88,7 +101,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI
      */
     protected function initTitle(): void
     {
-        $this->setTitle(self::plugin()->translate('workflow_parameters'));
+        $this->setTitle($this->plugin->txt('workflow_parameters'));
     }
 
     /**

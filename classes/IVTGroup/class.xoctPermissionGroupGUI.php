@@ -44,8 +44,8 @@ class xoctPermissionGroupGUI extends xoctGUI
         $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
         //		xoctGroup::installDB();
         xoctWaiterGUI::loadLib();
-        $main_tpl->addCss(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.css'));
-        $main_tpl->addJavaScript(self::plugin()->getPluginObject()->getStyleSheetLocation('default/groups.js'));
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/groups.css'));
+        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/groups.js'));
     }
 
     /**
@@ -71,7 +71,7 @@ class xoctPermissionGroupGUI extends xoctGUI
      */
     protected function index()
     {
-        $temp = self::plugin()->getPluginObject()->getTemplate('default/tpl.groups.html', false, false);
+        $temp = $this->plugin->getTemplate('default/tpl.groups.html', false, false);
         $temp->setVariable(
             'IS_ADMIN',
             (int) ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS)

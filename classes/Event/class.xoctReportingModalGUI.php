@@ -13,6 +13,10 @@ class xoctReportingModalGUI extends ilModalGUI
 
     public const REPORTING_TYPE_DATE = 1;
     public const REPORTING_TYPE_QUALITY = 2;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * @var xoctEventGUI
@@ -29,13 +33,14 @@ class xoctReportingModalGUI extends ilModalGUI
      */
     public function __construct($parent_gui, $type)
     {
-        global $DIC;
+        global $opencastContainer, $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->ctrl = $DIC->ctrl();
         $this->parent_gui = $parent_gui;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        $main_tpl->addCss(self::plugin()->getPluginObject()->getDirectory() . '/templates/default/reporting_modal.css');
+        $main_tpl->addCss($this->plugin->getDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
         $send_button->setCaption('send');
@@ -51,13 +56,13 @@ class xoctReportingModalGUI extends ilModalGUI
         switch ($type) {
             case self::REPORTING_TYPE_DATE:
                 $this->setId('xoct_report_date_modal');
-                $this->setHeading(self::plugin()->translate('event_report_date_modification'));
+                $this->setHeading($this->plugin->txt('event_report_date_modification'));
                 $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
                 $send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
                 break;
             case self::REPORTING_TYPE_QUALITY:
                 $this->setId('xoct_report_quality_modal');
-                $this->setHeading(self::plugin()->translate('event_report_quality_problem'));
+                $this->setHeading($this->plugin->txt('event_report_quality_problem'));
                 $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
                 $send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
                 break;
@@ -85,7 +90,7 @@ class xoctReportingModalGUI extends ilModalGUI
             "tpl.reporting_modal.html",
             true,
             true,
-            self::plugin()->getPluginObject()->getDirectory()
+            $this->plugin->getDirectory()
         );
         $tpl->setVariable('FORM_ACTION', $this->ctrl->getFormAction($this->parent_gui));
 

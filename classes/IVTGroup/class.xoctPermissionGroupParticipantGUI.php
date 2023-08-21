@@ -37,7 +37,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
         xoctWaiterGUI::loadLib();
         $main_tpl->addJavaScript(
-            self::plugin()->getPluginObject()->getStyleSheetLocation('default/group_participants.js')
+            $this->plugin->getStyleSheetLocation('default/group_participants.js')
         );
     }
 
