@@ -30,6 +30,10 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
     public const F_ADDED_ROLE_ACL_ACTIONS = 'added_role_acl_actions';
     public const F_ADDED_ROLE_ACTIONS_DOWNLOAD = 'added_role_actions_download';
     public const F_ADDED_ROLE_ACTIONS_ANNOTATE = 'added_role_actions_annotate';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * @var  PermissionTemplate
@@ -49,12 +53,12 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
      */
     public function __construct($parent_gui, PermissionTemplate $xoctPermissionTemplate)
     {
-        global $DIC;
-        $ctrl = $DIC->ctrl();
+        global $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         parent::__construct();
         $this->object = $xoctPermissionTemplate;
         $this->parent_gui = $parent_gui;
-        $ctrl->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
+        $opencastContainer->ilias()->ctrl()->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
         $this->is_new = ($this->object->getId() == 0);
         $this->initForm();
     }
@@ -285,6 +289,6 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
      */
     protected function txt($lang_var)
     {
-        return self::plugin()->getPluginObject()->txt('perm_tpl_form_' . $lang_var);
+        return $this->plugin->txt('perm_tpl_form_' . $lang_var);
     }
 }

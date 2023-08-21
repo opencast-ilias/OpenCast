@@ -14,6 +14,7 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 
 /**
  * Class xoctPlayerGUI
@@ -22,6 +23,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
  */
 class xoctPlayerGUI extends xoctGUI
 {
+    use TranslatorTrait;
     public const CMD_STREAM_VIDEO = 'streamVideo';
 
     public const IDENTIFIER = 'eid';
@@ -95,14 +97,14 @@ class xoctPlayerGUI extends xoctGUI
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
                 'LIVE_WAITING_TEXT',
-                self::plugin()->translate(
+                $this->translate(
                     'live_waiting_text',
                     'event',
                     [date('H:i', $event->getScheduling()->getStart()->getTimestamp())]
                 )
             );
-            $tpl->setVariable('LIVE_INTERRUPTED_TEXT', self::plugin()->translate('live_interrupted_text', 'event'));
-            $tpl->setVariable('LIVE_OVER_TEXT', self::plugin()->translate('live_over_text', 'event'));
+            $tpl->setVariable('LIVE_INTERRUPTED_TEXT', $this->translate('live_interrupted_text', 'event'));
+            $tpl->setVariable('LIVE_OVER_TEXT', $this->translate('live_over_text', 'event'));
         }
 
         if ($this->isChatVisible()) {
@@ -194,7 +196,7 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function txt($key)
     {
-        return self::plugin()->translate('event_' . $key);
+        return $this->translate('event_' . $key);
     }
 
     protected function index()

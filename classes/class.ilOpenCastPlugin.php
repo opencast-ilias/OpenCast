@@ -22,6 +22,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter;
 use srag\Plugins\Opencast\Util\UpdateCheck;
 use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\Container\Container;
 
 /**
  * OpenCast repository object plugin
@@ -57,6 +58,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     {
         // we create the Opencast Container here and
         global $DIC;
+        /** @var Container $opencastContainer */
         global $opencastContainer;
         $opencastContainer = Init::init($DIC);
     }
