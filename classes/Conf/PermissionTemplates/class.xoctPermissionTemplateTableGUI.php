@@ -32,10 +32,10 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
 
     public function __construct(xoctPermissionTemplateGUI $a_parent_obj, $a_parent_cmd = "", $a_template_context = "")
     {
-        global $DIC;
+        global $DIC, $opencastContainer;
         $this->ctrl = $DIC->ctrl();
         $this->main_tpl = $DIC->ui()->mainTemplate();
-        $this->plugin = ilOpenCastPlugin::getInstance();
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->user = $DIC->user();
         $this->parent_obj = $a_parent_obj;
 

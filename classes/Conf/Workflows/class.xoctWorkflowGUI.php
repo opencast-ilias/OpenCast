@@ -172,7 +172,7 @@ class xoctWorkflowGUI extends xoctGUI
         if (is_array($items) && count($items) === 1) {
             $id = array_shift($items);
             $this->workflow_repository->delete($id);
-            ilUtil::sendSuccess($this->plugin->txt('msg_workflow_deleted'), true);
+            ilUtil::sendSuccess($this->plugin->txt('workflow_msg_workflow_deleted'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
     }
