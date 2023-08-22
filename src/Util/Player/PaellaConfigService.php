@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use xoctLog;
 
 class PaellaConfigService
