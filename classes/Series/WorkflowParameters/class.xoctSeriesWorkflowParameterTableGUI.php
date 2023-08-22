@@ -36,8 +36,8 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
      */
     public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
-        global $DIC;
-        $this->plugin = ilOpenCastPlugin::getInstance();
+        global $DIC, $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->lng = $DIC->language();
         parent::__construct($parent, $parent_cmd);
         $this->setEnableNumInfo(false);
@@ -60,8 +60,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
     protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
     {
         $column = $row[$column];
-
-        break;
     }
 
     protected function getSelectableColumns2(): array

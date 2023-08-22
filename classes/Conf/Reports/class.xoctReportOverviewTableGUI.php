@@ -16,7 +16,7 @@ class xoctReportOverviewTableGUI extends TableGUI
     /**
      * @var ilLanguage
      */
-    private $lng;
+    protected $lng;
     /**
      * @var ilOpenCastPlugin
      */
@@ -30,11 +30,11 @@ class xoctReportOverviewTableGUI extends TableGUI
     public function __construct($parent, string $parent_cmd)
     {
         global $DIC, $opencastContainer;
-        $this->plugin = $opencastContainer->getPlugin(ilOpenCastPlugin::class);
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->lng = $DIC->language();
-        parent::__construct($parent, $parent_cmd);
-        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, $language->txt(xoctReportOverviewGUI::CMD_DELETE));
+        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, $this->lng->txt(xoctReportOverviewGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
+        parent::__construct($parent, $parent_cmd);
     }
 
     /**
@@ -58,7 +58,7 @@ class xoctReportOverviewTableGUI extends TableGUI
     {
         $this->addColumn('', '', '', true);
         $this->addColumn($this->lng->txt('message'));
-        $this->addColumn($this->plugin->txt('sender_sender'));
+        $this->addColumn($this->plugin->txt('sender'));
         $this->addColumn($this->lng->txt('date'), 'created_at');
     }
 

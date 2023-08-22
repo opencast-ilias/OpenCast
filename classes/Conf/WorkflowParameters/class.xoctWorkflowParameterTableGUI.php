@@ -21,7 +21,7 @@ class xoctWorkflowParameterTableGUI extends TableGUI
     /**
      * @var ilLanguage
      */
-    private $lng;
+    protected $lng;
     /**
      * @var ilOpenCastPlugin
      */
@@ -31,11 +31,11 @@ class xoctWorkflowParameterTableGUI extends TableGUI
     {
         global /** @var Container  $opencastContainer */
         $DIC, $opencastContainer;
-        parent::__construct($parent, $parent_cmd);
         $this->lng = $DIC->language();
         $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         $this->setEnableNumInfo(false);
         $this->workflowParameterRepository = $workflowParameterRepository;
+        parent::__construct($parent, $parent_cmd);
     }
 
     /**

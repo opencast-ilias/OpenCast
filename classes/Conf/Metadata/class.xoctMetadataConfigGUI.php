@@ -12,9 +12,12 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
+use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
+    use OutputTrait;
+
     public const CMD_STORE = 'store';
     public const CMD_REORDER = 'reorder';
 
@@ -140,7 +143,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id);
-        self::output()->output($this->renderer->render($form));
+        $this->output($this->renderer->render($form));
     }
 
     /**
@@ -152,7 +155,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id);
-        self::output()->output($this->renderer->render($form));
+        $this->output($this->renderer->render($form));
     }
 
     /**
