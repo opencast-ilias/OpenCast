@@ -59,6 +59,7 @@ class PluginConfig extends ActiveRecord
     public const F_SIGN_PLAYER_LINKS_OVERWRITE_DEFAULT = 'sign_player_links_overwrite_default';
     public const F_SIGN_PLAYER_LINKS_ADDITIONAL_TIME_PERCENT = "sign_player_links_additional_time_percent";
     public const F_SIGN_PLAYER_LINKS_WITH_IP = "sign_player_links_with_ip";
+    public const F_SIGN_PLAYER_LINKS_MP4 = "sign_player_links_mp4";
     public const F_SIGN_DOWNLOAD_LINKS = 'sign_download_links';
     public const F_SIGN_DOWNLOAD_LINKS_TIME = 'sign_download_links_time';
     public const F_SIGN_THUMBNAIL_LINKS = 'sign_thumbnail_links';

@@ -79,6 +79,7 @@ config_sign_player_links_overwrite_default#:#Use event duration for the validity
 config_sign_player_links_additional_time_percent#:#Additional Time
 config_sign_player_links_additional_time_percent_info#:#How much additional time should be added to the validity of the signature in percent, depending on the event duration?
 config_sign_player_links_with_ip#:#Sign for client IP
+config_sign_player_links_mp4#:#Sign ".mp4" files
 config_sign_download_links#:#Sign Download Link
 config_sign_download_links_info#:#The download links are not visible to the user, because the download is routed via the ILIAS server.
 config_sign_download_links_time#:#Validity in seconds
