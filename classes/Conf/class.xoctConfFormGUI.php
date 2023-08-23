@@ -584,6 +584,10 @@ class xoctConfFormGUI extends ilPropertyFormGUI
             PluginConfig::F_SIGN_DOWNLOAD_LINKS
         );
         $cb->setInfo($this->parent_gui->txt(PluginConfig::F_SIGN_DOWNLOAD_LINKS . '_info'));
+
+        $cb_sub = new ilCheckboxInputGUI($this->parent_gui->txt(PluginConfig::F_SIGN_PLAYER_LINKS_MP4), PluginConfig::F_SIGN_PLAYER_LINKS_MP4);
+        $cb->addSubItem($cb_sub);
+
         $this->addItem($cb);
 
         $cb_sub = new ilNumberInputGUI(
