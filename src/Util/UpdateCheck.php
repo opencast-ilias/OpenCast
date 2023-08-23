@@ -56,4 +56,9 @@ class UpdateCheck
 
         return $this->version_check_string === $this->version_check_string_db;
     }
+
+    public function isNewInstallation(): bool
+    {
+        return $this->last_update_version === '0.0.0';
+    }
 }

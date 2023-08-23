@@ -43,6 +43,9 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
      */
     protected $db;
 
+    private $is_new_installation = false;
+
+
     /**
      *
      */
@@ -67,6 +70,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     {
         // Check Version
         $check = new UpdateCheck($this->db);
+        $this->is_new_installation = $check->isNewInstallation();
         if (!$check->isUpdatePossible()) {
             throw new ilPluginException(
                 'You try to update from a incompatible version of the plugin, please read the infos here: https://github.com/opencast-ilias/OpenCast/blob/main/doc/migration.md'
@@ -77,7 +81,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
     protected function afterUpdate()
     {
-        if (PluginConfig::count() == 0) {
+        if ($this->is_new_installation) {
             PluginConfig::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
         }
     }
