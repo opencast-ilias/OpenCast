@@ -19,17 +19,11 @@ class UpdateSeriesMetadataRequest
         $this->identifier = $identifier;
     }
 
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return UpdateSeriesMetadataRequestPayload
-     */
     public function getPayload(): UpdateSeriesMetadataRequestPayload
     {
         return $this->payload;

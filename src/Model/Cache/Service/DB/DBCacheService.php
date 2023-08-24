@@ -12,12 +12,12 @@ class DBCacheService extends ilGlobalCacheService
 {
     public const TYPE_DB = 99;
 
-    protected function getActive()
+    protected function getActive(): bool
     {
         return true;
     }
 
-    protected function getInstallable()
+    protected function getInstallable(): bool
     {
         return true;
     }
@@ -34,7 +34,7 @@ class DBCacheService extends ilGlobalCacheService
         return is_null($record) || $this->isExpired($record) ? false : $record->getValue();
     }
 
-    public function set($key, $serialized_value, $ttl = null)
+    public function set($key, $serialized_value, $ttl = null): void
     {
         /** @var DBCacheAR|null $record */
         $record = DBCacheAR::where(['identifier' => $key])->first();
@@ -44,13 +44,17 @@ class DBCacheService extends ilGlobalCacheService
         }
 
         $record->setValue($serialized_value);
-        $record->setExpires(is_null($ttl) ? $ttl : (time() + (int)$ttl));
+        $record->setExpires(is_null($ttl) ? $ttl : (time() + (int) $ttl));
         $record->store();
     }
 
     public function serialize($value)
     {
-        return serialize($value);
+        try {
+            return serialize($value);
+        } catch (\Throwable $ex) {
+            return false;
+        }
     }
 
     public function exists($key)
@@ -58,7 +62,7 @@ class DBCacheService extends ilGlobalCacheService
         return DBCacheAR::where(['identifier' => $key])->hasSets();
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         $record = DBCacheAR::where(['identifier' => $key])->first();
         if ($record instanceof DBCacheAR) {
@@ -68,7 +72,7 @@ class DBCacheService extends ilGlobalCacheService
         return false;
     }
 
-    public function flush($complete = false)
+    public function flush($complete = false): bool
     {
         DBCacheAR::truncateDB();
         return true;
@@ -79,7 +83,7 @@ class DBCacheService extends ilGlobalCacheService
         return !is_null($DBCacheAR->getExpires()) && (time() > $DBCacheAR->getExpires());
     }
 
-    public static function cleanup(ilDBInterface $database)
+    public static function cleanup(ilDBInterface $database): void
     {
         $database->query('DELETE FROM ' . DBCacheAR::TABLE_NAME . ' WHERE expires < ' . time());
     }

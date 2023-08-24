@@ -1,7 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -9,6 +7,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctEventTableGUI
@@ -19,11 +18,17 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctEventTableGUI extends ilTable2GUI
 {
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const TBL_ID = 'tbl_xoct';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
     /**
      * @var array
      */
@@ -56,13 +61,16 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var string
      */
     private $lang_key;
+    /**
+     * @var \ILIAS\DI\UIServices
+     */
+    private $ui;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
 
     /**
-     * @param xoctEventGUI $a_parent_obj
-     * @param string $a_parent_cmd
-     * @param ObjectSettings $objectSettings
-     * @param array $md_fields
-     * @param array $data
      * @throws DICException
      * @throws xoctException
      */
@@ -74,19 +82,34 @@ class xoctEventTableGUI extends ilTable2GUI
         array $data,
         string $lang_key
     ) {
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $this->ui = $DIC->ui();
+        $this->user = $DIC->user();
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
         $this->lang_key = $lang_key;
         $this->objectSettings = $objectSettings;
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
         $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
         $this->setPrefix($a_val);
         $this->setFormName($a_val);
         $this->setId($a_val);
-        self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
+        $ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
         parent::__construct($a_parent_obj, $a_parent_cmd);
-        $this->setRowTemplate('tpl.events.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
-        $this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
-        $data = array_filter($data, $this->filterPermissions());
+        $this->setRowTemplate(
+            'tpl.events.html',
+            'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+        );
+        $this->setFormAction($ctrl->getFormAction($a_parent_obj));
+        $data = array_filter(
+            $data,
+            $this->filterPermissions() ?? function ($v, $k): bool {
+                return !empty($v);
+            },
+            $this->filterPermissions() === null ? ARRAY_FILTER_USE_BOTH : 0
+        );
         $this->setData($data);
         foreach ($data as $item) {
             /** @var Event $event */
@@ -104,24 +127,20 @@ class xoctEventTableGUI extends ilTable2GUI
         }
     }
 
-    public static function setDefaultRowValue(int $obj_id)
+    public static function setDefaultRowValue(int $obj_id): void
     {
         $_GET[self::getGeneratedPrefix($obj_id) . '_trows'] = 20;
     }
 
-
-    public static function getGeneratedPrefix(int $obj_id)
+    public static function getGeneratedPrefix(int $obj_id): string
     {
         return self::TBL_ID . '_' . substr($obj_id, 0, 5);
     }
 
-
     /**
      * @param $column
-     *
-     * @return bool
      */
-    public function isColumsSelected($column)
+    public function isColumsSelected($column): bool
     {
         if (!array_key_exists($column, $this->getSelectableColumns())) {
             return true;
@@ -130,18 +149,17 @@ class xoctEventTableGUI extends ilTable2GUI
         return in_array($column, $this->getSelectedColumns());
     }
 
-
     /**
      * @param array $a_set
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function fillRow($a_set)
+    protected function fillRow($a_set)
     {
         /**
          * @var $event        Event
-         * @var $xoctUser  xoctUser
+         * @var $xoctUser     xoctUser
          */
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
         $renderer = new xoctEventRenderer($event, $this->objectSettings);
@@ -185,11 +203,10 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->addActionMenu($event);
     }
 
-
     /**
-     * @return array
+     * @return array{selectable: true, sort_field: string, text: string}[]|array{selectable: false, sort_field: null, width: string, lang_var: string}[]|array{selectable: false, sort_field: null, lang_var: string}[]|array{selectable: true, sort_field: string, default: bool, lang_var: string}[]|array{selectable: false, sort_field: string, lang_var: string}[]|array{selectable: false, lang_var: string}[]
      */
-    protected function getAllColums()
+    protected function getAllColums(): array
     {
         $columns = [
             'event_preview' => [
@@ -240,7 +257,6 @@ class xoctEventTableGUI extends ilTable2GUI
         return $columns;
     }
 
-
     /**
      * @return bool
      */
@@ -250,11 +266,13 @@ class xoctEventTableGUI extends ilTable2GUI
         if ($owner_visible !== null) {
             return $owner_visible;
         }
-        $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole('upload', 'member') || $this->objectSettings->getPermissionPerClip());
+        $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole(
+            'upload',
+            'member'
+        ) || $this->objectSettings->getPermissionPerClip());
 
         return $owner_visible;
     }
-
 
     /**
      * @throws DICException
@@ -267,42 +285,39 @@ class xoctEventTableGUI extends ilTable2GUI
             if (!$this->isColumsSelected($key)) {
                 continue;
             }
-            if ($col['selectable'] == false or in_array($key, $selected_columns)) {
-                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $col['text'];
+            if ($col['selectable'] == false || in_array($key, $selected_columns)) {
+                $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $this->addColumn($col_title, $col['sort_field'], $col['width']);
             }
         }
     }
 
-
     /**
-     * @param Event $event
      * @throws DICException
      */
     protected function addActionMenu(Event $event)
     {
         $renderer = new xoctEventRenderer($event, $this->objectSettings);
         $actions = $renderer->getActions();
-        if (empty($actions)) {
+        if ($actions === []) {
             return;
         }
 
-        $dropdown = self::dic()->ui()->factory()->dropdown()->standard($actions)
-            ->withLabel(self::plugin()->translate('common_actions'));
+        $dropdown = $this->ui->factory()->dropdown()->standard($actions)
+                             ->withLabel($this->plugin->txt('common_actions'));
 
         $this->tpl->setVariable(
             'ACTIONS',
-            self::dic()->ui()->renderer()->renderAsync($dropdown)
+            $this->ui->renderer()->renderAsync($dropdown)
         );
     }
-
 
     /**
      * @return Closure => $value) {
      */
     protected function filterArray()
     {
-        return function ($array) {
+        return function ($array): bool {
             $return = true;
             foreach ($this->filter as $field => $value) {
                 switch ($field) {
@@ -320,7 +335,7 @@ class xoctEventTableGUI extends ilTable2GUI
                         if ($value === null || $value === '' || $value === false) {
                             continue 2;
                         }
-                        $strpos = (strpos(strtolower($array[$field]), strtolower($value)) !== false);
+                        $strpos = (stripos($array[$field], strtolower($value)) !== false);
                         if (!$strpos) {
                             $return = false;
                         }
@@ -332,20 +347,20 @@ class xoctEventTableGUI extends ilTable2GUI
         };
     }
 
-
     /**
      * @return Closure
      */
     protected function filterPermissions()
     {
-        return function ($array) {
-            $xoctUser = xoctUser::getInstance(self::dic()->user());
-            $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find($array['identifier']);
+        return function ($array): bool {
+            $xoctUser = xoctUser::getInstance($this->user);
+            $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find(
+                $array['identifier']
+            );
 
             return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->objectSettings);
         };
     }
-
 
     /**
      * @param $item
@@ -371,12 +386,11 @@ class xoctEventTableGUI extends ilTable2GUI
         }
     }
 
-
     /**
-     * @param int $format
+     * @param int  $format
      * @param bool $send
      */
-    public function exportData($format, $send = false)
+    public function exportData($format, $send = false): void
     {
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             echo "Access Denied";
@@ -384,7 +398,6 @@ class xoctEventTableGUI extends ilTable2GUI
         }
         parent::exportData($format, $send);
     }
-
 
     /**
      * @param object $a_csv
@@ -404,10 +417,9 @@ class xoctEventTableGUI extends ilTable2GUI
         $a_csv->addRow();
     }
 
-
     /**
      * @param object $a_csv
-     * @param array $a_set
+     * @param array  $a_set
      */
     protected function fillRowCSV($a_csv, $a_set)
     {
@@ -425,7 +437,6 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::fillRowCSV($a_csv, $set);
     }
 
-
     /**
      * @return array
      */
@@ -438,10 +449,10 @@ class xoctEventTableGUI extends ilTable2GUI
         $selectable_columns = [];
         foreach ($this->getAllColums() as $key => $col) {
             if ($col['selectable']) {
-                $col_title = isset($col['lang_var']) ? self::plugin()->translate($col['lang_var']) : $col['text'];
+                $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = [
                     'txt' => $col_title,
-                    'default' => isset($col['default']) ? $col['default'] : true,
+                    'default' => $col['default'] ?? true,
                 ];
             }
         }
@@ -449,18 +460,25 @@ class xoctEventTableGUI extends ilTable2GUI
         return $selectable_columns;
     }
 
-    public static function setOwnerFieldVisibility($visible, int $obj_id)
+    public static function setOwnerFieldVisibility($visible, int $obj_id): void
     {
+        global $DIC;
+        $db = $DIC->database();
         $table_id = self::getGeneratedPrefix($obj_id);
-        $query = self::dic()->database()->query("SELECT * FROM table_properties WHERE table_id = " . self::dic()->database()->quote($table_id, "text") . " AND property = 'selfields'");
-        while ($rec = self::dic()->database()->fetchAssoc($query)) {
-            $selfields = unserialize($rec['value']);
+        $query = $db->query(
+            "SELECT * FROM table_properties WHERE table_id = " . $db->quote(
+                $table_id,
+                "text"
+            ) . " AND property = 'selfields'"
+        );
+        while ($rec = $db->fetchAssoc($query)) {
+            $selfields = unserialize($rec['value'], ['allowed_classes' => false]);
             if ($selfields['event_owner'] == $visible) {
                 continue;
             }
-            $selfields['event_owner'] = (bool)$visible;
+            $selfields['event_owner'] = (bool) $visible;
             $usr_id = $rec['user_id'];
-            self::dic()->database()->update('table_properties', [
+            $db->update('table_properties', [
                 'value' => ['text', serialize($selfields)]
             ], [
                 'table_id' => ['text', $table_id],

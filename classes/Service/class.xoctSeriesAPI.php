@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -24,8 +23,6 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  */
 class xoctSeriesAPI
 {
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -49,7 +46,6 @@ class xoctSeriesAPI
      */
     private $aclUtils;
 
-
     /**
      * SeriesAPI constructor.
      */
@@ -62,10 +58,6 @@ class xoctSeriesAPI
         $this->aclUtils = $opencastDIC->acl_utils();
     }
 
-
-    /**
-     * @return xoctSeriesAPI
-     */
     public static function getInstance(): self
     {
         if (!self::$instance) {
@@ -73,7 +65,6 @@ class xoctSeriesAPI
         }
         return self::$instance;
     }
-
 
     /**
      * possible additional data:
@@ -92,18 +83,19 @@ class xoctSeriesAPI
      *  producers => int[]
      *
      *
-     * @param int $parent_ref_id
+     * @param int    $parent_ref_id
      * @param string $title
-     * @param array $additional_data
+     * @param array  $additional_data
      *
-     * @return ObjectSettings
      * @throws xoctException
      * @throws xoctInternalApiException
      */
     public function create(int $parent_ref_id, string $title, $additional_data = []): ObjectSettings
     {
         if (!ilObjOpenCast::_getParentCourseOrGroup($parent_ref_id)) {
-            throw new xoctInternalApiException("object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group");
+            throw new xoctInternalApiException(
+                "object with parent_ref_id $parent_ref_id is not a course/group or inside a course/group"
+            );
         }
 
         $ilObjOpenCast = new ilObjOpenCast();
@@ -130,17 +122,27 @@ class xoctSeriesAPI
         $metadata->getField(MDFieldDefinition::F_TITLE)->setValue($title);
         $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->setValue($additional_data['description'] ?? '');
         $metadata->getField(MDFieldDefinition::F_LICENSE)->setValue($additional_data['license'] ?? '');
-        $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue([ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle()]);
+        $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue(
+            [ilObjOpencast::_getParentCourseOrGroup($ilObjOpenCast->getRefId())->getTitle()]
+        );
 
         $acl = $this->aclUtils->getStandardRolesACL();
         if (isset($additional_data['permission_template_id'])) {
             PermissionTemplate::removeAllTemplatesFromAcls($acl);
             /** @var PermissionTemplate $xoctPermissionTemplate */
             $xoctPermissionTemplate = PermissionTemplate::find($additional_data['permission_template_id']);
-            $xoctPermissionTemplate->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
+            $xoctPermissionTemplate->addToAcls(
+                $acl,
+                !$objectSettings->getStreamingOnly(),
+                $objectSettings->getUseAnnotations()
+            );
         } elseif ($default_template = PermissionTemplate::where(['is_default' => 1])->first()) {
             /** @var PermissionTemplate $default_template */
-            $default_template->addToAcls($acl, !$objectSettings->getStreamingOnly(), $objectSettings->getUseAnnotations());
+            $default_template->addToAcls(
+                $acl,
+                !$objectSettings->getStreamingOnly(),
+                $objectSettings->getUseAnnotations()
+            );
         }
 
         // add producers
@@ -168,7 +170,9 @@ class xoctSeriesAPI
             $acl->merge($this->aclUtils->getUserRolesACL($producer));
         }
 
-        $series_id = $this->series_repository->create(new CreateSeriesRequest(new CreateSeriesRequestPayload($metadata, $acl)));
+        $series_id = $this->series_repository->create(
+            new CreateSeriesRequest(new CreateSeriesRequestPayload($metadata, $acl))
+        );
 
         $objectSettings->setSeriesIdentifier($series_id);
         $objectSettings->setObjId($ilObjOpenCast->getId());
@@ -184,7 +188,6 @@ class xoctSeriesAPI
         return $objectSettings;
     }
 
-
     /**
      * @param $ref_id
      *
@@ -197,12 +200,11 @@ class xoctSeriesAPI
         return $cast;
     }
 
-
     /**
      * @param      $ref_id
      * @param bool $delete_opencast_series
      */
-    public function delete($ref_id, $delete_opencast_series)
+    public function delete($ref_id, $delete_opencast_series): void
     {
         $object = new ilObjOpenCast($ref_id);
         if ($delete_opencast_series) {
@@ -210,7 +212,6 @@ class xoctSeriesAPI
         }
         $object->delete();
     }
-
 
     /**
      * possible data:
@@ -242,7 +243,17 @@ class xoctSeriesAPI
         $update_ilias_data = $update_opencast_data = false;
 
         // ilias data
-        foreach (['online', 'introduction_text', 'license', 'use_annotations', 'streaming_only', 'permission_per_clip', 'permission_allow_set_own'] as $field) {
+        foreach (
+            [
+                'online',
+                'introduction_text',
+                'license',
+                'use_annotations',
+                'streaming_only',
+                'permission_per_clip',
+                'permission_allow_set_own'
+            ] as $field
+        ) {
             if (isset($data[$field])) {
                 $setter = 'set' . str_replace('_', '', $field);
                 $settings->$setter($data[$field]);
@@ -255,12 +266,19 @@ class xoctSeriesAPI
 
         // opencast data
         if (isset($data['permission_template_id']) ||
-            ($series->getPermissionTemplateId() && (isset($data['use_annotations']) || isset($data['streaming_only'])))) {
+            ($series->getPermissionTemplateId(
+                ) && (isset($data['use_annotations']) || isset($data['streaming_only'])))) {
             $series_acls = $series->getAccessPolicies();
             PermissionTemplate::removeAllTemplatesFromAcls($series_acls);
             /** @var PermissionTemplate $xoctPermissionTemplate */
-            $xoctPermissionTemplate = PermissionTemplate::find($data['permission_template_id'] ?: $series->getPermissionTemplateId());
-            $xoctPermissionTemplate->addToAcls($series_acls, !$settings->getStreamingOnly(), $settings->getUseAnnotations());
+            $xoctPermissionTemplate = PermissionTemplate::find(
+                $data['permission_template_id'] ?: $series->getPermissionTemplateId()
+            );
+            $xoctPermissionTemplate->addToAcls(
+                $series_acls,
+                !$settings->getStreamingOnly(),
+                $settings->getUseAnnotations()
+            );
             $series->setAccessPolicies($series_acls);
             $update_opencast_data = true;
         }
@@ -273,12 +291,14 @@ class xoctSeriesAPI
         }
 
         if ($update_opencast_data) {
-            $this->series_repository->updateMetadata(new UpdateSeriesMetadataRequest(
-                $series->getIdentifier(),
-                new UpdateSeriesMetadataRequestPayload(
-                    $series->getMetadata()
+            $this->series_repository->updateMetadata(
+                new UpdateSeriesMetadataRequest(
+                    $series->getIdentifier(),
+                    new UpdateSeriesMetadataRequestPayload(
+                        $series->getMetadata()
+                    )
                 )
-            ));
+            );
             $object->updateObjectFromSeries($series->getMetadata());
         }
 

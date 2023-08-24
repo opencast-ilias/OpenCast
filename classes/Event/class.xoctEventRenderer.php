@@ -3,8 +3,6 @@
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -18,6 +16,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 
 /**
  * Class xoctEventRenderer
@@ -26,9 +25,17 @@ use srag\Plugins\Opencast\Model\DTO\DownloadDto;
  */
 class xoctEventRenderer
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use TranslatorTrait;
+
     public const LANG_MODULE = 'event';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
 
     /**
      * @var Event
@@ -54,33 +61,47 @@ class xoctEventRenderer
      * @var array
      */
     private $dropdowns;
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
+    /**
+     * @var \ILIAS\DI\UIServices
+     */
+    private $ui;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
 
     public function __construct(Event $event, ?ObjectSettings $objectSettings = null)
     {
-        $this->opencastDIC = OpencastDIC::getInstance();
+        global $DIC;
+        $ui = $DIC->ui();
+        $this->ctrl = $DIC->ctrl();
+        $this->ui = $DIC->ui();
+        $this->user = $DIC->user();
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
         $this->event = $event;
         $this->objectSettings = $objectSettings;
-        $this->factory = self::dic()->ui()->factory();
-        $this->renderer = self::dic()->ui()->renderer();
+        $this->factory = $ui->factory();
+        $this->renderer = $ui->renderer();
         $this->dropdowns = [];
     }
 
-
-    /**
-     * @param EventModals $modals
-     */
-    public static function initModals(EventModals $modals)
+    public static function initModals(EventModals $modals): void
     {
         self::$modals = $modals;
     }
 
     /**
-     * @param $tpl ilTemplate
-     * @param $variable string
-     * @param $value string
+     * @param        $tpl         ilTemplate
+     * @param        $variable    string
+     * @param        $value       string
      * @param string $block_title string
      */
-    public function insert(&$tpl, $variable, $value, $block_title = '')
+    public function insert(&$tpl, $variable, $value, $block_title = ''): void
     {
         if ($block_title) {
             $tpl->setCurrentBlock($block_title);
@@ -96,7 +117,7 @@ class xoctEventRenderer
     /**
      * @param $tpl ilTemplate
      */
-    public function renderDropdowns(&$tpl)
+    public function renderDropdowns(&$tpl): void
     {
         $value = '';
         $sorted_list = [];
@@ -147,7 +168,7 @@ class xoctEventRenderer
      *
      * @throws xoctException
      */
-    public function insertPreviewImage(&$tpl, $block_title = 'preview_image', $variable = 'PREVIEW_IMAGE')
+    public function insertPreviewImage(&$tpl, $block_title = 'preview_image', $variable = 'PREVIEW_IMAGE'): void
     {
         $this->insert($tpl, $variable, $this->getPreviewImageHTML(), $block_title);
     }
@@ -158,16 +179,13 @@ class xoctEventRenderer
      */
     public function getPreviewImageHTML()
     {
-        $preview_image_tpl = self::plugin()->template('default/tpl.event_preview_image.html');
+        $preview_image_tpl = $this->plugin->getTemplate('default/tpl.event_preview_image.html');
         $preview_image_tpl->setVariable('ID', $this->event->getIdentifier());
         $preview_image_tpl->setVariable('THUMBNAIL', $this->getThumbnailHTML());
         return $preview_image_tpl->get();
     }
 
-    /**
-     * @return string
-     */
-    public function getPreviewLink()
+    public function getPreviewLink(): string
     {
         return 'data-preview_link="' . $this->event->getIdentifier() . '"';
     }
@@ -178,9 +196,10 @@ class xoctEventRenderer
      */
     public function getThumbnailHTML()
     {
-        return $this->renderer->render($this->factory->image()->responsive($this->event->publications()->getThumbnailUrl(), 'Thumbnail'));
+        return $this->renderer->render(
+            $this->factory->image()->responsive($this->event->publications()->getThumbnailUrl(), 'Thumbnail')
+        );
     }
-
 
     /**
      * @param        $tpl ilTemplate
@@ -192,13 +211,12 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
+    public function insertPlayerLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
     {
         if ($player_link_html = $this->getPlayerLinkHTML($button_type)) {
             $this->insert($tpl, $variable, $player_link_html, $block_title);
         }
     }
-
 
     /**
      * @param string $button_type
@@ -210,9 +228,16 @@ class xoctEventRenderer
      */
     public function getPlayerLinkHTML($button_type = 'btn-info')
     {
-        if ($this->isEventAccessible() && (!is_null($this->event->publications()->getPlayerPublication())|| !is_null($this->event->publications()->getLivePublication()))) {
-            $link_tpl = self::plugin()->template('default/tpl.player_link.html');
-            $link_tpl->setVariable('LINK_TEXT', self::plugin()->translate($this->event->isLiveEvent() ? 'player_live' : 'player', self::LANG_MODULE));
+        if ($this->isEventAccessible() && (!is_null($this->event->publications()->getPlayerPublication()) || !is_null(
+            $this->event->publications()->getLivePublication()
+        ))) {
+            $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
+            $link_tpl->setVariable(
+                'LINK_TEXT',
+                $this->plugin->txt(
+                    $this->event->isLiveEvent() ? self::LANG_MODULE . '_player_live' : self::LANG_MODULE . '_player'
+                )
+            );
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
             $link_tpl->setVariable('PREVIEW_LINK', $this->getPreviewLink());
             $link_tpl->setVariable('TARGET', '_blank');
@@ -231,14 +256,11 @@ class xoctEventRenderer
         }
     }
 
-    /**
-     * @return string
-     */
     public function getInternalPlayerLink(): string
     {
-        self::dic()->ctrl()->clearParametersByClass(xoctEventGUI::class);
-        self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->event->getIdentifier());
-        return self::dic()->ctrl()->getLinkTargetByClass(
+        $this->ctrl->clearParametersByClass(xoctEventGUI::class);
+        $this->ctrl->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->event->getIdentifier());
+        return $this->ctrl->getLinkTargetByClass(
             [
                 ilRepositoryGUI::class,
                 ilObjOpenCastGUI::class,
@@ -249,7 +271,6 @@ class xoctEventRenderer
         );
     }
 
-
     /**
      * @return ilModalGUI
      * @throws xoctException
@@ -259,19 +280,17 @@ class xoctEventRenderer
         $modal = ilModalGUI::getInstance();
         $modal->setId('modal_' . $this->event->getIdentifier());
         $modal->setHeading($this->event->getTitle());
-        $modal->setBody('<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->getInternalPlayerLink() . '" style="border:none;"></iframe><br>');
+        $modal->setBody(
+            '<iframe class="xoct_iframe" allowfullscreen="true" src="' . $this->getInternalPlayerLink(
+            ) . '" style="border:none;"></iframe><br>'
+        );
         return $modal;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getModalLink()
+    public function getModalLink(): string
     {
         return 'data-toggle="modal" data-target="#modal_' . $this->event->getIdentifier() . '"';
     }
-
 
     /**
      * @param        $tpl ilTemplate
@@ -283,7 +302,7 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
+    public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
     {
         $publication_repository = new PublicationUsageRepository();
         $publication_sub_repository = new PublicationSubUsageRepository();
@@ -327,7 +346,6 @@ class xoctEventRenderer
         }
     }
 
-
     /**
      * @param PublicationUsage $download_publication_usage
      * @param DownloadDto[] $download_dtos
@@ -354,12 +372,12 @@ class xoctEventRenderer
             }
             $multi = $download_publication_usage->isAllowMultiple();
             if ($multi) {
-                $items = array_map(function ($dto) {
-                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
-                    self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
+                $items = array_map(function ($dto): \ILIAS\UI\Component\Link\Standard {
+                    $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+                    $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
                     return $this->factory->link()->standard(
                         $dto->getResolution(),
-                        self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
+                        $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD)
                     );
                 }, $download_dtos);
                 $dropdown = $this->factory->dropdown()->standard(
@@ -367,9 +385,9 @@ class xoctEventRenderer
                 )->withLabel($display_name);
                 $html = self::dic()->ui()->renderer()->renderAsync($dropdown);
             } else {
-                self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
-                $link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
-                $link_tpl = self::plugin()->template('default/tpl.player_link.html');
+                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+                $link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
+                $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
                 $link_tpl->setVariable('TARGET', '_self');
                 $link_tpl->setVariable('BUTTON_TYPE', $button_type);
                 $link_tpl->setVariable('LINK_TEXT', $display_name);
@@ -381,7 +399,6 @@ class xoctEventRenderer
         return $html;
     }
 
-
     /**
      * @param        $tpl ilTemplate
      * @param string $block_title
@@ -392,7 +409,7 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info')
+    public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
     {
         list($display_name, $annotation_link_html) = $this->getAnnotationLinkHTML($button_type);
         if (!empty($annotation_link_html)) {
@@ -411,7 +428,6 @@ class xoctEventRenderer
         }
     }
 
-
     /**
      * @param string $button_type
      *
@@ -429,9 +445,13 @@ class xoctEventRenderer
         $html = '';
         if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED)
             && ($this->event->publications()->getAnnotationPublication())) {
-            self::dic()->ctrl()->setParameterByClass(xoctEventGUI::class, xoctEventGUI::IDENTIFIER, $this->event->getIdentifier());
-            $annotations_link = self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
-            $link_tpl = self::plugin()->template('default/tpl.player_link.html');
+            $this->ctrl->setParameterByClass(
+                xoctEventGUI::class,
+                xoctEventGUI::IDENTIFIER,
+                $this->event->getIdentifier()
+            );
+            $annotations_link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE);
+            $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
             $link_tpl->setVariable('TARGET', '_blank');
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
             $link_tpl->setVariable('LINK_TEXT', $display_name);
@@ -443,57 +463,50 @@ class xoctEventRenderer
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE')
+    public function insertTitle(&$tpl, $block_title = 'title', $variable = 'TITLE'): void
     {
         $this->insert($tpl, $variable, $this->getTitleHTML(), $block_title);
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertDescription(&$tpl, $block_title = 'description', $variable = 'DESCRIPTION')
+    public function insertDescription(&$tpl, $block_title = 'description', $variable = 'DESCRIPTION'): void
     {
         $this->insert($tpl, $variable, $this->getDescriptionHTML(), $block_title);
     }
 
-    /**
-     * @return string
-     */
-    public function getTitleHTML()
+    public function getTitleHTML(): string
     {
         return $this->event->getTitle();
     }
 
-
-    /**
-     * @return string
-     */
-    public function getDescriptionHTML()
+    public function getDescriptionHTML(): string
     {
         return $this->event->getDescription();
     }
 
     /**
-     * @param $tpl
+     * @param        $tpl
      * @param string $block_title
      * @param string $variable
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE')
+    public function insertState(&$tpl, $block_title = 'state', $variable = 'STATE'): void
     {
         if ($state_html = $this->getStateHTML()) {
             $this->insert($tpl, $variable, $state_html, $block_title);
@@ -510,11 +523,11 @@ class xoctEventRenderer
     {
         if (!$this->isEventAccessible()) {
             $processing_state = $this->event->getProcessingState();
-            $state_tpl = self::plugin()->template('default/tpl.event_state.html');
+            $state_tpl = $this->plugin->getTemplate('default/tpl.event_state.html');
             $state_tpl->setVariable('STATE_CSS', Event::$state_mapping[$processing_state]);
 
             $suffix = '';
-            if ($this->opencastDIC->acl_utils()->isUserOwnerOfEvent(xoctUser::getInstance(self::dic()->user()), $this->event)
+            if ($this->container->acl_utils()->isUserOwnerOfEvent(xoctUser::getInstance($this->user), $this->event)
                 && in_array($processing_state, [
                     Event::STATE_FAILED,
                     Event::STATE_ENCODING
@@ -526,11 +539,20 @@ class xoctEventRenderer
             if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
                 $placeholders[] = date(
                     'd.m.Y, H:i',
-                    $this->event->getScheduling()->getStart()->getTimestamp() - (((int)PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE)) * 60)
+                    $this->event->getScheduling()->getStart()->getTimestamp() - (((int) PluginConfig::getConfig(
+                        PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
+                    )) * 60)
                 );
             }
 
-            $state_tpl->setVariable('STATE', self::plugin()->translate('state_' . strtolower($processing_state) . $suffix, self::LANG_MODULE, $placeholders));
+            $state_tpl->setVariable(
+                'STATE',
+                $this->translate(
+                    'state_' . strtolower($processing_state) . $suffix,
+                    self::LANG_MODULE,
+                    $placeholders
+                )
+            );
 
             return $state_tpl->get();
         } else {
@@ -539,11 +561,11 @@ class xoctEventRenderer
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      */
-    public function insertPresenter(&$tpl, $block_title = 'presenter', $variable = 'PRESENTER')
+    public function insertPresenter(&$tpl, $block_title = 'presenter', $variable = 'PRESENTER'): void
     {
         $this->insert($tpl, $variable, $this->getPresenterHTML(), $block_title);
     }
@@ -557,83 +579,74 @@ class xoctEventRenderer
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      */
-    public function insertLocation(&$tpl, $block_title = 'location', $variable = 'LOCATION')
+    public function insertLocation(&$tpl, $block_title = 'location', $variable = 'LOCATION'): void
     {
         $this->insert($tpl, $variable, $this->getLocationHTML(), $block_title);
     }
 
-    /**
-     * @return string
-     */
-    public function getLocationHTML()
+    public function getLocationHTML(): string
     {
         return $this->event->getLocation();
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      * @param string $format
      */
-    public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i')
+    public function insertStart(&$tpl, $block_title = 'start', $variable = 'START', $format = 'd.m.Y - H:i'): void
     {
         $this->insert($tpl, $variable, $this->getStartHTML($format), $block_title);
     }
 
     /**
      * @param string $format
-     * @return string
      */
-    public function getStartHTML($format = 'd.m.Y - H:i')
+    public function getStartHTML($format = 'd.m.Y - H:i'): string
     {
-        return $this->event->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format($format);
+        return $this->event->getStart()->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format(
+            $format
+        );
     }
 
-    /**
-     * @param ilTemplate $tpl
-     * @param string     $block_title
-     * @param string     $variable
-     */
     public function insertUnprotectedLink(
         ilTemplate &$tpl,
         string $block_title = 'unprotected_link',
         string $variable = 'UNPROTECTED_LINK'
-    ) {
-        $link_tpl = self::plugin()->template('default/tpl.event_link.html');
+    ): void {
+        $link_tpl = $this->plugin->getTemplate('default/tpl.event_link.html');
         $link = $this->event->publications()->getUnprotectedLink() ?: '';
         $link_tpl->setVariable('URL', $link);
-        $link_tpl->setVariable('TOOLTIP_TEXT', self::plugin()->translate('tooltip_copy_link'));
+        $link_tpl->setVariable('TOOLTIP_TEXT', $this->plugin->txt('tooltip_copy_link'));
         $this->insert($tpl, $variable, $link ? $link_tpl->get() : '', $block_title);
     }
 
     /**
-     * @param $tpl ilTemplate
+     * @param        $tpl ilTemplate
      * @param string $block_title
      * @param string $variable
      * @throws DICException
      * @throws ilTemplateException
      */
-    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER', string $username = null)
+    public function insertOwner(&$tpl, $block_title = 'owner', $variable = 'OWNER', string $username = null): void
     {
         $this->insert($tpl, $variable, $this->getOwnerHTML($username), $block_title);
     }
 
-
     /**
-     * @return string
      * @throws DICException
      * @throws ilTemplateException
      */
     public function getOwnerHTML(string $owner_username = null): string
     {
-        $owner_tpl = self::plugin()->template('default/tpl.event_owner.html');
+        $owner_tpl = $this->plugin->getTemplate('default/tpl.event_owner.html');
         if ($owner_username === null) {
-            $owner_username = $this->opencastDIC->acl_utils()->getOwnerUsernameOfEvent($this->event);
+            $owner_username = $this->container->acl_utils()->getOwnerUsernameOfEvent($this->event);
         }
         $owner_tpl->setVariable('OWNER', $owner_username);
 
@@ -649,11 +662,7 @@ class xoctEventRenderer
         return $owner_tpl->get();
     }
 
-
-    /**
-     * @return bool
-     */
-    protected function isEventAccessible()
+    protected function isEventAccessible(): bool
     {
         $processing_state = $this->event->getProcessingState();
 
@@ -667,7 +676,9 @@ class xoctEventRenderer
             }
             if ($processing_state == Event::STATE_LIVE_SCHEDULED) {
                 $start = $this->event->getScheduling()->getStart()->getTimestamp();
-                $accessible_before_start = ((int)PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE)) * 60;
+                $accessible_before_start = ((int) PluginConfig::getConfig(
+                    PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
+                )) * 60;
                 $accessible_from = $start - $accessible_before_start;
                 $accessible_to = $this->event->getScheduling()->getEnd()->getTimestamp();
                 return ($accessible_from < time()) && ($accessible_to > time());
@@ -700,19 +711,19 @@ class xoctEventRenderer
         /**
          * @var $xoctUser xoctUser
          */
-        $xoctUser = xoctUser::getInstance(self::dic()->user());
+        $xoctUser = xoctUser::getInstance($this->user);
 
-        self::dic()->ctrl()->setParameterByClass(
+        $this->ctrl->setParameterByClass(
             xoctEventGUI::class,
             xoctEventGUI::IDENTIFIER,
             $this->event->getIdentifier()
         );
-        self::dic()->ctrl()->setParameterByClass(
+        $this->ctrl->setParameterByClass(
             xoctGrantPermissionGUI::class,
             xoctEventGUI::IDENTIFIER,
             $this->event->getIdentifier()
         );
-        self::dic()->ctrl()->setParameterByClass(
+        $this->ctrl->setParameterByClass(
             xoctChangeOwnerGUI::class,
             xoctEventGUI::IDENTIFIER,
             $this->event->getIdentifier()
@@ -722,32 +733,42 @@ class xoctEventRenderer
 
         if (ilObjOpenCast::DEV) {
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_view'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_VIEW)
+                $this->plugin->txt('event_view'),
+                $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_VIEW)
             );
         }
 
         // Edit Owner
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_OWNER, $this->event, $xoctUser, $this->objectSettings)) {
+        if (ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_EDIT_OWNER,
+            $this->event,
+            $xoctUser,
+            $this->objectSettings
+        )) {
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_edit_owner'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD)
+                $this->plugin->txt('event_edit_owner'),
+                $this->ctrl->getLinkTargetByClass(xoctChangeOwnerGUI::class, xoctChangeOwnerGUI::CMD_STANDARD)
             );
         }
 
         // Share event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SHARE_EVENT, $this->event, $xoctUser, $this->objectSettings)) {
+        if (ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_SHARE_EVENT,
+            $this->event,
+            $xoctUser,
+            $this->objectSettings
+        )) {
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_invite_others'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctGrantPermissionGUI::class, xoctGrantPermissionGUI::CMD_STANDARD)
+                $this->plugin->txt('event_invite_others'),
+                $this->ctrl->getLinkTargetByClass(xoctGrantPermissionGUI::class, xoctGrantPermissionGUI::CMD_STANDARD)
             );
         }
 
         // Cut Event
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this->event, $xoctUser)) {
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_cut'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT)
+                $this->plugin->txt('event_cut'),
+                $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT)
             )->withOpenInNewViewport(true);
         }
 
@@ -756,7 +777,7 @@ class xoctEventRenderer
             && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getRepublishModal())
         ) {
             $actions[] = $this->factory->button()->shy(
-                self::plugin()->translate('event_republish'),
+                $this->plugin->txt('event_republish'),
                 self::$modals->getRepublishModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
                 return "$({$id}).on('click', function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
@@ -767,13 +788,13 @@ class xoctEventRenderer
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE, $this->event, $xoctUser)) {
             if ($this->event->getXoctEventAdditions()->getIsOnline()) {
                 $actions[] = $this->factory->link()->standard(
-                    self::plugin()->translate('event_set_offline'),
-                    self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_OFFLINE)
+                    $this->plugin->txt('event_set_offline'),
+                    $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_OFFLINE)
                 );
             } else {
                 $actions[] = $this->factory->link()->standard(
-                    self::plugin()->translate('event_set_online'),
-                    self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_ONLINE)
+                    $this->plugin->txt('event_set_online'),
+                    $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_SET_ONLINE)
                 );
             }
         }
@@ -781,8 +802,8 @@ class xoctEventRenderer
         // Delete Event
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_DELETE_EVENT, $this->event, $xoctUser)) {
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate('event_delete'),
-                self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
+                $this->plugin->txt('event_delete'),
+                $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CONFIRM)
             );
         }
 
@@ -790,11 +811,13 @@ class xoctEventRenderer
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)) {
             // show different langvar when date is editable
             $lang_var = ($this->event->isScheduled()
-                && (PluginConfig::getConfig(PluginConfig::F_SCHEDULED_METADATA_EDITABLE) == PluginConfig::ALL_METADATA)) ?
+                && (PluginConfig::getConfig(
+                    PluginConfig::F_SCHEDULED_METADATA_EDITABLE
+                ) == PluginConfig::ALL_METADATA)) ?
                 'event_edit_date' : 'event_edit';
             $actions[] = $this->factory->link()->standard(
-                self::plugin()->translate($lang_var),
-                self::dic()->ctrl()->getLinkTargetByClass(
+                $this->plugin->txt($lang_var),
+                $this->ctrl->getLinkTargetByClass(
                     xoctEventGUI::class,
                     $this->event->isScheduled() ? xoctEventGUI::CMD_EDIT_SCHEDULED : xoctEventGUI::CMD_EDIT
                 )
@@ -806,7 +829,7 @@ class xoctEventRenderer
             && !is_null(self::$modals) && !is_null(self::$modals->getReportQualityModal())
         ) {
             $actions[] = $this->factory->button()->shy(
-                self::plugin()->translate('event_report_quality_problem'),
+                $this->plugin->txt('event_report_quality_problem'),
                 self::$modals->getReportQualityModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
                 return "$({$id}).on('click', function(event){ $('input#xoct_report_quality_event_id').val('{$this->event->getIdentifier()}');$('#xoct_report_quality_modal textarea#message').focus(); });";

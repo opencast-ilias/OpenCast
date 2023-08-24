@@ -15,11 +15,7 @@ class WorkflowAR extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_workflow';
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -60,72 +56,42 @@ class WorkflowAR extends ActiveRecord
      */
     protected $parameters;
 
-
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-
-    /**
-     * @return string
-     */
     public function getWorkflowId(): string
     {
         return $this->workflow_id;
     }
 
-
-    /**
-     * @param string $workflow_id
-     */
-    public function setWorkflowId(string $workflow_id)
+    public function setWorkflowId(string $workflow_id): void
     {
         $this->workflow_id = $workflow_id;
     }
 
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
     public function getParameters(): string
     {
         return $this->parameters ?: '';
     }
 
-    /**
-     * @param string $parameters
-     */
-    public function setParameters(string $parameters)
+    public function setParameters(string $parameters): void
     {
         $this->parameters = $parameters;
     }

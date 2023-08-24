@@ -14,7 +14,6 @@ class Attachment extends publicationMetadata
      */
     public $ref;
 
-
     /**
      * @return string
      */
@@ -23,11 +22,10 @@ class Attachment extends publicationMetadata
         return $this->ref;
     }
 
-
     /**
      * @param string $ref
      */
-    public function setRef($ref)
+    public function setRef($ref): void
     {
         $this->ref = $ref;
     }

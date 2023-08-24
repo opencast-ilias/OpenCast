@@ -38,7 +38,6 @@ class Media extends publicationMetadata
      */
     public $is_master_playlist = true;
 
-
     /**
      * @return bool
      */
@@ -47,15 +46,13 @@ class Media extends publicationMetadata
         return $this->has_audio;
     }
 
-
     /**
      * @param bool $has_audio
      */
-    public function setHasAudio($has_audio)
+    public function setHasAudio($has_audio): void
     {
         $this->has_audio = $has_audio;
     }
-
 
     /**
      * @return bool
@@ -65,15 +62,13 @@ class Media extends publicationMetadata
         return $this->has_video;
     }
 
-
     /**
      * @param bool $has_video
      */
-    public function setHasVideo($has_video)
+    public function setHasVideo($has_video): void
     {
         $this->has_video = $has_video;
     }
-
 
     /**
      * @return int
@@ -83,15 +78,13 @@ class Media extends publicationMetadata
         return $this->duration;
     }
 
-
     /**
      * @param int $duration
      */
-    public function setDuration($duration)
+    public function setDuration($duration): void
     {
         $this->duration = $duration;
     }
-
 
     /**
      * @return string
@@ -101,15 +94,13 @@ class Media extends publicationMetadata
         return $this->description;
     }
 
-
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
-
 
     /**
      * @return int
@@ -119,15 +110,13 @@ class Media extends publicationMetadata
         return $this->width;
     }
 
-
     /**
      * @param int $width
      */
-    public function setWidth($width)
+    public function setWidth($width): void
     {
         $this->width = $width;
     }
-
 
     /**
      * @return int
@@ -137,11 +126,10 @@ class Media extends publicationMetadata
         return $this->height;
     }
 
-
     /**
      * @param int $height
      */
-    public function setHeight($height)
+    public function setHeight($height): void
     {
         $this->height = $height;
     }
@@ -151,7 +139,7 @@ class Media extends publicationMetadata
         return $this->is_master_playlist;
     }
 
-    public function setIsMasterPlaylist(bool $is_master_playlist)/*: void*/
+    public function setIsMasterPlaylist(bool $is_master_playlist): void/*: void*/
     {
         $this->is_master_playlist = $is_master_playlist;
     }

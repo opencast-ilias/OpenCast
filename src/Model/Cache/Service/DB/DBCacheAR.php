@@ -40,18 +40,12 @@ class DBCacheAR extends ActiveRecord
      */
     protected $expires;
 
-    /**
-     * @param string $identifier
-     */
-    public function setIdentifier(string $identifier)/* : void*/
+    public function setIdentifier(string $identifier): void/* : void*/
     {
         $this->identifier = $identifier;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue(string $value)/* : void*/
+    public function setValue(string $value): void/* : void*/
     {
         $this->value = $value;
     }
@@ -59,23 +53,16 @@ class DBCacheAR extends ActiveRecord
     /**
      * @param int|null $expires
      */
-    public function setExpires(/*?int*/ $expires)/* : void*/
+    public function setExpires(/*?int*/ $expires): void/* : void*/
     {
         $this->expires = $expires;
     }
 
-
-    /**
-     * @return string
-     */
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return $this->value;
@@ -89,8 +76,7 @@ class DBCacheAR extends ActiveRecord
         return $this->expires;
     }
 
-
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }

@@ -15,14 +15,10 @@ class MDPrefiller
      */
     private $dic;
 
-    /**
-     * @param Container $dic
-     */
     public function __construct(Container $dic)
     {
         $this->dic = $dic;
     }
-
 
     public function getPrefillValue(MDPrefillOption $prefill_type): ?string
     {
@@ -32,7 +28,9 @@ class MDPrefiller
                 try {
                     $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
                 } catch (InvalidArgumentException $e) {
-                    xoctLog::getInstance()->writeWarning('couldn\'t fetch parent course or group for prefilling metadata field');
+                    xoctLog::getInstance()->writeWarning(
+                        'couldn\'t fetch parent course or group for prefilling metadata field'
+                    );
                     return null;
                 }
                 return $course_or_group->getTitle();

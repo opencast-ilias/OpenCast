@@ -71,7 +71,6 @@ class PublicationUsageDefault extends PublicationUsage
     }
 
     /**
-     * @param string $usage
      * @return PublicationUsage|null
      */
     public static function getDefaultUsage(string $usage)

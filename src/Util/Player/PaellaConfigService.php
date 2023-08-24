@@ -3,23 +3,11 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use xoctLog;
 
 class PaellaConfigService
 {
     /**
-     * @var PaellaConfigStorageService
-     */
-    private $storageService;
-
-    public function __construct(PaellaConfigStorageService $storageService)
-    {
-        $this->storageService = $storageService;
-    }
-
-    /**
-     * @param bool $live
      * @return array{url: string, info: string, warn: bool}
      */
     public function getEffectivePaellaPlayerUrl(bool $live): array
@@ -34,9 +22,11 @@ class PaellaConfigService
                 $reachable = $this->checkUrlReachable($url);
                 if (!$reachable) {
                     xoctLog::getInstance()->writeWarning('url for paella config unreachable: ' . $url);
-                    return ['url' => $default_path,
+                    return [
+                        'url' => $default_path,
                         'info' => 'url for paella config unreachable, fallback to default config',
-                        'warn' => true];
+                        'warn' => true
+                    ];
                 }
                 return ['url' => $url, 'info' => 'config fetched from url', 'warn' => false];
             case PluginConfig::PAELLA_OPTION_DEFAULT:
@@ -48,9 +38,6 @@ class PaellaConfigService
     public function checkUrlReachable(string $url): bool
     {
         $file_headers = @get_headers($url);
-        if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
-            return false;
-        }
-        return true;
+        return $file_headers && $file_headers[0] != 'HTTP/1.1 404 Not Found';
     }
 }

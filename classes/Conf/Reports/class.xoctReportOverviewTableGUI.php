@@ -13,24 +13,32 @@ class xoctReportOverviewTableGUI extends TableGUI
 {
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
+    /**
+     * @var ilLanguage
+     */
+    protected $lng;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * xoctReportOverviewTableGUI constructor.
      * @param $parent xoctReportOverviewGUI
      * @param $parent_cmd
      */
-    public function __construct($parent, $parent_cmd)
+    public function __construct($parent, string $parent_cmd)
     {
-        parent::__construct($parent, $parent_cmd);
-        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, self::dic()->language()->txt(xoctReportOverviewGUI::CMD_DELETE));
+        global $DIC, $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
+        $this->lng = $DIC->language();
+        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, $this->lng->txt(xoctReportOverviewGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
+        parent::__construct($parent, $parent_cmd);
     }
 
-
     /**
-     * @param string $column
-     * @param array  $row
-     * @param bool   $format
+     * @param array $row
      *
      * @return string|void
      */
@@ -38,15 +46,10 @@ class xoctReportOverviewTableGUI extends TableGUI
     {
     }
 
-
-    /**
-     * @return array
-     */
     protected function getSelectableColumns2(): array
     {
         return [];
     }
-
 
     /**
      * @throws \srag\DIC\OpenCast\Exception\DICException
@@ -54,17 +57,18 @@ class xoctReportOverviewTableGUI extends TableGUI
     protected function initColumns(): void
     {
         $this->addColumn('', '', '', true);
-        $this->addColumn(self::dic()->language()->txt('message'));
-        $this->addColumn(self::plugin()->translate('sender'), 'sender');
-        $this->addColumn(self::dic()->language()->txt('date'), 'created_at');
+        $this->addColumn($this->lng->txt('message'));
+        $this->addColumn($this->plugin->txt('sender'));
+        $this->addColumn($this->lng->txt('date'), 'created_at');
     }
-
 
     /**
      * @throws Exception
      */
     protected function initData(): void
     {
+        $filter_date_from = null;
+        $filter_date_to = null;
         $filter_values = $this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
@@ -76,7 +80,10 @@ class xoctReportOverviewTableGUI extends TableGUI
         }
 
         if ($filter_date_from && $filter_date_to) {
-            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(['created_at' => $filter_date_to], ['created_at' => '<='])->getArray();
+            $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->where(
+                ['created_at' => $filter_date_to],
+                ['created_at' => '<=']
+            )->getArray();
         } elseif ($filter_date_from) {
             $data = Report::where(['created_at' => $filter_date_from], ['created_at' => '>='])->getArray();
         } elseif ($filter_date_to) {
@@ -87,8 +94,10 @@ class xoctReportOverviewTableGUI extends TableGUI
 
         $filtered = [];
         foreach ($data as $key => $value) {
-            $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail($value['user_id']);
-            if ($filter_sender && (strpos(strtolower($value['sender']), strtolower($filter_sender)) === false)) {
+            $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail(
+                $value['user_id']
+            );
+            if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
                 unset($data[$key]);
             } else {
                 $filtered[] = $value;
@@ -97,7 +106,6 @@ class xoctReportOverviewTableGUI extends TableGUI
 
         $this->setData($filtered);
     }
-
 
     /**
      *
@@ -117,7 +125,6 @@ class xoctReportOverviewTableGUI extends TableGUI
         ];
     }
 
-
     /**
      *
      */
@@ -126,14 +133,12 @@ class xoctReportOverviewTableGUI extends TableGUI
         $this->setId('xoct_reports');
     }
 
-
     /**
      *
      */
     protected function initTitle(): void
     {
     }
-
 
     /**
      * @param array $row

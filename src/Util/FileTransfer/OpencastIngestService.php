@@ -5,7 +5,8 @@ namespace srag\Plugins\Opencast\Util\FileTransfer;
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use xoctException;
-use xoctRequest;
+use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 class OpencastIngestService
 {
@@ -13,12 +14,15 @@ class OpencastIngestService
      * @var UploadStorageService
      */
     private $uploadStorageService;
-
     /**
-     * @param UploadStorageService $uploadStorageService
+     * @var API
      */
+    protected $api;
+
     public function __construct(UploadStorageService $uploadStorageService)
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->uploadStorageService = $uploadStorageService;
     }
 
@@ -27,65 +31,41 @@ class OpencastIngestService
      */
     public function ingest(UploadEventRequest $uploadEventRequest): void
     {
+        // We need to activate OpencastAPI Ingest.
+        $this->api->activateIngest(true);
         $payload = $uploadEventRequest->getPayload();
-        $ingest_node_url = $this->getIngestNodeURL();
 
         // create media package
-        $media_package = xoctRequest::root()->ingest()->createMediaPackage()->get([], '', $ingest_node_url);
+        $media_package = $this->api->routes()->ingest->createMediaPackage();
 
         // Metadata
-        $media_package = xoctRequest::root()->ingest()->addDCCatalog()->post([
-            'dublinCore' => (new MetadataToXML($payload->getMetadata()))->getXML(),
-            'mediaPackage' => $media_package,
-            'flavor' => 'dublincore/episode'
-        ], [], '', $ingest_node_url);
+        $media_package = $this->api->routes()->ingest->addDCCatalog(
+            $media_package,
+            (new MetadataToXML($payload->getMetadata()))->getXML(),
+            'dublincore/episode'
+        );
 
         // ACLs (as attachment)
-        $media_package = xoctRequest::root()->ingest()->addAttachment()->postFiles([
-            'mediaPackage' => $media_package,
-            'flavor' => 'security/xacml+episode'
-        ], [$this->uploadStorageService->buildACLUploadFile($payload->getAcl())], [], '', $ingest_node_url);
+        $media_package = $this->api->routes()->ingest->addAttachment(
+            $media_package,
+            'security/xacml+episode',
+            $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
+        );
 
         // track
-        $media_package = xoctRequest::root()->ingest()->addTrack()->postFiles([
-            'mediaPackage' => $media_package,
-            'flavor' => 'presentation/source'
-        ], [$payload->getPresentation()], [], '', $ingest_node_url);
+        $media_package = $this->api->routes()->ingest->addTrack(
+            $media_package,
+            'presentation/source',
+            $payload->getPresentation()->getFileStream()
+        );
 
         // ingest
-        $post_params = [
-            'mediaPackage' => $media_package,
-            'workflowDefinitionId' => $payload->getProcessing()->getWorkflow()
-        ];
-        $post_params = array_merge($post_params, $payload->getProcessing()->getConfiguration());
-        xoctRequest::root()->ingest()->ingest()->post($post_params, [], '', $ingest_node_url);
-    }
+        $media_package = $this->api->routes()->ingest->ingest(
+            $media_package,
+            $payload->getProcessing()->getWorkflow()
+        );
 
-    /**
-     * @return string
-     * @throws xoctException
-     */
-    private function getIngestNodeURL(): string
-    {
-        $nodes = json_decode(xoctRequest::root()->services()->available('org.opencastproject.ingest')->get(), true);
-        if (!is_array($nodes)
-            || !isset($nodes['services'])
-            || !isset($nodes['services']['service'])
-            || empty($nodes['services']['service'])
-        ) {
-            throw new xoctException(xoctException::API_CALL_STATUS_500, 'no available ingest nodes found');
-        }
-        $available_hosts = [];
-        $services = $nodes['services']['service'];
-        $services = isset($services['type']) ? [$services] : $services; // only one service?
-        foreach ($services as $node) {
-            if ($node['active'] && $node['host']) {
-                $available_hosts[] = $node['host'];
-            }
-        }
-        if (count($available_hosts) === 0) {
-            throw new xoctException(xoctException::API_CALL_STATUS_500, 'no available ingest nodes found');
-        }
-        return array_rand(array_flip($available_hosts));
+        // When we are done, we deactivate the ingest to keep everything clean.
+        $this->api->activateIngest(false);
     }
 }

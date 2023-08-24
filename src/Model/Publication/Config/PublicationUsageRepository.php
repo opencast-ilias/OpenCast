@@ -13,20 +13,12 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class PublicationUsageRepository
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-    /**
-     * @param string $usage
-     * @return bool
-     */
     public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
     }
 
     /**
-     * @param string $usage
-     *
      * @return PublicationUsage|null
      */
     public function getUsage(string $usage)
@@ -34,15 +26,9 @@ class PublicationUsageRepository
         return PublicationUsage::find($usage) ?: PublicationUsageDefault::getDefaultUsage($usage);
     }
 
-
-    /**
-     * @return array
-     */
     public function getMissingUsageIds(): array
     {
-        $missing = array_diff(PublicationUsage::$usage_ids, $this->getArray(null, 'usage_id'));
-
-        return $missing;
+        return array_diff(PublicationUsage::$usage_ids, $this->getArray(null, 'usage_id'));
     }
 
     /**
@@ -58,19 +44,13 @@ class PublicationUsageRepository
     /**
      * @param null $key
      * @param null $values
-     *
-     * @return array
      */
     public function getArray($key = null, $values = null): array
     {
         return PublicationUsage::getArray($key, $values);
     }
 
-
-    /**
-     * @param string $usage_id
-     */
-    public function delete(string $usage_id)
+    public function delete(string $usage): void
     {
         $usage = $this->getUsage($usage_id);
         if (!is_null($usage)) {
@@ -82,22 +62,6 @@ class PublicationUsageRepository
         }
     }
 
-
-    /**
-     * @param string $usage
-     * @param string $title
-     * @param string $display_name
-     * @param string $description
-     * @param string $group_id
-     * @param string $channel
-     * @param int    $md_type
-     * @param string $search_key
-     * @param string $flavor
-     * @param string $tag
-     * @param bool   $allow_multiple
-     * @param string $mimetype
-     * @param bool $ignore_object_settings
-     */
     public function store(
         string $usage,
         string $title,
@@ -112,7 +76,7 @@ class PublicationUsageRepository
         bool $allow_multiple = false,
         string $mediatype = '',
         bool $ignore_object_settings = false
-    ) {
+    ): void {
         /** @var PublicationUsage $usage */
         $usage = PublicationUsage::findOrGetInstance($usage);
         $usage->setTitle($title);

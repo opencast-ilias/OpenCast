@@ -71,7 +71,6 @@ class PublicationUsage extends ActiveRecord
         return self::TABLE_NAME;
     }
 
-
     /**
      * @return string
      */
@@ -79,7 +78,6 @@ class PublicationUsage extends ActiveRecord
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var string
@@ -170,7 +168,7 @@ class PublicationUsage extends ActiveRecord
      * @con_fieldtype  integer
      * @con_length     1
      */
-    protected $md_type = null;
+    protected $md_type;
     /**
      * @var bool
      *
@@ -196,38 +194,28 @@ class PublicationUsage extends ActiveRecord
      */
     protected $ignore_object_setting = false;
 
-
-    /**
-     * @return string
-     */
     public function getUsageId(): string
     {
         return $this->usage_id ?? '';
     }
 
-
     /**
      * @param string $usage_id
      */
-    public function setUsageId($usage_id)
+    public function setUsageId($usage_id): void
     {
         $this->usage_id = $usage_id;
     }
 
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title ?? '';
     }
 
-
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -259,11 +247,10 @@ class PublicationUsage extends ActiveRecord
         return $this->description ?? '';
     }
 
-
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -293,15 +280,13 @@ class PublicationUsage extends ActiveRecord
         return $this->channel ?? '';
     }
 
-
     /**
      * @param string $channel
      */
-    public function setChannel($channel)
+    public function setChannel($channel): void
     {
         $this->channel = $channel;
     }
-
 
     /**
      * @return boolean
@@ -311,98 +296,63 @@ class PublicationUsage extends ActiveRecord
         return $this->status;
     }
 
-
     /**
      * @param boolean $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllowMultiple(): bool
     {
         return (bool) $this->allow_multiple;
     }
 
-    /**
-     * @param bool $allow_multiple
-     */
-    public function setAllowMultiple(bool $allow_multiple)
+    public function setAllowMultiple(bool $allow_multiple): void
     {
         $this->allow_multiple = $allow_multiple;
     }
 
-    /**
-     * @return string
-     */
     public function getFlavor(): string
     {
         return $this->flavor ?? '';
     }
 
-
-    /**
-     * @param string $flavor
-     */
-    public function setFlavor(string $flavor)
+    public function setFlavor(string $flavor): void
     {
         $this->flavor = $flavor;
     }
 
-
-    /**
-     * @return string
-     */
     public function getSearchKey(): string
     {
         return $this->search_key ?? '';
     }
 
-
-    /**
-     * @param string $search_key
-     */
-    public function setSearchKey(string $search_key)
+    public function setSearchKey(string $search_key): void
     {
         $this->search_key = $search_key;
     }
 
-
-    /**
-     * @return string
-     */
     public function getTag(): string
     {
         return $this->tag ?? '';
     }
 
-
-    /**
-     * @param string $tag
-     */
-    public function setTag(string $tag)
+    public function setTag(string $tag): void
     {
         $this->tag = $tag;
     }
 
-
-    /**
-     * @return int
-     */
     public function getMdType(): int
     {
         return (int) $this->md_type;
     }
 
-
     /**
      * @param int $md_type
      */
-    public function setMdType($md_type)
+    public function setMdType($md_type): void
     {
         $this->md_type = $md_type;
     }

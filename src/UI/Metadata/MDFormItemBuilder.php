@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\UI\Metadata;
 
-use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use ILIAS\DI\Container;
@@ -87,8 +86,11 @@ class MDFormItemBuilder
 
     public function create_section(bool $as_admin): Input
     {
-        return $this->ui_factory->input()->field()->section($this->create_items($as_admin), $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->transformation());
+        return $this->ui_factory->input()->field()->section(
+            $this->create_items($as_admin),
+            $this->plugin->txt('metadata')
+        )
+                                ->withAdditionalTransformation($this->transformation());
     }
 
     /**
@@ -99,7 +101,7 @@ class MDFormItemBuilder
     {
         $form_elements = [];
         $MDFieldConfigARS = $this->md_conf_repository->getAllEditable($as_admin);
-        array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements) {
+        array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements): void {
             // TODO: visible for permission!
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField(
@@ -115,29 +117,35 @@ class MDFormItemBuilder
         $form_elements = [];
         $stored_field_configurations = $this->md_conf_repository->getAll($as_admin);
 
-        array_walk($stored_field_configurations, function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata) {
-            $key = $this->prefixPostVar($md_field_config->getFieldId());
+        array_walk(
+            $stored_field_configurations,
+            function (MDFieldConfigAR $md_field_config) use (&$form_elements, $existing_metadata): void {
+                $key = $this->prefixPostVar($md_field_config->getFieldId());
 
-            $form_elements[$key] = $this->buildFormElementForMDField(
-                $md_field_config,
-                $existing_metadata->getField($md_field_config->getFieldId())->getValue()
-            );
-        });
+                $form_elements[$key] = $this->buildFormElementForMDField(
+                    $md_field_config,
+                    $existing_metadata->getField($md_field_config->getFieldId())->getValue()
+                );
+            }
+        );
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->transformation());
+                                ->withAdditionalTransformation($this->transformation());
     }
 
     public function schedule_section(bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAllEditable($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
-            // start date is part of scheduling and location has a special input field
-            return !in_array(
-                $fieldConfigAR->getFieldId(),
-                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
-            );
-        });
-        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements) {
+        $MDFieldConfigARS = array_filter(
+            $this->md_conf_repository->getAllEditable($as_admin),
+            function (MDFieldConfigEventAR $fieldConfigAR): bool {
+                // start date is part of scheduling and location has a special input field
+                return !in_array(
+                    $fieldConfigAR->getFieldId(),
+                    [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
+                );
+            }
+        );
+        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements): void {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField(
                 $md_field_config,
@@ -145,28 +153,34 @@ class MDFormItemBuilder
             );
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->transformation());
+                                ->withAdditionalTransformation($this->transformation());
     }
 
     public function update_scheduled_section(Metadata $existing_metadata, bool $as_admin): Input
     {
         $form_elements = [];
-        $MDFieldConfigARS = array_filter($this->md_conf_repository->getAll($as_admin), function (MDFieldConfigEventAR $fieldConfigAR) {
-            // start date is part of scheduling and location has a special input field
-            return !in_array(
-                $fieldConfigAR->getFieldId(),
-                [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
-            );
-        });
-        array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata) {
-            $key = $this->prefixPostVar($md_field_config->getFieldId());
-            $form_elements[$key] = $this->buildFormElementForMDField(
-                $md_field_config,
-                $existing_metadata->getField($md_field_config->getFieldId())->getValue()
-            );
-        });
+        $MDFieldConfigARS = array_filter(
+            $this->md_conf_repository->getAll($as_admin),
+            function (MDFieldConfigEventAR $fieldConfigAR): bool {
+                // start date is part of scheduling and location has a special input field
+                return !in_array(
+                    $fieldConfigAR->getFieldId(),
+                    [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
+                );
+            }
+        );
+        array_walk(
+            $MDFieldConfigARS,
+            function (MDFieldConfigEventAR $md_field_config) use (&$form_elements, $existing_metadata): void {
+                $key = $this->prefixPostVar($md_field_config->getFieldId());
+                $form_elements[$key] = $this->buildFormElementForMDField(
+                    $md_field_config,
+                    $existing_metadata->getField($md_field_config->getFieldId())->getValue()
+                );
+            }
+        );
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
-            ->withAdditionalTransformation($this->transformation());
+                                ->withAdditionalTransformation($this->transformation());
     }
 
     /**
@@ -177,13 +191,21 @@ class MDFormItemBuilder
         $md_definition = $this->md_catalogue->getFieldById($fieldConfigAR->getFieldId());
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_TEXT:
-                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
+                $field = $this->ui_factory->input()->field()->text(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                );
                 break;
             case MDDataType::TYPE_TEXT_ARRAY:
-                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
-                    ->withAdditionalTransformation($this->refinery_factory->custom()->transformation(function (string $value) {
-                        return explode(',', $value);
-                    }));
+                $field = $this->ui_factory->input()->field()->text(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                )
+                                          ->withAdditionalTransformation(
+                                              $this->refinery_factory->custom()->transformation(
+                                                  function (string $value): array {
+                                                      return explode(',', $value);
+                                                  }
+                                              )
+                                          );
                 break;
             case MDDataType::TYPE_TEXT_SELECTION:
                 $field = $this->ui_factory->input()->field()->select(
@@ -193,17 +215,28 @@ class MDFormItemBuilder
 
                 break;
             case MDDataType::TYPE_TEXT_LONG:
-                $field = $this->ui_factory->input()->field()->textarea($fieldConfigAR->getTitle($this->dic->language()->getLangKey()));
+                $field = $this->ui_factory->input()->field()->textarea(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                );
                 break;
             case MDDataType::TYPE_TIME:
-                $field = $this->ui_factory->input()->field()->text($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))
-                    ->withByline($this->plugin->txt('byline_timeformat'))
-                    ->withAdditionalTransformation($this->refinery_factory->custom()->constraint(function ($vs) {
-                        return empty($vs) || preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/", $vs);
-                    }, $this->plugin->txt('msg_invalid_time_format')));
+                $field = $this->ui_factory->input()->field()->text(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                )
+                                          ->withByline($this->plugin->txt('byline_timeformat'))
+                                          ->withAdditionalTransformation(
+                                              $this->refinery_factory->custom()->constraint(function ($vs): bool {
+                                                  return empty($vs) || preg_match(
+                                                      "/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/",
+                                                      $vs
+                                                  );
+                                              }, $this->plugin->txt('msg_invalid_time_format'))
+                                          );
                 break;
             case MDDataType::TYPE_DATETIME:
-                $field = $this->ui_factory->input()->field()->dateTime($fieldConfigAR->getTitle($this->dic->language()->getLangKey()))->withUseTime(true);
+                $field = $this->ui_factory->input()->field()->dateTime(
+                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                )->withUseTime(true);
                 break;
             default:
                 throw new xoctException(
@@ -217,17 +250,18 @@ class MDFormItemBuilder
         return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
 
-
     private function formatValue($value, MDFieldDefinition $md_definition, MDFieldConfigAR $fieldConfigAR)
     {
         switch ($md_definition->getType()->getTitle()) {
             case MDDataType::TYPE_DATETIME:
                 /** @var $value DateTimeImmutable */
-                return $value instanceof DateTimeImmutable ? $value->setTimezone(new DateTimeZone(ilTimeZone::_getDefaultTimeZone()))->format('Y-m-d H:i:s') : $value;
+                return $value instanceof DateTimeImmutable ? $value->setTimezone(
+                    new DateTimeZone(ilTimeZone::_getDefaultTimeZone())
+                )->format('Y-m-d H:i:s') : $value;
             case MDDataType::TYPE_TEXT_ARRAY:
                 return is_array($value) ? implode(',', $value) : $value;
             case MDDataType::TYPE_TEXT_SELECTION:
-                if (!in_array($value, array_keys($fieldConfigAR->getValues()))) {
+                if (!array_key_exists($value, $fieldConfigAR->getValues())) {
                     return null;
                 }
                 return $value;

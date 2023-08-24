@@ -20,7 +20,9 @@ class SchedulingParser
         $data = $form_data['scheduling'];
         $type = $data[0];
         $scheduling_data = $data[1];
-        $channel =  PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL);
+        $channel = PluginConfig::getConfig(
+            PluginConfig::F_SCHEDULE_CHANNEL
+        )[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL);
         switch ($type) {
             case 'repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date'] . ' ' . $scheduling_data['start_time']);
@@ -37,7 +39,12 @@ class SchedulingParser
             case 'no_repeat':
                 $start = new DateTimeImmutable($scheduling_data['start_date_time']);
                 $end = new DateTimeImmutable($scheduling_data['end_date_time']);
-                return new Scheduling($form_data[MDFieldDefinition::F_LOCATION], $start->setTimezone(new DateTimeZone('GMT')), $end->setTimezone(new DateTimeZone('GMT')), $channel);
+                return new Scheduling(
+                    $form_data[MDFieldDefinition::F_LOCATION],
+                    $start->setTimezone(new DateTimeZone('GMT')),
+                    $end->setTimezone(new DateTimeZone('GMT')),
+                    $channel
+                );
         }
         throw new xoctException(xoctException::INTERNAL_ERROR, $type . ' is not a valid scheduling type');
     }
@@ -49,7 +56,9 @@ class SchedulingParser
             $form_data[MDFieldDefinition::F_LOCATION],
             $form_data['start_date_time']->setTimezone(new DateTimeZone('GMT')),
             $form_data['end_date_time']->setTimezone(new DateTimeZone('GMT')),
-            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)
+            PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(
+                PluginConfig::F_SCHEDULE_CHANNEL
+            )
         );
     }
 

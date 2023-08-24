@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once('./include/inc.ilias_version.php');
+
 /**
  * Class xoct
  *
@@ -56,10 +57,6 @@ class xoct
 
     /**
      * ilComponent's method doesn't work with ILIAS >6 yet because versions need to be of the format x.y.z
-     *
-     * @param string $v1
-     * @param string $v2
-     * @return bool
      */
     protected static function isVersionGreaterString(string $v1, string $v2): bool
     {
@@ -74,15 +71,12 @@ class xoct
         return self::getILIASVersion() >= self::ILIAS_54;
     }
 
-    /**
-     * @return bool
-     */
     public static function isIlias6(): bool
     {
         return self::getILIASVersion() >= self::ILIAS_6;
     }
 
-    public static function isApiVersionGreaterThan($api_version)
+    public static function isApiVersionGreaterThan($api_version): bool
     {
         return version_compare(PluginConfig::getConfig(PluginConfig::F_API_VERSION), $api_version, '>=');
     }
@@ -98,7 +92,7 @@ class xoct
     /**
      *
      */
-    public static function initILIAS()
+    public static function initILIAS(): void
     {
         chdir(self::getRootPath());
         require_once('./Services/Context/classes/class.ilContext.php');
@@ -112,10 +106,7 @@ class xoct
         require_once('./include/inc.header.php');
     }
 
-    /**
-     * @return string
-     */
-    public static function getRootPath()
+    public static function getRootPath(): string
     {
         //		$override_file = dirname(__FILE__) . '/Configuration/root';
         //		if (is_file($override_file)) {
@@ -126,9 +117,8 @@ class xoct
         //		}
 
         $path = realpath(dirname(__FILE__) . '/../../../../../../../..');
-        $path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        return $path;
+        return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     public static function isIlias7(): bool
