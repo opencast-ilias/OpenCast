@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 
@@ -11,9 +10,6 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
  */
 class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const F_PARENT_USAGE_ID = 'parent_usage_id';
     public const F_TITLE = 'title';
     public const F_DESCRIPTION = 'description';
@@ -50,12 +46,14 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     public function __construct($parent_gui, $xoctPublicationSubUsage, $is_new = true)
     {
         global $DIC;
-        $DIC->ui()->mainTemplate()->addJavaScript(ilOpenCastPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js');
+        $DIC->ui()->mainTemplate()->addJavaScript(
+            ilOpenCastPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js'
+        );
         parent::__construct();
         $this->object = $xoctPublicationSubUsage;
         $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
-        self::dic()->ctrl()->saveParameter($parent_gui, 'id');
+        $this->ctrl->saveParameter($parent_gui, 'id');
         $this->is_new = $is_new;
         $this->initForm();
     }
@@ -67,7 +65,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     protected function initForm()
     {
         $this->setTarget('_top');
-        $this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
+        $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
         $te = new ilTextInputGUI($this->parent_gui->txt(self::F_PARENT_USAGE_ID), self::F_PARENT_USAGE_ID);
@@ -107,8 +105,12 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         $te = new ilSelectInputGUI($this->parent_gui->txt(self::F_MD_TYPE), self::F_MD_TYPE);
         $te->setRequired(true);
         $te->setOptions([
-            PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_PUBLICATION_ITSELF),
-            PublicationUsage::MD_TYPE_ATTACHMENT         => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT),
+            PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt(
+                                                                'md_type_' . PublicationUsage::MD_TYPE_PUBLICATION_ITSELF
+                                                            ),
+            PublicationUsage::MD_TYPE_ATTACHMENT         => $this->parent_gui->txt(
+                                                                'md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT
+                                                            ),
             PublicationUsage::MD_TYPE_MEDIA              => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
         ]);
         $this->addItem($te);
@@ -135,11 +137,15 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         $te->setInfo($this->parent_gui->txt(self::F_MEDIATYPE . '_info'));
         $this->addItem($te);
 
-        if (in_array($this->object->getParentUsageId(), [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK])) {
+        if (in_array($this->object->getParentUsageId(),
+            [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK])) {
             $allow_multiple = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_ALLOW_MULTIPLE), self::F_ALLOW_MULTIPLE);
             $allow_multiple->setInfo($this->parent_gui->txt(self::F_ALLOW_MULTIPLE . '_info'));
             //F_IGNORE_OBJECT_SETTINGS
-            $ignore_object_setting = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS), self::F_IGNORE_OBJECT_SETTINGS);
+            $ignore_object_setting = new ilCheckboxInputGUI(
+                                        $this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS),
+                                        self::F_IGNORE_OBJECT_SETTINGS
+                                    );
             $ignore_object_setting->setInfo($this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS . '_info'));
         } else {
             $allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
@@ -231,10 +237,16 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     {
         if ($this->is_new) {
             $this->setTitle($this->parent_gui->txt('create_sub'));
-            $this->addCommandButton(xoctPublicationUsageGUI::CMD_CREATE_SUB, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CREATE));
+            $this->addCommandButton(
+                xoctPublicationUsageGUI::CMD_CREATE_SUB,
+                $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CREATE)
+            );
         } else {
             $this->setTitle($this->parent_gui->txt('edit_sub'));
-            $this->addCommandButton(xoctPublicationUsageGUI::CMD_UPDATE_SUB, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_UPDATE));
+            $this->addCommandButton(
+                xoctPublicationUsageGUI::CMD_UPDATE_SUB,
+                $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_UPDATE)
+            );
         }
 
         $this->addCommandButton(xoctPublicationUsageGUI::CMD_CANCEL, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CANCEL));

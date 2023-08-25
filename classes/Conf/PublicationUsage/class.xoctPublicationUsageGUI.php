@@ -71,7 +71,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function index()
     {
         $xoctPublicationTabsTableGUI = $this->initTabTableGUI($this->pub_subtab_active);
-        $this->main_tpl->setContent($xoctPublicationUsageTableGUI->getHTML());
+        $this->main_tpl->setContent($xoctPublicationTabsTableGUI->getHTML());
     }
 
     /**
@@ -94,7 +94,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_USAGE) {
             if (count($this->repository->getMissingUsageIds()) > 0) {
                 $b = ilLinkButton::getInstance();
-                $b->setCaption($this->plugin->getPluginObject()->getPrefix() . '_publication_usage_add_new');
+                $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new');
                 $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID));
                 $this->toolbar->addButtonInstance($b);
             }
@@ -102,14 +102,14 @@ class xoctPublicationUsageGUI extends xoctGUI
         } else if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_SUB_USAGE) {
             if (count($this->repository->getSubAllowedUsageIds()) > 0) {
                 $b = ilLinkButton::getInstance();
-                $b->setCaption($this->plugin->getPluginObject()->getPrefix() . '_publication_usage_add_new_sub');
+                $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new_sub');
                 $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID_SUB));
                 $this->toolbar->addButtonInstance($b);
             }
             return new xoctPublicationSubUsageTableGUI($this, self::CMD_STANDARD);
         } else if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_GROUPS) {
             $b = ilLinkButton::getInstance();
-            $b->setCaption($this->plugin->getPluginObject()->getPrefix() . '_publication_usage_add_new_group');
+            $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new_group');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD_NEW_GROUP));
             $this->toolbar->addButtonInstance($b);
             return new xoctPublicationGroupTableGUI($this, self::CMD_STANDARD);
@@ -271,7 +271,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         $channel = $_POST[xoctPublicationUsageFormGUI::F_CHANNEL];
         if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds())) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_sub_not_allowed'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_allowed'), true);
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID_SUB);
         }
         $xoctPublicationSubUsage = new PublicationSubUsage();
@@ -292,7 +292,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, new PublicationSubUsage());
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->translate('publication_usage_msg_success_sub'), true);
+            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
@@ -304,7 +304,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function editSub()
     {
         if (!PublicationSubUsage::find($_GET['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_sub_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, PublicationSubUsage::find($_GET['id']), false);
@@ -320,13 +320,17 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         $sub_usage_id = $_GET['id'];
         if (!PublicationSubUsage::find($sub_usage_id)) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_sub_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, PublicationSubUsage::find($sub_usage_id), false);
+        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI(
+                                                $this,
+                                                PublicationSubUsage::find($sub_usage_id),
+                                                false
+                                            );
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->getPluginObject()->txt('publication_usage_msg_success_sub'), true);
+            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
@@ -335,7 +339,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function confirmDeleteSub()
     {
         if (!PublicationSubUsage::find($_GET['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_sub_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsage = PublicationSubUsage::find($_GET['id']);
@@ -352,7 +356,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function deleteSub()
     {
         if (!PublicationSubUsage::find($_POST['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_sub_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
@@ -379,7 +383,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, new PublicationUsageGroup());
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->translate('publication_usage_msg_success'), true);
+            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
@@ -388,7 +392,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function editGroup()
     {
         if (!PublicationUsageGroup::find($_GET['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_group_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($_GET['id']), false);
@@ -401,7 +405,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($_GET['id']), false);
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->getPluginObject()->txt('publication_usage_msg_success'), true);
+            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
@@ -410,7 +414,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function confirmDeleteGroup()
     {
         if (!PublicationUsageGroup::find($_GET['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_group_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageGroup = PublicationUsageGroup::find($_GET['id']);
@@ -427,7 +431,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function deleteGroup()
     {
         if (!PublicationUsageGroup::find($_POST['id'])) {
-            ilUtil::sendFailure($this->plugin->translate('publication_usage_group_not_found'), true);
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
 

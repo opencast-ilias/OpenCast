@@ -136,12 +136,12 @@ class xoctEventRenderer
                 }
                 $display_name = PublicationUsageGroupRepository::getLocalizedDisplayName($group_data['display_name']);
                 if (empty($display_name)) {
-                    $display_name = self::plugin()->translate('default', PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
+                    $display_name = $this->translate('default', PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
                 }
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
                 )->withLabel($display_name);
-                $value .= self::dic()->ui()->renderer()->renderAsync($dropdown);
+                $value .= $this->renderer->renderAsync($dropdown);
             } else {
                 $content = reset($dropdown_contents);
                 $this->insert($tpl, $content['variable'], $content['html'], $content['block_title']);
@@ -324,7 +324,7 @@ class xoctEventRenderer
                 }
 
                 if (empty($display_name)) {
-                    $display_name = self::plugin()->translate('download', self::LANG_MODULE);
+                    $display_name = $this->translate('download', self::LANG_MODULE);
                 }
 
                 $download_html = $this->getDownloadLinkHTML($download_pub_usage, $download_dtos, $display_name, $button_type);
@@ -334,7 +334,7 @@ class xoctEventRenderer
                         $this->dropdowns[$group_id][] = [
                             'variable' => $variable,
                             'display_name' => $display_name,
-                            'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD),
+                            'link' => $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD),
                             'html' => $download_html,
                             'block_title' => $block_title,
                         ];
@@ -357,7 +357,11 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function getDownloadLinkHTML($download_publication_usage, $download_dtos, $display_name, $button_type = 'btn_info'): string
+    public function getDownloadLinkHTML(
+        $download_publication_usage,
+        $download_dtos, $display_name,
+        $button_type = 'btn_info'
+    ): string
     {
         $html = '';
         $ignore_object_settings = $download_publication_usage->ignoreObjectSettings();
@@ -383,7 +387,7 @@ class xoctEventRenderer
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
                 )->withLabel($display_name);
-                $html = self::dic()->ui()->renderer()->renderAsync($dropdown);
+                $html = $this->renderer->renderAsync($dropdown);
             } else {
                 $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
                 $link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
@@ -419,7 +423,7 @@ class xoctEventRenderer
                 $this->dropdowns[$group_id][] = [
                     'variable' => $variable,
                     'display_name' => $display_name,
-                    'link' => self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE),
+                    'link' => $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE),
                     'block_title' => $block_title,
                 ];
                 return;
@@ -440,7 +444,7 @@ class xoctEventRenderer
     {
         $display_name = (new PublicationUsageRepository())->getDisplayName(PublicationUsage::USAGE_ANNOTATE);
         if (empty($display_name)) {
-            $display_name = self::plugin()->translate('annotate', self::LANG_MODULE);
+            $display_name = $this->translate('annotate', self::LANG_MODULE);
         }
         $html = '';
         if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED)
@@ -780,7 +784,8 @@ class xoctEventRenderer
                 $this->plugin->txt('event_republish'),
                 self::$modals->getRepublishModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click', function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
+                return "$({$id}).on('click'," .
+                        "function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
             });
         }
 
@@ -832,7 +837,9 @@ class xoctEventRenderer
                 $this->plugin->txt('event_report_quality_problem'),
                 self::$modals->getReportQualityModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click', function(event){ $('input#xoct_report_quality_event_id').val('{$this->event->getIdentifier()}');$('#xoct_report_quality_modal textarea#message').focus(); });";
+                return "$({$id}).on('click', function(event){ " .
+                    "$('input#xoct_report_quality_event_id').val('{$this->event->getIdentifier()}');" .
+                    "$('#xoct_report_quality_modal textarea#message').focus(); });";
             });
         }
 

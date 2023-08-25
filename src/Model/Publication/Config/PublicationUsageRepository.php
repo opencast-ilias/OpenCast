@@ -2,8 +2,8 @@
 
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
-use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+
 /**
  * Class PublicationUsageRepository
  *
@@ -13,6 +13,7 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class PublicationUsageRepository
 {
+    use TranslatorTrait;
     public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
@@ -105,7 +106,7 @@ class PublicationUsageRepository
         $usage = $this->getUsage($usage);
         if (!empty($usage->getDisplayName())) {
             $display_name = $usage->getDisplayName();
-            $translated_display_name = self::plugin()->translate(strtolower($display_name), PublicationUsage::DISPLAY_NAME_LANG_MODULE);
+            $translated_display_name = $this->translate(strtolower($display_name), PublicationUsage::DISPLAY_NAME_LANG_MODULE);
             if (strpos($translated_display_name, 'MISSING') === false) {
                 $display_name = $translated_display_name;
             }

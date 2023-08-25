@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 
 /**
@@ -10,9 +9,6 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
  */
 class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const F_NAME = 'name';
     public const F_DISPLAY_NAME = 'display_name';
     public const F_DESCRIPTION = 'description';
@@ -44,7 +40,7 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         $this->object = $xoctPublicationUsageGroup;
         $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
-        self::dic()->ctrl()->saveParameter($parent_gui, 'id');
+        $this->ctrl->saveParameter($parent_gui, 'id');
         $this->is_new = $is_new;
         $this->initForm();
     }
@@ -56,7 +52,7 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
     protected function initForm()
     {
         $this->setTarget('_top');
-        $this->setFormAction(self::dic()->ctrl()->getFormAction($this->parent_gui));
+        $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
         $te = new ilTextInputGUI($this->txt(self::F_NAME), self::F_NAME);

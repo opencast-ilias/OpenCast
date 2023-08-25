@@ -294,10 +294,16 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsageGroup->create();
             $new_id = $xoctPublicationUsageGroup->getId();
 
-            // Mapping old id with new id, because we flushed the table.
+            // Mapping old id with new id in PublicationUsage, because we flushed the table.
             foreach (PublicationUsage::where(['group_id' => intval($old_id)])->get() as $pu) {
                 $pu->setGroupId($new_id);
                 $pu->update();
+            }
+
+            // Mapping old id with new id in PublicationSubUsage, because we flushed the table.
+            foreach (PublicationSubUsage::where(['group_id' => intval($old_id)])->get() as $psu) {
+                $psu->setGroupId($new_id);
+                $psu->update();
             }
         }
     }

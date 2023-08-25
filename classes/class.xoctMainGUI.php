@@ -203,19 +203,19 @@ class xoctMainGUI extends xoctGUI
         $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_USAGE);
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_USAGE,
-            $this->plugin->translate('subtab_' . self::SUBTAB_PUBLICATION_USAGE),
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_USAGE),
             $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
         );
         $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_SUB_USAGE);
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_SUB_USAGE,
-            $this->plugin->translate('subtab_' . self::SUBTAB_PUBLICATION_SUB_USAGE),
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_SUB_USAGE),
             $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
         );
         $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_GROUPS);
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_GROUPS,
-            $this->plugin->translate('subtab_' . self::SUBTAB_PUBLICATION_GROUPS),
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_GROUPS),
             $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
         );
         $this->ctrl->clearParametersByClass(xoctPublicationUsageGUI::class);

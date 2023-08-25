@@ -2,8 +2,8 @@
 
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
-use ilOpenCastPlugin;
-use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+
 /**
  * Class PublicationUsageGroupRepository
  *
@@ -11,9 +11,7 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class PublicationUsageGroupRepository
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
+    use TranslatorTrait;
     /**
      * Returns the display name of the group but by looking for a record also in localization.
      * @param int $group_id
@@ -36,7 +34,7 @@ class PublicationUsageGroupRepository
      */
     public static function getLocalizedDisplayName($group_display_name): string
     {
-        $localized_display_name = self::plugin()->translate(strtolower($group_display_name), PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
+        $localized_display_name = self::translate(strtolower($group_display_name), PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
         if (strpos($localized_display_name, 'MISSING') === false) {
             $group_display_name = $localized_display_name;
         }

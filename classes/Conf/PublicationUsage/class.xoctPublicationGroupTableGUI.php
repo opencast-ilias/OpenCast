@@ -1,6 +1,6 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupRepository;
@@ -12,14 +12,19 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupReposito
  */
 class xoctPublicationGroupTableGUI extends ilTable2GUI
 {
-    use DICTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const TBL_ID = 'tbl_xoct_pub_g';
     /**
      * @var array
      */
     protected $filter = [];
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
 
 
     /**
@@ -28,15 +33,20 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
      */
     public function __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd)
     {
+        parent::__construct($a_parent_obj, $a_parent_cmd);
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
         $this->setId(self::TBL_ID);
         $this->setPrefix(self::TBL_ID);
         $this->setFormName(self::TBL_ID);
-        self::dic()->ctrl()->saveParameter($a_parent_obj, $this->getNavParameter());
-        parent::__construct($a_parent_obj, $a_parent_cmd);
+        $this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
         $this->parent_obj = $a_parent_obj;
         $this->setTitle($this->parent_obj->txt('table_title_usage_group'));
-        $this->setRowTemplate('tpl.publication_group.html', 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast');
-        $this->setFormAction(self::dic()->ctrl()->getFormAction($a_parent_obj));
+        $this->setRowTemplate(
+            'tpl.publication_group.html',
+            'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+        );
+        $this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
         $this->initColumns();
         $this->parseData();
     }
@@ -67,7 +77,7 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->addColumn($this->parent_obj->txt('group_display_name'));
         $this->addColumn($this->parent_obj->txt('group_description'));
 
-        $this->addColumn(self::plugin()->getPluginObject()->txt('common_actions'), '', '150px');
+        $this->addColumn($this->plugin->txt('common_actions'), '', '150px');
     }
 
 
@@ -79,13 +89,21 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
     protected function addActionMenu(PublicationUsageGroup $xoctPublicationUsageGroup)
     {
         $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setListTitle(self::plugin()->getPluginObject()->txt('common_actions'));
+        $current_selection_list->setListTitle($this->plugin->txt('common_actions'));
         $current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsageGroup->getId());
         $current_selection_list->setUseImages(false);
 
-        self::dic()->ctrl()->setParameter($this->parent_obj, 'id', $xoctPublicationUsageGroup->getId());
-        $current_selection_list->addItem($this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT), xoctPublicationUsageGUI::CMD_EDIT_GROUP, self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_EDIT_GROUP));
-        $current_selection_list->addItem($this->parent_obj->txt(xoctPublicationUsageGUI::CMD_DELETE), xoctPublicationUsageGUI::CMD_DELETE_GROUP, self::dic()->ctrl()->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_CONFIRM_DELETE_GROUP));
+        $this->ctrl->setParameter($this->parent_obj, 'id', $xoctPublicationUsageGroup->getId());
+        $current_selection_list->addItem(
+            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT),
+            xoctPublicationUsageGUI::CMD_EDIT_GROUP,
+            $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_EDIT_GROUP)
+        );
+        $current_selection_list->addItem(
+            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_DELETE),
+            xoctPublicationUsageGUI::CMD_DELETE_GROUP,
+            $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_CONFIRM_DELETE_GROUP)
+        );
 
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
