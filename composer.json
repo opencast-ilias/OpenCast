@@ -1,6 +1,6 @@
 {
-  "name": "studer-raimann.ch/opencast",
-  "description": "ILIAS 5.x Opencast plugin",
+  "name": "opencast-ilias/opencast",
+  "description": "ILIAS Opencast Plugin",
   "type": "project",
   "keywords": [
     "ILIAS",
@@ -9,20 +9,15 @@
   ],
   "license": "GPL-3.0+",
   "authors": [
-    {
-      "name": "Theodor Truffer",
-      "email": "tt@studer-raimann.ch",
-      "homepage": "https://studer-raimann.ch",
-      "role": "Project Manager, Software Engineer"
-    }
+
   ],
   "support": {
-    "issues": "https://plugins.studer-raimann.ch/goto.php?target=uihk_srsu_PLOPENCAST"
+    "issues": "https://github.com/opencast-ilias/OpenCast/issues"
   },
   "minimum-stability": "beta",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.3",
     "elan-ev/opencast-api": "1.4",
     "srag/custominputguis": ">=0.1.0",
     "srag/datatable": ">=0.1.0",
