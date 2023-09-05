@@ -35,12 +35,11 @@ class UploadStorageService
     }
 
     /**
-     * @param UploadResult $uploadResult
      * @return string identifier
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid();
+        $identifier = uniqid('');
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
         return $identifier;
     }
@@ -108,8 +107,6 @@ class UploadStorageService
     }
 
     /**
-     * @param string $identifier
-     * @param int    $fileSizeUnit
      * @return array{path: string, size: DataSize, name: string, mimeType: string}
      * @throws FileNotFoundException
      * @throws IOException

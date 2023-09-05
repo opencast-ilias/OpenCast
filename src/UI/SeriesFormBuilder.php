@@ -8,7 +8,6 @@ use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\Series;
@@ -104,26 +103,24 @@ class SeriesFormBuilder
     }
 
     /**
-     * @return array
      * @throws xoctException
      */
     private function getSeriesSelectOptions(): array
     {
         $existing_series = [];
         $xoctUser = xoctUser::getInstance($this->dic->user());
-        if (is_null($xoctUser->getUserRoleName()) !== true) {
-            $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
-            foreach ($user_series as $series) {
-                $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue() . ' (...' . substr(
-                    $series->getIdentifier(),
-                    -4,
-                    4
-                ) . ')';
-            }
-            array_multisort($existing_series);
-            return $existing_series;
+        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
+        foreach ($user_series as $series) {
+            $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(
+                MDFieldDefinition::F_TITLE
+            )->getValue() . ' (...' . substr(
+                $series->getIdentifier(),
+                -4,
+                4
+            ) . ')';
         }
-        return [];
+        array_multisort($existing_series);
+        return $existing_series;
     }
 
     private function txt(string $lang_var): string
@@ -132,8 +129,6 @@ class SeriesFormBuilder
     }
 
     /**
-     * @param bool $is_admin
-     * @return Input
      * @throws xoctException
      */
     private function buildSeriesSelectionSection(bool $is_admin): Input
@@ -155,17 +150,21 @@ class SeriesFormBuilder
             [self::F_EXISTING_IDENTIFIER => $series_type],
             $this->plugin->txt(self::F_CHANNEL_TYPE)
         )
-                                ->withAdditionalTransformation($this->refinery->custom()->transformation(function (
-                                    $vs
-                                ) {
-                                    if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
-                                        $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
-                                    } else {
-                                        $vs[self::F_CHANNEL_ID] = false;
-                                        $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries($vs[self::F_EXISTING_IDENTIFIER][1]);
-                                    }
-                                    unset($vs[self::F_EXISTING_IDENTIFIER]);
-                                    return $vs;
-                                }));
+                                ->withAdditionalTransformation(
+                                    $this->refinery->custom()->transformation(function (
+                                        $vs
+                                    ) {
+                                        if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
+                                            $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
+                                        } else {
+                                            $vs[self::F_CHANNEL_ID] = false;
+                                            $vs['metadata'] = $this->formItemBuilder->parser()->parseFormDataSeries(
+                                                $vs[self::F_EXISTING_IDENTIFIER][1]
+                                            );
+                                        }
+                                        unset($vs[self::F_EXISTING_IDENTIFIER]);
+                                        return $vs;
+                                    })
+                                );
     }
 }

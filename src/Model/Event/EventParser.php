@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Model\Event;
 
 use Opis\Closure\SerializableClosure;
-use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\ACL\ACLParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
@@ -42,7 +41,7 @@ class EventParser
 
         if (isset($data->metadata)) {
             $event->setMetadata($this->MDParser->getMetadataFromResponse($data->metadata));
-        }else {
+        } else {
             $event->setMetadata($this->MDParser->getMetadataFromData($data));
         }
 

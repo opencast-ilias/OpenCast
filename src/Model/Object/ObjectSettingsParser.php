@@ -16,8 +16,10 @@ class ObjectSettingsParser
         $objectSettings->setUseAnnotations($data[ObjectSettingsFormItemBuilder::F_USE_ANNOTATIONS] ?? false);
         $objectSettings->setStreamingOnly($data[ObjectSettingsFormItemBuilder::F_STREAMING_ONLY] ?? false);
         $objectSettings->setPermissionPerClip(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP]));
-        $objectSettings->setPermissionAllowSetOwn(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP])
-            && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN]);
+        $objectSettings->setPermissionAllowSetOwn(
+            is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP])
+            && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN]
+        );
         $objectSettings->setChatActive($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE] ?? false);
 
         return $objectSettings;

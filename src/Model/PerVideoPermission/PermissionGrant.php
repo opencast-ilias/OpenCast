@@ -16,25 +16,18 @@ class PermissionGrant extends ActiveRecord
     public const TABLE_NAME = 'xoct_invitations';
     public const STATUS_ACTIVE = 1;
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var int
@@ -74,7 +67,7 @@ class PermissionGrant extends ActiveRecord
     /**
      * @var xoctUser
      */
-    protected $xoct_user = null;
+    protected $xoct_user;
     /**
      * @var int
      *
@@ -88,10 +81,8 @@ class PermissionGrant extends ActiveRecord
      */
     protected static $series_id_to_groups_map = [];
 
-
     /**
      * @param          $event_identifier
-     * @param xoctUser $xoctUser
      *
      * @return array
      */
@@ -116,12 +107,9 @@ class PermissionGrant extends ActiveRecord
         return $active_invitations;
     }
 
-
     /**
-     * @param Event $xoctEvent
      * @param bool $grant_access_rights
      * @param bool $count
-     *
      * @return mixed
      */
     public static function getActiveInvitationsForEvent(Event $xoctEvent, $grant_access_rights = false, $count = false)
@@ -161,7 +149,6 @@ class PermissionGrant extends ActiveRecord
         return $active_invitations;
     }
 
-
     /**
      * @return int
      */
@@ -170,15 +157,13 @@ class PermissionGrant extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return int
@@ -188,15 +173,13 @@ class PermissionGrant extends ActiveRecord
         return $this->user_id;
     }
 
-
     /**
      * @param int $user_id
      */
-    public function setUserId($user_id)
+    public function setUserId($user_id): void
     {
         $this->user_id = $user_id;
     }
-
 
     /**
      * @return int
@@ -206,15 +189,13 @@ class PermissionGrant extends ActiveRecord
         return $this->owner_id;
     }
 
-
     /**
      * @param int $owner_id
      */
-    public function setOwnerId($owner_id)
+    public function setOwnerId($owner_id): void
     {
         $this->owner_id = $owner_id;
     }
-
 
     /**
      * @return int
@@ -224,15 +205,13 @@ class PermissionGrant extends ActiveRecord
         return $this->status;
     }
 
-
     /**
      * @param int $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
-
 
     /**
      * @return int
@@ -242,33 +221,30 @@ class PermissionGrant extends ActiveRecord
         return $this->event_identifier;
     }
 
-
     /**
      * @param int $event_identifier
      */
-    public function setEventIdentifier($event_identifier)
+    public function setEventIdentifier($event_identifier): void
     {
         $this->event_identifier = $event_identifier;
     }
-
 
     /**
      * @return xoctUser
      */
     public function getXoctUser()
     {
-        if (!$this->xoct_user and $this->getUserId()) {
+        if (!$this->xoct_user && $this->getUserId()) {
             $this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
         }
 
         return $this->xoct_user;
     }
 
-
     /**
      * @param xoctUser $xoct_user
      */
-    public function setXoctUser($xoct_user)
+    public function setXoctUser($xoct_user): void
     {
         $this->xoct_user = $xoct_user;
     }

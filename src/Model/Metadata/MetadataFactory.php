@@ -3,7 +3,6 @@
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
-use srag\Plugins\Opencast\Model\Metadata\Metadata;
 
 class MetadataFactory
 {

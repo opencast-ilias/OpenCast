@@ -1,7 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
-
 /**
  * Class xoctWaiterGUI
  *
@@ -10,7 +8,6 @@ use srag\DIC\OpenCast\DICTrait;
  */
 class xoctWaiterGUI
 {
-    use DICTrait;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -22,58 +19,67 @@ class xoctWaiterGUI
      */
     protected static $init_js = false;
 
-
     /**
      *
      */
-    public static function loadLib()
+    public static function loadLib(): void
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
         if (!self::$init) {
-            self::dic()->ui()->mainTemplate()->addJavaScript('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js');
-            self::dic()->ui()->mainTemplate()->addCss('./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css');
+            $main_tpl->addJavaScript(
+                './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.min.js'
+            );
+            $main_tpl->addCss(
+                './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/waiter.css'
+            );
             self::$init = true;
         }
     }
 
-
     /**
      * @param string $type
      */
-    public static function initJS($type = 'waiter')
+    public static function initJS($type = 'waiter'): void
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
         self::loadLib();
         if (!self::$init_js) {
             $code = 'xoctWaiter.init(\'' . $type . '\');';
-            self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
+            $main_tpl->addOnLoadCode($code);
             self::$init_js = true;
         }
     }
 
-
     /**
      * @param $dom_selector_string
      */
-    public static function addListener($dom_selector_string)
+    public static function addListener($dom_selector_string): void
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
         $code = 'xoctWaiter.addListener("' . $dom_selector_string . '");';
-        self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
+        $main_tpl->addOnLoadCode($code);
     }
-
 
     /**
      * @param $dom_selector_string
      */
-    public static function addLinkOverlay($dom_selector_string)
+    public static function addLinkOverlay($dom_selector_string): void
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
         $code = 'xoctWaiter.addLinkOverlay("' . $dom_selector_string . '");';
-        self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
+        $main_tpl->addOnLoadCode($code);
     }
 
-
-    public static function show()
+    public static function show(): void
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
         self::initJS();
         $code = 'xoctWaiter.show();';
-        self::dic()->ui()->mainTemplate()->addOnLoadCode($code);
+        $main_tpl->addOnLoadCode($code);
     }
 }

@@ -55,7 +55,7 @@ class AcceptedToU extends ActiveRecord
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -65,7 +65,7 @@ class AcceptedToU extends ActiveRecord
         return $this->user_id;
     }
 
-    public function setUserId(int $id)
+    public function setUserId(int $id): void
     {
         $this->user_id = $id;
     }
@@ -75,7 +75,7 @@ class AcceptedToU extends ActiveRecord
         return $this->oc_instance_id;
     }
 
-    public function setOCInstanceId(int $id)
+    public function setOCInstanceId(int $id): void
     {
         $this->oc_instance_id = $id;
     }
@@ -85,17 +85,17 @@ class AcceptedToU extends ActiveRecord
         return $this->tou_accepted;
     }
 
-    public function setAccepted()
+    public function setAccepted(): void
     {
         $this->tou_accepted = true;
     }
 
-    public function resetAccepted()
+    public function resetAccepted(): void
     {
         $this->tou_accepted = false;
     }
 
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -115,7 +115,7 @@ class AcceptedToU extends ActiveRecord
     {
         switch ($field_name) {
             case "tou_accepted":
-                return boolval($field_value);
+                return (bool) $field_value;
             default:
                 return parent::wakeUp($field_name, $field_value);
         }

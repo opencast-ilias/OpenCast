@@ -2,11 +2,10 @@
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctEventTileGUI
@@ -15,11 +14,17 @@ use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
  */
 class xoctEventTileGUI
 {
-    use DICTrait;
-
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const GET_PAGE = 'page';
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
 
     /**
      * @var xoctEventGUI
@@ -54,21 +59,39 @@ class xoctEventTileGUI
      */
     protected $limit;
     /**
-     * @var array
+     * @var \ilLanguage
      */
-    private $data;
+    private $language;
+    /**
+     * @var \ilObjUser
+     */
+    private $user;
+    /**
+     * @var \ilCtrlInterface
+     */
+    private $ctrl;
 
     public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, array $data)
     {
+        global $DIC;
+        $ui = $DIC->ui();
+        $user = $DIC->user();
+        $this->language = $DIC->language();
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
+        $this->user = $DIC->user();
+        $this->ctrl = $DIC->ctrl();
         $this->parent_gui = $parent_gui;
         $this->objectSettings = $objectSettings;
-        $this->factory = self::dic()->ui()->factory();
-        $this->renderer = self::dic()->ui()->renderer();
-        $this->page = (int)filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
-        $this->limit = UserSettingsRepository::getTileLimitForUser(self::dic()->user()->getId(), filter_input(INPUT_GET, 'ref_id'));
-        $this->events = array_values(array_map(function ($item) {
-            return $item['object'];
-        }, $this->sortData($data)));
+        $this->factory = $ui->factory();
+        $this->renderer = $ui->renderer();
+        $this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
+        $this->limit = UserSettingsRepository::getTileLimitForUser($user->getId(), filter_input(INPUT_GET, 'ref_id'));
+        $this->events = array_values(
+            array_map(function ($item) {
+                return $item['object'];
+            }, $this->sortData($data))
+        );
     }
 
     /**
@@ -79,7 +102,7 @@ class xoctEventTileGUI
      */
     public function getHTML()
     {
-        $container_tpl = self::plugin()->template('default/tpl.tile_container.html');
+        $container_tpl = $this->plugin->getTemplate('default/tpl.tile_container.html');
         $container_tpl->setVariable('LIMIT_SELECTOR', $this->getLimitSelectorHTML());
         $container_tpl->setVariable('PAGINATION_TOP', $this->getPaginationHTML());
         $container_tpl->setVariable('PAGINATION_BOTTOM', $this->getPaginationHTML());
@@ -97,11 +120,11 @@ class xoctEventTileGUI
                 "Thumbnail"
             );
 
-            $tile_tpl = self::plugin()->template('default/tpl.event_tile.html');
+            $tile_tpl = $this->plugin->getTemplate('default/tpl.event_tile.html');
             $event_renderer->insertTitle($tile_tpl);
             $event_renderer->insertState($tile_tpl);
 
-            $buttons_tpl = self::plugin()->template('default/tpl.event_buttons.html');
+            $buttons_tpl = $this->plugin->getTemplate('default/tpl.event_buttons.html');
             $event_renderer->insertPlayerLink($buttons_tpl, 'link', 'LINK', 'btn-default');
             if (!$this->objectSettings->getStreamingOnly()) {
                 $event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
@@ -121,9 +144,9 @@ class xoctEventTileGUI
             $sections = [];
 
             $property_list = [];
-            $property_list[self::dic()->language()->txt('date')] = $event_renderer->getStartHTML();
+            $property_list[$this->language->txt('date')] = $event_renderer->getStartHTML();
             if ($this->objectSettings->getPermissionPerClip()) {
-                $property_list[self::dic()->language()->txt('owner')] = $event_renderer->getOwnerHTML();
+                $property_list[$this->language->txt('owner')] = $event_renderer->getOwnerHTML();
             }
             $sections[] = $this->factory->listing()->descriptive($property_list);
 
@@ -136,7 +159,6 @@ class xoctEventTileGUI
         return $container_tpl->get();
     }
 
-
     /**
      * @param Event[] $events
      *
@@ -146,9 +168,17 @@ class xoctEventTileGUI
     {
         $tab_prop = new ilTablePropertiesStorage();
 
-        $direction = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()), self::dic()->user()->getId(), 'direction')
+        $direction = $tab_prop->getProperty(
+            xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
+            $this->user->getId(),
+            'direction'
+        )
             ?? 'asc';
-        $order = $tab_prop->getProperty(xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()), self::dic()->user()->getId(), 'order')
+        $order = $tab_prop->getProperty(
+            xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
+            $this->user->getId(),
+            'order'
+        )
             ?? 'start';
         switch ($order) {
             case 'start_unix':
@@ -159,13 +189,11 @@ class xoctEventTileGUI
                 break;
         }
 
-        $events = ilUtil::sortArray(
+        return ilUtil::sortArray(
             $events,
             $order,
             $direction
         );
-
-        return $events;
     }
 
     /**
@@ -176,20 +204,27 @@ class xoctEventTileGUI
         return $this->has_scheduled_events;
     }
 
-
     /**
      * @return string
      */
     protected function getPaginationHTML()
     {
         $max_count = count($this->events);
-        $pages = ($max_count == 0) ? 1 : (int)ceil($max_count / $this->limit);
+        $pages = ($max_count == 0) ? 1 : (int) ceil($max_count / $this->limit);
         $pagination = $this->factory->viewControl()->pagination()
-            ->withMaxPaginationButtons($pages)
-            ->withTotalEntries($max_count)
-            ->withCurrentPage($this->page)
-            ->withTargetURL(self::dic()->ctrl()->getLinkTarget($this->parent_gui, xoctEventGUI::CMD_STANDARD, '', true), self::GET_PAGE)
-            ->withPageSize($this->limit);
+                                    ->withMaxPaginationButtons($pages)
+                                    ->withTotalEntries($max_count)
+                                    ->withCurrentPage($this->page)
+                                    ->withTargetURL(
+                                        $this->ctrl->getLinkTarget(
+                                            $this->parent_gui,
+                                            xoctEventGUI::CMD_STANDARD,
+                                            '',
+                                            true
+                                        ),
+                                        self::GET_PAGE
+                                    )
+                                    ->withPageSize($this->limit);
 
         return $this->renderer->renderAsync($pagination);
     }
@@ -201,12 +236,15 @@ class xoctEventTileGUI
      */
     protected function getLimitSelectorHTML()
     {
-        $tpl = self::plugin()->template('default/tpl.tile_limit_selector.html');
-        $tpl->setVariable('LIMIT_SELECTOR_FORM_ACTION', self::dic()->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CHANGE_TILE_LIMIT));
-        $select_input = new ilSelectInputGUI(self::plugin()->translate('tiles_per_page'), 'tiles_per_page');
+        $tpl = $this->plugin->getTemplate('default/tpl.tile_limit_selector.html');
+        $tpl->setVariable(
+            'LIMIT_SELECTOR_FORM_ACTION',
+            $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CHANGE_TILE_LIMIT)
+        );
+        $select_input = new ilSelectInputGUI($this->plugin->txt('tiles_per_page'), 'tiles_per_page');
         $select_input->setOptions([4 => 4, 8 => 8, 12 => 12, 16 => 16]);
         $select_input->setValue($this->limit);
-        $tpl->setVariable('LABEL_LIMIT_SELECTOR', self::plugin()->translate('tiles_per_page'));
+        $tpl->setVariable('LABEL_LIMIT_SELECTOR', $this->plugin->txt('tiles_per_page'));
         $tpl->setVariable('LIMIT_SELECTOR', $select_input->getToolbarHTML());
 
         return $tpl->get();

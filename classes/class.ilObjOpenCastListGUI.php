@@ -1,6 +1,5 @@
 <?php
 
-use srag\DIC\OpenCast\DICTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
@@ -20,7 +19,31 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 {
-    use DICTrait;
+    /**
+     * @var bool
+     */
+    public $subscribe_enabled;
+    /**
+     * @var bool
+     */
+    public $payment_enabled;
+    /**
+     * @var bool
+     */
+    public $link_enabled;
+    /**
+     * @var bool
+     */
+    public $delete_enabled;
+    /**
+     * @var bool
+     */
+    public $cut_enabled;
+    /**
+     * @var bool
+     */
+    public $adm_commands_included;
+    public $container_obj;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     /**
@@ -28,28 +51,18 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
      */
     public $plugin;
 
-
-    public function initType()
+    public function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
 
-
-    /**
-     * @return string
-     */
-    public function getGuiClass()
+    public function getGuiClass(): string
     {
         return 'ilObjOpenCastGUI';
     }
 
-
-    /**
-     * @return array
-     */
-    public function initCommands()
+    public function initCommands(): array
     {
-
         // Always set
         $this->timings_enabled = true;
         $this->subscribe_enabled = true;
@@ -64,7 +77,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         $this->cut_enabled = true;
         $this->copy_enabled = true;
 
-        $commands = [
+        return [
             [
                 'permission' => 'read',
                 'cmd' => ilObjOpenCastGUI::CMD_SHOW_CONTENT,
@@ -76,10 +89,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
                 'lang_var' => 'edit'
             ]
         ];
-
-        return $commands;
     }
-
 
     public function insertDeleteCommand()
     {
@@ -87,12 +97,12 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
             return;
         }
 
-        if (is_object($this->getContainerObject()) and
-            $this->getContainerObject() instanceof ilAdministrationCommandHandling) {
+        if (is_object($this->getContainerObject()) && $this->getContainerObject(
+            ) instanceof ilAdministrationCommandHandling) {
             if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-                self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
-                $cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
-                $this->insertCommand($cmd_link, self::dic()->language()->txt("delete"));
+                $this->ctrl->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
+                $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
+                $this->insertCommand($cmd_link, $this->lng->txt("delete"));
                 $this->adm_commands_included = true;
                 return true;
             }
@@ -100,16 +110,16 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
 
         if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-            self::dic()->ctrl()->setParameterByClass(
+            $this->ctrl->setParameterByClass(
                 "ilObjOpenCastGUI",
                 "ref_id",
                 $this->container_obj->object->getRefId()
             );
-            self::dic()->ctrl()->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
-            $cmd_link = self::dic()->ctrl()->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
+            $this->ctrl->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
+            $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
             $this->insertCommand(
                 $cmd_link,
-                self::dic()->language()->txt("delete"),
+                $this->lng->txt("delete"),
                 "",
                 ""
             );
@@ -117,12 +127,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
     }
 
-
-    protected function getObject()
+    protected function getObject(): \ilObjOpenCast
     {
         return new ilObjOpenCast($this->ref_id);
     }
-
 
     /**
      * @param bool $get_exceoptions
@@ -143,7 +151,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
         return $objectSettings;
     }
-
 
     /**
      * Get item properties
@@ -184,16 +191,13 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         return $props;
     }
 
-
     /**
      * get all alert properties
-     *
-     * @return array
      */
-    public function getAlertProperties()
+    public function getAlertProperties(): array
     {
         $alert = [];
-        foreach ((array)$this->getCustomProperties([]) as $prop) {
+        foreach ((array) $this->getCustomProperties([]) as $prop) {
             if ($prop['alert'] == true) {
                 $alert[] = $prop;
             }
@@ -202,15 +206,16 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         return $alert;
     }
 
-
     /**
      * @param $unix_timestamp
      *
      * @return string formatted date
      */
 
-    public static function format_date_time($unix_timestamp)
+    public static function format_date_time($unix_timestamp): string
     {
+        global $DIC;
+        $language = $DIC->language();
         $now = time();
         $today = $now - $now % (60 * 60 * 24);
         $yesterday = $today - 60 * 60 * 24;
@@ -220,10 +225,10 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
             $date = date('d. M Y', $unix_timestamp);
         } elseif ($unix_timestamp < $today) {
             // given date yesterday
-            $date = self::dic()->language()->txt('yesterday');
+            $date = $language->txt('yesterday');
         } else {
             // given date is today
-            $date = self::dic()->language()->txt('today');
+            $date = $language->txt('today');
         }
 
         return $date . ', ' . date('H:i', $unix_timestamp);

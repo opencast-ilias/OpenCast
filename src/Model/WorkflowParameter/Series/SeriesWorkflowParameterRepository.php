@@ -43,13 +43,11 @@ class SeriesWorkflowParameterRepository
         Factory $ui_factory,
         RefineryFactory $refinery,
         WorkflowParameterParser $workflowParameterParser
-    )
-    {
+    ) {
         $this->ui_factory = $ui_factory;
         $this->refinery = $refinery;
         $this->workflowParameterParser = $workflowParameterParser;
     }
-
 
     /**
      * @return self
@@ -59,12 +57,11 @@ class SeriesWorkflowParameterRepository
     {
         if (self::$instance == null) {
             global $DIC;
-            $self = new self(
+            self::$instance = new self(
                 $DIC->ui()->factory(),
                 $DIC->refinery(),
                 new WorkflowParameterParser()
             );
-            self::$instance = $self;
         }
         return self::$instance;
     }
@@ -79,26 +76,26 @@ class SeriesWorkflowParameterRepository
         return SeriesWorkflowParameter::where(['obj_id' => $obj_id, 'param_id' => $param_id])->first();
     }
 
-
     /**
      * @param $param_ids
      */
-    public function deleteParamsForAllObjectsById($param_ids)
+    public function deleteParamsForAllObjectsById($param_ids): void
     {
         if (!is_array($param_ids)) {
             $param_ids = [$param_ids];
         }
         /** @var SeriesWorkflowParameter $series_parameter */
-        foreach (SeriesWorkflowParameter::where(['param_id' => $param_ids], ['param_id' => 'IN'])->get() as $series_parameter) {
+        foreach (
+            SeriesWorkflowParameter::where(['param_id' => $param_ids], ['param_id' => 'IN'])->get() as $series_parameter
+        ) {
             $series_parameter->delete();
         }
     }
 
-
     /**
      * @param $params WorkflowParameter[]|WorkflowParameter
      */
-    public function createParamsForAllObjects($params)
+    public function createParamsForAllObjects($params): void
     {
         if (!is_array($params)) {
             $params = [$params];
@@ -116,50 +113,60 @@ class SeriesWorkflowParameterRepository
         }
     }
 
-
     /**
      * @param $id
      * @param $value_member
      * @param $value_admin
      */
-    public function updateById($id, $value_member, $value_admin)
+    public function updateById($id, $value_member, $value_admin): void
     {
         SeriesWorkflowParameter::find($id)
-            ->setValueMember($value_member)
-            ->setValueAdmin($value_admin)
-            ->update();
+                               ->setValueMember($value_member)
+                               ->setValueAdmin($value_admin)
+                               ->update();
     }
-
 
     /**
      * @param $obj_id
      * @param $as_admin
      *
-     * @return array Format $id => ['title' => $title, 'preset' => $is_preset]
+     * @return array<string, array{title: mixed, preset: bool}> Format $id => ['title' => $title, 'preset' => $is_preset]
      */
-    public function getParametersInFormForObjId($obj_id, $as_admin)
+    public function getParametersInFormForObjId($obj_id, $as_admin): array
     {
         $parameter = [];
         if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
             /** @var SeriesWorkflowParameter $input */
-            foreach (SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id', ['title'])->where([
-                'obj_id' => $obj_id,
-                ($as_admin ? 'value_admin' : 'value_member') => [SeriesWorkflowParameter::VALUE_SHOW_IN_FORM, SeriesWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]])->get() as $input) {
+            foreach (
+                SeriesWorkflowParameter::innerjoin(WorkflowParameter::TABLE_NAME, 'param_id', 'id', ['title'])->where([
+                    'obj_id' => $obj_id,
+                    ($as_admin ? 'value_admin' : 'value_member') => [
+                        SeriesWorkflowParameter::VALUE_SHOW_IN_FORM,
+                        SeriesWorkflowParameter::VALUE_SHOW_IN_FORM_PRESET
+                    ]
+                ])->get() as $input
+            ) {
                 if ($as_admin) {
                     $preset = ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 } else {
                     $preset = ($input->getDefaultValueMember() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 }
-                $parameter[$input->getParamId()] = [
-                    'title' => $input->xoct_workflow_param_title ?: $input->getParamId(),
+                $param_id = $input->getParamId();
+                $parameter[$param_id] = [
+                    'title' => $input->xoct_workflow_param_title ?? $param_id,
                     'preset' => $preset
                 ];
             }
         } else {
             /** @var WorkflowParameter $input */
-            foreach (WorkflowParameter::where([
-                ($as_admin ? 'default_value_admin' : 'default_value_member') => [WorkflowParameter::VALUE_SHOW_IN_FORM, WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
-            ])->get() as $input) {
+            foreach (
+                WorkflowParameter::where([
+                    ($as_admin ? 'default_value_admin' : 'default_value_member') => [
+                        WorkflowParameter::VALUE_SHOW_IN_FORM,
+                        WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET
+                    ]
+                ])->get() as $input
+            ) {
                 if ($as_admin) {
                     $preset = ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET);
                 } else {
@@ -181,9 +188,14 @@ class SeriesWorkflowParameterRepository
     {
         $parameter = [];
         /** @var WorkflowParameter $input */
-        foreach (WorkflowParameter::where([
-            'default_value_admin' => [WorkflowParameter::VALUE_SHOW_IN_FORM, WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET]
-        ])->get() as $input) {
+        foreach (
+            WorkflowParameter::where([
+                'default_value_admin' => [
+                    WorkflowParameter::VALUE_SHOW_IN_FORM,
+                    WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET
+                ]
+            ])->get() as $input
+        ) {
             $parameter[$input->getId()] = [
                 'title' => $input->getTitle() ?: $input->getId(),
                 'preset' => ($input->getDefaultValueAdmin() === WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET)
@@ -194,9 +206,6 @@ class SeriesWorkflowParameterRepository
 
     /**
      * TODO: refactor into a form builder
-     * @param int $obj_id
-     * @param bool $as_admin
-     * @return Input
      */
     public function getFormSectionForObjId(int $obj_id, bool $as_admin, string $workflow_section_title): ?Input
     {
@@ -206,78 +215,91 @@ class SeriesWorkflowParameterRepository
             $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
         }
-        if (empty($items)) {
+        if ($items === []) {
             return null;
         }
         return $this->buildFormSection($items, $workflow_section_title);
     }
-
 
     /**
      * @param      $obj_id
      *
      * @param bool $as_admin
      *
-     * @return array
+     * @return int[]
      */
-    public function getAutomaticallySetParametersForObjId($obj_id, $as_admin = true)
+    public function getAutomaticallySetParametersForObjId($obj_id, $as_admin = true): array
     {
         $parameters = [];
         if (PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES)) {
             /** @var SeriesWorkflowParameter $xoctSeriesWorkflowParameter */
-            foreach (SeriesWorkflowParameter::where([
-                'obj_id' => $obj_id,
-                ($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_ACTIVE
-            ])->get() as $xoctSeriesWorkflowParameter) {
+            foreach (
+                SeriesWorkflowParameter::where([
+                    'obj_id' => $obj_id,
+                    ($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_ACTIVE
+                ])->get() as $xoctSeriesWorkflowParameter
+            ) {
                 $parameters[$xoctSeriesWorkflowParameter->getParamId()] = 1;
             }
             /** @var SeriesWorkflowParameter $xoctSeriesWorkflowParameter */
-            foreach (SeriesWorkflowParameter::where([
-                'obj_id' => $obj_id,
-                ($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_INACTIVE
-            ])->get() as $xoctSeriesWorkflowParameter) {
+            foreach (
+                SeriesWorkflowParameter::where([
+                    'obj_id' => $obj_id,
+                    ($as_admin ? 'value_admin' : 'value_member') => SeriesWorkflowParameter::VALUE_ALWAYS_INACTIVE
+                ])->get() as $xoctSeriesWorkflowParameter
+            ) {
                 $parameters[$xoctSeriesWorkflowParameter->getParamId()] = 0;
             }
         } else {
             /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
-            foreach (WorkflowParameter::where([($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_ACTIVE])
-                         ->get() as $xoctSeriesWorkflowParameter) {
+            foreach (
+                WorkflowParameter::where(
+                    [($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_ACTIVE]
+                )
+                                 ->get() as $xoctSeriesWorkflowParameter
+            ) {
                 $parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
             }
             /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
-            foreach (WorkflowParameter::where([($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_INACTIVE])
-                         ->get() as $xoctSeriesWorkflowParameter) {
+            foreach (
+                WorkflowParameter::where(
+                    [($as_admin ? 'default_value_admin' : 'default_value_member') => WorkflowParameter::VALUE_ALWAYS_INACTIVE]
+                )
+                                 ->get() as $xoctSeriesWorkflowParameter
+            ) {
                 $parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
             }
         }
         return $parameters;
     }
 
-
     /**
-     * @return array
+     * @return int[]
      */
-    public function getGeneralAutomaticallySetParameters()
+    public function getGeneralAutomaticallySetParameters(): array
     {
         $parameters = [];
         /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
-        foreach (WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_ACTIVE])
-                     ->get() as $xoctSeriesWorkflowParameter) {
+        foreach (
+            WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_ACTIVE])
+                             ->get() as $xoctSeriesWorkflowParameter
+        ) {
             $parameters[$xoctSeriesWorkflowParameter->getId()] = 1;
         }
         /** @var WorkflowParameter $xoctSeriesWorkflowParameter */
-        foreach (WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_INACTIVE])
-                     ->get() as $xoctSeriesWorkflowParameter) {
+        foreach (
+            WorkflowParameter::where(['default_value_admin' => WorkflowParameter::VALUE_ALWAYS_INACTIVE])
+                             ->get() as $xoctSeriesWorkflowParameter
+        ) {
             $parameters[$xoctSeriesWorkflowParameter->getId()] = 0;
         }
         return $parameters;
     }
 
-
     /**
      * @param $obj_id
      */
-    public function syncAvailableParameters($obj_id)
+    public function syncAvailableParameters($obj_id): void
     {
         /** @var WorkflowParameter[] $workflow_parameters */
         $workflow_parameters = WorkflowParameter::get();
@@ -298,15 +320,13 @@ class SeriesWorkflowParameterRepository
         }
 
         // delete not existing
-        foreach ($series_parameters as $id => $series_parameter) {
+        foreach (array_keys($series_parameters) as $id) {
             SeriesWorkflowParameter::find($id)->delete();
         }
     }
 
-
     /**
      * TODO: refactor into a form builder
-     * @return Input
      */
     public function getGeneralFormSection(string $workflow_section_title): ?Input
     {
@@ -316,7 +336,7 @@ class SeriesWorkflowParameterRepository
             $post_var = 'wp_' . $id;
             $items[$post_var] = $cb;
         }
-        if (empty($items)) {
+        if ($items === []) {
             return null;
         }
         return $this->buildFormSection($items, $workflow_section_title);
@@ -325,9 +345,11 @@ class SeriesWorkflowParameterRepository
     private function buildFormSection(array $items, string $workflow_section_title): Input
     {
         return $this->ui_factory->input()->field()->section($items, $workflow_section_title)
-            ->withAdditionalTransformation($this->refinery->custom()->transformation(function ($vs) {
-                $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
-                return $vs;
-            }));
+                                ->withAdditionalTransformation(
+                                    $this->refinery->custom()->transformation(function ($vs) {
+                                        $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
+                                        return $vs;
+                                    })
+                                );
     }
 }

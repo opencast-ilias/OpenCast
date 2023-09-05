@@ -4,8 +4,6 @@
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-
 /**
  * Class xoctInternalAPI
  *
@@ -18,7 +16,6 @@ class xoctInternalAPI
      */
     protected static $instance;
 
-
     /**
      * xoctInternalAPI constructor.
      */
@@ -26,7 +23,6 @@ class xoctInternalAPI
     {
         PluginConfig::setApiSettings();
     }
-
 
     /**
      * @return xoctInternalAPI
@@ -39,20 +35,12 @@ class xoctInternalAPI
         return self::$instance;
     }
 
-
-    /**
-     * @return xoctSeriesAPI
-     */
-    public function series()
+    public function series(): \xoctSeriesAPI
     {
         return xoctSeriesAPI::getInstance();
     }
 
-
-    /**
-     * @return xoctEventAPI
-     */
-    public function events()
+    public function events(): \xoctEventAPI
     {
         return xoctEventAPI::getInstance();
     }

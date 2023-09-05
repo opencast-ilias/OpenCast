@@ -3,14 +3,11 @@
  * simple script to check http code of an url
  */
 
-
 function fetch(string $url): array
 {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -35,8 +32,8 @@ function parsePlaylist(string $ts): array
     // process the string
     $pieces = explode("\n", $ts); // make an array out of curl return value
     $pieces = array_map('trim', $pieces); // remove unnecessary space
-    $chunklists = array_filter($pieces, function (string $piece) { // pluck out ts urls
-       return strtolower(substr($piece, -3)) === '.ts';
+    $chunklists = array_filter($pieces, function (string $piece): bool { // pluck out ts urls
+        return strtolower(substr($piece, -3)) === '.ts';
     });
     return $chunklists;
 }

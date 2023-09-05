@@ -48,8 +48,7 @@ class Scheduling implements JsonSerializable
         ?array $inputs = ['default'],
         ?int $duration = null,
         ?RRule $rrule = null
-    )
-    {
+    ) {
         $this->agent_id = $agent_id;
         $this->start = $start;
         $this->end = $end;
@@ -58,11 +57,7 @@ class Scheduling implements JsonSerializable
         $this->inputs = $inputs;
     }
 
-
-    /**
-     * @return stdClass
-     */
-    public function __toStdClass(): stdClass
+    public function toStdClass(): stdClass
     {
         $this->getStart()->setTimezone(new DateTimeZone('GMT'));
         $this->getEnd()->setTimezone(new DateTimeZone('GMT'));
@@ -70,7 +65,7 @@ class Scheduling implements JsonSerializable
         $stdClass = new stdClass();
         $stdClass->agent_id = $this->getAgentId();
         $stdClass->start = $this->getStart()->format('Y-m-d\TH:i:s\Z');
-        if ($this->getEnd()) {
+        if ($this->getEnd() instanceof \DateTimeImmutable) {
             $stdClass->end = $this->getEnd()->format('Y-m-d\TH:i:s\Z');
         }
 
@@ -78,11 +73,11 @@ class Scheduling implements JsonSerializable
             $stdClass->inputs = $this->getInputs();
         }
 
-        if ($this->getRrule()) {
+        if ($this->getRrule() instanceof \srag\Plugins\Opencast\Model\Scheduling\RRule) {
             $stdClass->rrule = $this->rrule->getValue();
 
             if ($this->getDuration()) {
-                $stdClass->duration = (string)$this->getDuration();
+                $stdClass->duration = (string) $this->getDuration();
             }
         }
 
@@ -94,21 +89,15 @@ class Scheduling implements JsonSerializable
         return $this->duration;
     }
 
-
-    /**
-     * @param int $duration
-     */
     public function setDuration(int $duration): void
     {
         $this->duration = $duration;
     }
 
-
     public function getAgentId(): string
     {
         return $this->agent_id;
     }
-
 
     public function setAgentId(string $agent_id): void
     {
@@ -157,6 +146,6 @@ class Scheduling implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->__toStdClass();
+        return $this->toStdClass();
     }
 }

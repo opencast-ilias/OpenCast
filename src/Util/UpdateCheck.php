@@ -17,6 +17,7 @@ class UpdateCheck
             throw new \Exception('Could not find plugin.php');
         }
         include $this->path_to_plugin_php; // read the infos from plugin.php
+        /** @noinspection IssetArgumentExistenceInspection */
         if (isset($version_check)) {
             $this->version_check_string = $version_check;
         }
@@ -54,5 +55,10 @@ class UpdateCheck
         }
 
         return $this->version_check_string === $this->version_check_string_db;
+    }
+
+    public function isNewInstallation(): bool
+    {
+        return $this->last_update_version === '0.0.0';
     }
 }

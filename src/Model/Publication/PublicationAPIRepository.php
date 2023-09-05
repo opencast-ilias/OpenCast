@@ -3,7 +3,8 @@
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use srag\Plugins\Opencast\Model\Cache\Cache;
-use xoctRequest;
+use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\API\API;
 
 class PublicationAPIRepository implements PublicationRepository
 {
@@ -11,9 +12,15 @@ class PublicationAPIRepository implements PublicationRepository
      * @var Cache
      */
     private $cache;
+    /**
+     * @var API
+     */
+    protected $api;
 
     public function __construct(Cache $cache)
     {
+        global $opencastContainer;
+        $this->api = $opencastContainer[API::class];
         $this->cache = $cache;
     }
 
@@ -25,7 +32,7 @@ class PublicationAPIRepository implements PublicationRepository
 
     public function fetch(string $identifier): array
     {
-        $data = json_decode(xoctRequest::root()->events($identifier)->publications()->get());
+        $data = $this->api->routes()->eventsApi->getPublications($identifier);
         $publications = [];
         foreach ($data as $d) {
             $p = new Publication();

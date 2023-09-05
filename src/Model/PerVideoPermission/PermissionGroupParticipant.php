@@ -18,25 +18,18 @@ class PermissionGroupParticipant extends ActiveRecord
     public const TABLE_NAME = 'xoct_group_participant';
     public const STATUS_ACTIVE = 1;
 
-
     /**
-     * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var int
@@ -68,7 +61,7 @@ class PermissionGroupParticipant extends ActiveRecord
     /**
      * @var xoctUser
      */
-    protected $xoct_user = null;
+    protected $xoct_user;
     /**
      * @var int
      *
@@ -81,7 +74,6 @@ class PermissionGroupParticipant extends ActiveRecord
      * @var array
      */
     protected static $crs_members_cache = [];
-
 
     /**
      * @param $ref_id
@@ -112,7 +104,6 @@ class PermissionGroupParticipant extends ActiveRecord
         return $return;
     }
 
-
     /**
      * @param $obj_id
      *
@@ -127,7 +118,6 @@ class PermissionGroupParticipant extends ActiveRecord
 
         return self::where(['group_id' => $all])->getArray(null, 'user_id');
     }
-
 
     /**
      * @param $obj_id
@@ -145,7 +135,6 @@ class PermissionGroupParticipant extends ActiveRecord
         return self::where(['group_id' => $group_id])->getArray(null, 'user_id');
     }
 
-
     /**
      * @return int
      */
@@ -154,15 +143,13 @@ class PermissionGroupParticipant extends ActiveRecord
         return $this->id;
     }
 
-
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return int
@@ -172,15 +159,13 @@ class PermissionGroupParticipant extends ActiveRecord
         return $this->user_id;
     }
 
-
     /**
      * @param int $user_id
      */
-    public function setUserId($user_id)
+    public function setUserId($user_id): void
     {
         $this->user_id = $user_id;
     }
-
 
     /**
      * @return int
@@ -190,15 +175,13 @@ class PermissionGroupParticipant extends ActiveRecord
         return $this->group_id;
     }
 
-
     /**
      * @param $group_id
      */
-    public function setGroupId($group_id)
+    public function setGroupId($group_id): void
     {
         $this->group_id = $group_id;
     }
-
 
     /**
      * @return int
@@ -208,33 +191,30 @@ class PermissionGroupParticipant extends ActiveRecord
         return $this->status;
     }
 
-
     /**
      * @param int $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
-
 
     /**
      * @return xoctUser
      */
     public function getXoctUser()
     {
-        if (!$this->xoct_user and $this->getUserId()) {
+        if (!$this->xoct_user && $this->getUserId()) {
             $this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
         }
 
         return $this->xoct_user;
     }
 
-
     /**
      * @param xoctUser $xoct_user
      */
-    public function setXoctUser($xoct_user)
+    public function setXoctUser($xoct_user): void
     {
         $this->xoct_user = $xoct_user;
     }

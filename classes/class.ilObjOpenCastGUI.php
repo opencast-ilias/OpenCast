@@ -4,8 +4,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
-use srag\DIC\OpenCast\DICTrait;
-use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -32,8 +30,7 @@ use srag\Plugins\Opencast\UI\LegacyFormWrapper;
  */
 class ilObjOpenCastGUI extends ilObjectPluginGUI
 {
-    use DICTrait;
-
+    public $creation_mode;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const CMD_SHOW_CONTENT = 'showContent';
@@ -65,12 +62,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     private $ilias_dic;
 
-    private function cleanUpDBCache()
+    private function cleanUpDBCache(): void
     {
         if (PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE) == PluginConfig::CACHE_DATABASE) {
             $bm = microtime(true);
             DBCacheService::cleanup($this->ilias_dic->database());
-            $this->ilias_dic->logger()->root()->info('cache cleanup done in ' . round((microtime(true) - $bm) * 1000) . 'ms');
+            $this->ilias_dic->logger()->root()->info(
+                'cache cleanup done in ' . round((microtime(true) - $bm) * 1000) . 'ms'
+            );
         }
     }
 
@@ -79,28 +78,23 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         global $DIC;
         $this->ilias_dic = $DIC;
         $this->opencast_dic = OpencastDIC::getInstance();
+        $this->plugin = $this->opencast_dic->plugin();
     }
 
-
-    /**
-     * @return string
-     */
-    final public function getType()
+    final public function getType(): string
     {
         return ilOpenCastPlugin::PLUGIN_ID;
     }
 
-
     /**
      * @param $cmd
      */
-    public function performCommand($cmd)
+    public function performCommand($cmd): void
     {
         $this->{$cmd}();
     }
 
-
-    public function executeCommand()
+    public function executeCommand(): void
     {
         $this->checkPermission('read');
         try {
@@ -209,9 +203,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->cleanUpDBCache();
     }
 
-    /**
-     * @return ilObjOpenCast
-     */
     public function getObject(): ilObjOpenCast
     {
         return $this->object ?: new ilObjOpenCast();
@@ -229,42 +220,30 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
     }
 
-
     protected function showContent()
     {
         $this->ilias_dic->ctrl()->redirectByClass(xoctEventGUI::class);
     }
-
 
     protected function redirectSettings()
     {
         $this->ilias_dic->ctrl()->redirectByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT);
     }
 
-
-    /**
-     * @return string
-     */
-    public function getAfterCreationCmd()
+    public function getAfterCreationCmd(): string
     {
         return self::CMD_SHOW_CONTENT;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getStandardCmd()
+    public function getStandardCmd(): string
     {
         return self::CMD_SHOW_CONTENT;
     }
 
-
     /**
-     * @return bool
      * @throws DICException
      */
-    protected function setTabs()
+    protected function setTabs(): bool
     {
         /**
          * @var $objectSettings ObjectSettings
@@ -274,56 +253,83 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             return false;
         }
 
-        $this->ilias_dic->tabs()->addTab(self::TAB_EVENTS, self::plugin()->translate('tab_event_index'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_STANDARD));
-        $this->ilias_dic->tabs()->addTab(self::TAB_INFO, self::plugin()->translate('tab_info'), $this->ilias_dic->ctrl()->getLinkTarget($this, 'infoScreen'));
+        $this->ilias_dic->tabs()->addTab(
+            self::TAB_EVENTS,
+            $this->plugin->txt('tab_event_index'),
+            $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_STANDARD)
+        );
+        $this->ilias_dic->tabs()->addTab(
+            self::TAB_INFO,
+            $this->plugin->txt('tab_info'),
+            $this->ilias_dic->ctrl()->getLinkTarget($this, 'infoScreen')
+        );
 
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_SETTINGS)) {
-            $this->ilias_dic->tabs()->addTab(self::TAB_SETTINGS, self::plugin()->translate('tab_series_settings'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT_GENERAL));
+            $this->ilias_dic->tabs()->addTab(
+                self::TAB_SETTINGS,
+                $this->plugin->txt('tab_series_settings'),
+                $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctSeriesGUI::class, xoctSeriesGUI::CMD_EDIT_GENERAL)
+            );
         }
 
         if ($objectSettings->getPermissionPerClip() && ilObjOpenCastAccess::hasPermission('read')) {
-            $this->ilias_dic->tabs()->addTab(self::TAB_GROUPS, self::plugin()->translate('tab_groups'), $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI()));
+            $this->ilias_dic->tabs()->addTab(
+                self::TAB_GROUPS,
+                $this->plugin->txt('tab_groups'),
+                $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI())
+            );
         }
-        if ($this->ilias_dic->user()->getId() == 6 and ilObjOpenCast::DEV) {
-            $this->ilias_dic->tabs()->addTab('migrate_event', self::plugin()->translate('tab_migrate_event'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'search'));
-            $this->ilias_dic->tabs()->addTab('list_all', self::plugin()->translate('tab_list_all'), $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'listAll'));
+        if ($this->ilias_dic->user()->getId() == 6 && ilObjOpenCast::DEV) {
+            $this->ilias_dic->tabs()->addTab(
+                'migrate_event',
+                $this->plugin->txt('tab_migrate_event'),
+                $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'search')
+            );
+            $this->ilias_dic->tabs()->addTab(
+                'list_all',
+                $this->plugin->txt('tab_list_all'),
+                $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'listAll')
+            );
         }
 
         if ($this->checkPermissionBool("edit_permission")) {
-            $this->ilias_dic->tabs()->addTab("perm_settings", $this->ilias_dic->language()->txt("perm_settings"), $this->ilias_dic->ctrl()->getLinkTargetByClass([
-                get_class($this),
-                "ilpermissiongui",
-            ], "perm"));
+            $this->ilias_dic->tabs()->addTab(
+                "perm_settings",
+                $this->ilias_dic->language()->txt("perm_settings"),
+                $this->ilias_dic->ctrl()->getLinkTargetByClass([
+                    get_class($this),
+                    "ilpermissiongui",
+                ], "perm")
+            );
         }
 
         // ToDo: Why does this access check not work?
         if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
             $this->ilias_dic->tabs()->addTab(
                 self::TAB_EULA,
-                self::plugin()->translate("eula"),
+                $this->plugin->txt("eula"),
                 $this->ilias_dic->ctrl()->getLinkTarget($this, "showEula")
             );
         }
         return true;
     }
 
-    private function showEula()
+    private function showEula(): void
     {
-        self::dic()->tabs()->activateTab("eula");
-        self::dic()->ui()->mainTemplate()->setContent(PluginConfig::getConfig(PluginConfig::F_EULA));
+        $this->tabs_gui->activateTab("eula");
+        $this->tpl->setContent(PluginConfig::getConfig(PluginConfig::F_EULA));
     }
 
     /**
      * @param string $a_new_type
-     * @return array
      * @throws DICException
      * @throws arException
      * @throws xoctException
      */
-    protected function initCreationForms($a_new_type)
+    protected function initCreationForms($a_new_type): array
     {
         if (!ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
-            ilUtil::sendFailure(self::plugin()->translate('msg_creation_failed'), true);
+            ilUtil::sendFailure($this->plugin->txt('msg_creation_failed'), true);
             ilUtil::redirect('/');
         }
         $this->ilias_dic->ctrl()->setParameter($this, 'new_type', ilOpenCastPlugin::PLUGIN_ID);
@@ -332,10 +338,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @param string $type
+     * @param string     $type
      * @param bool|false $from_post
      */
-    public function initCreateForm($type, $from_post = false)
+    public function initCreateForm($type, $from_post = false): \srag\Plugins\Opencast\UI\LegacyFormWrapper
     {
         return new LegacyFormWrapper(
             $this->ilias_dic->ui()->renderer()->render(
@@ -356,27 +362,28 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @throws arException
      * @throws xoctException
      */
-    public function save()
+    public function save(): void
     {
         $creation_form = $this->buildUIForm()->withRequest($this->ilias_dic->http()->request());
         $data = $creation_form->getData();
 
         if (!$data) {
-            $this->ilias_dic->ui()->mainTemplate()->setContent($this->ilias_dic->ui()->renderer()->render($creation_form));
+            $this->ilias_dic->ui()->mainTemplate()->setContent(
+                $this->ilias_dic->ui()->renderer()->render($creation_form)
+            );
             return;
         }
 
         $this->saveObject($data);
     }
 
-
     /**
-     * @param ilObject $newObj
      * @throws DICException
      * @throws xoctException
      */
-    public function afterSave(ilObject $newObj)
+    public function afterSave(ilObject $newObj): void
     {
+        global $DIC;
         /**
          * @var $settings ObjectSettings
          */
@@ -404,8 +411,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $ilias_producers->addMembers($producers);
             }
         } catch (xoctException $e) {
-            self::dic()->log()->warning('Could not add producers to group while creating a series, msg: '
-                . $e->getMessage());
+            $DIC->logger()->root()->warning(
+                'Could not add producers to group while creating a series, msg: '
+                . $e->getMessage()
+            );
         }
 
         $acl = $this->opencast_dic->acl_utils()->getStandardRolesACL();
@@ -429,10 +438,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
         // TODO: do we need contributor / organizer?
         if (!$series_id) {
-            $series_id = $this->opencast_dic->series_repository()->create(new CreateSeriesRequest(new CreateSeriesRequestPayload(
-                $metadata,
-                $acl
-            )));
+            $series_id = $this->opencast_dic->series_repository()->create(
+                new CreateSeriesRequest(
+                    new CreateSeriesRequestPayload(
+                        $metadata,
+                        $acl
+                    )
+                )
+            );
         } else {
             $metadata = $this->opencast_dic->series_repository()->find($series_id)->getMetadata();
         }
@@ -444,7 +457,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $settings->create();
 
         if ($settings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo(self::plugin()->translate('msg_info_multiple_aftersave'), true);
+            ilUtil::sendInfo($this->plugin->txt('msg_info_multiple_aftersave'), true);
         }
 
         // checkbox from creation gui to activate "upload" permission for members
@@ -461,7 +474,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         parent::afterSave($newObj);
     }
 
-
     /**
      * @param bool $render_locator
      *
@@ -471,6 +483,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected function initHeader($render_locator = true)
     {
+        global $DIC;
         if ($render_locator && !$this->ilias_dic->ctrl()->isAsynch()) {
             $this->setLocator();
         }
@@ -488,9 +501,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->ilias_dic->ui()->mainTemplate()->setDescription($this->object->getDescription());
             if ($this->ilias_dic->access()->checkAccess('read', '', $_GET['ref_id'])) {
                 // TODO: remove self::dic
-                self::dic()->history()->addItem($_GET['ref_id'], $this->ilias_dic->ctrl()->getLinkTarget($this, $this->getStandardCmd()), $this->getType(), $this->object->getTitle());
+                $DIC['ilNavigationHistory']->addItem(
+                    $_GET['ref_id'],
+                    $this->ilias_dic->ctrl()->getLinkTarget($this, $this->getStandardCmd()),
+                    $this->getType(),
+                    $this->object->getTitle()
+                );
             }
-            require_once('./Services/Object/classes/class.ilObjectListGUIFactory.php');
             $list_gui = ilObjectListGUIFactory::_getListGUIByType(ilOpenCastPlugin::PLUGIN_ID);
             /**
              * @var $list_gui ilObjOpenCastListGUI
@@ -499,7 +516,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->ilias_dic->ui()->mainTemplate()->setAlertProperties($list_gui->getAlertProperties());
             }
         } else {
-            $this->ilias_dic->ui()->mainTemplate()->setTitle(self::plugin()->translate('series_create'));
+            $this->ilias_dic->ui()->mainTemplate()->setTitle($this->plugin->txt('series_create'));
         }
         $this->ilias_dic->ui()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
         $this->ilias_dic->ui()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
@@ -507,40 +524,49 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return $objectSettings;
     }
 
-
     /**
      * show information screen
      */
-    public function infoScreen()
+    public function infoScreen(): void
     {
         /**
          * @var $objectSettings ObjectSettings
-         * @var $item         ObjectSettings
-         * @var $tree         ilTree
+         * @var $item           ObjectSettings
+         * @var $tree           ilTree
          */
         $this->ilias_dic->tabs()->setTabActive("info_short");
         $this->initHeader(false);
         $this->checkPermission("visible");
 
-        include_once("./Services/InfoScreen/classes/class.ilInfoScreenGUI.php");
         $info = new ilInfoScreenGUI($this);
         $info->enablePrivateNotes();
         $objectSettings = ObjectSettings::find($this->obj_id);
         if ($refs = $objectSettings->getDuplicatesOnSystem()) {
-            $info->addSection(self::plugin()->translate('info_linked_items'));
+            $info->addSection($this->plugin->txt('info_linked_items'));
             $i = 1;
             foreach ($refs as $ref) {
                 $parent = $this->ilias_dic->repositoryTree()->getParentId($ref);
-                $info->addProperty(($i) . '. '
-                    . self::plugin()->translate('info_linked_item'), ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)), ilLink::_getStaticLink($parent));
+                $info->addProperty(
+                    ($i) . '. '
+                    . $this->plugin->txt('info_linked_item'),
+                    ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)),
+                    ilLink::_getStaticLink($parent)
+                );
                 $i++;
             }
         }
 
         if ($objectSettings->getVideoPortalLink()
-            && $this->opencast_dic->series_repository()->find($objectSettings->getSeriesIdentifier())->isPublishedOnVideoPortal()) {
-            $info->addSection(self::plugin()->translate('series_links'));
-            $info->addProperty(self::plugin()->translate('series_video_portal_link', '', [PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)]), $objectSettings->getVideoPortalLink());
+            && $this->opencast_dic->series_repository()->find(
+                $objectSettings->getSeriesIdentifier()
+            )->isPublishedOnVideoPortal()) {
+            $info->addSection($this->plugin->txt('series_links'));
+            $info->addProperty(
+                $this->plugin->txt(
+                    'series_video_portal_link'
+                ),
+                $objectSettings->getVideoPortalLink()
+            );
         }
 
         // general information
@@ -552,13 +578,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->ilias_dic->ctrl()->forwardCommand($info);
     }
 
-
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
      *
      * @param bool $a_error
      */
-    public function deleteObject($a_error = false)
+    public function deleteObject($a_error = false): void
     {
         if ($_GET["item_ref_id"] != "") {
             $_POST["id"] = [$_GET["item_ref_id"]];
@@ -566,7 +591,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         if (is_array($_POST["id"])) {
             foreach ($_POST["id"] as $idx => $id) {
-                $_POST["id"][$idx] = (int)$id;
+                $_POST["id"][$idx] = (int) $id;
             }
         }
 
@@ -578,11 +603,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
     }
 
-
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
      */
-    public function showDeleteConfirmation($a_ids, $a_supress_message = false)
+    public function showDeleteConfirmation($a_ids, $a_supress_message = false): bool
     {
         if (!is_array($a_ids) || count($a_ids) == 0) {
             ilUtil::sendFailure($this->ilias_dic->language()->txt("no_checkbox"), true);
@@ -591,15 +615,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         // Remove duplicate entries
-        $a_ids = array_unique((array)$a_ids);
+        $a_ids = array_unique($a_ids);
 
-        include_once("./Services/Utilities/classes/class.ilConfirmationGUI.php");
         $cgui = new ilConfirmationGUI();
 
         if (!$a_supress_message) {
             $msg = $this->ilias_dic->language()->txt("info_delete_sure");
 
-            if (!$this->ilias_dic->settings()->get('enable_trash')) {
+            if ($this->ilias_dic->settings()->get('enable_trash') === '' || $this->ilias_dic->settings()->get(
+                'enable_trash'
+            ) === '0') {
                 $msg .= "<br/>" . $this->ilias_dic->language()->txt("info_delete_warning_no_trash");
             }
 
@@ -609,7 +634,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $cgui->setCancel($this->ilias_dic->language()->txt("cancel"), "cancelDelete");
         $cgui->setConfirm($this->ilias_dic->language()->txt("confirm"), "confirmedDelete");
 
-        $form_name = "cgui_" . md5(uniqid());
+        $form_name = "cgui_" . md5(uniqid(''));
         $cgui->setFormName($form_name);
 
         $deps = [];
@@ -617,7 +642,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $obj_id = ilObject::_lookupObjId($ref_id);
             $type = ilObject::_lookupType($obj_id);
             $title = call_user_func([ilObjectFactory::getClassByType($type), '_lookupTitle'], $obj_id);
-            $alt = $this->ilias_dic->language()->txt("icon") . " " . ilPlugin::lookupTxt("rep_robj", $type, "obj_" . $type);
+            $alt = $this->ilias_dic->language()->txt("icon") . " " . ilPlugin::lookupTxt(
+                "rep_robj",
+                $type,
+                "obj_" . $type
+            );
 
             $title .= $this->handleMultiReferences($obj_id, $ref_id, $form_name);
 
@@ -627,8 +656,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
         $deps_html = "";
 
-        if (is_array($deps) && count($deps) > 0) {
-            include_once("./Services/Repository/classes/class.ilRepDependenciesTableGUI.php");
+        if (is_array($deps) && $deps !== []) {
             $tab = new ilRepDependenciesTableGUI($deps);
             $deps_html = "<br/><br/>" . $tab->getHTML();
         }
@@ -640,8 +668,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     * @param int $a_obj_id
-     * @param int $a_ref_id
+     * @param int    $a_obj_id
+     * @param int    $a_ref_id
      * @param string $a_form_name
      * @return string
      * @throws Exception
@@ -686,11 +714,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
             $tpl->setVariable("TXT_INTRO", $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_intro"));
 
-            if ($may_delete_any) {
-                $tpl->setVariable("TXT_INSTRUCTION", $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_instruction"));
+            if ($may_delete_any !== 0) {
+                $tpl->setVariable(
+                    "TXT_INSTRUCTION",
+                    $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_instruction")
+                );
             }
 
-            if ($items) {
+            if ($items !== []) {
                 $var_name = "mref_id[]";
 
                 foreach ($items as $item) {
@@ -701,7 +732,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $tpl->parseCurrentBlock();
                     } else {
                         $tpl->setCurrentBlock("item_info");
-                        $tpl->setVariable("TXT_ITEM_INFO", $this->ilias_dic->language()->txt("rep_no_permission_to_delete"));
+                        $tpl->setVariable(
+                            "TXT_ITEM_INFO",
+                            $this->ilias_dic->language()->txt("rep_no_permission_to_delete")
+                        );
                         $tpl->parseCurrentBlock();
                     }
 
@@ -714,8 +748,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $tpl->setCurrentBlock("cbox");
                     $tpl->setVariable("ITEM_NAME", "sall_" . $a_ref_id);
                     $tpl->setVariable("ITEM_VALUE", "");
-                    $tpl->setVariable("ITEM_ADD", " onclick=\"il.Util.setChecked('" . $a_form_name . "', '" . $var_name . "', document."
-                        . $a_form_name . ".sall_" . $a_ref_id . ".checked)\"");
+                    $tpl->setVariable(
+                        "ITEM_ADD",
+                        " onclick=\"il.Util.setChecked('" . $a_form_name . "', '" . $var_name . "', document."
+                        . $a_form_name . ".sall_" . $a_ref_id . ".checked)\""
+                    );
                     $tpl->parseCurrentBlock();
 
                     $tpl->setCurrentBlock("item");
@@ -724,16 +761,18 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 }
             }
 
-            if ($counter) {
+            if ($counter !== 0) {
                 $tpl->setCurrentBlock("add_info");
-                $tpl->setVariable("TXT_ADDITIONAL_INFO", sprintf($this->ilias_dic->language()->txt("rep_object_references_cannot_be_read"), $counter));
+                $tpl->setVariable(
+                    "TXT_ADDITIONAL_INFO",
+                    sprintf($this->ilias_dic->language()->txt("rep_object_references_cannot_be_read"), $counter)
+                );
                 $tpl->parseCurrentBlock();
             }
 
             return $tpl->get();
         }
     }
-
 
     /**
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
@@ -744,9 +783,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected function buildPath($ref_ids)
     {
-        include_once 'Services/Link/classes/class.ilLink.php';
-
-        if (!count($ref_ids)) {
+        if ($ref_ids === []) {
             return false;
         }
 
@@ -761,7 +798,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 if ($ref_id != $data['ref_id']) {
                     $path .= $data['title'];
                 } else {
-                    $path .= ('<a target="_top" href="' . ilLink::_getLink($data['ref_id'], $data['type']) . '">' . $data['title'] . '</a>');
+                    $path .= ('<a target="_top" href="' . ilLink::_getLink(
+                        $data['ref_id'],
+                        $data['type']
+                    ) . '">' . $data['title'] . '</a>');
                 }
             }
 

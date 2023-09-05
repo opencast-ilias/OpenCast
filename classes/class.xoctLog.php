@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class xoctLog
  * TODO: initialize and make available in OpencastDIC
@@ -23,15 +24,13 @@ class xoctLog extends ilLog
      */
     protected static $log_level = self::DEBUG_DEACTIVATED;
 
-
     /**
      * @param $log_level
      */
-    public static function init($log_level)
+    public static function init($log_level): void
     {
         self::$log_level = $log_level;
     }
-
 
     /**
      * @param $log_level
@@ -43,13 +42,12 @@ class xoctLog extends ilLog
         return $log_level <= self::$log_level;
     }
 
-
     /**
      * @return xoctLog
      */
     public static function getInstance()
     {
-        if (! isset(self::$instance)) {
+        if (!isset(self::$instance)) {
             if (ILIAS_LOG_DIR === "php:/" && ILIAS_LOG_FILE === "stdout") {
                 // Fix Docker-ILIAS log
                 self::$instance = new self(ILIAS_LOG_DIR, ILIAS_LOG_FILE);
@@ -61,18 +59,16 @@ class xoctLog extends ilLog
         return self::$instance;
     }
 
-
     /**
      * @param      $a_msg
      * @param null $log_level
      */
-    public function write($a_msg, $log_level = null)
+    public function write($a_msg, $log_level = null): void
     {
         if (self::relevant($log_level)) {
             parent::write($a_msg);
         }
     }
-
 
     public function writeTrace()
     {
@@ -83,7 +79,6 @@ class xoctLog extends ilLog
         }
     }
 
-
     /**
      * @return mixed
      */
@@ -91,7 +86,6 @@ class xoctLog extends ilLog
     {
         return ILIAS_LOG_DIR;
     }
-
 
     /**
      * @return string
@@ -106,17 +100,12 @@ class xoctLog extends ilLog
         }
     }
 
-
-    /**
-     * @return string
-     */
-    public static function getFullPath()
+    public static function getFullPath(): string
     {
         $log = self::getInstance();
 
         return $log->getLogDir() . '/' . $log->getLogFile();
     }
-
 
     /**
      * @return int

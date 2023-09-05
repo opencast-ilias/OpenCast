@@ -15,11 +15,10 @@ class publicationMetadata extends APIObject
     public const ROLE_PRESENTATION = "presentation";
     public const ROLE_PRESENTER = "presenter";
 
-
     /**
      * @param string $id
      */
-    public function __construct($id = '')
+    public function __construct()
     {
     }
 
@@ -28,9 +27,11 @@ class publicationMetadata extends APIObject
      */
     public function getRole(): string
     {
-        return strpos($this->getFlavor(), self::ROLE_PRESENTATION) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
+        return strpos(
+            $this->getFlavor(),
+            self::ROLE_PRESENTATION
+        ) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
     }
-
 
     /**
      * @var string
@@ -61,18 +62,15 @@ class publicationMetadata extends APIObject
      */
     public $tags;
 
-
     public function getId(): string
     {
         return $this->id;
     }
 
-
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
-
 
     /**
      * @return string
@@ -82,15 +80,13 @@ class publicationMetadata extends APIObject
         return $this->mediatype;
     }
 
-
     /**
      * @param string $mediatype
      */
-    public function setMediatype($mediatype)
+    public function setMediatype($mediatype): void
     {
         $this->mediatype = $mediatype;
     }
-
 
     /**
      * @return string
@@ -100,15 +96,13 @@ class publicationMetadata extends APIObject
         return $this->url;
     }
 
-
     /**
      * @param string $url
      */
-    public function setUrl($url)
+    public function setUrl($url): void
     {
         $this->url = $url;
     }
-
 
     /**
      * @return string
@@ -118,15 +112,13 @@ class publicationMetadata extends APIObject
         return $this->flavor;
     }
 
-
     /**
      * @param string $flavor
      */
-    public function setFlavor($flavor)
+    public function setFlavor($flavor): void
     {
         $this->flavor = $flavor;
     }
-
 
     /**
      * @return int
@@ -136,15 +128,13 @@ class publicationMetadata extends APIObject
         return $this->size;
     }
 
-
     /**
      * @param int $size
      */
-    public function setSize($size)
+    public function setSize($size): void
     {
         $this->size = $size;
     }
-
 
     /**
      * @return int
@@ -154,15 +144,13 @@ class publicationMetadata extends APIObject
         return $this->checksum;
     }
 
-
     /**
      * @param int $checksum
      */
-    public function setChecksum($checksum)
+    public function setChecksum($checksum): void
     {
         $this->checksum = $checksum;
     }
-
 
     /**
      * @return array
@@ -172,11 +160,10 @@ class publicationMetadata extends APIObject
         return $this->tags;
     }
 
-
     /**
      * @param array $tags
      */
-    public function setTags($tags)
+    public function setTags($tags): void
     {
         $this->tags = $tags;
     }

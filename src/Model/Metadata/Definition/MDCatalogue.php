@@ -32,10 +32,10 @@ class MDCatalogue
      */
     public function getFieldById(string $id): MDFieldDefinition
     {
-        $field = array_filter($this->field_definitions, function (MDFieldDefinition $field) use ($id) {
+        $field = array_filter($this->field_definitions, function (MDFieldDefinition $field) use ($id): bool {
             return $field->getId() === $id;
         });
-        if (count($field) === 0) {
+        if ($field === []) {
             throw new xoctException(
                 xoctException::INTERNAL_ERROR,
                 'could not find metadata field with id ' . $id

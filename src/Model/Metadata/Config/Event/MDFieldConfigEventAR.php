@@ -8,7 +8,7 @@ class MDFieldConfigEventAR extends MDFieldConfigAR
 {
     public const TABLE_NAME = 'xoct_md_field_event';
 
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
