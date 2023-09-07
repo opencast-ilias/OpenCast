@@ -1,5 +1,14 @@
 # Change Log
 
+## [5.2.0]
+- Version 5.2.0 contains a large number of refactorings. The ILIAS 7 compatible version is continuously refactored so that an update to ILIAS 8 is easier possible. For example, libraries that are no longer compatible have to be removed. In this first step the internal use of srg/dic was removed.
+- With the new release the plugin uses the new php-library `elan-ev/opencast-api` in version 1.4.0 for all API calls to Opencast.
+- Fix #169: Update from 5-1-0 to 5-1-1 crashes and refers to migration
+- Fix #177: Player settings ends up throwing error on fresh installation
+- Fix #178: Add default values to Paella options in formbuilder
+- Fix #183: no mp4 files in the player with sign player link active if they are not signed by opencast 
+- Fix #187: ErrorException thrown with message "Class srag\DIC\OpenCast\Database\DatabaseDetector
+
 ## [5.1.1]
 - Fix #107: filter is collapsed by default
 - Fix #133: add missing translation
