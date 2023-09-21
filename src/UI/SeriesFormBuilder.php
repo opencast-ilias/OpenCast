@@ -109,7 +109,12 @@ class SeriesFormBuilder
     {
         $existing_series = [];
         $xoctUser = xoctUser::getInstance($this->dic->user());
-        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
+
+        if ($xoctUser->getUserRoleName() === null) {
+            return $existing_series;
+        }
+
+        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName()); 
         foreach ($user_series as $series) {
             $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(
                 MDFieldDefinition::F_TITLE
