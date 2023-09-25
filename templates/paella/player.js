@@ -188,7 +188,7 @@ export default {
         // Priority to users browser language.
         let userDefaultLanguage = this.config.user_default_language;
         let hasCaption = captionsCanvas.getCaptions({
-            label: userDefaultLanguage
+            lang: userDefaultLanguage
         });
         if (hasCaption) {
             defaultCaption = userDefaultLanguage;
@@ -198,7 +198,7 @@ export default {
             for (const index in configFallbackCaptions) {
                 let fallbackCaption = configFallbackCaptions[index];
                 hasCaption = captionsCanvas.getCaptions({
-                    label: fallbackCaption
+                    lang: fallbackCaption
                 });
                 if (hasCaption) {
                     defaultCaption = fallbackCaption;
