@@ -70,7 +70,10 @@ final class Init
                 PluginConfig::getConfig(PluginConfig::F_API_BASE) ?? 'https://stable.opencast.org/api',
                 PluginConfig::getConfig(PluginConfig::F_CURL_USERNAME) ?? 'admin',
                 PluginConfig::getConfig(PluginConfig::F_CURL_PASSWORD) ?? 'opencast',
-                PluginConfig::getConfig(PluginConfig::F_API_VERSION) ?? '1.9.0'
+                PluginConfig::getConfig(PluginConfig::F_API_VERSION) ?? '1.9.0',
+                0,
+                0,
+                PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE) ?? null
             );
         });
 
