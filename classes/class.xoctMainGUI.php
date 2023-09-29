@@ -28,6 +28,9 @@ class xoctMainGUI extends xoctGUI
     public const SUBTAB_GROUPS_ROLES = 'groups_roles';
     public const SUBTAB_SECURITY = 'security';
     public const SUBTAB_ADVANCED = 'advanced';
+
+    public const SUBTAB_WORKFLOWS_SETTINGS = 'wf_settings';
+    public const SUBTAB_WORKFLOWS_LIST = 'wf_list';
     /**
      * @var \ilTabsGUI
      */
@@ -117,6 +120,7 @@ class xoctMainGUI extends xoctGUI
                 break;
             case strtolower(xoctWorkflowGUI::class):
                 $this->tabs->activateTab(self::TAB_WORKFLOWS);
+                $this->setWorkflowsSubTabs();
                 $xoctWorkflowGUI = new xoctWorkflowGUI($opencast_dic->workflow_repository());
                 $this->ctrl->forwardCommand($xoctWorkflowGUI);
                 break;
@@ -191,6 +195,22 @@ class xoctMainGUI extends xoctGUI
             $this->ctrl->getLinkTargetByClass(xoctConfGUI::class)
         );
         $this->ctrl->clearParametersByClass(xoctConfGUI::class);
+    }
+
+    protected function setWorkflowsSubTabs()
+    {
+        $this->ctrl->setParameterByClass(xoctWorkflowGUI::class, 'wf_subtab_active', self::SUBTAB_WORKFLOWS_SETTINGS);
+        $this->tabs->addSubTab(
+            self::SUBTAB_WORKFLOWS_SETTINGS,
+            $this->plugin->txt('subtab_' . self::SUBTAB_WORKFLOWS_SETTINGS),
+            $this->ctrl->getLinkTargetByClass(xoctWorkflowGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctWorkflowGUI::class, 'wf_subtab_active', self::SUBTAB_WORKFLOWS_LIST);
+        $this->tabs->addSubTab(
+            self::SUBTAB_WORKFLOWS_LIST,
+            $this->plugin->txt('subtab_' . self::SUBTAB_WORKFLOWS_LIST),
+            $this->ctrl->getLinkTargetByClass(xoctWorkflowGUI::class)
+        );
     }
 
     protected function index()

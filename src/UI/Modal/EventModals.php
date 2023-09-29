@@ -31,7 +31,8 @@ class EventModals
     /**
      * @var Modal
      */
-    protected $republish_modal;
+    protected $startworkflow_modal;
+
     private $parent_gui;
     /**
      * @var Container
@@ -58,34 +59,80 @@ class EventModals
         $this->plugin = $plugin;
     }
 
-    public function initRepublish(): void
+    public function initWorkflows(): void
     {
-        if ($this->workflow_repository->anyWorkflowExists()) {
-            $form = new ilPropertyFormGUI();
-            $form->setFormAction($this->dic->ctrl()->getFormAction($this->parent_gui, "republish"));
-            $form->setId(uniqid('form'));
+        if ($this->workflow_repository->anyWorkflowAvailable()) {
+            $tpl = new ilTemplate("tpl.startworkflow_modal.html", true, true, $this->plugin->getDirectory());
 
-            $select = new ilSelectInputGUI($this->plugin->txt('workflow'), 'workflow_id');
-            $select->setOptions($this->workflow_repository->getAllWorkflowsAsArray('id', 'title'));
-            $form->addItem($select);
+            $form_id = 'startworkflow_modal_form';
+            $form_submit_btn_id = 'startworkflow-form-submit-btn';
+            $tpl->setVariable('FORM_SUBMIT_BTN_ID', $form_submit_btn_id);
+            $tpl->setVariable('FORM_ID', $form_id);
+            $tpl->setVariable(
+                'FORM_ACTION',
+                $this->dic->ctrl()->getFormAction($this->parent_gui, $this->parent_gui::CMD_START_WORKFLOW)
+            );
 
-            $hidden = new ilHiddenInputGUI('republish_event_id');
-            $form->addItem($hidden);
 
-            $form_id = 'form_' . $form->getId();
+            $workflow_options = $this->workflow_repository->buildWorkflowSelectOptions();
+            $tpl->setVariable('WORKFLOW_OPTIONS', $workflow_options);
+
+            // Descriptions.
+            $description_section_tpl = new ilTemplate("tpl.startworkflow_description_section.html",
+                true, true, $this->plugin->getDirectory());
+            $description_section_tpl->setVariable('HEADER',
+                $this->plugin->txt('workflow_description_section_header'));
+            $description_blocks = [];
+            foreach ($this->workflow_repository->getFilteredWorkflowsArray() as $workflow) {
+                $description_block_tpl = new ilTemplate("tpl.startworkflow_description_block.html",
+                    true, true, $this->plugin->getDirectory());
+                $description = $workflow->getDescription();
+                $id = $workflow->getId();
+                if (!empty(trim($description))) {
+                    $description_block_tpl->setVariable('BLOCK_ID', $id);
+                    $description_block_tpl->setVariable('DESCRIPTION_TEXT', $description);
+                    $description_blocks[] = $description_block_tpl->get();
+                }
+            }
+            if (!empty($description_blocks)) {
+                $description_section_tpl->setVariable('BLOCK_CONTENT', implode('', $description_blocks));
+                $tpl->setVariable('WORKFLOW_DESCRIPTIONS', $description_section_tpl->get());
+            }
+
+            // Configuration Panel
+            $configpanel_section_tpl = new ilTemplate("tpl.startworkflow_configpanel_section.html",
+                true, true, $this->plugin->getDirectory());
+            $configpanel_section_tpl->setVariable('HEADER',
+                $this->plugin->txt('workflow_configpanel_section_header'));
+            $configpanel_blocks = [];
+            foreach ($this->workflow_repository->parseConfigPanels() as $id => $configpanel) {
+                $configpanel_block_tpl = new ilTemplate("tpl.startworkflow_configpanel_block.html",
+                    true, true, $this->plugin->getDirectory());
+                $configpanel_block_tpl->setVariable('BLOCK_ID', $id);
+                $configpanel_block_tpl->setVariable('CONFIGPANEL_BLOCK', $configpanel);
+                $configpanel_blocks[] = $configpanel_block_tpl->get();
+            }
+            if (!empty($configpanel_blocks)) {
+                $configpanel_section_tpl->setVariable('BLOCK_CONTENT', implode('', $configpanel_blocks));
+                $tpl->setVariable('WORKFLOW_CONFIG_PANELS', $configpanel_section_tpl->get());
+            }
+
+            // Error messages.
+            $tpl->setVariable('NO_WORKFLOW_SELECTED_ERROR_TEXT', $this->plugin->txt('msg_startworkflow_no_workflow_seleced'));
+            $tpl->setVariable('CONFIG_PANEL_REQUIRED_ERROR_TEXT', $this->plugin->txt('msg_startworkflow_required_config_panel_item'));
+
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
-                                    ->withOnLoadCode(function ($id) use ($form_id): string {
+                                    ->withOnLoadCode(function ($id) use ($form_submit_btn_id): string {
                                         return "$('#{$id}').click(function() { " .
-                                            "$('#{$form_id}').submit(); " .
-                                            "$(this).prop('disabled', true); " .
+                                            "$('#{$form_submit_btn_id}').click(); " .
                                             "return false; });";
                                     });
 
-            $modal_republish = $this->dic->ui()->factory()->modal()->roundtrip(
-                $this->plugin->txt('event_republish'),
-                $this->dic->ui()->factory()->legacy($form->getHTML())
+            $modal_startworkflow = $this->dic->ui()->factory()->modal()->roundtrip(
+                $this->plugin->txt('event_startworkflow'),
+                $this->dic->ui()->factory()->legacy($tpl->get())
             )->withActionButtons([$submit_btn]);
-            $this->setRepublishModal($modal_republish);
+            $this->setStartworkflowModal($modal_startworkflow);
         }
     }
 
@@ -156,8 +203,8 @@ class EventModals
         if (!is_null($this->report_quality_modal)) {
             $return[] = $this->report_quality_modal;
         }
-        if (!is_null($this->republish_modal)) {
-            $return[] = $this->republish_modal;
+        if (!is_null($this->startworkflow_modal)) {
+            $return[] = $this->startworkflow_modal;
         }
         return $return;
     }
@@ -191,13 +238,13 @@ class EventModals
     /**
      * @return Modal|null
      */
-    public function getRepublishModal()
+    public function getStartworkflowModal()
     {
-        return $this->republish_modal;
+        return $this->startworkflow_modal;
     }
 
-    public function setRepublishModal(Modal $republish_modal): void
+    public function setStartworkflowModal(Modal $startworkflow_modal): void
     {
-        $this->republish_modal = $republish_modal;
+        $this->startworkflow_modal = $startworkflow_modal;
     }
 }

@@ -1,0 +1,38 @@
+.startworkflow-form .wf-section {
+    border-top: 1px solid #e5e5e5;
+    padding: 10px 20px 0 20px;
+}
+.startworkflow-form .wf-section .wf-section-header {
+    font-weight: 600;
+}
+.startworkflow-form .wf-section:last-of-type {
+    margin-top: 20px;
+}
+.startworkflow-form .configField {
+    width: auto !important;
+    height: 25px;
+    font-size: 12px;
+    color: #161616;
+    border: 1px solid #757575;
+    border-radius: 0;
+}
+
+.startworkflow-form .configLabel {
+    width: 175px;
+}
+.startworkflow-form ul li {
+    align-items: center;
+}
+.startworkflow-form ul li .configField {
+    margin: 0;
+}
+.startworkflow-form ul li label.configListLabel {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 4px;
+    text-align: justify;
+    min-width: 175px;
+}
+.startworkflow-form .submit-btn {
+    display: none;
+}

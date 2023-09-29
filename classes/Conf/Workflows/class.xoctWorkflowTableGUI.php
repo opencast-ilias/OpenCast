@@ -36,10 +36,15 @@ class xoctWorkflowTableGUI extends TableGUI
      * @var Renderer
      */
     protected $renderer;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     public function __construct($parent, string $parent_cmd, WorkflowRepository $workflow_repository)
     {
-        global $DIC;
+        global $DIC, $opencastContainer;
+        $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         $ui = $DIC->ui();
         $this->workflow_repository = $workflow_repository;
         $this->factory = $ui->factory();
@@ -48,6 +53,7 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
         $this->setDescription($this->translate('msg_workflows_info'));
+        $parent->setTabParameter(xoctMainGUI::SUBTAB_WORKFLOWS_LIST);
     }
 
     /**
@@ -55,10 +61,27 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected function initColumns(): void
     {
-        $this->addColumn($this->lng->txt('id'));
-        $this->addColumn($this->lng->txt('title'));
-        $this->addColumn($this->translate('parameters'));
-        $this->addColumn($this->lng->txt('actions'), '', '', true);
+        $cols = $this->getSelectableColumns2();
+        foreach ($this->getSelectedColumns() as $col) {
+            $txt = $cols[$col]['txt'];
+            $id = $cols[$col]['id'];
+            $sort = false;
+            $width = '';
+            switch ($id) {
+                case 'description':
+                    $width = '250px';
+                    break;
+                case 'id':
+                    $width = '200px';
+                    break;
+                case 'config_panel':
+                    $width = '24px';
+                    break;
+            }
+            $action = ($id == 'action');
+
+            $this->addColumn($txt, $sort, $width, $action);
+        }
     }
 
     public function getHTML()
@@ -86,8 +109,25 @@ class xoctWorkflowTableGUI extends TableGUI
                 return $row->getWorkflowId();
             case 'title':
                 return $row->getTitle();
-            case 'parameters':
-                return $row->getParameters();
+            case 'description':
+                return $row->getDescription();
+            case 'tags':
+                return str_replace(',', '<br />', $row->getTags());
+            case 'roles':
+                return str_replace(',', '<br />', $row->getRoles());
+            case 'config_panel':
+                $tpl = new ilTemplate("tpl.icon.html", true, true, $this->plugin->getDirectory());
+                $has_config_panel = !empty($row->getConfigPanel()) ? true : false;
+                $icon = $has_config_panel ? 'checkbox_checked.png' : 'checkbox_unchecked.png';
+                $tpl->setCurrentBlock('icon');
+                $tpl->setVariable('ICON_SRC', ilUtil::getHtmlPath(ilUtil::getImagePath($icon)));
+                $tpl->setVariable('ICON_ALT', $icon);
+                $icon_title = $has_config_panel ?
+                    $this->translate('config_panel_icon_with', self::LANG_MODULE) :
+                    $this->translate('config_panel_icon_without', self::LANG_MODULE);
+                $tpl->setVariable('ICON_TITLE', $icon_title);
+                $tpl->parseCurrentBlock();
+                return $tpl->get();
             case 'actions':
                 $this->ctrl->setParameter($this->parent_obj, 'workflow_id', $row->getId());
                 $delete_modal = $this->factory->modal()->interruptive(
@@ -130,7 +170,10 @@ class xoctWorkflowTableGUI extends TableGUI
         return [
             ['txt' => $this->lng->txt('id'), 'id' => 'id'],
             ['txt' => $this->lng->txt('title'), 'id' => 'title'],
-            ['txt' => $this->translate('parameters'), 'id' => 'parameters'],
+            ['txt' => $this->lng->txt('description'), 'id' => 'description'],
+            ['txt' => $this->translate('tags', self::LANG_MODULE), 'id' => 'tags'],
+            ['txt' => $this->translate('roles', self::LANG_MODULE), 'id' => 'roles'],
+            ['txt' => $this->translate('config_panel', self::LANG_MODULE), 'id' => 'config_panel'],
             ['txt' => $this->lng->txt('actions'), 'id' => 'actions']
         ];
     }
@@ -140,7 +183,11 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     public function isColumnSelected($col): bool
     {
-        return true;
+        if (!array_key_exists($col, $this->getSelectableColumns())) {
+            return true;
+        }
+
+        return in_array($col, $this->getSelectedColumns());
     }
 
     /**
@@ -164,7 +211,7 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected function initId(): void
     {
-        // TODO: Implement initId() method.
+        $this->setId('xoct_workflows');
     }
 
     /**

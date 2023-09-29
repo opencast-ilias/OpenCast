@@ -24,7 +24,8 @@ interface WorkflowRepository
      */
     public function getAllWorkflowsAsArray($key = null, $values = null): array;
 
-    public function store(string $workflow_id, string $title, string $parameters, int $id = 0);
+    public function store(string $workflow_id, string $title, string $description,
+        string $tags, string $roles, string $config_panel, int $id = 0);
 
     public function exists(string $workflow_id): bool;
 
@@ -42,4 +43,50 @@ interface WorkflowRepository
      * @return WorkflowAR|null
      */
     public function getById(int $id);
+
+    /**
+     * @return array
+     * @throws xoctException
+     */
+    public function getWorkflowsFromOpencastApi(array $filter = [], bool $with_configuration_panel = false,
+        bool $with_tags = false): array;
+
+    /**
+     * @return WorkflowAR
+     */
+    public function createOrUpdate(string $workflow_id, string $title, string $description,
+        string $tags = '', string $roles = '', string $config_panel = ''): WorkflowAR;
+
+    /**
+     * @return array
+     * @throws xoctException
+     */
+    public function parseConfigPanels(): array;
+
+    /**
+     * @return string
+     * @throws xoctException
+     */
+    public function buildWorkflowSelectOptions(): string;
+
+    /**
+     * @return array
+     */
+    public function getFilteredWorkflowsArray(array $workflows = [], ?string $tags_str = null,
+        ?string $roles_str = null): array;
+
+    /**
+     * @return bool
+     */
+    public function resetList(): bool;
+
+    /**
+     * @return bool
+     */
+    public function updateList(?string $tags_str = null, ?string $roles_str = null): bool;
+
+    /**
+     * @return array
+     */
+    public function getConfigPanelAsArrayById(string $id): array;
 }

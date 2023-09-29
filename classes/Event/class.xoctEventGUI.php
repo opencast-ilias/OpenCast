@@ -62,7 +62,8 @@ class xoctEventGUI extends xoctGUI
     public const CMD_SWITCH_TO_LIST = 'switchToList';
     public const CMD_SWITCH_TO_TILES = 'switchToTiles';
     public const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
-    public const CMD_REPUBLISH = 'republish';
+    // public const CMD_REPUBLISH = 'republish';
+    public const CMD_START_WORKFLOW = 'startWorkflow';
     public const CMD_OPENCAST_STUDIO = 'opencaststudio';
     public const CMD_DOWNLOAD = 'download';
     public const CMD_CREATE_SCHEDULED = 'createScheduled';
@@ -258,6 +259,11 @@ class xoctEventGUI extends xoctGUI
         );    // fix action menu position bug
         $this->main_tpl->addCss(
             $this->plugin->getDirectory() . '/templates/default/reporting_modal.css'
+        );
+
+        // Start Workflow stylesheet
+        $this->main_tpl->addCss(
+            $this->plugin->getDirectory() . '/templates/default/startworkflow_modal.css'
         );
 
         switch ($cmd) {
@@ -1061,14 +1067,14 @@ class xoctEventGUI extends xoctGUI
      * @throws DICException
      * @throws xoctException
      */
-    protected function republish()
+    protected function startWorkflow()
     {
         $post_body = $this->http->request()->getParsedBody();
         if (isset($post_body['workflow_id']) && is_string($post_body['workflow_id'])
-            && isset($post_body['republish_event_id']) && is_string($post_body['republish_event_id'])
+            && isset($post_body['startworkflow_event_id']) && is_string($post_body['startworkflow_event_id'])
         ) {
             $workflow_id = strip_tags($post_body['workflow_id']);
-            $event_id = strip_tags($post_body['republish_event_id']);
+            $event_id = strip_tags($post_body['startworkflow_event_id']);
             $workflow = $this->workflowRepository->getById($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(
                 ilObjOpenCastAccess::ACTION_EDIT_EVENT,
@@ -1078,9 +1084,32 @@ class xoctEventGUI extends xoctGUI
                 ilUtil::sendFailure($this->txt('msg_no_access'), true);
                 $this->cancel();
             }
+
+            $received_configs = [];
+            if (isset($post_body[$workflow_id]) && !empty($post_body[$workflow_id])) {
+                $received_configs = $post_body[$workflow_id];
+            }
+            $default_configs = $this->workflowRepository->getConfigPanelAsArrayById($workflow_id);
             $configurations = [];
-            foreach (array_filter(explode(',', $workflow->getParameters())) as $param) {
-                $configurations[$param] = 'true';
+
+            foreach ($default_configs as $key => $config_data) {
+                $value = $config_data['value'];
+                $type = $config_data['type'];
+                if (in_array($key, array_keys($received_configs))) {
+                    $received_value = $received_configs[$key];
+                    // Take care of datetime conversion.
+                    if (strpos($type, 'datetime') !== false) {
+                        $datetime = new DateTimeImmutable($received_value);
+                        // $datetime->setTimezone(new DateTimeZone("UTC"));
+                        $received_value = $datetime->format('Y-m-d\TH:i:s\Z');
+                    }
+                    $value = $received_value;
+                }
+                // Take care of boolean conversion.
+                if (is_bool($value)) {
+                    $value = $value ? 'true' : 'false';
+                }
+                $configurations[$key] = (string) $value;
             }
 
             $workflow_instance = $this->api->routes()->workflowsApi->run(
@@ -1322,7 +1351,7 @@ class xoctEventGUI extends xoctGUI
                 $DIC,
                 $this->workflowRepository
             );
-            $modals->initRepublish();
+            $modals->initWorkflows();
             $modals->initReportDate();
             $modals->initReportQuality();
             $this->modals = $modals;
