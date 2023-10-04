@@ -16,14 +16,12 @@ class PaellaConfigFormBuilder
     // Paella Player Path
     public const F_PAELLA_PLAYER_OPTION = 'paella_player_option';
     public const F_PAELLA_PLAYER_DEFAULT = 'pp_default';
+    public const F_PAELLA_PLAYER_IMAGE = 'pp_image';
     public const F_PAELLA_PLAYER_FILE = 'pp_file';
     public const F_PAELLA_PLAYER_LINK = 'pp_link';
     //Paella Player Themes.
     public const F_PAELLA_PLAYER_THEME = 'paella_player_theme';
     public const F_PAELLA_PLAYER_LIVE_THEME = 'paella_player_live_theme';
-    public const F_PAELLA_PLAYER_THEME_DEFAULT = 'pp_default';
-    public const F_PAELLA_PLAYER_THEME_FILE = 'pp_file';
-    public const F_PAELLA_PLAYER_THEME_LINK = 'pp_file';
 
     // Preview fallback.
     public const F_PAELLA_PLAYER_PREVIEW_FALLBACK = 'paella_player_preview_fallback';
@@ -90,7 +88,7 @@ class PaellaConfigFormBuilder
         );
 
         $inputs[self::F_PAELLA_PLAYER_PREVIEW_FALLBACK] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_PREVIEW)),
+            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_IMAGE . "_link"), PluginConfig::PAELLA_DEFAULT_PREVIEW)),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL) ?? '',
             self::F_PAELLA_PLAYER_PREVIEW_FALLBACK,
