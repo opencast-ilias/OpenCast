@@ -208,6 +208,7 @@ event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
 event_msg_currently_unpublishing#:#Der Prozess zum Entfernen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
+event_msg_no_download_publication#:#Die Download-Publikation konnte nicht gefunden werden.
 event_msg_success#:#Änderungen gespeichert
 event_msg_scheduled#:#Aufzeichnungstermin(e) erstellt.
 event_msg_scheduling_conflict#:#Termin(e) konnte(n) nicht erstellt werden, da es Überschneidungen mit existierenden Terminen gibt:

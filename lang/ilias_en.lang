@@ -209,6 +209,7 @@ event_msg_deleted#:#Event deleted
 event_msg_unpublish_started#:#The publications are now being removed.
 event_msg_currently_unpublishing#:#The process to remove the publications is already running.
 event_msg_no_access#:#No Access
+event_msg_no_download_publication#:#The download publication could not be found.
 event_msg_success#:#Saved changes
 event_msg_scheduled#:#Event(s) scheduled
 event_msg_scheduling_conflict#:#Event(s) could not be scheduled, due to an overlap with existing events:

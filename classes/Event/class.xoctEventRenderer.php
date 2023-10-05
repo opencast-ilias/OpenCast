@@ -374,10 +374,18 @@ class xoctEventRenderer
             if (!$show_download) {
                 return '';
             }
+
+            // Setting event_id is necessary, because we use it for both multi approach with pub_id or subusage approach with usage_type and usage_id.
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+
+            // Setting the floowing parameters to null first, so that we get accurate parameters later on in download action.
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', null);
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', null);
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_id', null);
+
             $multi = $download_publication_usage->isAllowMultiple();
             if ($multi) {
                 $items = array_map(function ($dto): \ILIAS\UI\Component\Link\Standard {
-                    $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
                     $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
                     return $this->factory->link()->standard(
                         $dto->getResolution(),
@@ -389,7 +397,11 @@ class xoctEventRenderer
                 )->withLabel($display_name);
                 $html = $this->renderer->renderAsync($dropdown);
             } else {
-                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+                $usage_type = $download_publication_usage->is_sub ? 'sub' : 'org';
+                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', $usage_type);
+                $usage_id = $usage_type === 'sub' ? $download_publication_usage->sub_id :
+                    $download_publication_usage->getUsageId();
+                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_id', $usage_id);
                 $link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
                 $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
                 $link_tpl->setVariable('TARGET', '_self');
