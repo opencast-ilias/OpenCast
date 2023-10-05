@@ -51,7 +51,7 @@ class PublicationUsageRepository
         return PublicationUsage::getArray($key, $values);
     }
 
-    public function delete(string $usage): void
+    public function delete(string $usage_id): void
     {
         $usage = $this->getUsage($usage_id);
         if (!is_null($usage)) {
