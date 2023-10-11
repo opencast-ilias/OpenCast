@@ -233,13 +233,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->addItem($cb);
 
         $cb = new ilCheckboxInputGUI(
-            $this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE),
-            PluginConfig::F_EXT_DL_SOURCE
-        );
-        $cb->setInfo($this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE . '_info'));
-        $this->addItem($cb);
-
-        $cb = new ilCheckboxInputGUI(
             $this->parent_gui->txt(PluginConfig::F_STUDIO_ALLOWED),
             PluginConfig::F_STUDIO_ALLOWED
         );

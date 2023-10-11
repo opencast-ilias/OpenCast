@@ -38,8 +38,6 @@ config_editor_link#:#Link zum Opencast-Video-Editor
 config_editor_link_info#:#Link, welcher für die Aktion "Schneiden" verwendet wird. Als Platzhalter kann &#123event_id} verwendet werden. Default: https://[ihre-opencast-url.de]/admin-ng/index.html#!/events/events/&#123event_id}/tools/editor
 config_eula#:#Nutzungsvereinbarung
 config_events#:#Aufzeichnungen
-config_external_download_source#:#Externe Downloadquelle
-config_external_download_source_info#:#Aktivieren Sie diese Option im Falle einer externen Webseite, um die Downloads anzuzeigen
 config_series#:#Serien
 config_licenses#:#Lizenzen
 config_licenses_info#:#Neue Einträge auf neuer Zeile in der Form URL#Name hinzufügen
@@ -331,6 +329,8 @@ publication_usage_search_key_info#:#Die Medien/Attachments werden nach dem hier 
 publication_usage_tag#:#Tag
 publication_usage_allow_multiple#:#Mehrere Möglichkeiten zulassen
 publication_usage_allow_multiple_info#:#Wenn aktiviert und es werden mehrere Medien/Attachments mit dem oben angegebenen Flavor/Tag gefunden, werden diese alle zum Download in einer Dropdown-Liste angeboten. In diesem Fall wäre die Publikationsgruppe <b>NICHT</b> wirksam.
+publication_usage_ext_dl_source#:#Externe Downloadquelle
+publication_usage_ext_dl_source_info#:#Aktivieren Sie diese Option im Falle einer externen Webseite, um die Downloads anzuzeigen
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen

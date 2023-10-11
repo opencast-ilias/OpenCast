@@ -76,7 +76,8 @@ class PublicationUsageRepository
         string $tag = '',
         bool $allow_multiple = false,
         string $mediatype = '',
-        bool $ignore_object_settings = false
+        bool $ignore_object_settings = false,
+        bool $ext_dl_source = false
     ): void {
         /** @var PublicationUsage $usage */
         $usage = PublicationUsage::findOrGetInstance($usage);
@@ -92,6 +93,7 @@ class PublicationUsageRepository
         $usage->setAllowMultiple($allow_multiple);
         $usage->setMediaType($mediatype);
         $usage->setIgnoreObjectSettings($ignore_object_settings);
+        $usage->setExternalDownloadSource($ext_dl_source);
         $usage->store();
     }
 

@@ -173,11 +173,29 @@ class PublicationSelector
                 }
             }
             if (empty($pubs)) {
-                $pubs = $this->getPublicationMetadataForUsage(
-                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK)
-                );
+                $download_fallback_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK);
+                $download_usages = array_merge([$download_fallback_usage], $download_usages);
+                $pubs = $this->getPublicationMetadataForUsage($download_fallback_usage);
             }
-            $this->download_publications = $pubs;
+            // adding external download source option to the publications.
+            $pubs_mapped = array_map(function ($pub) use ($download_usages) {
+                $ext_dl_source = false;
+                $usage_id = $pub->usage_id;
+                $usage_type = $pub->usage_type;
+                $usage_filtered = array_filter($download_usages, function ($usage) use ($usage_id, $usage_type) {
+                    if ($usage_type == 'sub') {
+                        return property_exists($usage, 'is_sub') && $usage->is_sub == true && $usage->sub_id == $usage_id;
+                    } else {
+                        return !property_exists($usage, 'is_sub') && $usage->getUsageId() == $usage_id;
+                    }
+                });
+                if (!empty($usage_filtered)) {
+                    $ext_dl_source = reset($usage_filtered)->isExternalDownloadSource();
+                }
+                $pub->ext_dl_source = $ext_dl_source;
+                return $pub;
+            }, $pubs);
+            $this->download_publications = $pubs_mapped;
         }
 
         return $this->download_publications;

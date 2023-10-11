@@ -96,6 +96,7 @@ class PublicationSubUsageRepository
             $usage->setAllowMultiple($sub->isAllowMultiple());
             $usage->setMediaType($sub->getMediaType());
             $usage->setIgnoreObjectSettings($sub->ignoreObjectSettings());
+            $usage->setExternalDownloadSource($sub->isExternalDownloadSource());
             // Add extra tracking information.
             $usage->is_sub = true;
             $usage->sub_id = $sub->getId();

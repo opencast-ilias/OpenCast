@@ -28,6 +28,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
     public const F_ALLOW_MULTIPLE = 'allow_multiple';
     public const F_MEDIATYPE = 'mediatype';
     public const F_IGNORE_OBJECT_SETTINGS = 'ignore_object_settings';
+    public const F_EXT_DL_SOURCE = 'ext_dl_source';
 
     /**
      * @var  PublicationUsage
@@ -145,14 +146,23 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
                 self::F_IGNORE_OBJECT_SETTINGS
             );
             $ignore_object_setting->setInfo($this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS . '_info'));
+            //F_EXT_DL_SOURCE
+            $ext_dl_source = new ilCheckboxInputGUI(
+                $this->parent_gui->txt(self::F_EXT_DL_SOURCE),
+                self::F_EXT_DL_SOURCE
+            );
+            $ext_dl_source->setInfo($this->parent_gui->txt(self::F_EXT_DL_SOURCE . '_info'));
         } else {
             $allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
             $allow_multiple->setValue(0);
             $ignore_object_setting = new ilHiddenInputGUI(self::F_IGNORE_OBJECT_SETTINGS);
             $ignore_object_setting->setValue(0);
+            $ext_dl_source = new ilHiddenInputGUI(self::F_EXT_DL_SOURCE);
+            $ext_dl_source->setValue(0);
         }
         $this->addItem($allow_multiple);
         $this->addItem($ignore_object_setting);
+        $this->addItem($ext_dl_source);
     }
 
     /**
@@ -174,6 +184,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             self::F_ALLOW_MULTIPLE => $this->object->isAllowMultiple(),
             self::F_MEDIATYPE => $this->object->getMediaType(),
             self::F_IGNORE_OBJECT_SETTINGS => $this->object->ignoreObjectSettings(),
+            self::F_EXT_DL_SOURCE => $this->object->isExternalDownloadSource(),
         ];
 
         $this->setValuesByArray($array);
@@ -201,6 +212,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->object->setAllowMultiple((bool) $this->getInput(self::F_ALLOW_MULTIPLE));
         $this->object->setMediaType($this->getInput(self::F_MEDIATYPE));
         $this->object->setIgnoreObjectSettings((bool) $this->getInput(self::F_IGNORE_OBJECT_SETTINGS));
+        $this->object->setExternalDownloadSource((bool)$this->getInput(self::F_EXT_DL_SOURCE));
 
         return true;
     }

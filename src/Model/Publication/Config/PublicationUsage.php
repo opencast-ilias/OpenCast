@@ -193,6 +193,14 @@ class PublicationUsage extends ActiveRecord
      * @con_length     1
      */
     protected $ignore_object_setting = false;
+    /**
+     * @var bool
+     *
+     * @con_has_field  true
+     * @con_fieldtype  integer
+     * @con_length     1
+     */
+    protected $ext_dl_source = false;
 
     public function getUsageId(): string
     {
@@ -399,5 +407,21 @@ class PublicationUsage extends ActiveRecord
     public function setIgnoreObjectSettings(bool $ignore_object_setting)
     {
         $this->ignore_object_setting = $ignore_object_setting;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExternalDownloadSource(): bool
+    {
+        return (bool) $this->ext_dl_source;
+    }
+
+    /**
+     * @param bool $ext_dl_source
+     */
+    public function setExternalDownloadSource(bool $ext_dl_source)
+    {
+        $this->ext_dl_source = $ext_dl_source;
     }
 }

@@ -26,8 +26,6 @@ config_schedule_channel#:#Input value for scheduling
 config_schedule_channel_info#:#Input value sent to the capture agents when scheduling events via plugin. Warning: Scheduling events requires API v1.1.0.
 config_common_idp#:#Common IdP
 config_common_idp_info#:#Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks ("as-user" instead of "with-user-role").
-config_external_download_source#:#External download source
-config_external_download_source_info#:#Enable this option in case of an external web page to show the downloads
 config_oc_studio_allowed#:#Enable Opencast Studio
 config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
 config_oc_studio_url#:#Opencast Studio URL
@@ -334,6 +332,8 @@ publication_usage_search_key_info#:#The media/attachments will be search for the
 publication_usage_tag#:#Tag
 publication_usage_allow_multiple#:#Allow multiple
 publication_usage_allow_multiple_info#:#If active and multiple media/attachments can be found for the given flavor/tag, all of them in a form of dropdown list will be offered to download. In this case the Publication Group <b>would NOT</b> be effective.
+publication_usage_ext_dl_source#:#External download source
+publication_usage_ext_dl_source_info#:#Enable this option in case of an external web page to show the downloads
 series_accept_eula#:#I accept the agreement
 series_alert_eula#:#The EULA has to be accepted
 series_cancel#:#Cancel

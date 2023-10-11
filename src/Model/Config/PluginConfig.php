@@ -72,7 +72,6 @@ class PluginConfig extends ActiveRecord
     public const F_CREATE_SCHEDULED_ALLOWED = 'create_scheduled_allowed';
     public const F_STUDIO_ALLOWED = 'oc_studio_allowed';
     public const F_STUDIO_URL = 'oc_studio_url';
-    public const F_EXT_DL_SOURCE = 'external_download_source';
     public const F_VIDEO_PORTAL_LINK = 'video_portal_link';
     public const F_VIDEO_PORTAL_TITLE = 'video_portal_title';
     public const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
@@ -238,6 +237,8 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsage->setMediaType($mediatype ?? '');
             $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
             $xoctPublicationUsage->setIgnoreObjectSettings($ignore_object_setting);
+            $ext_dl_source = (bool) $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue;
+            $xoctPublicationUsage->setExternalDownloadSource($ext_dl_source);
 
             if (!PublicationUsage::where(['usage_id' => $xoctPublicationUsage->getUsageId()])->hasSets()) {
                 $xoctPublicationUsage->create();
@@ -274,6 +275,8 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationSubUsage->setMediaType($mediatype ?? '');
             $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
             $xoctPublicationSubUsage->setIgnoreObjectSettings($ignore_object_setting);
+            $ext_dl_source = (bool) $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue;
+            $xoctPublicationSubUsage->setExternalDownloadSource($ext_dl_source);
             $xoctPublicationSubUsage->create();
         }
 
@@ -404,6 +407,9 @@ class PluginConfig extends ActiveRecord
             $xml_xoctPU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
                 new DOMCdataSection($xoctPublicationUsage->ignoreObjectSettings())
             );
+            $xml_xoctPU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsage->isExternalDownloadSource())
+            );
         }
 
         // xoctPublicationSubUsage
@@ -448,6 +454,9 @@ class PluginConfig extends ActiveRecord
             );
             $xml_xoctPSU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
                 new DOMCdataSection($xoctPublicationSubUsage->ignoreObjectSettings())
+            );
+            $xml_xoctPSU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
+                new DOMCdataSection($xoctPublicationSubUsage->isExternalDownloadSource())
             );
         }
 

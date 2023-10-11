@@ -475,6 +475,31 @@ $ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup::updateDB();
 // Introducing PublicationSubUsage as for sub usages.
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::updateDB();
-// Add display name and groupd id to PublicationUsage.
+// Add new columns to PublicationUsage.
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+
+foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
+    if ($publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+        $ext_dl_source = false;
+        $config = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig('external_download_source');
+        if ((bool) $config) {
+            $ext_dl_source = true;
+        }
+        $publication_usage->setExternalDownloadSource($ext_dl_source);
+        $publication_usage->update();
+    }
+}
+
+foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::get() as $publication_subusage) {
+    if ($publication_subusage->getParentUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_subusage->getParentUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+        $ext_dl_source = false;
+        $config = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig('external_download_source');
+        if ((bool) $config) {
+            $ext_dl_source = true;
+        }
+        $publication_subusage->setExternalDownloadSource($ext_dl_source);
+        $publication_subusage->update();
+    }
+}
+
 ?>

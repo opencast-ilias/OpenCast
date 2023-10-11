@@ -929,7 +929,8 @@ class xoctEventGUI extends xoctGUI
         $extension = pathinfo($url)['extension'];
         $url = PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
 
-        if (PluginConfig::getConfig(PluginConfig::F_EXT_DL_SOURCE)) {
+        // if (PluginConfig::getConfig(PluginConfig::F_EXT_DL_SOURCE)) {
+        if (property_exists($publication, 'ext_dl_source') && $publication->ext_dl_source == true) {
             // Open external source page
             header('Location: ' . $url);
         } else {
