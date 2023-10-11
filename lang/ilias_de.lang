@@ -614,4 +614,6 @@ publication_usage_table_title_usage_group#:#Publikation Gruppe
 publication_usage_create_group#:#Gruppe erstellen
 publication_usage_edit_group#:#Gruppe bearbeiten
 publication_usage_confirm_delete_text_group#:#Sind Sie sicher, dass Sie diese Publikationsgruppe löschen möchten?
+publication_usage_extra_config#:#Zusätzliche
 pug_display_name_default#:#Mehr
+

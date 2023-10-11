@@ -66,6 +66,7 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
         $PublicationSubUsage = PublicationSubUsage::find($a_set['id']);
         $this->tpl->setVariable('PARENT_USAGE_ID', $PublicationSubUsage->getParentUsageId());
         $this->tpl->setVariable('TITLE', $PublicationSubUsage->getTitle());
+        $this->tpl->setVariable('DISPLAY_NAME', $PublicationSubUsage->getDisplayName());
         $this->tpl->setVariable('DESCRIPTION', $PublicationSubUsage->getDescription());
         $this->tpl->setVariable('CHANNEL', $PublicationSubUsage->getChannel());
         $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $PublicationSubUsage->getMdType()));
@@ -86,6 +87,15 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
         }
         $this->tpl->setVariable('GROUP_NAME', $group_name);
 
+        $extras = [];
+        if ($PublicationSubUsage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
+            $PublicationSubUsage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+            if ($PublicationSubUsage->isExternalDownloadSource()) {
+                $extras[] = $this->parent_obj->txt('ext_dl_source');
+            }
+        }
+        $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
+
         $this->addActionMenu($PublicationSubUsage);
     }
 
@@ -94,12 +104,14 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
     {
         $this->addColumn($this->parent_obj->txt('parent_usage_id'));
         $this->addColumn($this->parent_obj->txt('title'));
+        $this->addColumn($this->parent_obj->txt('display_name'));
         $this->addColumn($this->parent_obj->txt('description'));
         $this->addColumn($this->parent_obj->txt('channel'));
         $this->addColumn($this->parent_obj->txt('md_type'));
         $this->addColumn($this->parent_obj->txt('flavor'));
         $this->addColumn($this->parent_obj->txt('tag'));
         $this->addColumn($this->parent_obj->txt('group_th'));
+        $this->addColumn($this->parent_obj->txt('extra_config'));
 
         $this->addColumn($this->plugin->txt('common_actions'), '', '150px');
     }
