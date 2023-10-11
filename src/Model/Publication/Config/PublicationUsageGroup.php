@@ -152,6 +152,10 @@ class PublicationUsageGroup extends ActiveRecord
             $pu->setGroupId(null);
             $pu->update();
         }
+        foreach (PublicationSubUsage::where(['group_id' => intval($this->getId())])->get() as $psu) {
+            $psu->setGroupId(null);
+            $psu->update();
+        }
         parent::delete();
     }
 }
