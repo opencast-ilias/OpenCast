@@ -216,6 +216,9 @@ class PluginConfig extends ActiveRecord
          */
         $xoct_publication_usage = $domxml->getElementsByTagName('xoct_publication_usage');
 
+        // We need to reset the main usages, otherwise we end with an already filled unwanted usages!
+        PublicationUsage::flushDB();
+
         foreach ($xoct_publication_usage as $node) {
             $usage_id = $node->getElementsByTagName('usage_id')->item(0)->nodeValue;
             if (!$usage_id) {
