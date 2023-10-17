@@ -60,6 +60,7 @@ class ChunkedFileRenderer extends Renderer
         $settings->accepted_files = implode(',', $component->getAcceptedMimeTypes());
         $settings->existing_file_ids = $component->getValue();
         $settings->existing_files = $handler->getInfoForExistingFiles($component->getValue() ?? []);
+        $settings->timeout = (int) ini_get('max_execution_time') * 1000; // dropzone.js expects milliseconds
 
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();

@@ -1,7 +1,8 @@
 # Change Log
 
 ## [5.3.0]
-- The Chunk Size for Uploads is now configurable. The default value is 20MB, this can be changes in the plugin configuration.
+- Implemented #193: The Chunk Size for Uploads is now configurable. The default value is 20MB, this can be changes in the plugin configuration.
+- Fix #176: Fixed a static timeout in fileuploads, this now uses max_execution_time of the server. 
 
 ## [5.2.0]
 - Version 5.2.0 contains a large number of refactorings. The ILIAS 7 compatible version is continuously refactored so that an update to ILIAS 8 is easier possible. For example, libraries that are no longer compatible have to be removed. In this first step the internal use of srg/dic was removed.
