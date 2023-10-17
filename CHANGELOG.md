@@ -1,5 +1,8 @@
 # Change Log
 
+## [5.3.0]
+- The Chunk Size for Uploads is now configurable. The default value is 20MB, this can be changes in the plugin configuration.
+
 ## [5.2.0]
 - Version 5.2.0 contains a large number of refactorings. The ILIAS 7 compatible version is continuously refactored so that an update to ILIAS 8 is easier possible. For example, libraries that are no longer compatible have to be removed. In this first step the internal use of srg/dic was removed.
 - With the new release the plugin uses the new php-library `elan-ev/opencast-api` in version 1.4.0 for all API calls to Opencast.

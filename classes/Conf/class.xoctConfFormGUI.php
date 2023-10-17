@@ -184,10 +184,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
     }
 
-    /**
-     *
-     */
-    protected function initEventsSection()
+
+    protected function initEventsSection(): void
     {
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('events'));
@@ -203,7 +201,17 @@ class xoctConfFormGUI extends ilPropertyFormGUI
             PluginConfig::F_CURL_MAX_UPLOADSIZE
         );
         $te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_MAX_UPLOADSIZE . '_info'));
-        $te->setRequired(false);
+        $te->setRequired(true);
+        $this->addItem($te);
+
+        $te = new ilNumberInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_CURL_CHUNK_SIZE),
+            PluginConfig::F_CURL_CHUNK_SIZE
+        );
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_CHUNK_SIZE . '_info'));
+        $te->setRequired(true);
+        $te->setMinValue(1, true);
+        $te->setMaxValue(\ilUtil::getUploadSizeLimitBytes() / 1024 / 1024 / 2, true);
         $this->addItem($te);
 
         $te = new ilTextInputGUI(
