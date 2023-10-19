@@ -8,6 +8,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 
 /**
  * Class xoctEventTableGUI
@@ -69,6 +71,10 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var \ilObjUser
      */
     private $user;
+    /**
+     * @var \MDCatalogue
+     */
+    private $md_catalogue_event;
 
     /**
      * @throws DICException
@@ -80,7 +86,8 @@ class xoctEventTableGUI extends ilTable2GUI
         ObjectSettings $objectSettings,
         array $md_fields,
         array $data,
-        string $lang_key
+        string $lang_key,
+        MDCatalogue $md_catalogue_event
     ) {
         global $DIC;
         $ctrl = $DIC->ctrl();
@@ -125,6 +132,7 @@ class xoctEventTableGUI extends ilTable2GUI
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats([self::EXPORT_CSV]);
         }
+        $this->md_catalogue_event = $md_catalogue_event;
     }
 
     public static function setDefaultRowValue(int $obj_id): void
@@ -140,7 +148,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @param $column
      */
-    public function isColumsSelected($column): bool
+    public function isColumnsSelected($column): bool
     {
         if (!array_key_exists($column, $this->getSelectableColumns())) {
             return true;
@@ -177,18 +185,23 @@ class xoctEventTableGUI extends ilTable2GUI
 
         $first = true;
         foreach ($this->md_fields as $md_field) {
-            if ($this->isColumsSelected($md_field->getFieldId())) {
+            if ($this->isColumnsSelected($md_field->getFieldId())) {
                 $this->tpl->setCurrentBlock('generic' . ($first ? '_w_state' : ''));
                 if ($first) {
                     $this->tpl->setVariable('STATE', $renderer->getStateHTML());
                 }
-                $this->tpl->setVariable('VALUE', $a_set[$md_field->getFieldId()]);
+                $md_field_def = $this->md_catalogue_event->getFieldById($md_field->getFieldId());
+                $value = $a_set[$md_field->getFieldId()] ?? '';
+                if ($md_field_def->getType()->getTitle() == MDDataType::TYPE_TEXT_SELECTION) {
+                    $value = $md_field->getValues()[$value] ?? '';
+                }
+                $this->tpl->setVariable('VALUE', $value);
                 $first = false;
                 $this->tpl->parseCurrentBlock();
             }
         }
 
-        if ($this->isColumsSelected('event_owner')) {
+        if ($this->isColumnsSelected('event_owner')) {
             $renderer->insertOwner($this->tpl, 'generic', 'VALUE', $a_set['owner_username']);
         }
 
@@ -203,7 +216,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @return array{selectable: true, sort_field: string, text: string}[]|array{selectable: false, sort_field: null, width: string, lang_var: string}[]|array{selectable: false, sort_field: null, lang_var: string}[]|array{selectable: true, sort_field: string, default: bool, lang_var: string}[]|array{selectable: false, sort_field: string, lang_var: string}[]|array{selectable: false, lang_var: string}[]
      */
-    protected function getAllColums(): array
+    protected function getAllColumns(): array
     {
         $columns = [
             'event_preview' => [
@@ -278,8 +291,8 @@ class xoctEventTableGUI extends ilTable2GUI
     {
         $selected_columns = $this->getSelectedColumns();
 
-        foreach ($this->getAllColums() as $key => $col) {
-            if (!$this->isColumsSelected($key)) {
+        foreach ($this->getAllColumns() as $key => $col) {
+            if (!$this->isColumnsSelected($key)) {
                 continue;
             }
             if ($col['selectable'] == false || in_array($key, $selected_columns)) {
@@ -444,7 +457,7 @@ class xoctEventTableGUI extends ilTable2GUI
             return $selectable_columns;
         }
         $selectable_columns = [];
-        foreach ($this->getAllColums() as $key => $col) {
+        foreach ($this->getAllColumns() as $key => $col) {
             if ($col['selectable']) {
                 $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = [

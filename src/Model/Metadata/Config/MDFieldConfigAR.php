@@ -76,11 +76,11 @@ abstract class MDFieldConfigAR extends ActiveRecord
      */
     protected $read_only;
     /**
-     * @var MDPrefillOption
+     * @var string
      *
      * @con_has_field    true
      * @con_fieldtype    text
-     * @con_length       128
+     * @con_length       4000
      * @con_is_notnull   true
      */
     protected $prefill;
@@ -106,8 +106,6 @@ abstract class MDFieldConfigAR extends ActiveRecord
     public function sleep($field_name)
     {
         switch ($field_name) {
-            case 'prefill':
-                return $this->prefill->getValue();
             case 'values':
                 return json_encode($this->values);
             default:
@@ -121,8 +119,6 @@ abstract class MDFieldConfigAR extends ActiveRecord
     public function wakeUp($field_name, $field_value)
     {
         switch ($field_name) {
-            case 'prefill':
-                return new MDPrefillOption($field_value);
             case 'values':
                 if (empty($field_value)) {
                     return [];
@@ -205,12 +201,12 @@ abstract class MDFieldConfigAR extends ActiveRecord
         $this->read_only = $read_only;
     }
 
-    public function getPrefill(): MDPrefillOption
+    public function getPrefill(): string
     {
         return $this->prefill;
     }
 
-    public function setPrefill(MDPrefillOption $prefill): void
+    public function setPrefill(?string $prefill): void
     {
         $this->prefill = $prefill;
     }

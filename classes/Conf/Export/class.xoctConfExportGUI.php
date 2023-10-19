@@ -26,6 +26,7 @@ class xoctConfExportGUI extends xoctGUI
 
     protected function index()
     {
+        ilUtil::sendInfo($this->plugin->txt('msg_admin_import_freindly_reminder_info'));
         $b = ilLinkButton::getInstance();
         $b->setCaption('rep_robj_xoct_admin_export');
         $b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
@@ -45,7 +46,17 @@ class xoctConfExportGUI extends xoctGUI
      */
     protected function import()
     {
-        PluginConfig::importFromXML($_FILES['xoct_import']['tmp_name']);
+        if (!isset($_FILES['xoct_import']) || empty($_FILES['xoct_import']['tmp_name'])) {
+            ilUtil::sendFailure($this->plugin->txt("admin_import_file_missign"), true);
+            $this->cancel();
+        }
+
+        try {
+            PluginConfig::importFromXML($_FILES['xoct_import']['tmp_name']);
+            ilUtil::sendSuccess($this->plugin->txt('admin_import_success'), true);
+        } catch (\Throwable $th) {
+            ilUtil::sendFailure($this->plugin->txt("admin_import_failed"), true);
+        }
         $this->cancel();
     }
 

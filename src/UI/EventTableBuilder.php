@@ -78,7 +78,8 @@ class EventTableBuilder
                 $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
                 $objectSettings
             ),
-            $this->dic->language()->getLangKey()
+            $this->dic->language()->getLangKey(),
+            $this->MDCatalogue
         );
     }
 
