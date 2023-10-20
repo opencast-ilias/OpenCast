@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctConfFormGUI
@@ -25,12 +26,18 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      * @var string
      */
     protected $subtab_active;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
 
     /**
      * @param $parent_gui
      */
     public function __construct(xoctConfGUI $parent_gui, $subtab_active)
     {
+        $container = OpencastDIC::getInstance();
+        $this->plugin = $container->plugin();
         parent::__construct();
         $this->parent_gui = $parent_gui;
         $this->subtab_active = $subtab_active;
@@ -159,6 +166,11 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      */
     protected function initAPISection()
     {
+        global $DIC;
+        $main_tpl = $DIC->ui()->mainTemplate();
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
+        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/password_toggle.min.js'));
+
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('curl'));
         $this->addItem($h);
