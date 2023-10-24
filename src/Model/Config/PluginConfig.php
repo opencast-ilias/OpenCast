@@ -263,7 +263,7 @@ class PluginConfig extends ActiveRecord
             if (!$parent_usage_id) {
                 continue;
             }
-            $xoctPublicationSubUsage = new PublicationSubUsage();
+            $xoctPublicationSubUsage = PublicationSubUsage::findOrGetInstance(0);
             $xoctPublicationSubUsage->setParentUsageId($node->getElementsByTagName('parent_usage_id')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
@@ -293,7 +293,7 @@ class PluginConfig extends ActiveRecord
 
         foreach ($xoct_publication_usage_groups as $node) {
             $old_id = $node->getElementsByTagName('id')->item(0)->nodeValue;
-            $xoctPublicationUsageGroup = new PublicationUsageGroup();
+            $xoctPublicationUsageGroup = PublicationUsageGroup::findOrGetInstance(0);
             $xoctPublicationUsageGroup->setName($node->getElementsByTagName('name')->item(0)->nodeValue);
             $xoctPublicationUsageGroup->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue);
             $xoctPublicationUsageGroup->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
