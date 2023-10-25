@@ -141,6 +141,9 @@ class MDParser
                 }
             } else {
                 $key = array_search($fieldDefinition->getId(), array_column($fields, 'id'));
+                if ($key === false) {
+                    continue;
+                }
                 $field = $fields[$key];
             }
             $metadata->addField(
