@@ -42,6 +42,13 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         self::CMD_CONFIRM_LOAD_LIST,
         self::CMD_LOAD_LIST
     ];
+
+
+    protected static $listprovider_sources = [
+        'license' => 'LICENSES',
+        'language' => 'LANGUAGES'
+    ];
+
     /**
      * @var UIFactory
      */
@@ -220,9 +227,10 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->ctrl->setParameter($this, 'field_id', $field_id);
         $redirect = filter_input(INPUT_GET, 'redirect', FILTER_SANITIZE_STRING);
         try {
-            if ($this->listprovider->hasList($field_id)) {
+            if ($this->listprovider->hasList($field_id) && key_exists($field_id, self::$listprovider_sources)) {
                 $md_field_config = $this->repository->findByFieldId($field_id);
-                $digested_list = $this->digestList($this->listprovider->getList($field_id), $field_id);
+                $source = self::$listprovider_sources[$field_id];
+                $digested_list = $this->digestList($this->listprovider->getList($source), $field_id);
                 if (!empty($digested_list)) {
                     $separator = MDFieldConfigAR::VALUE_SEPERATOR;
                     $converted_list = array_map(function ($key, $value) use ($separator) {
