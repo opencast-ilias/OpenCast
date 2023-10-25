@@ -61,10 +61,9 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     protected function initColumns(): void
     {
-        $cols = $this->getSelectableColumns2();
-        foreach ($this->getSelectedColumns() as $col) {
-            $txt = $cols[$col]['txt'];
-            $id = $cols[$col]['id'];
+        foreach ($this->getSelectableColumns2() as $col) {
+            $txt = $col['txt'];
+            $id = $col['id'];
             $sort = false;
             $width = '';
             switch ($id) {
@@ -183,11 +182,7 @@ class xoctWorkflowTableGUI extends TableGUI
      */
     public function isColumnSelected($col): bool
     {
-        if (!array_key_exists($col, $this->getSelectableColumns())) {
-            return true;
-        }
-
-        return in_array($col, $this->getSelectedColumns());
+        return true;
     }
 
     /**
