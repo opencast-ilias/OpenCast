@@ -307,8 +307,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $te = new ilSelectInputGUI($this->parent_gui->txt(PluginConfig::F_LIVESTREAM_TYPE), PluginConfig::F_LIVESTREAM_TYPE);
         $te->setInfo($this->parent_gui->txt(PluginConfig::F_LIVESTREAM_TYPE . '_info'));
         $te->setOptions([
-            'hls' => 'HLS (.m3u8 / .m3u)',
-            'mpegts' => 'MPEG-TS (.ts)',
+            'hls' => $this->parent_gui->txt(PluginConfig::F_LIVESTREAM_TYPE . '_hls'),
+            'mpegts' => $this->parent_gui->txt(PluginConfig::F_LIVESTREAM_TYPE . '_mpegts'),
         ]);
         $te->setRequired(true);
         $cbs->addSubItem($te);

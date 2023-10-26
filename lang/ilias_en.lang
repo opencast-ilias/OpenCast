@@ -582,6 +582,8 @@ publication_usage_type_captions#:#Captions
 publication_usage_type_captions_fallback#:#Captions Fallback
 config_livestream_type#:#Streaming Type
 config_livestream_type_info#:#Different streaming types produce different playlist file types and information. It is important to select the supported streaming type to handle its files and information properly. Default type is set to HLS.
+config_livestream_type_hls#:#HLS (.m3u8 / .m3u)
+config_livestream_type_mpegts#:#MPEG-TS (.ts)
 config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
 config_paella_player_fallback_captions_option_info#:#The user-browser language is by default taken for the default caption, adding additional captions here helps to define preferred captions, prioritized based on the given order.
 config_paella_player_fallback_langs_option#:#Paella Player Languages (fallbacks)
