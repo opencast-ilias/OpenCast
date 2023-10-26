@@ -90,7 +90,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
      * @con_has_field    true
      * @con_fieldtype    integer
      * @con_length       8
-     * @con_is_notnull   true
+     * @con_is_notnull   false
      */
     protected $sort;
 
