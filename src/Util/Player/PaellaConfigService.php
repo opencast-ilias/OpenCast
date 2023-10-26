@@ -99,7 +99,7 @@ class PaellaConfigService
     /**
      * @return string preview fallback url
      */
-    public function getPaellaPlayerPreviewFallback()
+    public function getPaellaPlayerPreviewFallback(): string
     {
         $preview_fallback_http_path = ILIAS_HTTP_PATH . '/' . PluginConfig::PAELLA_DEFAULT_PREVIEW;
         $preview_fallback = PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK);
