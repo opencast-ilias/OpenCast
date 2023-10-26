@@ -97,7 +97,7 @@ class PublicationSelector
     /**
      * @var Publication[]|Media[]|Attachment[]
      */
-    protected $caption_publications;
+    protected $caption_publications = [];
     /**
      * @var \ilObjUser
      */
@@ -560,7 +560,7 @@ class PublicationSelector
      */
     public function getCaptionPublications(): array
     {
-        if (!isset($this->caption_publications)) {
+        if (empty($this->caption_publications)) {
             $captions = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS));
             $captions_fallback = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS_FALLBACK));
             $this->caption_publications = array_merge($captions, $captions_fallback);
