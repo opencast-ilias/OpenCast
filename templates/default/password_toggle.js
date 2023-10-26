@@ -1,52 +1,120 @@
-$(document).ready(function() {
-	let password_input = document.getElementById('curl_password');
-	if (!password_input) {
-		return;
-	}
-	password_input.setAttribute('type', 'password');
+/**
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ * You should have received a copy of said license along with the
+ * source code, too.
+ *
+ * If this is not the case or you just want to try ILIAS, you'll find
+ * us at:
+ * https://www.ilias.de
+ * https://github.com/ILIAS-eLearning
+ */
 
-	let show_icon = document.createElement("img");
-	show_icon.setAttribute('alt', 'show password');
-	show_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye');
-	show_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye.svg');
-	let show_div = document.createElement('div');
-	show_div.setAttribute('class', 'xoct_pw_toggle_item toggle-show');
-	show_div.appendChild(show_icon);
-	let hide_icon = document.createElement("img");
-	hide_icon.setAttribute('alt', 'hide password');
-	hide_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye-slash');
-	hide_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye-slash.svg');
-	let hide_div = document.createElement('div');
-	hide_div.setAttribute('class', 'xoct_pw_toggle_item toggle-hide');
-	hide_div.appendChild(hide_icon);
+/**
+ * xoctPasswordMask
+ * This module helps to mask passwords inputs, with show/hide feature.
+ *
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
+ */
+var xoctPasswordMask = {
+	password_input_ids: [],
 
-	let container_div = document.createElement('div');
-	container_div.setAttribute('id','xoct_pw_toggle_container');
+	/**
+	 * Init
+	 * This function is designed to handle multiple password inputs, masking all at the same time.
+	 * @param {string} password_input_ids_json_string possible values for this are:
+	 * 		string: json encoded array of inputs like '["curl_password"]'
+	 *		string: single input id like: 'curl_password'
+	 */
+	init: function (password_input_ids_json_string) {
 
-	container_div.appendChild(show_div);
-	container_div.appendChild(hide_div);
-
-	let current_parent = password_input.parentElement;
-	current_parent.classList.add('xoct_pw_main_container');
-
-	let wrapper_div = document.createElement('div');
-	wrapper_div.setAttribute('class', 'xoct_pw_wrapper');
-
-	wrapper_div.appendChild(password_input);
-	wrapper_div.appendChild(container_div);
-
-	current_parent.prepend(wrapper_div);
-
-	$('.xoct_pw_toggle_item').click( function(e) {
-		let element = e.target.nodeName == 'IMG' ? e.target.parentNode : e.element;
-		let toggle_element = $(element).siblings('.xoct_pw_toggle_item');
-		if ($(element).hasClass('toggle-show')) {
-			$('#curl_password').attr('type', 'text');
-		} else {
-			$('#curl_password').attr('type', 'password');
+		try {
+			let password_input_ids = JSON.parse(password_input_ids_json_string);
+			if (Array.isArray(password_input_ids)) {
+				this.password_input_ids = password_input_ids;
+			}
+		} catch (e) {
+			if (password_input_ids_json_string != '') {
+				this.password_input_ids = [password_input_ids_json_string];
+			}
 		}
 
-		$(element).hide();
-		$(toggle_element).show();
-	});
-});
+		if (!Array.isArray(this.password_input_ids) || this.password_input_ids.length === 0) {
+			console.warn('Unable to find any input to mask!');
+			return;
+		}
+
+		var self = this;
+
+		$(document).ready(function () {
+			$('.xoct_pw_toggle_item').click( function(e) {
+				let element = e.target.nodeName == 'IMG' ? e.target.parentNode : e.element;
+				let toggle_element = $(element).siblings('.xoct_pw_toggle_item');
+				let input_siblings = $(element.parentNode).siblings('input');
+				if (input_siblings && input_siblings.length > 0) {
+					let password_input = input_siblings[0];
+					if ($(element).hasClass('toggle-show')) {
+						$(password_input).attr('type', 'text');
+					} else {
+						$(password_input).attr('type', 'password');
+					}
+				}
+
+				$(element).hide();
+				$(toggle_element).show();
+			});
+		});
+
+		this.password_input_ids.forEach(function (password_input_id, index) {
+			self.wrapper(password_input_id);
+		});
+	},
+
+	/**
+	 * Wrapper function
+	 * This function prepares the masking elements and wrap them around the password input element.
+	 * @param {string} password_input_id The id of the password input element
+	 */
+	wrapper: function (password_input_id) {
+		let password_input = document.getElementById(password_input_id);
+		if (!password_input) {
+			return;
+		}
+		password_input.setAttribute('type', 'password');
+
+		let show_icon = document.createElement("img");
+		show_icon.setAttribute('alt', 'show password');
+		show_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye');
+		show_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye.svg');
+		let show_div = document.createElement('div');
+		show_div.setAttribute('class', 'xoct_pw_toggle_item toggle-show');
+		show_div.appendChild(show_icon);
+		let hide_icon = document.createElement("img");
+		hide_icon.setAttribute('alt', 'hide password');
+		hide_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye-slash');
+		hide_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye-slash.svg');
+		let hide_div = document.createElement('div');
+		hide_div.setAttribute('class', 'xoct_pw_toggle_item toggle-hide');
+		hide_div.appendChild(hide_icon);
+
+		let container_div = document.createElement('div');
+		container_div.setAttribute('class','xoct_pw_toggle_container');
+
+		container_div.appendChild(show_div);
+		container_div.appendChild(hide_div);
+
+		let current_parent = password_input.parentElement;
+		current_parent.classList.add('xoct_pw_main_container');
+
+		let wrapper_div = document.createElement('div');
+		wrapper_div.setAttribute('class', 'xoct_pw_wrapper');
+
+		wrapper_div.appendChild(password_input);
+		wrapper_div.appendChild(container_div);
+
+		current_parent.prepend(wrapper_div);
+	}
+};

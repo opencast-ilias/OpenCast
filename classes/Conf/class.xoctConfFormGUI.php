@@ -30,14 +30,22 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      * @var ilOpenCastPlugin
      */
     protected $plugin;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
     /**
      * @param $parent_gui
      */
     public function __construct(xoctConfGUI $parent_gui, $subtab_active)
     {
+        global $DIC;
         $container = OpencastDIC::getInstance();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $container->plugin();
+        $this->main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/password_toggle.min.js'));
+        $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
         parent::__construct();
         $this->parent_gui = $parent_gui;
         $this->subtab_active = $subtab_active;
@@ -166,10 +174,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      */
     protected function initAPISection()
     {
-        global $DIC;
-        $main_tpl = $DIC->ui()->mainTemplate();
-        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
-        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/password_toggle.min.js'));
+        $code = "xoctPasswordMask.init('" . PluginConfig::F_CURL_PASSWORD . "');";
+        $this->main_tpl->addOnLoadCode($code);
 
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('curl'));
