@@ -1,3 +1,11 @@
+/**
+ * PasswordToggle
+ *
+ * PasswordToggle class
+ *
+ * @author Fabian Schmid <fs@studer-raimann.ch>
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
+ */
 export default class PasswordToggle {
     /**
      * @type {jQuery}
