@@ -50,6 +50,10 @@ class xoctPlayerGUI extends xoctGUI
      * @var \ilObjUser
      */
     private $user;
+    /**
+     * @var \ILIAS\HTTP\Services
+     */
+    private $http;
 
     public function __construct(
         EventRepository $event_repository,
@@ -60,10 +64,13 @@ class xoctPlayerGUI extends xoctGUI
         global $DIC;
         parent::__construct();
         $this->user = $DIC->user();
+        $this->http = $DIC->http();
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
+        $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? null;
+        $this->force_no_chat = (bool) $this->http->request()->getQueryParams()['force_no_chat'] ?? false;
     }
 
     /**
@@ -73,7 +80,11 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo(): void
     {
-        $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
+        if (!isset($this->identifier) || empty($this->identifier)) {
+            echo "Error: invalid identifier";
+            exit();
+        }
+        $event = $this->event_repository->find($this->identifier);
         if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
             header('Location: ' . $event->publications()->getPlayerLink());
@@ -153,7 +164,8 @@ class xoctPlayerGUI extends xoctGUI
 
     protected function isChatVisible(): bool
     {
-        return !filter_input(INPUT_GET, 'force_no_chat')
+
+        return !$this->force_no_chat
             && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)
             && $this->objectSettings->isChatActive();
     }
