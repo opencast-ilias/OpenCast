@@ -31,6 +31,7 @@ class PluginConfig extends ActiveRecord
     public const F_CURL_USERNAME = 'curl_username';
     public const F_CURL_PASSWORD = 'curl_password';
     public const F_CURL_MAX_UPLOADSIZE = 'curl_max_upload_size';
+    public const F_CURL_CHUNK_SIZE = 'curl_chunk_size';
     public const F_WORKFLOW = 'workflow';
     public const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
     public const F_EULA = 'eula';

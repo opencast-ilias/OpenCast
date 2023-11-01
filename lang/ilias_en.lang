@@ -18,6 +18,8 @@ config_api_version#:#API Version
 config_api_version_info#:#Format: vX.Y.Z - e.g.: v1.0.0
 config_curl_max_upload_size#:#Max. File-Size in MB
 config_curl_max_upload_size_info#:#Defines the maximum possible upload size for video files in MB
+config_curl_chunk_size#:#Chunk size in MB
+config_curl_chunk_size_info#:#Defines the size of individual upload chunks in MB. Large files are uploaded in single parts (chunks). Smaller chunks are better for slow internet connections, larger chunks are better for fast internet connections.
 config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
