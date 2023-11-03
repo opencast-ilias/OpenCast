@@ -6,7 +6,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">	<!-- <link rel="icon" href="data:,"> -->
 	<title>{TITLE}</title>
-	<script type="text/javascript" src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/paella/paella-player.min.js?3"></script>
+	<script src="{JQUERY_PATH}"></script>
+	<script src="{ILIAS_BASIC_JS_PATH}"></script>
+	<script type="text/javascript" src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/dist/index.js?3"></script>
 	<link rel="stylesheet" href="{STYLE_SHEET_LOCATION}" type="text/css" media="screen" charset="utf-8">
 	<style>
 		body {
@@ -29,7 +31,7 @@
 	<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
 </div>
 <script>
-xoctPaellaPlayer.init(
+il.Opencast.Paella.player.init(
 	{DATA},
 	{JS_CONFIG}
 )

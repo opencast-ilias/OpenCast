@@ -6,14 +6,14 @@ module.exports = {
         path: path.resolve(__dirname),
         filename: 'paella-player.min.js',
         sourceMapFilename: 'paella-player.min.js.map',
+        globalObject: 'this',
         library: {
-            name: 'xoctPaellaPlayer',
-            type: 'var',
-            export: 'default',
+            name: 'PaellaPlayer',
+            type: 'umd'
         },
 
     },
-    devtool: 'source-map',
+    // devtool: 'source-map',
     module: {
         rules: [
             {

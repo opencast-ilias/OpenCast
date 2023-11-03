@@ -100,7 +100,13 @@ class xoctPlayerGUI extends xoctGUI
             exit;
         }
 
+        $jquery_path = iljQueryUtil::getLocaljQueryPath();
+        $ilias_basic_js_path = './Services/JavaScript/js/Basic.js';
         $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
+
+        $tpl->setVariable("JQUERY_PATH", $jquery_path);
+        $tpl->setVariable("ILIAS_BASIC_JS_PATH", $ilias_basic_js_path);
+
         $tpl->setVariable("TITLE", $event->getTitle());
         $tpl->setVariable("DATA", json_encode($data));
         $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));

@@ -1,5 +1,6 @@
 import {terser} from 'rollup-plugin-terser';
-
+import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 export default {
     external: [
         'document',
@@ -16,5 +17,5 @@ export default {
             jquery: '$',
         }
     },
-    plugins: [terser()]
+    plugins: [terser(), commonjs(), nodeResolve()]
 };

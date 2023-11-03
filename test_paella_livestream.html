@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name = "viewport" content = "user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
 	<title>Paella Engage Example</title>
-	<script type="text/javascript" src="./templates/paella/paella-player.min.js?3"></script>
+	<script type="text/javascript" src="./js/opencast/src/Paella/paella-player.min.js?3"></script>
 	<style>
 		body {
 			margin: 0px;
@@ -23,10 +23,13 @@
 	</style>
 </head>
 <body id="body" onload="
-let configUrl = location.href.replace(/[^/]*$/, '') + 'js/paella_player/config.json';
+let configUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/config/config.json';
 let previewUrl = location.href.replace(/[^/]*$/, '') + 'templates/images/thumbnail_live_running.png';
-let themeUrl = location.href.replace(/[^/]*$/, '') + 'templates/paella/default_theme/opencast_theme.json';
-xoctPaellaPlayer.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl);">
+let themeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_theme.json';
+
+// this call must be a direct call to the PaellaPlayer class, as il.Opencast is not defined here!
+window.PaellaPlayer.default.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl);
+">
 <div id="playerContainer">
 </div>
 </body>

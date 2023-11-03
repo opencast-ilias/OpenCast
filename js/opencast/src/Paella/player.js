@@ -9,11 +9,20 @@ import getUserTrackingPluginsContext from 'paella-user-tracking';
 import localDictionaries from "./lang/registery";
 
 const loadVideoManifestFunction = () => {
-    return xoctPaellaPlayer.data;
+    if (typeof il !== 'undefined') {
+        return il.Opencast.Paella.player.data;
+    }
+    return window.PaellaPlayer.default.data;
 };
 
 const noop = () => {};
 
+
+/**
+ * PaellaPlayer
+ *
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
+ */
 export default {
 
     data: [],
@@ -57,7 +66,10 @@ export default {
         this.data = data;
         this.config = config;
         this.config.user_default_language = navigator?.language?.substring(0,2);
+
+        // If it is decided to display the full language name of a caption, just uncomment the following method call (compileCaptions)
         // this.compileCaptions();
+
         this.initPaella();
         if (this.config.is_live_stream === true) {
             this.hasWorkingStream().then(stream_available => {
@@ -261,12 +273,6 @@ export default {
                 break;
             }
         }
-    },
-
-    noop: function() {},
-
-    loadVideoManifestFunction: function() {
-        return window.episode;
     },
 
     reloadPlayer: function() {
