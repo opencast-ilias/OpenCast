@@ -31,6 +31,7 @@ class ChunkedFileRenderer extends Renderer
     }
 
     /**
+     * @param ChunkedFile         $component
      * @throws ilTemplateException
      */
     public function render(Component $component, RendererInterface $default_renderer): string
@@ -59,13 +60,12 @@ class ChunkedFileRenderer extends Renderer
         $settings->accepted_files = implode(',', $component->getAcceptedMimeTypes());
         $settings->existing_file_ids = $component->getValue();
         $settings->existing_files = $handler->getInfoForExistingFiles($component->getValue() ?? []);
+        $settings->timeout = (int) ini_get('max_execution_time') * 1000; // dropzone.js expects milliseconds
 
         $upload_limit = \ilUtil::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
-        $settings->chunk_size = min(
-            $upload_limit / 2,
-            20 * self::MB_IN_B
-        ); // we use 20MB as default chunk size which seems to be a good compromise for slow connections
+        $settings->chunk_size = $component->getChunkSizeInBytes();
+
         if (!$settings->chunked_upload) {
             $max_file_size = $component->getMaxFileFize() === -1
                 ? $upload_limit
