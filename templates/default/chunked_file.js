@@ -66,7 +66,8 @@ il.UI.Input = il.UI.Input || {};
         forceChunking: true,
         acceptedFiles: settings.accepted_files,
         dictInvalidFileType: settings.dictInvalidFileType,
-        progress_storage: 0
+        progress_storage: 0,
+        timeout: settings.timeout,
       });
 
       myDropzone.on('uploadprogress', function (file, progress, bytesSent) {

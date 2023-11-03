@@ -471,6 +471,17 @@ $ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null
 ?>
 <#41>
 <?php
+/** @var $ilDB ilDBInterface */
+$res = $ilDB->queryF('SELECT value FROM xoct_config WHERE name = %s', ['text'], ['curl_chunk_size']);
+if ($res->rowCount() === 0) {
+    $ilDB->insert('xoct_config', [
+        'name' => ['text', 'curl_chunk_size'],
+        'value' => ['text', '20']
+    ]);
+}
+?>
+<#42>
+<?php
 // The small column changes must be applied.
 \srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
 \srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
@@ -494,3 +505,4 @@ foreach (\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeries
     }
 }
 ?>
+

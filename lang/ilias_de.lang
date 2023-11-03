@@ -22,6 +22,8 @@ config_api_version#:#API-Version
 config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
 config_curl_max_upload_size#:#Maximale Upload-Größe in MB
 config_curl_max_upload_size_info#:#Definiert die maximal mögliche Uploadgröße für Video-Dateien in MB
+config_curl_chunk_size#:#Chunk-Größe in MB
+config_curl_chunk_size_info#:#Definiert die Grösse der einzelnen Upload-Chunks in MB. Grosse Dateien werden in einzelnen Teilen (Chunks) hochgeladen. Kleinere Chunks sind besser bei langsamen Internet-Verbindungen, grössere Chunks sind besser bei schnellen Internetverbindungen.
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
