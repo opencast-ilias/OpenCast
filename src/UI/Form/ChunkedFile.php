@@ -13,6 +13,8 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploa
  */
 class ChunkedFile extends File
 {
+    protected $chunk_size = 1;
+
     public function __construct(
         DataFactory $data_factory,
         Factory $refinery,
@@ -40,6 +42,18 @@ class ChunkedFile extends File
             $label,
             $byline
         ));
+    }
+
+    public function withChunkSizeInBytes(int $chunk_size_in_bytes): self
+    {
+        $clone = clone $this;
+        $clone->chunk_size = $chunk_size_in_bytes;
+        return $clone;
+    }
+
+    public function getChunkSizeInBytes(): int
+    {
+        return $this->chunk_size;
     }
 
     protected function isClientSideValueOk($value): bool

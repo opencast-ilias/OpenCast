@@ -664,7 +664,7 @@ class xoctEventGUI extends xoctGUI
                     $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->user)),
                     new Processing(
                         PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                        $data['workflow_configuration']['object'] ?? $this->getDefaultWorkflowParameters()
+                        $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'])
                     ),
                     xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
                 )
@@ -675,15 +675,16 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    public function getDefaultWorkflowParameters(): \stdClass
+    public function getDefaultWorkflowParameters(?\stdClass $fromData = null): \stdClass
     {
         $WorkflowParameter = new WorkflowParameter();
-        $defaultParameter = new stdClass();
+        $defaultParameter = $fromData ?? new stdClass();
         $admin = ilObjOpenCastAccess::hasPermission('edit_videos');
         foreach ($WorkflowParameter::get() as $param) {
+            $id = $param->getId();
             $defaultValue = $admin ? $param->getDefaultValueAdmin() : $param->getDefaultValueMember();
-            if ($defaultValue == WorkflowParameter::VALUE_ALWAYS_ACTIVE) {
-                $id = $param->getId();
+
+            if (!isset($fromData->$id) && $defaultValue == WorkflowParameter::VALUE_ALWAYS_ACTIVE) {
                 $defaultParameter->$id = "true";
             }
         }

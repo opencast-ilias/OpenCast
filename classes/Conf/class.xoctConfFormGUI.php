@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctConfFormGUI
@@ -25,12 +26,26 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      * @var string
      */
     protected $subtab_active;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
     /**
      * @param $parent_gui
      */
     public function __construct(xoctConfGUI $parent_gui, $subtab_active)
     {
+        global $DIC;
+        $container = OpencastDIC::getInstance();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
+        $this->plugin = $container->plugin();
+        $this->main_tpl->addJavaScript($this->plugin->getDirectory().'/js/opencast/dist/index.js');
+        $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
         parent::__construct();
         $this->parent_gui = $parent_gui;
         $this->subtab_active = $subtab_active;
@@ -159,6 +174,9 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      */
     protected function initAPISection()
     {
+        $code = "il.Opencast.Form.passwordToggle.init('" . PluginConfig::F_CURL_PASSWORD . "');";
+        $this->main_tpl->addOnLoadCode($code);
+
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('curl'));
         $this->addItem($h);
@@ -184,10 +202,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
     }
 
-    /**
-     *
-     */
-    protected function initEventsSection()
+
+    protected function initEventsSection(): void
     {
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->parent_gui->txt('events'));
@@ -203,7 +219,17 @@ class xoctConfFormGUI extends ilPropertyFormGUI
             PluginConfig::F_CURL_MAX_UPLOADSIZE
         );
         $te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_MAX_UPLOADSIZE . '_info'));
-        $te->setRequired(false);
+        $te->setRequired(true);
+        $this->addItem($te);
+
+        $te = new ilNumberInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_CURL_CHUNK_SIZE),
+            PluginConfig::F_CURL_CHUNK_SIZE
+        );
+        $te->setInfo($this->parent_gui->txt(PluginConfig::F_CURL_CHUNK_SIZE . '_info'));
+        $te->setRequired(true);
+        $te->setMinValue(1, true);
+        $te->setMaxValue(\ilUtil::getUploadSizeLimitBytes() / 1024 / 1024 / 2, true);
         $this->addItem($te);
 
         $te = new ilTextInputGUI(

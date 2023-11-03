@@ -471,6 +471,17 @@ $ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null
 ?>
 <#41>
 <?php
+/** @var $ilDB ilDBInterface */
+$res = $ilDB->queryF('SELECT value FROM xoct_config WHERE name = %s', ['text'], ['curl_chunk_size']);
+if ($res->rowCount() === 0) {
+    $ilDB->insert('xoct_config', [
+        'name' => ['text', 'curl_chunk_size'],
+        'value' => ['text', '20']
+    ]);
+}
+?>
+<#42>
+<?php
 // Introducing PublicationUsageGroup for grouping PublicationUsage.
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup::updateDB();
 // Introducing PublicationSubUsage as for sub usages.
@@ -501,5 +512,4 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
         $publication_subusage->update();
     }
 }
-
 ?>
