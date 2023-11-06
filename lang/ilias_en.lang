@@ -7,8 +7,8 @@ config_activate_cache#:#Activate cache
 config_activate_cache_info#:#Improves the loading time by storing Opencast data locally. Can lead to temporarily corrupt metadata.
 config_activate_cache_0#:#Disable Cache
 config_activate_cache_0_info#:#
-config_activate_cache_1#:#ILIAS Global Cache
-config_activate_cache_1_info#:#Use the global cache type defined in the ILIAS setup.
+config_activate_cache_1#:#APCu Cache
+config_activate_cache_1_info#:#Needs the PHP extension "APCu" to be installed and activated.
 config_activate_cache_2#:#Database Cache
 config_activate_cache_2_info#:#Data will be cached in the ILIAS database.
 config_annotation_token_security#:#Enable Annotation token security

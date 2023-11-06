@@ -7,8 +7,8 @@ config_activate_cache#:#Caching
 config_activate_cache_info#:#Verbessert die Ladezeiten der Videolisten durch lokales Speichern. Kann vorübergehend zu falschen (nicht aktuellen) Metadaten führen.
 config_activate_cache_0#:#Cache deaktivieren
 config_activate_cache_0_info#:#
-config_activate_cache_1#:#ILIAS-Global-Cache
-config_activate_cache_1_info#:#Der im ILIAS-Setup definierte Global-Cache-Typ wird verwendet.
+config_activate_cache_1#:#APCu Cache
+config_activate_cache_1_info#:#Benötigt die PHP-Erweiterung APCu.
 config_activate_cache_2#:#Datenbank-Cache
 config_activate_cache_2_info#:#Daten werden in der ILIAS-Datenbank zwischengespeichert.
 config_annotation_token_security#:#Anmerkungs-Token-Sicherheit aktivieren

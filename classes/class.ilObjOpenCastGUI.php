@@ -16,6 +16,8 @@ use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequest;
 use srag\Plugins\Opencast\Model\Series\Request\CreateSeriesRequestPayload;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 
 /**
  * User Interface class for example repository object.
@@ -30,6 +32,9 @@ use srag\Plugins\Opencast\UI\LegacyFormWrapper;
  */
 class ilObjOpenCastGUI extends ilObjectPluginGUI
 {
+    /**
+     * @var mixed
+     */
     public $creation_mode;
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
@@ -61,16 +66,16 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @var Container
      */
     private $ilias_dic;
+    /**
+     * @var \srag\Plugins\Opencast\Container\Container
+     */
+    private $container;
 
-    private function cleanUpDBCache(): void
+    public function __construct($a_ref_id = 0, $a_id_type = self::REPOSITORY_NODE_ID, $a_parent_node_id = 0)
     {
-        if (PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE) == PluginConfig::CACHE_DATABASE) {
-            $bm = microtime(true);
-            DBCacheService::cleanup($this->ilias_dic->database());
-            $this->ilias_dic->logger()->root()->info(
-                'cache cleanup done in ' . round((microtime(true) - $bm) * 1000) . 'ms'
-            );
-        }
+        parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
+        global $opencastContainer;
+        $this->container = $opencastContainer;
     }
 
     protected function afterConstructor()
@@ -120,7 +125,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->setTabs();
                     $xoctGrantPermissionGUI = new xoctGrantPermissionGUI(
                         $objectSettings,
-                        $this->opencast_dic->event_repository(),
+                        $this->container[EventAPIRepository::class],
                         $this->opencast_dic->acl_utils()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctGrantPermissionGUI);
@@ -131,7 +136,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $this->setTabs();
                     $xoctChangeOwnerGUI = new xoctChangeOwnerGUI(
                         $objectSettings,
-                        $this->opencast_dic->event_repository(),
+                        $this->container[EventAPIRepository::class],
                         $this->opencast_dic->acl_utils()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctChangeOwnerGUI);
@@ -143,7 +148,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctSeriesGUI = new xoctSeriesGUI(
                         $this->object,
                         $this->opencast_dic->series_form_builder(),
-                        $this->opencast_dic->series_repository(),
+                        $this->container->get(SeriesAPIRepository::class),
                         $this->opencast_dic->workflow_parameter_series_repository(),
                         $this->opencast_dic->workflow_parameter_conf_repository()
                     );
@@ -156,12 +161,12 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctEventGUI = new xoctEventGUI(
                         $this,
                         $objectSettings,
-                        $this->opencast_dic->event_repository(),
+                        $this->container[EventAPIRepository::class],
                         $this->opencast_dic->event_form_builder(),
                         $this->opencast_dic->event_table_builder(),
                         $this->opencast_dic->workflow_repository(),
                         $this->opencast_dic->acl_utils(),
-                        $this->opencast_dic->series_repository(),
+                        $this->container->get(SeriesAPIRepository::class),
                         $this->opencast_dic->upload_handler(),
                         $this->opencast_dic->paella_config_storage_service(),
                         $this->opencast_dic->paella_config_service_factory(),
@@ -199,8 +204,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->showMainTemplate();
             }
         }
-
-        $this->cleanUpDBCache();
     }
 
     public function getObject(): ilObjOpenCast
@@ -438,7 +441,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
         // TODO: do we need contributor / organizer?
         if (!$series_id) {
-            $series_id = $this->opencast_dic->series_repository()->create(
+            $series_id = $this->container->get(SeriesAPIRepository::class)->create(
                 new CreateSeriesRequest(
                     new CreateSeriesRequestPayload(
                         $metadata,
@@ -447,7 +450,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 )
             );
         } else {
-            $metadata = $this->opencast_dic->series_repository()->find($series_id)->getMetadata();
+            $metadata = $this->container->get(SeriesAPIRepository::class)->find($series_id)->getMetadata();
         }
 
         if ($series_id !== null) {
@@ -557,7 +560,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         if ($objectSettings->getVideoPortalLink()
-            && $this->opencast_dic->series_repository()->find(
+            && $this->container->get(SeriesAPIRepository::class)->find(
                 $objectSettings->getSeriesIdentifier()
             )->isPublishedOnVideoPortal()) {
             $info->addSection($this->plugin->txt('series_links'));

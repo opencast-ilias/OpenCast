@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
+class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -64,8 +64,8 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -300,10 +300,23 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
         'srag\\Plugins\\Opencast\\Model\\Agent\\AgentApiRepository' => __DIR__ . '/../..' . '/src/Model/Agent/AgentApiRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Agent\\AgentParser' => __DIR__ . '/../..' . '/src/Model/Agent/AgentParser.php',
         'srag\\Plugins\\Opencast\\Model\\Agent\\AgentRepository' => __DIR__ . '/../..' . '/src/Model/Agent/AgentRepository.php',
-        'srag\\Plugins\\Opencast\\Model\\Cache\\Cache' => __DIR__ . '/../..' . '/src/Model/Cache/Cache.php',
-        'srag\\Plugins\\Opencast\\Model\\Cache\\CacheFactory' => __DIR__ . '/../..' . '/src/Model/Cache/CacheFactory.php',
-        'srag\\Plugins\\Opencast\\Model\\Cache\\Service\\DB\\DBCacheAR' => __DIR__ . '/../..' . '/src/Model/Cache/Service/DB/DBCacheAR.php',
-        'srag\\Plugins\\Opencast\\Model\\Cache\\Service\\DB\\DBCacheService' => __DIR__ . '/../..' . '/src/Model/Cache/Service/DB/DBCacheService.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\APCu' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/APCu.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\Adaptor' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/Adaptor.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\BaseAdaptor' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/BaseAdaptor.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\Database' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/Database.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\Factory' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/Factory.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Adaptor\\PHPStatic' => __DIR__ . '/../..' . '/src/Model/Cache/Adaptor/PHPStatic.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Cacheable' => __DIR__ . '/../..' . '/src/Model/Cache/Cacheable.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Config' => __DIR__ . '/../..' . '/src/Model/Cache/Config.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Container\\ActiveContainer' => __DIR__ . '/../..' . '/src/Model/Cache/Container/ActiveContainer.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Container\\BaseRequest' => __DIR__ . '/../..' . '/src/Model/Cache/Container/BaseRequest.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Container\\Container' => __DIR__ . '/../..' . '/src/Model/Cache/Container/Container.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Container\\Request' => __DIR__ . '/../..' . '/src/Model/Cache/Container/Request.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Container\\VoidContainer' => __DIR__ . '/../..' . '/src/Model/Cache/Container/VoidContainer.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Nodes\\Node' => __DIR__ . '/../..' . '/src/Model/Cache/Nodes/Node.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Nodes\\NodeRepository' => __DIR__ . '/../..' . '/src/Model/Cache/Nodes/NodeRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Nodes\\NullNodeRepository' => __DIR__ . '/../..' . '/src/Model/Cache/Nodes/NullNodeRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\Cache\\Services' => __DIR__ . '/../..' . '/src/Model/Cache/Services.php',
         'srag\\Plugins\\Opencast\\Model\\Config\\PluginConfig' => __DIR__ . '/../..' . '/src/Model/Config/PluginConfig.php',
         'srag\\Plugins\\Opencast\\Model\\DTO\\DownloadDto' => __DIR__ . '/../..' . '/src/Model/DTO/DownloadDto.php',
         'srag\\Plugins\\Opencast\\Model\\Event\\Event' => __DIR__ . '/../..' . '/src/Model/Event/Event.php',
@@ -465,9 +478,9 @@ class ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf618280b835f1c6e99e4eb8d8a3e04f0::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -4,7 +4,6 @@ use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
-use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -38,6 +37,7 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\CustomInputGUIs\OneDrive\Waiter\Waiter;
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\Model\Cache\Services;
 
 /**
  * Class xoctEventGUI
@@ -76,6 +76,10 @@ class xoctEventGUI extends xoctGUI
      * @var WaitOverlay
      */
     private $wait_overlay;
+    /**
+     * @var Services
+     */
+    private $cache;
     /**
      * @var \ILIAS\UI\Implementation\DefaultRenderer
      */
@@ -172,7 +176,7 @@ class xoctEventGUI extends xoctGUI
         PaellaConfigServiceFactory $paellaConfigServiceFactory,
         Container $dic
     ) {
-        global $DIC;
+        global $DIC, $opencastContainer;
         parent::__construct();
 
         $this->user = $DIC->user();
@@ -197,6 +201,7 @@ class xoctEventGUI extends xoctGUI
             new Loader($DIC, ilOpenCastPlugin::getInstance())
         );
         $this->wait_overlay  = new WaitOverlay($this->main_tpl);
+        $this->cache = $opencastContainer->get(Services::class);
     }
 
     /**
@@ -1184,12 +1189,9 @@ class xoctEventGUI extends xoctGUI
         return true;
     }
 
-    /**
-     *
-     */
-    protected function clearCache()
+    protected function clearCache(): void
     {
-        CacheFactory::getInstance()->flush();
+        $this->cache->flushAdapter();
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 

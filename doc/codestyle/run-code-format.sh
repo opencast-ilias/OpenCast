@@ -5,7 +5,7 @@ if [[ ! -z "$1" ]]
 then
   PATHS=$1
 else
-  PATHS=$(git diff --name-only --cached | tr -u '\n' ' ')
+  PATHS=$(git diff --name-only --cached | xargs ls -d 2>/dev/null | tr -u '\n' ' ')
   if [[ -z "$PATHS" ]]
   then
     PATHS=$TOP_LEVEL

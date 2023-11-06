@@ -2,14 +2,15 @@
 
 namespace srag\Plugins\Opencast\Model\Publication;
 
-use srag\Plugins\Opencast\Model\Cache\Cache;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Model\Cache\Container\Request;
+use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Model\Cache\Container\Container;
 
-class PublicationAPIRepository implements PublicationRepository
+class PublicationAPIRepository implements PublicationRepository, Request
 {
     /**
-     * @var Cache
+     * @var Container
      */
     private $cache;
     /**
@@ -17,29 +18,38 @@ class PublicationAPIRepository implements PublicationRepository
      */
     protected $api;
 
-    public function __construct(Cache $cache)
+    public function __construct()
     {
         global $opencastContainer;
         $this->api = $opencastContainer[API::class];
-        $this->cache = $cache;
+        $this->cache = $opencastContainer[Services::class]->get($this);
+    }
+
+    public function getContainerKey(): string
+    {
+        return 'publications';
     }
 
     public function find(string $identifier): array
     {
-        return $this->cache->get('event-pubs-' . $identifier)
-            ?? $this->fetch($identifier);
+        return $this->fetch($identifier);
     }
 
     public function fetch(string $identifier): array
     {
-        $data = $this->api->routes()->eventsApi->getPublications($identifier);
+        if ($this->cache->has($identifier)) {
+            $data = $this->cache->get($identifier);
+        } else {
+            $data = $this->api->routes()->eventsApi->getPublications($identifier);
+            $this->cache->set($identifier, $data);
+        }
         $publications = [];
         foreach ($data as $d) {
             $p = new Publication();
             $p->loadFromStdClass($d);
             $publications[] = $p;
         }
-        $this->cache->set('event-pubs-' . $identifier, $publications);
+
         return $publications;
     }
 }

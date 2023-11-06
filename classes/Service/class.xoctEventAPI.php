@@ -47,8 +47,9 @@ class xoctEventAPI
 
     public function __construct()
     {
+        global $opencastContainer;
+        $this->event_repository = $opencastContainer[EventAPIRepository::class];
         $opencastDIC = OpencastDIC::getInstance();
-        $this->event_repository = $opencastDIC->event_repository();
         $this->md_factory = $opencastDIC->metadata()->metadataFactory();
         $this->acl_utils = $opencastDIC->acl_utils();
         $this->workflow_param_repository = $opencastDIC->workflow_parameter_series_repository();
