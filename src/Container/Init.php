@@ -13,7 +13,8 @@
  * us at:
  * https://www.ilias.de
  * https://github.com/ILIAS-eLearning
- */
+ *
+ *********************************************************************/
 
 declare(strict_types=1);
 
@@ -24,6 +25,11 @@ use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\Config;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\API\Handlers;
+use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Model\Cache\Config as CacheConfig;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -46,6 +52,7 @@ final class Init
             return self::$container;
         }
         $opencast_container = new Container();
+        $legacy_container = OpencastDIC::getInstance();
 
         // ILIAS Dependencies
         $opencast_container->glue(
@@ -64,7 +71,7 @@ final class Init
         );
 
         // Plugin Dependencies
-        $opencast_container->glue(Config::class, function () use ($opencast_container) {
+        $opencast_container->glue(Config::class, function (): Config {
             return new Config(
                 Handlers::getHandlerStack(),
                 PluginConfig::getConfig(PluginConfig::F_API_BASE) ?? 'https://stable.opencast.org/api',
@@ -77,8 +84,56 @@ final class Init
             );
         });
 
-        $opencast_container->glue(API::class, function () use ($opencast_container) {
+        $opencast_container->glue(API::class, function () use ($opencast_container): OpencastAPI {
             return new OpencastAPI($opencast_container[Config::class]);
+        });
+
+        $opencast_container->glue(Services::class, function () use ($opencast_container): Services {
+            $use_cache = (int) PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE);
+            // map to caching settings
+            switch ($use_cache) {
+                case PluginConfig::CACHE_DISABLED:
+                default:
+                    $activated = false;
+                    $adaptor = CacheConfig::PHPSTATIC;
+                    break;
+                case PluginConfig::CACHE_STANDARD:
+                    $activated = true;
+                    $adaptor = CacheConfig::APCU;
+                    break;
+                case PluginConfig::CACHE_DATABASE:
+                    $activated = true;
+                    $adaptor = CacheConfig::DATABASE;
+                    break;
+            }
+
+            $config = new CacheConfig(
+                $adaptor,
+                $activated
+            );
+
+            return new Services(
+                $config,
+                $opencast_container[\ILIAS\DI\Container::class]->database()
+            );
+        });
+
+        $opencast_container->glue(EventAPIRepository::class, function () use ($opencast_container, $legacy_container) {
+            return new EventAPIRepository(
+                $opencast_container->get(Services::class),
+                $legacy_container->get('event_parser'),
+                $legacy_container->get('ingest_service')
+            );
+        });
+
+        $opencast_container->glue(SeriesAPIRepository::class, function () use ($opencast_container, $legacy_container) {
+            return new SeriesAPIRepository(
+                $opencast_container->get(Services::class),
+                $legacy_container->get('series_parser'),
+                $legacy_container->get('acl_utils'),
+                $legacy_container->get('md_factory'),
+                $legacy_container->get('md_parser')
+            );
         });
 
         return self::$container = $opencast_container;

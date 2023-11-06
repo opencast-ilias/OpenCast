@@ -2,7 +2,6 @@
 
 namespace srag\Plugins\Opencast\Model\Event;
 
-use srag\Plugins\Opencast\Model\Cache\Cache;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
@@ -10,9 +9,11 @@ use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use xoctException;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Model\Cache\Container\Request;
+use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Model\Cache\Container\Container;
 
 /**
  * Class EventRepository
@@ -21,17 +22,16 @@ use srag\Plugins\Opencast\API\API;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
-class EventAPIRepository implements EventRepository
+class EventAPIRepository implements EventRepository, Request
 {
     /**
      * @var API
      */
     protected $api;
     public $opencastDIC;
-    public const CACHE_PREFIX = 'event-';
 
     /**
-     * @var Cache
+     * @var Container
      */
     private $cache;
     /**
@@ -44,25 +44,35 @@ class EventAPIRepository implements EventRepository
     private $eventParser;
 
     public function __construct(
-        Cache $cache,
+        Services $cache_services,
         EventParser $eventParser,
         OpencastIngestService $ingestService
     ) {
         global $opencastContainer;
         $this->api = $opencastContainer[API::class];
-        $this->cache = $cache;
+        $this->cache = $cache_services->get($this);
         $this->ingestService = $ingestService;
         $this->eventParser = $eventParser;
     }
 
+    public function getContainerKey(): string
+    {
+        return 'event';
+    }
+
+
     public function find(string $identifier): Event
     {
-        return $this->cache->get(self::CACHE_PREFIX . $identifier)
-            ?? $this->fetch($identifier);
+        return $this->fetch($identifier);
     }
 
     public function fetch(string $identifier): Event
     {
+        if ($this->cache->has($identifier)) {
+            $data = $this->cache->get($identifier);
+            return $this->eventParser->parseAPIResponse($data, $identifier);
+        }
+
         $data = $this->api->routes()->eventsApi->get(
             $identifier,
             [
@@ -74,8 +84,8 @@ class EventAPIRepository implements EventRepository
             ]
         );
         $event = $this->eventParser->parseAPIResponse($data, $identifier);
-        if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE])) {
-            $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
+        if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE], true)) {
+            $this->cache->set($event->getIdentifier(), $data);
         }
         return $event;
     }
@@ -158,7 +168,7 @@ class EventAPIRepository implements EventRepository
             }
 
             if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE], true)) {
-                $this->cache->set(self::CACHE_PREFIX . $event->getIdentifier(), $event);
+                $this->cache->set($d->identifier, $d);
             }
         }
 
@@ -176,7 +186,7 @@ class EventAPIRepository implements EventRepository
             $payload['processing'] ?? '',
             $payload['scheduling'] ?? '',
         );
-        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete($request->getIdentifier());
     }
 
     public function schedule(ScheduleEventRequest $request): string
@@ -195,6 +205,6 @@ class EventAPIRepository implements EventRepository
     {
         $payload = $request->getPayload()->jsonSerialize();
         $this->api->routes()->eventsApi->updateAcl($request->getIdentifier(), $payload['acl']);
-        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete($request->getIdentifier());
     }
 }

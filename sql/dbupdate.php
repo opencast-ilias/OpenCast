@@ -288,7 +288,7 @@ if ($role_owner_prefix) {
 <?php
 \srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
 \srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
-\srag\Plugins\Opencast\Model\Cache\CacheFactory::getInstance()->flush();
+// \srag\Plugins\Opencast\Model\Cache\CacheFactory::getInstance()->flush(); removed since a new caching mechanism is used
 ?>
 <#32>
 <?php

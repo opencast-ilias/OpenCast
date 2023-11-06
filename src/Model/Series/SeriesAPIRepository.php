@@ -4,7 +4,6 @@ namespace srag\Plugins\Opencast\Model\Series;
 
 use ilException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
-use srag\Plugins\Opencast\Model\Cache\Cache;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
@@ -18,15 +17,16 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequest;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Model\Cache\Container\Container;
+use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Model\Cache\Container\Request;
 
-class SeriesAPIRepository implements SeriesRepository
+class SeriesAPIRepository implements SeriesRepository, Request
 {
     public const OWN_SERIES_PREFIX = 'Eigene Serie von ';
-    public const CACHE_PREFIX = 'series-';
     /**
-     * @var Cache
+     * @var Container
      */
     private $cache;
     /**
@@ -51,7 +51,7 @@ class SeriesAPIRepository implements SeriesRepository
     protected $api;
 
     public function __construct(
-        Cache $cache,
+        Services $cache,
         SeriesParser $seriesParser,
         ACLUtils $ACLUtils,
         MetadataFactory $metadataFactory,
@@ -59,26 +59,34 @@ class SeriesAPIRepository implements SeriesRepository
     ) {
         global $opencastContainer;
         $this->api = $opencastContainer[API::class];
-        $this->cache = $cache;
+        $this->cache = $cache->get($this);
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
         $this->metadataFactory = $metadataFactory;
         $this->MDParser = $MDParser;
     }
 
+    public function getContainerKey(): string
+    {
+        return 'series';
+    }
+
     public function find(string $identifier): Series
     {
-        return $this->cache->get(self::CACHE_PREFIX . $identifier)
-            ?? $this->fetch($identifier);
+        return $this->fetch($identifier);
     }
 
     public function fetch(string $identifier): Series
     {
-        $data = $this->api->routes()->seriesApi->get($identifier, true);
+        if ($this->cache->has($identifier)) {
+            $data = $this->cache->get($identifier);
+        } else {
+            $data = $this->api->routes()->seriesApi->get($identifier, true);
+            $this->cache->set($identifier, $data);
+        }
+
         $data->metadata = $this->fetchMD($identifier);
-        $series = $this->seriesParser->parseAPIResponse($data);
-        $this->cache->set(self::CACHE_PREFIX . $series->getIdentifier(), $series);
-        return $series;
+        return $this->seriesParser->parseAPIResponse($data);
     }
 
     /**
@@ -86,7 +94,13 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function fetchMD(string $identifier): Metadata
     {
-        $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
+        $key = $identifier . '_md';
+        if ($this->cache->has($key)) {
+            $data = $this->cache->get($key);
+        } else {
+            $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
+            $this->cache->set($key, $data);
+        }
         return $this->MDParser->parseAPIResponseSeries($data);
     }
 
@@ -111,7 +125,7 @@ class SeriesAPIRepository implements SeriesRepository
             $payload['metadata']
         );
 
-        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete($request->getIdentifier());
     }
 
     /**
@@ -124,7 +138,7 @@ class SeriesAPIRepository implements SeriesRepository
             $request->getIdentifier(),
             $payload['acl']
         );
-        $this->cache->delete(self::CACHE_PREFIX . $request->getIdentifier());
+        $this->cache->delete($request->getIdentifier());
     }
 
     /**
@@ -135,19 +149,22 @@ class SeriesAPIRepository implements SeriesRepository
      */
     public function getAllForUser(string $user_string): array
     {
-        if ($existing = $this->cache->get('series-' . $user_string)) {
-            return $existing;
+        if ($this->cache->has($user_string)) {
+            $data = $this->cache->get($user_string);
+        } else {
+            try {
+                $data = $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
+                    'onlyWithWriteAccess' => true,
+                    'withacl' => true,
+                    'limit' => 5000
+                ]);
+            } catch (ilException $e) {
+                $data = [];
+            }
         }
+
+        $this->cache->set($user_string, $data);
         $return = [];
-        try {
-            $data = $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
-                'onlyWithWriteAccess' => true,
-                'withacl' => true,
-                'limit' => 5000
-            ]);
-        } catch (ilException $e) {
-            return [];
-        }
         foreach ($data as $d) {
             try {
                 $metadata = $this->metadataFactory->series();
@@ -160,7 +177,7 @@ class SeriesAPIRepository implements SeriesRepository
                 continue;
             }
         }
-        $this->cache->set('series-' . $user_string, $return, 60);
+
 
         return $return;
     }

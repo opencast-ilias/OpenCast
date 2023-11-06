@@ -15,6 +15,7 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesMetadataRequestPayloa
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 
 /**
  * Class xoctSeriesAPI
@@ -51,8 +52,9 @@ class xoctSeriesAPI
      */
     public function __construct()
     {
+        global $opencastContainer;
+        $this->series_repository = $opencastContainer->get(SeriesAPIRepository::class);
         $opencastDIC = OpencastDIC::getInstance();
-        $this->series_repository = $opencastDIC->series_repository();
         $this->seriesWorkflowParameterRepository = $opencastDIC->workflow_parameter_series_repository();
         $this->metadataFactory = $opencastDIC->metadata()->metadataFactory();
         $this->aclUtils = $opencastDIC->acl_utils();

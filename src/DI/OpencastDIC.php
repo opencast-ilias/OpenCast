@@ -10,8 +10,6 @@ use srag\Plugins\Opencast\Model\ACL\ACLParser;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
-use srag\Plugins\Opencast\Model\Cache\Cache;
-use srag\Plugins\Opencast\Model\Cache\CacheFactory;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\EventParser;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
@@ -46,6 +44,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use xoctFileUploadHandler;
+use srag\Plugins\Opencast\Model\Cache\Services;
 
 /**
  * @deperecated use srag\Plugins\Opencast\Container\Container instead
@@ -73,15 +72,6 @@ class OpencastDIC
 
     private function init(): void
     {
-        $this->container['event_repository'] = $this->container->factory(
-            function ($c): \srag\Plugins\Opencast\Model\Event\EventAPIRepository {
-                return new EventAPIRepository(
-                    $c['cache'],
-                    $c['event_parser'],
-                    $c['ingest_service']
-                );
-            }
-        );
         $this->container['event_parser'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\Model\Event\EventParser {
                 return new EventParser(
@@ -96,9 +86,7 @@ class OpencastDIC
                 return new ACLUtils();
             }
         );
-        $this->container['cache'] = $this->container->factory(function ($c): \srag\Plugins\Opencast\Model\Cache\Cache {
-            return CacheFactory::getInstance();
-        });
+
         $this->container['ingest_service'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService {
                 return new OpencastIngestService($c['upload_storage_service']);
@@ -240,6 +228,7 @@ class OpencastDIC
         );
         $this->container['event_form_builder'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\UI\EventFormBuilder {
+                global $opencastContainer;
                 return new EventFormBuilder(
                     $this->dic->ui()->factory(),
                     $this->dic->refinery(),
@@ -249,29 +238,31 @@ class OpencastDIC
                     $c['upload_handler'],
                     $c['plugin'],
                     $c['scheduling_form_item_builder'],
-                    $c['series_repository'],
+                    $opencastContainer->get(SeriesAPIRepository::class),
                     $this->dic
                 );
             }
         );
         $this->container['event_table_builder'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\UI\EventTableBuilder {
+                global $opencastContainer;
                 return new EventTableBuilder(
                     $c['md_conf_repository_event'],
                     $c['md_catalogue_factory'],
-                    $c['event_repository'],
+                    $opencastContainer->get(EventAPIRepository::class),
                     $this->dic
                 );
             }
         );
         $this->container['series_form_builder'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\UI\SeriesFormBuilder {
+                global $opencastContainer;
                 return new SeriesFormBuilder(
                     $this->dic->ui()->factory(),
                     $this->dic->refinery(),
                     $c['md_form_item_builder_series'],
                     $c['object_settings_form_item_builder'],
-                    $c['series_repository'],
+                    $opencastContainer->get(SeriesAPIRepository::class),
                     $c['plugin'],
                     $this->dic
                 );
@@ -297,17 +288,7 @@ class OpencastDIC
         $this->container['plugin'] = $this->container->factory(function ($c): \ilOpenCastPlugin {
             return ilOpenCastPlugin::getInstance();
         });
-        $this->container['series_repository'] = $this->container->factory(
-            function ($c): \srag\Plugins\Opencast\Model\Series\SeriesAPIRepository {
-                return new SeriesAPIRepository(
-                    $c['cache'],
-                    $c['series_parser'],
-                    $c['acl_utils'],
-                    $c['md_factory'],
-                    $c['md_parser']
-                );
-            }
-        );
+
         $this->container['series_parser'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\Model\Series\SeriesParser {
                 return new SeriesParser($c['acl_parser']);
@@ -334,21 +315,6 @@ class OpencastDIC
                 );
             }
         );
-    }
-
-    public function series_repository(): SeriesRepository
-    {
-        return $this->container['series_repository'];
-    }
-
-    public function event_repository(): EventAPIRepository
-    {
-        return $this->container['event_repository'];
-    }
-
-    public function cache(): Cache
-    {
-        return $this->container['cache'];
     }
 
     public function ingest_service(): OpencastIngestService
@@ -444,5 +410,10 @@ class OpencastDIC
     public function plugin(): ilOpenCastPlugin
     {
         return $this->container['plugin'];
+    }
+
+    public function get(string $service_identifier)
+    {
+        return $this->container[$service_identifier];
     }
 }
