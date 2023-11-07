@@ -115,6 +115,8 @@ class xoctEventRenderer
     }
 
     /**
+     * Renders the dropdowns, in case the items to display is in a publication usage group.
+     * If a group has only one item, it renders it as normal that is why tpl is passed as reference.
      * @param $tpl ilTemplate
      */
     public function renderDropdowns(&$tpl): void
