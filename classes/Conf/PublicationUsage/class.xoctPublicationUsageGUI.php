@@ -63,6 +63,14 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected $get_id;
     /**
+     * @var int
+     */
+    protected $post_id;
+    /**
+     * @var string
+     */
+    protected $channel;
+    /**
      * xoctPublicationUsageGUI constructor.
      */
     public function __construct()
@@ -77,7 +85,12 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->pub_subtab_active =
             $this->http->request()->getQueryParams()['pub_subtab_active'] ?? xoctMainGUI::SUBTAB_PUBLICATION_USAGE;
         $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? '';
+        if (!empty($this->http->request()->getParsedBody()[self::IDENTIFIER])) {
+            $this->identifier = $this->http->request()->getParsedBody()[self::IDENTIFIER];
+        }
         $this->get_id = (int) $this->http->request()->getQueryParams()['id'] ?? null;
+        $this->post_id = (int) $this->http->request()->getParsedBody()['id'] ?? null;
+        $this->channel = $this->http->request()->getParsedBody()[xoctPublicationUsageFormGUI::F_CHANNEL] ?? null;
         $this->repository = new PublicationUsageRepository();
         $this->setTab();
 
@@ -162,12 +175,12 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function add()
     {
-        if (!$_POST[xoctPublicationUsageFormGUI::F_CHANNEL]) {
+        if (!$this->channel) {
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID);
         }
         $xoctPublicationUsage = new PublicationUsage();
-        $xoctPublicationUsage->setUsageId($_POST[xoctPublicationUsageFormGUI::F_CHANNEL]);
-        $xoctPublicationUsage->setTitle($this->txt('type_' . $_POST[xoctPublicationUsageFormGUI::F_CHANNEL]));
+        $xoctPublicationUsage->setUsageId($this->channel);
+        $xoctPublicationUsage->setTitle($this->txt('type_' . $this->channel));
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $xoctPublicationUsage);
         $xoctPublicationUsageFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
@@ -209,10 +222,13 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function update()
     {
-        $usage_id = $this->identifier;
+        $publication_usage = new PublicationUsage();
+        if (!$this->identifier && $this->repository->getUsage($this->identifier)) {
+            $publication_usage = $this->repository->getUsage($this->identifier);
+        }
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
             $this,
-            $usage_id ? $this->repository->getUsage($usage_id) : new PublicationUsage()
+            $publication_usage
         );
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
@@ -259,7 +275,7 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function delete()
     {
-        $this->repository->delete($_POST[self::IDENTIFIER]);
+        $this->repository->delete($this->identifier);
         $this->cancel();
     }
 
@@ -294,7 +310,7 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function addSub()
     {
-        $channel = $_POST[xoctPublicationUsageFormGUI::F_CHANNEL];
+        $channel = $this->channel;
         if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds(), true)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_allowed'), true);
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID_SUB);
@@ -380,12 +396,12 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function deleteSub()
     {
-        if (!PublicationSubUsage::find($_POST['id'])) {
+        if (!PublicationSubUsage::find($this->post_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
-        $xoctPublicationSubUsage = PublicationSubUsage::find($_POST['id']);
+        $xoctPublicationSubUsage = PublicationSubUsage::find($this->post_id);
         $xoctPublicationSubUsage->delete();
         $this->cancel();
     }
@@ -455,12 +471,12 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function deleteGroup()
     {
-        if (!PublicationUsageGroup::find($_POST['id'])) {
+        if (!PublicationUsageGroup::find($this->post_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
-        $xoctPublicationUsageGroup = PublicationUsageGroup::find($_POST['id']);
+        $xoctPublicationUsageGroup = PublicationUsageGroup::find($this->post_id);
         $xoctPublicationUsageGroup->delete();
         $this->cancel();
     }
