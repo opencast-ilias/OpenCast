@@ -37,10 +37,10 @@ class PublicationSubUsageRepository
      * @param string $title_text
      * @return string
      */
-    public static function generateTitle(string $parent_usage_id, string $title_text): string
+    public function generateTitle(string $parent_usage_id, string $title_text): string
     {
         $count_subs = PublicationSubUsage::where(['parent_usage_id' => $parent_usage_id])->count();
-        return $title_text . " (" . self::translate('publication_usage_sub') . "-" . ($count_subs + 1) . ")";
+        return $title_text . " (" . $this->translate('publication_usage_sub') . "-" . ($count_subs + 1) . ")";
     }
 
     /**

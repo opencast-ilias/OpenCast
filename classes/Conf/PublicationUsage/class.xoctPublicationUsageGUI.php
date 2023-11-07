@@ -35,6 +35,10 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected $repository;
     /**
+     * @var PublicationSubUsageRepository
+     */
+    protected $sub_repository;
+    /**
      * @var string
      */
     protected $pub_subtab_active;
@@ -92,6 +96,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->post_id = (int) $this->http->request()->getParsedBody()['id'] ?? null;
         $this->channel = $this->http->request()->getParsedBody()[xoctPublicationUsageFormGUI::F_CHANNEL] ?? null;
         $this->repository = new PublicationUsageRepository();
+        $this->sub_repository = new PublicationSubUsageRepository();
         $this->setTab();
 
     }
@@ -318,7 +323,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationSubUsage = new PublicationSubUsage();
         $xoctPublicationSubUsage->setParentUsageId($channel);
         $title_text = $this->txt('type_' . $channel);
-        $title = PublicationSubUsageRepository::generateTitle($channel, $title_text);
+        $title = $this->sub_repository->generateTitle($channel, $title_text);
         $xoctPublicationSubUsage->setTitle($title);
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, $xoctPublicationSubUsage);
         $xoctPublicationSubUsageFormGUI->fillForm();
