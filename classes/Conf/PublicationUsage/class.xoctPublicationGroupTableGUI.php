@@ -62,12 +62,12 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         /**
          * @var $publication_usage_group PublicationUsageGroup
          */
-        $$publication_usage_group = PublicationUsageGroup::find($a_set['id']);
-        $this->tpl->setVariable('NAME', $$publication_usage_group->getName());
-        $this->tpl->setVariable('DISPLAY_NAME', $$publication_usage_group->getDisplayName());
-        $this->tpl->setVariable('DESCRIPTION', $$publication_usage_group->getDescription());
+        $publication_usage_group = PublicationUsageGroup::find($a_set['id']);
+        $this->tpl->setVariable('NAME', $publication_usage_group->getName());
+        $this->tpl->setVariable('DISPLAY_NAME', $publication_usage_group->getDisplayName());
+        $this->tpl->setVariable('DESCRIPTION', $publication_usage_group->getDescription());
 
-        $this->addActionMenu($$publication_usage_group);
+        $this->addActionMenu($publication_usage_group);
     }
 
 

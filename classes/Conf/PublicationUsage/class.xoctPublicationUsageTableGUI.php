@@ -89,8 +89,8 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         }
         $group_name = '';
         if (!is_null($publication_usage->getGroupId())) {
-            $$publication_usage_group = PublicationUsageGroup::find($publication_usage->getGroupId());
-            $group_name = $$publication_usage_group ? $$publication_usage_group->getName() : $group_name;
+            $publication_usage_group = PublicationUsageGroup::find($publication_usage->getGroupId());
+            $group_name = $publication_usage_group ? $publication_usage_group->getName() : $group_name;
         }
         $this->tpl->setVariable('GROUP_NAME', $group_name);
 
