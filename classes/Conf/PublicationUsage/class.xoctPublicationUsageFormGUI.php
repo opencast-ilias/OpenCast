@@ -149,7 +149,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
 
         if (in_array($this->object->getUsageId(),
-            [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK])) {
+            [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK], true)) {
             $allow_multiple = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_ALLOW_MULTIPLE), self::F_ALLOW_MULTIPLE);
             $allow_multiple->setInfo($this->parent_gui->txt(self::F_ALLOW_MULTIPLE . '_info'));
             //F_IGNORE_OBJECT_SETTINGS

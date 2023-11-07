@@ -270,7 +270,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function addSub()
     {
         $channel = $_POST[xoctPublicationUsageFormGUI::F_CHANNEL];
-        if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds())) {
+        if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds(), true)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_allowed'), true);
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID_SUB);
         }
