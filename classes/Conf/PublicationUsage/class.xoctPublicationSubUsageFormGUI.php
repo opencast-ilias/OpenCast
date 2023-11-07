@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Class xoctPublicationSubUsageFormGUI
@@ -38,6 +39,14 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
      * @var bool $is_new
      */
     protected $is_new = true;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    protected $plugin;
+    /**
+     * @var OpencastDIC
+     */
+    protected $container;
 
 
     /**
@@ -47,9 +56,12 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     public function __construct($parent_gui, $xoctPublicationSubUsage, $is_new = true)
     {
         global $DIC;
+        $this->container = OpencastDIC::getInstance();
+        $this->plugin = $this->container->plugin();
         $DIC->ui()->mainTemplate()->addJavaScript(
-            ilOpenCastPlugin::getInstance()->getDirectory() . '/templates/default/publication_usage_form.min.js'
+            $this->plugin->getDirectory().'/js/opencast/dist/index.js'
         );
+        $DIC->ui()->mainTemplate()->addOnLoadCode('il.Opencast.Form.publicationUsage.init()');
         parent::__construct();
         $this->object = $xoctPublicationSubUsage;
         $this->parent_gui = $parent_gui;
