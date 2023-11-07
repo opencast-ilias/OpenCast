@@ -482,10 +482,42 @@ if ($res->rowCount() === 0) {
 ?>
 <#42>
 <?php
-// Introducing PublicationUsageGroup for grouping PublicationUsage.
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup::updateDB();
-// Introducing PublicationSubUsage as for sub usages.
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::updateDB();
+// Introducing xoct_publication_group table with model PublicationUsageGroup for grouping PublicationUsage.
+if (!$ilDB->tableExists('xoct_publication_group')) {
+    $fields = array(
+        "id" => array("notnull" => true, "length" => 4, "type" => "integer"),
+        "name" => array("notnull" => true, "length" => 512, "type" => "text"),
+        "display_name" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "description" => array("notnull" => false, "length" => 4000, "type" => "text"),
+    );
+    $ilDB->createTable("xoct_publication_group", $fields);
+    $ilDB->createSequence('xoct_publication_group');
+    $ilDB->addPrimaryKey('xoct_publication_group', array('id'));
+}
+// Introducing xoct_pub_sub_usage table with model PublicationSubUsage as for sub usages.
+if (!$ilDB->tableExists('xoct_pub_sub_usage')) {
+    $fields = array(
+        "id" => array('notnull' => true, "length" => 4, "type" => "integer"),
+        "parent_usage_id" => array("notnull" => true, "length" => 64, "type" => "text"),
+        "title" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "display_name" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "description" => array("notnull" => false, "length" => 4000, "type" => "text"),
+        "group_id" => array('notnull' => false, 'length' => 8, "type" => "integer"),
+        "channel" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "status" => array('notnull' => false, 'length' => 1, 'type' => "integer"),
+        "search_key" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "flavor" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "tag" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "md_type" => array('notnull' => false, 'length' => 1, 'type' => "integer", 'default' => null),
+        "allow_multiple" => array('notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0),
+        "mediatype" => array("notnull" => false, "length" => 512, "type" => "text"),
+        "ignore_object_setting" => array('notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0),
+        "ext_dl_source" => array('notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0),
+    );
+    $ilDB->createTable("xoct_pub_sub_usage", $fields);
+    $ilDB->createSequence('xoct_pub_sub_usage');
+    $ilDB->addPrimaryKey('xoct_pub_sub_usage', array('id'));
+}
 // Add new columns to PublicationUsage.
 \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 
