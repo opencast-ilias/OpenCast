@@ -469,27 +469,27 @@ class PublicationSelector
     }
 
     /**
-     * @param $PublicationUsage
+     * @param $publication_usage
      *
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getPublicationMetadataForUsage($PublicationUsage): array
+    public function getPublicationMetadataForUsage($publication_usage): array
     {
-        if (!$PublicationUsage instanceof PublicationUsage) {
+        if (!$publication_usage instanceof PublicationUsage) {
             return [];
         }
-        $usage_type = property_exists($PublicationUsage, 'is_sub') ? PublicationUsage::USAGE_TYPE_SUB : PublicationUsage::USAGE_TYPE_ORG;
-        $usage_id = property_exists($PublicationUsage, 'sub_id') ? $PublicationUsage->sub_id : $PublicationUsage->getUsageId();
+        $usage_type = property_exists($publication_usage, 'is_sub') ? PublicationUsage::USAGE_TYPE_SUB : PublicationUsage::USAGE_TYPE_ORG;
+        $usage_id = property_exists($publication_usage, 'sub_id') ? $publication_usage->sub_id : $publication_usage->getUsageId();
         /**
-         * @var $PublicationUsage       PublicationUsage
+         * @var $publication_usage       PublicationUsage
          * @var $attachment             Attachment
          * @var $medium                 Media
          */
         $media = [];
         $attachments = [];
         foreach ($this->getPublications() as $publication) {
-            if ($publication->getChannel() === $PublicationUsage->getChannel()) {
+            if ($publication->getChannel() === $publication_usage->getChannel()) {
                 $media += $publication->getMedia();
                 $attachments += $publication->getAttachments();
             }
@@ -506,21 +506,21 @@ class PublicationSelector
             return $medium;
         }, $media);
         $return = [];
-        switch ($PublicationUsage->getMdType()) {
+        switch ($publication_usage->getMdType()) {
             case PublicationUsage::MD_TYPE_ATTACHMENT:
                 foreach ($attachments as $attachment) {
-                    switch ($PublicationUsage->getSearchKey()) {
+                    switch ($publication_usage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
-                            if ($this->checkFlavor($attachment->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $result = $this->checkMediaTypes($attachment, $PublicationUsage);
+                            if ($this->checkFlavor($attachment->getFlavor(), $publication_usage->getFlavor())) {
+                                $result = $this->checkMediaTypes($attachment, $publication_usage);
                                 if (!empty($result)) {
                                     $return[] = clone $result;
                                 }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
-                            if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
-                                $result = $this->checkMediaTypes($attachment, $PublicationUsage);
+                            if (in_array($publication_usage->getTag(), $attachment->getTags())) {
+                                $result = $this->checkMediaTypes($attachment, $publication_usage);
                                 if (!empty($result)) {
                                     $return[] = clone $result;
                                 }
@@ -531,18 +531,18 @@ class PublicationSelector
                 break;
             case PublicationUsage::MD_TYPE_MEDIA:
                 foreach ($media as $medium) {
-                    switch ($PublicationUsage->getSearchKey()) {
+                    switch ($publication_usage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
-                            if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $result = $this->checkMediaTypes($medium, $PublicationUsage);
+                            if ($this->checkFlavor($medium->getFlavor(), $publication_usage->getFlavor())) {
+                                $result = $this->checkMediaTypes($medium, $publication_usage);
                                 if (!empty($result)) {
                                     $return[] = clone $result;
                                 }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
-                            if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
-                                $result = $this->checkMediaTypes($medium, $PublicationUsage);
+                            if (in_array($publication_usage->getTag(), $medium->getTags())) {
+                                $result = $this->checkMediaTypes($medium, $publication_usage);
                                 if (!empty($result)) {
                                     $return[] = clone $result;
                                 }
@@ -553,7 +553,7 @@ class PublicationSelector
                 break;
             case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
                 foreach ($this->getPublications() as $publication) {
-                    if ($publication->getChannel() == $PublicationUsage->getChannel()) {
+                    if ($publication->getChannel() == $publication_usage->getChannel()) {
                         $publication->usage_type = $usage_type;
                         $publication->usage_id = $usage_id;
                         $return[] = clone $publication;
@@ -623,13 +623,13 @@ class PublicationSelector
     /**
      * Returns the publication if the media type matches the usage media type, null otherwise.
      * @param publicationMetadata $publicationType
-     * @param PublicationUsage $publicationUsage
+     * @param PublicationUsage $publication_usage
      *
      * @return publicationMetadata|null
      */
-    private function checkMediaTypes(publicationMetadata $publicationType, PublicationUsage $publicationUsage): ?publicationMetadata
+    private function checkMediaTypes(publicationMetadata $publicationType, PublicationUsage $publication_usage): ?publicationMetadata
     {
-        $media_types = $publicationUsage->getArrayMediaTypes();
+        $media_types = $publication_usage->getArrayMediaTypes();
         if (empty($media_types)) {
             return $publicationType;
         }

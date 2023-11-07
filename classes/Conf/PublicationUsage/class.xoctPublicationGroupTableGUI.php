@@ -60,14 +60,14 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
     public function fillRow($a_set)
     {
         /**
-         * @var $PublicationUsageGroup PublicationUsageGroup
+         * @var $publication_usage_group PublicationUsageGroup
          */
-        $xoctPublicationUsageGroup = PublicationUsageGroup::find($a_set['id']);
-        $this->tpl->setVariable('NAME', $xoctPublicationUsageGroup->getName());
-        $this->tpl->setVariable('DISPLAY_NAME', $xoctPublicationUsageGroup->getDisplayName());
-        $this->tpl->setVariable('DESCRIPTION', $xoctPublicationUsageGroup->getDescription());
+        $$publication_usage_group = PublicationUsageGroup::find($a_set['id']);
+        $this->tpl->setVariable('NAME', $$publication_usage_group->getName());
+        $this->tpl->setVariable('DISPLAY_NAME', $$publication_usage_group->getDisplayName());
+        $this->tpl->setVariable('DESCRIPTION', $$publication_usage_group->getDescription());
 
-        $this->addActionMenu($xoctPublicationUsageGroup);
+        $this->addActionMenu($$publication_usage_group);
     }
 
 
@@ -82,18 +82,18 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
 
 
     /**
-     * @param PublicationUsageGroup $xoctPublicationUsageGroup
+     * @param PublicationUsageGroup $publication_usage_group
      *
      * @throws DICException
      */
-    protected function addActionMenu(PublicationUsageGroup $xoctPublicationUsageGroup)
+    protected function addActionMenu(PublicationUsageGroup $publication_usage_group)
     {
         $current_selection_list = new ilAdvancedSelectionListGUI();
         $current_selection_list->setListTitle($this->plugin->txt('common_actions'));
-        $current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsageGroup->getId());
+        $current_selection_list->setId(self::TBL_ID . '_actions_' . $publication_usage_group->getId());
         $current_selection_list->setUseImages(false);
 
-        $this->ctrl->setParameter($this->parent_obj, 'id', $xoctPublicationUsageGroup->getId());
+        $this->ctrl->setParameter($this->parent_obj, 'id', $publication_usage_group->getId());
         $current_selection_list->addItem(
             $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT),
             xoctPublicationUsageGUI::CMD_EDIT_GROUP,

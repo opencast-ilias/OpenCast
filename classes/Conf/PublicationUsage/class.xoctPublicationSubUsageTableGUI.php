@@ -61,42 +61,42 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
     public function fillRow($a_set)
     {
         /**
-         * @var $PublicationSubUsage PublicationSubUsage
+         * @var $publication_sub_usage PublicationSubUsage
          */
-        $PublicationSubUsage = PublicationSubUsage::find($a_set['id']);
-        $this->tpl->setVariable('PARENT_USAGE_ID', $PublicationSubUsage->getParentUsageId());
-        $this->tpl->setVariable('TITLE', $PublicationSubUsage->getTitle());
-        $this->tpl->setVariable('DISPLAY_NAME', $PublicationSubUsage->getDisplayName());
-        $this->tpl->setVariable('DESCRIPTION', $PublicationSubUsage->getDescription());
-        $this->tpl->setVariable('CHANNEL', $PublicationSubUsage->getChannel());
-        $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $PublicationSubUsage->getMdType()));
-        if ($PublicationSubUsage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
+        $publication_sub_usage = PublicationSubUsage::find($a_set['id']);
+        $this->tpl->setVariable('PARENT_USAGE_ID', $publication_sub_usage->getParentUsageId());
+        $this->tpl->setVariable('TITLE', $publication_sub_usage->getTitle());
+        $this->tpl->setVariable('DISPLAY_NAME', $publication_sub_usage->getDisplayName());
+        $this->tpl->setVariable('DESCRIPTION', $publication_sub_usage->getDescription());
+        $this->tpl->setVariable('CHANNEL', $publication_sub_usage->getChannel());
+        $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $publication_sub_usage->getMdType()));
+        if ($publication_sub_usage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
             $this->tpl->setVariable('FLAVOR', '&nbsp');
             $this->tpl->setVariable('TAG', '&nbsp');
-        } elseif ($PublicationSubUsage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
-            $this->tpl->setVariable('FLAVOR', $PublicationSubUsage->getFlavor());
+        } elseif ($publication_sub_usage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
+            $this->tpl->setVariable('FLAVOR', $publication_sub_usage->getFlavor());
             $this->tpl->setVariable('TAG', '&nbsp');
         } else {
-            $this->tpl->setVariable('TAG', $PublicationSubUsage->getTag());
+            $this->tpl->setVariable('TAG', $publication_sub_usage->getTag());
             $this->tpl->setVariable('FLAVOR', '&nbsp');
         }
         $group_name = '';
-        if (!is_null($PublicationSubUsage->getGroupId())) {
-            $PublicationUsageGroup = PublicationUsageGroup::find($PublicationSubUsage->getGroupId());
-            $group_name = $PublicationUsageGroup ? $PublicationUsageGroup->getName() : $group_name;
+        if (!is_null($publication_sub_usage->getGroupId())) {
+            $publication_usage_group = PublicationUsageGroup::find($publication_sub_usage->getGroupId());
+            $group_name = $publication_usage_group ? $publication_usage_group->getName() : $group_name;
         }
         $this->tpl->setVariable('GROUP_NAME', $group_name);
 
         $extras = [];
-        if ($PublicationSubUsage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
-            $PublicationSubUsage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
-            if ($PublicationSubUsage->isExternalDownloadSource()) {
+        if ($publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
+            $publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+            if ($publication_sub_usage->isExternalDownloadSource()) {
                 $extras[] = $this->parent_obj->txt('ext_dl_source');
             }
         }
         $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
 
-        $this->addActionMenu($PublicationSubUsage);
+        $this->addActionMenu($publication_sub_usage);
     }
 
 
@@ -118,18 +118,18 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
 
 
     /**
-     * @param PublicationSubUsage $PublicationSubUsage
+     * @param PublicationSubUsage $publication_sub_usage
      *
      * @throws DICException
      */
-    protected function addActionMenu(PublicationSubUsage $PublicationSubUsage)
+    protected function addActionMenu(PublicationSubUsage $publication_sub_usage)
     {
         $current_selection_list = new ilAdvancedSelectionListGUI();
         $current_selection_list->setListTitle($this->plugin->txt('common_actions'));
-        $current_selection_list->setId(self::TBL_ID . '_actions_' . $PublicationSubUsage->getId());
+        $current_selection_list->setId(self::TBL_ID . '_actions_' . $publication_sub_usage->getId());
         $current_selection_list->setUseImages(false);
 
-        $this->ctrl->setParameter($this->parent_obj, 'id', $PublicationSubUsage->getId());
+        $this->ctrl->setParameter($this->parent_obj, 'id', $publication_sub_usage->getId());
         $current_selection_list->addItem(
             $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT),
             xoctPublicationUsageGUI::CMD_EDIT_SUB,
