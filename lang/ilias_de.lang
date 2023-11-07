@@ -589,6 +589,7 @@ publication_usage_select_sub_usage_id_desc#:#Wählen Sie aus bereits konfigurier
 publication_usage_parent_usage_id#:#Eltern-Verwendungszweck
 publication_usage_sub_not_found#:#Ersatz-Verwendungszweck konnte nicht gefunden werden
 publication_usage_sub_not_allowed#:#Verwendungszweck konnte nicht ersatzbar werden
+publication_usage_no_identifier#:#Keine Veröffentlichungs-Nutzungskennung gefunden!
 publication_usage_sub#:#Ersatz
 publication_usage_display_name#:#Anzeigename
 publication_usage_display_name_info#:#Anzeigename INFO

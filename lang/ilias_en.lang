@@ -590,6 +590,7 @@ publication_usage_select_sub_usage_id_desc#:#Select from already configured usag
 publication_usage_parent_usage_id#:#Parent Usage
 publication_usage_sub_not_found#:#Sub-Usage not found
 publication_usage_sub_not_allowed#:#Sub-usage is not allowed for this parent usage
+publication_usage_no_identifier#:#No publication usage identifier found!
 publication_usage_sub#:#Sub
 publication_usage_display_name#:#Display Name
 publication_usage_display_name_info#:#The display name (max %s chars) to be shown to the users, and it can be localized by adding a string id (pu_display_name_%s) to the plugin languages.

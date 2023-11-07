@@ -50,7 +50,18 @@ class xoctPublicationUsageGUI extends xoctGUI
      * @var \ilTabs
      */
     private $tabs;
-
+    /**
+     * @var HTTPServices
+     */
+    private $http;
+    /**
+     * @var string
+     */
+    protected $identifier;
+    /**
+     * @var int
+     */
+    protected $get_id;
     /**
      * xoctPublicationUsageGUI constructor.
      */
@@ -58,11 +69,18 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         global $DIC;
         parent::__construct();
+        $this->http = $DIC->http();
         $this->toolbar = $DIC->toolbar();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->tabs = $DIC->tabs();
+        // Getting Query Parameters
+        $this->pub_subtab_active =
+            $this->http->request()->getQueryParams()['pub_subtab_active'] ?? xoctMainGUI::SUBTAB_PUBLICATION_USAGE;
+        $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? '';
+        $this->get_id = (int) $this->http->request()->getQueryParams()['id'] ?? null;
         $this->repository = new PublicationUsageRepository();
         $this->setTab();
+
     }
 
     /**
@@ -80,7 +98,6 @@ class xoctPublicationUsageGUI extends xoctGUI
     public function setTab()
     {
         $this->ctrl->saveParameter($this, 'pub_subtab_active');
-        $this->pub_subtab_active = $_GET['pub_subtab_active'] ?: xoctMainGUI::SUBTAB_PUBLICATION_USAGE;
         $this->tabs->setSubTabActive($this->pub_subtab_active);
     }
 
@@ -175,9 +192,13 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function edit()
     {
+        if (empty($this->identifier)) {
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_no_identifier'), true);
+            $this->ctrl->redirect($this);
+        }
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
             $this,
-            $this->repository->getUsage($_GET[self::IDENTIFIER])
+            $this->repository->getUsage($this->identifier)
         );
         $xoctPublicationUsageFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
@@ -188,10 +209,10 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function update()
     {
-        $usage_id = $_GET[self::IDENTIFIER];
+        $usage_id = $this->identifier;
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
             $this,
-            $usage_id ? $this->repository->getUsage($_GET[self::IDENTIFIER]) : new PublicationUsage()
+            $usage_id ? $this->repository->getUsage($usage_id) : new PublicationUsage()
         );
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
@@ -216,10 +237,14 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function confirmDelete()
     {
+        if (empty($this->identifier)) {
+            ilUtil::sendFailure($this->plugin->txt('publication_usage_no_identifier'), true);
+            $this->ctrl->redirect($this);
+        }
         /**
          * @var $xoctPublicationUsage PublicationUsage
          */
-        $xoctPublicationUsage = $this->repository->getUsage($_GET[self::IDENTIFIER]);
+        $xoctPublicationUsage = $this->repository->getUsage($this->identifier);
         $confirm = new ilConfirmationGUI();
         $confirm->addItem(self::IDENTIFIER, $xoctPublicationUsage->getUsageId(), $xoctPublicationUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
@@ -303,11 +328,11 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function editSub()
     {
-        if (!PublicationSubUsage::find($_GET['id'])) {
+        if (!PublicationSubUsage::find($this->get_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, PublicationSubUsage::find($_GET['id']), false);
+        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, PublicationSubUsage::find($this->get_id), false);
         $xoctPublicationSubUsageFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
     }
@@ -318,7 +343,7 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     protected function updateSub()
     {
-        $sub_usage_id = $_GET['id'];
+        $sub_usage_id = $this->get_id;
         if (!PublicationSubUsage::find($sub_usage_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
@@ -338,14 +363,14 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function confirmDeleteSub()
     {
-        if (!PublicationSubUsage::find($_GET['id'])) {
+        if (!PublicationSubUsage::find($this->get_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationSubUsage = PublicationSubUsage::find($_GET['id']);
+        $xoctPublicationSubUsage = PublicationSubUsage::find($this->get_id);
         $confirm = new ilConfirmationGUI();
         $confirm->setHeaderText($this->txt('confirm_delete_text_sub'));
-        $confirm->addItem('id', $_GET['id'], $xoctPublicationSubUsage->getTitle());
+        $confirm->addItem('id', $this->get_id, $xoctPublicationSubUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
         $confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
         $confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE_SUB);
@@ -391,18 +416,18 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function editGroup()
     {
-        if (!PublicationUsageGroup::find($_GET['id'])) {
+        if (!PublicationUsageGroup::find($this->get_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($_GET['id']), false);
+        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($this->get_id), false);
         $xoctPublicationGroupFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
     }
 
     protected function updateGroup()
     {
-        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($_GET['id']), false);
+        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($this->get_id), false);
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
             ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
@@ -413,14 +438,14 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function confirmDeleteGroup()
     {
-        if (!PublicationUsageGroup::find($_GET['id'])) {
+        if (!PublicationUsageGroup::find($this->get_id)) {
             ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationUsageGroup = PublicationUsageGroup::find($_GET['id']);
+        $xoctPublicationUsageGroup = PublicationUsageGroup::find($this->get_id);
         $confirm = new ilConfirmationGUI();
         $confirm->setHeaderText($this->txt('confirm_delete_text_group'));
-        $confirm->addItem('id', $_GET['id'], $xoctPublicationUsageGroup->getName());
+        $confirm->addItem('id', $this->get_id, $xoctPublicationUsageGroup->getName());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
         $confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
         $confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE_GROUP);
