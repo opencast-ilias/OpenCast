@@ -244,6 +244,10 @@ class xoctEventGUI extends xoctGUI
     protected function performCommand($cmd)
     {
         $this->tabs->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
+
+        // Adding the top level index.js.
+        $this->main_tpl->addJavaScript($this->plugin->getDirectory().'/js/opencast/dist/index.js');
+
         $this->main_tpl->addCss(
             './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css'
         );
@@ -1101,7 +1105,6 @@ class xoctEventGUI extends xoctGUI
                     // Take care of datetime conversion.
                     if (strpos($type, 'datetime') !== false) {
                         $datetime = new DateTimeImmutable($received_value);
-                        // $datetime->setTimezone(new DateTimeZone("UTC"));
                         $received_value = $datetime->format('Y-m-d\TH:i:s\Z');
                     }
                     $value = $received_value;

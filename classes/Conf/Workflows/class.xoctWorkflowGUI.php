@@ -71,6 +71,8 @@ class xoctWorkflowGUI extends xoctGUI
         $this->workflow_repository = $workflow_repository;
         $this->factory = $ui->factory();
         $this->main_tpl = $ui->mainTemplate();
+        $this->wf_subtab_active =
+            $this->http->request()->getQueryParams()['wf_subtab_active'] ?? xoctMainGUI::SUBTAB_WORKFLOWS_SETTINGS;
         $this->setTab();
     }
 
@@ -95,7 +97,6 @@ class xoctWorkflowGUI extends xoctGUI
     public function setTab()
     {
         $this->ctrl->saveParameter($this, 'wf_subtab_active');
-        $this->wf_subtab_active = $_GET['wf_subtab_active'] ?: xoctMainGUI::SUBTAB_WORKFLOWS_SETTINGS;
         $this->tabs->setSubTabActive($this->wf_subtab_active);
     }
 

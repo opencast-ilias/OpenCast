@@ -482,6 +482,7 @@ if ($res->rowCount() === 0) {
 ?>
 <#42>
 <?php
+// To apply new changes into WorkflowAP model as well as xoct_workflow table.
 \srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
 ?>
 

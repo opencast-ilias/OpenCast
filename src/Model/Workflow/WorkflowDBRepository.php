@@ -486,6 +486,10 @@ class WorkflowDBRepository implements WorkflowRepository
 
             // Replace the 'id' and 'name' attributes for input elements
             foreach ($inputs as $input) {
+                $old_id = '';
+                $new_id = '';
+                $old_name = '';
+                $new_name = '';
                 if ($input->hasAttribute('id')) {
                     $old_id = $input->getAttribute('id');
                     $new_id = "{$workflow_id}_{$old_id}";
@@ -522,6 +526,17 @@ class WorkflowDBRepository implements WorkflowRepository
 
                 if ($input->hasAttribute('required')) {
                     $required[] = $new_id;
+                }
+
+                if ($input->hasAttribute('type')) {
+                    $type = $input->getAttribute('type');
+                    // Exception for hidden inputs, to make them following the form naming convension.
+                    if ($type == 'hidden') {
+                        if (empty($new_name) && !empty($old_id)) {
+                            $new_name = "{$workflow_id}[{$old_id}]";
+                            $input->setAttribute('name', $new_name);
+                        }
+                    }
                 }
             }
 
