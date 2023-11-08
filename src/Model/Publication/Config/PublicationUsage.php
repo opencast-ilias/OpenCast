@@ -202,6 +202,18 @@ class PublicationUsage extends ActiveRecord
      */
     protected $ext_dl_source = false;
 
+    /**
+     * An indicator flag to determine if the usage is a sub-usage or not.
+     * @var bool
+     */
+    protected $is_sub = false;
+
+    /**
+     * A variable that works as an id holder, for when the usage is a sub-usage.
+     * @var int
+     */
+    protected $sub_id = 0;
+
     public function getUsageId(): string
     {
         return $this->usage_id ?? '';
@@ -423,5 +435,37 @@ class PublicationUsage extends ActiveRecord
     public function setExternalDownloadSource(bool $ext_dl_source)
     {
         $this->ext_dl_source = $ext_dl_source;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSub(): bool
+    {
+        return (bool) $this->is_sub;
+    }
+
+    /**
+     * @param bool $is_sub
+     */
+    public function setAsSub(bool $is_sub)
+    {
+        $this->is_sub = $is_sub;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSubId(): int
+    {
+        return (int) $this->sub_id;
+    }
+
+    /**
+     * @param int $sub_id
+     */
+    public function setSubId(int $sub_id): void
+    {
+        $this->sub_id = $sub_id;
     }
 }

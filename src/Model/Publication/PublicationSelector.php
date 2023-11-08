@@ -184,9 +184,9 @@ class PublicationSelector
                 $usage_type = $pub->usage_type;
                 $usage_filtered = array_filter($download_usages, function ($usage) use ($usage_id, $usage_type) {
                     if ($usage_type == 'sub') {
-                        return property_exists($usage, 'is_sub') && $usage->is_sub == true && $usage->sub_id == $usage_id;
+                        return $usage->isSub() && $usage->getSubId() == $usage_id;
                     } else {
-                        return !property_exists($usage, 'is_sub') && $usage->getUsageId() == $usage_id;
+                        return !$usage->isSub() && $usage->getUsageId() == $usage_id;
                     }
                 });
                 if (!empty($usage_filtered)) {
@@ -479,8 +479,12 @@ class PublicationSelector
         if (!$publication_usage instanceof PublicationUsage) {
             return [];
         }
-        $usage_type = property_exists($publication_usage, 'is_sub') ? PublicationUsage::USAGE_TYPE_SUB : PublicationUsage::USAGE_TYPE_ORG;
-        $usage_id = property_exists($publication_usage, 'sub_id') ? $publication_usage->sub_id : $publication_usage->getUsageId();
+        $usage_type = PublicationUsage::USAGE_TYPE_ORG;
+        $usage_id = $publication_usage->getUsageId();
+        if ($publication_usage->isSub()) {
+            $usage_type = PublicationUsage::USAGE_TYPE_SUB;
+            $usage_id = $publication_usage->getSubId();
+        }
         /**
          * @var $publication_usage       PublicationUsage
          * @var $attachment             Attachment

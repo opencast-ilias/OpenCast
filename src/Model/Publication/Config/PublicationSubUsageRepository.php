@@ -98,8 +98,8 @@ class PublicationSubUsageRepository
             $usage->setIgnoreObjectSettings($sub->ignoreObjectSettings());
             $usage->setExternalDownloadSource($sub->isExternalDownloadSource());
             // Add extra tracking information.
-            $usage->is_sub = true;
-            $usage->sub_id = $sub->getId();
+            $usage->setAsSub(true);
+            $usage->setSubId($sub->getId());
             return $usage;
         }
         return null;

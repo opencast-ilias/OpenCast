@@ -399,9 +399,9 @@ class xoctEventRenderer
                 )->withLabel($display_name);
                 $html = $this->renderer->renderAsync($dropdown);
             } else {
-                $usage_type = $download_publication_usage->is_sub ? 'sub' : 'org';
+                $usage_type = $download_publication_usage->isSub() ? 'sub' : 'org';
                 $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', $usage_type);
-                $usage_id = $usage_type === 'sub' ? $download_publication_usage->sub_id :
+                $usage_id = $usage_type === 'sub' ? $download_publication_usage->getSubId() :
                     $download_publication_usage->getUsageId();
                 $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_id', $usage_id);
                 $link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
