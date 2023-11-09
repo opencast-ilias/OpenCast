@@ -81,7 +81,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
      * @con_has_field    true
      * @con_fieldtype    text
      * @con_length       4000
-     * @con_is_notnull   true
+     * @con_is_notnull   false
      */
     protected $prefill;
     /**
