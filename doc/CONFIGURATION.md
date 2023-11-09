@@ -10,7 +10,7 @@ Some functions are restricted to a certain API version. The version can be found
 URL of your Opencast installation, followed by /api. E.g.: https://myopencast.com/api
 
 ##### API username
-Login of the user which will be used to call the API. 
+Login of the user which will be used to call the API.
 
 *Note that the API user must have enough permissions to access all API nodes and to switch user roles. Therefore it should have all roles beginning with 'ROLE_API_', plus the role 'ROLE_SUDO'*
 
@@ -19,7 +19,7 @@ Password for the above configured API user.
 
 ### Events
 ##### Processing Workflow ID
-ID of the Workflow which will be started after uploading an event. 
+ID of the Workflow which will be started after uploading an event.
 
 ##### Unpublish Workflow ID
 In older versions of Opencast, the event's publications have to be retracted before deleting an event, otherwise the publications will remain somewhere in the system. If this is the case for the configured installation, enter the ID of the retracting workflow here.
@@ -69,7 +69,7 @@ If enabled, the "Actions" dropdown of events will offer the option "Report Quali
 If active and a series contains one or multiple scheduled events, the toolbar will show a button "Report Date Modifications" for admins. This button opens an overlay where the admin can describe the problem and send it to the here configured email address.
 
 ##### Metadata of scheduled events editable
-Defined whether scheduled events can be edited in ILIAS. 
+Defined whether scheduled events can be edited in ILIAS.
 
 ### Player
 Define what config.json should be used for the plugin's Paella Player. You can chose from the default config ([located in the plugins code](../js/paella_player)),
@@ -101,19 +101,19 @@ Will transform the user's identifier to all uppercase. Possibly necessary to mat
 If active, users will have to accept the ToU the first time they create an event.
 
 ##### Updated Terms of Use
-If this is checked when saving the config form, all users which have already accepted the ToU are reset and will have 
+If this is checked when saving the config form, all users which have already accepted the ToU are reset and will have
 to accept it again on the next upload.
 
 ### Security
 ##### Sign * Link
-The URLs for the player, download, thumbnail and annotation tool can be signed by Opencast, in order to make them available only for a certain period of time and optionally for a certain IP address. *This will only work if the url signing is configured in Opencast* (see https://docs.opencast.org/develop/admin/#configuration/stream-security/). 
+The URLs for the player, download, thumbnail and annotation tool can be signed by Opencast, in order to make them available only for a certain period of time and optionally for a certain IP address. *This will only work if the url signing is configured in Opencast* (see https://docs.opencast.org/develop/admin/#configuration/stream-security/).
 
 The download links are not visible to the user, because the download is executed by the plugin. The plugin will then deliver the file to the user's browser. Therefore, the IP restriction is not available for download links.
 
 ##### Enable Annotation token security
 *This function will only work with a certain version of the Annotation tool (https://github.com/mliradelc/annotation-tool/tree/uzk-ilias-frontend-hash).*
 
- Sends the course reference ID, and the user, admin or a student, as a hash to the annotation tool. With that information, the tool will verify if the user is coming from ILIAS and if it is the same user as the user logged in ILIAS. 
+ Sends the course reference ID, and the user, admin or a student, as a hash to the annotation tool. With that information, the tool will verify if the user is coming from ILIAS and if it is the same user as the user logged in ILIAS.
 
 ##### Presign (experimental)
 If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
@@ -121,7 +121,7 @@ If active, links will be presigned by Opencast. This may impact the performance.
 ### Advanced
 
 ##### Common IdP
-Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks: if a common IdP is used, the plugin can send the username to Opencast to check for permissions, so Opencast can validate all roles possessed by this user. Otherwise, the user very likely doesn't exist in Opencast, so the plugin can only send the user-specific role for permission checks. This is currently only used by the PageComponent plugin. 
+Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks: if a common IdP is used, the plugin can send the username to Opencast to check for permissions, so Opencast can validate all roles possessed by this user. Otherwise, the user very likely doesn't exist in Opencast, so the plugin can only send the user-specific role for permission checks. This is currently only used by the PageComponent plugin.
 
 ##### User mapping
 Defines which user attribute will be used to map an ILIAS user to an Opencast user (or user role, respectively). If your ILIAS and Opencast are both connected to the same Identity Provider (e.g. an LDAP server) this should be the 'External-ID', since ILIAS stores the ID coming from the IdP in this attribute. If you want to use 'Email', make sure that users in ILIAS are not allowed to change their own email address.
@@ -131,7 +131,7 @@ Improves the performance by temporarily storing event metadata.
 
 ##### Debug level
 Level of detail for log entries. The log can be found in ILIAS' external data directory (same place where the ilias.log is found) and is titled 'curl.log'.
- 
+
 ##### Upload via Ingest Nodes
 If enabled, the upload will be executed via Ingest Nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 
@@ -154,7 +154,7 @@ The default parameters match the default workflow 'schedule-and-upload'.
 If enabled, the configuration of parameters will also be available in the settings of an Opencast series. Otherwise the plugin settings will be effective globally.
 
 ## Publications
-After an event is created, an Opencast workflow will process the event and create certain publications. These publications contain the links required by the plugin to enable essential functionalities, like the video player, thumbnails or download links. 
+After an event is created, an Opencast workflow will process the event and create certain publications. These publications contain the links required by the plugin to enable essential functionalities, like the video player, thumbnails or download links.
 
 Therefore, for each of these functionalities, a publication has to be configured. Each publication is identified by a 'channel' and may contain media and attachments. Media and attachments can be identified by a flavor or tags.
 
@@ -170,9 +170,9 @@ So e.g. for the thumbnails to work, a publication of the usage 'thumbnail' has t
 * **preview**: renders the preview thumbnails for the paella player (only used for the internal video player).
 * **thumbnail**: renders the thumbnails
 * **thumbnail_fallback/thumbnail_fallback_2**: fallbacks for the thumbnails
-* **video_portal**: renders a link to the external video portal (see chapter *Video Portal*). 
+* **video_portal**: renders a link to the external video portal (see chapter *Video Portal*).
 * **unprotected_link**: renders an unprotected link in the event list.
- 
+
 The default configuration (after a fresh install, or at /configuration/default_config.xml) contains publication configurations for all essential functions, that is the player, download, and thumbnails. Additionally, there are default values for the publications player, download, thumbnails, segments and preview, so these publications will use default values, even if they are not configured in the plugin configuration.
 
 Note that the default configuration only works with an out-of-the-box Opencast. If there are different workflows which affect the publications, this configuration will have to be adjusted accordingly.
@@ -190,11 +190,18 @@ A metadata field can be configured as:
 - visible for: either everyone or only for admins
 - read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
 - required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
-- prefilled: field is prefilled when creating an event or a series. Options are prefilled with current user's username or title of the course.
+- prefilled: field is prefilled when creating an event or a series. The prefilled text can be dynamically inserted as a form of text-base placeholder that admins can select from 3 different ilias global attributes as follows:
+-- 1. COURSE: admins can tap COURSE object with provided properties such as ID, REF_ID, TITLE, etc.
+-- 2. USER: admins can tap USER object with provided properties such as FIRSTNAME, LASTNAME, FULLNAME, etc.
+-- 3. META: admins can tap into META object but limited only to 2 preperties including KEYWORDS, LANGUAGES.
+The way of defining the prefilled placeholder follows a basic rule: it must be enclosed in square brackets "[]", all in CAPITAL letters, and narrowing down to properties by a "." (dot), for example: [USER.FIRSTNAME] or [COURSE.TYPE] or in case of META like [META.KEYWORDS.1]
+It is also possible to define multiple placeholders in a single prefilled text option like: [USER.FIRSTNAME], [USER.LASTNAME]
 
+#### Metadata + listproviders
+In case a metadata field is a list and requires to get the its list of available values from Opencast, there is the a button provided for this feature when adding or editing the metadata called "Load values from API", which gets the values from opencast and converts them into the format expected by Possible values.
 
 ## Video Portal
-Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series. 
+Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series.
 
 ### General
 ##### Title of external Video Portal

@@ -85,6 +85,10 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      * @var \srag\Plugins\Opencast\Model\ListProvider\ListProvider
      */
     private $listprovider;
+    /**
+     * @var array
+     */
+    private $post_ids = [];
 
     public function __construct(
         MDFieldConfigRepository $repository,
@@ -102,6 +106,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->renderer = $ui->renderer();
         $this->md_catalogue_factory = $md_catalogue_factory;
         $this->listprovider = new ListProvider();
+        $this->post_ids = $this->http->request()->getParsedBody()['ids'] ?? [];
     }
 
     /**
@@ -484,13 +489,14 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function reorder(): void
     {
-        $ids = $_POST['ids'];
-        $sort = 1;
-        foreach ($ids as $id) {
-            $configAR = $this->repository->findByFieldId($id);
-            $configAR->setSort($sort);
-            $configAR->update();
-            $sort++;
+        if (!empty($this->post_ids)) {
+            $sort = 1;
+            foreach ($this->post_ids as $id) {
+                $configAR = $this->repository->findByFieldId($id);
+                $configAR->setSort($sort);
+                $configAR->update();
+                $sort++;
+            }
         }
         exit;
     }
