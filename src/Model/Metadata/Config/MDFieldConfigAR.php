@@ -203,7 +203,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function getPrefill(): string
     {
-        return $this->prefill;
+        return $this->prefill ?? '';
     }
 
     public function setPrefill(?string $prefill): void
