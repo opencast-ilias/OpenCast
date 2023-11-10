@@ -38,11 +38,6 @@ export default class StartWorkflow {
                     if (typeof required !== 'undefined' && required !== false && value.trim() == '') {
                         validated = false;
                     }
-                    if (typeof type !== 'undefined') {
-                        if (type == 'number' && !Number.isInteger(value)) {
-                            validated = false;
-                        }
-                    }
                 });
                 if (validated) {
                     $('#' + form_id).trigger('submit');
