@@ -50,6 +50,10 @@ class xoctPlayerGUI extends xoctGUI
      * @var \ilObjUser
      */
     private $user;
+    /**
+     * @var \ILIAS\HTTP\Services
+     */
+    private $http;
 
     public function __construct(
         EventRepository $event_repository,
@@ -60,10 +64,13 @@ class xoctPlayerGUI extends xoctGUI
         global $DIC;
         parent::__construct();
         $this->user = $DIC->user();
+        $this->http = $DIC->http();
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $this->event_repository = $event_repository;
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
+        $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? null;
+        $this->force_no_chat = (bool) $this->http->request()->getQueryParams()['force_no_chat'] ?? false;
     }
 
     /**
@@ -73,7 +80,11 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo(): void
     {
-        $event = $this->event_repository->find(filter_input(INPUT_GET, self::IDENTIFIER));
+        if (!isset($this->identifier) || empty($this->identifier)) {
+            echo "Error: invalid identifier";
+            exit();
+        }
+        $event = $this->event_repository->find($this->identifier);
         if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
             header('Location: ' . $event->publications()->getPlayerLink());
@@ -89,13 +100,14 @@ class xoctPlayerGUI extends xoctGUI
             exit;
         }
 
+        $jquery_path = iljQueryUtil::getLocaljQueryPath();
+        $ilias_basic_js_path = './Services/JavaScript/js/Basic.js';
         $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
+
+        $tpl->setVariable("JQUERY_PATH", $jquery_path);
+        $tpl->setVariable("ILIAS_BASIC_JS_PATH", $ilias_basic_js_path);
+
         $tpl->setVariable("TITLE", $event->getTitle());
-        $tpl->setVariable(
-            "PAELLA_PLAYER_FOLDER",
-            $this->plugin->getDirectory()
-            . "/node_modules/paellaplayer/build/player"
-        );
         $tpl->setVariable("DATA", json_encode($data));
         $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
@@ -117,8 +129,7 @@ class xoctPlayerGUI extends xoctGUI
         } else {
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
-                ) . "/templates/default/player.css"
+                $this->plugin->getDirectory() . "/templates/default/player.css"
             );
         }
 
@@ -130,16 +141,26 @@ class xoctPlayerGUI extends xoctGUI
     protected function buildJSConfig(Event $event): stdClass
     {
         $js_config = new stdClass();
-        $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl($event->isLiveEvent());
+        $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl();
         $js_config->paella_config_file = $paella_config['url'];
+        $js_config->paella_config_livestream_type =  PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
+        $js_config->paella_config_resources_path = PluginConfig::PAELLA_RESOURCES_PATH;
+        $js_config->paella_config_fallback_captions = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS) ?? [];
+        $js_config->paella_config_fallback_langs = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [] ;
+
         $js_config->paella_config_info = $paella_config['info'];
         $js_config->paella_config_is_warning = $paella_config['warn'];
-        $js_config->paella_player_folder = $this->plugin->getDirectory(
-            ) . "/node_modules/paellaplayer/build/player";
+
+        $paella_themes = $this->paellaConfigService->getPaellaPlayerThemeUrl($event->isLiveEvent());
+        $js_config->paella_theme = $paella_themes['theme_url'];
+        $js_config->paella_theme_live = $paella_themes['theme_live_url'];
+        $js_config->paella_theme_info = $paella_themes['info'];
+
+        $js_config->paella_preview_fallback = $this->paellaConfigService->getPaellaPlayerPreviewFallback();
 
         if ($event->isLiveEvent()) {
-            $js_config->check_script_hls = $this->plugin->getDirectory(
-                ) . '/src/Util/check_hls_status.php'; // script to check live stream availability
+            // script to check live stream availability
+            $js_config->check_script_hls = $this->plugin->getDirectory() . '/src/Util/check_hls_status.php';
             $js_config->is_live_stream = true;
             $js_config->event_start = $event->getScheduling()->getStart()->getTimestamp();
             $js_config->event_end = $event->getScheduling()->getEnd()->getTimestamp();
@@ -149,7 +170,8 @@ class xoctPlayerGUI extends xoctGUI
 
     protected function isChatVisible(): bool
     {
-        return !filter_input(INPUT_GET, 'force_no_chat')
+
+        return !$this->force_no_chat
             && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)
             && $this->objectSettings->isChatActive();
     }
@@ -164,9 +186,7 @@ class xoctPlayerGUI extends xoctGUI
         $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->objectSettings->getObjId());
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
-                "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
-                ) . "/templates/default/player_w_chat.css"
+                "STYLE_SHEET_LOCATION", $this->plugin->getDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->objectSettings->getObjId());
             $public_name = $this->user->hasPublicProfile() ?
@@ -179,8 +199,7 @@ class xoctPlayerGUI extends xoctGUI
             // show chat history for past live events
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory(
-                ) . "/templates/default/player_w_chat.css"
+                $this->plugin->getDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
