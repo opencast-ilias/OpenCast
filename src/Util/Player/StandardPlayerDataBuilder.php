@@ -59,7 +59,99 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         ];
         $data['frameList'] = $this->buildSegments($this->event);
 
+        $captions = $this->event->publications()->getCaptionPublications();
+        $data['captions'] = $this->buildCaptions($captions);
+
         return $data;
+    }
+
+    /**
+     * @param array $captions a mixture of Media or Attachment
+     * @return array
+     * @throws xoctException
+     */
+    protected function buildCaptions(array $captions): array
+    {
+        $lang = 'unknown';
+        $format = '';
+        $url = '';
+        $paella_captions = [];
+        foreach ($captions as $caption) {
+            $tag_info_array = [];
+
+            list($flavor, $sub_flavor) = explode('/', $caption->flavor, 2);
+            if ($flavor !== 'captions') {
+                continue;
+            }
+
+            if ($caption instanceof Media) {
+                list($mimefiletype, $format) = explode('/', $caption->mediatype, 2);
+                foreach ($caption->tags as $tag) {
+                    if (strpos($tag, 'lang:') !== false) {
+                        $tag_lang = str_replace('lang:', '', $tag);
+                        if (!empty($tag_lang)) $lang = $tag_lang;
+                    }
+
+                    if (strpos($tag, 'generator-type:') !== false) {
+                        $tag_generator_type = str_replace('generator-type:', '', $tag);
+                        if (!empty($tag_generator_type)) {
+                            $tag_info_array['generator_type'] = $tag_generator_type;
+                        }
+                    }
+
+                    if (strpos($tag, 'generator:') !== false) {
+                        $tag_generator = str_replace('generator:', '', $tag);
+                        if (!empty($tag_generator)) {
+                            $tag_info_array['generator'] = $tag_generator;
+                        }
+                    }
+
+                    if (strpos($tag, 'type:') !== false) {
+                        $tag_type = str_replace('type:', '', $tag);
+                        if (!empty($tag_type)) {
+                            $tag_info_array['type'] = $tag_type;
+                        }
+                    }
+                }
+            } else if ($caption instanceof Attachment) {
+                list($format, $lang) = explode('+', $sub_flavor, 2);
+            }
+
+            $text = $this->buildCaptionText($lang, $tag_info_array);
+
+            $paella_captions[] = [
+                'lang' => $lang,
+                'text' => $text,
+                'format' => $format,
+                'url' => $caption->url
+            ];
+        }
+
+        return $paella_captions;
+    }
+
+    /**
+     * @param string $lang
+     * @param array $tag_info_array
+     * @return string
+     * @throws xoctException
+     */
+    private function buildCaptionText(string $lang, array $tag_info_array): string
+    {
+        $text_array[] = $lang;
+        if (array_key_exists('generator_type', $tag_info_array)) {
+            $generator_type = $tag_info_array['generator_type'] == 'auto' ? 'Auto': 'Manual';
+            $text_array[] = "($generator_type)";
+        }
+        if (array_key_exists('type', $tag_info_array)) {
+            $type = ucfirst($tag_info_array['type']);
+            $text_array[] = "($type)";
+        }
+        if (array_key_exists('generator', $tag_info_array)) {
+            $generator = ucfirst($tag_info_array['generator']);
+            $text_array[] = "($generator)";
+        }
+        return implode(' - ', $text_array);
     }
 
     /**

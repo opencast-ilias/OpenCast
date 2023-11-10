@@ -1,0 +1,26 @@
+{
+  "name": "ilias-paella-player",
+  "private": true,
+  "dependencies": {
+    "paella-basic-plugins": "^1.38.0",
+    "paella-core": "^1.39.2",
+    "paella-slide-plugins": "^1.8.0",
+    "paella-user-tracking": "^1.8.0",
+    "paella-zoom-plugin": "^1.27.0"
+  },
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --watch --mode development"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.3",
+    "@babel/preset-env": "^7.21.4",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.7.3",
+    "jquery": "^3.7.0",
+    "style-loader": "^3.3.2",
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "^5.82.0",
+    "webpack-cli": "^5.1.1"
+  }
+}

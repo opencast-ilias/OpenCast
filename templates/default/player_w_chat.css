@@ -7,6 +7,8 @@ body {
 }
 
 div#playerContainer {
+	font-family: roboto;
+	font-weight: 600;
 	display: inline-block !important;
 	position: relative;
 	float: left;

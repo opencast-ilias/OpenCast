@@ -416,10 +416,11 @@ if (\srag\Plugins\Opencast\Model\Config\PluginConfig::count() > 0) {
         \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION,
         \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
     );
-    \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
-        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION_LIVE,
-        \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
-    );
+    // The paella player live config option is discarded after paella 7 update, but the code remains here to keep track of flow.
+    // \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
+    //     \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_OPTION_LIVE,
+    //     \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
+    // );
 }
 ?>
 <#37>
@@ -481,6 +482,28 @@ if ($res->rowCount() === 0) {
 }
 ?>
 <#42>
+<?php
+// Adding paella player default values.
+if (empty(\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_LIVESTREAM_TYPE))) {
+    \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_LIVESTREAM_TYPE,
+        'hls'
+    );
+}
+if (empty(\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_THEME))) {
+    \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_THEME,
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
+    );
+}
+if (empty(\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_THEME_LIVE))) {
+    \srag\Plugins\Opencast\Model\Config\PluginConfig::set(
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::F_PAELLA_THEME_LIVE,
+        \srag\Plugins\Opencast\Model\Config\PluginConfig::PAELLA_OPTION_DEFAULT
+    );
+}
+?>
+<#43>
 <?php
 // Introducing xoct_publication_group table with model PublicationUsageGroup for grouping PublicationUsage.
 if (!$ilDB->tableExists('xoct_publication_group')) {
