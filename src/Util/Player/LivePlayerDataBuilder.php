@@ -32,41 +32,55 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
-                        "hls" => [
+                        "hlsLive" => [
                             [
                                 "src" => $track['url'],
                                 "mimetype" => $track['mimetype']
-                                //"isLiveStream" => true
-                                //removed isLivestream so that the playback-bar and forward/backward-buttons show up in livestreams.
-                                //Otherwise the paellaplayer will not show these buttons in livestreams.
                             ]
                         ]
                     ]
                 ];
+                if (isset($track['video']['resolution'])) {
+                    $streams[$role]['sources']['hlsLive'][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+                }
             }
         } else {    // single stream
             $track = $media_package['media']['track'];
             $streams[] = [
                 "content" => self::ROLE_MASTER,
                 "sources" => [
-                    "hls" => [
+                    "hlsLive" => [
                         [
                             "src" => $track['url'],
                             "mimetype" => $track['mimetype']
-                            //"isLiveStream" => true
-                            //removed isLivestream so that the playback-bar and forward/backward-buttons show up in livestreams.
-                            //Otherwise the paellaplayer will not show these buttons in livestreams.
                         ]
                     ]
                 ]
             ];
+            if (isset($track['video']['resolution'])) {
+                $streams[0]['sources']['hlsLive'][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+            }
         }
 
         return [
             "streams" => array_values($streams),
             "metadata" => [
                 "title" => $this->event->getTitle(),
+                "preview" => ILIAS_HTTP_PATH . ltrim($this->event->publications()->getThumbnailUrl(), '.'),
             ],
         ];
+    }
+
+    private function getConsumableResolution($resolution) {
+        $video_res = [
+            "w" => '1920',
+            "h" => '1080'
+        ];
+        $resolution_arr = explode('x', $resolution);
+        if (count($resolution_arr) == 2) {
+            $video_res['w'] = $resolution_arr[0];
+            $video_res['h'] = $resolution_arr[1];
+        }
+        return $video_res;
     }
 }

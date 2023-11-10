@@ -79,6 +79,7 @@ class PluginConfig extends ActiveRecord
     public const F_ENABLE_LIVE_STREAMS = 'enable_live_streams';
     public const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
     public const F_PRESENTATION_NODE = 'presentation_node';
+    public const F_LIVESTREAM_TYPE = 'livestream_type';
     public const F_ENABLE_CHAT = 'enable_chat';
 
     public const F_REPORT_QUALITY = 'report_quality';
@@ -106,15 +107,26 @@ class PluginConfig extends ActiveRecord
     public const F_RESET = "reset_terms";
 
     public const F_PAELLA_OPTION = 'paella_config_option';
-    public const F_PAELLA_OPTION_LIVE = 'paella_config_option_l';
     public const F_PAELLA_URL = 'paella_conf_url';
-    public const F_PAELLA_URL_LIVE = 'paella_conf_url_l';
+    public const F_PAELLA_THEME = 'paella_config_theme';
+    public const F_PAELLA_THEME_URL = 'paella_config_theme_url';
+    public const F_PAELLA_THEME_LIVE = 'paella_config_theme_l';
+    public const F_PAELLA_THEME_URL_LIVE = 'paella_config_theme_url_l';
+
+    public const F_PAELLA_FALLBACK_CAPTIONS = 'paella_conf_fallback_captions';
+    public const F_PAELLA_FALLBACK_LANGS = 'paella_conf_fallback_langs';
 
     public const PAELLA_OPTION_DEFAULT = 'default';
     public const PAELLA_OPTION_URL = 'url';
-    public const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config.json';
-    public const PAELLA_DEFAULT_PATH_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/paella_player/config_live.json';
+    public const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/config/config.json';
+    public const PAELLA_RESOURCES_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/resources';
+    public const PAELLA_LANG_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/lang';
+    public const PAELLA_DEFAULT_THEME = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_theme.json';
+    public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_theme.json';
 
+    public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';
+    public const F_PAELLA_PREVIEW_FALLBACK_URL = 'paella_config_preview_fallback_url';
+    public const PAELLA_DEFAULT_PREVIEW = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/default_preview.png';
     /**
      * @var array
      */

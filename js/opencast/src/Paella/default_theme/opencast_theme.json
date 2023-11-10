@@ -1,0 +1,65 @@
+{
+    "styleSheets": [
+        "opencast_theme.css"
+    ],
+    "configOverrides": {
+        "accessibility": {
+            "clickWithSpacebar": false
+        },
+        "progressIndicator": {
+            "inlineMode": false,
+            "showTotal": true,
+            "parentContainer": "buttonArea",
+            "side": "left",
+            "visible": false,
+            "showHandler": true,
+            "hideHandlerOnMouseOut": true,
+            "showRemainingProgress": true
+        },
+        "videoContainer": {
+            "overPlaybackBar": false,
+            "dynamicLayout": {
+                "landscapeVerticalAlignment": "align-bottom",
+                "portraitHorizontalAlignment": "align-center"
+            }
+        },
+        "plugins": {
+            "es.upv.paella.slideMapProgressBarPlugin": {
+                "markColor": {
+                    "mouseOut": "#0A0A0A",
+                    "mouseHover": "#9CA3AF"
+                },
+                "markWidth": 3,
+                "drawBackground": false
+            }
+        }
+    },
+    "icons": [
+        { "plugin": "es.upv.paella.fullscreenButton", "identifier": "fullscreenIcon", "icon": "./default_icons/fullscreen-icon.svg" },
+        { "plugin": "es.upv.paella.fullscreenButton", "identifier": "windowedIcon", "icon": "./default_icons/fullscreen-exit.svg" },
+
+        { "plugin": "es.upv.paella.volumeButtonPlugin","identifier": "volumeHighIcon", "icon": "./default_icons/volume-high.svg"},
+        { "plugin": "es.upv.paella.volumeButtonPlugin","identifier": "volumeMidIcon", "icon": "./default_icons/volume-mid.svg"},
+        { "plugin": "es.upv.paella.volumeButtonPlugin","identifier": "volumeLowIcon", "icon": "./default_icons/volume-low.svg"},
+        { "plugin": "es.upv.paella.volumeButtonPlugin","identifier": "volumeMuteIcon", "icon": "./default_icons/volume-mute.svg"},
+
+        { "plugin": "es.upv.paella.dualVideoDynamic", "identifier": "iconMaximize", "icon": "./default_icons/maximize.svg" },
+        { "plugin": "es.upv.paella.dualVideoDynamic", "identifier": "iconMimimize", "icon": "./default_icons/minimize.svg" },
+        { "plugin": "es.upv.paella.dualVideoDynamic", "identifier": "iconClose", "icon": "./default_icons/close.svg" },
+
+        { "plugin": "es.upv.paella.playPauseButton", "identifier": "play", "icon": "./default_icons/play.svg" },
+
+        { "plugin": "es.upv.paella.layoutSelector","identifier": "layoutIcon", "icon": "./default_icons/view-mode.svg"},
+
+        { "plugin": "es.upv.paella.backwardButtonPlugin","identifier": "backwardIcon", "icon": "./default_icons/backward.svg"},
+        { "plugin": "es.upv.paella.forwardButtonPlugin","identifier": "forwardIcon", "icon": "./default_icons/forward.svg"},
+
+        { "plugin": "es.upv.paella.captionsSelectorPlugin","identifier": "captionsIcon", "icon": "./default_icons/captions-icon.svg"},
+
+        { "plugin": "es.upv.paella.frameControlButtonPlugin","identifier": "photoIcon", "icon": "./default_icons/slides-icon.svg"},
+
+        { "plugin": "es.upv.paella.nextSlideNavigatorButton","identifier": "arrowRightIcon", "icon": "./default_icons/slide-next-icon.svg"},
+        { "plugin": "es.upv.paella.prevSlideNavigatorButton","identifier": "arrowLeftIcon", "icon": "./default_icons/slide-prev-icon.svg"}
+
+    ]
+}

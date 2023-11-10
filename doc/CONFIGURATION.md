@@ -71,11 +71,20 @@ If active and a series contains one or multiple scheduled events, the toolbar wi
 ##### Metadata of scheduled events editable
 Defined whether scheduled events can be edited in ILIAS.
 
-### Player
-Define what config.json should be used for the plugin's Paella Player. You can chose from the default config ([located in the plugins code](../js/paella_player)),
+### Paella Player
+Define the basic configuration of plugin's Paella Player (config.json). You can chose from the default config ([located in the plugins code](./js/opencast/src/Paella/config/)),
 an uploaded file, or a remote URL.
 
-Note that there's a separate config for live streams and for Video on Demand, since they need different flags to be set in the config.
+From paella player 7, the plugin uses player themes (by default opencast theme located in ./js/opencast/src/Paella/default_theme/opencast_theme.json) for videos on demand, and a specific livestream theme (located in ./js/opencast/src/Paella/default_theme/opencast_live_theme.json), these themes can also be replaced by a remote URL.
+
+There is also the possibility to use a preview image as a fallback (located in ./templates/images/default_preview.png), in case opencast could not provide the video's default preview image somehow, this image can also be replaced by a remote URL.
+
+Language Fallbacks of the paella player can also be set, which work in a form of fallback, because the user browser's language comes first. Order of the given fallbacks matters.
+NOTE: the language files can also be extended or a new language file can also be added under (./js/opencast/src/Paella/lang) with .json format with key value pairs. Added language files must be registerd in (./js/opencast/src/Paella/lang/registery.js) just like the current added de language, in order for plugin to recognize the new language.
+
+Default caption languages of the paella player can also be set in a form of fallback. the user browser's language takes the priority. The order of the given fallbacks also matter here.
+NOTE: In order to captions to work, admin must configure the caption publication usages as well!
+The plugin supports both ways of handling captions in opencast, namely attachments and media assets. To do that admin are also able to configure both of them at once by using caption fallback publication usage!
 
 ### Groups & Roles
 ##### ILIAS Producers

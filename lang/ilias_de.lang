@@ -392,7 +392,7 @@ series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
 config_paella_player_option#:#Paella Player Config für Video-On-Demand
-config_paella_player_option_live#:#Paella Player Config für Live-Streams
+config_paella_player_option_info#:#Die allgemeine Konfigurationsdatei des Paella Players, die im JSON-Format geladen werden soll.
 pp_default_link#:#Standard-Config
 pp_default_string#:#Verwende die
 pp_file#:#Config-Datei hochladen
@@ -622,3 +622,20 @@ md_license_list_CCBYND#:#CC BY-ND
 md_license_list_CCBY#:#CC BY
 md_license_list_CCBYNC#:#CC BY-NC
 md_license_list_ALLRIGHTS#:#Alle Rechte vorbehalten
+publication_usage_type_captions#:#Captions
+publication_usage_type_captions_fallback#:#Captions Fallback
+config_livestream_type#:#Streaming Typ
+config_livestream_type_info#:#Verschiedene Streaming-Typen erzeugen unterschiedliche Playlist-Dateitypen und Informationen. Es ist wichtig, den unterstützten Streaming-Typ auszuwählen, um die Dateien und Informationen ordnungsgemäß verarbeiten zu können. Der Standardtyp ist auf HLS eingestellt.
+config_livestream_type_hls#:#HLS (.m3u8 / .m3u)
+config_livestream_type_mpegts#:#MPEG-TS (.ts)
+config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
+config_paella_player_fallback_captions_option_info#:#Standardmäßig wird die Sprache des Benutzerbrowsers für die Standardbeschriftung verwendet. Das Hinzufügen zusätzlicher Beschriftungen hier hilft dabei, bevorzugte Beschriftungen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
+config_paella_player_fallback_langs_option#:#Paella Player Sprachen (fallbacks)
+config_paella_player_fallback_langs_option_info#:#Die Standardsprache für den Paella-Player wird von der Browsersprache übernommen. Das Hinzufügen zusätzlicher Sprachen hier hilft dabei, bevorzugte Sprachen als Ausweichsprachen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
+config_paella_player_theme#:#Paella Player Theme
+config_paella_player_theme_info#:#Die in den Paella Player zu ladende Themendatei für Videos auf Abruf im JSON-Format.
+config_paella_player_live_theme#:#Paella Player Theme (Livestream)
+config_paella_player_live_theme_info#:#Die Themendatei, die für Livestream-Videos im JSON-Format in den Paella Player geladen werden soll.
+config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
+config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hintergrundbilddatei, die angezeigt werden soll. Das übliche Bilddateiformat wie PNG oder JPG wird empfohlen.<br> HINWEIS: Standardmäßig wird das Vorschaubild aus den Videoressourcen geladen.
+pp_image_link#:#aktuelle Bilddatei

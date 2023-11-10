@@ -14,3 +14,14 @@
 	display: inline-block;
 	font-size: 32px;
 }
+
+#playerContainer {
+	font-family: roboto;
+	font-weight: 600;
+	width: 100vw;
+	height: 100vh;
+	left: 0px;
+	top: 0px;
+	position: relative;
+	overflow: hidden;
+}
