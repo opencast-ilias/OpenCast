@@ -95,6 +95,10 @@ class PublicationSelector
         PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
     ];
     /**
+     * @var Publication[]|Media[]|Attachment[]
+     */
+    protected $caption_publications = [];
+    /**
      * @var \ilObjUser
      */
     private $user;
@@ -548,5 +552,20 @@ class PublicationSelector
     public function setReference(SerializableClosure $reference): void
     {
         $this->reference = $reference;
+    }
+
+    /**
+     * @return Publication[]|Media[]|Attachment[]
+     * @throws xoctException
+     */
+    public function getCaptionPublications(): array
+    {
+        if (empty($this->caption_publications)) {
+            $captions = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS));
+            $captions_fallback = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS_FALLBACK));
+            $this->caption_publications = array_merge($captions, $captions_fallback);
+        }
+
+        return $this->caption_publications;
     }
 }

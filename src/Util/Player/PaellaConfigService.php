@@ -3,36 +3,115 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use xoctLog;
 
 class PaellaConfigService
 {
     /**
+     * @var PaellaConfigStorageService
+     */
+    private $storageService;
+
+    public function __construct(PaellaConfigStorageService $storageService)
+    {
+        $this->storageService = $storageService;
+    }
+
+    /**
      * @return array{url: string, info: string, warn: bool}
      */
-    public function getEffectivePaellaPlayerUrl(bool $live): array
+    public function getEffectivePaellaPlayerUrl(): array
     {
-        $option = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION_LIVE)
-            : PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION);
-        $default_path = $live ? PluginConfig::PAELLA_DEFAULT_PATH_LIVE : PluginConfig::PAELLA_DEFAULT_PATH;
-        switch ($option) {
-            case PluginConfig::PAELLA_OPTION_URL:
-                $url = $live ? PluginConfig::getConfig(PluginConfig::F_PAELLA_URL_LIVE)
-                    : PluginConfig::getConfig(PluginConfig::F_PAELLA_URL);
+        $option = PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION);
+        $default_path = PluginConfig::PAELLA_DEFAULT_PATH;
+
+        $result = [
+            'url' => $default_path,
+            'info' => 'default config used',
+            'warn' => false
+        ];
+        if ($option === PluginConfig::PAELLA_OPTION_URL) {
+            $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_URL);
+
+            $result['url'] = $url;
+            $result['info'] = 'config fetched from url';
+
+            $reachable = $this->checkUrlReachable($url);
+            if (!$reachable) {
+                xoctLog::getInstance()->writeWarning('url for paella config unreachable: ' . $url);
+                $result['url'] = $default_path;
+                $result['info'] = 'url for paella config unreachable, fallback to default config';
+                $result['warn'] = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param bool $live
+     * @return array{url: string, info: string, warn: bool}
+     */
+    public function getPaellaPlayerThemeUrl(bool $live): array
+    {
+        $default_theme = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME);
+        $default_theme_live = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_LIVE);
+        $default_theme_url = PluginConfig::PAELLA_DEFAULT_THEME;
+        $default_theme_live_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE;
+
+        $result = [
+            'theme_url' => $default_theme_url,
+            'theme_live_url' => $default_theme_live_url,
+            'info' => 'default theme used',
+        ];
+        if ($live) {
+            if ($default_theme_live === PluginConfig::PAELLA_OPTION_URL) {
+                $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL_LIVE);
+
+                $result['theme_live_url'] = $url;
+                $result['info'] = 'external live theme fetched from url';
+
                 $reachable = $this->checkUrlReachable($url);
                 if (!$reachable) {
-                    xoctLog::getInstance()->writeWarning('url for paella config unreachable: ' . $url);
-                    return [
-                        'url' => $default_path,
-                        'info' => 'url for paella config unreachable, fallback to default config',
-                        'warn' => true
-                    ];
+                    xoctLog::getInstance()->writeWarning('url for paella live theme unreachable: ' . $url);
+                    $result['theme_live_url'] = $default_theme_live_url;
+                    $result['info'] = 'url for paella live theme unreachable, fallback to default live theme';
                 }
-                return ['url' => $url, 'info' => 'config fetched from url', 'warn' => false];
-            case PluginConfig::PAELLA_OPTION_DEFAULT:
-            default:
-                return ['url' => $default_path, 'info' => 'default config used', 'warn' => false];
+            }
+        } else {
+            if ($default_theme === PluginConfig::PAELLA_OPTION_URL) {
+                $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL);
+
+                $result['theme_url'] = $url;
+                $result['info'] = 'external theme fetched from url';
+
+                $reachable = $this->checkUrlReachable($url);
+                if (!$reachable) {
+                    xoctLog::getInstance()->writeWarning('url for paella theme unreachable: ' . $url);
+                    $result['theme_url'] = $default_theme_url;
+                    $result['info'] = 'url for paella theme unreachable, fallback to default theme';
+                }
+            }
         }
+        return $result;
+    }
+
+    /**
+     * @return string preview fallback url
+     */
+    public function getPaellaPlayerPreviewFallback(): string
+    {
+        $preview_fallback_http_path = ILIAS_HTTP_PATH . '/' . PluginConfig::PAELLA_DEFAULT_PREVIEW;
+        $preview_fallback = PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK);
+        $url = $preview_fallback_http_path;
+        if ($preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
+            $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL);
+            $reachable = $this->checkUrlReachable($url);
+            if (!$reachable) {
+                xoctLog::getInstance()->writeWarning('url for paella preview fallback unreachable: ' . $url);
+            }
+        }
+        return $url;
     }
 
     public function checkUrlReachable(string $url): bool
