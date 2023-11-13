@@ -1106,12 +1106,13 @@ class xoctEventGUI extends xoctGUI
                     if (strpos($type, 'datetime') !== false) {
                         $datetime = new DateTimeImmutable($received_value);
                         $received_value = $datetime->format('Y-m-d\TH:i:s\Z');
-                    }
-                    if ($type === 'text') {
+                        $value = $received_value;
+                    } else if ($type === 'text') {
                         $value = strip_tags($received_value);
-                    }
-                    if ($type == 'number') {
+                    } else if ($type == 'number') {
                         $value = intval($received_value);
+                    } else {
+                        $value = $received_value;
                     }
                 }
                 // Take care of boolean conversion.
