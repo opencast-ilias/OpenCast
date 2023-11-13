@@ -586,8 +586,6 @@ workflow_settings_header#:#General Settings
 workflow_settings_header_description#:#Here you can configure the workflow settings and the way to use them.<br /> <b>NOTE: </b>Upon saving the new changes, the list of workflow definitions will also be updated accordingly.
 config_workflows_tags#:#Workflows Tags
 config_workflows_tags_info#:#A comma-separated list of tags to extract from the all available tags in Opencast and provide them to the teachers as a list to start against events.<br/><b>NOTE:</b> Leaving it empty will disable the feature.
-config_workflows_exclude_roles#:#Roles to exclude
-config_workflows_exclude_roles_info#:#A comma-separated list of roles included in workflows to be excluded from the workflow list.
 config_workflows_update_btn#:#Update Workflows List
 config_workflows_reset_btn#:#Reset Workflows List
 msg_workflow_settings_saved#:#General settings have been saved, the workflow list has also been updated.

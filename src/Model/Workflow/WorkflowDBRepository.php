@@ -331,15 +331,6 @@ class WorkflowDBRepository implements WorkflowRepository
             return [];
         }
 
-        $roles_to_exclude = PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES) ?? '';
-        if (!is_null($roles_str)) {
-            $roles_to_exclude = $roles_str;
-        }
-        $roles_to_exclude_arr = $this->commaToArray($roles_to_exclude);
-        $roles_to_exclude_arr = array_filter($roles_to_exclude_arr, function ($role) {
-            return !empty(trim($role));
-        });
-
         // If the list is empty, then we get all currect ones from WorkflowAR
         if (empty($workflows)) {
             $workflows = $this->getAllWorkflows();
@@ -368,10 +359,6 @@ class WorkflowDBRepository implements WorkflowRepository
             }
 
             if ($this->hasItem($tags_array, $tags_to_include_arr) === false) {
-                continue;
-            }
-
-            if ($this->hasItem($roles_array, $roles_to_exclude_arr) === true) {
                 continue;
             }
 

@@ -124,7 +124,6 @@ class PluginConfig extends ActiveRecord
     public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_theme.json';
 
     public const F_WORKFLOWS_TAGS = 'config_workflows_tags';
-    public const F_WORKFLOWS_EXCLUDE_ROLES = 'config_workflows_exclude_roles';
     public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';
     public const F_PAELLA_PREVIEW_FALLBACK_URL = 'paella_config_preview_fallback_url';
     public const PAELLA_DEFAULT_PREVIEW = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/default_preview.png';

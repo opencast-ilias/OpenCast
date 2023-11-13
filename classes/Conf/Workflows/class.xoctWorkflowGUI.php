@@ -117,16 +117,12 @@ class xoctWorkflowGUI extends xoctGUI
         $tags = $this->factory->input()->field()->text($this->translate(PluginConfig::F_WORKFLOWS_TAGS))
             ->withByline($this->translate(PluginConfig::F_WORKFLOWS_TAGS . '_info'))
             ->withValue(PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_TAGS) ?? '');
-        $excluded_roles = $this->factory->input()->field()->text($this->translate(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES))
-            ->withByline($this->translate(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES . '_info'))
-            ->withValue(PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES) ?? '');
         return $this->factory->input()->container()->form()->standard(
             $this->ctrl->getFormAction($this, self::CMD_SAVE_SETTINGS),
             [
                 $this->factory->input()->field()->section(
                     [
                         PluginConfig::F_WORKFLOWS_TAGS => $tags,
-                        PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES => $excluded_roles
                     ],
                     $this->txt('settings_header'),
                     $this->txt('settings_header_description')
@@ -143,10 +139,8 @@ class xoctWorkflowGUI extends xoctGUI
             $data = reset($data);
 
             $current_tags = PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_TAGS);
-            $current_roles = PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES);
 
             $new_tags = $data[PluginConfig::F_WORKFLOWS_TAGS] ?? '';
-            $new_roles = $data[PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES] ?? '';
 
             try {
                 $update_succeeded = $this->workflow_repository->updateList($new_tags, $new_roles);
@@ -156,15 +150,10 @@ class xoctWorkflowGUI extends xoctGUI
                         PluginConfig::F_WORKFLOWS_TAGS,
                         trim($new_tags)
                     );
-                    PluginConfig::set(
-                        PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES,
-                        trim($new_roles)
-                    );
                 } else {
                     ilUtil::sendFailure($this->translate('msg_workflow_settings_saved_update_failed'), true);
                     // Reverting back!
                     PluginConfig::set(PluginConfig::F_WORKFLOWS_TAGS, $current_tags);
-                    PluginConfig::set(PluginConfig::F_WORKFLOWS_EXCLUDE_ROLES, $current_roles);
                 }
             } catch (xoctException $e) {
                 ilUtil::sendFailure($e->getMessage(), true);
