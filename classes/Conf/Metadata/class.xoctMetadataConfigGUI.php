@@ -242,8 +242,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                         return "{$key}{$separator}{$value}";
                     }, array_keys($digested_list), array_values($digested_list));
                     if (!empty($converted_list)) {
-                        // $md_field_config->setValuesFromEditableString(implode("\n", $converted_list));
-                        // $md_field_config->update();
                         $encoded_list = base64_encode(json_encode($converted_list));
                         $this->ctrl->setParameter($this, 'possible_values_list', $encoded_list);
                         ilUtil::sendSuccess($this->plugin->txt('msg_md_listproviders_load_success'), true);
