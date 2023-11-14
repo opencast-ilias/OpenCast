@@ -361,13 +361,14 @@ class WorkflowDBRepository implements WorkflowRepository
         foreach ($this->getFilteredWorkflowsArray() as $workflow) {
             $title = $workflow->getTitle();
             $workflow_record_id = $workflow->getId();
-            $translated_text = $this->translate($workflow_record_id, self::SELECTION_TEXT_LANG_MODULE);
+            $workflow_identifier = $workflow->getWorkflowId();
+            $translated_text = $this->translate($workflow_identifier, self::SELECTION_TEXT_LANG_MODULE);
             if (strpos($translated_text, 'MISSING') === false) {
                 $title = $translated_text;
             }
             // A tiny fallback to workflow identifier, if title is empty!
             if (empty($title)) {
-                $title = $workflow->getWorkflowId();
+                $title = $workflow_identifier;
             }
             $options[] = "<option value='{$workflow_record_id}'>{$title}</option>";
         }
