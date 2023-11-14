@@ -365,6 +365,10 @@ class WorkflowDBRepository implements WorkflowRepository
             if (strpos($translated_text, 'MISSING') === false) {
                 $title = $translated_text;
             }
+            // A tiny fallback to workflow identifier, if title is empty!
+            if (empty($title)) {
+                $title = $workflow->getWorkflowId();
+            }
             $options[] = "<option value='{$workflow_record_id}'>{$title}</option>";
         }
         return implode("\n", $options);
