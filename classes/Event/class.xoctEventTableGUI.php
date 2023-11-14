@@ -38,7 +38,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @var ObjectSettings
      */
-    protected $objectSettings;
+    protected $object_settings;
     /**
      * @var xoctEventGUI
      */
@@ -76,14 +76,10 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     private $md_catalogue_event;
 
-    /**
-     * @throws DICException
-     * @throws xoctException
-     */
     public function __construct(
         xoctEventGUI $a_parent_obj,
         string $a_parent_cmd,
-        ObjectSettings $objectSettings,
+        ObjectSettings $object_settings,
         array $md_fields,
         array $data,
         string $lang_key,
@@ -96,7 +92,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->parent_obj = $a_parent_obj;
         $this->md_fields = $md_fields;
         $this->lang_key = $lang_key;
-        $this->objectSettings = $objectSettings;
+        $this->object_settings = $object_settings;
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
         $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
@@ -145,21 +141,23 @@ class xoctEventTableGUI extends ilTable2GUI
         return self::TBL_ID . '_' . substr($obj_id, 0, 5);
     }
 
-    /**
-     * @param $column
-     */
-    public function isColumnsSelected($column): bool
+    public function isColumnSelected($a_col): bool
     {
-        if (!array_key_exists($column, $this->getSelectableColumns())) {
+        if (!array_key_exists($a_col, $this->getSelectableColumns())) {
             return true;
         }
 
-        return in_array($column, $this->getSelectedColumns());
+        if (isset($this->getSelectedColumns()[$a_col])) {
+            return true;
+        }
+
+        $column_settings = $this->getSelectableColumns()[$a_col] ?? [];
+
+        return $column_settings['default'] ?? false;
     }
 
     /**
      * @param array $a_set
-     * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
@@ -170,22 +168,22 @@ class xoctEventTableGUI extends ilTable2GUI
          * @var $xoctUser     xoctUser
          */
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
-        $renderer = new xoctEventRenderer($event, $this->objectSettings);
+        $renderer = new xoctEventRenderer($event, $this->object_settings);
 
         $renderer->insertPreviewImage($this->tpl, null);
         $renderer->insertPlayerLink($this->tpl);
 
-        if (!$this->objectSettings->getStreamingOnly()) {
+        if (!$this->object_settings->getStreamingOnly()) {
             $renderer->insertDownloadLink($this->tpl);
         }
 
-        if ($this->objectSettings->getUseAnnotations()) {
+        if ($this->object_settings->getUseAnnotations()) {
             $renderer->insertAnnotationLink($this->tpl);
         }
 
         $first = true;
         foreach ($this->md_fields as $md_field) {
-            if ($this->isColumnsSelected($md_field->getFieldId())) {
+            if ($this->isColumnSelected($md_field->getFieldId())) {
                 $this->tpl->setCurrentBlock('generic' . ($first ? '_w_state' : ''));
                 if ($first) {
                     $this->tpl->setVariable('STATE', $renderer->getStateHTML());
@@ -201,7 +199,7 @@ class xoctEventTableGUI extends ilTable2GUI
             }
         }
 
-        if ($this->isColumnsSelected('event_owner')) {
+        if ($this->isColumnSelected('event_owner')) {
             $renderer->insertOwner($this->tpl, 'generic', 'VALUE', $a_set['owner_username']);
         }
 
@@ -233,9 +231,10 @@ class xoctEventTableGUI extends ilTable2GUI
         ];
 
         foreach ($this->md_fields as $md_field) {
-            $columns[$md_field->getFieldId()] = [
+            $field_id = $md_field->getFieldId();
+            $columns[$field_id] = [
                 'selectable' => true,
-                'sort_field' => $md_field->getFieldId() . '_s',
+                'sort_field' => $field_id,
                 'text' => $md_field->getTitle($this->lang_key)
             ];
         }
@@ -258,19 +257,16 @@ class xoctEventTableGUI extends ilTable2GUI
             ],
         ];
 
-        if (!(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)
-            || !$this->has_unprotected_links
-            || !ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
+        if (!$this->has_unprotected_links
+            || !ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)
+            || !(new PublicationUsageRepository())->exists(PublicationUsage::USAGE_UNPROTECTED_LINK)) {
             unset($columns['unprotected_link']);
         }
 
         return $columns;
     }
 
-    /**
-     * @return bool
-     */
-    protected function getOwnerColDefault()
+    protected function getOwnerColDefault(): bool
     {
         static $owner_visible;
         if ($owner_visible !== null) {
@@ -279,35 +275,28 @@ class xoctEventTableGUI extends ilTable2GUI
         $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole(
             'upload',
             'member'
-        ) || $this->objectSettings->getPermissionPerClip());
+        ) || $this->object_settings->getPermissionPerClip());
 
         return $owner_visible;
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function initColumns()
+    protected function initColumns(): void
     {
-        $selected_columns = $this->getSelectedColumns();
-
         foreach ($this->getAllColumns() as $key => $col) {
-            if (!$this->isColumnsSelected($key)) {
+            if (!$this->isColumnSelected($key)) {
                 continue;
             }
-            if ($col['selectable'] == false || in_array($key, $selected_columns)) {
-                $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
-                $this->addColumn($col_title, $col['sort_field'], $col['width']);
-            }
+            $this->addColumn(
+                isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'],
+                $col['sort_field'],
+                $col['width']
+            );
         }
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function addActionMenu(Event $event)
+    protected function addActionMenu(Event $event): void
     {
-        $renderer = new xoctEventRenderer($event, $this->objectSettings);
+        $renderer = new xoctEventRenderer($event, $this->object_settings);
         $actions = $renderer->getActions();
         if ($actions === []) {
             return;
@@ -325,7 +314,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @return Closure => $value) {
      */
-    protected function filterArray()
+    protected function filterArray(): Closure
     {
         return function ($array): bool {
             $return = true;
@@ -357,10 +346,7 @@ class xoctEventTableGUI extends ilTable2GUI
         };
     }
 
-    /**
-     * @return Closure
-     */
-    protected function filterPermissions()
+    protected function filterPermissions(): Closure
     {
         return function ($array): bool {
             $xoctUser = xoctUser::getInstance($this->user);
@@ -368,14 +354,11 @@ class xoctEventTableGUI extends ilTable2GUI
                 $array['identifier']
             );
 
-            return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->objectSettings);
+            return ilObjOpenCastAccess::hasReadAccessOnEvent($event, $xoctUser, $this->object_settings);
         };
     }
 
-    /**
-     * @param $item
-     */
-    protected function addAndReadFilterItem(ilFormPropertyGUI $item)
+    protected function addAndReadFilterItem(ilFormPropertyGUI $item): void
     {
         $this->addFilterItem($item);
         $item->readFromSession();
@@ -447,10 +430,7 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::fillRowCSV($a_csv, $set);
     }
 
-    /**
-     * @return array
-     */
-    public function getSelectableColumns()
+    public function getSelectableColumns(): array
     {
         static $selectable_columns;
         if ($selectable_columns !== null) {
@@ -458,7 +438,7 @@ class xoctEventTableGUI extends ilTable2GUI
         }
         $selectable_columns = [];
         foreach ($this->getAllColumns() as $key => $col) {
-            if ($col['selectable']) {
+            if ((bool) ($col['selectable'] ?? false)) {
                 $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = [
                     'txt' => $col_title,
