@@ -112,8 +112,6 @@ class xoctWorkflowTableGUI extends TableGUI
                 return $row->getDescription();
             case 'tags':
                 return str_replace(',', '<br />', $row->getTags());
-            case 'roles':
-                return str_replace(',', '<br />', $row->getRoles());
             case 'config_panel':
                 $tpl = new ilTemplate("tpl.icon.html", true, true, $this->plugin->getDirectory());
                 $has_config_panel = !empty($row->getConfigPanel()) ? true : false;
@@ -171,7 +169,6 @@ class xoctWorkflowTableGUI extends TableGUI
             ['txt' => $this->lng->txt('title'), 'id' => 'title'],
             ['txt' => $this->lng->txt('description'), 'id' => 'description'],
             ['txt' => $this->translate('tags', self::LANG_MODULE), 'id' => 'tags'],
-            ['txt' => $this->translate('roles', self::LANG_MODULE), 'id' => 'roles'],
             ['txt' => $this->translate('config_panel', self::LANG_MODULE), 'id' => 'config_panel'],
             ['txt' => $this->lng->txt('actions'), 'id' => 'actions']
         ];

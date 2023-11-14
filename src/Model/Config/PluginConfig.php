@@ -239,7 +239,6 @@ class PluginConfig extends ActiveRecord
             $xoctWorkflow->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue ?? '');
             $xoctWorkflow->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue ?? '');
             $xoctWorkflow->setTags($node->getElementsByTagName('tags')->item(0)->nodeValue ?? '');
-            $xoctWorkflow->setRoles($node->getElementsByTagName('roles')->item(0)->nodeValue ?? '');
             $xoctWorkflow->setConfigPanel($node->getElementsByTagName('config_panel')->item(0)->nodeValue ?? '');
             $xoctWorkflow->create();
         }
@@ -342,9 +341,6 @@ class PluginConfig extends ActiveRecord
             );
             $xml_xoctWf->appendChild(new DOMElement('tags'))->appendChild(
                 new DOMCdataSection($xoctWorkflows->getTags() ?? '')
-            );
-            $xml_xoctWf->appendChild(new DOMElement('roles'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getRoles() ?? '')
             );
             $xml_xoctWf->appendChild(new DOMElement('config_panel'))->appendChild(
                 new DOMCdataSection($xoctWorkflows->getConfigPanel() ?? '')

@@ -67,14 +67,6 @@ class WorkflowAR extends ActiveRecord
      * @var string
      *
      * @con_has_field  true
-     * @con_fieldtype  text
-     * @con_length     512
-     */
-    protected $roles;
-    /**
-     * @var string
-     *
-     * @con_has_field  true
      * @con_fieldtype clob
      */
     protected $config_panel;
@@ -127,16 +119,6 @@ class WorkflowAR extends ActiveRecord
     public function setTags(string $tags): void
     {
         $this->tags = $tags;
-    }
-
-    public function getRoles(): string
-    {
-        return $this->roles ?: '';
-    }
-
-    public function setRoles(string $roles): void
-    {
-        $this->roles = $roles;
     }
 
     public function getConfigPanel(): string

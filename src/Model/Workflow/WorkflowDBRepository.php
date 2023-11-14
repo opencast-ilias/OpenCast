@@ -43,7 +43,7 @@ class WorkflowDBRepository implements WorkflowRepository
     }
 
     public function store(string $workflow_id, string $title, string $description,
-        string $tags, string $roles, string $config_panel, int $id = 0): void
+        string $tags, string $config_panel, int $id = 0): void
     {
         /** @var WorkflowAR $workflow */
         $workflow = new WorkflowAR($id == 0 ? null : $id);
@@ -52,14 +52,10 @@ class WorkflowDBRepository implements WorkflowRepository
         $workflow->setDescription($description);
         if ($id == 0) {
             $workflow->setTags($tags);
-            $workflow->setRoles($roles);
             $workflow->setConfigPanel($config_panel);
         } else {
             if (!empty($tags)) {
                 $workflow->setTags($tags);
-            }
-            if (!empty($roles)) {
-                $workflow->setRoles($roles);
             }
             if (!empty($config_panel)) {
                 $workflow->setConfigPanel($config_panel);
@@ -170,10 +166,10 @@ class WorkflowDBRepository implements WorkflowRepository
         return $workflows;
     }
 
-    public function updateList(?string $tags_str = null, ?string $roles_str = null): bool
+    public function updateList(?string $tags_str = null): bool
     {
         $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
-        $filtered_oc_workflows = $this->getFilteredWorkflowsArray($oc_workflows_all, $tags_str, $roles_str);
+        $filtered_oc_workflows = $this->getFilteredWorkflowsArray($oc_workflows_all, $tags_str);
         $filtered_oc_workflows_ids = array_keys($filtered_oc_workflows);
         $current_workflows = $this->getAllWorkflowsAsArray('workflow_id');
         $current_workflows_ids = array_keys($current_workflows);
@@ -208,9 +204,8 @@ class WorkflowDBRepository implements WorkflowRepository
                 $title = isset($oc_wf->title) ? trim($oc_wf->title) : '';
                 $description = isset($oc_wf->description) ? trim($oc_wf->description) : '';
                 $tags = isset($oc_wf->tags) ? implode(',', $oc_wf->tags) : '';
-                $roles = isset($oc_wf->roles) ? implode(',', $oc_wf->roles) : '';
                 $configuration_panel = !empty($oc_wf->configuration_panel) ? $oc_wf->configuration_panel : '';
-                $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $roles, $configuration_panel);
+                $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel);
             }
         }
 
@@ -225,7 +220,6 @@ class WorkflowDBRepository implements WorkflowRepository
                 $new_workflow->setTitle($workflow->getTitle());
                 $new_workflow->setDescription($workflow->getDescription());
                 $new_workflow->setTags($workflow->getTags());
-                $new_workflow->setRoles($workflow->getRoles());
                 $new_workflow->setConfigPanel($workflow->getConfigPanel());
                 $new_workflow->store();
             }
@@ -251,9 +245,8 @@ class WorkflowDBRepository implements WorkflowRepository
             $title = isset($oc_wf->title) ? trim($oc_wf->title) : '';
             $description = isset($oc_wf->description) ? trim($oc_wf->description) : '';
             $tags = isset($oc_wf->tags) ? implode(',', $oc_wf->tags) : '';
-            $roles = isset($oc_wf->roles) ? implode(',', $oc_wf->roles) : '';
             $configuration_panel = !empty($oc_wf->configuration_panel) ? $oc_wf->configuration_panel : '';
-            $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $roles, $configuration_panel);
+            $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel);
         }
 
         $success = WorkflowAR::count() === count($filtered_oc_workflows_ids);
@@ -267,7 +260,6 @@ class WorkflowDBRepository implements WorkflowRepository
                 $new_workflow->setTitle($workflow->getTitle());
                 $new_workflow->setDescription($workflow->getDescription());
                 $new_workflow->setTags($workflow->getTags());
-                $new_workflow->setRoles($workflow->getRoles());
                 $new_workflow->setConfigPanel($workflow->getConfigPanel());
                 $new_workflow->store();
             }
@@ -276,8 +268,7 @@ class WorkflowDBRepository implements WorkflowRepository
         return $success;
     }
 
-    public function createOrUpdate(string $workflow_id, string $title, string $description, string $tags = '', string $roles = '',
-        string $config_panel = ''): WorkflowAR
+    public function createOrUpdate(string $workflow_id, string $title, string $description, string $tags = '', string $config_panel = ''): WorkflowAR
     {
         $id = 0;
         if ($this->exists($workflow_id)) {
@@ -285,7 +276,7 @@ class WorkflowDBRepository implements WorkflowRepository
             $id = $workflow->getId();
         }
 
-        $this->store($workflow_id, $title, $description, $tags, $roles, $config_panel, $id);
+        $this->store($workflow_id, $title, $description, $tags, $config_panel, $id);
 
         $new_workflow = $this->getByWorkflowId($workflow_id);
         return $new_workflow;
@@ -313,8 +304,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
     public function getFilteredWorkflowsArray(
         array $workflows = [],
-        ?string $tags_str = null,
-        ?string $roles_str = null): array
+        ?string $tags_str = null): array
     {
         $filtered_list = [];
 
@@ -338,19 +328,14 @@ class WorkflowDBRepository implements WorkflowRepository
 
         foreach ($workflows as $workflow) {
             $tags_array = [];
-            $roles_array = [];
             $workflow_id = '';
             if ($workflow instanceof WorkflowAR) {
                 $tags_array = $this->commaToArray($workflow->getTags());
-                $roles_array = $this->commaToArray($workflow->getRoles());
                 $workflow_id = $workflow->getWorkflowId();
             } else {
                 $workflow_id = $workflow->identifier;
                 if (isset($workflow->tags)) {
                     $tags_array = $workflow->tags;
-                }
-                if (isset($workflow->roles)) {
-                    $roles_array = $workflow->roles;
                 }
             }
 

@@ -143,7 +143,7 @@ class xoctWorkflowGUI extends xoctGUI
             $new_tags = $data[PluginConfig::F_WORKFLOWS_TAGS] ?? '';
 
             try {
-                $update_succeeded = $this->workflow_repository->updateList($new_tags, $new_roles);
+                $update_succeeded = $this->workflow_repository->updateList($new_tags);
                 if ($update_succeeded) {
                     ilUtil::sendSuccess($this->translate('msg_workflow_settings_saved'), true);
                     PluginConfig::set(
@@ -224,7 +224,6 @@ class xoctWorkflowGUI extends xoctGUI
         $title = $this->factory->input()->field()->text($this->language->txt('title'));
         $description = $this->factory->input()->field()->textarea($this->language->txt('description'));
         $tags = $this->factory->input()->field()->text($this->translate('tags', self::LANG_MODULE))->withDisabled(true);
-        $roles = $this->factory->input()->field()->text($this->translate('roles', self::LANG_MODULE))->withDisabled(true);
         $configuration_panel = $this->factory->input()->field()->textarea($this->translate('config_panel', self::LANG_MODULE))
             ->withDisabled(true);
 
@@ -242,7 +241,6 @@ class xoctWorkflowGUI extends xoctGUI
                         'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle()),
                         'description' => is_null($workflow) ? $description : $description->withValue($workflow->getDescription()),
                         'tags' => is_null($workflow) ? $tags : $tags->withValue($workflow->getTags()),
-                        'roles' => is_null($workflow) ? $roles : $roles->withValue($workflow->getRoles()),
                         'configuration_panel' => is_null($workflow) ? $configuration_panel : $configuration_panel->withValue(
                             json_encode($workflow->getConfigPanel())
                         )
@@ -269,7 +267,7 @@ class xoctWorkflowGUI extends xoctGUI
         $form = $this->getForm()->withRequest($this->http->request());
         if ($data = $form->getData()) {
             $wf = reset($data);
-            $this->workflow_repository->createOrUpdate($wf['id'], $wf['title'], $wf['description'], $wf['tags'], $wf['roles']);
+            $this->workflow_repository->createOrUpdate($wf['id'], $wf['title'], $wf['description'], $wf['tags']);
             ilUtil::sendSuccess($this->plugin->txt('msg_workflow_created'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         } else {

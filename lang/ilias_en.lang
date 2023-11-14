@@ -597,7 +597,6 @@ msg_workflow_list_reset_failed#:#Unable to reset workflows list, please try agai
 msg_workflows_updated#:#The workflows list has been successfully updated.
 msg_confirm_reset_workflow_list#:#The workflows list will be reset and all changes will be removed, would you like to proceed with the reset anyway?
 workflow_tags#:#Tags
-workflow_roles#:#Roles
 workflow_config_panel#:#Configuration Panel
 workflow_config_panel_icon_with#:#With Configuration Panel
 workflow_config_panel_icon_without#:#Without Configuration Panel

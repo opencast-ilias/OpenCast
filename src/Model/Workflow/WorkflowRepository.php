@@ -25,7 +25,7 @@ interface WorkflowRepository
     public function getAllWorkflowsAsArray($key = null, $values = null): array;
 
     public function store(string $workflow_id, string $title, string $description,
-        string $tags, string $roles, string $config_panel, int $id = 0);
+        string $tags, string $config_panel, int $id = 0);
 
     public function exists(string $workflow_id): bool;
 
@@ -55,7 +55,7 @@ interface WorkflowRepository
      * @return WorkflowAR
      */
     public function createOrUpdate(string $workflow_id, string $title, string $description,
-        string $tags = '', string $roles = '', string $config_panel = ''): WorkflowAR;
+        string $tags = '', string $config_panel = ''): WorkflowAR;
 
     /**
      * @return array
@@ -72,8 +72,7 @@ interface WorkflowRepository
     /**
      * @return array
      */
-    public function getFilteredWorkflowsArray(array $workflows = [], ?string $tags_str = null,
-        ?string $roles_str = null): array;
+    public function getFilteredWorkflowsArray(array $workflows = [], ?string $tags_str = null): array;
 
     /**
      * @return bool
@@ -83,7 +82,7 @@ interface WorkflowRepository
     /**
      * @return bool
      */
-    public function updateList(?string $tags_str = null, ?string $roles_str = null): bool;
+    public function updateList(?string $tags_str = null): bool;
 
     /**
      * @return array

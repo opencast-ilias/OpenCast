@@ -596,7 +596,6 @@ msg_workflow_list_reset_failed#:#Die Workflowliste konnte nicht zurückgesetzt w
 msg_workflows_updated#:#Die Workflowliste wurde erfolgreich aktualisiert.
 msg_confirm_reset_workflow_list#:#Die Workflowliste wird zurückgesetzt und alle Änderungen werden entfernt. Möchten Sie trotzdem mit dem Zurücksetzen fortfahren?
 workflow_tags#:#Tags
-workflow_roles#:#Rollen
 workflow_config_panel#:#Konfigurationspanel
 workflow_config_panel_icon_with#:#Mit Konfigurationspanel
 workflow_config_panel_icon_without#:#Ohne Konfigurationspanel
