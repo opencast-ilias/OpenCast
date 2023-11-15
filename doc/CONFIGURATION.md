@@ -209,6 +209,7 @@ It is also possible to define multiple placeholders in a single prefilled text o
 #### Metadata + listproviders
 In case a metadata field is a list and requires to get the its list of available values from Opencast, there is the a button provided for this feature when adding or editing the metadata called "Load values from API", which gets the values from opencast and converts them into the format expected by Possible values.
 Opencast API user must have ROLE_API_LISTPROVIDERS_VIEW role which will be provided in latest version of Opencast (from 13 - 14)
+In addition to the role, the API version must be set to 1.10.0 or above.
 
 ## Video Portal
 Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series.
