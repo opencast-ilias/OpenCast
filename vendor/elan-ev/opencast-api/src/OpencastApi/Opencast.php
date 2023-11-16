@@ -6,11 +6,68 @@ use OpencastApi\Rest\OcIngest;
 
 class Opencast
 {
-    /** @var OpencastApi\Rest\OcRestClient the rest client */
+    /** @var OcRestClient the rest client */
     private $restClient;
 
-    /** @var OpencastApi\Rest\OcRestClient the engage node rest client */
+    /** @var OcRestClient the engage node rest client */
     private $engageRestClient;
+
+    // PHP 8.2 deprecates the creation of dynamic class properties.
+    // We also need to avoid the type declaration to provide the possibility of using Decorate proxy.
+
+    /** @var \OpencastApi\Rest\OcAgentsApi $agentsApi */
+    public $agentsApi;
+
+    /** @var \OpencastApi\Rest\OcBaseApi $baseApi */
+    public $baseApi;
+
+    /** @var \OpencastApi\Rest\OcCaptureAdmin $captureAdmin */
+    public $captureAdmin;
+
+    /** @var \OpencastApi\Rest\OcEventAdminNg $eventAdminNg */
+    public $eventAdminNg;
+
+    /** @var \OpencastApi\Rest\OcEventsApi $eventsApi */
+    public $eventsApi;
+
+    /** @var \OpencastApi\Rest\OcGroupsApi $groupsApi */
+    public $groupsApi;
+
+    /** @var \OpencastApi\Rest\OcRecordings $recordings */
+    public $recordings;
+
+    /** @var \OpencastApi\Rest\OcSearch $search */
+    public $search;
+
+    /** @var \OpencastApi\Rest\OcSecurityApi $securityApi */
+    public $securityApi;
+
+    /** @var \OpencastApi\Rest\OcSeriesApi $seriesApi */
+    public $seriesApi;
+
+    /** @var \OpencastApi\Rest\OcSeries $series */
+    public $series;
+
+    /** @var \OpencastApi\Rest\OcServices $services */
+    public $services;
+
+    /** @var \OpencastApi\Rest\OcStatisticsApi $statisticsApi */
+    public $statisticsApi;
+
+    /** @var \OpencastApi\Rest\OcSysinfo $sysinfo */
+    public $sysinfo;
+
+    /** @var \OpencastApi\Rest\OcWorkflow $agentsApi */
+    public $workflow;
+
+    /** @var \OpencastApi\Rest\OcWorkflowsApi $workflowsApi */
+    public $workflowsApi;
+
+    /** @var \OpencastApi\Rest\OcIngest $ingest */
+    public $ingest;
+
+    /** @var \OpencastApi\Rest\OcListProvidersApi $listProvidersApi */
+    public $listProvidersApi;
 
     /*
         $config = [
@@ -55,7 +112,7 @@ class Opencast
             $propertyName = lcfirst(str_replace('Oc', '', $className));
             $client = $this->restClient;
 
-            if (in_array($className, $this->excludeFilters()) || property_exists($this, $propertyName)) {
+            if (in_array($className, $this->excludeFilters())) {
                 continue;
             }
 
@@ -63,7 +120,10 @@ class Opencast
                 $client = $this->engageRestClient;
             }
 
-            $this->{$propertyName} = new $fullClassName($client);
+            // Make sure the property is declared properly!
+            if (property_exists($this, $propertyName)) {
+                $this->{$propertyName} = new $fullClassName($client);
+            }
         }
 
         if ($enableingest) {
@@ -133,7 +193,10 @@ class Opencast
                 $ingestClient = new OcRestClient($config);
             }
 
-            $this->ingest = new OcIngest($ingestClient);
+            // Make sure ingest property exists!
+            if (property_exists($this, 'ingest')) {
+                $this->ingest = new OcIngest($ingestClient);
+            }
         }
     }
 
