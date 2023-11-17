@@ -175,6 +175,10 @@ class ObjectSettingsFormItemBuilder
         ];
 
         if (PermissionTemplate::count() !== 0) {
+            $value = $series->isPublishedOnVideoPortal()
+                ? [self::F_PUBLISH_ON_VIDEO_PORTAL => $series->getPermissionTemplateId()]
+                : null;
+
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
                 [
                     self::F_PUBLISH_ON_VIDEO_PORTAL => $this->getPermissionTemplateRadioInput()
@@ -184,14 +188,9 @@ class ObjectSettingsFormItemBuilder
                     PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE)
                 ),
                 $this->txt(self::F_PUBLISH_ON_VIDEO_PORTAL . '_info')
-            )
-                                                                     ->withValue(
-                                                                         $series->isPublishedOnVideoPortal() ?
-                                                                             [
-                                                                                 self::F_PUBLISH_ON_VIDEO_PORTAL => $series->getPermissionTemplateId(
-                                                                                 )
-                                                                             ] : null
-                                                                     );
+            )->withValue(
+                $value
+            );
         }
 
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
