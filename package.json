@@ -20,13 +20,9 @@
     "ini": "^1.3.5",
     "moment": "^2.29.4",
     "mysql": "^2.17.1",
-    "paellaplayer": "https://github.com/polimediaupv/paella/tarball/6.5.6",
     "socket.io": "^4.6.1",
     "uuid": "^3.3.2",
     "yargs": "^17.3.1"
   },
-  "private": true,
-  "scripts": {
-    "install": "cd node_modules/paellaplayer && npm install && npm run build && rm -rfd $(ls -a -I '.' -I '..' -I 'build' -I 'package.json' -I 'README.md')"
-  }
+  "private": true
 }
