@@ -40,7 +40,7 @@ class PluginConfig extends ActiveRecord
     public const F_API_BASE = 'api_base';
     public const F_ACTIVATE_CACHE = 'activate_cache';
     public const CACHE_DISABLED = 0;
-    public const CACHE_STANDARD = 1;
+    public const CACHE_APCU = 1;
     public const CACHE_DATABASE = 2;
     public const F_USER_MAPPING = 'user_mapping';
     public const F_GROUP_PRODUCERS = 'group_producers';
