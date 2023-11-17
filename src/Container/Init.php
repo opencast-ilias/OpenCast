@@ -97,7 +97,7 @@ final class Init
                     $activated = false;
                     $adaptor = CacheConfig::PHPSTATIC;
                     break;
-                case PluginConfig::CACHE_STANDARD:
+                case PluginConfig::CACHE_APCU:
                     $activated = true;
                     $adaptor = CacheConfig::APCU;
                     break;

@@ -717,16 +717,19 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $cb->addOption($opt);
         $opt = new ilRadioOption(
-            $this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_STANDARD),
-            PluginConfig::CACHE_STANDARD
+            $this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_APCU),
+            PluginConfig::CACHE_APCU
         );
         $opt->setInfo(
             $this->parent_gui->txt(
-                PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_STANDARD . '_info',
+                PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_APCU . '_info',
                 '',
                 []
             )
         );
+        $apc_available = !function_exists('apcu_fetch');
+        $opt->setDisabled($apc_available);
+
         $cb->addOption($opt);
         $opt = new ilRadioOption(
             $this->parent_gui->txt(PluginConfig::F_ACTIVATE_CACHE . '_' . PluginConfig::CACHE_DATABASE),
