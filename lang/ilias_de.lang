@@ -581,7 +581,7 @@ channel_type#:#Serie
 file#:#Datei
 link#:#URL
 subtab_publication_usage#:#Publikationsnutzungen
-subtab_publication_sub_usage#:#Unternutzungen 
+subtab_publication_sub_usage#:#Unternutzungen
 subtab_publication_groups#:#Unternutzungsgruppen
 publication_usage_msg_success_sub#:#Unternutzung gespeichert
 publication_usage_select_sub_usage_id#:#Unternutzungen
@@ -593,6 +593,7 @@ publication_usage_no_identifier#:#Keine Unternutzung gefunden!
 publication_usage_sub#:#Unternutzung
 publication_usage_display_name#:#Anzeigename
 publication_usage_display_name_info#:#Anzeigename, der in dem Button angezeigt wird. (Maximal %s Zeichen, kann übersetzt werden, wenn (pu_display_name_%s) in eine(r) Sprachdatei gespeichert wird.)
+publication_usage_sub_display_name_info#:#Anzeigename, der in dem Button angezeigt wird. (Maximal %s Zeichen, kann übersetzt werden, wenn (pus_display_name_%s) in eine(r) Sprachdatei gespeichert wird.)
 publication_usage_group_id#:#Unternutzungsgruppe
 publication_usage_add_new_sub#:#untergeordnete Nutzung hinzufügen
 publication_usage_add_new_group#:#Neue Unternutzungsgruppe hinzufügen

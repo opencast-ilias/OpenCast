@@ -94,7 +94,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         // F_DISPLAY_NAME
         $max_lenght = 20;
         $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName() : '{added display name}');
-        $info = sprintf($this->parent_gui->txt(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
+        $info = sprintf($this->plugin->txt('publication_usage_sub_' . self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
         $te = new ilTextInputGUI($this->parent_gui->txt(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);
         $te->setMaxLength($max_lenght);

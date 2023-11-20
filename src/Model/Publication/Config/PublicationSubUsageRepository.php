@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
-use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class PublicationSubUsageRepository
@@ -11,7 +11,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
  */
 class PublicationSubUsageRepository
 {
-    use TranslatorTrait;
+    use LocaleTrait;
     /**
      * Returns the display name of the sub-usage but by looking for a record also in localization.
      * @param int $sub_id
@@ -23,10 +23,8 @@ class PublicationSubUsageRepository
         $sub_usage = PublicationSubUsage::find($sub_id);
         if (!empty($sub_usage) && !empty($sub_usage->getDisplayName())) {
             $display_name = $sub_usage->getDisplayName();
-            $translated_display_name = $this->translate(strtolower($display_name), PublicationSubUsage::DISPLAY_NAME_LANG_MODULE);
-            if (strpos($translated_display_name, 'MISSING') === false) {
-                $display_name = $translated_display_name;
-            }
+            $display_name = $this->getLocaleString(strtolower($display_name),
+                PublicationSubUsage::DISPLAY_NAME_LANG_MODULE, $display_name);
         }
         return trim($display_name);
     }
@@ -40,7 +38,7 @@ class PublicationSubUsageRepository
     public function generateTitle(string $parent_usage_id, string $title_text): string
     {
         $count_subs = PublicationSubUsage::where(['parent_usage_id' => $parent_usage_id])->count();
-        return $title_text . " (" . $this->translate('publication_usage_sub') . "-" . ($count_subs + 1) . ")";
+        return $title_text . " (" . $this->getLocaleString('publication_usage_sub') . "-" . ($count_subs + 1) . ")";
     }
 
     /**

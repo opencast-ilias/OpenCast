@@ -2,7 +2,7 @@
 
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
-use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class PublicationUsageRepository
@@ -13,7 +13,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
  */
 class PublicationUsageRepository
 {
-    use TranslatorTrait;
+    use LocaleTrait;
     public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
@@ -104,14 +104,11 @@ class PublicationUsageRepository
      */
     public function getDisplayName(string $usage): string
     {
-        $display_name = '';
         $usage = $this->getUsage($usage);
-        if (!empty($usage->getDisplayName())) {
-            $display_name = $usage->getDisplayName();
-            $translated_display_name = $this->translate(strtolower($display_name), PublicationUsage::DISPLAY_NAME_LANG_MODULE);
-            if (strpos($translated_display_name, 'MISSING') === false) {
-                $display_name = $translated_display_name;
-            }
+        $display_name = $usage->getDisplayName() ?? '';
+        if (!empty($display_name)) {
+            $display_name = $this->getLocaleString(strtolower($display_name),
+                PublicationUsage::DISPLAY_NAME_LANG_MODULE, $display_name);
         }
         return trim($display_name);
     }

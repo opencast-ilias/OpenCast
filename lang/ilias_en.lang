@@ -594,6 +594,7 @@ publication_usage_no_identifier#:#No publication usage identifier found!
 publication_usage_sub#:#Sub
 publication_usage_display_name#:#Display Name
 publication_usage_display_name_info#:#The display name (max %s chars) to be shown to the users, and it can be localized by adding a string id (pu_display_name_%s) to the plugin languages.
+publication_usage_sub_display_name_info#:#The display name (max %s chars) to be shown to the users, and it can be localized by adding a string id (pus_display_name_%s) to the plugin languages.
 publication_usage_group_id#:#Publication Group
 publication_usage_add_new_group#:#Add new group
 publication_usage_group_name#:#Name

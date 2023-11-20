@@ -17,6 +17,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctEventRenderer
@@ -26,6 +27,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 class xoctEventRenderer
 {
     use TranslatorTrait;
+    use LocaleTrait;
 
     public const LANG_MODULE = 'event';
     /**
@@ -136,9 +138,10 @@ class xoctEventRenderer
                         $content['link']
                     );
                 }
-                $display_name = PublicationUsageGroupRepository::getLocalizedDisplayName($group_data['display_name']);
+                $display_name = $this->getLocaleString(strtolower($group_data['display_name']),
+                    PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE, $group_data['display_name']);
                 if (empty($display_name)) {
-                    $display_name = $this->translate('default', PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
+                    $display_name = $this->getLocaleString('default', PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
                 }
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
