@@ -329,10 +329,10 @@ publication_usage_type_unprotected_link#:#Ungeschützter Link
 publication_usage_search_key#:#Suchbegriff
 publication_usage_search_key_info#:#Die Medien/Attachments werden nach dem hier angegebenen Flavor/Tag durchsucht.
 publication_usage_tag#:#Tag
-publication_usage_allow_multiple#:#Mehrere Möglichkeiten zulassen
-publication_usage_allow_multiple_info#:#Wenn aktiviert und es werden mehrere Medien/Attachments mit dem oben angegebenen Flavor/Tag gefunden, werden diese alle zum Download in einer Dropdown-Liste angeboten. In diesem Fall wäre die Publikationsgruppe <b>NICHT</b> wirksam.
+publication_usage_allow_multiple#:#Mehrere Downloads zulassen
+publication_usage_allow_multiple_info#:#Wenn aktiviert und es werden mehrere Medien/Attachments mit dem oben angegebenen Flavor/Tag gefunden, werden diese alle zum Download in einer Dropdown-Liste angeboten. In diesem Fall wäre die Unternutzungsgruppe <b>NICHT</b> wirksam (ILIAS-Einschränkung).
 publication_usage_ext_dl_source#:#Externe Downloadquelle
-publication_usage_ext_dl_source_info#:#Aktivieren Sie diese Option im Falle einer externen Webseite, um die Downloads anzuzeigen
+publication_usage_ext_dl_source_info#:#Aktivieren Sie diese Option, wenn eine externe Webseite aufgerufen wird, um die Downloads anzuzeigen.
 series_accept_eula#:#Ich akzeptiere die Nutzungsvereinbarungen
 series_alert_eula#:#Die Nutzungsvereinbarung muss akzeptiert werden
 series_cancel#:#Abbrechen
@@ -580,43 +580,43 @@ object_settings#:#Einstellungen
 channel_type#:#Serie
 file#:#Datei
 link#:#URL
-subtab_publication_usage#:#Publikationen Nutzung
-subtab_publication_sub_usage#:#Publikationen Erzats-Nutzung
-subtab_publication_groups#:#Publikationen Gruppe
-publication_usage_msg_success_sub#:#Ersatz-Verwendungszweck Gespeichert
-publication_usage_select_sub_usage_id#:#Ersatz-Verwendungszweck
-publication_usage_select_sub_usage_id_desc#:#Wählen Sie aus bereits konfigurierten Verwendungszweck aus, für die Sie Ersatz-Verwendungszwecke bereitstellen möchten.
-publication_usage_parent_usage_id#:#Eltern-Verwendungszweck
-publication_usage_sub_not_found#:#Ersatz-Verwendungszweck konnte nicht gefunden werden
-publication_usage_sub_not_allowed#:#Verwendungszweck konnte nicht ersatzbar werden
-publication_usage_no_identifier#:#Keine Veröffentlichungs-Nutzungskennung gefunden!
-publication_usage_sub#:#Ersatz
+subtab_publication_usage#:#Publikationsnutzungen
+subtab_publication_sub_usage#:#Unternutzungen 
+subtab_publication_groups#:#Unternutzungsgruppen
+publication_usage_msg_success_sub#:#Unternutzung gespeichert
+publication_usage_select_sub_usage_id#:#Unternutzungen
+publication_usage_select_sub_usage_id_desc#:#Wählen Sie eine bereits konfigurierte Publikationsnutzung aus, für die Sie eine Unternutzung erstellen möchten.
+publication_usage_parent_usage_id#:#übergeordnete Publikationsnutzung
+publication_usage_sub_not_found#:#Unternutzung konnte nicht gefunden werden
+publication_usage_sub_not_allowed#:#Unternutzung konnte nicht ersetzt werden
+publication_usage_no_identifier#:#Keine Unternutzung gefunden!
+publication_usage_sub#:#Unternutzung
 publication_usage_display_name#:#Anzeigename
-publication_usage_display_name_info#:#Anzeigename INFO
-publication_usage_group_id#:#Publication Gruppe
-publication_usage_add_new_sub#:#Ersatz-Verwendungszweck Hinzufügen
-publication_usage_add_new_group#:#Neue Gruppe hinzufügen
+publication_usage_display_name_info#:#Anzeigename, der in dem Button angezeigt wird. (Maximal %s Zeichen, kann übersetzt werden, wenn (pu_display_name_%s) in eine(r) Sprachdatei gespeichert wird.)
+publication_usage_group_id#:#Unternutzungsgruppe
+publication_usage_add_new_sub#:#untergeordnete Nutzung hinzufügen
+publication_usage_add_new_group#:#Neue Unternutzungsgruppe hinzufügen
 publication_usage_group_name#:#Name
 publication_usage_group_th#:#Gruppe
 publication_usage_group_display_name#:#Anzeigename
-publication_usage_group_display_name_info#:#Anzeigename INFO
+publication_usage_group_display_name_info#:#Anzeigename der Gruppe in der die Unterpublikationen gruppiert werden. (Maximum %s Zeichen, kann übersetzt werden, wenn (pug_display_name_%s) in eine(r) Sprachdatei gespeichert wird.
 publication_usage_group_description#:#Beschreibung
-publication_usage_group_not_found#:#Group nicht gefunden!
+publication_usage_group_not_found#:#Unternutzungsgruppe nicht gefunden!
 publication_usage_mediatype#:#Mediatyp(en)
-publication_usage_mediatype_info#:#Eine durch Kommas getrennte optionale Liste von Mediatypen, die aus der Veröffentlichung extrahiert werden sollen, z. B. „video/mp4, application/x-mpegURL“
+publication_usage_mediatype_info#:#Eine durch Kommas getrennte optionale Liste von Mediatypen, die aus der gewählten Opencast-Publikation extrahiert werden sollen, z. B. „video/mp4, application/x-mpegURL“
 publication_usage_ignore_object_settings#:#Objekteinstellungen ignorieren
-publication_usage_ignore_object_settings_info#:#Die auf das Serienobjekt für diese Veröffentlichung angewendeten Einstellungen hätten keine Auswirkung und werden ignoriert.
-publication_usage_create_sub#:#Erzats-Nutzung erstellen
-publication_usage_delete_sub#:#Erzats-Nutzung löchen
-publication_usage_edit_sub#:#rzats-Nutzung bearbeiten
-publication_usage_add_new_sub#:#Erzats-Nutzung hinzufügen
-publication_usage_confirm_delete_text_sub#:#Sind Sie sicher, dass Sie diese Erzats-Nutzung löschen möchten?
-publication_usage_table_title_sub_usage#:#Publikation Erzats-Nutzung
-publication_usage_table_title_usage#:#Publikation Nutzung
-publication_usage_table_title_usage_group#:#Publikation Gruppe
-publication_usage_create_group#:#Gruppe erstellen
-publication_usage_edit_group#:#Gruppe bearbeiten
-publication_usage_confirm_delete_text_group#:#Sind Sie sicher, dass Sie diese Publikationsgruppe löschen möchten?
+publication_usage_ignore_object_settings_info#:#Die auf das Opencast-Serienobjekt bezogene Einstellung "ohne Download" wird ignoriert.Sorgsam benutzen.
+publication_usage_create_sub#:#Unternutzung erstellen
+publication_usage_delete_sub#:#Unternutzung löschen
+publication_usage_edit_sub#:#Unternutzung bearbeiten
+publication_usage_add_new_sub#:#Unternutzung hinzufügen
+publication_usage_confirm_delete_text_sub#:#Sind Sie sicher, dass Sie diese Unternutzung löschen möchten?
+publication_usage_table_title_sub_usage#:#Unternutzungen
+publication_usage_table_title_usage#:#Nutzungen
+publication_usage_table_title_usage_group#:#Unternutzungsgruppe
+publication_usage_create_group#:#Unternutzungsgruppe erstellen
+publication_usage_edit_group#:#Unternutzungsgruppe bearbeiten
+publication_usage_confirm_delete_text_group#:#Sind Sie sicher, dass Sie diese Unternutzungsgruppe löschen möchten?
 publication_usage_extra_config#:#Zusätzliche
 pug_display_name_default#:#Mehr
 publication_usage_type_captions#:#Captions
