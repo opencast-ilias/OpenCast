@@ -44,10 +44,8 @@ class Handlers
         return function (callable $handler) {
             return function (RequestInterface $request, array $options) use ($handler) {
                 $path = $request->getUri()->getPath();
-                $host = $request->getUri()->getHost();
                 $query = $request->getUri()->getQuery();
                 $method = $request->getMethod();
-                $requestBody = $request->getBody()->getContents();
                 $completeUri = $request->getUri()->__toString();
 
                 // Exclude requests.
