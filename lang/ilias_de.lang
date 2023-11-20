@@ -601,7 +601,7 @@ workflow_config_panel_icon_with#:#Mit Konfigurationspanel
 workflow_config_panel_icon_without#:#Ohne Konfigurationspanel
 workflow_empty_select_option#:#--einen Workflow auswählen--
 workflow_description_section_header#:#Beschreibung
-workflow_configpanel_section_header#:#Konfigurationspanel
+workflow_configpanel_section_header#:#Einstellungen
 msg_startworkflow_no_workflow_seleced#:#Bitte wählen Sie zunächst einen Workflow aus
 msg_startworkflow_required_config_panel_item#:#Erforderliche Felder müssen Werte enthalten
 publication_usage_type_captions#:#Captions

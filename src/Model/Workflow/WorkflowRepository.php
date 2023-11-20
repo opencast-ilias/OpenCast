@@ -64,6 +64,12 @@ interface WorkflowRepository
     public function parseConfigPanels(): array;
 
     /**
+     * Generates the list of workflow selections in array form of key:value pairr
+     * @return array
+     */
+    public function getWorkflowSelectionArray(): array;
+
+    /**
      * @return string
      * @throws xoctException
      */

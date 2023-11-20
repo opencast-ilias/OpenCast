@@ -80,16 +80,17 @@ class EventModals
             // Descriptions.
             $description_section_tpl = new ilTemplate("tpl.startworkflow_description_section.html",
                 true, true, $this->plugin->getDirectory());
-            $description_section_tpl->setVariable('HEADER',
-                $this->plugin->txt('workflow_description_section_header'));
             $description_blocks = [];
+            $workflow_selection_array = $this->workflow_repository->getWorkflowSelectionArray();
             foreach ($this->workflow_repository->getFilteredWorkflowsArray() as $workflow) {
                 $description_block_tpl = new ilTemplate("tpl.startworkflow_description_block.html",
                     true, true, $this->plugin->getDirectory());
                 $description = $workflow->getDescription();
                 $id = $workflow->getId();
+                $header = $workflow_selection_array[$id] ?? $this->plugin->txt('workflow_description_section_header');
                 if (!empty(trim($description))) {
                     $description_block_tpl->setVariable('BLOCK_ID', $id);
+                    $description_block_tpl->setVariable('HEADER', $header);
                     $description_block_tpl->setVariable('DESCRIPTION_TEXT', $description);
                     $description_blocks[] = $description_block_tpl->get();
                 }

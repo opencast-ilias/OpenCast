@@ -602,7 +602,7 @@ workflow_config_panel_icon_with#:#With Configuration Panel
 workflow_config_panel_icon_without#:#Without Configuration Panel
 workflow_empty_select_option#:#--Select a workflow--
 workflow_description_section_header#:#Description
-workflow_configpanel_section_header#:#Configuration Panel
+workflow_configpanel_section_header#:#Settings
 msg_startworkflow_no_workflow_seleced#:#Please select a workflow first
 msg_startworkflow_required_config_panel_item#:#Required fields must have values
 publication_usage_type_captions#:#Captions

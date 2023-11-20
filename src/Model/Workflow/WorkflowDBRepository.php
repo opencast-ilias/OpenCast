@@ -22,26 +22,41 @@ class WorkflowDBRepository implements WorkflowRepository
         $this->api = $opencastContainer[API::class];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function anyWorkflowExists(): bool
     {
         return (WorkflowAR::count() > 0);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function anyWorkflowAvailable(): bool
     {
         return (count($this->getFilteredWorkflowsArray()) > 0);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAllWorkflows(): array
     {
         return WorkflowAR::get();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAllWorkflowsAsArray($key = null, $values = null): array
     {
         return WorkflowAR::getArray($key, $values);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store(string $workflow_id, string $title, string $description,
         string $tags, string $config_panel, int $id = 0): void
     {
@@ -65,27 +80,42 @@ class WorkflowDBRepository implements WorkflowRepository
         $workflow->store();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function exists(string $workflow_id): bool
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->hasSets();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function delete($id): void
     {
         $workflow = WorkflowAR::find($id);
         $workflow->delete();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getByWorkflowId(string $workflow_id)
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->first();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getById(int $id)
     {
         return WorkflowAR::where(['id' => $id])->first();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getConfigPanelAsArrayById(string $id): array
     {
         $config_panel_array = [];
@@ -151,6 +181,9 @@ class WorkflowDBRepository implements WorkflowRepository
         return $config_panel_array;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getWorkflowsFromOpencastApi(array $filter = [], bool $with_configuration_panel = false,
         bool $with_tags = false): array
     {
@@ -166,6 +199,9 @@ class WorkflowDBRepository implements WorkflowRepository
         return $workflows;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function updateList(?string $tags_str = null): bool
     {
         $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
@@ -228,6 +264,9 @@ class WorkflowDBRepository implements WorkflowRepository
         return $success;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function resetList(): bool
     {
         $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
@@ -268,6 +307,9 @@ class WorkflowDBRepository implements WorkflowRepository
         return $success;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createOrUpdate(string $workflow_id, string $title, string $description, string $tags = '', string $config_panel = ''): WorkflowAR
     {
         $id = 0;
@@ -282,6 +324,12 @@ class WorkflowDBRepository implements WorkflowRepository
         return $new_workflow;
     }
 
+    /**
+     * Helper function to convert comma separated list string to array
+     * @param string $comma_separated_str
+     *
+     * @return array
+     */
     private function commaToArray($comma_separated_str): array
     {
         $converted_list = [];
@@ -292,6 +340,14 @@ class WorkflowDBRepository implements WorkflowRepository
         return $converted_list;
     }
 
+    /**
+     * Helper function to check if an array contains an item
+     *
+     * @param array $base
+     * @param string|int $check
+     *
+     *  @return bool
+     */
     private function hasItem($base, $check): bool
     {
         foreach ($base as $item) {
@@ -302,6 +358,9 @@ class WorkflowDBRepository implements WorkflowRepository
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilteredWorkflowsArray(
         array $workflows = [],
         ?string $tags_str = null): array
@@ -353,11 +412,13 @@ class WorkflowDBRepository implements WorkflowRepository
         return $filtered_list;
     }
 
-    public function buildWorkflowSelectOptions(): string
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWorkflowSelectionArray(): array
     {
-        $options = [
-            '<option value="">' . $this->translate('empty_select_option', 'workflow') . '</option>'
-        ];
+        $workflow_selection_list = [];
         foreach ($this->getFilteredWorkflowsArray() as $workflow) {
             $title = $workflow->getTitle();
             $workflow_record_id = $workflow->getId();
@@ -370,11 +431,28 @@ class WorkflowDBRepository implements WorkflowRepository
             if (empty($title)) {
                 $title = $workflow_identifier;
             }
+            $workflow_selection_list[$workflow_record_id] = $title;
+        }
+        return $workflow_selection_list;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildWorkflowSelectOptions(): string
+    {
+        $options = [
+            '<option value="">' . $this->translate('empty_select_option', 'workflow') . '</option>'
+        ];
+        foreach ($this->getWorkflowSelectionArray() as $workflow_record_id => $title) {
             $options[] = "<option value='{$workflow_record_id}'>{$title}</option>";
         }
         return implode("\n", $options);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function parseConfigPanels(): array
     {
         $config_panels = [];
@@ -388,6 +466,14 @@ class WorkflowDBRepository implements WorkflowRepository
         return $config_panels;
     }
 
+    /**
+     * Helper function to extract, map and generate configuration panel elements received from opencast.
+     *
+     * @param string $workflow_id
+     * @param string $configuration_panel_html
+     *
+     * @return string
+     */
     private function mapConfigPanelElements(string $workflow_id, string $configuration_panel_html): string
     {
         $dom = new \DOMDocument();
@@ -416,10 +502,10 @@ class WorkflowDBRepository implements WorkflowRepository
             // Legends replacements. We need to legend to be displayed in there!
             foreach ($legends as $legend) {
                 $text = $legend->textContent;
-                $h3 = $dom->createElement('h3');
-                $h3->textContent = $text;
+                $em = $dom->createElement('em');
+                $em->textContent = $text;
                 $legend->setAttribute('class', 'hidden');
-                $legend->parentNode->insertBefore($h3, $legend);
+                $legend->parentNode->insertBefore($em, $legend);
             }
 
             // Stylings and classes of ul li elements.
@@ -481,6 +567,9 @@ class WorkflowDBRepository implements WorkflowRepository
                     $input->setAttribute('name', $new_name);
                 }
                 $classes = ['wf-inputs'];
+                if ($input->parentNode->tagName === 'li') {
+                    $classes[] = 'wf-list-inputs';
+                }
                 if ($input->hasAttribute('class')) {
                     $classes[] = $input->getAttribute('class');
                 }
@@ -573,12 +662,12 @@ class WorkflowDBRepository implements WorkflowRepository
                 }
                 $label->nodeValue = $label_text;
 
-                $classes = ['control-label'];
-                if ($label->parentNode->tagName !== 'li') {
-                    $classes[] = 'col-sm-3';
-                    $classes[] = 'configLabel';
-                } else {
-                    $classes[] = 'configListLabel';
+                $classes = [
+                    'wf-labels',
+                    'col-sm-4'
+                ];
+                if ($label->parentNode->tagName == 'li') {
+                    $classes[] = 'wf-list-labels';
                 }
                 if ($label->hasAttribute('class')) {
                     $classes[] = $label->getAttribute('class');
