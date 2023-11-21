@@ -60,7 +60,9 @@ class xoctChangeOwnerGUI extends xoctGUI
             $this->plugin->txt('tab_back'),
             $ctrl->getLinkTargetByClass(xoctEventGUI::class)
         );
-        xoctWaiterGUI::loadLib();
+
+        new WaitOverlay($this->main_tpl); // TODO check if needed
+
         $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/change_owner.css'));
         $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/change_owner.js'));
         $ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);

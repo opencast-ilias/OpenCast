@@ -3,17 +3,17 @@
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
 	$(document).ready(function () {
-		xoctWaiter.init();
+		il.Opencast.UI.waitOverlay.init();
 		xoctGroup.init('{BASE_URL}', '#xoct_groups_container', {IS_ADMIN}, function () {
-			xoctWaiter.show()
+			il.Opencast.UI.waitOverlay.show()
 		}, function () {
-			xoctWaiter.hide()
+			il.Opencast.UI.waitOverlay.hide()
 		});
 		xoctGroup.lngFromJson('{GROUP_LANGUAGE}');
 		xoctGroupParticipant.init('{GP_BASE_URL}', '#xoct_available_participant_container', '#xoct_group_participants_container', function () {
-			xoctWaiter.show()
+			il.Opencast.UI.waitOverlay.show()
 		}, function () {
-			xoctWaiter.hide()
+			il.Opencast.UI.waitOverlay.hide()
 		});
 		xoctGroupParticipant.lngFromJson('{PARTICIPANTS_LANGUAGE}');
 

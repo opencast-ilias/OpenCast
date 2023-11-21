@@ -1,5 +1,12 @@
 # Change Log
 
+## [5.3.2]
+- Fix #220: Upload of large files lead to a memory limit error.
+- Fixed the Overlay when creating a new Event.
+
+## [5.3.1]
+- Fix #11 and #113: Introducing new Paella 7 Player
+
 ## [5.3.0]
 - Implemented #193: The Chunk Size for Uploads is now configurable. The default value is 20MB, this can be changes in the plugin configuration.
 - Fix #176: Fixed a static timeout in fileuploads, this now uses max_execution_time of the server. 

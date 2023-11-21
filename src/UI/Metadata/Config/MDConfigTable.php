@@ -7,7 +7,7 @@ use ilPlugin;
 use ilTable2GUI;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use xoctGUI;
-use xoctWaiterGUI;
+use WaitOverlay;
 
 /**
  * Table for Plugin config -> Metadata
@@ -19,6 +19,10 @@ class MDConfigTable extends ilTable2GUI
      * @var xoctGUI
      */
     private $parent;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
     /**
      * @var string
      */
@@ -42,6 +46,7 @@ class MDConfigTable extends ilTable2GUI
         $this->parent = $parent;
         $this->plugin = $plugin;
         $this->dic = $dic;
+        $this->main_tpl = $this->dic->ui()->mainTemplate();
         $this->setId('xoct_md_config');
         $this->setDescription($this->plugin->txt('msg_md_config_info'));
         parent::__construct($parent);
@@ -58,12 +63,13 @@ class MDConfigTable extends ilTable2GUI
 
     private function initJS(): void
     {
-        xoctWaiterGUI::initJS();
-        $this->dic->ui()->mainTemplate()->addJavaScript(
+        new WaitOverlay($this->main_tpl); // TODO check if needed
+
+        $this->main_tpl->addJavaScript(
             $this->plugin->getDirectory() . '/templates/default/sortable.js'
         );
         $base_link = $this->dic->ctrl()->getLinkTarget($this->parent, 'reorder', '', true);
-        $this->dic->ui()->mainTemplate()->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
+        $this->main_tpl->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
     }
 
     protected function initColumns()

@@ -185,6 +185,13 @@ class EventFormBuilder
                                      )
                                  );
 
+        // We must bind the WaitOverlay to an Input since the Form itself is not JS-bindable
+        $file_input = $file_input->withAdditionalOnLoadCode(
+            function ($id) {
+                return 'il.Opencast.UI.waitOverlay.onFormSubmit("#' . $id . '")';
+            }
+        );
+
         $file_section_inputs = ['file' => $file_input];
         if ($obj_id == 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();

@@ -42,8 +42,9 @@ class xoctPermissionGroupGUI extends xoctGUI
             $this->objectSettings = new ObjectSettings();
         }
         $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
-        //		xoctGroup::installDB();
-        xoctWaiterGUI::loadLib();
+
+        new WaitOverlay($this->main_tpl); // TODO check if needed
+
         $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/groups.css'));
         $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/groups.js'));
     }

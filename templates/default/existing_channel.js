@@ -7,10 +7,10 @@
  */
 $(document).ready(function () {
 
-	xoctWaiter.init();
+	il.Opencast.UI.waitOverlay.init();
 
 	function extracted() {
-		xoctWaiter.show();
+		il.Opencast.UI.waitOverlay.show();
 		var identifier = $('#existing_identifier').val();
 		$.ajax({
 			url: "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Series/json.php",
@@ -29,7 +29,7 @@ $(document).ready(function () {
 		}).fail(function (jqXHR, textStatus, errorThrown) {
 			console.log("HTTP Request Failed");
 		}).always(function () {
-			xoctWaiter.hide();
+			il.Opencast.UI.waitOverlay.hide();
 		});
 	}
 
