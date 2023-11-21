@@ -1,5 +1,8 @@
 # Change Log
 
+## [5.4.0]
+- Implemented improved Caching Service which fixes #194
+
 ## [5.3.2]
 - Fix #220: Upload of large files lead to a memory limit error.
 - Fixed the Overlay when creating a new Event.
