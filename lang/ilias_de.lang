@@ -585,6 +585,8 @@ config_livestream_type#:#Streaming Typ
 config_livestream_type_info#:#Verschiedene Streaming-Typen erzeugen unterschiedliche Playlist-Dateitypen und Informationen. Es ist wichtig, den unterstützten Streaming-Typ auszuwählen, um die Dateien und Informationen ordnungsgemäß verarbeiten zu können. Der Standardtyp ist auf HLS eingestellt.
 config_livestream_type_hls#:#HLS (.m3u8 / .m3u)
 config_livestream_type_mpegts#:#MPEG-TS (.ts)
+config_livestream_buffered#:#Buffered Livestream
+config_livestream_buffered_info#:#Diese Option sollte aktiviert werden, wenn der Livestream Zeit puffern kann und es möglich ist, während des Streams in der Zeit zurückzugehen, zu pausieren und fortzufahren.<br> Bei Aktivierung werden der Fortschrittsbalken des Players und die Stream-Quelle angezeigt Das Format wird auf "hls" statt auf "hlsLive" gesetzt.
 config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
 config_paella_player_fallback_captions_option_info#:#Standardmäßig wird die Sprache des Benutzerbrowsers für die Standardbeschriftung verwendet. Das Hinzufügen zusätzlicher Beschriftungen hier hilft dabei, bevorzugte Beschriftungen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
 config_paella_player_fallback_langs_option#:#Paella Player Sprachen (fallbacks)

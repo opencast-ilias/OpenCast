@@ -57,7 +57,11 @@ class PaellaConfigService
         $default_theme = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME);
         $default_theme_live = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_LIVE);
         $default_theme_url = PluginConfig::PAELLA_DEFAULT_THEME;
+
         $default_theme_live_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE;
+        if (PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED)) {
+            $default_theme_live_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE_BUFFERED;
+        }
 
         $result = [
             'theme_url' => $default_theme_url,

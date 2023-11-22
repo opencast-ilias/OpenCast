@@ -3,6 +3,7 @@
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\API\OpencastAPI;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class LivePlayerDataBuilder
@@ -25,6 +26,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
 
         $media_package = $episode_data['search-results']['result']['mediapackage'];
 
+        $source_format = PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED) ? 'hls' : 'hlsLive';
         $streams = [];
         if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
@@ -32,7 +34,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
-                        "hlsLive" => [
+                        $source_format => [
                             [
                                 "src" => $track['url'],
                                 "mimetype" => $track['mimetype']
@@ -41,7 +43,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                     ]
                 ];
                 if (isset($track['video']['resolution'])) {
-                    $streams[$role]['sources']['hlsLive'][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+                    $streams[$role]['sources'][$source_format][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
                 }
             }
         } else {    // single stream
@@ -49,7 +51,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             $streams[] = [
                 "content" => self::ROLE_MASTER,
                 "sources" => [
-                    "hlsLive" => [
+                    $source_format => [
                         [
                             "src" => $track['url'],
                             "mimetype" => $track['mimetype']
@@ -58,7 +60,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 ]
             ];
             if (isset($track['video']['resolution'])) {
-                $streams[0]['sources']['hlsLive'][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+                $streams[0]['sources'][$source_format][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
             }
         }
 
