@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "elan-ev/opencast-api",
-            "version": "1.4.0",
-            "version_normalized": "1.4.0.0",
+            "version": "1.5.0",
+            "version_normalized": "1.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elan-ev/opencast-php-library.git",
-                "reference": "34b46fb9c0986fc7e4ecd05a45038612da7409c9"
+                "reference": "dfcfa0789c8a670623ed27434ced88f595941b73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elan-ev/opencast-php-library/zipball/34b46fb9c0986fc7e4ecd05a45038612da7409c9",
-                "reference": "34b46fb9c0986fc7e4ecd05a45038612da7409c9",
+                "url": "https://api.github.com/repos/elan-ev/opencast-php-library/zipball/dfcfa0789c8a670623ed27434ced88f595941b73",
+                "reference": "dfcfa0789c8a670623ed27434ced88f595941b73",
                 "shasum": ""
             },
             "require": {
@@ -24,7 +24,7 @@
                 "phpunit/phpunit": "^9.5",
                 "squizlabs/php_codesniffer": "^3.7"
             },
-            "time": "2023-07-21T11:58:16+00:00",
+            "time": "2023-11-13T16:47:55+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -58,7 +58,7 @@
             ],
             "support": {
                 "issues": "https://github.com/elan-ev/opencast-php-library/issues",
-                "source": "https://github.com/elan-ev/opencast-php-library/tree/1.4.0"
+                "source": "https://github.com/elan-ev/opencast-php-library/tree/1.5.0"
             },
             "install-path": "../elan-ev/opencast-api"
         },

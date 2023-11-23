@@ -18,7 +18,7 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.3",
-    "elan-ev/opencast-api": "1.4",
+    "elan-ev/opencast-api": "1.5",
     "srag/custominputguis": ">=0.1.0",
     "srag/datatable": ">=0.1.0",
     "srag/dic": ">=0.1.0",

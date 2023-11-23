@@ -33,3 +33,6 @@
 - Introducing runAsUser method to add X-RUN-AS-USER into the request headers.
 - Introducing OcListProvidersApi REST API service endpoint.
 - Add another array param into response result of the library called 'origin', which contains the information about oriniated request like its path, base url, params and method.
+
+# 1.5.0
+- PHP 8.2 compatibility: prevent dynamic property declarations
