@@ -568,3 +568,8 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
     }
 }
 ?>
+<#44>
+<?php
+// To apply new changes into WorkflowAP model as well as xoct_workflow table.
+\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+?>

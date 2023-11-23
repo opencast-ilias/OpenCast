@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\Model\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use xoctCurl;
 use xoctCurlSettings;
 use xoctLog;
@@ -123,6 +124,7 @@ class PluginConfig extends ActiveRecord
     public const PAELLA_DEFAULT_THEME = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_theme.json';
     public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_theme.json';
 
+    public const F_WORKFLOWS_TAGS = 'config_workflows_tags';
     public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';
     public const F_PAELLA_PREVIEW_FALLBACK_URL = 'paella_config_preview_fallback_url';
     public const PAELLA_DEFAULT_PREVIEW = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/default_preview.png';
@@ -222,6 +224,24 @@ class PluginConfig extends ActiveRecord
             } else {
                 $xoctWorkflowParameter->update();
             }
+        }
+
+        /**
+         * @var $xoctWorkflowParameter WorkflowParameter
+         */
+        $xoct_workflow = $domxml->getElementsByTagName('xoct_workflow');
+
+        // We need to reset the workflow table.
+        WorkflowAR::flushDB();
+
+        foreach ($xoct_workflow as $node) {
+            $xoctWorkflow = new WorkflowAR();
+            $xoctWorkflow->setWorkflowId($node->getElementsByTagName('workflow_id')->item(0)->nodeValue);
+            $xoctWorkflow->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue ?? '');
+            $xoctWorkflow->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue ?? '');
+            $xoctWorkflow->setTags($node->getElementsByTagName('tags')->item(0)->nodeValue ?? '');
+            $xoctWorkflow->setConfigPanel($node->getElementsByTagName('config_panel')->item(0)->nodeValue ?? '');
+            $xoctWorkflow->create();
         }
 
         /**
@@ -375,6 +395,30 @@ class PluginConfig extends ActiveRecord
             );
             $xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(
                 new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin())
+            );
+        }
+
+        // xoctWorkflows
+        $xml_xoctWorkflows = $config->appendChild(new DOMElement('xoct_workflows'));
+        /**
+         * @var $xoctWorkflowAR WorkflowAR
+         */
+        foreach (WorkflowAR::get() as $xoctWorkflows) {
+            $xml_xoctWf = $xml_xoctWorkflows->appendChild(new DOMElement('xoct_workflow'));
+            $xml_xoctWf->appendChild(new DOMElement('workflow_id'))->appendChild(
+                new DOMCdataSection($xoctWorkflows->getWorkflowId())
+            );
+            $xml_xoctWf->appendChild(new DOMElement('title'))->appendChild(
+                new DOMCdataSection($xoctWorkflows->getTitle() ?? '')
+            );
+            $xml_xoctWf->appendChild(new DOMElement('description'))->appendChild(
+                new DOMCdataSection($xoctWorkflows->getDescription() ?? '')
+            );
+            $xml_xoctWf->appendChild(new DOMElement('tags'))->appendChild(
+                new DOMCdataSection($xoctWorkflows->getTags() ?? '')
+            );
+            $xml_xoctWf->appendChild(new DOMElement('config_panel'))->appendChild(
+                new DOMCdataSection($xoctWorkflows->getConfigPanel() ?? '')
             );
         }
 

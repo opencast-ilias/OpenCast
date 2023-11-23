@@ -145,12 +145,17 @@ Level of detail for log entries. The log can be found in ILIAS' external data di
 If enabled, the upload will be executed via Ingest Nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 
 ## Workflows
-This view allows you to configure workflow definitions with optional workflow parameters. If any workflows are configured, the "Actions" menu of events will show a new option "Publish" which will open an overlay through which one of the configured workflows can be started for that event.
+This settings view allows you to configute the workflows that could be provided to the users via the "Start Workflow" button in the "Actions" menu of events in the event table/tile view. This sections consists of two sub-pages, one called "Settings" is responsible for general settings required to perform this feature, the other one is the list of  workflow definitions that are being presented to the users.
 
-A workflow configuration requires the following fields:
-* ID: a valid workflow definition ID
-* Title: will be used in the overlay
-* Parameters: a comma-separated list of workflow parameters. These parameters will be set to 'true' when starting the workflow.
+#### Settings
+In this sub-section you need to define workflow tags that you would like to provide to the user. What it does, is simply getting the list of all workflows and then check if each workflow has any of your defined tags (which happens in the next sub-section).
+NOTE: you can define a list of tags in a comma-separated format like: "api, archive, editor, delete, upload"
+
+#### Workflow definition list
+In this sub-section you are able to get the list of workflow definitions based on the tags you defined in the above sub-section, simply by clicking on the "Update workflow list" button. On the other hand, you are able to edit the title and description of each workflow definition based on you needs simply via "Actions / Edit", the delete button is also provided!
+
+##### Configuration Panel
+As a minor reminder and announcement, it is good to know that the configuration panel of each workflow definition (if any) will be dynamically and automatically displayed to the users and they can interact and enter values, which in return will be captured and sent to the workflow api as configuration parameter, therefore, you should take care of any cutom-defined logic that you provide for any workflow definition in Opencast.
 
 ## Workflow Parameters
 ### Parameters

@@ -54,7 +54,22 @@ class WorkflowAR extends ActiveRecord
      * @con_fieldtype  text
      * @con_length     512
      */
-    protected $parameters;
+    protected $description;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype  text
+     * @con_length     512
+     */
+    protected $tags;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype clob
+     */
+    protected $config_panel;
 
     public function getId(): int
     {
@@ -86,13 +101,33 @@ class WorkflowAR extends ActiveRecord
         $this->title = $title;
     }
 
-    public function getParameters(): string
+    public function getDescription(): string
     {
-        return $this->parameters ?: '';
+        return $this->description ?: '';
     }
 
-    public function setParameters(string $parameters): void
+    public function setDescription(string $description): void
     {
-        $this->parameters = $parameters;
+        $this->description = $description;
+    }
+
+    public function getTags(): string
+    {
+        return $this->tags ?: '';
+    }
+
+    public function setTags(string $tags): void
+    {
+        $this->tags = $tags;
+    }
+
+    public function getConfigPanel(): string
+    {
+        return $this->config_panel ?: '';
+    }
+
+    public function setConfigPanel(string $config_panel): void
+    {
+        $this->config_panel = $config_panel;
     }
 }
