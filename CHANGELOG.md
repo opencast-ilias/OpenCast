@@ -1,5 +1,9 @@
 # Change Log
 
+## [5.5.0]
+- Updated to Opencast API 1.5.0
+- Introduced Publication Usages and solved issue #182
+
 ## [5.4.1]
 - Fixed a compatibility issue in the new caching service.
 
