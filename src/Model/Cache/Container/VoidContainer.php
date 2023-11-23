@@ -20,11 +20,6 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Model\Cache\Container;
 
-use srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor;
-use srag\Plugins\Opencast\Model\Cache\Config;
-use ILIAS\Refinery\Transformation;
-use ILIAS\Refinery\ByTrying;
-
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  */
@@ -53,10 +48,7 @@ final class VoidContainer implements Container
         return false;
     }
 
-    /**
-     * @return string|int|mixed[]|bool|null
-     */
-    public function get(string $key, Transformation $transformation)
+    public function get(string $key)
     {
         return null;
     }
@@ -93,6 +85,6 @@ final class VoidContainer implements Container
 
     public function getContainerName(): string
     {
-        return $this->request->getContainerName();
+        return $this->request->getContainerKey();
     }
 }
