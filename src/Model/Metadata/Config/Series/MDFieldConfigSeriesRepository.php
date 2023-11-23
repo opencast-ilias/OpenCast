@@ -5,7 +5,6 @@ namespace srag\Plugins\Opencast\Model\Metadata\Config\Series;
 use Exception;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigRepository;
-use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use xoctException;
 
@@ -77,7 +76,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         $ar->setTitleDe($data['title_de']);
         $ar->setTitleEn($data['title_en']);
         $ar->setVisibleForPermissions($data['visible_for_permissions']);
-        $ar->setPrefill(new MDPrefillOption($data['prefill']));
+        $ar->setPrefill($data['prefill']);
         $ar->setReadOnly($data['read_only']);
         $ar->setRequired($data['required']);
         $ar->setValuesFromEditableString($data['values'] ?? '');

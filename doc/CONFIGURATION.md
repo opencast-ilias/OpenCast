@@ -201,11 +201,20 @@ The configured Metadata fields will be visible in:
 - the table containing events (event metadata)
 
 A metadata field can be configured as:
-- visible for: either everyone or only for admins
-- read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
-- required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
-- prefilled: field is prefilled when creating an event or a series. Options are prefilled with current user's username or title of the course.
+- Visible for: either everyone or only for admins
+- Read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- Required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- Prefilled: field is prefilled when creating an event or a series. The prefilled text can be dynamically inserted as a form of text-base placeholder that admins can select from 3 different ilias global attributes as follows:
+  - 1. COURSE: admins can tap COURSE object with provided properties such as ID, REF_ID, TITLE, etc.
+  - 2. USER: admins can tap USER object with provided properties such as FIRSTNAME, LASTNAME, FULLNAME, etc.
+  - 3. META: admins can tap into META object but limited only to 2 preperties including KEYWORDS, LANGUAGES.
+The way of defining the prefilled placeholder follows a basic rule: it must be enclosed in square brackets "[]", all in CAPITAL letters, and narrowing down to properties by a "." (dot), for example: [USER.FIRSTNAME] or [COURSE.TYPE] or in case of META like [META.KEYWORDS.1]
+It is also possible to define multiple placeholders in a single prefilled text option like: [USER.FIRSTNAME], [USER.LASTNAME]
 
+#### Metadata + listproviders
+In case a metadata field is a list and requires to get the its list of available values from Opencast, there is the a button provided for this feature when adding or editing the metadata called "Load values from API", which gets the values from opencast and converts them into the format expected by Possible values.
+Opencast API user must have ROLE_API_LISTPROVIDERS_VIEW role which will be provided in latest version of Opencast (from 13 - 14)
+In addition to the role, the API version must be set to 1.10.0 or above.
 
 ## Video Portal
 Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series.

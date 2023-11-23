@@ -34,6 +34,8 @@ class MDCatalogueFactory
             new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text(), false, false),
             new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
             new MDFieldDefinition(MDFieldDefinition::F_CONTRIBUTOR, MDDataType::text_array(), false, false),
+            new MDFieldDefinition(MDFieldDefinition::F_LICENSE, MDDataType::text_selection(), false, false),
+            new MDFieldDefinition(MDFieldDefinition::F_LANGUAGE, MDDataType::text_selection(), false, false),
         ]);
     }
 
@@ -49,6 +51,7 @@ class MDCatalogueFactory
             new MDFieldDefinition(MDFieldDefinition::F_PUBLISHER, MDDataType::text_array(), true, false),
             new MDFieldDefinition(MDFieldDefinition::F_IDENTIFIER, MDDataType::text(), true, false),
             new MDFieldDefinition(MDFieldDefinition::F_LICENSE, MDDataType::text_selection(), false, false),
+            new MDFieldDefinition(MDFieldDefinition::F_LANGUAGE, MDDataType::text_selection(), false, false),
         ]);
     }
 }

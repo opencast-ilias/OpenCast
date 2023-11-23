@@ -13,6 +13,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\Model\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use xoctCurl;
 use xoctCurlSettings;
@@ -200,6 +202,54 @@ class PluginConfig extends ActiveRecord
         }
 
         /**
+         * @var $xoctMDFieldConfigEventAR MDFieldConfigEventAR
+         */
+        $xoct_md_field_event = $domxml->getElementsByTagName('xoct_md_field_event');
+
+        // Clear MDFieldConfigEventAR
+        MDFieldConfigEventAR::flushDB();
+
+        foreach ($xoct_md_field_event as $node) {
+            $xoctMDFieldConfigEventAR = new MDFieldConfigEventAR();
+            $xoctMDFieldConfigEventAR->setSort($node->getElementsByTagName('sort')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setFieldId($node->getElementsByTagName('field_id')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setTitleDe($node->getElementsByTagName('title_de')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setTitleEn($node->getElementsByTagName('title_en')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setVisibleForPermissions(
+                $node->getElementsByTagName('visible_for_permissions')->item(0)->nodeValue
+            );
+            $xoctMDFieldConfigEventAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setValuesFromEditableString($node->getElementsByTagName('values')->item(0)->nodeValue ?? '');
+            $xoctMDFieldConfigEventAR->store();
+        }
+
+        /**
+         * @var $xoctMDFieldConfigSeriesAR MDFieldConfigSeriesAR
+         */
+        $xoct_md_field_series = $domxml->getElementsByTagName('xoct_md_field_series');
+
+        // Clear MDFieldConfigSeriesAR
+        MDFieldConfigSeriesAR::flushDB();
+
+        foreach ($xoct_md_field_series as $node) {
+            $xoctMDFieldConfigSeriesAR = new MDFieldConfigSeriesAR();
+            $xoctMDFieldConfigSeriesAR->setSort($node->getElementsByTagName('sort')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setFieldId($node->getElementsByTagName('field_id')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setTitleDe($node->getElementsByTagName('title_de')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setTitleEn($node->getElementsByTagName('title_en')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setVisibleForPermissions(
+                $node->getElementsByTagName('visible_for_permissions')->item(0)->nodeValue
+            );
+            $xoctMDFieldConfigSeriesAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setValuesFromEditableString($node->getElementsByTagName('values')->item(0)->nodeValue ?? '');
+            $xoctMDFieldConfigSeriesAR->store();
+        }
+
+        /**
          * @var $xoctWorkflowParameter WorkflowParameter
          */
         $xoct_workflow_parameter = $domxml->getElementsByTagName('xoct_workflow_parameter');
@@ -372,6 +422,79 @@ class PluginConfig extends ActiveRecord
             $value = PluginConfig::getConfig($xoctConf->getName());
             $value = is_array($value) ? json_encode($value) : $value;
             $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
+        }
+
+
+        // xoctMDFieldConfigEventARs
+        $xml_xoctMDFieldConfigEventARs = $config->appendChild(new DOMElement('xoct_md_field_events'));
+        /**
+         * @var $xoctMDFieldConfigEventARs MDFieldConfigEventAR
+         */
+        foreach (MDFieldConfigEventAR::get() as $xoctMDFieldConfigEventAR) {
+            $xml_xoctMDE = $xml_xoctMDFieldConfigEventARs->appendChild(new DOMElement('xoct_md_field_event'));
+            $xml_xoctMDE->appendChild(new DOMElement('sort'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getSort())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('field_id'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getFieldId())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('title_de'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getTitle('de'))
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('title_en'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getTitle('en'))
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('visible_for_permissions'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getVisibleForPermissions())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('prefill'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getPrefill())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('read_only'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->isReadOnly())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('required'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->isRequired())
+            );
+            $xml_xoctMDE->appendChild(new DOMElement('values'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigEventAR->getValuesAsEditableString())
+            );
+        }
+
+        // xoctMDFieldConfigSeriesARs
+        $xml_xoctMDFieldConfigSeriesARs = $config->appendChild(new DOMElement('xoct_md_field_serieses'));
+        /**
+         * @var $xoctMDFieldConfigSeriesARs MDFieldConfigSeriesAR
+         */
+        foreach (MDFieldConfigSeriesAR::get() as $xoctMDFieldConfigSeriesAR) {
+            $xml_xoctMDS = $xml_xoctMDFieldConfigSeriesARs->appendChild(new DOMElement('xoct_md_field_series'));
+            $xml_xoctMDS->appendChild(new DOMElement('sort'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getSort())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('field_id'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getFieldId())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('title_de'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getTitle('de'))
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('title_en'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getTitle('en'))
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('visible_for_permissions'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getVisibleForPermissions())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('prefill'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getPrefill())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('read_only'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->isReadOnly())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('required'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->isRequired())
+            );
+            $xml_xoctMDS->appendChild(new DOMElement('values'))->appendChild(
+                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getValuesAsEditableString())
+            );
         }
 
         // xoctWorkflowParameters

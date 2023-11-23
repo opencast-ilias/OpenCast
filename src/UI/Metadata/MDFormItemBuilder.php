@@ -104,9 +104,10 @@ class MDFormItemBuilder
         array_walk($MDFieldConfigARS, function (MDFieldConfigAR $md_field_config) use (&$form_elements): void {
             // TODO: visible for permission!
             $key = $this->prefixPostVar($md_field_config->getFieldId());
+            $values = $this->prefiller->getReplacedPrefill($md_field_config->getPrefill());
             $form_elements[$key] = $this->buildFormElementForMDField(
                 $md_field_config,
-                $this->prefiller->getPrefillValue($md_field_config->getPrefill())
+                $values
             );
         });
         return $form_elements;
@@ -149,7 +150,7 @@ class MDFormItemBuilder
             $key = $this->prefixPostVar($md_field_config->getFieldId());
             $form_elements[$key] = $this->buildFormElementForMDField(
                 $md_field_config,
-                $this->prefiller->getPrefillValue($md_field_config->getPrefill())
+                $this->prefiller->getReplacedPrefill($md_field_config->getPrefill())
             );
         });
         return $this->ui_factory->input()->field()->section($form_elements, $this->plugin->txt('metadata'))
