@@ -19,7 +19,7 @@ var xoctSortable = {
 	},
 
 	reSort: function (e, ui) {
-		xoctWaiter.show();
+		il.Opencast.UI.waitOverlay.show();
 		var order = [];
 		$("div.ilTableOuter table tbody tr.xoctSortable").each(function () {
 			order.push($(this).attr('data-id'));
@@ -33,7 +33,7 @@ var xoctSortable = {
 				"ids": order
 			}
 		}).always(function(data, textStatus, jqXHR) {
-			xoctWaiter.hide();
+			il.Opencast.UI.waitOverlay.hide();
 		});
 	}
 }

@@ -73,6 +73,10 @@ class xoctEventGUI extends xoctGUI
      */
     private $parent_gui;
     /**
+     * @var WaitOverlay
+     */
+    private $wait_overlay;
+    /**
      * @var \ILIAS\UI\Implementation\DefaultRenderer
      */
     protected $custom_renderer;
@@ -192,6 +196,7 @@ class xoctEventGUI extends xoctGUI
         $this->ui_renderer = new \ILIAS\UI\Implementation\DefaultRenderer(
             new Loader($DIC, ilOpenCastPlugin::getInstance())
         );
+        $this->wait_overlay  = new WaitOverlay($this->main_tpl);
     }
 
     /**
@@ -274,8 +279,7 @@ class xoctEventGUI extends xoctGUI
      */
     protected function prepareContent()
     {
-        xoctWaiterGUI::initJS();
-        xoctWaiterGUI::addLinkOverlay('#rep_robj_xoct_event_clear_cache');
+        $this->wait_overlay->onLinkClick('#rep_robj_xoct_event_clear_cache');
         $this->main_tpl->addJavascript("./src/UI/templates/js/Modal/modal.js");
         $this->main_tpl->addOnLoadCode(
             'xoctEvent.init(\'' . json_encode([
@@ -504,11 +508,11 @@ class xoctEventGUI extends xoctGUI
 				    url: '{$ajax_link}',
 				    dataType: 'html',
 				    success: function(data){
-				        xoctWaiter.hide();
+				        il.Opencast.UI.waitOverlay.hide();
 				        $('div#xoct_table_placeholder').replaceWith($(data));
 				    }
 				});";
-        $this->main_tpl->addOnLoadCode('xoctWaiter.show();');
+        $this->main_tpl->addOnLoadCode('il.Opencast.UI.waitOverlay.show();');
         $this->main_tpl->addOnLoadCode($ajax);
     }
 
@@ -524,11 +528,11 @@ class xoctEventGUI extends xoctGUI
 				    url: '{$ajax_link}',
 				    dataType: 'html',
 				    success: function(data){
-				        xoctWaiter.hide();
+				        il.Opencast.UI.waitOverlay.hide();
 				        $('div#xoct_tiles_placeholder').replaceWith($(data));
 				    }
 				});";
-        $this->main_tpl->addOnLoadCode('xoctWaiter.show();');
+        $this->main_tpl->addOnLoadCode('il.Opencast.UI.waitOverlay.show();');
         $this->main_tpl->addOnLoadCode($ajax);
     }
 
@@ -615,12 +619,8 @@ class xoctEventGUI extends xoctGUI
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
-        xoctWaiterGUI::initJS();
-        $this->main_tpl->addOnLoadCode(
-            'window.onbeforeunload = function(){
-                        xoctWaiter.show();
-                    };'
-        );
+        $this->wait_overlay->onUnload();
+
         $this->main_tpl->setContent($this->ui_renderer->render($form));
     }
 
@@ -664,7 +664,7 @@ class xoctEventGUI extends xoctGUI
                     $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->user)),
                     new Processing(
                         PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                        $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'])
+                        $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'] ?? null)
                     ),
                     xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
                 )

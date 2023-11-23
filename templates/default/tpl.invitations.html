@@ -3,12 +3,12 @@
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
 	$(document).ready(function () {
-        xoctWaiter.init();
+        il.Opencast.UI.waitOverlay.init();
         xoctInvitation.lngFromJson('{LANGUAGE}');
         xoctInvitation.init('{BASE_URL}', '#xoct_invitations_container', '#xoct_available_participant_container', function () {
-			xoctWaiter.show()
+			il.Opencast.UI.waitOverlay.show()
 		}, function () {
-			xoctWaiter.hide()
+			il.Opencast.UI.waitOverlay.hide()
 		});
 	});
 </script>
