@@ -60,7 +60,7 @@ const client_id = argv.clientId;
 const ilias_installation_dir = argv.iliasDir ? argv.iliasDir.replace(/\/+$/, '') : '/var/www/ilias';
 const port = argv.port;
 const ip = argv.ip;
-const host = argv.host ?? ip;
+const host = argv.host ? argv.host : ip;
 if (argv.useHttps && (!(typeof argv.sslKeyPath == 'string') || !(typeof argv.sslCertPath == 'string') || !(typeof argv.sslPassphrase == 'string'))) {
     console.error('please define a ssl-key-path, ssl-cert-path and ssl-passphrase when using https');
     process.exit(1);
