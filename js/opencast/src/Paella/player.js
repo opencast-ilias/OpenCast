@@ -30,6 +30,7 @@ export default {
     config: {
         paella_config_file: '',
         paella_config_livestream_type: '',
+        paella_config_livestream_buffered: false,
         paella_config_resources_path: '',
         paella_config_fallback_captions: '',
         paella_config_fallback_langs: '',
@@ -182,7 +183,7 @@ export default {
     },
 
     handleLiveAttributes: function() {
-        if (!this.config.is_live_stream) {
+        if (!this.config.is_live_stream || this.config.paella_config_livestream_buffered) {
             return;
         }
         this.paella.playbackBar.progressIndicator.hideProgressTimer();
@@ -335,7 +336,8 @@ export default {
         var working_stream_found = false;
         for (const stream of this.data.streams) {
             if (!working_stream_found) {
-                working_stream_found = await this.isStreamWorking(stream.sources.hlsLive[0].src);
+                let src = this.config.paella_config_livestream_buffered ? stream.sources.hls[0].src : stream.sources.hlsLive[0].src;
+                working_stream_found = await this.isStreamWorking(src);
             }
         }
         return working_stream_found;
@@ -402,31 +404,44 @@ export default {
     filterStreams: async function() {
         if (this.config.is_live_stream) {
             for (const streamKey in this.data.streams) {
+                let src = this.config.paella_config_livestream_buffered ?
+                    this.data.streams[streamKey].sources.hls[0].src :
+                    this.data.streams[streamKey].sources.hlsLive[0].src;
                 if (this.data.streams.hasOwnProperty(streamKey) &&
-                    (!(await this.isStreamWorking(this.data.streams[streamKey].sources.hlsLive[0].src)))) {
+                    (!(await this.isStreamWorking(src)))) {
                     this.data.streams.splice(streamKey, 1);
                 }
             }
         }
     },
 
-    testLivePaella: async function(containerId, configUrl, previewUrl, themeUrl, hlsUrl = '') {
+    testLivePaella: async function(containerId, configUrl, previewUrl, themeUrl, hlsUrl = '', withBuffer = false) {
         if (hlsUrl === '') {
             hlsUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
         }
+        let hlsObj = [
+            {src: hlsUrl, mimetype: 'application/x-mpegURL'}
+        ];
+        let stream = {
+            content: 'presenter',
+            sources: {}
+        };
+        if (withBuffer) {
+            stream.sources.hls = hlsObj;
+        } else {
+            stream.sources.hlsLive = hlsObj;
+        }
         this.data = {
             streams: [
-                {
-                    content: 'presenter',
-                    sources: {
-                        hls: [
-                            {src: hlsUrl, mimetype: 'application/x-mpegURL'}
-                        ],
-                    },
-                }
+                stream
             ],
             metadata: {title: 'test live', preview: previewUrl}
         };
+        if (this.paella) {
+            this.paella.pause();
+            this.paella = null;
+            $('#' + containerId).empty();
+        }
         this.paella = new Paella(containerId, {
             configUrl: configUrl,
             getManifestUrl: noop,
@@ -448,5 +463,17 @@ export default {
             console.log("Initialization done");
         })
         .catch(e => console.error(e));
+
+        this.paella.bindEvent(
+            Events.PLAYER_LOADED,
+            () => {
+                if (!withBuffer) {
+                    this.paella.playbackBar.progressIndicator.hideProgressTimer();
+                    this.paella.playbackBar.progressIndicator.hideProgressContainer();
+                    this.paella.playbackBar.progressIndicator.hideTimeLine();
+                }
+            },
+            false
+        );
     }
 }

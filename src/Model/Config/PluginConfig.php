@@ -82,6 +82,7 @@ class PluginConfig extends ActiveRecord
     public const F_START_X_MINUTES_BEFORE_LIVE = 'start_x_minutes_before_live';
     public const F_PRESENTATION_NODE = 'presentation_node';
     public const F_LIVESTREAM_TYPE = 'livestream_type';
+    public const F_LIVESTREAM_BUFFERED = 'livestream_buffered';
     public const F_ENABLE_CHAT = 'enable_chat';
 
     public const F_REPORT_QUALITY = 'report_quality';
@@ -125,6 +126,7 @@ class PluginConfig extends ActiveRecord
     public const PAELLA_LANG_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/lang';
     public const PAELLA_DEFAULT_THEME = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_theme.json';
     public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_theme.json';
+    public const PAELLA_DEFAULT_THEME_LIVE_BUFFERED = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json';
 
     public const F_WORKFLOWS_TAGS = 'config_workflows_tags';
     public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';

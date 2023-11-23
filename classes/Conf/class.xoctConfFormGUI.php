@@ -332,6 +332,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $te->setRequired(true);
         $cbs->addSubItem($te);
 
+        $cbs2 = new ilCheckboxInputGUI(
+            $this->parent_gui->txt(PluginConfig::F_LIVESTREAM_BUFFERED),
+            PluginConfig::F_LIVESTREAM_BUFFERED
+        );
+        $cbs2->setInfo($this->parent_gui->txt(PluginConfig::F_LIVESTREAM_BUFFERED . '_info'));
+        $cbs->addSubItem($cbs2);
+
         $ni = new ilNumberInputGUI(
             $this->parent_gui->txt(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE),
             PluginConfig::F_START_X_MINUTES_BEFORE_LIVE

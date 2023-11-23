@@ -144,6 +144,8 @@ class xoctPlayerGUI extends xoctGUI
         $paella_config = $this->paellaConfigService->getEffectivePaellaPlayerUrl();
         $js_config->paella_config_file = $paella_config['url'];
         $js_config->paella_config_livestream_type =  PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
+        $js_config->paella_config_livestream_buffered =
+            PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED) ?? false;
         $js_config->paella_config_resources_path = PluginConfig::PAELLA_RESOURCES_PATH;
         $js_config->paella_config_fallback_captions = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS) ?? [];
         $js_config->paella_config_fallback_langs = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [] ;

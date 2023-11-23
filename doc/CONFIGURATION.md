@@ -51,6 +51,7 @@ The player can be configured to use streaming URLs. This requires a Wowza stream
 
 ##### Live Streams
 Allow viewing Live Streams, optionally with an on-screen chat during the event. The publication "Live Stream" has to be configured properly for the plugin to recognize live events.
+<b>NOTE:</b> If you are using livestream with buffering capabality, you would need to enable "Buffered Livestream" option, in order to apply correct theme, settings and source format into the paella player, which results in having a paella palyer with progressbar to move back and forth in time and play/pause button during your livestream videos.
 
 ##### Use self-generated streaming URLs
 If this is active, the plugin will generate streaming urls with the given 'Wowza URL', according to this pattern:
@@ -76,6 +77,7 @@ Define the basic configuration of plugin's Paella Player (config.json). You can 
 an uploaded file, or a remote URL.
 
 From paella player 7, the plugin uses player themes (by default opencast theme located in ./js/opencast/src/Paella/default_theme/opencast_theme.json) for videos on demand, and a specific livestream theme (located in ./js/opencast/src/Paella/default_theme/opencast_live_theme.json), these themes can also be replaced by a remote URL.
+Based on the settings (buffered livestreams) there is another theme configuration introduced (located in ./js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json), which has the basic requirements for the paella player to show buffered livestreams.
 
 There is also the possibility to use a preview image as a fallback (located in ./templates/images/default_preview.png), in case opencast could not provide the video's default preview image somehow, this image can also be replaced by a remote URL.
 

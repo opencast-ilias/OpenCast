@@ -497,6 +497,9 @@
       "margin": 10,
       "textColor": "white",
       "circleColor": "red"
+    },
+    "org.ilias.paella.liveStreamingButtonIndicator": {
+      "enabled": false
     }
   }
 }

@@ -31,10 +31,6 @@ button {
     forced-color-adjust: none;
 }
 
-.playback-bar .button-plugins .button-plugin-container div.non-interactive {
-    margin-top: -2px;
-}
-
   /* progress indicator style */
 .progress-indicator {
     height: 25px;
@@ -131,4 +127,15 @@ button {
     outline-color: var(--main-outline-color);
     outline-style: solid;
     opacity: 1;
+}
+
+/* Custom ILIAS LiveStream Indicators */
+.playback-bar .button-plugins .button-plugin-container div.ilias-livestream-button {
+    display: flex !important;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+}
+.playback-bar .button-plugins .button-plugin-container div.ilias-livestream-button div i {
+    width: 12px !important;
 }

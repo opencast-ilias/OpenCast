@@ -25,12 +25,30 @@
 <body id="body" onload="
 let configUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/config/config.json';
 let previewUrl = location.href.replace(/[^/]*$/, '') + 'templates/images/thumbnail_live_running.png';
-let themeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_theme.json';
+let liveThemeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_live_theme.json';
+let bufferedLiveThemeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json';
 
-// this call must be a direct call to the PaellaPlayer class, as il.Opencast is not defined here!
-window.PaellaPlayer.default.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl);
+
+function runPaella() {
+	let buffered = document.querySelector('input[name=buffered]:checked').value;
+	let hlsUrl = document.getElementById('hlsUrl').value;
+	let themeUrl = buffered == 'yes' ? bufferedLiveThemeUrl : liveThemeUrl;
+
+	// this call must be a direct call to the PaellaPlayer class, as il.Opencast is not defined here!
+	window.PaellaPlayer.default.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl, hlsUrl, buffered == 'yes');
+}
+
+const runBtn = document.getElementById('run');
+runBtn.addEventListener('click', runPaella, false);
+runBtn.click();
 ">
-<div id="playerContainer">
-</div>
+	<div style="padding: 10px; border-bottom: 1px solid gray;">
+		<input type="radio" name="buffered" value="yes" checked> With Buffer
+		<input type="radio" name="buffered" value="no"> Without Buffer
+		<br>
+		<input type="text" style="width: 75%; margin-top: 10px;" id="hlsUrl" value="" placeholder="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8">
+		<button id="run" style="width: 150px; margin-top: 10px;">apply settings</button>
+	</div>
+	<div id="playerContainer"></div>
 </body>
 </html>
