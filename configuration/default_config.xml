@@ -263,10 +263,6 @@
       <value><![CDATA[]]></value>
     </xoct_conf>
     <xoct_conf>
-      <name>external_download_source</name>
-      <value><![CDATA[]]></value>
-    </xoct_conf>
-    <xoct_conf>
       <name>presenter-mandatory</name>
       <value><![CDATA[1]]></value>
     </xoct_conf>

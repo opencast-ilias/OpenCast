@@ -503,4 +503,68 @@ if (empty(\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plug
     );
 }
 ?>
+<#43>
+<?php
+// Introducing xoct_publication_group table with model PublicationUsageGroup for grouping PublicationUsage.
+if (!$ilDB->tableExists('xoct_publication_group')) {
+    $fields = [
+        "id" => ["notnull" => true, "length" => 4, "type" => "integer"],
+        "name" => ["notnull" => true, "length" => 512, "type" => "text"],
+        "display_name" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "description" => ["notnull" => false, "length" => 4000, "type" => "text"],
+    ];
+    $ilDB->createTable("xoct_publication_group", $fields);
+    $ilDB->createSequence('xoct_publication_group');
+    $ilDB->addPrimaryKey('xoct_publication_group', ['id']);
+}
+// Introducing xoct_pub_sub_usage table with model PublicationSubUsage as for sub usages.
+if (!$ilDB->tableExists('xoct_pub_sub_usage')) {
+    $fields = [
+        "id" => ['notnull' => true, "length" => 4, "type" => "integer"],
+        "parent_usage_id" => ["notnull" => true, "length" => 64, "type" => "text"],
+        "title" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "display_name" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "description" => ["notnull" => false, "length" => 4000, "type" => "text"],
+        "group_id" => ['notnull' => false, 'length' => 8, "type" => "integer"],
+        "channel" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "status" => ['notnull' => false, 'length' => 1, 'type' => "integer"],
+        "search_key" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "flavor" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "tag" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "md_type" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => null],
+        "allow_multiple" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
+        "mediatype" => ["notnull" => false, "length" => 512, "type" => "text"],
+        "ignore_object_setting" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
+        "ext_dl_source" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
+    ];
+    $ilDB->createTable("xoct_pub_sub_usage", $fields);
+    $ilDB->createSequence('xoct_pub_sub_usage');
+    $ilDB->addPrimaryKey('xoct_pub_sub_usage', ['id']);
+}
+// Add new columns to PublicationUsage.
+\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 
+foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
+    if ($publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+        $ext_dl_source = false;
+        $config = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig('external_download_source');
+        if ((bool) $config) {
+            $ext_dl_source = true;
+        }
+        $publication_usage->setExternalDownloadSource($ext_dl_source);
+        $publication_usage->update();
+    }
+}
+
+foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::get() as $publication_subusage) {
+    if ($publication_subusage->getParentUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_subusage->getParentUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+        $ext_dl_source = false;
+        $config = \srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig('external_download_source');
+        if ((bool) $config) {
+            $ext_dl_source = true;
+        }
+        $publication_subusage->setExternalDownloadSource($ext_dl_source);
+        $publication_subusage->update();
+    }
+}
+?>

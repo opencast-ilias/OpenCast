@@ -77,7 +77,6 @@
 
 .xoct_event_buttons .dropdown {
 	display: inline-block;
-	width: 32%;
 }
 
 .xoct_event_buttons .dropdown button {
@@ -150,8 +149,9 @@ div.il-card.thumbnail div.caption {
 	display: inline-block;
 }
 
-.il-card a {
-	width: 32%;
+.il-card a, .il-card .dropdown {
+	margin-top: 3px;
+	width: 49%;
 }
 
 .il-card ul li a {
@@ -206,4 +206,9 @@ div.modal-body form .ilFormFooter {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
+}
+
+.std .btn-group-vertical .dropdown .btn {
+	width: 100%;
+	text-align: center;
 }

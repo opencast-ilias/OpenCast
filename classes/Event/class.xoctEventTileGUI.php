@@ -126,12 +126,18 @@ class xoctEventTileGUI
 
             $buttons_tpl = $this->plugin->getTemplate('default/tpl.event_buttons.html');
             $event_renderer->insertPlayerLink($buttons_tpl, 'link', 'LINK', 'btn-default');
-            if (!$this->objectSettings->getStreamingOnly()) {
-                $event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
-            }
+
+            // The object settings will be checked based from within the insertDownloadLink method!
+            $event_renderer->insertDownloadLink($buttons_tpl, 'link', 'LINK', 'btn-default');
+
             if ($this->objectSettings->getUseAnnotations()) {
                 $event_renderer->insertAnnotationLink($buttons_tpl, 'link', 'LINK', 'btn-default');
             }
+
+            // In order to render dropdowns, we have to call its method here (at the end),
+            // because the dropdown list gets its value during the call of download and annotate insertion.
+            $event_renderer->renderDropdowns($buttons_tpl);
+
             $tile_tpl->setVariable('EVENT_BUTTONS', $buttons_tpl->get());
 
             $card = $this->factory->card()->repositoryObject(

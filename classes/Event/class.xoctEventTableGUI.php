@@ -165,9 +165,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $renderer->insertPreviewImage($this->tpl, null);
         $renderer->insertPlayerLink($this->tpl);
 
-        if (!$this->object_settings->getStreamingOnly()) {
-            $renderer->insertDownloadLink($this->tpl);
-        }
+        // The object settings will be checked based from within the insertDownloadLink method!
+        $renderer->insertDownloadLink($this->tpl);
 
         if ($this->object_settings->getUseAnnotations()) {
             $renderer->insertAnnotationLink($this->tpl);
@@ -194,6 +193,10 @@ class xoctEventTableGUI extends ilTable2GUI
             && ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_VIEW_UNPROTECTED_LINK)) {
             $renderer->insertUnprotectedLink($this->tpl, 'generic', 'VALUE');
         }
+
+        // In order to render dropdowns, we have to call its method here (at the end),
+        // because the dropdown list gets its value during the call of download and annotate insertion.
+        $renderer->renderDropdowns($this->tpl);
 
         $this->addActionMenu($event);
     }

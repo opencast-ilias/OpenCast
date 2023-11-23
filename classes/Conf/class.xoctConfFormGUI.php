@@ -44,7 +44,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $container = OpencastDIC::getInstance();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $container->plugin();
-        $this->main_tpl->addJavaScript($this->plugin->getDirectory().'/js/opencast/dist/index.js');
+        $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
         $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
         parent::__construct();
         $this->parent_gui = $parent_gui;
@@ -256,13 +256,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI
             PluginConfig::F_CREATE_SCHEDULED_ALLOWED
         );
         $cb->setInfo($this->parent_gui->txt(PluginConfig::F_CREATE_SCHEDULED_ALLOWED . '_info'));
-        $this->addItem($cb);
-
-        $cb = new ilCheckboxInputGUI(
-            $this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE),
-            PluginConfig::F_EXT_DL_SOURCE
-        );
-        $cb->setInfo($this->parent_gui->txt(PluginConfig::F_EXT_DL_SOURCE . '_info'));
         $this->addItem($cb);
 
         $cb = new ilCheckboxInputGUI(

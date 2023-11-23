@@ -901,21 +901,43 @@ class xoctEventGUI extends xoctGUI
     {
         $event_id = filter_input(INPUT_GET, 'event_id', FILTER_SANITIZE_STRING);
         $publication_id = filter_input(INPUT_GET, 'pub_id', FILTER_SANITIZE_STRING);
+        $usage_type = filter_input(INPUT_GET, 'usage_type', FILTER_SANITIZE_STRING);
+        $usage_id = filter_input(INPUT_GET, 'usage_id', FILTER_SANITIZE_STRING);
         $event = $this->event_repository->find($event_id);
         $download_publications = $event->publications()->getDownloadPublications();
+        // Now that we have multiple sub-usages, we first check for publication_id which is passed by the multi-dropdowns.
         if ($publication_id) {
             $publication = array_filter($download_publications, function ($publication) use ($publication_id): bool {
                 return $publication->getId() === $publication_id;
             });
-            $publication = array_shift($publication);
+            $publication = reset($publication);
         } else {
-            $publication = array_shift($download_publications);
+            // If this is not multi-download dropdown, then it has to have the usage_type and usage_id parameters identified.
+            if (!empty($usage_type) && !empty($usage_id)) {
+                $publication = array_filter(
+                    $download_publications,
+                    function ($publication) use ($usage_type, $usage_id): bool {
+                        return $publication->usage_id == $usage_id && $publication->usage_type === $usage_type;
+                    }
+                );
+                $publication = reset($publication);
+            } else {
+                // As a fallback we take out the last publication, if non of the above has been met!
+                $publication = reset($download_publications);
+            }
         }
+
+        if (empty($publication)) {
+            ilUtil::sendFailure($this->txt('msg_no_download_publication'), true);
+            $this->ctrl->redirect($this, self::CMD_STANDARD);
+        }
+
         $url = $publication->getUrl();
         $extension = pathinfo($url)['extension'];
         $url = PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ? xoctSecureLink::signDownload($url) : $url;
 
-        if (PluginConfig::getConfig(PluginConfig::F_EXT_DL_SOURCE)) {
+        // if (PluginConfig::getConfig(PluginConfig::F_EXT_DL_SOURCE)) {
+        if (property_exists($publication, 'ext_dl_source') && $publication->ext_dl_source == true) {
             // Open external source page
             header('Location: ' . $url);
         } else {

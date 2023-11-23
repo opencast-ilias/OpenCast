@@ -33,6 +33,10 @@ class xoctMainGUI extends xoctGUI
      */
     private $tabs;
 
+    public const SUBTAB_PUBLICATION_USAGE = 'publication_usage';
+    public const SUBTAB_PUBLICATION_SUB_USAGE = 'publication_sub_usage';
+    public const SUBTAB_PUBLICATION_GROUPS = 'publication_groups';
+
     public function __construct()
     {
         global $DIC;
@@ -97,6 +101,7 @@ class xoctMainGUI extends xoctGUI
         switch ($nextClass) {
             case strtolower(xoctPublicationUsageGUI::class):
                 $this->tabs->activateTab(self::TAB_PUBLICATION_USAGE);
+                $this->setPublicationSubTabs();
                 $xoctPublicationUsageGUI = new xoctPublicationUsageGUI();
                 $this->ctrl->forwardCommand($xoctPublicationUsageGUI);
                 break;
@@ -192,6 +197,30 @@ class xoctMainGUI extends xoctGUI
         );
         $this->ctrl->clearParametersByClass(xoctConfGUI::class);
     }
+
+    protected function setPublicationSubTabs()
+    {
+        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_USAGE);
+        $this->tabs->addSubTab(
+            self::SUBTAB_PUBLICATION_USAGE,
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_USAGE),
+            $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_SUB_USAGE);
+        $this->tabs->addSubTab(
+            self::SUBTAB_PUBLICATION_SUB_USAGE,
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_SUB_USAGE),
+            $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
+        );
+        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_GROUPS);
+        $this->tabs->addSubTab(
+            self::SUBTAB_PUBLICATION_GROUPS,
+            $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_GROUPS),
+            $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
+        );
+        $this->ctrl->clearParametersByClass(xoctPublicationUsageGUI::class);
+    }
+
 
     protected function index()
     {

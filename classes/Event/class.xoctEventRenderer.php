@@ -9,10 +9,15 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
+use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctEventRenderer
@@ -22,6 +27,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 class xoctEventRenderer
 {
     use TranslatorTrait;
+    use LocaleTrait;
 
     public const LANG_MODULE = 'event';
     /**
@@ -54,6 +60,10 @@ class xoctEventRenderer
      */
     protected static $modals;
     /**
+     * @var array
+     */
+    private $dropdowns;
+    /**
      * @var \ilCtrlInterface
      */
     private $ctrl;
@@ -79,6 +89,7 @@ class xoctEventRenderer
         $this->objectSettings = $objectSettings;
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
+        $this->dropdowns = [];
     }
 
     public static function initModals(EventModals $modals): void
@@ -104,6 +115,59 @@ class xoctEventRenderer
             $tpl->parseCurrentBlock();
         }
     }
+
+    /**
+     * Renders the dropdowns, in case the items to display is in a publication usage group.
+     * If a group has only one item, it renders it as normal that is why tpl is passed as reference.
+     * @param $tpl ilTemplate
+     */
+    public function renderDropdowns(&$tpl): void
+    {
+        $value = '';
+        $sorted_list = [];
+        if (!empty($this->dropdowns)) {
+            $sorted_list = PublicationUsageGroupRepository::getSortedArrayList(array_keys($this->dropdowns));
+        }
+        foreach ($sorted_list as $group_id => $group_data) {
+            $dropdown_contents = $this->dropdowns[$group_id];
+            if (count($dropdown_contents) > 1) {
+                $items = [];
+                foreach ($dropdown_contents as $content) {
+                    $items[] = $this->factory->link()->standard(
+                        $content['display_name'],
+                        $content['link']
+                    );
+                }
+                $display_name = $this->getLocaleString(
+                    strtolower($group_data['display_name']),
+                    PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE,
+                    $group_data['display_name']
+                );
+                if (empty($display_name)) {
+                    $display_name = $this->getLocaleString('default', PublicationUsageGroup::DISPLAY_NAME_LANG_MODULE);
+                }
+                $dropdown = $this->factory->dropdown()->standard(
+                    $items
+                )->withLabel($display_name);
+                $value .= $this->renderer->renderAsync($dropdown);
+            } else {
+                $content = reset($dropdown_contents);
+                $this->insert($tpl, $content['variable'], $content['html'], $content['block_title']);
+                continue;
+            }
+        }
+
+        if (!empty($value)) {
+            $block_title_dpdn = 'dropdown';
+            $variable_dpdb = 'DROPDOWN';
+            $tpl->setCurrentBlock($block_title_dpdn);
+
+            $tpl->setVariable($variable_dpdb, $value);
+
+            $tpl->parseCurrentBlock();
+        }
+    }
+
 
     /**
      * @param        $tpl ilTemplate
@@ -246,18 +310,54 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertDownloadLink(
-        &$tpl,
-        $block_title = 'link',
-        $variable = 'LINK',
-        $button_type = 'btn-info'
-    ): void {
-        if ($download_link_html = $this->getDownloadLinkHTML($button_type)) {
-            $this->insert($tpl, $variable, $download_link_html, $block_title);
+    public function insertDownloadLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
+    {
+        $publication_repository = new PublicationUsageRepository();
+        $publication_sub_repository = new PublicationSubUsageRepository();
+        $categorized_download_dtos = $this->event->publications()->getDownloadDtos(false);
+        foreach ($categorized_download_dtos as $usage_type => $content) {
+            foreach ($content as $usage_id => $download_dtos) {
+                $download_pub_usage = null;
+                $display_name = '';
+                if ($usage_type == PublicationUsage::USAGE_TYPE_ORG) {
+                    $download_pub_usage = $publication_repository->getUsage($usage_id);
+                    $display_name = $publication_repository->getDisplayName($usage_id);
+                } else {
+                    $download_pub_usage = $publication_sub_repository->convertSingleSubToUsage($usage_id);
+                    $display_name = $publication_sub_repository->getDisplayName($usage_id);
+                }
+
+                if (is_null($download_pub_usage)) {
+                    continue;
+                }
+
+                if (empty($display_name)) {
+                    $display_name = $this->translate('download', self::LANG_MODULE);
+                }
+
+                $download_html = $this->getDownloadLinkHTML($download_pub_usage, $download_dtos, $display_name, $button_type);
+                if (!empty($download_html)) {
+                    $group_id = $download_pub_usage->getGroupId();
+                    if (!is_null($group_id) && !$download_pub_usage->isAllowMultiple()) {
+                        $this->dropdowns[$group_id][] = [
+                            'variable' => $variable,
+                            'display_name' => $display_name,
+                            'link' => $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD),
+                            'html' => $download_html,
+                            'block_title' => $block_title,
+                        ];
+                    } else {
+                        $this->insert($tpl, $variable, $download_html, $block_title);
+                    }
+                }
+            }
         }
     }
 
     /**
+     * @param PublicationUsage $download_publication_usage
+     * @param DownloadDto[] $download_dtos
+     * @param string $display_name
      * @param string $button_type
      *
      * @return string
@@ -265,17 +365,35 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function getDownloadLinkHTML($button_type = 'btn_info')
-    {
-        $download_dtos = $this->event->publications()->getDownloadDtos(false);
-        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && ($download_dtos !== [])) {
-            if ($this->objectSettings instanceof ObjectSettings && $this->objectSettings->getStreamingOnly()) {
+    public function getDownloadLinkHTML(
+        $download_publication_usage,
+        $download_dtos,
+        $display_name,
+        $button_type = 'btn_info'
+    ): string {
+        $html = '';
+        $ignore_object_settings = $download_publication_usage->ignoreObjectSettings();
+        $has_streaming_only = $this->objectSettings instanceof ObjectSettings && $this->objectSettings->getStreamingOnly();
+        $show_download = true;
+        if ($has_streaming_only && $ignore_object_settings == false) {
+            $show_download = false;
+        }
+        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
+            if (!$show_download) {
                 return '';
             }
-            $multi = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_DOWNLOAD)->isAllowMultiple();
+
+            // Setting event_id is necessary, because we use it for both multi approach with pub_id or subusage approach with usage_type and usage_id.
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+
+            // Setting the floowing parameters to null first, so that we get accurate parameters later on in download action.
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', null);
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', null);
+            $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_id', null);
+
+            $multi = $download_publication_usage->isAllowMultiple();
             if ($multi) {
                 $items = array_map(function ($dto): \ILIAS\UI\Component\Link\Standard {
-                    $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
                     $this->ctrl->setParameterByClass(xoctEventGUI::class, 'pub_id', $dto->getPublicationId());
                     return $this->factory->link()->standard(
                         $dto->getResolution(),
@@ -284,22 +402,25 @@ class xoctEventRenderer
                 }, $download_dtos);
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
-                )->withLabel($this->plugin->txt(self::LANG_MODULE . '_download'));
-                return $this->ui->renderer()->renderAsync($dropdown);
+                )->withLabel($display_name);
+                $html = $this->renderer->renderAsync($dropdown);
             } else {
-                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
+                $usage_type = $download_publication_usage->isSub() ? 'sub' : 'org';
+                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', $usage_type);
+                $usage_id = $usage_type === 'sub' ? $download_publication_usage->getSubId() :
+                    $download_publication_usage->getUsageId();
+                $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_id', $usage_id);
                 $link = $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_DOWNLOAD);
                 $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
                 $link_tpl->setVariable('TARGET', '_self');
                 $link_tpl->setVariable('BUTTON_TYPE', $button_type);
-                $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt(self::LANG_MODULE . '_download'));
+                $link_tpl->setVariable('LINK_TEXT', $display_name);
                 $link_tpl->setVariable('LINK_URL', $link);
 
-                return $link_tpl->get();
+                $html = $link_tpl->get();
             }
-        } else {
-            return '';
         }
+        return $html;
     }
 
     /**
@@ -312,13 +433,21 @@ class xoctEventRenderer
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function insertAnnotationLink(
-        &$tpl,
-        $block_title = 'link',
-        $variable = 'LINK',
-        $button_type = 'btn-info'
-    ): void {
-        if ($annotation_link_html = $this->getAnnotationLinkHTML($button_type)) {
+    public function insertAnnotationLink(&$tpl, $block_title = 'link', $variable = 'LINK', $button_type = 'btn-info'): void
+    {
+        list($display_name, $annotation_link_html) = $this->getAnnotationLinkHTML($button_type);
+        if (!empty($annotation_link_html)) {
+            $annotatePublicationUsage = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_ANNOTATE);
+            $group_id = $annotatePublicationUsage->getGroupId();
+            if (!is_null($group_id)) {
+                $this->dropdowns[$group_id][] = [
+                    'variable' => $variable,
+                    'display_name' => $display_name,
+                    'link' => $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_ANNOTATE),
+                    'block_title' => $block_title,
+                ];
+                return;
+            }
             $this->insert($tpl, $variable, $annotation_link_html, $block_title);
         }
     }
@@ -326,13 +455,18 @@ class xoctEventRenderer
     /**
      * @param string $button_type
      *
-     * @return string
+     * @return array
      * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function getAnnotationLinkHTML($button_type = 'btn_info')
+    public function getAnnotationLinkHTML($button_type = 'btn_info'): array
     {
+        $display_name = (new PublicationUsageRepository())->getDisplayName(PublicationUsage::USAGE_ANNOTATE);
+        if (empty($display_name)) {
+            $display_name = $this->translate('annotate', self::LANG_MODULE);
+        }
+        $html = '';
         if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED)
             && ($this->event->publications()->getAnnotationPublication())) {
             $this->ctrl->setParameterByClass(
@@ -344,13 +478,12 @@ class xoctEventRenderer
             $link_tpl = $this->plugin->getTemplate('default/tpl.player_link.html');
             $link_tpl->setVariable('TARGET', '_blank');
             $link_tpl->setVariable('BUTTON_TYPE', $button_type);
-            $link_tpl->setVariable('LINK_TEXT', $this->plugin->txt(self::LANG_MODULE . '_annotate'));
+            $link_tpl->setVariable('LINK_TEXT', $display_name);
             $link_tpl->setVariable('LINK_URL', $annotations_link);
 
-            return $link_tpl->get();
-        } else {
-            return '';
+            $html = $link_tpl->get();
         }
+        return [$display_name, $html];
     }
 
     /**
@@ -671,7 +804,8 @@ class xoctEventRenderer
                 $this->plugin->txt('event_republish'),
                 self::$modals->getRepublishModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click', function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
+                return "$({$id}).on('click'," .
+                        "function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
             });
         }
 
@@ -723,7 +857,9 @@ class xoctEventRenderer
                 $this->plugin->txt('event_report_quality_problem'),
                 self::$modals->getReportQualityModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click', function(event){ $('input#xoct_report_quality_event_id').val('{$this->event->getIdentifier()}');$('#xoct_report_quality_modal textarea#message').focus(); });";
+                return "$({$id}).on('click', function(event){ " .
+                    "$('input#xoct_report_quality_event_id').val('{$this->event->getIdentifier()}');" .
+                    "$('#xoct_report_quality_modal textarea#message').focus(); });";
             });
         }
 
