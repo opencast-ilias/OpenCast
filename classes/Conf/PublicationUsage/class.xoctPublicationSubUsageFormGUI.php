@@ -5,17 +5,13 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
- * Class xoctPublicationUsageFormGUI
+ * Class xoctPublicationSubUsageFormGUI
  *
- * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @version 1.0.0
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
-class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
+class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
 {
-    public $is_new;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
-    public const F_USAGE_ID = 'usage_id';
+    public const F_PARENT_USAGE_ID = 'parent_usage_id';
     public const F_TITLE = 'title';
     public const F_DESCRIPTION = 'description';
     public const F_DISPLAY_NAME = 'display_name';
@@ -40,6 +36,10 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
      */
     protected $parent_gui;
     /**
+     * @var bool $is_new
+     */
+    protected $is_new = true;
+    /**
      * @var ilOpenCastPlugin
      */
     protected $plugin;
@@ -48,14 +48,14 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
      */
     protected $container;
 
+
     /**
      * @param xoctPublicationUsageGUI $parent_gui
-     * @param PublicationUsage        $xoctPublicationUsage
+     * @param xoctPublicationSubUsage $xoctPublicationSubUsage
      */
-    public function __construct($parent_gui, $xoctPublicationUsage)
+    public function __construct($parent_gui, $xoctPublicationSubUsage, $is_new = true)
     {
         global $DIC;
-        $ctrl = $DIC->ctrl();
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
         $DIC->ui()->mainTemplate()->addJavaScript(
@@ -63,13 +63,14 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         );
         $DIC->ui()->mainTemplate()->addOnLoadCode('il.Opencast.Form.publicationUsage.init()');
         parent::__construct();
-        $this->object = $xoctPublicationUsage;
+        $this->object = $xoctPublicationSubUsage;
         $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
-        $ctrl->saveParameter($parent_gui, xoctPublicationUsageGUI::IDENTIFIER);
-        $this->is_new = ($this->object->getUsageId() == '');
+        $this->ctrl->saveParameter($parent_gui, 'id');
+        $this->is_new = $is_new;
         $this->initForm();
     }
+
 
     /**
      *
@@ -80,19 +81,20 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_USAGE_ID), self::F_USAGE_ID);
+        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_PARENT_USAGE_ID), self::F_PARENT_USAGE_ID);
         $te->setRequired(true);
         $te->setDisabled(true);
         $this->addItem($te);
 
         $te = new ilTextInputGUI($this->parent_gui->txt(self::F_TITLE), self::F_TITLE);
         $te->setRequired(true);
+        $te->setDisabled(true);
         $this->addItem($te);
 
         // F_DISPLAY_NAME
         $max_lenght = 20;
         $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName() : '{added display name}');
-        $info = sprintf($this->parent_gui->txt(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
+        $info = sprintf($this->plugin->txt('publication_usage_sub_' . self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
         $te = new ilTextInputGUI($this->parent_gui->txt(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);
         $te->setMaxLength($max_lenght);
@@ -119,10 +121,10 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt(
                 'md_type_' . PublicationUsage::MD_TYPE_PUBLICATION_ITSELF
             ),
-            PublicationUsage::MD_TYPE_ATTACHMENT => $this->parent_gui->txt(
+            PublicationUsage::MD_TYPE_ATTACHMENT         => $this->parent_gui->txt(
                 'md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT
             ),
-            PublicationUsage::MD_TYPE_MEDIA => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
+            PublicationUsage::MD_TYPE_MEDIA              => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
         ]);
         $this->addItem($te);
 
@@ -149,7 +151,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
 
         if (in_array(
-            $this->object->getUsageId(),
+            $this->object->getParentUsageId(),
             [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK],
             true
         )) {
@@ -180,13 +182,14 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->addItem($ext_dl_source);
     }
 
+
     /**
      *
      */
-    public function fillForm(): void
+    public function fillForm()
     {
         $array = [
-            self::F_USAGE_ID => $this->object->getUsageId(),
+            self::F_PARENT_USAGE_ID => $this->object->getParentUsageId(),
             self::F_TITLE => $this->object->getTitle(),
             self::F_DISPLAY_NAME => $this->object->getDisplayName(),
             self::F_DESCRIPTION => $this->object->getDescription(),
@@ -205,8 +208,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->setValuesByArray($array);
     }
 
+
     /**
      * returns whether checkinput was successful or not.
+     *
+     * @return bool
      */
     public function fillObject(): bool
     {
@@ -214,7 +220,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             return false;
         }
 
-        $this->object->setUsageId($this->getInput(self::F_USAGE_ID));
+        $this->object->setParentUsageId($this->getInput(self::F_PARENT_USAGE_ID));
         $this->object->setTitle($this->getInput(self::F_TITLE));
         $this->object->setDisplayName($this->getInput(self::F_DISPLAY_NAME));
         $this->object->setDescription($this->getInput(self::F_DESCRIPTION));
@@ -224,23 +230,24 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->object->setFlavor($this->getInput(self::F_FLAVOR));
         $this->object->setTag($this->getInput(self::F_TAG));
         $this->object->setMdType($this->getInput(self::F_MD_TYPE));
-        $this->object->setAllowMultiple((bool) $this->getInput(self::F_ALLOW_MULTIPLE));
+        $this->object->setAllowMultiple((bool)$this->getInput(self::F_ALLOW_MULTIPLE));
         $this->object->setMediaType($this->getInput(self::F_MEDIATYPE));
-        $this->object->setIgnoreObjectSettings((bool) $this->getInput(self::F_IGNORE_OBJECT_SETTINGS));
+        $this->object->setIgnoreObjectSettings((bool)$this->getInput(self::F_IGNORE_OBJECT_SETTINGS));
         $this->object->setExternalDownloadSource((bool)$this->getInput(self::F_EXT_DL_SOURCE));
 
         return true;
     }
 
+
     /**
-     * @return bool|string
+     * @return bool
      */
     public function saveObject(): bool
     {
         if (!$this->fillObject()) {
             return false;
         }
-        if (!PublicationUsage::where(['usage_id' => $this->object->getUsageId()])->hasSets()) {
+        if ($this->is_new) {
             $this->object->create();
         } else {
             $this->object->update();
@@ -249,28 +256,26 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         return true;
     }
 
+
     /**
      *
      */
     protected function initButtons()
     {
         if ($this->is_new) {
-            $this->setTitle($this->parent_gui->txt('create'));
+            $this->setTitle($this->parent_gui->txt('create_sub'));
             $this->addCommandButton(
-                xoctPublicationUsageGUI::CMD_CREATE,
+                xoctPublicationUsageGUI::CMD_CREATE_SUB,
                 $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CREATE)
             );
         } else {
-            $this->setTitle($this->parent_gui->txt('edit'));
+            $this->setTitle($this->parent_gui->txt('edit_sub'));
             $this->addCommandButton(
-                xoctPublicationUsageGUI::CMD_UPDATE,
+                xoctPublicationUsageGUI::CMD_UPDATE_SUB,
                 $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_UPDATE)
             );
         }
 
-        $this->addCommandButton(
-            xoctPublicationUsageGUI::CMD_CANCEL,
-            $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CANCEL)
-        );
+        $this->addCommandButton(xoctPublicationUsageGUI::CMD_CANCEL, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CANCEL));
     }
 }

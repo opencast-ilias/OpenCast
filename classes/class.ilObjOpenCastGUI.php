@@ -503,7 +503,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->ilias_dic->ui()->mainTemplate()->setTitle($this->object->getTitle());
             $this->ilias_dic->ui()->mainTemplate()->setDescription($this->object->getDescription());
             if ($this->ilias_dic->access()->checkAccess('read', '', $_GET['ref_id'])) {
-                // TODO: remove self::dic
                 $DIC['ilNavigationHistory']->addItem(
                     $_GET['ref_id'],
                     $this->ilias_dic->ctrl()->getLinkTarget($this, $this->getStandardCmd()),

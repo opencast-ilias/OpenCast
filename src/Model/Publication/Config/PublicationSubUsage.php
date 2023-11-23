@@ -3,68 +3,17 @@
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
+use xoctException;
 
 /**
- * Class PublicationUsage
+ * Class PublicationSubUsage
  *
- * @author Fabian Schmid <fs@studer-raimann.ch>
+ * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
-class PublicationUsage extends ActiveRecord
+class PublicationSubUsage extends ActiveRecord
 {
-    public const TABLE_NAME = 'xoct_publication_usage';
-    public const USAGE_ANNOTATE = 'annotate';
-    public const USAGE_PLAYER = 'player';
-    public const USAGE_THUMBNAIL = 'thumbnail';
-    public const USAGE_THUMBNAIL_FALLBACK = 'thumbnail_fallback';
-    public const USAGE_THUMBNAIL_FALLBACK_2 = 'thumbnail_fallback_2';
-    public const USAGE_DOWNLOAD = 'download';
-    public const USAGE_DOWNLOAD_FALLBACK = 'download_fallback';
-    public const USAGE_CUTTING = 'cutting';
-    public const USAGE_SEGMENTS = 'segments';
-    public const USAGE_PREVIEW = 'preview';
-    public const USAGE_DUAL_IMAGE_SOURCE = "dual-image-source";
-    public const USAGE_LIVE_EVENT = 'live_event';
-    public const USAGE_UNPROTECTED_LINK = 'unprotected_link';
-    public const MD_TYPE_ATTACHMENT = 1;
-    public const MD_TYPE_MEDIA = 2;
-    public const MD_TYPE_PUBLICATION_ITSELF = 0;
-    public const SEARCH_KEY_FLAVOR = 'flavor';
-    public const SEARCH_KEY_TAG = 'tag';
-    public const DISPLAY_NAME_LANG_MODULE = 'pu_display_name';
-    public const USAGE_TYPE_ORG = 'org';
-    public const USAGE_TYPE_SUB = 'sub';
-    public const USAGE_CAPTIONS = 'captions';
-    public const USAGE_CAPTIONS_FALLBACK = 'captions_fallback';
-    /**
-     * @var array
-     */
-    public static $usage_ids
-        = [
-            self::USAGE_ANNOTATE,
-            self::USAGE_PLAYER,
-            self::USAGE_THUMBNAIL,
-            self::USAGE_THUMBNAIL_FALLBACK,
-            self::USAGE_THUMBNAIL_FALLBACK_2,
-            self::USAGE_DOWNLOAD,
-            self::USAGE_DOWNLOAD_FALLBACK,
-            self::USAGE_CUTTING,
-            self::USAGE_SEGMENTS,
-            self::USAGE_PREVIEW,
-            self::USAGE_LIVE_EVENT,
-            self::USAGE_UNPROTECTED_LINK,
-            self::USAGE_CAPTIONS,
-            self::USAGE_CAPTIONS_FALLBACK,
-        ];
-
-    /**
-     * INFO: the capability can be used for other usages, but it needs to be implemented when needed.
-     * @var array
-     */
-    public static $sub_allowed_usage_ids
-        = [
-            self::USAGE_DOWNLOAD
-        ];
-
+    public const TABLE_NAME = 'xoct_pub_sub_usage';
+    public const DISPLAY_NAME_LANG_MODULE = 'pus_display_name';
 
     /**
      * @return string
@@ -75,6 +24,7 @@ class PublicationUsage extends ActiveRecord
         return self::TABLE_NAME;
     }
 
+
     /**
      * @return string
      */
@@ -83,16 +33,28 @@ class PublicationUsage extends ActiveRecord
         return self::TABLE_NAME;
     }
 
+
+    /**
+     * @var int
+     *
+     * @con_has_field  true
+     * @con_fieldtype  integer
+     * @con_length     4
+     * @con_is_notnull true
+     * @con_is_primary true
+     * @con_is_unique  true
+     * @con_sequence   true
+     */
+    protected $id;
     /**
      * @var string
      *
-     * @con_is_primary true
-     * @con_is_unique  true
      * @con_has_field  true
      * @con_fieldtype  text
      * @con_length     64
+     * @con_is_notnull true
      */
-    protected $usage_id = '';
+    protected $parent_usage_id = '';
     /**
      * @var string
      *
@@ -172,7 +134,7 @@ class PublicationUsage extends ActiveRecord
      * @con_fieldtype  integer
      * @con_length     1
      */
-    protected $md_type;
+    protected $md_type = null;
     /**
      * @var bool
      *
@@ -207,39 +169,54 @@ class PublicationUsage extends ActiveRecord
     protected $ext_dl_source = false;
 
     /**
-     * An indicator flag to determine if the usage is a sub-usage or not.
-     * @var bool
+     * @return int
      */
-    protected $is_sub = false;
-
-    /**
-     * A variable that works as an id holder, for when the usage is a sub-usage.
-     * @var int
-     */
-    protected $sub_id = 0;
-
-    public function getUsageId(): string
+    public function getId(): int
     {
-        return $this->usage_id ?? '';
+        return intval($this->id);
     }
 
+
     /**
-     * @param string $usage_id
+     * @param int $id
      */
-    public function setUsageId($usage_id): void
+    public function setId($id)
     {
-        $this->usage_id = $usage_id;
+        $this->id = $id;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getParentUsageId(): string
+    {
+        return $this->parent_usage_id;
+    }
+
+
+    /**
+     * @param string $parent_usage_id
+     */
+    public function setParentUsageId($parent_usage_id)
+    {
+        $this->parent_usage_id = $parent_usage_id;
+    }
+
+
+    /**
+     * @return string
+     */
     public function getTitle(): string
     {
         return $this->title ?? '';
     }
 
+
     /**
      * @param string $title
      */
-    public function setTitle($title): void
+    public function setTitle($title)
     {
         $this->title = $title;
     }
@@ -271,16 +248,17 @@ class PublicationUsage extends ActiveRecord
         return $this->description ?? '';
     }
 
+
     /**
      * @param string $description
      */
-    public function setDescription($description): void
+    public function setDescription($description)
     {
         $this->description = $description;
     }
 
     /**
-     * @return ?int
+     * @return int|null
      */
     public function getGroupId(): ?int
     {
@@ -304,79 +282,116 @@ class PublicationUsage extends ActiveRecord
         return $this->channel ?? '';
     }
 
+
     /**
      * @param string $channel
      */
-    public function setChannel($channel): void
+    public function setChannel($channel)
     {
         $this->channel = $channel;
     }
 
+
     /**
      * @return boolean
      */
-    public function isStatus()
+    public function isStatus(): bool
     {
         return $this->status;
     }
 
+
     /**
      * @param boolean $status
      */
-    public function setStatus($status): void
+    public function setStatus($status)
     {
         $this->status = $status;
     }
 
+    /**
+     * @return bool
+     */
     public function isAllowMultiple(): bool
     {
         return (bool) $this->allow_multiple;
     }
 
-    public function setAllowMultiple(bool $allow_multiple): void
+    /**
+     * @param bool $allow_multiple
+     */
+    public function setAllowMultiple(bool $allow_multiple)
     {
         $this->allow_multiple = $allow_multiple;
     }
 
+    /**
+     * @return string
+     */
     public function getFlavor(): string
     {
         return $this->flavor ?? '';
     }
 
-    public function setFlavor(string $flavor): void
+
+    /**
+     * @param string $flavor
+     */
+    public function setFlavor(string $flavor)
     {
         $this->flavor = $flavor;
     }
 
+
+    /**
+     * @return string
+     */
     public function getSearchKey(): string
     {
         return $this->search_key ?? '';
     }
 
-    public function setSearchKey(string $search_key): void
+
+    /**
+     * @param string $search_key
+     */
+    public function setSearchKey(string $search_key)
     {
         $this->search_key = $search_key;
     }
 
+
+    /**
+     * @return string
+     */
     public function getTag(): string
     {
         return $this->tag ?? '';
     }
 
-    public function setTag(string $tag): void
+
+    /**
+     * @param string $tag
+     */
+    public function setTag(string $tag)
     {
         $this->tag = $tag;
     }
 
+
+    /**
+     * @return int
+     */
     public function getMdType(): int
     {
         return (int) $this->md_type;
     }
 
+
     /**
      * @param int $md_type
      */
-    public function setMdType($md_type): void
+    public function setMdType($md_type)
     {
         $this->md_type = $md_type;
     }
@@ -442,34 +457,26 @@ class PublicationUsage extends ActiveRecord
     }
 
     /**
-     * @return bool
+     * Create the object, but we check if it is allowed!
+     * @throws xoctException
      */
-    public function isSub(): bool
+    public function create()
     {
-        return (bool) $this->is_sub;
+        if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
+            throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());
+        }
+        parent::create();
     }
 
     /**
-     * @param bool $is_sub
+     * Updates the object, but we check if it is allowed!
+     * @throws xoctException
      */
-    public function setAsSub(bool $is_sub)
+    public function update()
     {
-        $this->is_sub = $is_sub;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSubId(): int
-    {
-        return (int) $this->sub_id;
-    }
-
-    /**
-     * @param int $sub_id
-     */
-    public function setSubId(int $sub_id): void
-    {
-        $this->sub_id = $sub_id;
+        if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
+            throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());
+        }
+        parent::update();
     }
 }

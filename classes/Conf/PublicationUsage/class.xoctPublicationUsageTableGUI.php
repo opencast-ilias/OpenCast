@@ -2,6 +2,7 @@
 
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -49,6 +50,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         $this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->parent_obj = $a_parent_obj;
+        $this->setTitle($this->parent_obj->txt('table_title_usage'));
         $this->setRowTemplate(
             'tpl.publication_usage.html',
             'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
@@ -66,38 +68,56 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     protected function fillRow($a_set)
     {
         /**
-         * @var $PublicationUsage PublicationUsage
+         * @var $publication_usage PublicationUsage
          */
-        $PublicationUsage = $this->repository->getUsage($a_set['usage_id']);
-        $this->tpl->setVariable('USAGE_ID', $PublicationUsage->getUsageId());
-        $this->tpl->setVariable('TITLE', $PublicationUsage->getTitle());
-        $this->tpl->setVariable('DESCRIPTION', $PublicationUsage->getDescription());
-        $this->tpl->setVariable('CHANNEL', $PublicationUsage->getChannel());
-        $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $PublicationUsage->getMdType()));
-        if ($PublicationUsage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
+        $publication_usage = $this->repository->getUsage($a_set['usage_id']);
+        $this->tpl->setVariable('USAGE_ID', $publication_usage->getUsageId());
+        $this->tpl->setVariable('TITLE', $publication_usage->getTitle());
+        $this->tpl->setVariable('DISPLAY_NAME', $publication_usage->getDisplayName());
+        $this->tpl->setVariable('DESCRIPTION', $publication_usage->getDescription());
+        $this->tpl->setVariable('CHANNEL', $publication_usage->getChannel());
+        $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $publication_usage->getMdType()));
+        if ($publication_usage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
             $this->tpl->setVariable('FLAVOR', '&nbsp');
             $this->tpl->setVariable('TAG', '&nbsp');
-        } elseif ($PublicationUsage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
-            $this->tpl->setVariable('FLAVOR', $PublicationUsage->getFlavor());
+        } elseif ($publication_usage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
+            $this->tpl->setVariable('FLAVOR', $publication_usage->getFlavor());
             $this->tpl->setVariable('TAG', '&nbsp');
         } else {
-            $this->tpl->setVariable('TAG', $PublicationUsage->getTag());
+            $this->tpl->setVariable('TAG', $publication_usage->getTag());
             $this->tpl->setVariable('FLAVOR', '&nbsp');
         }
+        $group_name = '';
+        if (!is_null($publication_usage->getGroupId())) {
+            $publication_usage_group = PublicationUsageGroup::find($publication_usage->getGroupId());
+            $group_name = $publication_usage_group ? $publication_usage_group->getName() : $group_name;
+        }
+        $this->tpl->setVariable('GROUP_NAME', $group_name);
 
-        $this->addActionMenu($PublicationUsage);
+        $extras = [];
+        if ($publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
+            $publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
+            if ($publication_usage->isExternalDownloadSource()) {
+                $extras[] = $this->parent_obj->txt('ext_dl_source');
+            }
+        }
+        $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
+
+        $this->addActionMenu($publication_usage);
     }
 
     protected function initColumns()
     {
         $this->addColumn($this->parent_obj->txt('usage_id'));
         $this->addColumn($this->parent_obj->txt('title'));
+        $this->addColumn($this->parent_obj->txt('display_name'));
         $this->addColumn($this->parent_obj->txt('description'));
         $this->addColumn($this->parent_obj->txt('channel'));
         $this->addColumn($this->parent_obj->txt('md_type'));
         $this->addColumn($this->parent_obj->txt('flavor'));
         $this->addColumn($this->parent_obj->txt('tag'));
-        //		$this->addColumn($this->txt('status'));
+        $this->addColumn($this->parent_obj->txt('group_th'));
+        $this->addColumn($this->parent_obj->txt('extra_config'));
 
         $this->addColumn($this->plugin->txt('common_actions'), '', '150px');
     }

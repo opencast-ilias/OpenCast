@@ -80,13 +80,13 @@ class PublicationUsageDefault extends PublicationUsage
         if (is_null($defaults)) {
             return null;
         }
-        $PublicationUsage = new PublicationUsage();
-        $PublicationUsage->setUsageId($usage);
-        $PublicationUsage->setChannel($defaults['channel']);
-        $PublicationUsage->setMdType($defaults['md_type']);
-        $PublicationUsage->setSearchKey($defaults['search_key']);
-        $PublicationUsage->setFlavor($defaults['flavor']);
-        $PublicationUsage->setTag($defaults['tag']);
-        return $PublicationUsage;
+        $publication_usage = new PublicationUsage();
+        $publication_usage->setUsageId($usage);
+        $publication_usage->setChannel($defaults['channel']);
+        $publication_usage->setMdType($defaults['md_type']);
+        $publication_usage->setSearchKey($defaults['search_key']);
+        $publication_usage->setFlavor($defaults['flavor']);
+        $publication_usage->setTag($defaults['tag']);
+        return $publication_usage;
     }
 }

@@ -10,6 +10,8 @@ use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use stdClass;
 use xoctException;
@@ -49,6 +51,10 @@ class PublicationSelector
      * @var PublicationUsageRepository
      */
     protected $publication_usage_repository;
+    /**
+     * @var PublicationSubUsageRepository
+     */
+    protected $publication_sub_usage_repository;
     /**
      * @var Publication[]|Media[]|Attachment[]
      */
@@ -112,6 +118,7 @@ class PublicationSelector
         $this->user = $DIC->user();
         $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
+        $this->publication_sub_usage_repository = new PublicationSubUsageRepository();
     }
 
     /**
@@ -158,23 +165,50 @@ class PublicationSelector
      */
     public function getDownloadPublications(): array
     {
-        if ($this->download_publications === null) {
-            $pubs = $this->getPublicationMetadataForUsage(
-                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD)
-            );
-            if ($pubs === []) {
-                $pubs = $this->getPublicationMetadataForUsage(
-                    $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK)
-                );
+        if (!isset($this->download_publications)) {
+            $pubs = [];
+            $download_pub_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD);
+            $download_pub_sub_usages = $this->publication_sub_usage_repository->convertSubsToUsage(PublicationUsage::USAGE_DOWNLOAD);
+            $download_usages = array_merge([$download_pub_usage], $download_pub_sub_usages);
+            foreach ($download_usages as $download_usage) {
+                $usage_pubs = $this->getPublicationMetadataForUsage($download_usage);
+                if (!empty($usage_pubs)) {
+                    $pubs = array_merge($usage_pubs, $pubs);
+                }
             }
-            $this->download_publications = $pubs;
+            if (empty($pubs)) {
+                $download_fallback_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK);
+                $download_usages = array_merge([$download_fallback_usage], $download_usages);
+                $pubs = $this->getPublicationMetadataForUsage($download_fallback_usage);
+            }
+            // adding external download source option to the publications.
+            $pubs_mapped = array_map(function ($pub) use ($download_usages) {
+                $ext_dl_source = false;
+                $usage_id = $pub->usage_id;
+                $usage_type = $pub->usage_type;
+                $usage_filtered = array_filter($download_usages, function ($usage) use ($usage_id, $usage_type) {
+                    if ($usage_type == 'sub') {
+                        return $usage->isSub() && $usage->getSubId() == $usage_id;
+                    } else {
+                        return !$usage->isSub() && $usage->getUsageId() == $usage_id;
+                    }
+                });
+                if (!empty($usage_filtered)) {
+                    $ext_dl_source = reset($usage_filtered)->isExternalDownloadSource();
+                }
+                $pub->ext_dl_source = $ext_dl_source;
+                return $pub;
+            }, $pubs);
+            $this->download_publications = $pubs_mapped;
         }
 
         return $this->download_publications;
     }
 
     /**
-     * @return DownloadDto[]
+     * @param bool $with_urls
+     * @return array $categorized_dtos dtos array with format:
+     *      $categorized_dtos[{USAGE TYPE: org/sub}][{usage id (string) or usage sub id (int)}][$downloadDto]
      * @throws xoctException
      */
     public function getDownloadDtos(bool $with_urls = true): array
@@ -188,21 +222,30 @@ class PublicationSelector
             }
             return 0;
         });
-        return array_map(function ($pub, $i) use ($with_urls): \srag\Plugins\Opencast\Model\DTO\DownloadDto {
-            /** @var $pub Publication|Media|Attachment */
-            $label = ($pub instanceof Media) ? $pub->getHeight() . 'p' :
+
+        $categorized_dtos = [];
+        foreach ($download_publications as $index => $pub) {
+            $i = ($index + 1);
+            $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight() . 'p' : 'Download ' . $i) :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
-            return new DownloadDto(
+            $downloadDto = new DownloadDto(
                 $pub->getId(),
-                $label,
+                trim($label),
                 $with_urls ?
                     (PluginConfig::getConfig(PluginConfig::F_SIGN_DOWNLOAD_LINKS) ?
                         xoctSecureLink::signDownload($pub->getUrl()) : $pub->getUrl())
                     : ''
             );
-        }, $download_publications, array_keys($download_publications));
+            if ($pub->usage_type === PublicationUsage::USAGE_TYPE_SUB) {
+                $categorized_dtos[PublicationUsage::USAGE_TYPE_SUB][$pub->usage_id][] = $downloadDto;
+            } else {
+                $categorized_dtos[PublicationUsage::USAGE_TYPE_ORG][$pub->usage_id][] = $downloadDto;
+            }
+        }
+
+        return $categorized_dtos;
     }
 
     /**
@@ -430,42 +473,65 @@ class PublicationSelector
     }
 
     /**
-     * @param $PublicationUsage
+     * @param $publication_usage
      *
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
-    public function getPublicationMetadataForUsage($PublicationUsage): array
+    public function getPublicationMetadataForUsage($publication_usage): array
     {
-        if (!$PublicationUsage instanceof PublicationUsage) {
+        if (!$publication_usage instanceof PublicationUsage) {
             return [];
         }
+        $usage_type = PublicationUsage::USAGE_TYPE_ORG;
+        $usage_id = $publication_usage->getUsageId();
+        if ($publication_usage->isSub()) {
+            $usage_type = PublicationUsage::USAGE_TYPE_SUB;
+            $usage_id = $publication_usage->getSubId();
+        }
         /**
-         * @var $PublicationUsage       PublicationUsage
+         * @var $publication_usage       PublicationUsage
          * @var $attachment             Attachment
          * @var $medium                 Media
          */
         $media = [];
         $attachments = [];
         foreach ($this->getPublications() as $publication) {
-            if ($publication->getChannel() === $PublicationUsage->getChannel()) {
+            if ($publication->getChannel() === $publication_usage->getChannel()) {
                 $media += $publication->getMedia();
                 $attachments += $publication->getAttachments();
             }
         }
+        // Adding the usage and sub usage flags to both attachments and media.
+        $attachments = array_map(function ($attachment) use ($usage_type, $usage_id) {
+            $attachment->usage_type = $usage_type;
+            $attachment->usage_id = $usage_id;
+            return $attachment;
+        }, $attachments);
+        $media = array_map(function ($medium) use ($usage_type, $usage_id) {
+            $medium->usage_type = $usage_type;
+            $medium->usage_id = $usage_id;
+            return $medium;
+        }, $media);
         $return = [];
-        switch ($PublicationUsage->getMdType()) {
+        switch ($publication_usage->getMdType()) {
             case PublicationUsage::MD_TYPE_ATTACHMENT:
                 foreach ($attachments as $attachment) {
-                    switch ($PublicationUsage->getSearchKey()) {
+                    switch ($publication_usage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
-                            if ($this->checkFlavor($attachment->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $return[] = $attachment;
+                            if ($this->checkFlavor($attachment->getFlavor(), $publication_usage->getFlavor())) {
+                                $result = $this->checkMediaTypes($attachment, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
-                            if (in_array($PublicationUsage->getTag(), $attachment->getTags())) {
-                                $return[] = $attachment;
+                            if (in_array($publication_usage->getTag(), $attachment->getTags())) {
+                                $result = $this->checkMediaTypes($attachment, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                     }
@@ -473,15 +539,21 @@ class PublicationSelector
                 break;
             case PublicationUsage::MD_TYPE_MEDIA:
                 foreach ($media as $medium) {
-                    switch ($PublicationUsage->getSearchKey()) {
+                    switch ($publication_usage->getSearchKey()) {
                         case PublicationUsage::SEARCH_KEY_FLAVOR:
-                            if ($this->checkFlavor($medium->getFlavor(), $PublicationUsage->getFlavor())) {
-                                $return[] = $medium;
+                            if ($this->checkFlavor($medium->getFlavor(), $publication_usage->getFlavor())) {
+                                $result = $this->checkMediaTypes($medium, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                         case PublicationUsage::SEARCH_KEY_TAG:
-                            if (in_array($PublicationUsage->getTag(), $medium->getTags())) {
-                                $return[] = $medium;
+                            if (in_array($publication_usage->getTag(), $medium->getTags())) {
+                                $result = $this->checkMediaTypes($medium, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
                             }
                             break;
                     }
@@ -489,8 +561,10 @@ class PublicationSelector
                 break;
             case PublicationUsage::MD_TYPE_PUBLICATION_ITSELF:
                 foreach ($this->getPublications() as $publication) {
-                    if ($publication->getChannel() === $PublicationUsage->getChannel()) {
-                        $return[] = $publication;
+                    if ($publication->getChannel() == $publication_usage->getChannel()) {
+                        $publication->usage_type = $usage_type;
+                        $publication->usage_id = $usage_id;
+                        $return[] = clone $publication;
                     }
                 }
                 break;
@@ -555,13 +629,37 @@ class PublicationSelector
     }
 
     /**
+     * Returns the publication if the media type matches the usage media type, null otherwise.
+     * @param publicationMetadata $publicationType
+     * @param PublicationUsage $publication_usage
+     *
+     * @return publicationMetadata|null
+     */
+    private function checkMediaTypes(
+        publicationMetadata $publicationType,
+        PublicationUsage $publication_usage
+    ): ?publicationMetadata
+    {
+        $media_types = $publication_usage->getArrayMediaTypes();
+        if (empty($media_types)) {
+            return $publicationType;
+        }
+        if (in_array($publicationType->getMediatype(), $media_types)) {
+            return $publicationType;
+        }
+        return null;
+    }
+
+    /**
      * @return Publication[]|Media[]|Attachment[]
      * @throws xoctException
      */
     public function getCaptionPublications(): array
     {
         if (empty($this->caption_publications)) {
-            $captions = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS));
+            $captions = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS)
+            );
             $captions_fallback = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS_FALLBACK));
             $this->caption_publications = array_merge($captions, $captions_fallback);
         }
