@@ -1,5 +1,8 @@
 # Change Log
 
+## [5.4.1]
+- Fixed a compatibility issue in the new caching service.
+
 ## [5.4.0]
 - Implemented improved Caching Service which fixes #194
 
