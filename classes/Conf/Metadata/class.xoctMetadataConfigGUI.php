@@ -15,11 +15,13 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
 use srag\Plugins\Opencast\Model\ListProvider\ListProvider;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
     use OutputTrait;
     use TranslatorTrait;
+    use LocaleTrait;
 
     public const CMD_STORE = 'store';
     public const CMD_REORDER = 'reorder';
@@ -276,11 +278,13 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $digested = [];
         foreach ($raw_list as $key => $value) {
             if ($field_id == 'language') {
-                $translated = $this->plugin->txt('md_lang_list_' . $key);
-                if (strpos($txt, "MISSING ") !== false) {
-                    $split = explode('.', $value);
-                    $translated = ucfirst($split[count($split) - 1]);
-                }
+                $split = explode('.', $value);
+                $default_text = ucfirst(strtolower($split[count($split) - 1]));
+                $translated = $this->getLocaleString(
+                    'md_lang_list_' . $key,
+                    '',
+                    $default_text
+                );
                 $digested[$key] = $translated;
                 continue;
             }
@@ -290,14 +294,16 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                     continue;
                 }
                 if ($value->selectable) {
-                    $translated = $this->plugin->txt('md_license_list_' . str_replace(['-', ' '], ['', ''], $key));
-                    if (strpos($txt, "MISSING ") !== false) {
-                        $split = [$key];
-                        if (isset($value->label)) {
-                            $split = explode('.', $value->label);
-                        }
-                        $translated = ucfirst($split[count($split) - 1]);
+                    $split = [$key];
+                    if (isset($value->label)) {
+                        $split = explode('.', $value->label);
                     }
+                    $default_text = $split[count($split) - 1];
+                    $translated = $this->getLocaleString(
+                        'md_license_list_' . str_replace(['-', ' '], ['', ''], $key),
+                        '',
+                        $default_text
+                    );
                     $digested[$key] = $translated;
                 }
                 continue;

@@ -156,8 +156,19 @@ NOTE: you can define a list of tags in a comma-separated format like: "api, arch
 #### Workflow definition list
 In this sub-section you are able to get the list of workflow definitions based on the tags you defined in the above sub-section, simply by clicking on the "Update workflow list" button. On the other hand, you are able to edit the title and description of each workflow definition based on you needs simply via "Actions / Edit", the delete button is also provided!
 
+##### Title
+The title of the workflow definition, which at the end shows up in the dropdown list for users to select from, can be translated and follows the locale translation fallback mechanism:
+- By default what you enter or is set as title will be displayed to the user.
+- In case you remove the title (without providing translation fallback), the workflow definition id will be displayed.
+- In case you want to use the translation fallback mechanism, you have to add the string to the lang files with the following key format:
+  - workflow_selection_text_[workflow definition id]#:#TEST (e.g. workflow_selection_text_delete#:#Remove and retract the event)
+
 ##### Configuration Panel
 As a minor reminder and announcement, it is good to know that the configuration panel of each workflow definition (if any) will be dynamically and automatically displayed to the users and they can interact and enter values, which in return will be captured and sent to the workflow api as configuration parameter, therefore, you should take care of any cutom-defined logic that you provide for any workflow definition in Opencast.
+
+###### Prameter Labels
+You are able to provide custom label texts for the configuration panel items using translation fallback mechanism, with the following key format:
+- workflow_config_panel_label_[the id of the input]#:#TEST (e.g. workflow_config_panel_label_mpTitle#:#This item is translated)
 
 ## Workflow Parameters
 ### Parameters
@@ -217,6 +228,13 @@ It is also possible to define multiple placeholders in a single prefilled text o
 In case a metadata field is a list and requires to get the its list of available values from Opencast, there is the a button provided for this feature when adding or editing the metadata called "Load values from API", which gets the values from opencast and converts them into the format expected by Possible values.
 Opencast API user must have ROLE_API_LISTPROVIDERS_VIEW role which will be provided in latest version of Opencast (from 13 - 14)
 In addition to the role, the API version must be set to 1.10.0 or above.
+
+Using translation fallback mechanism for languages and licenses which are going to be displayed to the users in the dropdown:
+- For languages all you need to do is to provide the string in the lang file with the format like:
+  - md_lang_list_[the id of language from opencast]#:#TEST (e.g. md_lang_list_zho#:#Chinesisch)
+
+- For Licenses all you need to do is to provide the string in the lang file with the format like:
+  - md_license_list_[the id of the license from openacst]#:#TEST (e.g. md_license_list_ALLRIGHTS#:#All rights reserved)
 
 ## Video Portal
 Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series.

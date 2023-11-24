@@ -768,7 +768,7 @@ class xoctEventGUI extends xoctGUI
                         $data['scheduling']['object'],
                         new Processing(
                             PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                            $data['workflow_configuration']['object']
+                            $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'] ?? null)
                         )
                     )
                 )
