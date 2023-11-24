@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -7,6 +9,7 @@ use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -16,7 +19,9 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 class xoctWorkflowTableGUI extends TableGUI
 {
     use TranslatorTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait;
+
+
 
     public const LANG_MODULE = 'workflow';
 
@@ -56,15 +61,12 @@ class xoctWorkflowTableGUI extends TableGUI
         $parent->setTabParameter(xoctMainGUI::SUBTAB_WORKFLOWS_LIST);
     }
 
-    /**
-     * @throws DICException
-     */
     protected function initColumns(): void
     {
         foreach ($this->getSelectableColumns2() as $col) {
             $txt = $col['txt'];
             $id = $col['id'];
-            $sort = false;
+            $sort = '';
             $width = '';
             switch ($id) {
                 case 'description':
@@ -77,13 +79,13 @@ class xoctWorkflowTableGUI extends TableGUI
                     $width = '24px';
                     break;
             }
-            $action = ($id == 'action');
+            $action = ($id === 'action');
 
             $this->addColumn($txt, $sort, $width, $action);
         }
     }
 
-    public function getHTML()
+    public function getHTML(): string
     {
         $html = parent::getHTML();
         foreach ($this->modals as $modal) {
@@ -97,9 +99,6 @@ class xoctWorkflowTableGUI extends TableGUI
      *
      * @param     $column
      * @param     $row WorkflowAR
-     *
-     * @throws DICException
-     * @throws ilTemplateException
      */
     protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
     {
@@ -130,7 +129,7 @@ class xoctWorkflowTableGUI extends TableGUI
                 $delete_modal = $this->factory->modal()->interruptive(
                     $this->lng->txt('delete'),
                     $this->txt('msg_confirm_delete_workflow'),
-                    $this->ctrl->getFormAction($this->parent_obj, xoctWorkflowGUI::CMD_DELETE)
+                    $this->ctrl->getFormAction($this->parent_obj, xoctGUI::CMD_DELETE)
                 )->withAffectedItems(
                     [
                         $this->factory->modal()->interruptiveItem(
@@ -144,7 +143,7 @@ class xoctWorkflowTableGUI extends TableGUI
                     [
                         $this->factory->button()->shy(
                             $this->lng->txt('edit'),
-                            $this->ctrl->getLinkTarget($this->parent_obj, xoctWorkflowGUI::CMD_EDIT)
+                            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
                         ),
                         $this->factory->button()->shy(
                             $this->lng->txt('delete'),
@@ -158,10 +157,6 @@ class xoctWorkflowTableGUI extends TableGUI
         return '';
     }
 
-    /**
-     * @inheritDoc
-     * @throws DICException
-     */
     protected function getSelectableColumns2(): array
     {
         return [
@@ -206,10 +201,6 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->setId('xoct_workflows');
     }
 
-    /**
-     * @inheritDoc
-     * @throws DICException
-     */
     protected function initTitle(): void
     {
         $this->setTitle($this->translate('table_title', self::LANG_MODULE));

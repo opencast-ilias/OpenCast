@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Series;
 
 use ilException;
@@ -153,11 +155,15 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $data = $this->cache->get($user_string);
         } else {
             try {
-                $data = $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
+                $data = (array)$this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
                     'onlyWithWriteAccess' => true,
                     'withacl' => true,
                     'limit' => 5000
                 ]);
+                $data = array_filter($data, static function ($series) {
+                    return $series instanceof \stdClass;
+                });
+
             } catch (ilException $e) {
                 $data = [];
             }
@@ -177,7 +183,6 @@ class SeriesAPIRepository implements SeriesRepository, Request
                 continue;
             }
         }
-
 
         return $return;
     }

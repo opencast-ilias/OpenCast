@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Event;
 
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
@@ -38,12 +40,12 @@ interface EventRepository
      */
     public function getFiltered(
         array $filter,
-        $for_user = '',
-        $roles = [],
-        $offset = 0,
-        $limit = 1000,
-        $sort = '',
-        $as_object = false
+        string $for_user = '',
+        array $roles = [],
+        int $offset = 0,
+        int $limit = 1000,
+        string $sort = '',
+        bool $as_object = false
     );
 
     public function update(UpdateEventRequest $request): void;

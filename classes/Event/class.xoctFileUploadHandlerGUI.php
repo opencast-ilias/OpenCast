@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\Data\DataSize;
 use ILIAS\Filesystem\Exception\FileNotFoundException;
 use ILIAS\FileUpload\DTO\UploadResult;
@@ -12,9 +14,9 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
 
 /**
- * @ilCtrl_IsCalledBy xoctFileUploadHandler: xoctEventGUI, xoctConfGUI
+ * @ilCtrl_IsCalledBy xoctFileUploadHandlerGUI: xoctEventGUI, xoctConfGUI
  */
-class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
+class xoctFileUploadHandlerGUI extends AbstractCtrlAwareChunkedUploadHandler
 {
     /**
      * @var UploadStorageService
@@ -71,8 +73,8 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         $result = end($array);
 
         if ($result instanceof UploadResult && $result->isOK()) {
-            if ($this->is_chunked) {
-                $identifier = $this->uploadStorageService->appendChunkToStorage($result, $this->chunk_id);
+            if ($this->_is_chunked) {
+                $identifier = $this->uploadStorageService->appendChunkToStorage($result, $this->_chunk_id);
             } else {
                 $identifier = $this->uploadStorageService->moveUploadToStorage($result);
             }
@@ -102,7 +104,8 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
         return new BasicHandlerResult($this->getFileIdentifierParameterName(), $status, $identifier, $message);
     }
 
-    protected function getInfoResult(string $identifier): FileInfoResult
+    #[ReturnTypeWillChange]
+    public function getInfoResult(string $identifier): FileInfoResult
     {
         $info = $this->uploadStorageService->getFileInfo($identifier);
         /** @var DataSize $size */
@@ -111,7 +114,7 @@ class xoctFileUploadHandler extends AbstractCtrlAwareChunkedUploadHandler
             $this->getFileIdentifierParameterName(),
             $identifier,
             $info['name'],
-            $size->getSize(),
+            (int) $size->getSize(),
             $info['mimeType']
         );
     }

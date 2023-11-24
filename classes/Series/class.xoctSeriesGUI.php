@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -13,6 +15,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
+use ILIAS\DI\HTTPServices;
 
 /**
  * Class xoctSeriesGUI
@@ -64,18 +67,9 @@ class xoctSeriesGUI extends xoctGUI
      */
     private $tabs;
     /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
      * @var \ILIAS\DI\UIServices
      */
     private $ui;
-    /**
-     * @var \ILIAS\HTTP\Services
-     */
-    private $http;
-
     public function __construct(
         ilObjOpenCast $object,
         SeriesFormBuilder $seriesFormBuilder,
@@ -86,9 +80,7 @@ class xoctSeriesGUI extends xoctGUI
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->ui = $DIC->ui();
-        $this->http = $DIC->http();
         $this->objectSettings = ObjectSettings::find($object->getId());
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
@@ -136,7 +128,7 @@ class xoctSeriesGUI extends xoctGUI
     /**
      *
      */
-    protected function index()
+    protected function index(): void
     {
         $this->tabs->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
     }
@@ -144,7 +136,7 @@ class xoctSeriesGUI extends xoctGUI
     /**
      * @throws Exception
      */
-    protected function edit()
+    protected function edit(): void
     {
         $this->editGeneral();
     }
@@ -163,7 +155,7 @@ class xoctSeriesGUI extends xoctGUI
 
         $this->object->updateObjectFromSeries($series->getMetadata());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo($this->plugin->txt('series_has_duplicates'));
+            $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_GENERAL);
         $form = $this->seriesFormBuilder->update(
@@ -178,13 +170,12 @@ class xoctSeriesGUI extends xoctGUI
     /**
      * @throws xoctException
      */
-    protected function update()
+    protected function update(): void
     {
         $this->updateGeneral();
     }
 
     /**
-     * @throws DICException
      * @throws arException
      * @throws ilException
      * @throws xoctException
@@ -248,20 +239,19 @@ class xoctSeriesGUI extends xoctGUI
         $this->object->updateObjectFromSeries($metadata);
 
         $this->objectSettings->updateAllDuplicates($metadata);
-        ilUtil::sendSuccess($this->plugin->txt('series_saved'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('series_saved'), true);
         $this->ctrl->redirect($this, self::CMD_EDIT_GENERAL);
     }
 
     /**
      * @return void
-     * @throws DICException
      * @throws ilException
      */
     protected function editWorkflowParameters()
     {
         $this->seriesWorkflowParameterRepository->syncAvailableParameters($this->getObjId());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo($this->plugin->txt('series_has_duplicates'));
+            $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
 
@@ -273,10 +263,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->main_tpl->setContent($xoctSeriesFormGUI->getHTML());
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function updateWorkflowParameters()
+    protected function updateWorkflowParameters(): void
     {
         foreach (
             filter_input(
@@ -298,7 +285,7 @@ class xoctSeriesGUI extends xoctGUI
                 )->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
             }
         }
-        ilUtil::sendSuccess($this->plugin->txt('msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);
     }
 
@@ -323,28 +310,28 @@ class xoctSeriesGUI extends xoctGUI
     /**
      *
      */
-    protected function add()
+    protected function add(): void
     {
     }
 
     /**
      *
      */
-    protected function create()
+    protected function create(): void
     {
     }
 
     /**
      *
      */
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
     /**
      *
      */
-    protected function delete()
+    protected function delete(): void
     {
     }
 

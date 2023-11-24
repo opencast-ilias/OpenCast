@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Config\Series;
 
 use Exception;
@@ -48,7 +50,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue): bool {
+            static function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue): bool {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
             }
         );
@@ -59,6 +61,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         return MDFieldConfigSeriesAR::orderBy('sort')->getArray();
     }
 
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
     public function findByFieldId(string $field_id): ?MDFieldConfigAR
     {
         return MDFieldConfigSeriesAR::where(['field_id' => $field_id])->first();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use DateTime;
@@ -54,10 +56,9 @@ class MDParser
     }
 
     /**
-     * @param stdClass $data
      * @throws \xoctException
      */
-    public function getMetadataFromData($data): Metadata
+    public function getMetadataFromData(\stdClass $data): Metadata
     {
         $fields = [];
 
@@ -93,7 +94,7 @@ class MDParser
                         "value" => $entry
                     ];
             }
-            if (!in_array($field_data, $fields)) {
+            if (!in_array($field_data, $fields, true)) {
                 $fields[] = $field_data;
             }
         }
@@ -110,7 +111,7 @@ class MDParser
     public function parseAPIResponseSeries(array $response): Metadata
     {
         foreach ($response as $d) {
-            if ($d->flavor == Metadata::FLAVOR_DUBLINCORE_SERIES) {
+            if ($d->flavor === Metadata::FLAVOR_DUBLINCORE_SERIES) {
                 $fields = $d->fields;
                 break;
             }
@@ -130,7 +131,7 @@ class MDParser
     private function parseAPIResponseGeneric(array $fields, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
         foreach ($catalogue->getFieldDefinitions() as $fieldDefinition) {
-            if ($fieldDefinition->getId() == MDFieldDefinition::F_START_DATE) {
+            if ($fieldDefinition->getId() === MDFieldDefinition::F_START_DATE) {
                 // start can be in one or two fields, but we'll always store them in one field
                 $key_start_date = array_search(MDFieldDefinition::F_START_DATE, array_column($fields, 'id'));
                 $field = $fields[$key_start_date];

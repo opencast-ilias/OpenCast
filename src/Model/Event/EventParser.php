@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Event;
 
-use Opis\Closure\SerializableClosure;
 use srag\Plugins\Opencast\Model\ACL\ACLParser;
 use srag\Plugins\Opencast\Model\Metadata\Helper\MDParser;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;

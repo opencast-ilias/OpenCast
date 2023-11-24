@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Object;
 
 use ActiveRecord;
 use ilException;
 use ilObjOpenCast;
-use ilOpenCastPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -23,7 +24,6 @@ class ObjectSettings extends ActiveRecord
     public $paella_player_live_option;
     public $paella_player_live_file_id;
     public $paella_player_live_url;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const TABLE_NAME = 'xoct_data';
 
@@ -32,34 +32,24 @@ class ObjectSettings extends ActiveRecord
         return self::TABLE_NAME;
     }
 
-    /**
-     * @param $series_identifier
-     *
-     * @return int
-     */
-    public static function lookupObjId($series_identifier)
+    public static function lookupObjId(string $series_identifier): ?int
     {
         $objectSettings = ObjectSettings::where(['series_identifier' => $series_identifier])->last();
-        if ($objectSettings instanceof ObjectSettings) {
+        if ($objectSettings instanceof self) {
             return $objectSettings->getObjId();
         }
 
-        return false;
+        return null;
     }
 
-    /**
-     * @param $obj_id
-     *
-     * @return int
-     */
-    public static function lookupSeriesIdentifier($obj_id)
+    public static function lookupSeriesIdentifier(int $obj_id): ?string
     {
         $objetSettings = ObjectSettings::where(['obj_id' => $obj_id])->last();
-        if ($objetSettings instanceof ObjectSettings) {
+        if ($objetSettings instanceof self) {
             return $objetSettings->getSeriesIdentifier();
         }
 
-        return false;
+        return null;
     }
 
     public function create(): void
@@ -125,10 +115,7 @@ class ObjectSettings extends ActiveRecord
         return '';
     }
 
-    /**
-     * @return ilObjOpenCast
-     */
-    public function getILIASObject()
+    public function getILIASObject(): ilObjOpenCast
     {
         static $object;
         if (is_null($object[$this->getObjId()])) {
@@ -240,7 +227,7 @@ class ObjectSettings extends ActiveRecord
 
     public function getObjId(): int
     {
-        return $this->obj_id;
+        return (int)$this->obj_id;
     }
 
     public function setObjId(int $obj_id): void
@@ -330,7 +317,7 @@ class ObjectSettings extends ActiveRecord
 
     public function getDefaultView(): int
     {
-        return $this->default_view;
+        return (int) $this->default_view;
     }
 
     public function setDefaultView(int $default_view): void

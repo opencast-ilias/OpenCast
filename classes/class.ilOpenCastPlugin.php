@@ -1,9 +1,8 @@
 <?php
 
+declare(strict_types=1);
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -39,23 +38,11 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     public const PLUGIN_ID = 'xoct';
     public const PLUGIN_NAME = 'OpenCast';
     /**
-     * @var ilDBInterface
+     * @var ilDBInterface|null
      */
-    protected $db;
+    protected $_db = null; // to have compatibility with ILAIS 7 and 8, we double introduce the property
 
     private $is_new_installation = false;
-
-
-    /**
-     *
-     */
-    public function __construct()
-    {
-        parent::__construct();
-
-        global $DIC;
-        $this->db = $DIC->database();
-    }
 
     protected function init(): void
     {
@@ -63,13 +50,14 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         global $DIC;
         /** @var Container $opencastContainer */
         global $opencastContainer;
+        $this->_db = $DIC->database();
         $opencastContainer = Init::init($DIC);
     }
 
     protected function beforeUpdate(): bool
     {
         // Check Version
-        $check = new UpdateCheck($this->db);
+        $check = new UpdateCheck($this->_db);
         $this->is_new_installation = $check->isNewInstallation();
         if (!$check->isUpdatePossible()) {
             throw new ilPluginException(
@@ -79,52 +67,57 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         return true;
     }
 
-    protected function afterUpdate()
+    protected function afterUpdate(): void
     {
         if ($this->is_new_installation) {
             PluginConfig::importFromXML($this->getDirectory() . '/configuration/default_config.xml');
         }
     }
 
-    protected function uninstallCustom(): bool
+    protected function uninstallCustom(): void
     {
-        $this->db->dropTable(PermissionGrant::TABLE_NAME, false);
-        $this->db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
-        $this->db->dropTable(PermissionGroup::TABLE_NAME, false);
-        $this->db->dropTable(ObjectSettings::TABLE_NAME, false);
-        $this->db->dropTable(EventAdditionsAR::TABLE_NAME, false);
-        $this->db->dropTable(PermissionTemplate::TABLE_NAME, false);
-        $this->db->dropTable(PublicationUsage::TABLE_NAME, false);
-        $this->db->dropTable(PluginConfig::TABLE_NAME, false);
-        $this->db->dropTable(Report::DB_TABLE, false);
-        $this->db->dropTable(WorkflowAR::TABLE_NAME, false);
-        $this->db->dropTable(WorkflowParameter::TABLE_NAME, false);
-        $this->db->dropTable(SeriesWorkflowParameter::TABLE_NAME, false);
-        $this->db->dropTable(MDFieldConfigEventAR::TABLE_NAME, false);
-        $this->db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
-        $this->db->dropTable(UserSetting::TABLE_NAME, false);
-        $this->db->dropTable(AcceptedToU::TABLE_NAME, false);
-        $this->db->dropTable(DBCacheAR::TABLE_NAME, false);
-
-        return true;
+        $this->_db->dropTable(PermissionGrant::TABLE_NAME, false);
+        $this->_db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
+        $this->_db->dropTable(PermissionGroup::TABLE_NAME, false);
+        $this->_db->dropTable(ObjectSettings::TABLE_NAME, false);
+        $this->_db->dropTable(EventAdditionsAR::TABLE_NAME, false);
+        $this->_db->dropTable(PermissionTemplate::TABLE_NAME, false);
+        $this->_db->dropTable(PublicationUsage::TABLE_NAME, false);
+        $this->_db->dropTable(PluginConfig::TABLE_NAME, false);
+        $this->_db->dropTable(Report::DB_TABLE, false);
+        $this->_db->dropTable(WorkflowAR::TABLE_NAME, false);
+        $this->_db->dropTable(WorkflowParameter::TABLE_NAME, false);
+        $this->_db->dropTable(SeriesWorkflowParameter::TABLE_NAME, false);
+        $this->_db->dropTable(MDFieldConfigEventAR::TABLE_NAME, false);
+        $this->_db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
+        $this->_db->dropTable(UserSetting::TABLE_NAME, false);
+        $this->_db->dropTable(AcceptedToU::TABLE_NAME, false);
+        $this->_db->dropTable('xoct_cache', false);
     }
 
     /**
-     * @var ilOpenCastPlugin
+     * @var ilOpenCastPlugin|null
      */
-    protected static $cache;
+    protected static $cache = null;
 
-    /**
-     * @return ilOpenCastPlugin
-     */
-    public static function getInstance()
+    public static function getInstance(): ilOpenCastPlugin
     {
-        if (!isset(self::$cache)) {
-            self::$cache = new self();
+        global $DIC;
+        if (isset(self::$cache)) {
+            return self::$cache;
         }
 
-        return self::$cache;
+        // check if we are in ILIAS 8 context
+        if (isset($DIC['component.factory'])) {
+            /** @var ilComponentFactory $component_factory */
+            $component_factory = $DIC['component.factory'];
+            /** @var $plugin ilOpenCastPlugin */
+            return self::$cache = $component_factory->getPlugin('xoct');
+        }
+        // otherwise we are in ILIAS 7 context
+        return self::$cache = new self();
     }
+
 
     public function getPluginName(): string
     {

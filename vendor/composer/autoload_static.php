@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
+class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -14,7 +14,7 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
+        's' =>
         array (
             'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
             'srag\\LibrariesNamespaceChanger\\' => 31,
@@ -22,18 +22,18 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
         ),
-        'O' => 
+        'O' =>
         array (
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'G' => 
+        'G' =>
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
@@ -42,56 +42,56 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
     );
 
     public static $prefixDirsPsr4 = array (
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
+        'srag\\LibraryLanguageInstaller\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
         ),
-        'srag\\LibrariesNamespaceChanger\\' => 
+        'srag\\LibrariesNamespaceChanger\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DataTableUI\\OpenCast\\' => 
+        'srag\\DataTableUI\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/datatable/src',
         ),
-        'srag\\DIC\\OpenCast\\' => 
+        'srag\\DIC\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\OpenCast\\' => 
+        'srag\\CustomInputGUIs\\OpenCast\\' =>
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            1 => __DIR__ . '/..' . '/psr/http-factory/src',
         ),
-        'Psr\\Http\\Client\\' => 
+        'Psr\\Http\\Client\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'OpencastApi\\Rest\\' => 
+        'OpencastApi\\Rest\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' => 
+        'OpencastApi\\Mock\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' => 
+        'OpencastApi\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'GuzzleHttp\\Psr7\\' => 
+        'GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
+        'GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
+        'GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
@@ -291,6 +291,7 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
         'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => __DIR__ . '/../..' . '/src/DI/OpencastDIC.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/OutputTrait.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/TranslatorTrait.php',
+        'srag\\Plugins\\Opencast\\LegacyHelpers\\UploadSize' => __DIR__ . '/../..' . '/src/LegacyHelpers/UploadSize.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/ACL/ACL.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACLEntry' => __DIR__ . '/../..' . '/src/Model/ACL/ACLEntry.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACLParser' => __DIR__ . '/../..' . '/src/Model/ACL/ACLParser.php',
@@ -366,9 +367,9 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
         'srag\\Plugins\\Opencast\\Model\\Publication\\Media' => __DIR__ . '/../..' . '/src/Model/Publication/Media.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Publication' => __DIR__ . '/../..' . '/src/Model/Publication/Publication.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationAPIRepository' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationAPIRepository.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationMetadata' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationRepository' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationSelector' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationSelector.php',
-        'srag\\Plugins\\Opencast\\Model\\Publication\\publicationMetadata' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationMetadata.php',
         'srag\\Plugins\\Opencast\\Model\\Report\\Report' => __DIR__ . '/../..' . '/src/Model/Report/Report.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\RRule' => __DIR__ . '/../..' . '/src/Model/Scheduling/RRule.php',
         'srag\\Plugins\\Opencast\\Model\\Scheduling\\Scheduling' => __DIR__ . '/../..' . '/src/Model/Scheduling/Scheduling.php',
@@ -416,6 +417,7 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\PaellaConfigStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/PaellaConfigStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/UploadStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\Locale\\LocaleTrait' => __DIR__ . '/../..' . '/src/Util/Locale/LocaleTraits.php',
+        'srag\\Plugins\\Opencast\\Util\\MimeType' => __DIR__ . '/../..' . '/src/Util/MimeType.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/LivePlayerDataBuilder.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigService.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigServiceFactory' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigServiceFactory.php',
@@ -442,7 +444,7 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
         'xoctEventTableGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventTableGUI.php',
         'xoctEventTileGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventTileGUI.php',
         'xoctException' => __DIR__ . '/../..' . '/classes/class.xoctException.php',
-        'xoctFileUploadHandler' => __DIR__ . '/../..' . '/classes/Event/class.xoctFileUploadHandler.php',
+        'xoctFileUploadHandlerGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctFileUploadHandlerGUI.php',
         'xoctGUI' => __DIR__ . '/../..' . '/classes/class.xoctGUI.php',
         'xoctGrantPermissionGUI' => __DIR__ . '/../..' . '/classes/Invitations/class.xoctGrantPermissionGUI.php',
         'xoctInternalAPI' => __DIR__ . '/../..' . '/classes/Service/class.xoctInternalAPI.php',
@@ -487,9 +489,9 @@ class ComposerStaticInit3ec6035552927b2808b955c9ba4217c5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit3ec6035552927b2808b955c9ba4217c5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$classMap;
 
         }, null, ClassLoader::class);
     }

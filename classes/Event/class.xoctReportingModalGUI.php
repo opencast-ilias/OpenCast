@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -9,8 +11,6 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctReportingModalGUI extends ilModalGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const REPORTING_TYPE_DATE = 1;
     public const REPORTING_TYPE_QUALITY = 2;
     /**
@@ -23,7 +23,7 @@ class xoctReportingModalGUI extends ilModalGUI
      */
     protected $parent_gui;
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     private $ctrl;
 
@@ -31,7 +31,7 @@ class xoctReportingModalGUI extends ilModalGUI
      * xoctReportingFormGUI constructor.
      * @noinspection MagicMethodsValidityInspection
      */
-    public function __construct($parent_gui, $type)
+    protected function __construct($parent_gui, $type)
     {
         global $opencastContainer, $DIC;
         $main_tpl = $DIC->ui()->mainTemplate();
@@ -73,7 +73,7 @@ class xoctReportingModalGUI extends ilModalGUI
      * @return never
      * @throws ilException
      */
-    public static function getInstance()
+    public static function getInstance(): self
     {
         throw new ilException('Do not use this method, please use the constructor instead.');
     }
@@ -83,7 +83,7 @@ class xoctReportingModalGUI extends ilModalGUI
      * @throws \srag\DIC\OpenCast\Exception\DICException
      * @throws ilTemplateException
      */
-    public function getHTML()
+    public function getHTML(): string
     {
         // only the following two lines differ from the parent method
         $tpl = new ilTemplate(

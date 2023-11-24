@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
 
 use DOMDocument;
@@ -24,8 +26,6 @@ use srag\Plugins\Opencast\API\API;
  */
 class WorkflowParameterRepository
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     /**
      * @var self
      */
@@ -58,11 +58,16 @@ class WorkflowParameterRepository
      * @var \ilDBInterface
      */
     private $db;
+    /**
+     * @var \ilGlobalTemplateInterface
+     */
+    private $main_tpl;
 
     public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
         global $DIC;
         global $opencastContainer;
+        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->api = $opencastContainer[API::class];
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
@@ -81,23 +86,31 @@ class WorkflowParameterRepository
         if (!$workflow_definition_id) {
             throw new xoctException(xoctException::INTERNAL_ERROR, 'No Workflow defined in plugin configuration.');
         }
-        $response = $this->api->routes()->workflowsApi->getDefinition($workflow_definition_id, true, true, OpencastAPI::RETURN_ARRAY);
+        $response = $this->api->routes()->workflowsApi->getDefinition(
+            $workflow_definition_id,
+            true,
+            true,
+            OpencastAPI::RETURN_ARRAY
+        );
 
         if ($response == false) {
-            throw new xoctException(xoctException::INTERNAL_ERROR, "Couldn't fetch workflow information for workflow '$workflow_definition_id'.");
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                "Couldn't fetch workflow information for workflow '$workflow_definition_id'."
+            );
         }
 
         if (!isset($response['configuration_panel'])) {
-            throw new xoctException(xoctException::INTERNAL_ERROR, 'No configuration panel found for workflow with id = ' . $workflow_definition_id);
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'No configuration panel found for workflow with id = ' . $workflow_definition_id
+            );
         }
 
         try {
             return $this->parseConfigurationPanelHTML($response['configuration_panel']);
         } catch (ilException $e) {
-            ilUtil::sendFailure(
-                $this->plugin->txt('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(),
-                true
-            );
+            $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
             $this->ctrl->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
         }
 

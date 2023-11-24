@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -40,7 +42,6 @@ final class ActiveContainer implements Container
     private const NULL_PREFIX = 'null' . self::GLUE;
     private const TRUE = 'true';
     private const FALSE = 'false';
-
 
     /**
      * @var \srag\Plugins\Opencast\Model\Cache\Container\Request
@@ -111,7 +112,6 @@ final class ActiveContainer implements Container
         );
     }
 
-
     /**
      * @return string|int|mixed[]|bool|null
      */
@@ -159,7 +159,6 @@ final class ActiveContainer implements Container
         }
         return null;
     }
-
 
     public function isLocked(): bool
     {

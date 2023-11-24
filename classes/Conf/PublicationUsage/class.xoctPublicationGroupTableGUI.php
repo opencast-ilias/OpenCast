@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupRepository;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPublicationGroupTableGUI
@@ -12,6 +15,15 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupReposito
  */
 class xoctPublicationGroupTableGUI extends ilTable2GUI
 {
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
+
     public const TBL_ID = 'tbl_xoct_pub_g';
     /**
      * @var array
@@ -26,13 +38,10 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
      */
     protected $container;
 
-
-    /**
-     * @param xoctPublicationUsageGUI $a_parent_obj
-     * @param string                  $a_parent_cmd
-     */
-    public function __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd)
-    {
+    public function __construct(
+        xoctPublicationUsageGUI $a_parent_obj,
+        string $a_parent_cmd
+    ) {
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
@@ -41,7 +50,7 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->setFormName(self::TBL_ID);
         $this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
         $this->parent_obj = $a_parent_obj;
-        $this->setTitle($this->parent_obj->txt('table_title_usage_group'));
+        $this->setTitle($this->getLocaleString('table_title_usage_group'));
         $this->setRowTemplate(
             'tpl.publication_group.html',
             'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
@@ -51,13 +60,8 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->parseData();
     }
 
-
-    /**
-     * @param array $a_set
-     *
-     * @throws DICException
-     */
-    public function fillRow($a_set)
+    #[ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $a_set): void
     {
         /**
          * @var $publication_usage_group PublicationUsageGroup
@@ -70,37 +74,30 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->addActionMenu($publication_usage_group);
     }
 
-
-    protected function initColumns()
+    protected function initColumns(): void
     {
-        $this->addColumn($this->parent_obj->txt('group_name'));
-        $this->addColumn($this->parent_obj->txt('group_display_name'));
-        $this->addColumn($this->parent_obj->txt('group_description'));
+        $this->addColumn($this->getLocaleString('group_name'));
+        $this->addColumn($this->getLocaleString('group_display_name'));
+        $this->addColumn($this->getLocaleString('group_description'));
 
-        $this->addColumn($this->plugin->txt('common_actions'), '', '150px');
+        $this->addColumn($this->getLocaleString('actions', 'common'), '', '150px');
     }
 
-
-    /**
-     * @param PublicationUsageGroup $publication_usage_group
-     *
-     * @throws DICException
-     */
-    protected function addActionMenu(PublicationUsageGroup $publication_usage_group)
+    protected function addActionMenu(PublicationUsageGroup $publication_usage_group): void
     {
         $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setListTitle($this->plugin->txt('common_actions'));
+        $current_selection_list->setListTitle($this->getLocaleString('actions', 'common'));
         $current_selection_list->setId(self::TBL_ID . '_actions_' . $publication_usage_group->getId());
         $current_selection_list->setUseImages(false);
 
         $this->ctrl->setParameter($this->parent_obj, 'id', $publication_usage_group->getId());
         $current_selection_list->addItem(
-            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT),
+            $this->getLocaleString(xoctGUI::CMD_EDIT),
             xoctPublicationUsageGUI::CMD_EDIT_GROUP,
             $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_EDIT_GROUP)
         );
         $current_selection_list->addItem(
-            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_DELETE),
+            $this->getLocaleString(xoctGUI::CMD_DELETE),
             xoctPublicationUsageGUI::CMD_DELETE_GROUP,
             $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_CONFIRM_DELETE_GROUP)
         );
@@ -108,18 +105,13 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
 
-
-    protected function parseData()
+    protected function parseData(): void
     {
         $groups = PublicationUsageGroupRepository::getSortedArrayList();
         $this->setData($groups);
     }
 
-
-    /**
-     * @param $item
-     */
-    protected function addAndReadFilterItem(ilFormPropertyGUI $item)
+    protected function addAndReadFilterItem(ilFormPropertyGUI $item): void
     {
         $this->addFilterItem($item);
         $item->readFromSession();

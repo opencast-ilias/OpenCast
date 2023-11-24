@@ -14,8 +14,8 @@ trait LocaleTrait
     /**
      * A translator function, which makes sure that strings go through pluign->txt method to get translated.
      * It uses the plugin property of the class or gets it from global container.
-     * @param string $string string to translate
-     * @param string $module
+     * @param string  $string   string to translate
+     * @param string  $module
      * @param ?string $fallback the fallback string in case the translataion does not exist.
      *
      * @return string
@@ -39,7 +39,10 @@ trait LocaleTrait
         $start = substr($translation, 0, 1);
         $end = substr($translation, -1);
         if (((empty($translation) || $translation === "MISSING" || strpos($translation, "MISSING ") === 0) ||
-            ($start == '-' && $end == '-' && strpos($translation, $locale_string) !== false)) && !empty($fallback)) {
+                ($start === '-' && $end === '-' && strpos(
+                    $translation,
+                    $locale_string
+                ) !== false)) && !empty($fallback)) {
             return $fallback;
         }
 

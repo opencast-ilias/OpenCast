@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -89,22 +91,6 @@ class xoct
         return self::isApiVersionGreaterThan('v1.1.0');
     }
 
-    /**
-     *
-     */
-    public static function initILIAS(): void
-    {
-        chdir(self::getRootPath());
-        require_once('./Services/Context/classes/class.ilContext.php');
-        require_once('./Services/Authentication/classes/class.ilAuthFactory.php');
-        $il_context_auth = ilAuthFactory::CONTEXT_WEB;
-        $_COOKIE['ilClientId'] = $_SERVER['argv'][3];
-        $_POST['username'] = $_SERVER['argv'][1];
-        $_POST['password'] = $_SERVER['argv'][2];
-
-        ilAuthFactory::setContext($il_context_auth);
-        require_once('./include/inc.header.php');
-    }
 
     public static function getRootPath(): string
     {

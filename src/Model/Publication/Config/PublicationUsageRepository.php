@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
@@ -14,17 +16,16 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 class PublicationUsageRepository
 {
     use LocaleTrait;
+
     public function exists(string $usage): bool
     {
         return !is_null(PublicationUsage::find($usage));
     }
 
-    /**
-     * @return PublicationUsage|null
-     */
-    public function getUsage(string $usage)
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    public function getUsage(string $usage): ?PublicationUsage
     {
-        return PublicationUsage::find($usage) ?: PublicationUsageDefault::getDefaultUsage($usage);
+        return PublicationUsage::find($usage) ?? PublicationUsageDefault::getDefaultUsage($usage);
     }
 
     public function getMissingUsageIds(): array
@@ -37,10 +38,12 @@ class PublicationUsageRepository
      */
     public function getSubAllowedUsageIds(): array
     {
-        $sub_allowed_configured = array_intersect(PublicationUsage::$sub_allowed_usage_ids, $this->getArray(null, 'usage_id'));
+        $sub_allowed_configured = array_intersect(
+            PublicationUsage::$sub_allowed_usage_ids,
+            $this->getArray(null, 'usage_id')
+        );
         return $sub_allowed_configured;
     }
-
 
     /**
      * @param null $key
@@ -66,11 +69,11 @@ class PublicationUsageRepository
     public function store(
         string $usage,
         string $title,
-        string $display_name = '',
         string $description,
-        string $group_id = null,
         string $channel,
         int $md_type,
+        string $display_name = '',
+        string $group_id = null,
         string $search_key = '',
         string $flavor = '',
         string $tag = '',

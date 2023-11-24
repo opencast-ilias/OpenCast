@@ -170,6 +170,14 @@ var xoctGroupParticipant = {
         self.container_per_group.empty();
         var participants = xoctGroup.getSelectedGroupParticipants();
         participants.forEach(function(participant) {
+            // continue if participant has no properties user_id or name
+            if(!participant || !participant.hasOwnProperty('user_id') || !participant.hasOwnProperty('name')) {
+                return;
+            }
+
+            if (!participant.user_id || !participant.name) {
+                return;
+            }
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id
                 + '"><div style="margin-right:30px;">'

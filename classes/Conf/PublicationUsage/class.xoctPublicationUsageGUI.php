@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
+use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPublicationUsageGUI
@@ -15,6 +19,15 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
  */
 class xoctPublicationUsageGUI extends xoctGUI
 {
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
+
     public const IDENTIFIER = 'usage_id';
     public const CMD_SELECT_PUBLICATION_ID = 'selectPublicationId';
     public const CMD_SELECT_PUBLICATION_ID_SUB = 'selectPublicationIdForSub';
@@ -47,17 +60,9 @@ class xoctPublicationUsageGUI extends xoctGUI
      */
     private $toolbar;
     /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var \ilTabs
+     * @var \ilTabsGUI
      */
     private $tabs;
-    /**
-     * @var HTTPServices
-     */
-    private $http;
     /**
      * @var string
      */
@@ -74,6 +79,7 @@ class xoctPublicationUsageGUI extends xoctGUI
      * @var string
      */
     protected $channel;
+
     /**
      * xoctPublicationUsageGUI constructor.
      */
@@ -81,9 +87,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         global $DIC;
         parent::__construct();
-        $this->http = $DIC->http();
         $this->toolbar = $DIC->toolbar();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->tabs = $DIC->tabs();
         // Getting Query Parameters
         $this->pub_subtab_active =
@@ -92,38 +96,35 @@ class xoctPublicationUsageGUI extends xoctGUI
         if (!empty($this->http->request()->getParsedBody()[self::IDENTIFIER])) {
             $this->identifier = $this->http->request()->getParsedBody()[self::IDENTIFIER];
         }
-        $this->get_id = (int) $this->http->request()->getQueryParams()['id'] ?? null;
-        $this->post_id = (int) $this->http->request()->getParsedBody()['id'] ?? null;
+        $this->get_id = (int) ($this->http->request()->getQueryParams()['id'] ?? null);
+        $this->post_id = (int) ($this->http->request()->getParsedBody()['id'] ?? null);
         $this->channel = $this->http->request()->getParsedBody()[xoctPublicationUsageFormGUI::F_CHANNEL] ?? null;
         $this->repository = new PublicationUsageRepository();
         $this->sub_repository = new PublicationSubUsageRepository();
         $this->setTab();
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function index()
+    protected function index(): void
     {
-        $xoctPublicationTabsTableGUI = $this->initTabTableGUI($this->pub_subtab_active);
-        $this->main_tpl->setContent($xoctPublicationTabsTableGUI->getHTML());
+        $table = $this->initTabTableGUI($this->pub_subtab_active);
+        if ($table !== null) {
+            $this->main_tpl->setContent($table->getHTML());
+        }
     }
 
     /**
      * Helps setting the tabs at all time.
      */
-    public function setTab()
+    public function setTab(): void
     {
         $this->ctrl->saveParameter($this, 'pub_subtab_active');
         $this->tabs->setSubTabActive($this->pub_subtab_active);
     }
 
-
     /**
      * Decides which content to display for the current tab.
-     * @return ilTable2GUI
      */
-    protected function initTabTableGUI($pub_subtab_active): ilTable2GUI
+    protected function initTabTableGUI(string $pub_subtab_active): ?ilTable2GUI
     {
         if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_USAGE) {
             if (count($this->repository->getMissingUsageIds()) > 0) {
@@ -133,7 +134,9 @@ class xoctPublicationUsageGUI extends xoctGUI
                 $this->toolbar->addButtonInstance($b);
             }
             return new xoctPublicationUsageTableGUI($this, self::CMD_STANDARD);
-        } elseif ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_SUB_USAGE) {
+        }
+
+        if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_SUB_USAGE) {
             if (count($this->repository->getSubAllowedUsageIds()) > 0) {
                 $b = ilLinkButton::getInstance();
                 $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new_sub');
@@ -141,32 +144,32 @@ class xoctPublicationUsageGUI extends xoctGUI
                 $this->toolbar->addButtonInstance($b);
             }
             return new xoctPublicationSubUsageTableGUI($this, self::CMD_STANDARD);
-        } elseif ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_GROUPS) {
+        }
+
+        if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_GROUPS) {
             $b = ilLinkButton::getInstance();
             $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new_group');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD_NEW_GROUP));
             $this->toolbar->addButtonInstance($b);
             return new xoctPublicationGroupTableGUI($this, self::CMD_STANDARD);
         }
+        return null;
     }
 
-    /**
-     *
-     */
     protected function selectPublicationId()
     {
         $form = new ilPropertyFormGUI();
         $form->setFormAction($this->ctrl->getFormAction($this));
-        $form->setTitle($this->txt('select_usage_id'));
-        $form->addCommandButton(self::CMD_ADD, $this->txt(self::CMD_ADD));
-        $form->addCommandButton(self::CMD_CANCEL, $this->txt(self::CMD_CANCEL));
+        $form->setTitle($this->getLocaleString('select_usage_id', 'publication_usage'));
+        $form->addCommandButton(self::CMD_ADD, $this->getLocaleString(self::CMD_ADD, 'publication_usage'));
+        $form->addCommandButton(self::CMD_CANCEL, $this->getLocaleString(self::CMD_CANCEL, 'publication_usage'));
         $sel = new ilSelectInputGUI(
-            $this->txt(xoctPublicationUsageFormGUI::F_CHANNEL),
+            $this->getLocaleString(xoctPublicationUsageFormGUI::F_CHANNEL),
             xoctPublicationUsageFormGUI::F_CHANNEL
         );
         $options = [];
         foreach ($this->repository->getMissingUsageIds() as $id) {
-            $options[$id] = $this->txt('type_' . $id);
+            $options[$id] = $this->getLocaleString('type_' . $id);
         }
         $sel->setOptions($options);
 
@@ -174,43 +177,34 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->main_tpl->setContent($form->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function add()
+    protected function add(): void
     {
         if (!$this->channel) {
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID);
         }
         $xoctPublicationUsage = new PublicationUsage();
         $xoctPublicationUsage->setUsageId($this->channel);
-        $xoctPublicationUsage->setTitle($this->txt('type_' . $this->channel));
+        $xoctPublicationUsage->setTitle($this->getLocaleString('type_' . $this->channel));
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, $xoctPublicationUsage);
         $xoctPublicationUsageFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function create()
+    protected function create(): void
     {
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, new PublicationUsage());
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function edit()
+    protected function edit(): void
     {
         if (empty($this->identifier)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_no_identifier'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_no_identifier'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
@@ -221,10 +215,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function update()
+    protected function update(): void
     {
         $publication_usage = new PublicationUsage();
         if (!$this->identifier && $this->repository->getUsage($this->identifier)) {
@@ -236,29 +227,16 @@ class xoctPublicationUsageGUI extends xoctGUI
         );
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
     }
 
-    /**
-     * @param $key
-     *
-     * @throws DICException
-     */
-    public function txt($key): string
-    {
-        return $this->plugin->txt('publication_usage_' . $key);
-    }
-
-    /**
-     *
-     */
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
         if (empty($this->identifier)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_no_identifier'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_no_identifier'), true);
             $this->ctrl->redirect($this);
         }
         /**
@@ -268,16 +246,13 @@ class xoctPublicationUsageGUI extends xoctGUI
         $confirm = new ilConfirmationGUI();
         $confirm->addItem(self::IDENTIFIER, $xoctPublicationUsage->getUsageId(), $xoctPublicationUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
-        $confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
-        $confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE);
+        $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
+        $confirm->setConfirm($this->getLocaleString(self::CMD_DELETE), self::CMD_DELETE);
 
         $this->main_tpl->setContent($confirm->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function delete()
+    protected function delete(): void
     {
         $this->repository->delete($this->identifier);
         $this->cancel();
@@ -285,23 +260,27 @@ class xoctPublicationUsageGUI extends xoctGUI
 
 
     ### Subs Section ###
+
     /**
      * Helps select the sub usage channel.
      * INFO: Although there is only Download channel available to select, but there is the capability to extend this feature
      * for other channels too.
      */
-    protected function selectPublicationIdForSub()
+    protected function selectPublicationIdForSub(): void
     {
         $form = new ilPropertyFormGUI();
         $form->setFormAction($this->ctrl->getFormAction($this));
-        $form->setTitle($this->txt('select_sub_usage_id'));
-        $form->setDescription($this->txt('select_sub_usage_id_desc'));
-        $form->addCommandButton(self::CMD_ADD_SUB, $this->txt(self::CMD_ADD));
-        $form->addCommandButton(self::CMD_CANCEL, $this->txt(self::CMD_CANCEL));
-        $sel = new ilSelectInputGUI($this->txt(xoctPublicationUsageFormGUI::F_CHANNEL), xoctPublicationUsageFormGUI::F_CHANNEL);
+        $form->setTitle($this->getLocaleString('select_sub_usage_id'));
+        $form->setDescription($this->getLocaleString('select_sub_usage_id_desc'));
+        $form->addCommandButton(self::CMD_ADD_SUB, $this->getLocaleString(self::CMD_ADD));
+        $form->addCommandButton(self::CMD_CANCEL, $this->getLocaleString(self::CMD_CANCEL));
+        $sel = new ilSelectInputGUI(
+            $this->getLocaleString(xoctPublicationUsageFormGUI::F_CHANNEL),
+            xoctPublicationUsageFormGUI::F_CHANNEL
+        );
         $options = [];
         foreach ($this->repository->getSubAllowedUsageIds() as $id) {
-            $options[$id] = $this->txt('type_' . $id);
+            $options[$id] = $this->getLocaleString('type_' . $id);
         }
         $sel->setOptions($options);
 
@@ -309,19 +288,16 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->main_tpl->setContent($form->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function addSub()
+    protected function addSub(): void
     {
         $channel = $this->channel;
         if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds(), true)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_allowed'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_allowed'), true);
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID_SUB);
         }
         $xoctPublicationSubUsage = new PublicationSubUsage();
         $xoctPublicationSubUsage->setParentUsageId($channel);
-        $title_text = $this->txt('type_' . $channel);
+        $title_text = $this->getLocaleString('type_' . $channel);
         $title = $this->sub_repository->generateTitle($channel, $title_text);
         $xoctPublicationSubUsage->setTitle($title);
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, $xoctPublicationSubUsage);
@@ -329,43 +305,37 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function createSub()
+    protected function createSub(): void
     {
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, new PublicationSubUsage());
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success_sub'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function editSub()
+    protected function editSub(): void
     {
         if (!PublicationSubUsage::find($this->get_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, PublicationSubUsage::find($this->get_id), false);
+        $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI(
+            $this,
+            PublicationSubUsage::find($this->get_id),
+            false
+        );
         $xoctPublicationSubUsageFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
     }
 
-
-    /**
-     * @throws DICException
-     */
-    protected function updateSub()
+    protected function updateSub(): void
     {
         $sub_usage_id = $this->get_id;
         if (!PublicationSubUsage::find($sub_usage_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI(
@@ -375,33 +345,33 @@ class xoctPublicationUsageGUI extends xoctGUI
         );
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success_sub'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
     }
 
-    protected function confirmDeleteSub()
+    protected function confirmDeleteSub(): void
     {
         if (!PublicationSubUsage::find($this->get_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsage = PublicationSubUsage::find($this->get_id);
         $confirm = new ilConfirmationGUI();
-        $confirm->setHeaderText($this->txt('confirm_delete_text_sub'));
+        $confirm->setHeaderText($this->getLocaleString('confirm_delete_text_sub'));
         $confirm->addItem('id', $this->get_id, $xoctPublicationSubUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
-        $confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
-        $confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE_SUB);
+        $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
+        $confirm->setConfirm($this->getLocaleString(self::CMD_DELETE), self::CMD_DELETE_SUB);
 
         $this->main_tpl->setContent($confirm->getHTML());
     }
 
-    protected function deleteSub()
+    protected function deleteSub(): void
     {
         if (!PublicationSubUsage::find($this->post_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
@@ -414,7 +384,7 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     ### Group Section ###
 
-    protected function addNewGroup()
+    protected function addNewGroup(): void
     {
         $xoctPublicationUsageGroup = new PublicationUsageGroup();
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, $xoctPublicationUsageGroup);
@@ -423,60 +393,68 @@ class xoctPublicationUsageGUI extends xoctGUI
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
     }
 
-    protected function createGroup()
+    protected function createGroup(): void
     {
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, new PublicationUsageGroup());
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
     }
 
-    protected function editGroup()
+    protected function editGroup(): void
     {
         if (!PublicationUsageGroup::find($this->get_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
-        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($this->get_id), false);
+        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI(
+            $this,
+            PublicationUsageGroup::find($this->get_id),
+            false
+        );
         $xoctPublicationGroupFormGUI->fillForm();
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
     }
 
-    protected function updateGroup()
+    protected function updateGroup(): void
     {
-        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, PublicationUsageGroup::find($this->get_id), false);
+        $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI(
+            $this,
+            PublicationUsageGroup::find($this->get_id),
+            false
+        );
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->plugin->txt('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
     }
 
-    protected function confirmDeleteGroup()
+    protected function confirmDeleteGroup(): void
     {
         if (!PublicationUsageGroup::find($this->get_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageGroup = PublicationUsageGroup::find($this->get_id);
         $confirm = new ilConfirmationGUI();
-        $confirm->setHeaderText($this->txt('confirm_delete_text_group'));
+        $confirm->setHeaderText($this->getLocaleString('confirm_delete_text_group'));
         $confirm->addItem('id', $this->get_id, $xoctPublicationUsageGroup->getName());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
-        $confirm->setCancel($this->txt(self::CMD_CANCEL), self::CMD_CANCEL);
-        $confirm->setConfirm($this->txt(self::CMD_DELETE), self::CMD_DELETE_GROUP);
+        $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
+        $confirm->setConfirm($this->getLocaleString(self::CMD_DELETE), self::CMD_DELETE_GROUP);
 
         $this->main_tpl->setContent($confirm->getHTML());
     }
 
-    protected function deleteGroup()
+    protected function deleteGroup(): void
     {
         if (!PublicationUsageGroup::find($this->post_id)) {
-            ilUtil::sendFailure($this->plugin->txt('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
             $this->ctrl->redirect($this);
         }
 

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use xoctException;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 
 class OpencastIngestService

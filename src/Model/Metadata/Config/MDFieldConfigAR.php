@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Config;
 
 use ActiveRecord;
@@ -183,7 +185,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function isRequired(): bool
     {
-        return $this->required;
+        return (bool)$this->required;
     }
 
     public function setRequired(bool $required): void
@@ -193,7 +195,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function isReadOnly(): bool
     {
-        return $this->read_only;
+        return (bool)$this->read_only;
     }
 
     public function setReadOnly(bool $read_only): void

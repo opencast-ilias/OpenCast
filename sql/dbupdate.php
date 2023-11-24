@@ -282,7 +282,7 @@ if ($role_owner_prefix) {
 ?>
 <#30>
 <?php
-\srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR::updateDB();
+// \srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR::updateDB();
 ?>
 <#31>
 <?php

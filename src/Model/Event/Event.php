@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Event;
 
 use DateTimeImmutable;
@@ -150,7 +152,7 @@ class Event
         if ($this->processing_state_init) {
             return;
         }
-        if ($this->status == 'EVENTS.EVENTS.STATUS.PROCESSED') {
+        if ($this->status === 'EVENTS.EVENTS.STATUS.PROCESSED') {
             $this->processing_state = 'SUCCEEDED';
         }
         switch ($this->processing_state) {
@@ -161,7 +163,8 @@ class Event
                     $publication_player = (new PublicationUsageRepository())->getUsage(PublicationUsage::USAGE_PLAYER);
 
                     // "not published" depends: if the internal player is used, the "api" publication must be present, else the "player" publication
-                    if (!in_array($publication_player->getChannel(), $this->publication_status)) {
+                    if ($publication_player !== null
+                        && !in_array($publication_player->getChannel(), $this->publication_status, true)) {
                         if ($this->hasPreviews()) {
                             $this->setProcessingState(self::STATE_READY_FOR_CUTTING);
                         } else {
@@ -171,7 +174,7 @@ class Event
                 }
                 break;
             case '': // empty state means it's a scheduled event
-                if ($this->status == 'EVENTS.EVENTS.STATUS.RECORDING') {
+                if ($this->status === 'EVENTS.EVENTS.STATUS.RECORDING') {
                     $this->setProcessingState($this->isLiveEvent() ? self::STATE_LIVE_RUNNING : self::STATE_RECORDING);
                 } elseif (!$this->getXoctEventAdditions()->getIsOnline()) {
                     $this->setProcessingState(

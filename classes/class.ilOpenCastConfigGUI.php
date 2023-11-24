@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * ilOpenCastConfigGUI
  *
  * @author             Fabian Schmid <fs@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy  ilOpenCastConfigGUI: ilObjComponentSettingsGUIs
+ * @ilCtrl_IsCalledBy ilOpenCastConfigGUI: ilObjComponentSettingsGUI
  */
 class ilOpenCastConfigGUI extends ilPluginConfigGUI
 {
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     private $ctrl;
     /**
@@ -25,6 +27,10 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
      * @var \ilTabsGUI
      */
     private $tabs;
+    /**
+     * @var \ILIAS\DI\HTTPServices
+     */
+    protected $http;
 
     public function __construct()
     {
@@ -33,22 +39,24 @@ class ilOpenCastConfigGUI extends ilPluginConfigGUI
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->language = $DIC->language();
         $this->tabs = $DIC->tabs();
+        $this->http = $DIC->http();
     }
 
     public function executeCommand(): void
     {
-        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $_GET["ctype"]);
-        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "cname", $_GET["cname"]);
-        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "slot_id", $_GET["slot_id"]);
-        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $_GET["plugin_id"]);
-        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "pname", $_GET["pname"]);
+        $get = $this->http->request()->getQueryParams();
+        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "ctype", $get["ctype"]);
+        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "cname", $get["cname"]);
+        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "slot_id", $get["slot_id"]);
+        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "plugin_id", $get["plugin_id"]);
+        $this->ctrl->setParameterByClass("ilobjcomponentsettingsgui", "pname", $get["pname"]);
 
-        $this->main_tpl->setTitle($this->language->txt("cmps_plugin") . ": " . $_GET["pname"]);
+        $this->main_tpl->setTitle($this->language->txt("cmps_plugin") . ": " . $get["pname"]);
         $this->main_tpl->setDescription("");
 
         $this->tabs->clearTargets();
 
-        if ($_GET["plugin_id"]) {
+        if ($get["plugin_id"]) {
             $this->tabs->setBackTarget(
                 $this->language->txt("cmps_plugin"),
                 $this->ctrl->getLinkTargetByClass("ilobjcomponentsettingsgui", "showPlugin")

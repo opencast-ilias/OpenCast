@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
 
@@ -11,8 +13,6 @@ use srag\Plugins\Opencast\API\API;
  */
 abstract class xoctGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const CMD_STANDARD = 'index';
     public const CMD_ADD = 'add';
     public const CMD_SAVE = 'save';
@@ -23,6 +23,14 @@ abstract class xoctGUI
     public const CMD_DELETE = 'delete';
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
+    /**
+     * @var \ILIAS\DI\HTTPServices
+     */
+    protected $http;
+    /**
+     * @var ilGlobalTemplateInterface
+     */
+    protected $main_tpl;
     /**
      * @var API
      */
@@ -36,7 +44,7 @@ abstract class xoctGUI
      */
     protected $container;
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     protected $ctrl;
 
@@ -47,6 +55,8 @@ abstract class xoctGUI
         $this->ctrl = $DIC->ctrl();
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
+        $this->main_tpl = $DIC->ui()->mainTemplate();
+        $this->http = $DIC->http();
     }
 
     public function executeCommand(): void
@@ -56,27 +66,25 @@ abstract class xoctGUI
         $this->performCommand($cmd);
     }
 
-    /**
-     * @param $cmd
-     */
-    protected function performCommand($cmd)
+
+    protected function performCommand(string $cmd): void
     {
         $this->{$cmd}();
     }
 
-    abstract protected function index();
+    abstract protected function index(): void;
 
-    abstract protected function add();
+    abstract protected function add(): void;
 
-    abstract protected function create();
+    abstract protected function create(): void;
 
-    abstract protected function edit();
+    abstract protected function edit(): void;
 
-    abstract protected function update();
+    abstract protected function update(): void;
 
-    abstract protected function confirmDelete();
+    abstract protected function confirmDelete(): void;
 
-    abstract protected function delete();
+    abstract protected function delete(): void;
 
     protected function cancel()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -25,7 +27,7 @@ use ILIAS\DI\Exceptions\Exception;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
- * @deperecated
+ * @deprecated
  */
 trait OutputTrait
 {

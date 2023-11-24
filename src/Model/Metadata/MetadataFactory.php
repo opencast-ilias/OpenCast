@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;

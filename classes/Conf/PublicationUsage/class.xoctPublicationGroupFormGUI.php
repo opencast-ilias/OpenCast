@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPublicationGroupFormGUI
@@ -9,6 +12,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
  */
 class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
 {
+    use LocaleTrait;
+
     public const F_NAME = 'name';
     public const F_DISPLAY_NAME = 'display_name';
     public const F_DESCRIPTION = 'description';
@@ -27,17 +32,13 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
      */
     protected $is_new = true;
 
-
-
-    /**
-     * @param xoctPublicationUsageGUI $parent_gui
-     * @param PublicationUsageGroup   $xoctPublicationUsageGroup
-     * @param bool $is_new
-     */
-    public function __construct($parent_gui, $xoctPublicationUsageGroup, $is_new = true)
-    {
+    public function __construct(
+        xoctPublicationUsageGUI $parent_gui,
+        PublicationUsageGroup $publication_usage_group,
+        bool $is_new = true
+    ) {
         parent::__construct();
-        $this->object = $xoctPublicationUsageGroup;
+        $this->object = $publication_usage_group;
         $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
         $this->ctrl->saveParameter($parent_gui, 'id');
@@ -45,49 +46,31 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         $this->initForm();
     }
 
-
-    /**
-     *
-     */
-    protected function initForm()
+    protected function initForm(): void
     {
         $this->setTarget('_top');
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $te = new ilTextInputGUI($this->txt(self::F_NAME), self::F_NAME);
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_NAME), self::F_NAME);
         $te->setRequired(true);
         $this->addItem($te);
 
-        $max_lenght = self::F_DISPLAY_NAME_MAX_LENGTH;
-        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName() : '{added display name}');
-        $info = sprintf($this->txt(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
-        $te = new ilTextInputGUI($this->txt(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
+        $max_length = self::F_DISPLAY_NAME_MAX_LENGTH;
+        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName(
+        ) : '{added display name}');
+        $info = sprintf($this->getLocaleString(self::F_DISPLAY_NAME . '_info'), $max_length, strtolower($display_name));
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);
-        $te->setMaxLength($max_lenght);
+        $te->setMaxLength($max_length);
         $te->setRequired(true);
         $this->addItem($te);
 
-        $te = new ilTextAreaInputGUI($this->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
+        $te = new ilTextAreaInputGUI($this->getLocaleString(self::F_DESCRIPTION), self::F_DESCRIPTION);
         $this->addItem($te);
     }
 
-
-    /**
-     * @param $lang_var
-     *
-     * @return string
-     */
-    protected function txt($lang_var): string
-    {
-        return $this->parent_gui->txt("group_{$lang_var}");
-    }
-
-
-    /**
-     *
-     */
-    public function fillForm()
+    public function fillForm(): void
     {
         $array = [
             self::F_NAME => $this->object->getName(),
@@ -97,7 +80,6 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
 
         $this->setValuesByArray($array);
     }
-
 
     /**
      * returns whether checkinput was successful or not.
@@ -117,7 +99,6 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         return true;
     }
 
-
     /**
      * @return bool
      */
@@ -135,20 +116,22 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         return true;
     }
 
-
-    /**
-     *
-     */
-    protected function initButtons()
+    protected function initButtons(): void
     {
         if ($this->is_new) {
-            $this->setTitle($this->parent_gui->txt('create_group'));
-            $this->addCommandButton(xoctPublicationUsageGUI::CMD_CREATE_NEW_GROUP, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CREATE));
+            $this->setTitle($this->getLocaleString('create_group'));
+            $this->addCommandButton(
+                xoctPublicationUsageGUI::CMD_CREATE_NEW_GROUP,
+                $this->getLocaleString(xoctGUI::CMD_CREATE)
+            );
         } else {
-            $this->setTitle($this->parent_gui->txt('edit_group'));
-            $this->addCommandButton(xoctPublicationUsageGUI::CMD_UPDATE_GROUP, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_UPDATE));
+            $this->setTitle($this->getLocaleString('edit_group'));
+            $this->addCommandButton(
+                xoctPublicationUsageGUI::CMD_UPDATE_GROUP,
+                $this->getLocaleString(xoctGUI::CMD_UPDATE)
+            );
         }
 
-        $this->addCommandButton(xoctPublicationUsageGUI::CMD_CANCEL, $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CANCEL));
+        $this->addCommandButton(xoctGUI::CMD_CANCEL, $this->getLocaleString(xoctGUI::CMD_CANCEL));
     }
 }

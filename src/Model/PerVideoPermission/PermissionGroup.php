@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
@@ -31,11 +33,9 @@ class PermissionGroup extends ActiveRecord
     }
 
     /**
-     * @param $id
-     *
      * @return PermissionGroup[]
      */
-    public static function getAllForId($id, $call_by_reference = false)
+    public static function getAllForId(int $id, bool $call_by_reference = false)
     {
         if ($call_by_reference) {
             $id = ilObject::_lookupObjectId($id);
@@ -61,44 +61,41 @@ class PermissionGroup extends ActiveRecord
     protected $id = 0;
 
     /**
-     * @param          $series_identifier
-     *
      * @return PermissionGroupParticipant[]
      */
-    public static function getAllGroupParticipantsOfUser($series_identifier, xoctUser $xoctUser)
+    public static function getAllGroupParticipantsOfUser(string $series_identifier, xoctUser $xoctUser): array
     {
         self::loadGroupIdsForSeriesId($series_identifier);
         $group_ids = self::$series_id_to_groups_map[$series_identifier];
 
-        if ((is_countable($group_ids) ? count($group_ids) : 0) == 0) {
+        if ((is_countable($group_ids) ? count($group_ids) : 0) === 0) {
             return [];
         }
 
-        $my_groups = PermissionGroupParticipant::where(['user_id' => $xoctUser->getIliasUserId(),])->where(
-            ['group_id' => $group_ids]
-        )
+        $my_groups = PermissionGroupParticipant::where(['user_id' => $xoctUser->getIliasUserId(),])
+                                               ->where(
+                                                   ['group_id' => $group_ids]
+                                               )
                                                ->getArray(null, 'group_id');
-        if (count($my_groups) == 0) {
+        if (count($my_groups) === 0) {
             return [];
         }
 
         return PermissionGroupParticipant::where(['group_id' => $my_groups])->get();
     }
 
-    /**
-     * @param $series_identifier
-     *
-     * @return array
-     */
-    protected static function loadGroupIdsForSeriesId($series_identifier)
+    protected static function loadGroupIdsForSeriesId(string $series_identifier): void
     {
+        global $DIC;
         if (!isset(self::$series_id_to_groups_map[$series_identifier])) {
             $objectSettings = ObjectSettings::where([
                 'series_identifier' => $series_identifier,
-                'obj_id' => ilObject2::_lookupObjectId($_GET['ref_id']),
+                'obj_id' => ilObject2::_lookupObjectId(
+                    (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0)
+                ),
             ])->last();
             if (!$objectSettings instanceof ObjectSettings) {
-                return [];
+                return;
             }
             $array = self::where(['serie_id' => $objectSettings->getObjId(),])->getArray(null, 'id');
 
@@ -150,90 +147,57 @@ class PermissionGroup extends ActiveRecord
         parent::delete();
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getSerieId()
+    public function getSerieId(): int
     {
-        return $this->serie_id;
+        return (int) $this->serie_id;
     }
 
-    /**
-     * @param int $serie_id
-     */
-    public function setSerieId($serie_id): void
+    public function setSerieId(int $serie_id): void
     {
         $this->serie_id = $serie_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getNamePresentation()
+    public function getNamePresentation(): string
     {
-        return $this->getTitle();
+        return (string) $this->getTitle();
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title): void
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return $this->description;
+        return (string) $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description): void
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
 
-    /**
-     * @return int
-     */
-    public function getStatus()
+    public function getStatus(): int
     {
-        return $this->status;
+        return (int) $this->status;
     }
 
-    /**
-     * @param int $status
-     */
-    public function setStatus($status): void
+    public function setStatus(int $status): void
     {
         $this->status = $status;
     }

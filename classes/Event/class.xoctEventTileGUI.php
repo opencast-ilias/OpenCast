@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -14,8 +16,6 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class xoctEventTileGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const GET_PAGE = 'page';
     /**
      * @var ilOpenCastPlugin
@@ -67,7 +67,7 @@ class xoctEventTileGUI
      */
     private $user;
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     private $ctrl;
 
@@ -86,9 +86,10 @@ class xoctEventTileGUI
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
         $this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
-        $this->limit = UserSettingsRepository::getTileLimitForUser($user->getId(), filter_input(INPUT_GET, 'ref_id'));
+        $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $this->limit = UserSettingsRepository::getTileLimitForUser($user->getId(), $ref_id);
         $this->events = array_values(
-            array_map(function ($item) {
+            array_map(static function ($item) {
                 return $item['object'];
             }, $this->sortData($data))
         );
@@ -96,7 +97,6 @@ class xoctEventTileGUI
 
     /**
      * @return string
-     * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
@@ -237,10 +237,9 @@ class xoctEventTileGUI
 
     /**
      * @return string
-     * @throws DICException
      * @throws ilTemplateException
      */
-    protected function getLimitSelectorHTML()
+    protected function getLimitSelectorHTML(): string
     {
         $tpl = $this->plugin->getTemplate('default/tpl.tile_limit_selector.html');
         $tpl->setVariable(

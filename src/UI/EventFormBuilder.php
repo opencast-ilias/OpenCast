@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI;
 
 use ILIAS\DI\Container;
@@ -8,7 +10,7 @@ use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
-use ilMimeTypeUtil;
+use srag\Plugins\Opencast\Util\MimeType as MimeTypeUtil;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -37,17 +39,17 @@ class EventFormBuilder
     public const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
 
     private static $accepted_video_mimetypes = [
-        ilMimeTypeUtil::VIDEO__AVI,
-        ilMimeTypeUtil::VIDEO__QUICKTIME,
-        ilMimeTypeUtil::VIDEO__MPEG,
-        ilMimeTypeUtil::VIDEO__MP4,
-        ilMimeTypeUtil::VIDEO__OGG,
-        ilMimeTypeUtil::VIDEO__WEBM,
-        ilMimeTypeUtil::VIDEO__X_MS_WMV,
-        ilMimeTypeUtil::VIDEO__X_FLV,
-        ilMimeTypeUtil::VIDEO__X_MSVIDEO,
-        ilMimeTypeUtil::VIDEO__X_DV,
-        ilMimeTypeUtil::VIDEO__X_MSVIDEO,
+        MimeTypeUtil::VIDEO__AVI,
+        MimeTypeUtil::VIDEO__QUICKTIME,
+        MimeTypeUtil::VIDEO__MPEG,
+        MimeTypeUtil::VIDEO__MP4,
+        MimeTypeUtil::VIDEO__OGG,
+        MimeTypeUtil::VIDEO__WEBM,
+        MimeTypeUtil::VIDEO__X_MS_WMV,
+        MimeTypeUtil::VIDEO__X_FLV,
+        MimeTypeUtil::VIDEO__X_MSVIDEO,
+        MimeTypeUtil::VIDEO__X_DV,
+        MimeTypeUtil::VIDEO__X_MSVIDEO,
         'video/mkv',
         'video/x-matroska',
         'video/x-m4v',
@@ -62,16 +64,16 @@ class EventFormBuilder
     ];
 
     private static $accepted_audio_mimetypes = [
-        ilMimeTypeUtil::AUDIO__MP4,
-        ilMimeTypeUtil::AUDIO__OGG,
-        ilMimeTypeUtil::AUDIO__MPEG,
-        ilMimeTypeUtil::AUDIO__MPEG3,
-        ilMimeTypeUtil::AUDIO__X_AIFF,
-        ilMimeTypeUtil::AUDIO__AIFF,
-        ilMimeTypeUtil::AUDIO__X_WAV,
-        ilMimeTypeUtil::AUDIO__WAV,
-        ilMimeTypeUtil::AUDIO__X_MS_WMA,
-        ilMimeTypeUtil::AUDIO__BASIC,
+        MimeTypeUtil::AUDIO__MP4,
+        MimeTypeUtil::AUDIO__OGG,
+        MimeTypeUtil::AUDIO__MPEG,
+        MimeTypeUtil::AUDIO__MPEG3,
+        MimeTypeUtil::AUDIO__X_AIFF,
+        MimeTypeUtil::AUDIO__AIFF,
+        MimeTypeUtil::AUDIO__X_WAV,
+        MimeTypeUtil::AUDIO__WAV,
+        MimeTypeUtil::AUDIO__X_MS_WMA,
+        MimeTypeUtil::AUDIO__BASIC,
         'audio/aac',
         'audio/flac',
         'audio/x-m4a',
@@ -105,7 +107,7 @@ class EventFormBuilder
      */
     private $uploadStorageService;
     /**
-     * @var UploadHandler|\xoctFileUploadHandler
+     * @var UploadHandler|\xoctFileUploadHandlerGUI
      */
     private $uploadHandler;
     /**

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctReportOverviewTableGUI
@@ -11,16 +14,9 @@ use srag\Plugins\Opencast\Model\Report\Report;
  */
 class xoctReportOverviewTableGUI extends TableGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class; // TODO remove
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
-    /**
-     * @var ilLanguage
-     */
-    protected $lng;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
 
     /**
      * xoctReportOverviewTableGUI constructor.
@@ -29,10 +25,7 @@ class xoctReportOverviewTableGUI extends TableGUI
      */
     public function __construct($parent, string $parent_cmd)
     {
-        global $DIC, $opencastContainer;
-        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->lng = $DIC->language();
-        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, $this->lng->txt(xoctReportOverviewGUI::CMD_DELETE));
+        $this->addMultiCommand(xoctGUI::CMD_DELETE, $this->getLocaleString(xoctGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
         parent::__construct($parent, $parent_cmd);
     }
@@ -57,14 +50,11 @@ class xoctReportOverviewTableGUI extends TableGUI
     protected function initColumns(): void
     {
         $this->addColumn('', '', '', true);
-        $this->addColumn($this->lng->txt('message'));
-        $this->addColumn($this->plugin->txt('sender'));
-        $this->addColumn($this->lng->txt('date'), 'created_at');
+        $this->addColumn($this->getLocaleString('message'));
+        $this->addColumn($this->getLocaleString('sender'));
+        $this->addColumn($this->getLocaleString('date'), 'created_at');
     }
 
-    /**
-     * @throws Exception
-     */
     protected function initData(): void
     {
         $filter_date_from = null;

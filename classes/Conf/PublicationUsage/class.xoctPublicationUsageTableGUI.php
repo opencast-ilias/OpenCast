@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctEventTableGUI
@@ -14,7 +17,14 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class xoctPublicationUsageTableGUI extends ilTable2GUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
 
     public const TBL_ID = 'tbl_xoct_pub_u';
     /**
@@ -50,7 +60,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         $this->ctrl->saveParameter($a_parent_obj, $this->getNavParameter());
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->parent_obj = $a_parent_obj;
-        $this->setTitle($this->parent_obj->txt('table_title_usage'));
+        $this->setTitle($this->getLocaleString('table_title_usage'));
         $this->setRowTemplate(
             'tpl.publication_usage.html',
             'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
@@ -60,12 +70,8 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         $this->parseData();
     }
 
-    /**
-     * @param array $a_set
-     *
-     * @throws DICException
-     */
-    protected function fillRow($a_set)
+    #[ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $a_set): void
     {
         /**
          * @var $publication_usage PublicationUsage
@@ -76,7 +82,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         $this->tpl->setVariable('DISPLAY_NAME', $publication_usage->getDisplayName());
         $this->tpl->setVariable('DESCRIPTION', $publication_usage->getDescription());
         $this->tpl->setVariable('CHANNEL', $publication_usage->getChannel());
-        $this->tpl->setVariable('MD_TYPE', $this->parent_obj->txt('md_type_' . $publication_usage->getMdType()));
+        $this->tpl->setVariable('MD_TYPE', $this->getLocaleString('md_type_' . $publication_usage->getMdType()));
         if ($publication_usage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
             $this->tpl->setVariable('FLAVOR', '&nbsp');
             $this->tpl->setVariable('TAG', '&nbsp');
@@ -98,7 +104,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         if ($publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
             $publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
             if ($publication_usage->isExternalDownloadSource()) {
-                $extras[] = $this->parent_obj->txt('ext_dl_source');
+                $extras[] = $this->getLocaleString('ext_dl_source');
             }
         }
         $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
@@ -108,27 +114,24 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
 
     protected function initColumns()
     {
-        $this->addColumn($this->parent_obj->txt('usage_id'));
-        $this->addColumn($this->parent_obj->txt('title'));
-        $this->addColumn($this->parent_obj->txt('display_name'));
-        $this->addColumn($this->parent_obj->txt('description'));
-        $this->addColumn($this->parent_obj->txt('channel'));
-        $this->addColumn($this->parent_obj->txt('md_type'));
-        $this->addColumn($this->parent_obj->txt('flavor'));
-        $this->addColumn($this->parent_obj->txt('tag'));
-        $this->addColumn($this->parent_obj->txt('group_th'));
-        $this->addColumn($this->parent_obj->txt('extra_config'));
+        $this->addColumn($this->getLocaleString('usage_id'));
+        $this->addColumn($this->getLocaleString('title'));
+        $this->addColumn($this->getLocaleString('display_name'));
+        $this->addColumn($this->getLocaleString('description'));
+        $this->addColumn($this->getLocaleString('channel'));
+        $this->addColumn($this->getLocaleString('md_type'));
+        $this->addColumn($this->getLocaleString('flavor'));
+        $this->addColumn($this->getLocaleString('tag'));
+        $this->addColumn($this->getLocaleString('group_th'));
+        $this->addColumn($this->getLocaleString('extra_config'));
 
-        $this->addColumn($this->plugin->txt('common_actions'), '', '150px');
+        $this->addColumn($this->getLocaleString('actions', 'common'), '', '150px');
     }
 
-    /**
-     * @throws DICException
-     */
     protected function addActionMenu(PublicationUsage $xoctPublicationUsage)
     {
         $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setListTitle($this->plugin->txt('common_actions'));
+        $current_selection_list->setListTitle($this->getLocaleString('actions', 'common'));
         $current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsage->getUsageId());
         $current_selection_list->setUseImages(false);
 
@@ -138,20 +141,20 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
             $xoctPublicationUsage->getUsageId()
         );
         $current_selection_list->addItem(
-            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_EDIT),
-            xoctPublicationUsageGUI::CMD_EDIT,
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_EDIT)
+            $this->getLocaleString(xoctGUI::CMD_EDIT),
+            xoctGUI::CMD_EDIT,
+            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
         );
         $current_selection_list->addItem(
-            $this->parent_obj->txt(xoctPublicationUsageGUI::CMD_DELETE),
-            xoctPublicationUsageGUI::CMD_DELETE,
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctPublicationUsageGUI::CMD_CONFIRM)
+            $this->getLocaleString(xoctGUI::CMD_DELETE),
+            xoctGUI::CMD_DELETE,
+            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_CONFIRM)
         );
 
         $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
 
-    protected function parseData()
+    protected function parseData(): void
     {
         $this->setData($this->repository->getArray());
     }
@@ -159,7 +162,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     /**
      * @param $item
      */
-    protected function addAndReadFilterItem(ilFormPropertyGUI $item)
+    protected function addAndReadFilterItem(ilFormPropertyGUI $item): void
     {
         $this->addFilterItem($item);
         $item->readFromSession();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\Model;
 
 use ActiveRecord;
@@ -70,57 +72,39 @@ class EventAR extends ActiveRecord
      */
     protected $sent_at;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getChatRoomId()
+    public function getChatRoomId(): int
     {
-        return $this->chat_room_id;
+        return (int) $this->chat_room_id;
     }
 
-    /**
-     * @param int $chat_room_id
-     */
-    public function setChatRoomId($chat_room_id): void
+    public function setChatRoomId(int $chat_room_id): void
     {
         $this->chat_room_id = $chat_room_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getSubjectId()
+    public function getSubjectId(): int
     {
-        return $this->subject_id;
+        return (int) $this->subject_id;
     }
 
-    /**
-     * @param int $subject_id
-     */
-    public function setSubjectId($subject_id): void
+    public function setSubjectId(int $subject_id): void
     {
         $this->subject_id = $subject_id;
     }
 
     public function getEventTypeId(): int
     {
-        return $this->event_type_id;
+        return (int) $this->event_type_id;
     }
 
     public function setEventTypeId(int $event_type_id): void
@@ -128,18 +112,12 @@ class EventAR extends ActiveRecord
         $this->event_type_id = $event_type_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSentAt()
+    public function getSentAt(): string
     {
         return $this->sent_at;
     }
 
-    /**
-     * @param string $sent_at
-     */
-    public function setSentAt($sent_at): void
+    public function setSentAt(string $sent_at): void
     {
         $this->sent_at = $sent_at;
     }

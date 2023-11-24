@@ -1,5 +1,9 @@
 <?php
 
+/** @noinspection PhpIncompatibleReturnTypeInspection */
+
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\Model;
 
 use ActiveRecord;
@@ -15,13 +19,7 @@ class ChatroomAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_room';
 
-    /**
-     * @param $event_id
-     * @param $obj_id
-     *
-     * @return ChatroomAR
-     */
-    public static function findOrCreate($event_id, $obj_id)
+    public static function findOrCreate(string $event_id, int $obj_id): ChatroomAR
     {
         $chatroom = self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
         if (!$chatroom) {
@@ -33,23 +31,13 @@ class ChatroomAR extends ActiveRecord
         return $chatroom;
     }
 
-    /**
-     * @param $event_id
-     * @param $obj_id
-     *
-     * @return ChatroomAR
-     */
-    public static function findBy($event_id, $obj_id)
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    public static function findBy(string $event_id, int $obj_id): ChatroomAR
     {
         return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
     }
 
-    /**
-     * @param $event_id string
-     * @param $obj_id   int
-     * @return bool
-     */
-    public static function chatroomExists($event_id, $obj_id)
+    public static function chatroomExists(string $event_id, int $obj_id): bool
     {
         return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->hasSets();
     }
@@ -90,50 +78,32 @@ class ChatroomAR extends ActiveRecord
      */
     protected $obj_id;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getEventId()
+    public function getEventId(): string
     {
-        return $this->event_id;
+        return (string) $this->event_id;
     }
 
-    /**
-     * @param string $event_id
-     */
-    public function setEventId($event_id): void
+    public function setEventId(string $event_id): void
     {
         $this->event_id = $event_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getObjId()
+    public function getObjId(): int
     {
-        return $this->obj_id;
+        return (int) $this->obj_id;
     }
 
-    /**
-     * @param int $obj_id
-     */
-    public function setObjId($obj_id): void
+    public function setObjId(int $obj_id): void
     {
         $this->obj_id = $obj_id;
     }

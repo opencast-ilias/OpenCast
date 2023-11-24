@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPermissionTemplateFormGUI
@@ -9,7 +12,14 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'config' : $module, $fallback);
+    }
 
     /**
      * @var  PluginConfig
@@ -37,46 +47,41 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     /**
      *
      */
-    protected function initForm()
+    protected function initForm(): void
     {
         $this->setTarget('_top');
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
         $h = new ilFormSectionHeaderGUI();
-        $h->setTitle($this->parent_gui->txt('general'));
+        $h->setTitle($this->getLocaleString('general'));
         $this->addItem($h);
 
         // VIDEO PORTAL TITLE
         $te = new ilTextInputGUI(
-            $this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_TITLE),
+            $this->getLocaleString(PluginConfig::F_VIDEO_PORTAL_TITLE),
             PluginConfig::F_VIDEO_PORTAL_TITLE
         );
-//        $te->setInfo($this->parent_gui->txt(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
+//        $te->setInfo($this->getLocaleString(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
         $te->setRequired(true);
         $this->addItem($te);
 
         // VIDEO PORTAL LINK
         $te = new ilTextInputGUI(
-            $this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK),
+            $this->getLocaleString(PluginConfig::F_VIDEO_PORTAL_LINK),
             PluginConfig::F_VIDEO_PORTAL_LINK
         );
-        $te->setInfo($this->parent_gui->txt(PluginConfig::F_VIDEO_PORTAL_LINK . '_info'));
+        $te->setInfo($this->getLocaleString(PluginConfig::F_VIDEO_PORTAL_LINK . '_info'));
         $te->setRequired(false);
         $this->addItem($te);
     }
 
-    /**
-     *
-     */
-    protected function initButtons()
+    protected function initButtons(): void
     {
-        $this->addCommandButton(xoctConfGUI::CMD_UPDATE, $this->parent_gui->txt(xoctConfGUI::CMD_UPDATE));
+        $this->addCommandButton(xoctGUI::CMD_UPDATE, $this->getLocaleString(xoctGUI::CMD_UPDATE));
     }
 
-    /**
-     *
-     */
+
     public function fillForm(): void
     {
         $array = [];

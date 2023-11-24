@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -70,10 +72,7 @@ class PublicationUsageDefault extends PublicationUsage
         }
     }
 
-    /**
-     * @return PublicationUsage|null
-     */
-    public static function getDefaultUsage(string $usage)
+    public static function getDefaultUsage(string $usage): ?PublicationUsage
     {
         self::initDefaultValues();
         $defaults = self::$default_values[$usage];

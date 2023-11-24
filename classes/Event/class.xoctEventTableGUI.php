@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -20,8 +22,6 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
  */
 class xoctEventTableGUI extends ilTable2GUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const TBL_ID = 'tbl_xoct';
     /**
      * @var ilOpenCastPlugin
@@ -39,10 +39,6 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var ObjectSettings
      */
     protected $object_settings;
-    /**
-     * @var xoctEventGUI
-     */
-    protected $parent_obj;
     /**
      * @var bool
      */
@@ -133,12 +129,12 @@ class xoctEventTableGUI extends ilTable2GUI
 
     public static function setDefaultRowValue(int $obj_id): void
     {
-        $_GET[self::getGeneratedPrefix($obj_id) . '_trows'] = 20;
+        // $_GET[self::getGeneratedPrefix($obj_id) . '_trows'] = 20; no longer possible to write into $_GET
     }
 
     public static function getGeneratedPrefix(int $obj_id): string
     {
-        return self::TBL_ID . '_' . substr($obj_id, 0, 5);
+        return self::TBL_ID . '_' . substr((string)$obj_id, 0, 5);
     }
 
     public function isColumnSelected($a_col): bool
@@ -161,7 +157,8 @@ class xoctEventTableGUI extends ilTable2GUI
      * @throws ilTemplateException
      * @throws xoctException
      */
-    protected function fillRow($a_set)
+    #[ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $a_set): void
     {
         /**
          * @var $event        Event
@@ -170,7 +167,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $event = $a_set['object'] ?: $this->event_repository->find($a_set['identifier']);
         $renderer = new xoctEventRenderer($event, $this->object_settings);
 
-        $renderer->insertPreviewImage($this->tpl, null);
+        $renderer->insertPreviewImage($this->tpl, '');
         $renderer->insertPlayerLink($this->tpl);
 
         // The object settings will be checked based from within the insertDownloadLink method!
@@ -291,8 +288,8 @@ class xoctEventTableGUI extends ilTable2GUI
             }
             $this->addColumn(
                 isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'],
-                $col['sort_field'],
-                $col['width']
+                $col['sort_field']??'',
+                $col['width']??''
             );
         }
     }
@@ -395,10 +392,8 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::exportData($format, $send);
     }
 
-    /**
-     * @param object $a_csv
-     */
-    protected function fillHeaderCSV($a_csv)
+    #[ReturnTypeWillChange]
+    protected function fillRowCSV(/*ilCSVWriter*/ $a_csv, /*array*/ $a_set): void
     {
         $data = $this->getData();
         foreach ($data[0] as $k => $v) {
@@ -413,25 +408,6 @@ class xoctEventTableGUI extends ilTable2GUI
         $a_csv->addRow();
     }
 
-    /**
-     * @param object $a_csv
-     * @param array  $a_set
-     */
-    protected function fillRowCSV($a_csv, $a_set)
-    {
-        $set = [];
-        foreach ($a_set as $k => $value) {
-            switch ($k) {
-                case 'created_unix':
-                case 'start_unix':
-                case 'object':
-                    continue 2;
-            }
-
-            $set[$k] = $value;
-        }
-        parent::fillRowCSV($a_csv, $set);
-    }
 
     public function getSelectableColumns(): array
     {
@@ -441,7 +417,7 @@ class xoctEventTableGUI extends ilTable2GUI
         }
         $selectable_columns = [];
         foreach ($this->getAllColumns() as $key => $col) {
-            if ((bool) ($col['selectable'] ?? false)) {
+            if ($col['selectable'] ?? false) {
                 $col_title = isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'];
                 $selectable_columns[$key] = [
                     'txt' => $col_title,

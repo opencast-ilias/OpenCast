@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
@@ -76,13 +78,9 @@ class PermissionGroupParticipant extends ActiveRecord
     protected static $crs_members_cache = [];
 
     /**
-     * @param $ref_id
-     * @param $group_id
-     *
-     * @return array
-     * @throws \xoctException
+     * @return PermissionGroupParticipant[]
      */
-    public static function getAvailable($ref_id, $group_id = null)
+    public static function getAvailable(int $ref_id, ?int $group_id = null): array
     {
         if (isset(self::$crs_members_cache[$ref_id][$group_id])) {
             return self::$crs_members_cache[$ref_id][$group_id];
@@ -91,7 +89,7 @@ class PermissionGroupParticipant extends ActiveRecord
 
         $return = [];
         foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id) {
-            if (in_array($user_id, $existing)) {
+            if (in_array($user_id, $existing, true)) {
                 continue;
             }
             $obj = new self();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;

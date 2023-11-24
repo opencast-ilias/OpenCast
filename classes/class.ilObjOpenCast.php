@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -16,15 +18,13 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
  */
 class ilObjOpenCast extends ilObjectPlugin
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     /**
      * @var bool
      */
     protected $object;
     public const DEV = false;
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     private $ctrl;
 
@@ -38,12 +38,12 @@ class ilObjOpenCast extends ilObjectPlugin
         parent::__construct($a_ref_id);
     }
 
-    final public function initType(): void
+    final protected function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
     }
 
-    public function doCreate(): void
+    protected function doCreate(bool $clone_mode = false): void
     {
     }
 
@@ -64,11 +64,11 @@ class ilObjOpenCast extends ilObjectPlugin
         }
     }
 
-    public function doUpdate(): void
+    protected function doUpdate(): void
     {
     }
 
-    public function doDelete(): void
+    protected function doDelete(): void
     {
         $opencast_dic = OpencastDIC::getInstance();
         /** @var ObjectSettings $objectSettings */
@@ -90,27 +90,31 @@ class ilObjOpenCast extends ilObjectPlugin
      *
      * @return bool|void
      */
-    protected function doCloneObject($new_obj, $a_target_id, $a_copy_id = null)
+    #[ReturnTypeWillChange]
+    protected function doCloneObject(/*ilObject2*/ $new_obj, /*int*/ $a_target_id, /*?int*/ $a_copy_id = null): void
     {
         PluginConfig::setApiSettings();
         /**
-         * @var $objectSettingsNew ObjectSettings
-         * @var $objectSettingsOld ObjectSettings
+         * @var $new_object_settings ObjectSettings
+         * @var $existing_object_settings ObjectSettings
          */
-        $objectSettingsNew = new ObjectSettings();
-        $objectSettingsNew->setObjId($new_obj->getId());
-        $objectSettingsOld = ObjectSettings::find($this->getId());
+        $new_object_settings = new ObjectSettings();
+        $new_object_settings->setObjId($new_obj->getId());
+        $existing_object_settings = ObjectSettings::find($this->getId());
+        if ($existing_object_settings === null) {
+            return;
+        }
 
-        $objectSettingsNew->setSeriesIdentifier($objectSettingsOld->getSeriesIdentifier());
-        $objectSettingsNew->setIntroductionText($objectSettingsOld->getIntroductionText());
-        $objectSettingsNew->setAgreementAccepted($objectSettingsOld->getAgreementAccepted());
-        $objectSettingsNew->setOnline(false);
-        $objectSettingsNew->setPermissionAllowSetOwn($objectSettingsOld->getPermissionAllowSetOwn());
-        $objectSettingsNew->setStreamingOnly($objectSettingsOld->getStreamingOnly());
-        $objectSettingsNew->setUseAnnotations($objectSettingsOld->getUseAnnotations());
-        $objectSettingsNew->setPermissionPerClip($objectSettingsOld->getPermissionPerClip());
+        $new_object_settings->setSeriesIdentifier($existing_object_settings->getSeriesIdentifier());
+        $new_object_settings->setIntroductionText($existing_object_settings->getIntroductionText());
+        $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
+        $new_object_settings->setOnline(false);
+        $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
+        $new_object_settings->setStreamingOnly($existing_object_settings->getStreamingOnly());
+        $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
+        $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
 
-        $objectSettingsNew->create();
+        $new_object_settings->create();
     }
 
     public function getParentCourseOrGroup()
@@ -119,48 +123,43 @@ class ilObjOpenCast extends ilObjectPlugin
     }
 
     /**
-     * TODO: weird static method - think about where this belongs
-     *
-     * @param $ref_id
-     *
-     * @return bool|ilObjCourse|ilObjGroup
+
+     * @return null|ilObjCourse|ilObjGroup
      */
-    public static function _getParentCourseOrGroup($ref_id)
+    public static function _getParentCourseOrGroup(int $ref_id): ?ilContainer
     {
         global $DIC;
-        static $crs_or_grp_object;
-        if (!is_array($crs_or_grp_object)) {
-            $crs_or_grp_object = [];
+        static $crs_or_grp_cache;
+        if (!is_array($crs_or_grp_cache)) {
+            $crs_or_grp_cache = [];
         }
 
-        if (isset($crs_or_grp_object[$ref_id])) {
-            return $crs_or_grp_object[$ref_id];
+        if (isset($crs_or_grp_cache[$ref_id])) {
+            return $crs_or_grp_cache[$ref_id];
         }
 
-        /**
-         * @var $tree ilTree
-         */
         while (!in_array(ilObject2::_lookupType($ref_id, true), ['crs', 'grp'])) {
-            if ($ref_id == 1) {
-                $crs_or_grp_object[$ref_id] = false;
-                return $crs_or_grp_object[$ref_id];
+            if ($ref_id === 1) {
+                return $crs_or_grp_cache[$ref_id] = null;
             }
-            $ref_id = $DIC->repositoryTree()->getParentId($ref_id);
+            $ref_id = (int) $DIC->repositoryTree()->getParentId($ref_id);
         }
 
-        $crs_or_grp_object[$ref_id] = ilObjectFactory::getInstanceByRefId($ref_id);
-        return $crs_or_grp_object[$ref_id];
+        /** @var ilObjCourse|ilObjGroup $course_or_group */
+        $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
+        return $crs_or_grp_cache[$ref_id] = $course_or_group;
     }
 
-    /**
-     * @return string
-     */
-    public static function _getCourseOrGroupRole()
+    public static function _getCourseOrGroupRole(): string
     {
         global $DIC;
         $user = $DIC->user();
         $rbac_review = $DIC->rbac()->review();
-        $crs_or_group = self::_getParentCourseOrGroup($_GET['ref_id']);
+        $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $crs_or_group = self::_getParentCourseOrGroup($ref_id);
+        if ($crs_or_group === null) {
+            return 'Unbekannt';
+        }
 
         if ($rbac_review->isAssigned($user->getId(), $crs_or_group->getDefaultAdminRole())) {
             return $crs_or_group instanceof ilObjCourse ? 'Kursadministrator' : 'Gruppenadministrator';

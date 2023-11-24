@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Object;
 
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
@@ -9,18 +11,22 @@ class ObjectSettingsParser
     public function parseFormData(array $data): ObjectSettings
     {
         $objectSettings = new ObjectSettings();
-        $objectSettings->setOnline($data[ObjectSettingsFormItemBuilder::F_OBJ_ONLINE]);
-        $objectSettings->setIntroductionText($data[ObjectSettingsFormItemBuilder::F_INTRODUCTION_TEXT]);
-        $objectSettings->setDefaultView($data[ObjectSettingsFormItemBuilder::F_DEFAULT_VIEW]);
-        $objectSettings->setViewChangeable($data[ObjectSettingsFormItemBuilder::F_VIEW_CHANGEABLE]);
-        $objectSettings->setUseAnnotations($data[ObjectSettingsFormItemBuilder::F_USE_ANNOTATIONS] ?? false);
-        $objectSettings->setStreamingOnly($data[ObjectSettingsFormItemBuilder::F_STREAMING_ONLY] ?? false);
-        $objectSettings->setPermissionPerClip(is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP]));
-        $objectSettings->setPermissionAllowSetOwn(
-            is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP])
-            && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN]
+        $objectSettings->setOnline((bool) ($data[ObjectSettingsFormItemBuilder::F_OBJ_ONLINE] ?? false));
+        $objectSettings->setIntroductionText(
+            (string) ($data[ObjectSettingsFormItemBuilder::F_INTRODUCTION_TEXT] ?? '')
         );
-        $objectSettings->setChatActive($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE] ?? false);
+        $objectSettings->setDefaultView((int) ($data[ObjectSettingsFormItemBuilder::F_DEFAULT_VIEW] ?? 0));
+        $objectSettings->setViewChangeable((bool) ($data[ObjectSettingsFormItemBuilder::F_VIEW_CHANGEABLE] ?? false));
+        $objectSettings->setUseAnnotations((bool) ($data[ObjectSettingsFormItemBuilder::F_USE_ANNOTATIONS] ?? false));
+        $objectSettings->setStreamingOnly((bool) ($data[ObjectSettingsFormItemBuilder::F_STREAMING_ONLY] ?? false));
+        $objectSettings->setPermissionPerClip(
+            is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP] ?? null)
+        );
+        $objectSettings->setPermissionAllowSetOwn(
+            is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP] ?? null)
+            && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN] ?? false
+        );
+        $objectSettings->setChatActive((bool) ($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE] ?? false));
 
         return $objectSettings;
     }

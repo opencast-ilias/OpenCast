@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\Model;
 
 use ActiveRecord;
@@ -20,14 +22,7 @@ class TokenAR extends ActiveRecord
      */
     public const TOKEN_VALIDITY = 60 * 60;
 
-    /**
-     * @param $chat_room_id int
-     * @param $usr_id       int
-     * @param $public_name  string
-     *
-     * @return $this
-     */
-    public static function getNewFrom($chat_room_id, $usr_id, $public_name)
+    public static function getNewFrom(int $chat_room_id, int $usr_id, string $public_name): self
     {
         $self = new self();
         $self->chat_room_id = $chat_room_id;
@@ -106,59 +101,36 @@ class TokenAR extends ActiveRecord
      */
     protected $valid_until_unix;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int
-     */
-    public function getChatRoomId()
+    public function getChatRoomId(): int
     {
         return $this->chat_room_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getUsrId()
+    public function getUsrId(): int
     {
         return $this->usr_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getPublicName()
+    public function getPublicName(): string
     {
         return $this->public_name;
     }
 
-    /**
-     * @return Token
-     */
-    public function getToken()
+    public function getToken(): Token
     {
         return $this->token;
     }
 
-    /**
-     * @return int
-     */
-    public function getValidUntilUnix()
+    public function getValidUntilUnix(): int
     {
         return $this->valid_until_unix;
     }
 
-    /**
-     * @param $field_name
-     *
-     * @return string|null
-     */
     public function sleep($field_name)
     {
         switch ($field_name) {
@@ -169,12 +141,6 @@ class TokenAR extends ActiveRecord
         }
     }
 
-    /**
-     * @param $field_name
-     * @param $field_value
-     *
-     * @return Token|null
-     */
     public function wakeUp($field_name, $field_value)
     {
         switch ($field_name) {

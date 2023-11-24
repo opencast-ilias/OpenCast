@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use JsonSerializable;
@@ -89,34 +91,23 @@ class Metadata implements JsonSerializable
         sort($this->fields);
     }
 
-    /**
-     * @return string
-     */
-    public function getFlavor()
+    public function getFlavor(): string
     {
         return $this->flavor;
     }
 
-    /**
-     * @param string $flavor
-     */
-    public function setFlavor($flavor): void
+
+    public function setFlavor(string $flavor): void
     {
         $this->flavor = $flavor;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title): void
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -124,7 +115,7 @@ class Metadata implements JsonSerializable
     /**
      * @return MetadataField[]
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
@@ -132,7 +123,7 @@ class Metadata implements JsonSerializable
     /**
      * @param MetadataField[] $fields
      */
-    public function setFields($fields): void
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
@@ -141,7 +132,7 @@ class Metadata implements JsonSerializable
     {
         $clone = clone $this;
         $clone->fields = array_values(
-            array_filter($clone->fields, function (MetadataField $field): bool {
+            array_filter($clone->fields, static function (MetadataField $field): bool {
                 // no nulls, no empty strings, no empty arrays
                 return (bool) $field->getValue();
             })
@@ -154,7 +145,7 @@ class Metadata implements JsonSerializable
         $std_class = new stdClass();
         $std_class->label = $this->getTitle();
         $std_class->flavor = $this->getFlavor();
-        $std_class->fields = array_map(function (MetadataField $field): array {
+        $std_class->fields = array_map(static function (MetadataField $field): array {
             return $field->jsonSerialize();
         }, $this->getFields());
         return $std_class;

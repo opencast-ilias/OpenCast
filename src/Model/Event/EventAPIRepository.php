@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Event;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -59,7 +61,6 @@ class EventAPIRepository implements EventRepository, Request
     {
         return 'event';
     }
-
 
     public function find(string $identifier): Event
     {
@@ -124,18 +125,17 @@ class EventAPIRepository implements EventRepository, Request
     }
 
     /**
-     * @param string $for_user
-     * @param array  $roles
-     * @param int    $offset
-     * @param int    $limit
-     * @param string $sort
-     * @param bool   $as_object
-     *
-     * @return \srag\Plugins\Opencast\Model\Event\Event[]|mixed[][]
-     * @throws xoctException
+     * @return \srag\Plugins\Opencast\Model\Event\Event[]|string[][]
      */
-    public function getFiltered(array $filter, $for_user = '', $roles = [], $offset = 0, $limit = 1000, $sort = '', $as_object = false)
-    {
+    public function getFiltered(
+        array $filter,
+        string $for_user = '',
+        array $roles = [],
+        int $offset = 0,
+        int $limit = 1000,
+        string $sort = '',
+        bool $as_object = false
+    ) {
         $params = [
             'withmetadata' => false,
             'withacl' => true,
@@ -151,7 +151,13 @@ class EventAPIRepository implements EventRepository, Request
         if (!empty($sort)) {
             $params['sort'] = $sort;
         }
-        $data = $this->api->routes()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params);
+        // nmake sure we have proper values here
+        $data = array_filter(
+            (array) $this->api->routes()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params),
+            static function ($event) {
+                return $event instanceof \stdClass;
+            }
+        );
         $return = [];
 
         $this->opencastDIC = OpencastDIC::getInstance();

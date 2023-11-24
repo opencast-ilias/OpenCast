@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\WorkflowParameter\Config;
 
 use ActiveRecord;
@@ -34,14 +36,6 @@ class WorkflowParameter extends ActiveRecord
         return self::TABLE_NAME;
     }
 
-    /**
-     * @return $this
-     */
-    public function create()
-    {
-        parent::create();
-        return $this;
-    }
 
     /**
      * @var string

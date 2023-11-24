@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication;
 
 /**
@@ -7,7 +9,7 @@ namespace srag\Plugins\Opencast\Model\Publication;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class Media extends publicationMetadata
+class Media extends PublicationMetadata
 {
     /**
      * @var bool

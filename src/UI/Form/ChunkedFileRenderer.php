@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ILIAS\UI\Implementation\Component\Input\Field;
 
 use ILIAS\UI\Component\Component;
@@ -8,6 +10,7 @@ use ILIAS\UI\Implementation\Render\ResourceRegistry;
 use ILIAS\UI\Renderer as RendererInterface;
 use ilTemplate;
 use ilTemplateException;
+use srag\Plugins\Opencast\LegacyHelpers\UploadSize;
 
 class ChunkedFileRenderer extends Renderer
 {
@@ -31,7 +34,7 @@ class ChunkedFileRenderer extends Renderer
     }
 
     /**
-     * @param ChunkedFile         $component
+     * @param ChunkedFile $component
      * @throws ilTemplateException
      */
     public function render(Component $component, RendererInterface $default_renderer): string
@@ -62,7 +65,7 @@ class ChunkedFileRenderer extends Renderer
         $settings->existing_files = $handler->getInfoForExistingFiles($component->getValue() ?? []);
         $settings->timeout = (int) ini_get('max_execution_time') * 1000; // dropzone.js expects milliseconds
 
-        $upload_limit = \ilUtil::getUploadSizeLimitBytes();
+        $upload_limit = UploadSize::getUploadSizeLimitBytes();
         $settings->chunked_upload = $handler->supportsChunkedUploads();
         $settings->chunk_size = $component->getChunkSizeInBytes();
 

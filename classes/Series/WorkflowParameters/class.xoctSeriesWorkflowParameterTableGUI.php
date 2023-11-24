@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
@@ -12,17 +14,11 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  */
 class xoctSeriesWorkflowParameterTableGUI extends TableGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
     /**
      * @var ilOpenCastPlugin
      */
     protected $plugin;
-    protected $lng;
-    /**
-     * @var xoctSeriesGUI
-     */
-    protected $parent_obj;
     /**
      * @var WorkflowParameterRepository
      */
@@ -38,7 +34,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
     {
         global $DIC, $opencastContainer;
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->lng = $DIC->language();
         parent::__construct($parent, $parent_cmd);
         $this->setEnableNumInfo(false);
         $this->workflowParameterRepository = $workflowParameterRepository;
@@ -52,14 +47,9 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
     }
 
-    /**
-     * @param array  $row
-     * @param        $format
-     *
-     */
     protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
     {
-        $column = $row[$column];
+        return $row[$column] ?? '';
     }
 
     protected function getSelectableColumns2(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
@@ -65,12 +67,11 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_DOWNLOAD
         ];
 
-
     /**
      * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
@@ -78,7 +79,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @return string
      */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
@@ -244,7 +245,6 @@ class PublicationUsage extends ActiveRecord
         $this->title = $title;
     }
 
-
     /**
      * @return string
      */
@@ -253,7 +253,6 @@ class PublicationUsage extends ActiveRecord
         return $this->display_name ?? '';
     }
 
-
     /**
      * @param string $description
      */
@@ -261,7 +260,6 @@ class PublicationUsage extends ActiveRecord
     {
         $this->display_name = $display_name;
     }
-
 
     /**
      * @return string
@@ -286,7 +284,6 @@ class PublicationUsage extends ActiveRecord
     {
         return (!is_null($this->group_id) ? intval($this->group_id) : null);
     }
-
 
     /**
      * @param $group_id
@@ -399,7 +396,6 @@ class PublicationUsage extends ActiveRecord
         $mediatypes = array_map('trim', $mediatypes);
         return $mediatypes;
     }
-
 
     /**
      * @param string $mediatype

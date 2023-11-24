@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 namespace srag\Plugins\Opencast\Model\PermissionTemplate;
@@ -273,12 +275,8 @@ class PermissionTemplate extends ActiveRecord
         return $ACL;
     }
 
-    /**
-     * @param $with_download
-     * @param $with_annotate
-     *
-     */
-    public function getAcls($with_download, $with_annotate): ACL
+
+    public function getAcls(bool $with_download, bool $with_annotate): ACL
     {
         $entries = [];
 
@@ -345,9 +343,6 @@ class PermissionTemplate extends ActiveRecord
         return new ACLEntry($role, $action, true);
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return (int) $this->id;

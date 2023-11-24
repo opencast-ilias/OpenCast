@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -15,22 +13,26 @@ declare(strict_types=1);
  * us at:
  * https://www.ilias.de
  * https://github.com/ILIAS-eLearning
- *
- *********************************************************************/
+ */
 
 declare(strict_types=1);
 
-namespace srag\Plugins\Opencast\Model\Cache;
-
-use ILIAS\Cache\Nodes\NodeRepository;
-use ILIAS\Cache\Nodes\NullNodeRepository;
+namespace srag\Plugins\Opencast\LegacyHelpers;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
+ * @deprecated
  */
-interface Cacheable
+class UploadSize
 {
-    public function toCache(): array;
-
-    public function fromCache(array $data): void;
+    public static function getUploadSizeLimitBytes(): int
+    {
+        if (class_exists('ilFileUtils') && method_exists('ilFileUtils', 'getUploadSizeLimitBytes')) {
+            return (int) \ilFileUtils::getUploadSizeLimitBytes();
+        }
+        if (class_exists('ilUtils') && method_exists('ilUtils', 'getUploadSizeLimitBytes')) {
+            return (int) \ilUtils::getUploadSizeLimitBytes();
+        }
+        return 0;
+    }
 }

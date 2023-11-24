@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
@@ -12,6 +14,7 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 class PublicationSubUsageRepository
 {
     use LocaleTrait;
+
     /**
      * Returns the display name of the sub-usage but by looking for a record also in localization.
      * @param int $sub_id

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -24,8 +26,6 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
  */
 class xoctSeriesAPI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     /**
      * @var self
      */
@@ -209,8 +209,9 @@ class xoctSeriesAPI
     public function delete($ref_id, $delete_opencast_series): void
     {
         $object = new ilObjOpenCast($ref_id);
-        if ($delete_opencast_series) {
-            ObjectSettings::find($object->getId())->getSeries()->delete();
+        $object_settings = ObjectSettings::find($object->getId());
+        if ($delete_opencast_series && $object_settings instanceof ObjectSettings) {
+            $object_settings->getSeries()->delete();
         }
         $object->delete();
     }

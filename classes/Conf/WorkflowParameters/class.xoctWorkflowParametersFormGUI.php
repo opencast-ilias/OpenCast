@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctWorkflowParametersFormGUI
@@ -11,8 +14,8 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
  */
 class xoctWorkflowParametersFormGUI extends PropertyFormGUI
 {
-    use TranslatorTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait;
+    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class; // TODO remove
 
     public const PROPERTY_TITLE = 'setTitle';
     public const PROPERTY_INFO = 'setInfo';
@@ -39,7 +42,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
     protected function initFields(): void
     {
         $this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-            self::PROPERTY_TITLE => $this->translate(
+            self::PROPERTY_TITLE => $this->getLocaleString(
                 PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES,
                 'config'
             ),
@@ -47,8 +50,8 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
             self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
             self::PROPERTY_SUBITEMS => [
                 self::F_OVERWRITE_SERIES_PARAMS => [
-                    self::PROPERTY_TITLE => $this->translate(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-                    self::PROPERTY_INFO => $this->translate(
+                    self::PROPERTY_TITLE => $this->getLocaleString(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
+                    self::PROPERTY_INFO => $this->getLocaleString(
                         self::F_OVERWRITE_SERIES_PARAMS . '_info',
                         'config'
                     ),
@@ -58,24 +61,17 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
         ];
     }
 
-    /**
-     *
-     */
+
     protected function initId(): void
     {
     }
 
-    /**
-     *
-     */
+
     protected function initTitle(): void
     {
-        $this->setTitle($this->translate('settings', 'tab'));
+        $this->setTitle($this->getLocaleString('settings', 'tab'));
     }
 
-    /**
-     * @param mixed $value
-     */
     protected function storeValue(string $key, $value): void
     {
         switch ($key) {
@@ -83,7 +79,7 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
                 PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
                 break;
             case self::F_OVERWRITE_SERIES_PARAMS:
-                if ($value == true) {
+                if ($value) {
                     $this->parent->setOverwriteSeriesParameter();
                 }
                 break;

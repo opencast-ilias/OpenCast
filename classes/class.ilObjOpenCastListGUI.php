@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
@@ -19,38 +21,6 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 {
-    /**
-     * @var bool
-     */
-    public $subscribe_enabled;
-    /**
-     * @var bool
-     */
-    public $payment_enabled;
-    /**
-     * @var bool
-     */
-    public $link_enabled;
-    /**
-     * @var bool
-     */
-    public $delete_enabled;
-    /**
-     * @var bool
-     */
-    public $cut_enabled;
-    /**
-     * @var bool
-     */
-    public $adm_commands_included;
-    public $container_obj;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
-    /**
-     * @var ilOpenCastPlugin
-     */
-    public $plugin;
-
     public function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);
@@ -91,29 +61,28 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         ];
     }
 
-    public function insertDeleteCommand()
+    public function insertDeleteCommand(): void
     {
         if ($this->std_cmd_only) {
             return;
         }
 
-        if (is_object($this->getContainerObject()) && $this->getContainerObject(
-            ) instanceof ilAdministrationCommandHandling) {
+        if ($this->getContainerObject() instanceof ilAdministrationCommandHandling) {
             if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
                 $this->ctrl->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
                 $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
                 $this->insertCommand($cmd_link, $this->lng->txt("delete"));
                 $this->adm_commands_included = true;
-                return true;
+                return;
             }
-            return false;
+            return;
         }
 
         if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
             $this->ctrl->setParameterByClass(
                 "ilObjOpenCastGUI",
                 "ref_id",
-                $this->container_obj->object->getRefId()
+                $this->parent_ref_id
             );
             $this->ctrl->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
             $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
@@ -133,13 +102,14 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
     }
 
     /**
-     * @param bool $get_exceoptions
-     * @return ActiveRecord|ObjectSettings
      * @throws xoctException
      */
-    protected function getOpenCast($get_exceoptions = false)
+    protected function getOpenCast(bool $get_exceoptions = false): ObjectSettings
     {
         $objectSettings = new ObjectSettings();
+        if (!isset($this->obj_id)) {
+            return $objectSettings;
+        }
         try {
             PluginConfig::setApiSettings();
             $objectSettings = ObjectSettings::find($this->obj_id);
@@ -160,7 +130,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
      *                        'property' (string) => property name
      *                        'value' (string) => property value
      */
-    public function getCustomProperties($a_prop)
+    #[ReturnTypeWillChange]
+    public function getCustomProperties(/*array*/ $prop): array
     {
         $props = parent::getCustomProperties([]);
         try {
@@ -197,8 +168,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
     public function getAlertProperties(): array
     {
         $alert = [];
-        foreach ((array) $this->getCustomProperties([]) as $prop) {
-            if ($prop['alert'] == true) {
+        foreach ($this->getCustomProperties([]) as $prop) {
+            if ($prop['alert']) {
                 $alert[] = $prop;
             }
         }
