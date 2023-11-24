@@ -4,10 +4,12 @@ namespace srag\Plugins\Opencast\Model\Workflow;
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 class WorkflowDBRepository implements WorkflowRepository
 {
     use TranslatorTrait;
+    use LocaleTrait;
 
     public const SELECTION_TEXT_LANG_MODULE = 'workflow_selection_text';
     public const CONFIG_PANEL_LABEL_LANG_MODULE = 'workflow_config_panel_label';
@@ -420,17 +422,17 @@ class WorkflowDBRepository implements WorkflowRepository
     {
         $workflow_selection_list = [];
         foreach ($this->getFilteredWorkflowsArray() as $workflow) {
-            $title = $workflow->getTitle();
             $workflow_record_id = $workflow->getId();
+            $title = $workflow->getTitle();
             $workflow_identifier = $workflow->getWorkflowId();
-            $translated_text = $this->translate($workflow_identifier, self::SELECTION_TEXT_LANG_MODULE);
-            if (strpos($translated_text, 'MISSING') === false) {
-                $title = $translated_text;
-            }
-            // A tiny fallback to workflow identifier, if title is empty!
             if (empty($title)) {
                 $title = $workflow_identifier;
             }
+            $title = $this->getLocaleString(
+                $workflow_identifier,
+                self::SELECTION_TEXT_LANG_MODULE,
+                $title
+            );
             $workflow_selection_list[$workflow_record_id] = $title;
         }
         return $workflow_selection_list;
@@ -655,10 +657,11 @@ class WorkflowDBRepository implements WorkflowRepository
                     if (isset($ids[$for])) {
                         $label->setAttribute('for', $ids[$for]);
                     }
-                    $translated_label = $this->translate($for, self::CONFIG_PANEL_LABEL_LANG_MODULE);
-                    if (strpos($translated_label, 'MISSING') === false) {
-                        $label_text = $translated_label;
-                    }
+                    $label_text = $this->getLocaleString(
+                        $for,
+                        self::CONFIG_PANEL_LABEL_LANG_MODULE,
+                        $label_text
+                    );
                 }
                 $label->nodeValue = $label_text;
 
