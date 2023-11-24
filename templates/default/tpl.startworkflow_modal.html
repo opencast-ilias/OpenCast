@@ -1,0 +1,21 @@
+<div class="alert hidden alert-danger" role="alert" id="wf-alert">
+	<span class="hidden" id="no-workflow-seleced">{NO_WORKFLOW_SELECTED_ERROR_TEXT}</span>
+	<span class="hidden" id="required">{CONFIG_PANEL_REQUIRED_ERROR_TEXT}</span>
+</div>
+<form id="{FORM_ID}" role="form" action="{FORM_ACTION}" method="post" class="form-horizontal preventDoubleSubmission startworkflow-form" novalidate="novalidate">
+	<input type="hidden" name="startworkflow_event_id" id="startworkflow_event_id" value="">
+	<div class="form-horizontal">
+		<div class="form-group" id="workflow_id_block">
+			<label for="workflow_id" class="col-sm-4 wf-labels">Workflow</label>
+			<select aria-label="Workflow" class="form-control" id="workflow_id" name="workflow_id" required>
+				{WORKFLOW_OPTIONS}
+			</select>
+		</div>
+		{WORKFLOW_DESCRIPTIONS}
+		{WORKFLOW_CONFIG_PANELS}
+		<button type="submit" id="{FORM_SUBMIT_BTN_ID}" class="submit-btn"></button>
+	</div>
+</form>
+<script type="text/javascript">
+	il.Opencast.Workflow.startWorkflow.init("{FORM_SUBMIT_BTN_ID}", "{FORM_ID}")
+</script>

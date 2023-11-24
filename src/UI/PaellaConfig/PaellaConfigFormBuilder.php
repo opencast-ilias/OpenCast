@@ -79,8 +79,13 @@ class PaellaConfigFormBuilder
             true
         );
 
+        $live_theme_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE;
+        // Toggle the live theme path when it is buffered capable.
+        if (PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED)) {
+            $live_theme_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE_BUFFERED;
+        }
         $inputs[self::F_PAELLA_PLAYER_LIVE_THEME] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_THEME_LIVE)),
+            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), $live_theme_url)),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_LIVE) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL_LIVE) ?? '',
             self::F_PAELLA_PLAYER_LIVE_THEME,

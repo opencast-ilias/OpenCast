@@ -51,6 +51,7 @@ The player can be configured to use streaming URLs. This requires a Wowza stream
 
 ##### Live Streams
 Allow viewing Live Streams, optionally with an on-screen chat during the event. The publication "Live Stream" has to be configured properly for the plugin to recognize live events.
+<b>NOTE:</b> If you are using livestream with buffering capabality, you would need to enable "Buffered Livestream" option, in order to apply correct theme, settings and source format into the paella player, which results in having a paella palyer with progressbar to move back and forth in time and play/pause button during your livestream videos.
 
 ##### Use self-generated streaming URLs
 If this is active, the plugin will generate streaming urls with the given 'Wowza URL', according to this pattern:
@@ -76,6 +77,7 @@ Define the basic configuration of plugin's Paella Player (config.json). You can 
 an uploaded file, or a remote URL.
 
 From paella player 7, the plugin uses player themes (by default opencast theme located in ./js/opencast/src/Paella/default_theme/opencast_theme.json) for videos on demand, and a specific livestream theme (located in ./js/opencast/src/Paella/default_theme/opencast_live_theme.json), these themes can also be replaced by a remote URL.
+Based on the settings (buffered livestreams) there is another theme configuration introduced (located in ./js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json), which has the basic requirements for the paella player to show buffered livestreams.
 
 There is also the possibility to use a preview image as a fallback (located in ./templates/images/default_preview.png), in case opencast could not provide the video's default preview image somehow, this image can also be replaced by a remote URL.
 
@@ -145,12 +147,28 @@ Level of detail for log entries. The log can be found in ILIAS' external data di
 If enabled, the upload will be executed via Ingest Nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 
 ## Workflows
-This view allows you to configure workflow definitions with optional workflow parameters. If any workflows are configured, the "Actions" menu of events will show a new option "Publish" which will open an overlay through which one of the configured workflows can be started for that event.
+This settings view allows you to configute the workflows that could be provided to the users via the "Start Workflow" button in the "Actions" menu of events in the event table/tile view. This sections consists of two sub-pages, one called "Settings" is responsible for general settings required to perform this feature, the other one is the list of  workflow definitions that are being presented to the users.
 
-A workflow configuration requires the following fields:
-* ID: a valid workflow definition ID
-* Title: will be used in the overlay
-* Parameters: a comma-separated list of workflow parameters. These parameters will be set to 'true' when starting the workflow.
+#### Settings
+In this sub-section you need to define workflow tags that you would like to provide to the user. What it does, is simply getting the list of all workflows and then check if each workflow has any of your defined tags (which happens in the next sub-section).
+NOTE: you can define a list of tags in a comma-separated format like: "api, archive, editor, delete, upload"
+
+#### Workflow definition list
+In this sub-section you are able to get the list of workflow definitions based on the tags you defined in the above sub-section, simply by clicking on the "Update workflow list" button. On the other hand, you are able to edit the title and description of each workflow definition based on you needs simply via "Actions / Edit", the delete button is also provided!
+
+##### Title
+The title of the workflow definition, which at the end shows up in the dropdown list for users to select from, can be translated and follows the locale translation fallback mechanism:
+- By default what you enter or is set as title will be displayed to the user.
+- In case you remove the title (without providing translation fallback), the workflow definition id will be displayed.
+- In case you want to use the translation fallback mechanism, you have to add the string to the lang files with the following key format:
+  - workflow_selection_text_[workflow definition id]#:#TEST (e.g. workflow_selection_text_delete#:#Remove and retract the event)
+
+##### Configuration Panel
+As a minor reminder and announcement, it is good to know that the configuration panel of each workflow definition (if any) will be dynamically and automatically displayed to the users and they can interact and enter values, which in return will be captured and sent to the workflow api as configuration parameter, therefore, you should take care of any cutom-defined logic that you provide for any workflow definition in Opencast.
+
+###### Prameter Labels
+You are able to provide custom label texts for the configuration panel items using translation fallback mechanism, with the following key format:
+- workflow_config_panel_label_[the id of the input]#:#TEST (e.g. workflow_config_panel_label_mpTitle#:#This item is translated)
 
 ## Workflow Parameters
 ### Parameters
@@ -196,11 +214,27 @@ The configured Metadata fields will be visible in:
 - the table containing events (event metadata)
 
 A metadata field can be configured as:
-- visible for: either everyone or only for admins
-- read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
-- required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
-- prefilled: field is prefilled when creating an event or a series. Options are prefilled with current user's username or title of the course.
+- Visible for: either everyone or only for admins
+- Read-only: field can not be edited in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- Required: field is required in a form. Note that some fields are defined to be read-only by Opencast, so they can't be configured editable in ILIAS.
+- Prefilled: field is prefilled when creating an event or a series. The prefilled text can be dynamically inserted as a form of text-base placeholder that admins can select from 3 different ilias global attributes as follows:
+  - 1. COURSE: admins can tap COURSE object with provided properties such as ID, REF_ID, TITLE, etc.
+  - 2. USER: admins can tap USER object with provided properties such as FIRSTNAME, LASTNAME, FULLNAME, etc.
+  - 3. META: admins can tap into META object but limited only to 2 preperties including KEYWORDS, LANGUAGES.
+The way of defining the prefilled placeholder follows a basic rule: it must be enclosed in square brackets "[]", all in CAPITAL letters, and narrowing down to properties by a "." (dot), for example: [USER.FIRSTNAME] or [COURSE.TYPE] or in case of META like [META.KEYWORDS.1]
+It is also possible to define multiple placeholders in a single prefilled text option like: [USER.FIRSTNAME], [USER.LASTNAME]
 
+#### Metadata + listproviders
+In case a metadata field is a list and requires to get the its list of available values from Opencast, there is the a button provided for this feature when adding or editing the metadata called "Load values from API", which gets the values from opencast and converts them into the format expected by Possible values.
+Opencast API user must have ROLE_API_LISTPROVIDERS_VIEW role which will be provided in latest version of Opencast (from 13 - 14)
+In addition to the role, the API version must be set to 1.10.0 or above.
+
+Using translation fallback mechanism for languages and licenses which are going to be displayed to the users in the dropdown:
+- For languages all you need to do is to provide the string in the lang file with the format like:
+  - md_lang_list_[the id of language from opencast]#:#TEST (e.g. md_lang_list_zho#:#Chinesisch)
+
+- For Licenses all you need to do is to provide the string in the lang file with the format like:
+  - md_license_list_[the id of the license from openacst]#:#TEST (e.g. md_license_list_ALLRIGHTS#:#All rights reserved)
 
 ## Video Portal
 Some institutions run an external video portal to which Opencast events will be published, based on the permissions set for events. This configuration allows to create permission templates, which can be chosen when creating a new series.

@@ -216,10 +216,7 @@ class PermissionTemplate extends ActiveRecord
         return $ACL;
     }
 
-    /**
-     * @return PermissionTemplate|bool
-     */
-    public static function getTemplateForAcls(ACL $ACL)
+    public static function getTemplateForAcls(ACL $ACL): ?PermissionTemplate
     {
         $acls_formatted = [];
         foreach ($ACL->getEntries() as $entry) {
@@ -231,20 +228,30 @@ class PermissionTemplate extends ActiveRecord
 
         /** @var PermissionTemplate $perm_tpl */
         foreach (self::get() as $perm_tpl) {
-            $entry = $acls_formatted[$perm_tpl->getRole()];
-            if ($entry && (isset($entry[ACLEntry::READ]) === (bool) $perm_tpl->getRead(
-                    )) && (isset($entry[ACLEntry::WRITE]) === (bool) $perm_tpl->getWrite())) {
-                foreach (array_filter(explode(',', $perm_tpl->getAdditionalAclActions())) as $action) {
-                    if (!$entry[trim($action)]) {
-                        continue 2;
-                    }
-                }
-
-                return $perm_tpl;
+            $entry = $acls_formatted[$perm_tpl->getRole()] ?? null;
+            if ($entry === null) {
+                continue;
             }
+            $perm_read = (bool) $perm_tpl->getRead();
+            $perm_write = (bool) $perm_tpl->getWrite();
+
+            $entry_read = isset($entry[ACLEntry::READ]) && (bool) $entry[ACLEntry::READ];
+            $entry_write = isset($entry[ACLEntry::WRITE]) && (bool) $entry[ACLEntry::WRITE];
+            // This check has been removed, see https://github.com/opencast-ilias/OpenCast/issues/212 .
+            // But I leave it here for now, since there must be some reason why it was there in the first place.
+
+            // if (($perm_read === $entry_read) && ($perm_write === $entry_write)) {
+            foreach (array_filter(explode(',', $perm_tpl->getAdditionalAclActions())) as $action) {
+                if (!$entry[trim($action)]) {
+                    continue 2;
+                }
+            }
+
+            return $perm_tpl;
+            // }
         }
 
-        return false;
+        return null;
     }
 
     public function addToAcls(ACL $ACL, bool $with_download, bool $with_annotate): ACL
@@ -257,8 +264,8 @@ class PermissionTemplate extends ActiveRecord
     {
         $entries = $ACL->getEntries();
         foreach ($ACL->getEntries() as $key => $existing_acl) {
-            if ($existing_acl->getRole() === $this->getRole() || $existing_acl->getRole() == $this->getAddedRoleName(
-                )) {
+            if ($existing_acl->getRole() === $this->getRole()
+                || $existing_acl->getRole() == $this->getAddedRoleName()) {
                 unset($entries[$key]);
             }
         }
@@ -341,145 +348,94 @@ class PermissionTemplate extends ActiveRecord
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return String
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         global $DIC;
-        return $DIC->user()->getLanguage() == 'de' ? $this->title_de : $this->title_en;
+        return $DIC->user()->getLanguage() === 'de' ? $this->title_de : $this->title_en;
     }
 
-    /**
-     * @return String
-     */
-    public function getTitleDE()
+    public function getTitleDE(): string
     {
         return $this->title_de;
     }
 
-    /**
-     * @param String $title_de
-     */
-    public function setTitleDE($title_de): void
+    public function setTitleDE(string $title_de): void
     {
         $this->title_de = $title_de;
     }
 
-    /**
-     * @return String
-     */
-    public function getTitleEN()
+    public function getTitleEN(): string
     {
         return $this->title_en;
     }
 
-    /**
-     * @param String $title_en
-     */
-    public function setTitleEN($title_en): void
+    public function setTitleEN(string $title_en): void
     {
         $this->title_en = $title_en;
     }
 
-    /**
-     * @return String
-     */
-    public function getInfo()
+    public function getInfo(): string
     {
         global $DIC;
-        return $DIC->user()->getLanguage() == 'de' ? $this->info_de : $this->info_en;
+        return $DIC->user()->getLanguage() === 'de' ? $this->info_de : $this->info_en;
     }
 
-    /**
-     * @return String
-     */
-    public function getInfoDE()
+    public function getInfoDE(): string
     {
         return $this->info_de;
     }
 
-    /**
-     * @param String $info_de
-     */
-    public function setInfoDE($info_de): void
+    public function setInfoDE(string $info_de): void
     {
         $this->info_de = $info_de;
     }
 
-    /**
-     * @return String
-     */
-    public function getInfoEN()
+    public function getInfoEN(): string
     {
         return $this->info_en;
     }
 
-    /**
-     * @param String $info_en
-     */
-    public function setInfoEN($info_en): void
+    public function setInfoEN(string $info_en): void
     {
         $this->info_en = $info_en;
     }
 
-    /**
-     * @return String
-     */
-    public function getRole()
+    public function getRole(): string
     {
         return $this->role;
     }
 
-    /**
-     * @param String $role
-     */
-    public function setRole($role): void
+    public function setRole(string $role): void
     {
         $this->role = $role;
     }
 
-    /**
-     * @return int
-     */
-    public function getRead()
+    public function getRead(): int
     {
-        return $this->read_access;
+        return (int) $this->read_access;
     }
 
-    /**
-     * @param int $read
-     */
-    public function setRead($read): void
+    public function setRead(int $read): void
     {
         $this->read_access = $read;
     }
 
-    /**
-     * @return int
-     */
-    public function getWrite()
+    public function getWrite(): int
     {
-        return $this->write_access;
+        return (int) $this->write_access;
     }
 
-    /**
-     * @param int $write
-     */
-    public function setWrite($write): void
+    public function setWrite(int $write): void
     {
         $this->write_access = $write;
     }
@@ -489,42 +445,27 @@ class PermissionTemplate extends ActiveRecord
         return str_replace(' ', '', $this->additional_acl_actions);
     }
 
-    /**
-     * @param String $additional_acl_actions
-     */
-    public function setAdditionalAclActions($additional_acl_actions): void
+    public function setAdditionalAclActions(string $additional_acl_actions): void
     {
         $this->additional_acl_actions = $additional_acl_actions;
     }
 
-    /**
-     * @return String
-     */
-    public function getAdditionalActionsDownload()
+    public function getAdditionalActionsDownload(): string
     {
         return $this->additional_actions_download;
     }
 
-    /**
-     * @param String $additional_actions_download
-     */
-    public function setAdditionalActionsDownload($additional_actions_download): void
+    public function setAdditionalActionsDownload(string $additional_actions_download): void
     {
         $this->additional_actions_download = $additional_actions_download;
     }
 
-    /**
-     * @return String
-     */
-    public function getAdditionalActionsAnnotate()
+    public function getAdditionalActionsAnnotate(): string
     {
         return $this->additional_actions_annotate;
     }
 
-    /**
-     * @param String $additional_actions_annotate
-     */
-    public function setAdditionalActionsAnnotate($additional_actions_annotate): void
+    public function setAdditionalActionsAnnotate(string $additional_actions_annotate): void
     {
         $this->additional_actions_annotate = $additional_actions_annotate;
     }
@@ -599,34 +540,22 @@ class PermissionTemplate extends ActiveRecord
         $this->added_role_actions_annotate = $additional_actions_annotate;
     }
 
-    /**
-     * @return int
-     */
-    public function getSort()
+    public function getSort(): int
     {
-        return $this->sort;
+        return (int) $this->sort;
     }
 
-    /**
-     * @param int $sort
-     */
-    public function setSort($sort): void
+    public function setSort(int $sort): void
     {
         $this->sort = $sort;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDefault()
+    public function isDefault(): bool
     {
-        return $this->is_default;
+        return (bool) $this->is_default;
     }
 
-    /**
-     * @param int $default
-     */
-    public function setDefault($default): void
+    public function setDefault(bool $default): void
     {
         $this->is_default = $default;
     }

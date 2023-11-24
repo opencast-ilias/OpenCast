@@ -798,14 +798,13 @@ class xoctEventRenderer
 
         // Republish
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)
-            && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getRepublishModal())
+            && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(self::$modals->getStartworkflowModal())
         ) {
             $actions[] = $this->factory->button()->shy(
-                $this->plugin->txt('event_republish'),
-                self::$modals->getRepublishModal()->getShowSignal()
+                $this->plugin->txt('event_startworkflow'),
+                self::$modals->getStartworkflowModal()->getShowSignal()
             )->withOnLoadCode(function ($id) {
-                return "$({$id}).on('click'," .
-                        "function(event){ $('input#republish_event_id').val('{$this->event->getIdentifier()}'); });";
+                return "$({$id}).on('click', function(event){ $('input#startworkflow_event_id').val('{$this->event->getIdentifier()}'); $('.startworkflow-form select#workflow_id').val(''); $('.startworkflow-form select#workflow_id').trigger('change');});";
             });
         }
 

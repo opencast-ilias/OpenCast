@@ -8,6 +8,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 
 /**
  * Class xoctEventTableGUI
@@ -69,6 +71,10 @@ class xoctEventTableGUI extends ilTable2GUI
      * @var \ilObjUser
      */
     private $user;
+    /**
+     * @var \MDCatalogue
+     */
+    private $md_catalogue_event;
 
     public function __construct(
         xoctEventGUI $a_parent_obj,
@@ -76,7 +82,8 @@ class xoctEventTableGUI extends ilTable2GUI
         ObjectSettings $object_settings,
         array $md_fields,
         array $data,
-        string $lang_key
+        string $lang_key,
+        MDCatalogue $md_catalogue_event
     ) {
         global $DIC;
         $ctrl = $DIC->ctrl();
@@ -121,6 +128,7 @@ class xoctEventTableGUI extends ilTable2GUI
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats([self::EXPORT_CSV]);
         }
+        $this->md_catalogue_event = $md_catalogue_event;
     }
 
     public static function setDefaultRowValue(int $obj_id): void
@@ -179,7 +187,12 @@ class xoctEventTableGUI extends ilTable2GUI
                 if ($first) {
                     $this->tpl->setVariable('STATE', $renderer->getStateHTML());
                 }
-                $this->tpl->setVariable('VALUE', $a_set[$md_field->getFieldId()]);
+                $md_field_def = $this->md_catalogue_event->getFieldById($md_field->getFieldId());
+                $value = $a_set[$md_field->getFieldId()] ?? '';
+                if ($md_field_def->getType()->getTitle() == MDDataType::TYPE_TEXT_SELECTION) {
+                    $value = $md_field->getValues()[$value] ?? '';
+                }
+                $this->tpl->setVariable('VALUE', $value);
                 $first = false;
                 $this->tpl->parseCurrentBlock();
             }

@@ -1,5 +1,9 @@
 admin_export#:#Einstellungen exportieren
 admin_import#:#Einstellungen importieren
+admin_import_success#:#Neue Einstellungen wurden erfolgreich importiert
+admin_import_failed#:#Neue Einstellungen können nicht importiert werden.
+admin_import_file_missign#:#Die Einstellungsdatei ist nicht ausgewählt.
+msg_admin_import_freindly_reminder_info#:#Bitte beachten Sie, dass beim Importieren neuer Einstellungen die alten Einstellungen überschrieben und/oder gelöscht werden. Daher wird dringend empfohlen, die neu importierten Einstellungen durchzugehen und sicherzustellen, dass alles vorhanden ist.
 common_actions#:#Aktionen
 config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
 config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.
@@ -232,7 +236,7 @@ event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
 event_recording_station#:#Aufnahmestation
-event_republish#:#Workflow starten
+event_startworkflow#:#Workflow starten
 event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start
 event_start#:#Start
@@ -520,7 +524,7 @@ tiles_per_page#:#Kacheln pro Seite:
 event_live_waiting_text#:#Das Live Event hat noch nicht begonnen.<br>Geplante Startzeit: %s
 event_live_interrupted_text#:#Das Live Event wurde unterbrochen oder frühzeitig beendet.
 event_live_over_text#:#Das Live Event wurde beendet.
-msg_workflows_info#:#Die hier konfigurierten Workflows können verwendet werden, um Events erneut zu publizieren.
+msg_workflows_info#:#Hier können Sie die Workflows von Opencast laden und sie anpassen.
 msg_workflow_created#:#Workflow erfolgreich erstellt.
 msg_workflow_updated#:#Workflow erfolgreich aktualisiert.
 config_button_add_workflow#:#Neuen Workflow hinzufügen
@@ -547,8 +551,8 @@ md_visible_for_permissions#:#Sichbar für
 md_required#:#Verpflichtend
 md_read_only#:#Nicht editierbar
 md_prefill#:#Vorausgefüllt mit
+md_prefill_info#:#Der vorab ausgefüllte Text, der im Metadatenfeld angezeigt wird, wenn das Objekt neu ist.<br /> Es stehen drei Arten von Platzhaltern zur Verfügung, die auf Benutzer-, Kurs-/Gruppenobjekte oder Metadaten des Kurses/der Gruppe zugreifen, um deren verfügbare Eigenschaften abzurufen .<br /><br /> <i>Das Format</i>: in eckigen Klammern eingeschlossen "[]" in zwei oder drei Teilen, getrennt durch ".", alle in GROSSBUCHSTABEN, es ist möglich, mehrere auf einmal hinzuzufügen, z.B. <b>%s</b> <br /> <br />Der erste ganz linke Teil hat 3 mögliche Werte: %s, %s oder %s zum Tippen.<br /> Der rechte Teil (in 2 Schlüssel.Wert-Paarform) oder Mittelteil (in 3 Schlüssel.Wert.Unterwert-Paarform) akzeptiert nur die folgenden möglichen Werte: <br /><br /> <b>Für %s</b>: <br /> %s <br /><br /> <b>Für %s</b>: <br /> %s <br /><br /> <b>Für %s</b>: <br /> %s <br /><br /> Bei Verwendung von <b>%s</b> muss der dritte Teil (ganz rechts) die Bestellnummer dieser Eigenschaft beginnend mit 1 haben, z. B. <b>%s </b> <br /><br /> Weitere Informationen finden Sie in der Dokumentation der Klassen ilObject, ilUser und ilMD in ILIAS.
 md_values#:#Mögliche Werte
-md_values_info#:#Ein Eintrag pro Zeile in der Form "Wert%sBeschreibung"
 md_prefill_none#:#Leer
 md_prefill_username_creator#:#Benutzername
 md_prefill_crs_title#:#Kurstitel
@@ -580,6 +584,70 @@ object_settings#:#Einstellungen
 channel_type#:#Serie
 file#:#Datei
 link#:#URL
+md_values_info#:#Ein Eintrag pro Zeile im Format wie "[Wert]%s[Label]". Das Trennzeichen ist %s, und ändern Sie [Wert] und [Beschriftung] nach Ihren Wünschen: z. B. eng%sEnglisch
+msg_md_confirm_load_list#:#Sind Sie sicher, dass Sie die Liste von der API laden möchten? Bitte beachten Sie, dass nicht gespeicherte Änderungen gelöscht werden und erneut eingegeben werden müssen.
+md_accept#:#Akzeptieren
+md_cancel#:#Stornieren
+msg_md_listproviders_load_success#:#Die Liste wurde erfolgreich geladen.
+msg_md_listproviders_load_invalid#:#Die gültige Liste konnte nicht geladen werden.
+btn_load_metadata_values_from_listprovider#:#Werte von der API laden
+msg_md_listproviders_no_access#:#Auf den ListProvider-API-Endpunkt kann Ihr Opencast-API-Benutzer nicht zugreifen. Stellen Sie bitte sicher, dass der Benutzer über Rollen in Ihrem Opencast verfügt.
+msg_md_listproviders_empty#:#The loaded list is empty
+md_lang_list_zho#:#Chinesisch
+md_lang_list_spa#:#Spanisch
+md_lang_list_nld#:#Niederländisch
+md_lang_list_fin#:#Finnisch
+md_lang_list_gsw#:#Schweizerdeutsch
+md_lang_list_roh#:#Rätoromanisch
+md_lang_list_hin#:#Hindi
+md_lang_list_pol#:#Polnisch
+md_lang_list_dan#:#Dänisch
+md_lang_list_nor#:#Norwegisch
+md_lang_list_tur#:#Türkisch
+md_lang_list_ara#:#Arabisch
+md_lang_list_rus#:#Russisch
+md_lang_list_por#:#Portugiesisch
+md_lang_list_jpx#:#Japanisch
+md_lang_list_fra#:#Französisch
+md_lang_list_deu#:#Deutsch
+md_lang_list_ita#:#Italienisch
+md_lang_list_slv#:#Slowenisch
+md_lang_list_swa#:#Schwedisch
+md_lang_list_ukr#:#Ukrainische
+md_lang_list_eng#:#Englisch
+md_license_list_CC0#:#CC0
+md_license_list_CCBYNCSA#:#CC BY-NC-SA
+md_license_list_CCBYSA#:#CC BY-SA
+md_license_list_CCBYNCND#:#CC BY-NC-ND
+md_license_list_CCBYND#:#CC BY-ND
+md_license_list_CCBY#:#CC BY
+md_license_list_CCBYNC#:#CC BY-NC
+md_license_list_ALLRIGHTS#:#Alle Rechte vorbehalten
+subtab_wf_settings#:#Einstellungen
+subtab_wf_list#:#Liste der Workflow-Definitionen
+workflow_settings_header#:#Allgemeine Einstellungen
+workflow_settings_header_description#:#Hier können Sie die Workflow-Einstellungen und deren Verwendung konfigurieren.<br /> <b>HINWEIS: </b>Beim Speichern der neuen Änderungen wird auch die Liste der Workflow-Definitionen entsprechend aktualisiert.
+config_workflows_tags#:#Workflows-Tags
+config_workflows_tags_info#:#Eine durch Kommas getrennte Liste von Tags, die aus allen verfügbaren Tags in Opencast extrahiert und den Lehrern als Liste für den Start bei Ereignissen bereitgestellt werden sollen.<br/><b>HINWEIS:</b> Wenn Sie das Feld leer lassen, wird die Funktion deaktiviert.
+config_workflows_update_btn#:#Workflowliste aktualisieren
+config_workflows_reset_btn#:#Workflowliste zurücksetzen
+msg_workflow_settings_saved#:#Allgemeine Einstellungen wurden gespeichert, die Workflow-Liste wurde ebenfalls aktualisiert.
+msg_workflow_settings_saved_update_failed#:#Die Workflow-Liste konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut!
+msg_workflow_list_update_success#:#Die Workflow-Liste wurde erfolgreich aktualisiert.
+msg_workflow_list_update_failed#:#Die Workflow-Liste konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut!
+msg_workflow_list_reset_success#:#Die Workflowliste wurde erfolgreich zurückgesetzt.
+msg_workflow_list_reset_failed#:#Die Workflowliste konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut!
+msg_workflows_updated#:#Die Workflowliste wurde erfolgreich aktualisiert.
+msg_confirm_reset_workflow_list#:#Die Workflowliste wird zurückgesetzt und alle Änderungen werden entfernt. Möchten Sie trotzdem mit dem Zurücksetzen fortfahren?
+workflow_tags#:#Tags
+workflow_config_panel#:#Konfigurationspanel
+workflow_config_panel_icon_with#:#Mit Konfigurationspanel
+workflow_config_panel_icon_without#:#Ohne Konfigurationspanel
+workflow_empty_select_option#:#--einen Workflow auswählen--
+workflow_description_section_header#:#Beschreibung
+workflow_configpanel_section_header#:#Einstellungen
+msg_startworkflow_no_workflow_seleced#:#Bitte wählen Sie zunächst einen Workflow aus
+msg_startworkflow_required_config_panel_item#:#Erforderliche Felder müssen Werte enthalten
 subtab_publication_usage#:#Publikationsnutzungen
 subtab_publication_sub_usage#:#Unternutzungen
 subtab_publication_groups#:#Unternutzungsgruppen
@@ -626,6 +694,8 @@ config_livestream_type#:#Streaming Typ
 config_livestream_type_info#:#Verschiedene Streaming-Typen erzeugen unterschiedliche Playlist-Dateitypen und Informationen. Es ist wichtig, den unterstützten Streaming-Typ auszuwählen, um die Dateien und Informationen ordnungsgemäß verarbeiten zu können. Der Standardtyp ist auf HLS eingestellt.
 config_livestream_type_hls#:#HLS (.m3u8 / .m3u)
 config_livestream_type_mpegts#:#MPEG-TS (.ts)
+config_livestream_buffered#:#Buffered Livestream
+config_livestream_buffered_info#:#Diese Option sollte aktiviert werden, wenn der Livestream Zeit puffern kann und es möglich ist, während des Streams in der Zeit zurückzugehen, zu pausieren und fortzufahren.<br> Bei Aktivierung werden der Fortschrittsbalken des Players und die Stream-Quelle angezeigt Das Format wird auf "hls" statt auf "hlsLive" gesetzt.
 config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
 config_paella_player_fallback_captions_option_info#:#Standardmäßig wird die Sprache des Benutzerbrowsers für die Standardbeschriftung verwendet. Das Hinzufügen zusätzlicher Beschriftungen hier hilft dabei, bevorzugte Beschriftungen zu definieren, die auf der Grundlage der angegebenen Reihenfolge priorisiert werden.
 config_paella_player_fallback_langs_option#:#Paella Player Sprachen (fallbacks)

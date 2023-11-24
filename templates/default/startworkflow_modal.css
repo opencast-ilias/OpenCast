@@ -1,0 +1,58 @@
+.startworkflow-form {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.startworkflow-form .wf-section {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 10px;
+}
+.startworkflow-form .wf-section:last-of-type {
+    margin-top: 10px;
+}
+.startworkflow-form input[type="radio"],.startworkflow-form input[type="checkbox"] {
+    width: auto;
+}
+.startworkflow-form input:not([type="radio"], [type="checkbox"]) {
+    min-width: 180px;
+}
+.startworkflow-form .wf-inputs {
+    height: 25px;
+    font-size: 12px;
+    color: #161616;
+    border: 1px solid #757575;
+    border-radius: 0;
+    margin-right: 5px !important;
+    margin-top: 0px !important;
+}
+
+.startworkflow-form .wf-labels {
+    text-align: left !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    min-width: 175px;
+
+}
+.startworkflow-form ul {
+    padding: 0 !important;
+}
+.startworkflow-form ul li {
+    align-items: center;
+}
+
+.startworkflow-form ul li input[type="radio"].wf-list-inputs,.startworkflow-form input[type="checkbox"].wf-list-inputs {
+    flex-grow: 0;
+}
+
+.startworkflow-form ul li input[type="radio"].wf-list-inputs + .wf-list-labels,.startworkflow-form input[type="checkbox"].wf-list-inputs + .wf-list-labels{
+    flex-grow: 1;
+}
+
+.startworkflow-form ul ul {
+    margin: 0.8em 0 !important;
+}
+.startworkflow-form .submit-btn {
+    display: none;
+}

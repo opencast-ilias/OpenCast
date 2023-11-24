@@ -1,5 +1,9 @@
 admin_export#:#Export Settings
 admin_import#:#Import Settings
+admin_import_success#:#New settings have been imported successfully
+admin_import_failed#:#Unable to import new settings.
+admin_import_file_missign#:#The settings file is not selected.
+msg_admin_import_freindly_reminder_info#:#Please keep in mind that by importing new settings, the old settings will be overwritten and/or deleted, therefore it is highly recommended to go through newly imported settings and make sure everything is in place.
 common_actions#:#Actions
 config_accept_terms#:#All users must accept the Terms of Use
 config_accept_terms_info#:#Terms of Use must be accepted when uploading an event for the first time.
@@ -267,7 +271,7 @@ event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
 event_report_quality_problem#:#Report Quality Problems
-event_republish#:#Start Workflow
+event_startworkflow#:#Start Workflow
 event_series#:#Series
 event_own_series#:#Own Series (%s)
 groups_available_participants_header#:#Available Participants
@@ -522,7 +526,7 @@ tiles_per_page#:#Tiles per page:
 event_live_waiting_text#:#Live Event hasn't started yet. <br>Scheduled start time: %s
 event_live_interrupted_text#:#The Live Event has been paused or prematurely terminated.
 event_live_over_text#:#Live Event finished.
-msg_workflows_info#:#The configured workflows can be used to republish events.
+msg_workflows_info#:#Here you can load the workflows from opencast and customize them.
 msg_workflow_created#:#Workflow created successfully.
 msg_workflow_updated#:#Workflow updated successfully.
 config_button_add_workflow#:#Create new workflow
@@ -548,8 +552,8 @@ md_visible_for_permissions#:#Visible for
 md_required#:#Required
 md_read_only#:#Read-Only
 md_prefill#:#Prefilled with
+md_prefill_info#:#The prefilled text to be displayed in the metadata field when the object is new.<br /> There are 3 types of placeholder to use, which taps into user, course/group object or metadata of the course/group to get their available properties.<br /><br /> <i>The format</i>: enclosed in square brackets "[]" in two or three parts separated by ".", all in CAPITAL letters, possible to add multiple at once, e.g <b>%s</b> <br /> <br />The first most left part has 3 possible values: %s, %s or %s to tap into.<br /> The right part (in 2 key.value pair form) or middle part (in 3 key.value.subvalue pairs form) accepts only the following possible values: <br /><br /> <b>For %s</b>: <br /> %s <br /><br /> <b>For %s</b>: <br /> %s <br /><br /> <b>For %s</b>: <br /> %s <br /><br /> In case of using <b>%s</b> the 3rd part (on the most right-hand side) must have the oder number of that property starting from 1 e.g <b>%s</b> <br /><br /> For more into refer to the documentation of ilObject, ilUser and ilMD classes in ILIAS.
 md_values#:#Possible values
-md_values_info#:#One Entry per line in the format "value%slabel".
 md_prefill_none#:#None
 md_prefill_username_creator#:#Username
 md_prefill_crs_title#:#Course Title
@@ -581,6 +585,70 @@ object_settings#:#Settings
 channel_type#:#Series
 file#:#File
 link#:#URL
+md_values_info#:#One entry per line in the format like "[value]%s[label]". The separator is %s, and change [value] and [label] with whatever you want: e.g. eng%sEnglish
+msg_md_confirm_load_list#:#Are you sure you would like to load the list from API? Please note that unsaved changes will be removed and must be entered again.
+md_accept#:#Accept
+md_cancel#:#Cancel
+msg_md_listproviders_load_success#:#The list has been successfully loaded.
+msg_md_listproviders_load_invalid#:#Unable to load valid list.
+btn_load_metadata_values_from_listprovider#:#Load values from API
+msg_md_listproviders_no_access#:#The ListProvider API Endpoint is not accessible by your Opencast API User, please make sure that the user has roles in your Opencast.
+msg_md_listproviders_empty#:#The loaded list is empty
+md_lang_list_zho#:#Chinese
+md_lang_list_spa#:#Spanish
+md_lang_list_nld#:#Dutch
+md_lang_list_fin#:#Finnish
+md_lang_list_gsw#:#Swiss German
+md_lang_list_roh#:#Romansh
+md_lang_list_hin#:#Hindi
+md_lang_list_pol#:#Polish
+md_lang_list_dan#:#Danish
+md_lang_list_nor#:#Norwegian
+md_lang_list_tur#:#Turkish
+md_lang_list_ara#:#Arabic
+md_lang_list_rus#:#Russian
+md_lang_list_por#:#Portugese
+md_lang_list_jpx#:#Japanese
+md_lang_list_fra#:#French
+md_lang_list_deu#:#German
+md_lang_list_ita#:#Italian
+md_lang_list_slv#:#Slovenian
+md_lang_list_swa#:#Swedish
+md_lang_list_ukr#:#Ukrainian
+md_lang_list_eng#:#English
+md_license_list_CC0#:#CC0
+md_license_list_CCBYNCSA#:#CC BY-NC-SA
+md_license_list_CCBYSA#:#CC BY-SA
+md_license_list_CCBYNCND#:#CC BY-NC-ND
+md_license_list_CCBYND#:#CC BY-ND
+md_license_list_CCBY#:#CC BY
+md_license_list_CCBYNC#:#CC BY-NC
+md_license_list_ALLRIGHTS#:#All rights reserved
+subtab_wf_settings#:#Settings
+subtab_wf_list#:#Workflow definitions list
+workflow_settings_header#:#General Settings
+workflow_settings_header_description#:#Here you can configure the workflow settings and the way to use them.<br /> <b>NOTE: </b>Upon saving the new changes, the list of workflow definitions will also be updated accordingly.
+config_workflows_tags#:#Workflows Tags
+config_workflows_tags_info#:#A comma-separated list of tags to extract from the all available tags in Opencast and provide them to the teachers as a list to start against events.<br/><b>NOTE:</b> Leaving it empty will disable the feature.
+config_workflows_update_btn#:#Update Workflows List
+config_workflows_reset_btn#:#Reset Workflows List
+msg_workflow_settings_saved#:#General settings have been saved, the workflow list has also been updated.
+msg_workflow_settings_saved_update_failed#:#Unable to update the workflow list, please try again!
+msg_workflow_list_update_success#:#Workflow list has been successfully updated.
+msg_workflow_list_update_failed#:#Unable to update the workflow list, please try again!
+msg_workflow_list_reset_success#:#Workflows list has been successfully reset.
+msg_workflow_list_reset_failed#:#Unable to reset workflows list, please try again!
+msg_workflows_updated#:#The workflows list has been successfully updated.
+msg_confirm_reset_workflow_list#:#The workflows list will be reset and all changes will be removed, would you like to proceed with the reset anyway?
+workflow_tags#:#Tags
+workflow_config_panel#:#Configuration Panel
+workflow_config_panel_icon_with#:#With Configuration Panel
+workflow_config_panel_icon_without#:#Without Configuration Panel
+workflow_empty_select_option#:#--Select a workflow--
+workflow_description_section_header#:#Description
+workflow_configpanel_section_header#:#Settings
+msg_startworkflow_no_workflow_seleced#:#Please select a workflow first
+msg_startworkflow_required_config_panel_item#:#Required fields must have values
 subtab_publication_usage#:#Publication Usage
 subtab_publication_sub_usage#:#Publication Sub-Usage
 subtab_publication_groups#:#Publication Groups
@@ -626,6 +694,8 @@ config_livestream_type#:#Streaming Type
 config_livestream_type_info#:#Different streaming types produce different playlist file types and information. It is important to select the supported streaming type to handle its files and information properly. Default type is set to HLS.
 config_livestream_type_hls#:#HLS (.m3u8 / .m3u)
 config_livestream_type_mpegts#:#MPEG-TS (.ts)
+config_livestream_buffered#:#Buffered Livestream
+config_livestream_buffered_info#:#This option should be activated when the livestream is capable of buffering time and it is possible to go back in time, pause and resume during the stream.<br> When activated, the progress bar of the player will be shown, and the stream source format will be set to "hls" instead of "hlsLive".
 config_paella_player_fallback_captions_option#:#Paella Player Captions (fallbacks)
 config_paella_player_fallback_captions_option_info#:#The user-browser language is by default taken for the default caption, adding additional captions here helps to define preferred captions, prioritized based on the given order.
 config_paella_player_fallback_langs_option#:#Paella Player Languages (fallbacks)

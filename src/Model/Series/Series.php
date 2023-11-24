@@ -72,19 +72,16 @@ class Series
     {
         $this->theme = $theme;
     }
-
-    /**
-     * @return int
-     */
-    public function getPermissionTemplateId()
+    
+    public function getPermissionTemplateId(): ?int
     {
         $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
-        return $template ? $template->getId() : 0;
+        return $template !== null ? $template->getId() : 0;
     }
 
     public function isPublishedOnVideoPortal(): bool
     {
         $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
-        return $template && !$template->isDefault();
+        return $template !== null && !$template->isDefault();
     }
 }

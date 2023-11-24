@@ -1,5 +1,10 @@
 # Change Log
 
+## [5.6.0]
+- Introduced Dynamic Workflows and fix Issue #13
+- Added Metadata Enhancement and fix Issue #181
+- Added Paella Player with buffered live streams and fix Issue #219
+
 ## [5.5.0]
 - Updated to Opencast API 1.5.0
 - Introduced Publication Usages and solved issue #182

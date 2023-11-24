@@ -5,7 +5,6 @@ namespace srag\Plugins\Opencast\UI\Metadata\Config;
 use ILIAS\DI\Container;
 use ilPlugin;
 use ilTable2GUI;
-use srag\Plugins\Opencast\Model\Metadata\Config\MDPrefillOption;
 use xoctGUI;
 use WaitOverlay;
 
@@ -90,9 +89,6 @@ class MDConfigTable extends ilTable2GUI
         $a_set['actions'] = $this->buildActions($a_set);
         $a_set['required'] = $a_set['required'] ? 'ok' : 'not_ok';
         $a_set['read_only'] = $a_set['read_only'] ? 'ok' : 'not_ok';
-        /** @var $prefill MDPrefillOption */
-        $prefill = $a_set['prefill'];
-        $a_set['prefill'] = $this->plugin->txt('md_prefill_' . $prefill->getValue());
         parent::fillRow($a_set);
     }
 

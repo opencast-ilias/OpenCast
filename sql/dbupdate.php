@@ -568,3 +568,33 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
     }
 }
 ?>
+<#44>
+<?php
+// To apply new changes into WorkflowAP model as well as xoct_workflow table.
+\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+?>
+<#45>
+<?php
+// The small column changes must be applied.
+\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
+\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
+// Since we get rid of MDPrefillOption, we need to update the prefill column on both
+// MDFieldConfigEventAR & MDFieldConfigSeriesAR models.
+$mapping = [
+    'none' => '',
+    'crs_title' => '[COURSE.TITLE]',
+    'username_creator' => '[USER.FIRSTNAME] [USER.LASTNAME]'
+];
+foreach (\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::get() as $md_config_event) {
+    if (isset($mapping[$md_config_event->getPrefill()])) {
+        $md_config_event->setPrefill($mapping[$md_config_event->getPrefill()]);
+        $md_config_event->update();
+    }
+}
+foreach (\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::get() as $md_config_series) {
+    if (isset($mapping[$md_config_series->getPrefill()])) {
+        $md_config_series->setPrefill($mapping[$md_config_series->getPrefill()]);
+        $md_config_series->update();
+    }
+}
+?>
