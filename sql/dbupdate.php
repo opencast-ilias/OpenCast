@@ -282,7 +282,29 @@ if ($role_owner_prefix) {
 ?>
 <#30>
 <?php
-// \srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR::updateDB();
+global $DIC;
+$fields = [
+    'identifier' => [
+        'notnull' => true,
+        'type' => 'text',
+        'length' => 128,
+
+    ],
+    'value' => [
+        'notnull' => true,
+        'type' => 'clob',
+
+    ],
+    'expires' => [
+        'type' => 'integer',
+        'length' => 8,
+
+    ],
+];
+if (! $DIC->database()->tableExists('xoct_cache')) {
+    $DIC->database()->createTable('xoct_cache', $fields);
+    $DIC->database()->addPrimaryKey('xoct_cache', ['identifier']);
+}
 ?>
 <#31>
 <?php
@@ -468,7 +490,7 @@ if (!$ilDB->tableColumnExists('xoct_md_field_series', 'values')) {
 ?>
 <#40>
 <?php
-$ilDB->manipulate('update xoct_data set intro_text = "" where intro_text is null');
+$ilDB->manipulate("update xoct_data set intro_text = '' where intro_text is null");
 ?>
 <#41>
 <?php
