@@ -2,8 +2,6 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
-use srag\DataTableUI\OpenCast\Implementation\Utils\DataTableUITrait;
-use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheAR;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -104,7 +102,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
         $this->db->dropTable(UserSetting::TABLE_NAME, false);
         $this->db->dropTable(AcceptedToU::TABLE_NAME, false);
-        $this->db->dropTable(DBCacheAR::TABLE_NAME, false);
+        $this->db->dropTable('xoct_cache', false);
 
         return true;
     }
