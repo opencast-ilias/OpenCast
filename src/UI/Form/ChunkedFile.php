@@ -24,7 +24,17 @@ class ChunkedFile extends File
         $label,
         $byline
     ) {
-        parent::__construct($data_factory, $refinery, $handler, $label, $byline);
+        global $DIC;
+        parent::__construct(
+            $DIC->language(),
+            $data_factory,
+            $refinery,
+            $DIC["ui.upload_limit_resolver"],
+            $handler,
+            $label,
+            null,
+            $byline
+        );
     }
 
     public static function getInstance(

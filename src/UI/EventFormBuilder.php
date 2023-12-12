@@ -172,7 +172,7 @@ class EventFormBuilder
 
         // Chunk Size
         $chunk_size = (int) PluginConfig::getConfig(PluginConfig::F_CURL_CHUNK_SIZE);
-        $chunk_size = $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilUtil::getUploadSizeLimitBytes();
+        $chunk_size = $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilFileUtils::getUploadSizeLimitBytes();
 
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
@@ -181,7 +181,7 @@ class EventFormBuilder
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
-                                             $id = $file[0];
+                                             $id = $file[0] ?? '';
                                              return $upload_storage_service->getFileInfo($id);
                                          }
                                      )
