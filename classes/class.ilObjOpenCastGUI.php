@@ -377,15 +377,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $additional_args = $this->form_data;
         if ($additional_args !== null) {
             /** @var ObjectSettings $settings */
-            $settings = $additional_args['settings']['object'];
+            $settings = $additional_args['settings']['object'] ?? null;
             /** @var Metadata $metadata */
-            $metadata = $additional_args['series_type']['metadata'];
+            $metadata = $additional_args['series_type']['metadata'] ?? null;
             /** @var string|false $series_id */
-            $series_id = $additional_args['series_type']['channel_id'];
+            $series_id = $additional_args['series_type']['channel_id'] ?? null;
             /** @var bool $is_memberupload_enabled */
             $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
             /** @var int $perm_tpl_id */
-            $perm_tpl_id = $additional_args['settings']['permission_template'];
+            $perm_tpl_id = $additional_args['settings']['permission_template'] ?? null;
         }
 
         // set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
