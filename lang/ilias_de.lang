@@ -4,6 +4,10 @@ admin_import_success#:#Neue Einstellungen wurden erfolgreich importiert
 admin_import_failed#:#Neue Einstellungen können nicht importiert werden.
 admin_import_file_missign#:#Die Einstellungsdatei ist nicht ausgewählt.
 msg_admin_import_freindly_reminder_info#:#Bitte beachten Sie, dass beim Importieren neuer Einstellungen die alten Einstellungen überschrieben und/oder gelöscht werden. Daher wird dringend empfohlen, die neu importierten Einstellungen durchzugehen und sicherzustellen, dass alles vorhanden ist.
+common_create#:#Erstellen
+common_delete#:#Löschen
+common_edit#:#Bearbeiten
+common_cancel#:#Abbrechen
 common_actions#:#Aktionen
 config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
 config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.

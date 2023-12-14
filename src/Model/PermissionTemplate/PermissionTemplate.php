@@ -487,7 +487,7 @@ class PermissionTemplate extends ActiveRecord
 
     public function getAddedRoleRead(): ?int
     {
-        return $this->added_role_read_access;
+        return $this->added_role_read_access === null ? null : (int) $this->added_role_read_access;
     }
 
     public function setAddedRoleRead(?int $read): void
@@ -497,7 +497,7 @@ class PermissionTemplate extends ActiveRecord
 
     public function getAddedRoleWrite(): ?int
     {
-        return $this->added_role_write_access;
+        return $this->added_role_write_access === null ? null : (int) $this->added_role_write_access;
     }
 
     public function setAddedRoleWrite(?int $write): void
