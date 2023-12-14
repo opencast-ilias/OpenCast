@@ -18,7 +18,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
-        return $this->_getLocaleString($string, empty($module) ? 'config' : $module, $fallback);
+        return $this->_getLocaleString($string, empty($module) ? 'perm_tpl_form' : $module, $fallback);
     }
 
     public const F_DEFAULT = 'is_default';
@@ -156,22 +156,22 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             xoctPermissionTemplateGUI::SUBTAB_PERMISSION_TEMPLATES
         );
         if ($this->is_new) {
-            $this->setTitle($this->getLocaleString('create'));
+            $this->setTitle($this->lng->txt('create'));
             $this->addCommandButton(
                 xoctGUI::CMD_CREATE,
-                $this->getLocaleString(xoctGUI::CMD_CREATE)
+                $this->getLocaleString(xoctGUI::CMD_CREATE, 'common')
             );
         } else {
             $this->setTitle($this->lng->txt('edit'));
             $this->addCommandButton(
                 xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE,
-                $this->getLocaleString(xoctGUI::CMD_UPDATE)
+                $this->getLocaleString(xoctGUI::CMD_UPDATE, 'common')
             );
         }
 
         $this->addCommandButton(
             xoctGUI::CMD_CANCEL,
-            $this->getLocaleString(xoctGUI::CMD_CANCEL)
+            $this->getLocaleString(xoctGUI::CMD_CANCEL, 'common')
         );
     }
 
