@@ -172,20 +172,25 @@ class xoctEventTileGUI
      */
     protected function sortData(array $events)
     {
-        $tab_prop = new ilTablePropertiesStorage();
+        $tab_prop = null;
+        if (class_exists('ilTablePropertiesStorageGUI')) {
+            $tab_prop = new ilTablePropertiesStorageGUI();
+        } elseif (class_exists('ilTablePropertiesStorage')) {
+            $tab_prop = new ilTablePropertiesStorage();
+        }
+        if ($tab_prop !== null) {
+            $direction = $tab_prop->getProperty(
+                xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
+                $this->user->getId(),
+                'direction'
+            ) ?? 'asc';
+            $order = $tab_prop->getProperty(
+                xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
+                $this->user->getId(),
+                'order'
+            ) ?? 'start';
+        }
 
-        $direction = $tab_prop->getProperty(
-            xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
-            $this->user->getId(),
-            'direction'
-        )
-            ?? 'asc';
-        $order = $tab_prop->getProperty(
-            xoctEventTableGUI::getGeneratedPrefix($this->parent_gui->getObjId()),
-            $this->user->getId(),
-            'order'
-        )
-            ?? 'start';
         switch ($order) {
             case 'start_unix':
                 $order = 'start';
@@ -195,11 +200,21 @@ class xoctEventTileGUI
                 break;
         }
 
-        return ilUtil::sortArray(
-            $events,
-            $order,
-            $direction
-        );
+        if (class_exists('ilUtil') && method_exists('ilUtil', 'sortArray')) {
+            return ilUtil::sortArray(
+                $events,
+                $order,
+                $direction
+            );
+        } elseif (class_exists('ilArrayUtil') && method_exists('ilArrayUtil', 'sortArray')) {
+            return ilArrayUtil::sortArray(
+                $events,
+                $order,
+                $direction
+            );
+        }
+
+        return $events;
     }
 
     /**
