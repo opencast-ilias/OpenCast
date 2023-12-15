@@ -81,18 +81,12 @@ class xoctPermissionTemplateGUI extends xoctGUI
         }
     }
 
-    /**
-     *
-     */
     protected function add(): void
     {
         $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
         $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
 
-    /**
-     *
-     */
     protected function create(): void
     {
         $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI($this, new PermissionTemplate());
@@ -104,9 +98,6 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
     }
 
-    /**
-     *
-     */
     protected function edit(): void
     {
         $xoctPermissionTemplateFormGUI = new xoctPermissionTemplateFormGUI(
@@ -182,21 +173,19 @@ class xoctPermissionTemplateGUI extends xoctGUI
      */
     protected function delete(): void
     {
-        $this->main_tpl->setOnScreenMessage('question', $this->getLocaleString('msg_confirm_delete_perm_template'));
+        $this->main_tpl->setOnScreenMessage('question', $this->plugin->txt('msg_confirm_delete_perm_template'));
         $tpl_id = (int) ($this->http->request()->getQueryParams()['tpl_id'] ?? 0);
         $template = PermissionTemplate::find($tpl_id);
         $ilConfirmationGUI = new ilConfirmationGUI();
+        $ilConfirmationGUI->setHeaderText($this->plugin->txt('msg_confirm_delete_perm_template', 'common'));
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-        $ilConfirmationGUI->addItem('tpl_id', $tpl_id, $template->getTitle());
-        $ilConfirmationGUI->addButton($this->getLocaleString('delete'), self::CMD_CONFIRM);
-        $ilConfirmationGUI->addButton($this->getLocaleString('cancel'), self::CMD_STANDARD);
+        $ilConfirmationGUI->addItem('tpl_id', (string) $tpl_id, $template->getTitle());
+        $ilConfirmationGUI->setConfirm($this->getLocaleString('delete', 'common'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_STANDARD);
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 
-    /**
-     * ajax
-     */
-    protected function reorder()
+    protected function reorder():void
     {
         $ids = $this->http->request()->getParsedBody()['ids'] ?? [];
         $sort = 1;
