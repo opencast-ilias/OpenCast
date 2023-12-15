@@ -41,9 +41,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     public const TAB_GROUPS = 'groups';
     public const TAB_EULA = "eula";
     /**
-     * @var mixed|null
+     * @var array|null
      */
-    private ?array $form_data = null;
+    private $form_data = null;
     /**
      * @var HTTPServices
      */
