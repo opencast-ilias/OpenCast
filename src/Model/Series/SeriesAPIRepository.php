@@ -46,7 +46,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
     /**
      * @var MDParser
      */
-    private $MDParser;
+    private $md_parser;
     /**
      * @var API
      */
@@ -65,7 +65,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
         $this->metadataFactory = $metadataFactory;
-        $this->MDParser = $MDParser;
+        $this->md_parser = $MDParser;
     }
 
     public function getContainerKey(): string
@@ -97,13 +97,13 @@ class SeriesAPIRepository implements SeriesRepository, Request
     public function fetchMD(string $identifier): Metadata
     {
         $key = $identifier . '_md';
-        if ($this->cache->has($key)) {
+        if ($this->cache->has($key) && is_array($data = $this->cache->get($key))) {
             $data = $this->cache->get($key);
         } else {
             $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
             $this->cache->set($key, $data);
         }
-        return $this->MDParser->parseAPIResponseSeries($data);
+        return $this->md_parser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
