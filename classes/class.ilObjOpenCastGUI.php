@@ -453,7 +453,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
-        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue());
+        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
         $newObj->update();
 
         $this->opencast_dic->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());
@@ -571,19 +571,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      *
      * @param bool $a_error
      */
-    public function deleteObject($a_error = false): void
+    public function deleteObject22($a_error = false): void
     {
-        if ($this->http->request()->getQueryParams()["item_ref_id"] !== "") {
-            // $_POST["id"] = [$_GET["item_ref_id"]];
-            throw new \LogicException("Illegal \$_POST overwrite");
-        }
-
-        foreach ($this->http->request()->getParsedBody()["id"]??[] as $idx => $id) {
-            // $_POST["id"][$idx] = (int) $id;
-            throw new \LogicException("Illegal \$_POST overwrite");
-        }
-
-        // SAVE POST VALUES (get rid of this
         ilSession::set("saved_post", $this->http->request()->getParsedBody()["id"]);
 
         if (!$this->showDeleteConfirmation($_POST["id"], $a_error)) {

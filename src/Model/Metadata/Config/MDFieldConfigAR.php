@@ -108,6 +108,8 @@ abstract class MDFieldConfigAR extends ActiveRecord
     public function sleep($field_name)
     {
         switch ($field_name) {
+            case 'prefill':
+                return $this->prefill ?? '';
             case 'values':
                 return json_encode($this->values);
             default:
@@ -215,7 +217,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function getSort(): int
     {
-        return $this->sort;
+        return (int) $this->sort;
     }
 
     public function setSort(int $sort): void
