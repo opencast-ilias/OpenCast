@@ -174,6 +174,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
+            if (!isset($sources[$medium->getRole()][$source_type])) {
+                continue;
+            }
             if (!is_array($sources[$medium->getRole()][$source_type])) {
                 $sources[$medium->getRole()][$source_type] = [];
             }
