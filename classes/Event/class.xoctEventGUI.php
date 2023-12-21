@@ -608,7 +608,7 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
-        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA]) {
+        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA] ?? false) {
             ToUManager::setToUAccepted($this->user->getId());
         }
 
