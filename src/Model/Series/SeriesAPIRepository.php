@@ -97,7 +97,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
     public function fetchMD(string $identifier): Metadata
     {
         $key = $identifier . '_md';
-        if ($this->cache->has($key) && is_array($data = $this->cache->get($key))) {
+        if ($this->cache->has($key)) {
             $data = $this->cache->get($key);
         } else {
             $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];

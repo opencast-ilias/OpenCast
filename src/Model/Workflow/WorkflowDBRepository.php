@@ -387,8 +387,8 @@ class WorkflowDBRepository implements WorkflowRepository
                 $workflow_id = $workflow->getWorkflowId();
             } else {
                 $workflow_id = $workflow->identifier;
-                if (!empty($workflow->getTags())) {
-                    $tags_array = $workflow->getTags();
+                if (!empty($workflow->tags)) {
+                    $tags_array = $workflow->tags;
                 }
             }
 
@@ -461,7 +461,7 @@ class WorkflowDBRepository implements WorkflowRepository
      *
      * @return string
      */
-    private function mapConfigPanelElements(string $workflow_id, string $configuration_panel_html): string
+    private function mapConfigPanelElements(int $workflow_id, string $configuration_panel_html): string
     {
         $dom = new \DOMDocument();
         $dom->strictErrorChecking = false;
