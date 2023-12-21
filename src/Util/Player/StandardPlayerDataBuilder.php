@@ -144,7 +144,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     {
         $text_array[] = $lang;
         if (array_key_exists('generator_type', $tag_info_array)) {
-            $generator_type = $tag_info_array['generator_type'] == 'auto' ? 'Auto' : 'Manual';
+            $generator_type = ($tag_info_array['generator_type'] ?? '') === 'auto' ? 'Auto' : 'Manual';
             $text_array[] = "($generator_type)";
         }
         if (array_key_exists('type', $tag_info_array)) {
@@ -224,7 +224,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         $frameList = [];
         $segments = $event->publications()->getSegmentPublications();
         if ($segments !== []) {
-            $segments = array_reduce($segments, function (array &$segments, Attachment $segment): array {
+            $segments = array_reduce($segments, function (array $segments, Attachment $segment): array {
                 if (!isset($segments[$segment->getRef()])) {
                     $segments[$segment->getRef()] = [];
                 }
