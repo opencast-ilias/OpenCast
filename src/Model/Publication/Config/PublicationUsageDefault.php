@@ -75,7 +75,7 @@ class PublicationUsageDefault extends PublicationUsage
     public static function getDefaultUsage(string $usage): ?PublicationUsage
     {
         self::initDefaultValues();
-        $defaults = self::$default_values[$usage];
+        $defaults = self::$default_values[$usage] ?? null;
         if (is_null($defaults)) {
             return null;
         }
