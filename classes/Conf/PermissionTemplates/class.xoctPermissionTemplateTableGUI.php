@@ -64,16 +64,16 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
     protected function initColumns()
     {
         $this->addColumn("", "", "10px", true);
-        $this->addColumn($this->getLocaleString('table_column_default'));
+        $this->addColumn($this->getLocaleString('table_column_default'), "", "25px");
         $this->addColumn($this->getLocaleString('table_column_title'));
         $this->addColumn($this->getLocaleString('table_column_info'));
         $this->addColumn($this->getLocaleString('table_column_role'));
-        $this->addColumn($this->getLocaleString('table_column_read'));
-        $this->addColumn($this->getLocaleString('table_column_write'));
+        $this->addColumn($this->getLocaleString('table_column_read'), "", "25px");
+        $this->addColumn($this->getLocaleString('table_column_write'), "", "25px");
         $this->addColumn($this->getLocaleString('table_column_additional_acl_actions'));
         $this->addColumn($this->getLocaleString('table_column_additional_actions_download'));
         $this->addColumn($this->getLocaleString('table_column_additional_actions_annotate'));
-        $this->addColumn("", "", '30px', true);
+        $this->addColumn($this->getLocaleString('actions', 'common'), "", '30px', false);
     }
 
     #[ReturnTypeWillChange]
@@ -88,10 +88,10 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
         parent::fillRow($a_set);
     }
 
-    protected function buildActions($a_set)
+    protected function buildActions(array $a_set): string
     {
         $actions = new ilAdvancedSelectionListGUI();
-        $actions->setListTitle($this->getLocaleString('actions'));
+        $actions->setListTitle($this->getLocaleString('actions', 'common'));
 
         $this->ctrl->setParameter($this->parent_obj, xoctPermissionTemplateGUI::IDENTIFIER, $a_set['id']);
         $actions->addItem(
