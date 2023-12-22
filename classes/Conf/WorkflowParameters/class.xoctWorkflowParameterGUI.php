@@ -16,7 +16,14 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
  */
 class xoctWorkflowParameterGUI extends xoctGUI
 {
-    use LocaleTrait;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'workflow_params' : $module, $fallback);
+    }
 
     public const SUBTAB_PARAMETERS = 'parameters';
     public const SUBTAB_SETTINGS = 'settings';
@@ -67,23 +74,23 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $this->showTable();
     }
 
-    protected function setSubTabs()
+    protected function setSubTabs(): void
     {
         $this->tabs->addSubTab(
             self::SUBTAB_PARAMETERS,
-            $this->getLocaleString('subtab_' . self::SUBTAB_PARAMETERS),
+            $this->getLocaleString(self::SUBTAB_PARAMETERS, 'subtab'),
             $this->ctrl->getLinkTarget($this, self::CMD_STANDARD)
         );
         $this->tabs->addSubTab(
             self::SUBTAB_SETTINGS,
-            $this->getLocaleString('subtab_' . self::SUBTAB_SETTINGS),
+            $this->getLocaleString(self::SUBTAB_SETTINGS, 'subtab'),
             $this->ctrl->getLinkTarget($this, self::CMD_SHOW_FORM)
         );
     }
 
-    protected function showTable()
+    protected function showTable(): void
     {
-        $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('msg_workflow_parameters_info'));
+        $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('parameters_info', 'msg_workflow'));
         $this->tabs->setSubTabActive(self::SUBTAB_PARAMETERS);
         $xoctWorkflowParameterTableGUI = new xoctWorkflowParameterTableGUI(
             $this,
@@ -93,7 +100,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $this->main_tpl->setContent($xoctWorkflowParameterTableGUI->getHTML());
     }
 
-    protected function showForm()
+    protected function showForm(): void
     {
         $this->tabs->setSubTabActive(self::SUBTAB_SETTINGS);
         $xoctWorkflowParameterFormGUI = new xoctWorkflowParametersFormGUI($this);
@@ -113,11 +120,11 @@ class xoctWorkflowParameterGUI extends xoctGUI
             case self::CMD_STANDARD:
             case self::CMD_SHOW_TABLE:
                 $button = ilLinkButton::getInstance();
-                $button->setCaption($this->getLocaleString('config_btn_load_parameters'), false);
+                $button->setCaption($this->getLocaleString('load_parameters', 'config_btn'), false);
                 $button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_LOAD_WORKFLOW_PARAMS));
                 $this->toolbar->addButtonInstance($button);
                 $button = ilLinkButton::getInstance();
-                $button->setCaption($this->getLocaleString('config_btn_add_parameter'), false);
+                $button->setCaption($this->getLocaleString('add_parameter', 'config_btn'), false);
                 $button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD));
                 $button->setPrimary(true);
                 $this->toolbar->addButtonInstance($button);
@@ -137,8 +144,8 @@ class xoctWorkflowParameterGUI extends xoctGUI
             }
             $ilConfirmationGUI = new ilConfirmationGUI();
             $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-            $ilConfirmationGUI->setCancel($this->getLocaleString('cancel'), self::CMD_SHOW_TABLE);
-            $ilConfirmationGUI->setConfirm($this->getLocaleString('confirm'), self::CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED);
+            $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_SHOW_TABLE);
+            $ilConfirmationGUI->setConfirm($this->getLocaleString('confirm', 'common'), self::CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED);
             $ilConfirmationGUI->setHeaderText($this->getLocaleString('msg_load_workflow_params'));
             /** @var WorkflowParameter $param */
             foreach ($params as $param) {
@@ -190,7 +197,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
             $this->seriesWorkflowParameterRepository->createParamsForAllObjects($to_create);
         }
 
-        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('config_msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
     }
 
@@ -224,7 +231,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $xoctWorkflowParameterFormGUI = new xoctWorkflowParametersFormGUI($this);
         $xoctWorkflowParameterFormGUI->setValuesByPost();
         if ($xoctWorkflowParameterFormGUI->storeForm()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('config_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
             if ($this->overwrite_series_parameters) {
                 $ilConfirmationGUI = new ilConfirmationGUI();
                 $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
@@ -248,7 +255,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI($this, $this->workflowParameterRepository);
         $xoctWorkflowParameterFormGUI->setValuesByPost();
         if ($xoctWorkflowParameterFormGUI->storeForm()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('config_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
             $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
         }
         $this->main_tpl->setContent($xoctWorkflowParameterFormGUI->getHTML());
@@ -275,14 +282,14 @@ class xoctWorkflowParameterGUI extends xoctGUI
                 )->update();
             }
         }
-        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
     }
 
     protected function overwriteSeriesParameters(): void
     {
         $this->workflowParameterRepository->overwriteSeriesParameter();
-        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_FORM);
     }
 
@@ -291,7 +298,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $this->workflowParameterRepository->deleteById(
             (int) ($this->http->request()->getParsedBody()['param_id'] ?? 0)
         );
-        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('config_msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
     }
 
@@ -307,7 +314,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
             $param_id,
             WorkflowParameter::find($param_id)->getTitle()
         );
-        $ilConfirmationGUI->setHeaderText($this->getLocaleString('msg_confirm_delete_param'));
+        $ilConfirmationGUI->setHeaderText($this->getLocaleString('confirm_delete_param', 'msg'));
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 

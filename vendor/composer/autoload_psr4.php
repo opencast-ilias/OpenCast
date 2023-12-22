@@ -11,7 +11,7 @@ return array(
     'srag\\DataTableUI\\OpenCast\\' => array($vendorDir . '/srag/datatable/src'),
     'srag\\DIC\\OpenCast\\' => array($vendorDir . '/srag/dic/src'),
     'srag\\CustomInputGUIs\\OpenCast\\' => array($vendorDir . '/srag/custominputguis/src'),
-    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src', $vendorDir . '/psr/http-factory/src'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'Psr\\Http\\Client\\' => array($vendorDir . '/psr/http-client/src'),
     'OpencastApi\\Rest\\' => array($vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest'),
     'OpencastApi\\Mock\\' => array($vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Mock'),
