@@ -69,7 +69,7 @@ class EventAdditionsAR extends ActiveRecord
 
     public function getId(): string
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
     public function setId(string $id): void
@@ -79,7 +79,7 @@ class EventAdditionsAR extends ActiveRecord
 
     public function getIsOnline(): bool
     {
-        return $this->is_online;
+        return (bool) $this->is_online;
     }
 
     public function setIsOnline(bool $is_online): void
