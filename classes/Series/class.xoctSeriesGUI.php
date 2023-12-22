@@ -243,11 +243,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_EDIT_GENERAL);
     }
 
-    /**
-     * @return void
-     * @throws ilException
-     */
-    protected function editWorkflowParameters()
+    protected function editWorkflowParameters(): void
     {
         $this->seriesWorkflowParameterRepository->syncAvailableParameters($this->getObjId());
         if ($this->objectSettings->getDuplicatesOnSystem()) {
