@@ -85,19 +85,15 @@ trait TableGUI
     }
 
     /**
-     * @param string       $column
-     * @param array|object $row
-     * @param int          $format
-     *
-     * @return string
-     *
-     * @deprecated
+     * @deperecated
      */
-    abstract protected function getColumnValue(
+    protected function getColumnValue(
         string $column,
-        array $row,
+        $row,
         int $format = TableGUIConstants::DEFAULT_FORMAT
-    ): string;
+    ): string {
+        return $row[$column] ?? '';
+    }
 
     /**
      * @return array
@@ -158,7 +154,6 @@ trait TableGUI
     protected function initExport(): void
     {
     }
-
 
     /**
      * @deprecated

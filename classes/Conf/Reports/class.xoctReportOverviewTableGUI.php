@@ -6,17 +6,19 @@ use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Report\Report;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
 
 /**
  * Class xoctReportOverviewTableGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctReportOverviewTableGUI extends TableGUI
+class xoctReportOverviewTableGUI extends ilTable2GUI
 {
     use LocaleTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class; // TODO remove
+    use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
+    private ilOpenCastPlugin $plugin;
 
     /**
      * xoctReportOverviewTableGUI constructor.
@@ -25,28 +27,26 @@ class xoctReportOverviewTableGUI extends TableGUI
      */
     public function __construct($parent, string $parent_cmd)
     {
+        global $DIC, $opencastContainer;
+        $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->addMultiCommand(xoctGUI::CMD_DELETE, $this->getLocaleString(xoctGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
         parent::__construct($parent, $parent_cmd);
     }
 
-    /**
-     * @param array $row
-     *
-     * @return string|void
-     */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    protected function getRowTemplate(): string
     {
+        return $this->plugin->getDirectory() . '/templates/default/' . self::ROW_TEMPLATE;
     }
+
+
 
     protected function getSelectableColumns2(): array
     {
         return [];
     }
 
-    /**
-     * @throws \srag\DIC\OpenCast\Exception\DICException
-     */
+
     protected function initColumns(): void
     {
         $this->addColumn('', '', '', true);
@@ -97,9 +97,7 @@ class xoctReportOverviewTableGUI extends TableGUI
         $this->setData($filtered);
     }
 
-    /**
-     *
-     */
+
     protected function initFilterFields(): void
     {
         $this->filter_fields = [
@@ -115,25 +113,18 @@ class xoctReportOverviewTableGUI extends TableGUI
         ];
     }
 
-    /**
-     *
-     */
+
     protected function initId(): void
     {
         $this->setId('xoct_reports');
     }
 
-    /**
-     *
-     */
     protected function initTitle(): void
     {
     }
 
-    /**
-     * @param array $row
-     */
-    protected function fillRow($row): void
+
+    protected function fillRow(array $row): void
     {
         $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
