@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
+class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -14,14 +14,6 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
-        array (
-            'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
-            'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DataTableUI\\OpenCast\\' => 26,
-            'srag\\DIC\\OpenCast\\' => 18,
-            'srag\\CustomInputGUIs\\OpenCast\\' => 30,
-        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -42,26 +34,6 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
     );
 
     public static $prefixDirsPsr4 = array (
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
-        ),
-        'srag\\LibrariesNamespaceChanger\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
-        ),
-        'srag\\DataTableUI\\OpenCast\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/datatable/src',
-        ),
-        'srag\\DIC\\OpenCast\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/dic/src',
-        ),
-        'srag\\CustomInputGUIs\\OpenCast\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/srag/custominputguis/src',
-        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
@@ -130,147 +102,6 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
         'ilObjOpenCastListGUI' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastListGUI.php',
         'ilOpenCastConfigGUI' => __DIR__ . '/../..' . '/classes/class.ilOpenCastConfigGUI.php',
         'ilOpenCastPlugin' => __DIR__ . '/../..' . '/classes/class.ilOpenCastPlugin.php',
-        'srag\\CustomInputGUIs\\OpenCast\\AjaxCheckbox\\AjaxCheckbox' => __DIR__ . '/..' . '/srag/custominputguis/src/AjaxCheckbox/AjaxCheckbox.php',
-        'srag\\CustomInputGUIs\\OpenCast\\CheckboxInputGUI\\CheckboxInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/CheckboxInputGUI/CheckboxInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\ColorPickerInputGUI\\ColorPickerInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ColorPickerInputGUI/ColorPickerInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIs' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIs.php',
-        'srag\\CustomInputGUIs\\OpenCast\\CustomInputGUIsTrait' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIsTrait.php',
-        'srag\\CustomInputGUIs\\OpenCast\\DateDurationInputGUI\\DateDurationInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/DateDurationInputGUI/DateDurationInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\FormBuilder\\AbstractFormBuilder' => __DIR__ . '/..' . '/srag/custominputguis/src/FormBuilder/AbstractFormBuilder.php',
-        'srag\\CustomInputGUIs\\OpenCast\\FormBuilder\\FormBuilder' => __DIR__ . '/..' . '/srag/custominputguis/src/FormBuilder/FormBuilder.php',
-        'srag\\CustomInputGUIs\\OpenCast\\HiddenInputGUI\\HiddenInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/HiddenInputGUI/HiddenInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\AbstractRenderer' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/AbstractRenderer.php',
-        'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\InputGUIWrapperConstraint' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperConstraint.php',
-        'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\InputGUIWrapperConstraintTrait' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperConstraintTrait.php',
-        'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\InputGUIWrapperUIInputComponent' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperUIInputComponent.php',
-        'srag\\CustomInputGUIs\\OpenCast\\InputGUIWrapperUIInputComponent\\Renderer' => __DIR__ . '/..' . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/Renderer.php',
-        'srag\\CustomInputGUIs\\OpenCast\\Loader\\CustomInputGUIsLoaderDetector' => __DIR__ . '/..' . '/srag/custominputguis/src/Loader/CustomInputGUIsLoaderDetector.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiLineNewInputGUI\\MultiLineNewInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiLineNewInputGUI/MultiLineNewInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\AbstractAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/AbstractAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\MultiSelectSearchNewInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/MultiSelectSearchNewInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\ObjectChildrenAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.ObjectChildrenAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\ObjectsAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.ObjectsAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\OrgUnitAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.OrgUnitAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\OpenCast\\MultiSelectSearchNewInputGUI\\UsersAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.UsersAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\OpenCast\\NumberInputGUI\\NumberInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/NumberInputGUI/NumberInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\PropertyFormGUI\\Exception\\PropertyFormGUIException' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/Exception/PropertyFormGUIException.php',
-        'srag\\CustomInputGUIs\\OpenCast\\PropertyFormGUI\\Items\\Items' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/Items/Items.php',
-        'srag\\CustomInputGUIs\\OpenCast\\PropertyFormGUI\\PropertyFormGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/PropertyFormGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\ScreenshotsInputGUI\\ScreenshotsInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ScreenshotsInputGUI/ScreenshotsInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\StaticHTMLPresentationInputGUI\\StaticHTMLPresentationInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/StaticHTMLPresentationInputGUI/StaticHTMLPresentationInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TableGUI\\Exception\\TableGUIException' => __DIR__ . '/..' . '/srag/custominputguis/src/TableGUI/Exception/TableGUIException.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TableGUI\\TableGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TableGUI/TableGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TabsInputGUI\\MultilangualTabsInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TabsInputGUI/MultilangualTabsInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TabsInputGUI\\TabsInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TabsInputGUI/TabsInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TabsInputGUI\\TabsInputGUITab' => __DIR__ . '/..' . '/srag/custominputguis/src/TabsInputGUI/TabsInputGUITab.php',
-        'srag\\CustomInputGUIs\\OpenCast\\Template\\Template' => __DIR__ . '/..' . '/srag/custominputguis/src/Template/Template.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TextAreaInputGUI\\TextAreaInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TextAreaInputGUI/TextAreaInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TextInputGUI\\TextInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/TextInputGUI/TextInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\TextInputGUI\\TextInputGUIWithModernAutoComplete' => __DIR__ . '/..' . '/srag/custominputguis/src/TextInputGUI/TextInputGUIWithModernAutoComplete.php',
-        'srag\\CustomInputGUIs\\OpenCast\\UIInputComponentWrapperInputGUI\\UIInputComponentWrapperInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/UIInputComponentWrapperInputGUI/UIInputComponentWrapperInputGUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\UIInputComponentWrapperInputGUI\\UIInputComponentWrapperNameSource' => __DIR__ . '/..' . '/srag/custominputguis/src/UIInputComponentWrapperInputGUI/UIInputComponentWrapperNameSource.php',
-        'srag\\CustomInputGUIs\\OpenCast\\ViewControlModeUI\\ViewControlModeUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ViewControlModeUI/ViewControlModeUI.php',
-        'srag\\CustomInputGUIs\\OpenCast\\Waiter\\Waiter' => __DIR__ . '/..' . '/srag/custominputguis/src/Waiter/Waiter.php',
-        'srag\\CustomInputGUIs\\OpenCast\\WeekdayInputGUI\\WeekdayInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/WeekdayInputGUI/WeekdayInputGUI.php',
-        'srag\\DIC\\OpenCast\\Cron\\FixUITemplateInCronContext' => __DIR__ . '/..' . '/srag/dic/src/Cron/FixUITemplateInCronContext.php',
-        'srag\\DIC\\OpenCast\\DICStatic' => __DIR__ . '/..' . '/srag/dic/src/DICStatic.php',
-        'srag\\DIC\\OpenCast\\DICStaticInterface' => __DIR__ . '/..' . '/srag/dic/src/DICStaticInterface.php',
-        'srag\\DIC\\OpenCast\\DICTrait' => __DIR__ . '/..' . '/srag/dic/src/DICTrait.php',
-        'srag\\DIC\\OpenCast\\DIC\\AbstractDIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/AbstractDIC.php',
-        'srag\\DIC\\OpenCast\\DIC\\DICInterface' => __DIR__ . '/..' . '/srag/dic/src/DIC/DICInterface.php',
-        'srag\\DIC\\OpenCast\\DIC\\Implementation\\ILIAS60DIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/ILIAS60DIC.php',
-        'srag\\DIC\\OpenCast\\DIC\\Implementation\\ILIAS70DIC' => __DIR__ . '/..' . '/srag/dic/src/DIC/Implementation/ILIAS70DIC.php',
-        'srag\\DIC\\OpenCast\\Database\\AbstractILIASDatabaseDetector' => __DIR__ . '/..' . '/srag/dic/src/Database/AbstractILIASDatabaseDetector.php',
-        'srag\\DIC\\OpenCast\\Database\\DatabaseDetector' => __DIR__ . '/..' . '/srag/dic/src/Database/DatabaseDetector.php',
-        'srag\\DIC\\OpenCast\\Database\\DatabaseInterface' => __DIR__ . '/..' . '/srag/dic/src/Database/DatabaseInterface.php',
-        'srag\\DIC\\OpenCast\\Database\\PdoContextHelper' => __DIR__ . '/..' . '/srag/dic/src/Database/PdoContextHelper.php',
-        'srag\\DIC\\OpenCast\\Database\\PdoStatementContextHelper' => __DIR__ . '/..' . '/srag/dic/src/Database/PdoStatementContextHelper.php',
-        'srag\\DIC\\OpenCast\\Exception\\DICException' => __DIR__ . '/..' . '/srag/dic/src/Exception/DICException.php',
-        'srag\\DIC\\OpenCast\\Loader\\AbstractLoaderDetector' => __DIR__ . '/..' . '/srag/dic/src/Loader/AbstractLoaderDetector.php',
-        'srag\\DIC\\OpenCast\\Output\\Output' => __DIR__ . '/..' . '/srag/dic/src/Output/Output.php',
-        'srag\\DIC\\OpenCast\\Output\\OutputInterface' => __DIR__ . '/..' . '/srag/dic/src/Output/OutputInterface.php',
-        'srag\\DIC\\OpenCast\\PHPVersionChecker' => __DIR__ . '/..' . '/srag/dic/src/PHPVersionChecker.php',
-        'srag\\DIC\\OpenCast\\Plugin\\Plugin' => __DIR__ . '/..' . '/srag/dic/src/Plugin/Plugin.php',
-        'srag\\DIC\\OpenCast\\Plugin\\PluginInterface' => __DIR__ . '/..' . '/srag/dic/src/Plugin/PluginInterface.php',
-        'srag\\DIC\\OpenCast\\Plugin\\Pluginable' => __DIR__ . '/..' . '/srag/dic/src/Plugin/Pluginable.php',
-        'srag\\DIC\\OpenCast\\Version\\PluginVersionParameter' => __DIR__ . '/..' . '/srag/dic/src/Version/PluginVersionParameter.php',
-        'srag\\DIC\\OpenCast\\Version\\Version' => __DIR__ . '/..' . '/srag/dic/src/Version/Version.php',
-        'srag\\DIC\\OpenCast\\Version\\VersionInterface' => __DIR__ . '/..' . '/srag/dic/src/Version/VersionInterface.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Column' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Column.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Formatter\\Actions\\ActionsFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Formatter/Actions/ActionsFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Formatter\\Actions\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Formatter/Actions/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Formatter\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Formatter/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Column\\Formatter\\Formatter' => __DIR__ . '/..' . '/srag/datatable/src/Component/Column/Formatter/Formatter.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Data' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Data.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Fetcher\\DataFetcher' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Fetcher/DataFetcher.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Fetcher\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Fetcher/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Row\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Row/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Data\\Row\\RowData' => __DIR__ . '/..' . '/srag/datatable/src/Component/Data/Row/RowData.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Format\\Browser\\BrowserFormat' => __DIR__ . '/..' . '/srag/datatable/src/Component/Format/Browser/BrowserFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Format\\Browser\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Format/Browser/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Format\\Browser\\Filter\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Format/Browser/Filter/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Format\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Format/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Format\\Format' => __DIR__ . '/..' . '/srag/datatable/src/Component/Format/Format.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Settings' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Settings.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Sort\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Sort/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Sort\\SortField' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Sort/SortField.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Storage\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Storage/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Settings\\Storage\\SettingsStorage' => __DIR__ . '/..' . '/srag/datatable/src/Component/Settings/Storage/SettingsStorage.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Table' => __DIR__ . '/..' . '/srag/datatable/src/Component/Table.php',
-        'srag\\DataTableUI\\OpenCast\\Component\\Utils\\TableBuilder' => __DIR__ . '/..' . '/srag/datatable/src/Component/Utils/TableBuilder.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Column' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Column.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\AbstractFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/AbstractFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\Actions\\ActionsDropdownFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/Actions/ActionsDropdownFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\Actions\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/Actions/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\Actions\\SortFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/Actions/SortFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\ChainGetterFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/ChainGetterFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\CheckFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/CheckFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\DateFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/DateFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\DefaultFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/DefaultFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\ImageFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/ImageFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\LanguageVariableFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/LanguageVariableFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\LearningProgressFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/LearningProgressFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\LinkFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/LinkFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Column\\Formatter\\MultilineFormatter' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Column/Formatter/MultilineFormatter.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Data' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Data.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Fetcher\\AbstractDataFetcher' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Fetcher/AbstractDataFetcher.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Fetcher\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Fetcher/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Fetcher\\StaticDataFetcher' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Fetcher/StaticDataFetcher.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Row\\AbstractRowData' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Row/AbstractRowData.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Row\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Row/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Row\\GetterRowData' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Row/GetterRowData.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Data\\Row\\PropertyRowData' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Data/Row/PropertyRowData.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\AbstractFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/AbstractFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\Browser\\DefaultBrowserFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/Browser/DefaultBrowserFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\Browser\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/Browser/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\Browser\\Filter\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/Browser/Filter/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\Browser\\Filter\\FormBuilder' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/Browser/Filter/FormBuilder.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\CsvFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/CsvFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\ExcelFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/ExcelFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\HtmlFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/HtmlFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Format\\PdfFormat' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Format/PdfFormat.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Renderer' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Renderer.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Settings' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Settings.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Sort\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Sort/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Sort\\SortField' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Sort/SortField.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Storage\\AbstractSettingsStorage' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Storage/AbstractSettingsStorage.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Storage\\DefaultSettingsStorage' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Storage/DefaultSettingsStorage.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Settings\\Storage\\Factory' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Settings/Storage/Factory.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Table' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Table.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Utils\\AbstractTableBuilder' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Utils/AbstractTableBuilder.php',
-        'srag\\DataTableUI\\OpenCast\\Implementation\\Utils\\DataTableUITrait' => __DIR__ . '/..' . '/srag/datatable/src/Implementation/Utils/DataTableUITrait.php',
-        'srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger' => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src/LibrariesNamespaceChanger.php',
-        'srag\\LibraryLanguageInstaller\\OpenCast\\LibraryLanguageInstaller' => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src/LibraryLanguageInstaller.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => __DIR__ . '/../..' . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\Loader' => __DIR__ . '/../..' . '/src/UI/Form/Loader.php',
         'srag\\Plugins\\Opencast\\API\\API' => __DIR__ . '/../..' . '/src/API/API.php',
@@ -491,9 +322,9 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit20975cba620fc47d8c392214bb856b0a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit20975cba620fc47d8c392214bb856b0a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit20975cba620fc47d8c392214bb856b0a::$classMap;
 
         }, null, ClassLoader::class);
     }
