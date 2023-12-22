@@ -68,12 +68,7 @@ class SeriesWorkflowParameterRepository
         return self::$instance;
     }
 
-    /**
-     * @param $obj_id
-     * @param $param_id
-     * @return SeriesWorkflowParameter|ActiveRecord
-     */
-    public static function getByObjAndParamId($obj_id, $param_id)
+    public static function getByObjAndParamId(int $obj_id, string $param_id): ?SeriesWorkflowParameter
     {
         return SeriesWorkflowParameter::where(['obj_id' => $obj_id, 'param_id' => $param_id])->first();
     }
