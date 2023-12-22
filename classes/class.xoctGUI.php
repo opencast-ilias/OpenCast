@@ -86,7 +86,7 @@ abstract class xoctGUI
 
     abstract protected function delete(): void;
 
-    protected function cancel()
+    protected function cancel(): void
     {
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
