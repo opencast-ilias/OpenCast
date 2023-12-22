@@ -4,10 +4,12 @@ admin_import_success#:#New settings have been imported successfully
 admin_import_failed#:#Unable to import new settings.
 admin_import_file_missign#:#The settings file is not selected.
 msg_admin_import_freindly_reminder_info#:#Please keep in mind that by importing new settings, the old settings will be overwritten and/or deleted, therefore it is highly recommended to go through newly imported settings and make sure everything is in place.
+common_save#:#Save
 common_create#:#Create
 common_delete#:#Delete
 common_edit#:#Edit
 common_cancel#:#Cancel
+common_confirm#:#Confirm
 common_actions#:#Actions
 config_accept_terms#:#All users must accept the Terms of Use
 config_accept_terms_info#:#Terms of Use must be accepted when uploading an event for the first time.
@@ -430,6 +432,9 @@ tab_migration#:#Migration
 tab_video_portal#:#Video Portal
 tab_reports#:#Reports
 tab_workflow_params#:#Workflow Parameters
+workflow_params_id#:#ID
+workflow_params_title#:#Title
+workflow_params_type#:#Type
 tab_metadata#:#Metadata
 subtab_api#:#API
 subtab_general#:#General
@@ -517,13 +522,16 @@ msg_quality_report_sent#:#The report has been sent. The support has been informe
 date_from#:#Date From
 date_to#:#Date To
 sender#:#Creator
-workflow_parameters#:#Workflow Parameters
-processing_settings#:#Processing settings
-default_values#:#Default Values
-default_value_member#:#Usage for Members
-default_value_admin#:#Usage for Admins
-value_member#:#Usage for Members
-value_admin#:#Usage for Admins
+workflow_params_table_title#:#Workflow Parameters
+workflow_params_id#:#ID
+workflow_params_title#:#Title
+workflow_params_type#:#Type
+workflow_params_processing_settings#:#Processing settings
+workflow_params_default_values#:#Default Values
+workflow_params_default_value_member#:#Usage for Members
+workflow_params_default_value_admin#:#Usage for Admins
+workflow_params_value_member#:#Usage for Members
+workflow_params_value_admin#:#Usage for Admins
 list#:#List
 tiles#:#Tiles
 tiles_per_page#:#Tiles per page:

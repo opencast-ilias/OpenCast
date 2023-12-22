@@ -14,7 +14,7 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' =>
+        's' => 
         array (
             'srag\\LibraryLanguageInstaller\\OpenCast\\' => 39,
             'srag\\LibrariesNamespaceChanger\\' => 31,
@@ -22,18 +22,18 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
             'srag\\DIC\\OpenCast\\' => 18,
             'srag\\CustomInputGUIs\\OpenCast\\' => 30,
         ),
-        'P' =>
+        'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
         ),
-        'O' =>
+        'O' => 
         array (
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'G' =>
+        'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
@@ -42,56 +42,56 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
     );
 
     public static $prefixDirsPsr4 = array (
-        'srag\\LibraryLanguageInstaller\\OpenCast\\' =>
+        'srag\\LibraryLanguageInstaller\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/librarylanguageinstaller/src',
         ),
-        'srag\\LibrariesNamespaceChanger\\' =>
+        'srag\\LibrariesNamespaceChanger\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DataTableUI\\OpenCast\\' =>
+        'srag\\DataTableUI\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/datatable/src',
         ),
-        'srag\\DIC\\OpenCast\\' =>
+        'srag\\DIC\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\OpenCast\\' =>
+        'srag\\CustomInputGUIs\\OpenCast\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
-        'Psr\\Http\\Message\\' =>
+        'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' =>
+        'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'OpencastApi\\Rest\\' =>
+        'OpencastApi\\Rest\\' => 
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' =>
+        'OpencastApi\\Mock\\' => 
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' =>
+        'OpencastApi\\' => 
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'GuzzleHttp\\Psr7\\' =>
+        'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' =>
+        'GuzzleHttp\\Promise\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' =>
+        'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
@@ -290,6 +290,8 @@ class ComposerStaticInitc514e8f9e82f7cdff520698cb95baa64
         'srag\\Plugins\\Opencast\\Container\\Init' => __DIR__ . '/../..' . '/src/Container/Init.php',
         'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => __DIR__ . '/../..' . '/src/DI/OpencastDIC.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/OutputTrait.php',
+        'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUI' => __DIR__ . '/../..' . '/src/LegacyHelpers/TableGUI.php',
+        'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUIConstants' => __DIR__ . '/../..' . '/src/LegacyHelpers/TableGUIConstants.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/TranslatorTrait.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\UploadSize' => __DIR__ . '/../..' . '/src/LegacyHelpers/UploadSize.php',
         'srag\\Plugins\\Opencast\\Model\\ACL\\ACL' => __DIR__ . '/../..' . '/src/Model/ACL/ACL.php',

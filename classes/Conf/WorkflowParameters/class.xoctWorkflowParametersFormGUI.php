@@ -6,16 +6,24 @@ use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
 /**
  * Class xoctWorkflowParametersFormGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowParametersFormGUI extends PropertyFormGUI
+class xoctWorkflowParametersFormGUI extends ilPropertyFormGUI
 {
-    use LocaleTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class; // TODO remove
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'workflow_params' : $module, $fallback);
+    }
 
     public const PROPERTY_TITLE = 'setTitle';
     public const PROPERTY_INFO = 'setInfo';
@@ -27,43 +35,51 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
      */
     protected $parent;
 
-    /**
-     * @return mixed|void
-     */
-    protected function getValue(string $key)
+    public function __construct(xoctWorkflowParameterGUI $parent)
     {
+        $this->parent = $parent;
+        parent::__construct();
+        $this->initForm();
     }
+
+    private function initForm(): void
+    {
+        $this->initAction();
+        $this->initCommands();
+        $this->initTitle();
+        $this->initFields();
+    }
+
+    protected function initAction(): void
+    {
+        $this->setFormAction($this->ctrl->getFormAction($this->parent));
+    }
+
 
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, $this->lng->txt('save'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_FORM, $this->lng->txt('save', 'common'));
+        $this->addCommandButton(xoctGUI::CMD_CANCEL, $this->getLocaleString('cancel', 'common'));
     }
 
     protected function initFields(): void
     {
-        $this->fields[PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES] = [
-            self::PROPERTY_TITLE => $this->getLocaleString(
-                PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES,
-                'config'
-            ),
-            self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-            self::PROPERTY_VALUE => (bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES),
-            self::PROPERTY_SUBITEMS => [
-                self::F_OVERWRITE_SERIES_PARAMS => [
-                    self::PROPERTY_TITLE => $this->getLocaleString(self::F_OVERWRITE_SERIES_PARAMS, 'config'),
-                    self::PROPERTY_INFO => $this->getLocaleString(
-                        self::F_OVERWRITE_SERIES_PARAMS . '_info',
-                        'config'
-                    ),
-                    self::PROPERTY_CLASS => ilCheckboxInputGUI::class,
-                ]
-            ]
-        ];
-    }
+        $field = new ilCheckboxInputGUI($this->getLocaleString(
+            PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES,
+            'config'
+        ), PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES);
+        $field->setValue("1");
+        $field->setChecked((bool) PluginConfig::getConfig(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES));
 
+        $sub_item = new ilCheckboxInputGUI($this->getLocaleString(self::F_OVERWRITE_SERIES_PARAMS, 'config'), self::F_OVERWRITE_SERIES_PARAMS);
+        $sub_item->setInfo($this->getLocaleString(
+            self::F_OVERWRITE_SERIES_PARAMS . '_info',
+            'config'
+        ));
 
-    protected function initId(): void
-    {
+        $field->addSubItem($sub_item);
+
+        $this->addItem($field);
     }
 
 
@@ -72,19 +88,14 @@ class xoctWorkflowParametersFormGUI extends PropertyFormGUI
         $this->setTitle($this->getLocaleString('settings', 'tab'));
     }
 
-    protected function storeValue(string $key, $value): void
+    public function storeForm(): bool
     {
-        switch ($key) {
-            case PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES:
-                PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $value);
-                break;
-            case self::F_OVERWRITE_SERIES_PARAMS:
-                if ($value) {
-                    $this->parent->setOverwriteSeriesParameter();
-                }
-                break;
-            default:
-                break;
+        if (!$this->checkInput()) {
+            return false;
         }
+
+        PluginConfig::set(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES, $this->getInput(PluginConfig::F_ALLOW_WORKFLOW_PARAMS_IN_SERIES));
+
+        return true;
     }
 }
