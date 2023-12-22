@@ -538,6 +538,9 @@ msg_workflow_created#:#Workflow erfolgreich erstellt.
 msg_workflow_updated#:#Workflow erfolgreich aktualisiert.
 config_button_add_workflow#:#Neuen Workflow hinzufügen
 workflow_table_title#:#Workflows
+workflow_id#:#ID
+workflow_title#:#Titel
+workflow_description#:#Beschreibung
 tab_workflows#:#Workflows
 workflow#:#Workflow
 event_msg_republish_started#:#Workflow erfolgreich gestartet.
