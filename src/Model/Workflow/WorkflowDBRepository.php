@@ -40,8 +40,11 @@ class WorkflowDBRepository implements WorkflowRepository
     }
 
 
-    public function getAllWorkflows(): array
+    public function getAllWorkflows(bool $as_array): array
     {
+        if ($as_array) {
+            return WorkflowAR::getArray();
+        }
         return WorkflowAR::get();
     }
 
@@ -207,15 +210,16 @@ class WorkflowDBRepository implements WorkflowRepository
 
         // First remove from workflowsAR list.
         foreach ($current_workflows as $cr_wf_id => $cr_wf) {
-            if (!in_array($cr_wf_id, $filtered_oc_workflows_ids)) {
+            if (!in_array($cr_wf_id, $filtered_oc_workflows_ids, true)) {
                 $this->delete($cr_wf['id']);
             }
         }
 
         // Then, update the list if it is not there, without touching the current ones
         foreach ($filtered_oc_workflows as $oc_wd_id => $oc_wf) {
+            $oc_wd_id = (string) $oc_wd_id;
             // Exists, we check the diffs!
-            if (in_array($oc_wd_id, $current_workflows_ids)) {
+            if (in_array($oc_wd_id, $current_workflows_ids, true)) {
                 $current_workflow = $this->getByWorkflowId($oc_wd_id);
                 // Check the configuration panel changes only.
                 $current_config_panel = json_encode(
@@ -376,7 +380,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
         // If the list is empty, then we get all currect ones from WorkflowAR
         if (empty($workflows)) {
-            $workflows = $this->getAllWorkflows();
+            $workflows = $this->getAllWorkflows(false);
         }
 
         foreach ($workflows as $workflow) {

@@ -16,9 +16,10 @@ interface WorkflowRepository
     public function anyWorkflowExists(): bool;
 
     /**
+     * @param bool $as_array
      * @return WorkflowAR[]
      */
-    public function getAllWorkflows(): array;
+    public function getAllWorkflows(bool $as_array): array;
 
     /**
      * @param null $key
