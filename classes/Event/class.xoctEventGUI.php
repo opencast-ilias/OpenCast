@@ -96,9 +96,9 @@ class xoctEventGUI extends xoctGUI
      */
     protected $objectSettings;
     /**
-     * @var EventModals
+     * @var EventModals|null
      */
-    protected $modals;
+    protected $modals = null;
     /**
      * @var EventRepository
      */
@@ -330,7 +330,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "report date change" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE) || true) {
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
             $b = ilLinkButton::getInstance();
             $b->setId('xoct_report_date_button');
             $b->setCaption('rep_robj_xoct_event_report_date_modification');
@@ -520,7 +520,7 @@ class xoctEventGUI extends xoctGUI
     {
         $xoctEventTableGUI = $this->eventTableBuilder->table($this, self::CMD_STANDARD, $this->objectSettings);
 
-        return $this->prependModalsAndTrigger($xoctEventTableGUI->getHTML(), $xoctEventTableGUI->hasScheduledEvents());
+        return $this->prependModalsAndTrigger($xoctEventTableGUI);
     }
 
     /**
@@ -537,12 +537,25 @@ class xoctEventGUI extends xoctGUI
     {
         $xoctEventTileGUI = $this->eventTableBuilder->tiles($this, $this->objectSettings);
 
-        return $this->prependModalsAndTrigger($xoctEventTileGUI->getHTML(), $xoctEventTileGUI->hasScheduledEvents());
+        return $this->prependModalsAndTrigger($xoctEventTileGUI);
     }
 
-    private function prependModalsAndTrigger(string $html, bool $has_scheduled_events): string
+    private function prependModalsAndTrigger(object $providing_gui): string
     {
         $modals_html = $this->getModalsHTML();
+        switch (true) {
+            case $providing_gui instanceof xoctEventTableGUI:
+            case $providing_gui instanceof xoectEventTileGUI:
+                $html = $providing_gui->getHTML();
+                $has_scheduled_events = $providing_gui->hasScheduledEvents();
+                break;
+            default:
+                throw new xoctException(
+                    xoctException::INTERNAL_ERROR,
+                    'Invalid type ' . get_class($providing_gui) . ' for providing gui'
+                );
+        }
+
         if ($has_scheduled_events) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
             $modals_html .= "<script type='text/javascript'>
@@ -1250,7 +1263,7 @@ class xoctEventGUI extends xoctGUI
     public function getModals(): EventModals
     {
         global $DIC;
-        if (is_null($this->modals)) {
+        if ($this->modals === null) {
             $modals = new EventModals(
                 $this,
                 ilOpenCastPlugin::getInstance(),
