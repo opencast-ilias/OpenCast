@@ -89,7 +89,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
                 (int) $this->http->request()->getQueryParams()['group_id']
             ) as $xoctGroupParticipant
         ) {
-            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass = $xoctGroupParticipant->asStdClass();
             $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(
                 ilObjOpenCastAccess::hasWriteAccess()
             );
@@ -112,7 +112,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
          * @var $xoctGroupParticipant PermissionGroupParticipant
          */
         foreach (PermissionGroupParticipant::where(['group_id' => $group_id])->get() as $xoctGroupParticipant) {
-            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass = $xoctGroupParticipant->asStdClass();
             $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
             $data[] = $stdClass;
         }
