@@ -39,8 +39,10 @@ class ChunkedFileRenderer extends Renderer
      */
     public function render(Component $input, RendererInterface $default_renderer): string
     {
+        /** @var ChunkedFile $input */
         global $DIC;
-        $file_preview_template = new ilTemplateWrapper(
+
+        $template = new ilTemplateWrapper(
             $DIC->ui()->mainTemplate(),
             new ilTemplate(
                 self::TEMPLATES . "tpl.chunked_file.html",
@@ -48,7 +50,21 @@ class ChunkedFileRenderer extends Renderer
                 true
             )
         );
-        $template = new ilTemplateWrapper(
+
+        foreach ($input->getDynamicInputs() as $metadata_input) {
+            $file_info = $input->getValue() === [] ? null : $input->getUploadHandler()->getInfoResult(
+                $input->getValue()[0]
+            );
+            $template = $this->renderFilePreview(
+                $input,
+                $metadata_input,
+                $default_renderer,
+                $file_info,
+                $template
+            );
+        }
+
+        $file_preview_template = new ilTemplateWrapper(
             $DIC->ui()->mainTemplate(),
             new ilTemplate(
                 self::TEMPLATES . "tpl.chunked_file.html",
@@ -69,14 +85,17 @@ class ChunkedFileRenderer extends Renderer
         $input = $this->initClientsideRenderer($input, $file_preview_template->get('block_file_preview'));
 
         // display the action button (to choose files).
-        $template->setVariable('ACTION_BUTTON', $default_renderer->render(
+        $template->setVariable(
+            'ACTION_BUTTON', $default_renderer->render(
             $this->getUIFactory()->button()->shy(
                 $this->txt('select_files_from_computer'),
                 '#'
             )
-        ));
+        )
+        );
 
         $js_id = $this->bindJSandApplyId($input, $template);
+
         return $this->wrapInFormContext(
             $input,
             $template->get(),
@@ -84,49 +103,6 @@ class ChunkedFileRenderer extends Renderer
             "",
             false
         );
-
-
-        /**
-         * @var $component F\File
-         */
-        $component = $component->withAdditionalOnLoadCode(
-            function ($id) use ($settings) {
-                $settings = json_encode($settings);
-                return "$(document).ready(function() {
-                    il.UI.Input.chunkedFile.init('$id', '{$settings}');
-                });";
-            }
-        );
-
-        $id = $this->bindJavaScript($component) ?? $this->createId();
-        $tpl->setVariable("ID", $id);
-
-        $tpl->setVariable(
-            'BUTTON',
-            $default_renderer->render(
-                $this->getUIFactory()->button()->shy(
-                    $this->txt('select_files_from_computer'),
-                    "#"
-                )
-            )
-        );
-
-        $component = $component->withByline(
-            $component->getByline() .
-            '<br>' .
-            $this->txt('file_notice') . ' ' . ($settings->max_file_size / self::MIB_F) . ' MB'
-        );
-
-        if ($component->isDisabled()) {
-            $tpl->setVariable("DISABLED", 'disabled="disabled"');
-        }
-
-        // Support ILIAS 6 and 7
-        if (method_exists($this, 'wrapInFormContext')) {
-            return $this->wrapInFormContext($component, $tpl->get(), $id);
-        } else {
-            return $this->renderInputFieldWithContext($default_renderer, $tpl, $component);
-        }
     }
 
     protected function getComponentInterfaceName(): array
