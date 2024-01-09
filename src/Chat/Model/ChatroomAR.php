@@ -34,7 +34,7 @@ class ChatroomAR extends ActiveRecord
     /** @noinspection PhpIncompatibleReturnTypeInspection */
     public static function findBy(string $event_id, int $obj_id): ChatroomAR
     {
-        return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
+        return self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first() ?? new ChatroomAR();
     }
 
     public static function chatroomExists(string $event_id, int $obj_id): bool

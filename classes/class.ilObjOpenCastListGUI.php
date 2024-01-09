@@ -112,7 +112,7 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         }
         try {
             PluginConfig::setApiSettings();
-            $objectSettings = ObjectSettings::find($this->obj_id);
+            $objectSettings = ObjectSettings::findOrGetInstance($this->obj_id);
         } catch (xoctException $e) {
             if ($get_exceoptions) {
                 throw $e;

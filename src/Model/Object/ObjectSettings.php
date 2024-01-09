@@ -223,7 +223,7 @@ class ObjectSettings extends ActiveRecord
      * @con_fieldtype integer
      * @con_length    1
      */
-    protected $chat_active = true;
+    protected $chat_active = false;
 
     public function getObjId(): int
     {
