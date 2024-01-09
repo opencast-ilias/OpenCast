@@ -118,7 +118,7 @@ class ObjectSettings extends ActiveRecord
     public function getILIASObject(): ilObjOpenCast
     {
         static $object;
-        if (is_null($object[$this->getObjId()])) {
+        if (is_null($object[$this->getObjId()] ?? null)) {
             $references = ilObjOpenCast::_getAllReferences($this->getObjId());
             $object[$this->getObjId()] = new ilObjOpenCast(array_shift($references));
         }
