@@ -393,6 +393,7 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::exportData($format, $send);
     }
 
+    #[ReturnTypeWillChange]
     protected function fillHeaderCSV(ilCSVWriter $a_csv): void
     {
         foreach ($this->getSelectedColumns() as $column_id) {
