@@ -196,7 +196,7 @@ class xoctGrantPermissionGUI extends xoctGUI
         } else {
             $obj->update();
         }
-        $this->outJson($obj->asStdClass());
+        $this->outJson($obj->__asStdClass());
     }
 
     /**
@@ -224,7 +224,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             } else {
                 $obj->update();
             }
-            $objects[] = $obj->asStdClass();
+            $objects[] = $obj->__asStdClass();
         }
         $this->outJson(json_encode($objects));
     }

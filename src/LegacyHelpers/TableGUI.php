@@ -65,7 +65,8 @@ trait TableGUI
      *
      * @deprecated
      */
-    protected function fillRow(array $row): void
+    #[\ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $row): void
     {
         $this->tpl->setCurrentBlock("column");
 

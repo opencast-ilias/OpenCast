@@ -130,7 +130,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         $arr = [];
         foreach (PermissionGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
             $users = PermissionGroupParticipant::where(['group_id' => $group->getId()])->getArray(null, 'user_id');
-            $stdClass = $group->asStdClass();
+            $stdClass = $group->__asStdClass();
             $stdClass->user_count = count($users);
             $stdClass->name = $stdClass->title;
             $stdClass->users = array_map('intval', $users);
@@ -167,7 +167,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         $obj->setSerieId($this->objectSettings->getObjId());
         $obj->setTitle($this->http->request()->getParsedBody()['title']);
         $obj->create();
-        $json = $obj->asStdClass();
+        $json = $obj->__asStdClass();
         $json->users = [];
         $json->user_count = 0;
         $this->outJson($json);

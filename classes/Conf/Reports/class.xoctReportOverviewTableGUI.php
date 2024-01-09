@@ -18,7 +18,10 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     use LocaleTrait;
     use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
-    private ilOpenCastPlugin $plugin;
+    /**
+     * @var ilOpenCastPlugin
+     */
+    private $plugin;
 
     /**
      * xoctReportOverviewTableGUI constructor.
@@ -124,7 +127,8 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     }
 
 
-    protected function fillRow(array $row): void
+    #[ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $row): void
     {
         $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();

@@ -28,6 +28,10 @@ class MDConfigTable extends ilTable2GUI
      * @var Container
      */
     private $dic;
+    /**
+     * @var \ilTemplate
+     */
+    private $main_tpl;
 
     public function __construct(
         xoctGUI $parent,
@@ -39,6 +43,7 @@ class MDConfigTable extends ilTable2GUI
         $this->parent = $parent;
         $this->plugin = $plugin;
         $this->dic = $dic;
+        $this->main_tpl = $dic->ui()->mainTemplate();
         new WaitOverlay($this->dic->ui()->mainTemplate());
         $this->setId('xoct_md_config');
         $this->setDescription($this->plugin->txt('msg_md_config_info'));
