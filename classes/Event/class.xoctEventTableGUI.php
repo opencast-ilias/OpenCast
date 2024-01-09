@@ -149,7 +149,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
         $column_settings = $this->getSelectableColumns()[$a_col] ?? [];
 
-        return $column_settings['default'] ?? false;
+        return false; //$column_settings['default'] ?? false;
     }
 
     /**
