@@ -528,6 +528,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         $info = new ilInfoScreenGUI($this);
         $info->enablePrivateNotes();
+        /** @var $objectSettings ObjectSettings */
         $objectSettings = ObjectSettings::find($this->obj_id);
         if ($refs = $objectSettings->getDuplicatesOnSystem()) {
             $info->addSection($this->plugin->txt('info_linked_items'));
@@ -548,10 +549,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             && $this->container->get(SeriesAPIRepository::class)->find(
                 $objectSettings->getSeriesIdentifier()
             )->isPublishedOnVideoPortal()) {
+            $video_portal_title = PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE);
             $info->addSection($this->plugin->txt('series_links'));
             $info->addProperty(
-                $this->plugin->txt(
-                    'series_video_portal_link'
+                sprintf(
+                    $this->plugin->txt(
+                        'series_video_portal_link'
+                    ), $video_portal_title
                 ),
                 $objectSettings->getVideoPortalLink()
             );
