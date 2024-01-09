@@ -52,7 +52,7 @@ class xoctPermissionGroupGUI extends xoctGUI
      */
     protected function performCommand(string $cmd): void
     {
-        if (in_array($cmd, self::$admin_commands)) {
+        if (in_array($cmd, self::$admin_commands, true)) {
             $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
         } else {
             $access = ilObjOpenCastAccess::hasPermission('read');
@@ -132,10 +132,10 @@ class xoctPermissionGroupGUI extends xoctGUI
         $arr = [];
         foreach (PermissionGroup::getAllForId($this->objectSettings->getObjId()) as $group) {
             $users = PermissionGroupParticipant::where(['group_id' => $group->getId()])->getArray(null, 'user_id');
-            $stdClass = $group->__asStdClass();
+            $stdClass = $group->asStdClass();
             $stdClass->user_count = count($users);
             $stdClass->name = $stdClass->title;
-            $stdClass->users = $users;
+            $stdClass->users = array_map('intval', $users);
             $arr[] = $stdClass;
         }
         usort($arr, ['xoctGUI', 'compareStdClassByName']);
@@ -150,7 +150,7 @@ class xoctPermissionGroupGUI extends xoctGUI
          */
         foreach (PermissionGroupParticipant::getAvailable((int)$this->http->request()->getQueryParams()['ref_id']) as $group_participant) {
             $data[] = [
-                'user_id' => $group_participant->getUserId(),
+                'user_id' => (int) $group_participant->getUserId(),
                 'name' => $group_participant->getXoctUser()->getNamePresentation(
                     ilObjOpenCastAccess::hasWriteAccess()
                 )
@@ -169,7 +169,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         $obj->setSerieId($this->objectSettings->getObjId());
         $obj->setTitle($this->http->request()->getParsedBody()['title']);
         $obj->create();
-        $json = $obj->__asStdClass();
+        $json = $obj->asStdClass();
         $json->users = [];
         $json->user_count = 0;
         $this->outJson($json);
