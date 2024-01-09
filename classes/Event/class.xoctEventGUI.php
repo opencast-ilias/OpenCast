@@ -461,7 +461,8 @@ class xoctEventGUI extends xoctGUI
 
     protected function changeTileLimit(): void
     {
-        $tile_limit = filter_input(INPUT_POST, 'tiles_per_page');
+        $tile_limit = (int) ($this->http->request()->getParsedBody()['tiles_per_page'] ?? 0);
+
         if (in_array($tile_limit, [4, 8, 12, 16])) {
             UserSettingsRepository::changeTileLimit(
                 $this->user->getId(),
