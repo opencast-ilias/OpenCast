@@ -234,7 +234,7 @@ class xoctEventTableGUI extends ilTable2GUI
             $field_id = $md_field->getFieldId();
             $columns[$field_id] = [
                 'selectable' => true,
-                'sort_field' => $field_id,
+                'sort_field' => $field_id . '_s',
                 'text' => $md_field->getTitle($this->lang_key)
             ];
         }
