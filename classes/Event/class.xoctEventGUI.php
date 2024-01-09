@@ -727,13 +727,13 @@ class xoctEventGUI extends xoctGUI
     private function checkAndShowConflictMessage(xoctException $e): void
     {
         if ($e->getCode() === xoctException::API_CALL_STATUS_409) {
-            $conflicts = json_decode(substr($e->getMessage(), 10), true);
+            $conflicts = (array) json_decode(substr($e->getMessage(), 10), true);
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
-                    'Y.m.d H:i:s',
-                    strtotime($conflict['start'])
-                ) . ' - '
+                        'Y.m.d H:i:s',
+                        strtotime($conflict['start'])
+                    ) . ' - '
                     . date('Y.m.d H:i:s', strtotime($conflict['end'])) . '<br>';
             }
             $this->main_tpl->setOnScreenMessage('failure', $message);

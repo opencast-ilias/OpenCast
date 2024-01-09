@@ -172,6 +172,9 @@ class MDParser
                 if (is_int($value)) {
                     return date("H:i:s", $value);
                 }
+                if (is_string($value)) {
+                    return $value;
+                }
             // no break
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:

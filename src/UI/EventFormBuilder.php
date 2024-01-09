@@ -278,7 +278,7 @@ class EventFormBuilder
             $form_action,
             $inputs
         )->withAdditionalTransformation(
-            $this->refinery_factory->custom()->constraint(function ($vs) {
+            $this->refinery_factory->custom()->transformation(function ($vs): array {
                 $date_field = new MetadataField(MDFieldDefinition::F_START_DATE, MDDataType::datetime());
                 $date_field->setValue($vs['scheduling'] ["start_date_time"]);
                 $vs['metadata']['object']->addField($date_field);
@@ -289,7 +289,7 @@ class EventFormBuilder
                 );
                 $vs['metadata']['object']->addField($time_field);
                 return $vs;
-            }, \xoctException::INTERNAL_ERROR)
+            })
         );
     }
 
