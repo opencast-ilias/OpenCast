@@ -93,6 +93,13 @@ class xoctEventTileGUI
                 return $item['object'];
             }, $this->sortData($data))
         );
+
+        foreach ($this->events as $event) {
+            if ($event->isScheduled()) {
+                $this->has_scheduled_events = true;
+                break;
+            }
+        }
     }
 
     /**

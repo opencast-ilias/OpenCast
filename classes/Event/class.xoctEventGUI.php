@@ -330,8 +330,8 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "report date change" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
-            $b = ilButton::getInstance();
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE) || true) {
+            $b = ilLinkButton::getInstance();
             $b->setId('xoct_report_date_button');
             $b->setCaption('rep_robj_xoct_event_report_date_modification');
             $b->addCSSClass('hidden');
@@ -518,24 +518,9 @@ class xoctEventGUI extends xoctGUI
 
     public function getTableGUI(): string
     {
-        $modals_html = $this->getModalsHTML();
         $xoctEventTableGUI = $this->eventTableBuilder->table($this, self::CMD_STANDARD, $this->objectSettings);
-        $html = $xoctEventTableGUI->getHTML();
-        if ($xoctEventTableGUI->hasScheduledEvents()) {
-            $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
-            $html .= "<script type='text/javascript'>
-                        $('#xoct_report_date_button').removeClass('hidden');
-                        $('#xoct_report_date_button').on('click', function(){
-                            $(this).trigger('$signal',
-							{
-								'id' : '$signal', 'event' : 'click',
-								'triggerer' : $(this),
-								'options' : JSON.parse('[]')
-							});
-                        });
-                    </script>";
-        }
-        return $html . $modals_html;
+
+        return $this->prependModalsAndTrigger($xoctEventTableGUI->getHTML(), $xoctEventTableGUI->hasScheduledEvents());
     }
 
     /**
@@ -551,23 +536,31 @@ class xoctEventGUI extends xoctGUI
     protected function getTilesGUI(): string
     {
         $xoctEventTileGUI = $this->eventTableBuilder->tiles($this, $this->objectSettings);
-        $html = $this->getModalsHTML();
-        $html .= $xoctEventTileGUI->getHTML();
-        if ($xoctEventTileGUI->hasScheduledEvents()) {
+
+        return $this->prependModalsAndTrigger($xoctEventTileGUI->getHTML(), $xoctEventTileGUI->hasScheduledEvents());
+    }
+
+    private function prependModalsAndTrigger(string $html, bool $has_scheduled_events): string
+    {
+        $modals_html = $this->getModalsHTML();
+        if ($has_scheduled_events) {
             $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
-            $html .= "<script type='text/javascript'>
-                        $('#xoct_report_date_button').removeClass('hidden');
-                        $('#xoct_report_date_button').on('click', function(){
-                            $(this).trigger('$signal',
-							{
-								'id' : '$signal', 'event' : 'click',
-								'triggerer' : $(this),
-								'options' : JSON.parse('[]')
-							});
-                        });
+            $modals_html .= "<script type='text/javascript'>
+                        window.onload = function(event) {
+                            $('#xoct_report_date_button').removeClass('hidden');
+                            $('#xoct_report_date_button').on('click', function(){
+                                $(this).trigger('$signal',
+                                {
+                                    'id' : '$signal', 'event' : 'click',
+                                    'triggerer' : $(this),
+                                    'options' : JSON.parse('[]')
+                                });
+                            });    
+                        };
                     </script>";
         }
-        return $html;
+
+        return $html . $modals_html;
     }
 
     /**
