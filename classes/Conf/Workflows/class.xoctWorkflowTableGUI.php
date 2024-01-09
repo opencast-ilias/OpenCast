@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -71,7 +72,7 @@ class xoctWorkflowTableGUI extends ilTable2GUI
 
     protected function getRowTemplate(): string
     {
-        return $this->plugin->getDirectory() . '/templates/default/table_row.html';
+        return $this->plugin->getDirectory() . '/templates/default/tpl.table_row.html';
     }
 
     protected function initColumns(): void
@@ -113,8 +114,10 @@ class xoctWorkflowTableGUI extends ilTable2GUI
      * @param     $column
      * @param     $row WorkflowAR
      */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    protected function getColumnValue(string $column, /*array*/ $row, int $format = TableGUIConstants::DEFAULT_FORMAT): string
     {
+        $row = WorkflowAR::find($row['id']);
+
         switch ($column) {
             case 'id':
                 return $row->getWorkflowId();
@@ -132,21 +135,21 @@ class xoctWorkflowTableGUI extends ilTable2GUI
                 $tpl->setVariable('ICON_SRC', ilUtil::getHtmlPath(ilUtil::getImagePath($icon)));
                 $tpl->setVariable('ICON_ALT', $icon);
                 $icon_title = $has_config_panel ?
-                    $this->translate('config_panel_icon_with', self::LANG_MODULE) :
-                    $this->translate('config_panel_icon_without', self::LANG_MODULE);
+                    $this->getLocaleString('config_panel_icon_with', self::LANG_MODULE) :
+                    $this->getLocaleString('config_panel_icon_without', self::LANG_MODULE);
                 $tpl->setVariable('ICON_TITLE', $icon_title);
                 $tpl->parseCurrentBlock();
                 return $tpl->get();
             case 'actions':
                 $this->ctrl->setParameter($this->parent_obj, 'workflow_id', $row->getId());
                 $delete_modal = $this->factory->modal()->interruptive(
-                    $this->getLocaleString('delete'),
+                    $this->getLocaleString('delete', 'common'),
                     $this->txt('msg_confirm_delete_workflow'),
                     $this->ctrl->getFormAction($this->parent_obj, xoctGUI::CMD_DELETE)
                 )->withAffectedItems(
                     [
                         $this->factory->modal()->interruptiveItem(
-                            $row->getId(),
+                            (string) $row->getId(),
                             $row->getTitle()
                         )
                     ]
@@ -155,16 +158,16 @@ class xoctWorkflowTableGUI extends ilTable2GUI
                 $actions = $this->factory->dropdown()->standard(
                     [
                         $this->factory->button()->shy(
-                            $this->getLocaleString('edit'),
+                            $this->getLocaleString('edit', 'common'),
                             $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
                         ),
                         $this->factory->button()->shy(
-                            $this->getLocaleString('delete'),
+                            $this->getLocaleString('delete', 'common'),
                             $delete_modal->getShowSignal()
                         )
                     ]
-                )->withLabel($this->getLocaleString('actions'));
-                return self::output()->getHTML($actions);
+                )->withLabel($this->getLocaleString('actions', 'common'));
+                return $this->renderer->render($actions);
         }
 
         return '';
@@ -189,7 +192,7 @@ class xoctWorkflowTableGUI extends ilTable2GUI
 
     protected function initData(): void
     {
-        $this->setData($this->workflow_repository->getAllWorkflows());
+        $this->setData($this->workflow_repository->getAllWorkflows(true));
     }
 
     protected function initId(): void
