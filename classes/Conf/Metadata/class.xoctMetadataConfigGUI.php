@@ -14,7 +14,6 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
-use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
 use srag\Plugins\Opencast\Model\ListProvider\ListProvider;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
@@ -22,7 +21,6 @@ use ILIAS\DI\HTTPServices;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
-    use OutputTrait;
     use TranslatorTrait;
     use LocaleTrait;
 
@@ -510,6 +508,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $sort++;
             }
         }
-        exit;
+        $this->closeResponse();
     }
 }

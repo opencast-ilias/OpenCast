@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctEventTableGUI
@@ -22,6 +23,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
  */
 class xoctEventTableGUI extends ilTable2GUI
 {
+    use OutputResponse;
     public const TBL_ID = 'tbl_xoct';
     /**
      * @var ilOpenCastPlugin
@@ -386,8 +388,7 @@ class xoctEventTableGUI extends ilTable2GUI
     public function exportData($format, $send = false): void
     {
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
-            echo "Access Denied";
-            exit;
+            $this->sendReponse("Access Denied");
         }
         parent::exportData($format, $send);
     }

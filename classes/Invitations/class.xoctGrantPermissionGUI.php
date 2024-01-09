@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctGrantPermissionGUI
@@ -18,6 +19,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctGrantPermissionGUI extends xoctGUI
 {
+    use OutputResponse;
     /**
      * @var Event
      */
@@ -97,9 +99,7 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected function outJson($data)
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
     protected function add(): void

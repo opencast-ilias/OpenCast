@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctPlayerGUI
@@ -27,6 +28,7 @@ use ILIAS\DI\HTTPServices;
 class xoctPlayerGUI extends xoctGUI
 {
     use TranslatorTrait;
+    use OutputResponse;
 
     public const CMD_STREAM_VIDEO = 'streamVideo';
 
@@ -87,14 +89,13 @@ class xoctPlayerGUI extends xoctGUI
     public function streamVideo(): void
     {
         if (!isset($this->identifier) || empty($this->identifier)) {
-            echo "Error: invalid identifier";
-            exit();
+            $this->sendReponse("Error: invalid identifier");
         }
         $event = $this->event_repository->find($this->identifier);
         if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
             // redirect to opencast
             header('Location: ' . $event->publications()->getPlayerLink());
-            exit;
+            $this->closeResponse();
         }
 
         try {
@@ -102,8 +103,7 @@ class xoctPlayerGUI extends xoctGUI
         } catch (xoctException $e) {
             xoctLog::getInstance()->logError($e->getCode(), $e->getMessage());
             xoctLog::getInstance()->logStack($e->getTraceAsString());
-            echo $e->getMessage();
-            exit;
+            $this->sendReponse("Error: " . $e->getMessage());
         }
 
         $jquery_path = iljQueryUtil::getLocaljQueryPath();
@@ -140,8 +140,7 @@ class xoctPlayerGUI extends xoctGUI
         }
 
         setcookie('lastProfile', '', ['expires' => -1]);
-        echo $tpl->get();
-        exit();
+        $this->sendReponse($tpl->get());
     }
 
     protected function buildJSConfig(Event $event): stdClass

@@ -39,6 +39,7 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctEventGUI
@@ -48,6 +49,7 @@ use ILIAS\DI\HTTPServices;
  */
 class xoctEventGUI extends xoctGUI
 {
+    use OutputResponse;
     public const IDENTIFIER = 'eid';
     public const CMD_STANDARD = 'index';
     public const CMD_CLEAR_CACHE = 'clearCache';
@@ -512,8 +514,7 @@ class xoctEventGUI extends xoctGUI
      */
     public function asyncGetTableGUI(): void
     {
-        echo $this->getTableGUI();
-        exit();
+        $this->sendReponse($this->getTableGUI());
     }
 
     public function getTableGUI(): string
@@ -529,8 +530,7 @@ class xoctEventGUI extends xoctGUI
      */
     public function asyncGetTilesGUI(): void
     {
-        echo $this->getTilesGUI();
-        exit();
+        $this->sendReponse($this->getTilesGUI());
     }
 
     protected function getTilesGUI(): string
@@ -900,7 +900,7 @@ class xoctEventGUI extends xoctGUI
             readfile($url);
         }
 
-        exit;
+        $this->closeResponse();
     }
 
 
