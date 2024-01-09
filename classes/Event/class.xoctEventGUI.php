@@ -545,7 +545,7 @@ class xoctEventGUI extends xoctGUI
         $modals_html = $this->getModalsHTML();
         switch (true) {
             case $providing_gui instanceof xoctEventTableGUI:
-            case $providing_gui instanceof xoectEventTileGUI:
+            case $providing_gui instanceof xoctEventTileGUI:
                 $html = $providing_gui->getHTML();
                 $has_scheduled_events = $providing_gui->hasScheduledEvents();
                 break;
