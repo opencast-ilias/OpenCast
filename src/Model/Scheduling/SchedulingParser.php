@@ -27,8 +27,13 @@ class SchedulingParser
         )[0] == "" ? ['default'] : PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL);
         switch ($type) {
             case 'repeat':
-                $start = new DateTimeImmutable($scheduling_data['start_date'] . ' ' . $scheduling_data['start_time']);
-                $end = new DateTimeImmutable($scheduling_data['end_date'] . ' ' . $scheduling_data['end_time']);
+                $start_date = $scheduling_data['start_date'] instanceof DateTimeImmutable ? $scheduling_data['start_date']->format('Y-m-d') : $scheduling_data['start_date'];
+                $start_time = $scheduling_data['start_time'] instanceof DateTimeImmutable ? $scheduling_data['start_time']->format('H:i:s') : $scheduling_data['start_time'];
+                $start = new DateTimeImmutable($start_date . ' ' . $start_time);
+                $end_date = $scheduling_data['end_date'] instanceof DateTimeImmutable ? $scheduling_data['end_date']->format('Y-m-d') : $scheduling_data['end_date'];
+                $end_time = $scheduling_data['end_time'] instanceof DateTimeImmutable ? $scheduling_data['end_time']->format('H:i:s') : $scheduling_data['end_time'];
+                $end = new DateTimeImmutable($end_date . ' ' . $end_time);
+
                 $duration = $end->getTimestamp() - $start->getTimestamp();
                 return new Scheduling(
                     $form_data[MDFieldDefinition::F_LOCATION],
@@ -39,8 +44,18 @@ class SchedulingParser
                     RRule::fromStartAndWeekdays($start, $scheduling_data['weekdays'])
                 );
             case 'no_repeat':
-                $start = new DateTimeImmutable($scheduling_data['start_date_time']);
-                $end = new DateTimeImmutable($scheduling_data['end_date_time']);
+                if (isset($scheduling_data['start_date_time']) && $scheduling_data['start_date_time'] instanceof DateTimeImmutable) {
+                    $start = $scheduling_data['start_date_time'];
+                } else {
+                    $start = new DateTimeImmutable($scheduling_data['start_date_time']);
+                }
+
+                if (isset($scheduling_data['end_date_time']) && $scheduling_data['end_date_time'] instanceof DateTimeImmutable) {
+                    $end = $scheduling_data['end_date_time'];
+                } else {
+                    $end = new DateTimeImmutable($scheduling_data['end_date_time']);
+                }
+
                 return new Scheduling(
                     $form_data[MDFieldDefinition::F_LOCATION],
                     $start->setTimezone(new DateTimeZone('GMT')),
