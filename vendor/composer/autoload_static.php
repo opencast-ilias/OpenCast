@@ -120,7 +120,6 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Container\\Container' => __DIR__ . '/../..' . '/src/Container/Container.php',
         'srag\\Plugins\\Opencast\\Container\\Init' => __DIR__ . '/../..' . '/src/Container/Init.php',
         'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => __DIR__ . '/../..' . '/src/DI/OpencastDIC.php',
-        'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/OutputTrait.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUI' => __DIR__ . '/../..' . '/src/LegacyHelpers/TableGUI.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUIConstants' => __DIR__ . '/../..' . '/src/LegacyHelpers/TableGUIConstants.php',
         'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => __DIR__ . '/../..' . '/src/LegacyHelpers/TranslatorTrait.php',

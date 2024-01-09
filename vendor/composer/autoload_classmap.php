@@ -56,7 +56,6 @@ return array(
     'srag\\Plugins\\Opencast\\Container\\Container' => $baseDir . '/src/Container/Container.php',
     'srag\\Plugins\\Opencast\\Container\\Init' => $baseDir . '/src/Container/Init.php',
     'srag\\Plugins\\Opencast\\DI\\OpencastDIC' => $baseDir . '/src/DI/OpencastDIC.php',
-    'srag\\Plugins\\Opencast\\LegacyHelpers\\OutputTrait' => $baseDir . '/src/LegacyHelpers/OutputTrait.php',
     'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUI' => $baseDir . '/src/LegacyHelpers/TableGUI.php',
     'srag\\Plugins\\Opencast\\LegacyHelpers\\TableGUIConstants' => $baseDir . '/src/LegacyHelpers/TableGUIConstants.php',
     'srag\\Plugins\\Opencast\\LegacyHelpers\\TranslatorTrait' => $baseDir . '/src/LegacyHelpers/TranslatorTrait.php',
