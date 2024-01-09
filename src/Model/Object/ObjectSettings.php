@@ -91,7 +91,7 @@ class ObjectSettings extends ActiveRecord
                 $rec = $DIC->database()->fetchAssoc($set);
 
                 if ($rec['ref_id']) {
-                    $duplicates_ids[] = $rec['ref_id'];
+                    $duplicates_ids[] = (int) $rec['ref_id'];
                 }
             }
         }
