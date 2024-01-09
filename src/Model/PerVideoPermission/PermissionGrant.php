@@ -155,7 +155,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
     public function setId(int $id): void
@@ -165,7 +165,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getUserId(): int
     {
-        return $this->user_id;
+        return (int) $this->user_id;
     }
 
     public function setUserId(int $user_id): void
@@ -175,7 +175,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getOwnerId(): int
     {
-        return $this->owner_id;
+        return (int) $this->owner_id;
     }
 
     public function setOwnerId(int $owner_id): void
@@ -185,7 +185,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getStatus(): int
     {
-        return $this->status;
+        return (int) $this->status;
     }
 
     public function setStatus(int $status): void
@@ -195,7 +195,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getEventIdentifier(): string
     {
-        return $this->event_identifier;
+        return (string)$this->event_identifier;
     }
 
     public function setEventIdentifier(string $event_identifier): void

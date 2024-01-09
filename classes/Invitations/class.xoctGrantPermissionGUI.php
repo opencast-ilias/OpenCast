@@ -178,9 +178,10 @@ class xoctGrantPermissionGUI extends xoctGUI
 
     protected function create(): void
     {
+        $user_id = (int) ($this->http->request()->getParsedBody()['id'] ?? 0);
         $obj = PermissionGrant::where([
             'event_identifier' => $this->event->getIdentifier(),
-            'user_id' => $this->http->request()->getParsedBody()['id'],
+            'user_id' => $user_id,
         ])->first();
         $new = false;
         if (!$obj instanceof PermissionGrant) {
@@ -188,14 +189,14 @@ class xoctGrantPermissionGUI extends xoctGUI
             $new = true;
         }
         $obj->setEventIdentifier($this->event->getIdentifier());
-        $obj->setUserId($this->http->request()->getParsedBody()['id']);
+        $obj->setUserId($user_id);
         $obj->setOwnerId($this->user->getId());
         if ($new) {
             $obj->create();
         } else {
             $obj->update();
         }
-        $this->outJson($obj->__asStdClass());
+        $this->outJson($obj->asStdClass());
     }
 
     /**
@@ -205,6 +206,7 @@ class xoctGrantPermissionGUI extends xoctGUI
     {
         $objects = [];
         foreach ($this->http->request()->getParsedBody()['ids'] as $id) {
+            $id = (int) $id;
             $obj = PermissionGrant::where([
                 'event_identifier' => $this->event->getIdentifier(),
                 'user_id' => $id,
@@ -222,7 +224,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             } else {
                 $obj->update();
             }
-            $objects[] = $obj->__asStdClass();
+            $objects[] = $obj->asStdClass();
         }
         $this->outJson(json_encode($objects));
     }
