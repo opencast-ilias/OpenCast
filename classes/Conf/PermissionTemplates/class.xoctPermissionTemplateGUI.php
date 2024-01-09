@@ -196,7 +196,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
             $perm_tpl->update();
             $sort++;
         }
-        exit;
+        $this->closeResponse();
     }
 
     /**

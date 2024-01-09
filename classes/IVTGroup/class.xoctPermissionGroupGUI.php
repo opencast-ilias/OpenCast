@@ -118,9 +118,7 @@ class xoctPermissionGroupGUI extends xoctGUI
      */
     protected function outJson($data)
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
     protected function add(): void

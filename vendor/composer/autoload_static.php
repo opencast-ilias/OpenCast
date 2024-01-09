@@ -251,6 +251,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/UploadStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\Locale\\LocaleTrait' => __DIR__ . '/../..' . '/src/Util/Locale/LocaleTraits.php',
         'srag\\Plugins\\Opencast\\Util\\MimeType' => __DIR__ . '/../..' . '/src/Util/MimeType.php',
+        'srag\\Plugins\\Opencast\\Util\\OutputResponse' => __DIR__ . '/../..' . '/src/Util/OutputResponse.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => __DIR__ . '/../..' . '/src/Util/Player/LivePlayerDataBuilder.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigService.php',
         'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigServiceFactory' => __DIR__ . '/../..' . '/src/Util/Player/PaellaConfigServiceFactory.php',

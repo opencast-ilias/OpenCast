@@ -189,6 +189,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     break;
             }
         } catch (xoctException $e) {
+            throw $e; // DEBUG
             $this->tpl->setOnScreenMessage('failure', $e->getMessage());
             $this->ilias_dic->logger()->root()->error($e->getMessage());
             $this->ilias_dic->logger()->root()->error($e->getTraceAsString());

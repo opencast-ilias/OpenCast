@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctGUI
@@ -13,6 +14,7 @@ use srag\Plugins\Opencast\API\API;
  */
 abstract class xoctGUI
 {
+    use OutputResponse;
     public const CMD_STANDARD = 'index';
     public const CMD_ADD = 'add';
     public const CMD_SAVE = 'save';

@@ -187,6 +187,7 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => $baseDir . '/src/Util/FileTransfer/UploadStorageService.php',
     'srag\\Plugins\\Opencast\\Util\\Locale\\LocaleTrait' => $baseDir . '/src/Util/Locale/LocaleTraits.php',
     'srag\\Plugins\\Opencast\\Util\\MimeType' => $baseDir . '/src/Util/MimeType.php',
+    'srag\\Plugins\\Opencast\\Util\\OutputResponse' => $baseDir . '/src/Util/OutputResponse.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => $baseDir . '/src/Util/Player/LivePlayerDataBuilder.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => $baseDir . '/src/Util/Player/PaellaConfigService.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigServiceFactory' => $baseDir . '/src/Util/Player/PaellaConfigServiceFactory.php',
