@@ -105,8 +105,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $data = array_filter(
             $data,
             $this->filterPermissions() ?? function ($v, $k): bool {
-                return !empty($v);
-            },
+            return !empty($v);
+        },
             $this->filterPermissions() === null ? ARRAY_FILTER_USE_BOTH : 0
         );
         $this->setData($data);
@@ -134,7 +134,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
     public static function getGeneratedPrefix(int $obj_id): string
     {
-        return self::TBL_ID . '_' . substr((string)$obj_id, 0, 5);
+        return self::TBL_ID . '_' . substr((string) $obj_id, 0, 5);
     }
 
     public function isColumnSelected($a_col): bool
@@ -273,9 +273,9 @@ class xoctEventTableGUI extends ilTable2GUI
             return $owner_visible;
         }
         $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole(
-            'upload',
-            'member'
-        ) || $this->object_settings->getPermissionPerClip());
+                'upload',
+                'member'
+            ) || $this->object_settings->getPermissionPerClip());
 
         return $owner_visible;
     }
@@ -288,8 +288,8 @@ class xoctEventTableGUI extends ilTable2GUI
             }
             $this->addColumn(
                 isset($col['lang_var']) ? $this->plugin->txt($col['lang_var']) : $col['text'],
-                $col['sort_field']??'',
-                $col['width']??''
+                $col['sort_field'] ?? '',
+                $col['width'] ?? ''
             );
         }
     }
@@ -392,22 +392,37 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::exportData($format, $send);
     }
 
-    #[ReturnTypeWillChange]
-    protected function fillRowCSV(/*ilCSVWriter*/ $a_csv, /*array*/ $a_set): void
+    protected function fillHeaderCSV(ilCSVWriter $a_csv): void
     {
-        $data = $this->getData();
-        foreach ($data[0] as $k => $v) {
-            switch ($k) {
-                case 'created_unix':
-                case 'start_unix':
-                case 'object':
-                    continue 2;
+        foreach ($this->getSelectedColumns() as $column_id) {
+            $column = $this->getAllColumns()[$column_id];
+            if (!isset($column["text"])) {
+                continue;
             }
-            $a_csv->addColumn($k);
+
+            $title = strip_tags($column["text"]);
+            if ($title) {
+                $a_csv->addColumn($title);
+            }
         }
         $a_csv->addRow();
     }
 
+    #[ReturnTypeWillChange]
+    protected function fillRowCSV(/*ilCSVWriter*/ $a_csv, /*array*/ $a_set): void
+    {
+        $selected_colums = $this->getSelectedColumns();
+
+        $row_data = [];
+        foreach ($this->getSelectedColumns() as $column_id) {
+            $column = $this->getAllColumns()[$column_id];
+            if (!isset($column["text"])) {
+                continue;
+            }
+            $row_data[$column_id] = $a_set[$column_id] ?? '';
+        }
+        parent::fillRowCSV($a_csv, $row_data);
+    }
 
     public function getSelectableColumns(): array
     {
