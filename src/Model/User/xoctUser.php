@@ -263,10 +263,8 @@ class xoctUser
         return self::$user_mapping;
     }
 
-    /**
-     * @param int $user_mapping
-     */
-    public static function setUserMapping($user_mapping): void
+
+    public static function setUserMapping(int $user_mapping): void
     {
         self::$user_mapping = $user_mapping;
     }
@@ -281,9 +279,9 @@ class xoctUser
     /**
      * @return string
      */
-    public function getUserRoleName()
+    public function getUserRoleName(): ?string
     {
-        return $this->getIdentifier() !== '' && $this->getIdentifier() !== '0' ?
+        return !empty($this->getIdentifier()) ?
             str_replace(
                 '{IDENTIFIER}',
                 $this->getIdentifier(),
