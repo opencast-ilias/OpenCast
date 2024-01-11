@@ -195,7 +195,7 @@ class EventFormBuilder
         );
 
         $file_section_inputs = ['file' => $file_input];
-        if ($obj_id == 0) {
+        if ($obj_id === 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
         }
         $file_section = $factory->section(
@@ -328,7 +328,8 @@ class EventFormBuilder
         // fetch early, because acls will be refreshed
         $own_series = $this->seriesRepository->getOwnSeries($xoct_user);
         $series_options = [];
-        foreach ($this->seriesRepository->getAllForUser($xoct_user->getUserRoleName()) as $series) {
+        $user_string = $xoct_user->getUserRoleName() ?? '';
+        foreach ($this->seriesRepository->getAllForUser($user_string) as $series) {
             $series_options[$series->getIdentifier()] =
                 $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue()
                 . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';

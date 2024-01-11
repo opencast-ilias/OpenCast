@@ -74,6 +74,9 @@ class MDPrefiller
     {
         $metadata = [];
         $ref_id = (int) ($this->dic->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if($ref_id === 0) {
+            return [];
+        }
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
             if (!empty($course_or_group)) {
@@ -114,6 +117,9 @@ class MDPrefiller
     {
         $course = [];
         $ref_id = (int) ($this->dic->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if($ref_id === 0) {
+            return [];
+        }
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
             foreach (self::$course_properties as $prop_name => $method_name) {

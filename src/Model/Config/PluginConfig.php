@@ -181,7 +181,7 @@ class PluginConfig extends ActiveRecord
         xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
         // USER
-        xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN);
+        xoctUser::setUserMapping((int) (self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN));
     }
 
     public static function importFromXML(string $xml_file_path): void
