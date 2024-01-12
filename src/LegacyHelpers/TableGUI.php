@@ -36,7 +36,7 @@ trait TableGUI
      */
     final public function getSelectableColumns(): array
     {
-        return array_map(function (array &$column): array {
+        return array_map(function (array $column): array {
             if (!isset($column["txt"])) {
                 $column["txt"] = $this->txt($column["id"]);
             }
