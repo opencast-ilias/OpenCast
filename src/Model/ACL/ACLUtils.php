@@ -75,7 +75,7 @@ class ACLUtils
         if ($entries !== []) {
             $first_entry = array_shift($entries);
             $usr_id = xoctUser::lookupUserIdForOwnerRole($first_entry->getRole());
-            if ($usr_id !== 0) {
+            if ($usr_id !== 0 && $usr_id !== null) {
                 return xoctUser::getInstance(new ilObjUser($usr_id));
             }
         }
