@@ -503,6 +503,7 @@ class xoctEventGUI extends xoctGUI
 				    success: function(data){
 				        il.Opencast.UI.waitOverlay.hide();
 				        $('div#xoct_tiles_placeholder').replaceWith($(data));
+				        il.Opencast.UI.Tiles.init();
 				    }
 				});";
         $this->main_tpl->addOnLoadCode('il.Opencast.UI.waitOverlay.show();');
