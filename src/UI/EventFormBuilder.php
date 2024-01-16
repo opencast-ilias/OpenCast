@@ -203,11 +203,11 @@ class EventFormBuilder
             $this->plugin->txt('file')
         );
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
                 $as_admin,
-                $this->plugin->txt('processing_settings')
+                $this->plugin->txt('workflow_params_processing_settings')
             );
         $inputs = [
             'file' => $file_section,
@@ -240,11 +240,11 @@ class EventFormBuilder
         bool $as_admin = false
     ): Form {
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
                 $as_admin,
-                $this->plugin->txt('processing_settings')
+                $this->plugin->txt('workflow_params_processing_settings')
             );
         $inputs = [
             'metadata' => $this->formItemBuilder->schedule_section($as_admin),
