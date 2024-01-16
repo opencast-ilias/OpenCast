@@ -37,73 +37,48 @@ class ChunkedFileRenderer extends Renderer
      * @param ChunkedFile $component
      * @throws ilTemplateException
      */
-    public function render(Component $input, RendererInterface $default_renderer): string
+    public function render(Component $component, RendererInterface $default_renderer): string
+    {
+        $component = $component->withByline(
+            $component->getByline() . '<br>' . $this->txt('file_notice') . ': ' . $component->getMaxFileSize(
+            ) / self::MB_IN_B . ' MB'
+        );
+
+
+        return $this->renderFileField($component, $default_renderer);
+    }
+
+    protected function initClientsideFileInput(\ILIAS\UI\Component\Input\Field\File $input): \ILIAS\UI\Component\Input\Field\File
     {
         /** @var ChunkedFile $input */
-        global $DIC;
 
-        $template = new ilTemplateWrapper(
-            $DIC->ui()->mainTemplate(),
-            new ilTemplate(
-                self::TEMPLATES . "tpl.chunked_file.html",
-                true,
-                true
-            )
-        );
-
-        foreach ($input->getDynamicInputs() as $metadata_input) {
-            $file_info = $input->getValue() === [] ? null : $input->getUploadHandler()->getInfoResult(
-                $input->getValue()[0]
-            );
-            $template = $this->renderFilePreview(
-                $input,
-                $metadata_input,
-                $default_renderer,
-                $file_info,
-                $template
-            );
-        }
-
-        $file_preview_template = new ilTemplateWrapper(
-            $DIC->ui()->mainTemplate(),
-            new ilTemplate(
-                self::TEMPLATES . "tpl.chunked_file.html",
-                true,
-                true
-            )
-        );
-
-        $file_preview_template = $this->renderFilePreview(
-            $input,
-            $input->getTemplateForDynamicInputs(),
-            $default_renderer,
-            null,
-            $file_preview_template
-        );
-
-        $input = $this->initClientsideFileInput($input);
-        $input = $this->initClientsideRenderer($input, $file_preview_template->get('block_file_preview'));
-
-        // display the action button (to choose files).
-        $template->setVariable(
-            'ACTION_BUTTON', $default_renderer->render(
-            $this->getUIFactory()->button()->shy(
-                $this->txt('select_files_from_computer'),
-                '#'
-            )
-        )
-        );
-
-        $js_id = $this->bindJSandApplyId($input, $template);
-
-        return $this->wrapInFormContext(
-            $input,
-            $template->get(),
-            $js_id,
-            "",
-            false
+        return $input->withAdditionalOnLoadCode(
+            function ($id) use ($input) {
+                $current_file_count = count($input->getDynamicInputs());
+                $translations = json_encode($input->getTranslations());
+                $is_disabled = ($input->isDisabled()) ? 'true' : 'false';
+                return "
+                    $(document).ready(function () {
+                        il.UI.Input.ChunkedFile.init(
+                            '$id',
+                            '{$input->getUploadHandler()->getUploadURL()}',
+                            '{$input->getUploadHandler()->getFileRemovalURL()}',
+                            '{$input->getUploadHandler()->getFileIdentifierParameterName()}',
+                            $current_file_count,
+                            {$input->getMaxFiles()},
+                            {$input->getMaxFileSize()},
+                            '{$this->prepareDropzoneJsMimeTypes($input->getAcceptedMimeTypes())}',
+                            $is_disabled,
+                            $translations,
+                            '{$input->getUploadHandler()->supportsChunkedUploads()}',
+                            {$input->getChunkSizeInBytes()}
+                        );
+                    });
+                ";
+            }
         );
     }
+
 
     protected function getComponentInterfaceName(): array
     {

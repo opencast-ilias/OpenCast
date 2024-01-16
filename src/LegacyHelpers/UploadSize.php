@@ -27,12 +27,13 @@ class UploadSize
 {
     public static function getUploadSizeLimitBytes(): int
     {
-        if (class_exists('ilFileUtils') && method_exists('ilFileUtils', 'getUploadSizeLimitBytes')) {
-            return (int) \ilFileUtils::getUploadSizeLimitBytes();
+        $limit = 2 * 1024 * 1024;
+        if (class_exists('\ilFileUtils') && method_exists('\ilFileUtils', 'getUploadSizeLimitBytes')) {
+            $limit = (int) \ilFileUtils::getUploadSizeLimitBytes();
         }
-        if (class_exists('ilUtils') && method_exists('ilUtils', 'getUploadSizeLimitBytes')) {
-            return (int) \ilUtils::getUploadSizeLimitBytes();
+        if (class_exists('\ilUtils') && method_exists('\ilUtils', 'getUploadSizeLimitBytes')) {
+            $limit = (int) \ilUtils::getUploadSizeLimitBytes();
         }
-        return 0;
+        return $limit;
     }
 }
