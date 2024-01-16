@@ -224,7 +224,7 @@ var xoctGroup = {
 
     getParticipant: function(user_id) {
         return this.participants.find(function(participant) {
-            return participant.user_id === user_id;
+            return parseInt(participant.user_id) === parseInt(user_id);
         });
     },
 
