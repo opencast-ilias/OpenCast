@@ -92,7 +92,6 @@ var xoctGroupParticipant = {
             $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id, "group_id": xoctGroup.selected_id}}).done(function (data) {
                 xoctGroup.removeParticipant(id);
                 self.after_load();
-                console.log('load');
                 self.load();
                 self.loadForGroupId();
                 // xoctGroup.load(function () {
