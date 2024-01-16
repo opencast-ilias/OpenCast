@@ -165,7 +165,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             $this->setTitle($this->lng->txt('edit'));
             $this->addCommandButton(
                 xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE,
-                $this->getLocaleString(xoctGUI::CMD_UPDATE, 'common')
+                $this->getLocaleString('save', 'common')
             );
         }
 
