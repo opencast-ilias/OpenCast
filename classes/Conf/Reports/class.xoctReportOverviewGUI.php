@@ -77,8 +77,8 @@ class xoctReportOverviewGUI extends xoctGUI
             $report = Report::find((int) $id);
             $ilConfirmationGUI->addItem('id[]', $id, $report->getSubject() . ' (' . $report->getCreatedAt() . ')');
         }
-        $ilConfirmationGUI->addButton($this->getLocaleString('delete'), self::CMD_CONFIRM);
-        $ilConfirmationGUI->addButton($this->getLocaleString('cancel'), self::CMD_STANDARD);
+        $ilConfirmationGUI->setConfirm($this->getLocaleString('delete', 'common'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_STANDARD);
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 }
