@@ -29,9 +29,13 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     {
         global $DIC, $opencastContainer;
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->addMultiCommand(xoctGUI::CMD_DELETE, $this->getLocaleString(xoctGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
         parent::__construct($parent, $parent_cmd);
+        $this->setFormAction($DIC->ctrl()->getFormAction($parent));
+        $this->addMultiCommand(xoctGUI::CMD_DELETE, $this->getLocaleString(xoctGUI::CMD_DELETE, 'common'));
+        $this->initRowTemplate();
+        $this->initTitle();
+        $this->initData();
     }
 
     protected function getRowTemplate(): string
@@ -59,7 +63,7 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     {
         $filter_date_from = null;
         $filter_date_to = null;
-        $filter_values = $this->getFilterValues();
+        $filter_values = [];//$this->getFilterValues();
         $filter_sender = $filter_values['sender'];
         /** @var ilDate $ilDate */
         if ($ilDate = $filter_values['date_from']) {
@@ -84,8 +88,8 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
 
         $filtered = [];
         foreach ($data as $key => $value) {
-            $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail(
-                $value['user_id']
+            $value['sender'] = ilObjUser::_lookupLogin((int)$value['user_id']) . ', ' . ilObjUser::_lookupEmail(
+                    (int)$value['user_id']
             );
             if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
                 unset($data[$key]);
