@@ -7,6 +7,7 @@ namespace ILIAS\UI\Implementation\Component\Input\Field;
 use ILIAS\Data\Factory as DataFactory;
 use ILIAS\Refinery\Factory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
+use ILIAS\UI\Component\Input\Field\FileUpload;
 
 /**
  * Class ChunkedFile
@@ -56,6 +57,24 @@ class ChunkedFile extends File
     public function getChunkSizeInBytes(): int
     {
         return $this->chunk_size;
+    }
+
+    public function getMaxFileFize(): int
+    {
+        return $this->getMaxFileSize();
+    }
+
+    public function withMaxFileSize(int $size_in_bytes): FileUpload
+    {
+        $clone = clone $this;
+        $clone->max_file_size = $size_in_bytes;
+
+        return $clone;
+    }
+
+    public function getMaxFileSize(): int
+    {
+        return $this->max_file_size ?? -1;
     }
 
     protected function isClientSideValueOk($value): bool
