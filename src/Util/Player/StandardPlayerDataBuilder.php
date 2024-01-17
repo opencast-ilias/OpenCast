@@ -167,13 +167,23 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             publicationMetadata::ROLE_PRESENTATION => []
         ];
 
+        $source_type_master_mapping = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
             if (!is_array($sources[$medium->getRole()][$source_type])) {
                 $sources[$medium->getRole()][$source_type] = [];
             }
-            $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
+
+            $is_master_playlist = $medium->isMasterPlaylist();
+            if ($is_master_playlist) {
+                $source_type_master_mapping[$source_type] = true;
+                $sources[$medium->getRole()][$source_type] = [];
+            }
+
+            if ($is_master_playlist || empty($source_type_master_mapping[$source_type])) {
+                $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
+            }
         }
 
         foreach ($sources as $role => $source) {
