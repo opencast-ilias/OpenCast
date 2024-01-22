@@ -85,7 +85,11 @@ class PermissionGroupParticipant extends ActiveRecord
         if (isset(self::$crs_members_cache[$ref_id][$group_id])) {
             return self::$crs_members_cache[$ref_id][$group_id];
         }
-        $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
+        if ($group_id === null) {
+            $existing = self::getAllUserIdsForOpenCastObjId($ref_id);
+        } else {
+            $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
+        }
 
         $return = [];
         foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id) {
@@ -112,12 +116,6 @@ class PermissionGroupParticipant extends ActiveRecord
         return self::where(['group_id' => $all])->getArray(null, 'user_id');
     }
 
-    /**
-     * @param $obj_id
-     * @param $group_id
-     *
-     * @return array
-     */
     public static function getAllUserIdsForOpenCastObjIdAndGroupId(int $obj_id, int $group_id): array
     {
         $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
