@@ -147,6 +147,25 @@ class PermissionGroup extends ActiveRecord
         parent::delete();
     }
 
+    public function wakeUp($field_name, $field_value)
+    {
+        switch ($field_name) {
+            case 'id':
+            case 'serie_id':
+            case 'status':
+                return (int) $field_value;
+            case 'title':
+                return (string) $field_value;
+            case 'description':
+                return (string) $field_value;
+            default:
+                return null;
+        }
+        return null;
+    }
+
+
+
     public function getId(): int
     {
         return (int) $this->id;
@@ -201,4 +220,6 @@ class PermissionGroup extends ActiveRecord
     {
         $this->status = $status;
     }
+
+
 }

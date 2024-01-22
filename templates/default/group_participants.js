@@ -50,7 +50,7 @@ var xoctGroupParticipant = {
         //$('.xoct_available_group_participant').
         var self = this;
         $(document).on('click', '.xoct_add_user', function () {
-            var user_id = $(this).parent().data('user-id');
+            var user_id = parseInt($(this).parent().data('user-id'));
             self.addUser(user_id);
         });
         $(document).on('click', '.xoct_remove_user', function () {
