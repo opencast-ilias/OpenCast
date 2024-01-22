@@ -133,7 +133,9 @@ class xoctPermissionGroupGUI extends xoctGUI
             $stdClass = $group->__asStdClass();
             $stdClass->user_count = count($users);
             $stdClass->name = $stdClass->title;
-            $stdClass->users = array_map('intval', $users);
+            $stdClass->users = array_values(array_filter(array_map('intval', $users), function ($user_id) {
+                return $user_id > 0;
+            }));
             $arr[] = $stdClass;
         }
         usort($arr, ['xoctGUI', 'compareStdClassByName']);

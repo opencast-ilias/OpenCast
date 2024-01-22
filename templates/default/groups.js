@@ -183,7 +183,7 @@ var xoctGroup = {
     },
 
     addParticipant: function (id) {
-        this.getSelectedGroup().users.push(id.toString());
+        this.getSelectedGroup().users.push(parseInt(id.toString()));
         $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
     },
 
