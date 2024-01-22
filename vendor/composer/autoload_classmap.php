@@ -36,6 +36,7 @@ return array(
     'ilObjOpenCastAccess' => $baseDir . '/classes/class.ilObjOpenCastAccess.php',
     'ilObjOpenCastGUI' => $baseDir . '/classes/class.ilObjOpenCastGUI.php',
     'ilObjOpenCastListGUI' => $baseDir . '/classes/class.ilObjOpenCastListGUI.php',
+    'ilObjShowDuplicates' => $baseDir . '/classes/trait.ilObjShowDuplicates.php',
     'ilOpenCastConfigGUI' => $baseDir . '/classes/class.ilOpenCastConfigGUI.php',
     'ilOpenCastPlugin' => $baseDir . '/classes/class.ilOpenCastPlugin.php',
     'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => $baseDir . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
