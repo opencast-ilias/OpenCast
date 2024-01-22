@@ -146,7 +146,12 @@ class xoctPermissionGroupGUI extends xoctGUI
         /**
          * @var $group_participant PermissionGroupParticipant
          */
-        foreach (PermissionGroupParticipant::getAvailable((int)$this->http->request()->getQueryParams()['ref_id']) as $group_participant) {
+        $ref_id = $this->http->request()->getQueryParams()['ref_id'] ?? null;
+        if($ref_id === null) {
+            $this->outJson([]);
+        }
+        $ref_id = (int) $ref_id;
+        foreach (PermissionGroupParticipant::getAvailable($ref_id) as $group_participant) {
             $data[] = [
                 'user_id' => (int) $group_participant->getUserId(),
                 'name' => $group_participant->getXoctUser()->getNamePresentation(
