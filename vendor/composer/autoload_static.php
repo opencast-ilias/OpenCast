@@ -100,6 +100,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'ilObjOpenCastAccess' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastAccess.php',
         'ilObjOpenCastGUI' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastGUI.php',
         'ilObjOpenCastListGUI' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastListGUI.php',
+        'ilObjShowDuplicates' => __DIR__ . '/../..' . '/classes/trait.ilObjShowDuplicates.php',
         'ilOpenCastConfigGUI' => __DIR__ . '/../..' . '/classes/class.ilOpenCastConfigGUI.php',
         'ilOpenCastPlugin' => __DIR__ . '/../..' . '/classes/class.ilOpenCastPlugin.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => __DIR__ . '/../..' . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
