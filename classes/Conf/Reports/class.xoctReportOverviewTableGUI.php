@@ -66,13 +66,13 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     {
         $filter_date_from = null;
         $filter_date_to = null;
-        $filter_values = [];//$this->getFilterValues();
-        $filter_sender = $filter_values['sender'];
+        $filter_values = [];
+        $filter_sender = $filter_values['sender'] ?? '';
         /** @var ilDate $ilDate */
-        if ($ilDate = $filter_values['date_from']) {
+        if ($ilDate = $filter_values['date_from'] ?? null) {
             $filter_date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
-        if ($ilDate = $filter_values['date_to']) {
+        if ($ilDate = $filter_values['date_to'] ?? null) {
             $filter_date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
 
