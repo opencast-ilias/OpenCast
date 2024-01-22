@@ -16,6 +16,9 @@ class xoctReportOverviewGUI extends xoctGUI
 {
     use LocaleTrait;
 
+    public const CMD_APPLY_FILTER = 'applyFilter';
+    public const CMD_RESET_FILTER = 'resetFilter';
+
     protected function index(): void
     {
         $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('msg_reports_table'));
