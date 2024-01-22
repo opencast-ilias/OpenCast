@@ -106,7 +106,7 @@ class PermissionGroupParticipant extends ActiveRecord
         return $return;
     }
 
-    public function getAllUserIdsForOpenCastObjId(int $obj_id): array
+    public static function getAllUserIdsForOpenCastObjId(int $obj_id): array
     {
         $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
         if (count($all) == 0) {
