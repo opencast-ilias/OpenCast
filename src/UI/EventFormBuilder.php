@@ -342,9 +342,21 @@ class EventFormBuilder
                 + $series_options;
         }
 
-        return $this->ui_factory->input()->field()->select(
-            $this->plugin->txt('event_series'),
-            $series_options
-        )->withRequired(true);
+        return $this->ui_factory
+            ->input()
+            ->field()
+            ->select(
+                $this->plugin->txt('event_series'),
+                $series_options
+            )
+            ->withRequired(true);
+            /*->withAdditionalTransformation(
+                $this->refinery_factory->custom()->constraint(
+                    function ($v): bool {
+                        return false;
+                    },
+                    'HELLO WORLD' // error message if no ("-") series is selected. Only works if required is set to false
+                )
+            )*/
     }
 }
