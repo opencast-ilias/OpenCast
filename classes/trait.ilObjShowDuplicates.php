@@ -31,9 +31,9 @@ trait ilObjShowDuplicates
         }
 
         $post = $this->http->request()->getParsedBody() ?? null;
-
-        if (is_array($post["id"])) {
-            foreach ($post["id"] as $idx => $id) {
+        $value = $post["id"] ?? null;
+        if (is_array($value)) {
+            foreach ($value as $idx => $id) {
                 $this->items_to_delete["id"][$idx] = (int) $id;
             }
         }
