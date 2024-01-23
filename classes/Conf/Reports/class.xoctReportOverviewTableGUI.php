@@ -135,7 +135,11 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
         $range->setEndText('');
         $this->addFilterItem($range, false);
         $range->readFromSession();
-        $range = $range->getValue();
+        try {
+            $range = $range->getValue();
+        } catch (Throwable $e) {
+            $range = [];
+        }
         $start = $range['start'] ?? null;
         $this->filter['date_from'] = $start === null ? null : new ilDateTime($start, IL_CAL_UNIX);
         $end = $range['end'] ?? null;

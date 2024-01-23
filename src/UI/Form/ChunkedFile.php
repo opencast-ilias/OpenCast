@@ -59,22 +59,10 @@ class ChunkedFile extends File
         return $this->chunk_size;
     }
 
-    public function getMaxFileFize(): int
-    {
-        return $this->getMaxFileSize();
-    }
-
-    public function withMaxFileSize(int $size_in_bytes): FileUpload
-    {
-        $clone = clone $this;
-        $clone->max_file_size = $size_in_bytes;
-
-        return $clone;
-    }
 
     public function getMaxFileSize(): int
     {
-        return $this->max_file_size ?? -1;
+        return $this->getMaxFileFize();
     }
 
     protected function isClientSideValueOk($value): bool

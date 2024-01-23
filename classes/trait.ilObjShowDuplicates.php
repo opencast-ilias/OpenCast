@@ -22,7 +22,7 @@ trait ilObjShowDuplicates
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
      */
     #[ReturnTypeWillChange]
-    public function deleteObject(bool $error = false): void
+    public function deleteObject($a_error = false): void
     {
         $item_ref_id = $this->http->request()->getQueryParams()["item_ref_id"] ?? null;
 
