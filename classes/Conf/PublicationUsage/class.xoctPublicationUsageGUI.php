@@ -195,7 +195,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI($this, new PublicationUsage());
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
@@ -204,7 +204,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function edit(): void
     {
         if (empty($this->identifier)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_no_identifier'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('no_identifier'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageFormGUI = new xoctPublicationUsageFormGUI(
@@ -227,7 +227,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         );
         $xoctPublicationUsageFormGUI->setValuesByPost();
         if ($xoctPublicationUsageFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationUsageFormGUI->getHTML());
@@ -236,7 +236,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function confirmDelete(): void
     {
         if (empty($this->identifier)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_no_identifier'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('no_identifier'), true);
             $this->ctrl->redirect($this);
         }
         /**
@@ -292,7 +292,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         $channel = $this->channel;
         if (empty($channel) || !in_array($channel, $this->repository->getSubAllowedUsageIds(), true)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_allowed'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_allowed'), true);
             $this->ctrl->redirect($this, self::CMD_SELECT_PUBLICATION_ID_SUB);
         }
         $xoctPublicationSubUsage = new PublicationSubUsage();
@@ -310,7 +310,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI($this, new PublicationSubUsage());
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success_sub'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
@@ -319,7 +319,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function editSub(): void
     {
         if (!PublicationSubUsage::find($this->get_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI(
@@ -335,7 +335,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     {
         $sub_usage_id = $this->get_id;
         if (!PublicationSubUsage::find($sub_usage_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsageFormGUI = new xoctPublicationSubUsageFormGUI(
@@ -345,7 +345,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         );
         $xoctPublicationSubUsageFormGUI->setValuesByPost();
         if ($xoctPublicationSubUsageFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success_sub'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success_sub'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationSubUsageFormGUI->getHTML());
@@ -354,7 +354,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function confirmDeleteSub(): void
     {
         if (!PublicationSubUsage::find($this->get_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsage = PublicationSubUsage::find($this->get_id);
@@ -371,7 +371,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function deleteSub(): void
     {
         if (!PublicationSubUsage::find($this->post_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_sub_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
@@ -398,7 +398,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI($this, new PublicationUsageGroup());
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
@@ -407,7 +407,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function editGroup(): void
     {
         if (!PublicationUsageGroup::find($this->get_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationGroupFormGUI = new xoctPublicationGroupFormGUI(
@@ -428,7 +428,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         );
         $xoctPublicationGroupFormGUI->setValuesByPost();
         if ($xoctPublicationGroupFormGUI->saveObject()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('publication_usage_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPublicationGroupFormGUI->getHTML());
@@ -437,7 +437,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function confirmDeleteGroup(): void
     {
         if (!PublicationUsageGroup::find($this->get_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageGroup = PublicationUsageGroup::find($this->get_id);
@@ -454,7 +454,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function deleteGroup(): void
     {
         if (!PublicationUsageGroup::find($this->post_id)) {
-            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('publication_usage_group_not_found'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }
 
