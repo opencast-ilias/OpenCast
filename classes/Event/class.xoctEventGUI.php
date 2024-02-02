@@ -697,7 +697,7 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
-        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA]) {
+        if ($data[EventFormBuilder::F_ACCEPT_EULA][EventFormBuilder::F_ACCEPT_EULA] ?? false) {
             ToUManager::setToUAccepted($this->user->getId());
         }
 
@@ -1000,16 +1000,23 @@ class xoctEventGUI extends xoctGUI
         }
 
         $scheduling = $data['scheduling']['object'] ?? null;
-        $this->event_repository->update(
-            new UpdateEventRequest(
-                $event->getIdentifier(),
-                new UpdateEventRequestPayload(
-                    $data['metadata']['object'],
-                    null,
-                    $scheduling
+        try {
+            $this->event_repository->update(
+                new UpdateEventRequest(
+                    $event->getIdentifier(),
+                    new UpdateEventRequestPayload(
+                        $data['metadata']['object'],
+                        null,
+                        $scheduling
+                    )
                 )
-            )
-        );
+            );
+        } catch (xoctException $e) {
+            $this->checkAndShowConflictMessage($e);
+            $this->main_tpl->setContent($this->ui_renderer->render($form));
+            return;
+        }
+
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
