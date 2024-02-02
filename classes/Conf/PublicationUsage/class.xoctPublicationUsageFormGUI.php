@@ -15,7 +15,14 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
  */
 class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 {
-    use LocaleTrait;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
 
     /**
      * @var bool
@@ -179,11 +186,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             $ext_dl_source->setInfo($this->getLocaleString(self::F_EXT_DL_SOURCE . '_info'));
         } else {
             $allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
-            $allow_multiple->setValue(0);
+            $allow_multiple->setValue('0');
             $ignore_object_setting = new ilHiddenInputGUI(self::F_IGNORE_OBJECT_SETTINGS);
-            $ignore_object_setting->setValue(0);
+            $ignore_object_setting->setValue('0');
             $ext_dl_source = new ilHiddenInputGUI(self::F_EXT_DL_SOURCE);
-            $ext_dl_source->setValue(0);
+            $ext_dl_source->setValue('0');
         }
         $this->addItem($allow_multiple);
         $this->addItem($ignore_object_setting);

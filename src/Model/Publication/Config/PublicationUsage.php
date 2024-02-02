@@ -215,19 +215,16 @@ class PublicationUsage extends ActiveRecord
 
     /**
      * A variable that works as an id holder, for when the usage is a sub-usage.
-     * @var int
      */
     protected $sub_id = 0;
 
     public function getUsageId(): string
     {
-        return $this->usage_id ?? '';
+        return (string) $this->usage_id;
     }
 
-    /**
-     * @param string $usage_id
-     */
-    public function setUsageId($usage_id): void
+
+    public function setUsageId(string $usage_id): void
     {
         $this->usage_id = $usage_id;
     }
