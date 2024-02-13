@@ -1,19 +1,321 @@
 <#1>
 <?php
+$fields = array(
+    'usage_id' => array(
+        'type' => 'text',
+        'length' => '64',
 
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
-\srag\Plugins\Opencast\Model\Config\PluginConfig::updateDB();
-\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup::updateDB();
-\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+    ),
+    'title' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'display_name' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'description' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+    'group_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'channel' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'status' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'search_key' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'flavor' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'tag' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'md_type' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'allow_multiple' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'mediatype' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'ignore_object_setting' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'ext_dl_source' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_publication_usage')) {
+    $ilDB->createTable('xoct_publication_usage', $fields);
+    $ilDB->addPrimaryKey('xoct_publication_usage', array( 'usage_id' ));
+
+}
+
+
+$fields = array(
+    'name' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '250',
+
+    ),
+    'value' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_config')) {
+    $ilDB->createTable('xoct_config', $fields);
+    $ilDB->addPrimaryKey('xoct_config', array( 'name' ));
+
+}
+
+
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'serie_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'title' => array(
+        'type' => 'text',
+        'length' => '1024',
+
+    ),
+    'description' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+    'status' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_group')) {
+    $ilDB->createTable('xoct_group', $fields);
+    $ilDB->addPrimaryKey('xoct_group', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_group')) {
+        $ilDB->createSequence('xoct_group');
+    }
+
+}
+
+$fields = array(
+    'obj_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'series_identifier' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'intro_text' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+    'use_annotations' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'streaming_only' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'permission_per_clip' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'permission_allow_set_own' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'agreement_accepted' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'obj_online' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'default_view' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'view_changeable' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'chat_active' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_data')) {
+    $ilDB->createTable('xoct_data', $fields);
+    $ilDB->addPrimaryKey('xoct_data', array( 'obj_id' ));
+
+    if (! $ilDB->sequenceExists('xoct_data')) {
+        $ilDB->createSequence('xoct_data');
+    }
+
+}
+
 ?>
 <#2>
 <?php
-\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant::updateDB();
-\srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'user_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'group_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'status' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_group_participant')) {
+    $ilDB->createTable('xoct_group_participant', $fields);
+    $ilDB->addPrimaryKey('xoct_group_participant', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_group_participant')) {
+        $ilDB->createSequence('xoct_group_participant');
+    }
+
+}
+
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'event_identifier' => array(
+        'type' => 'text',
+        'length' => '128',
+
+    ),
+    'user_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'owner_id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'status' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_invitations')) {
+    $ilDB->createTable('xoct_invitations', $fields);
+    $ilDB->addPrimaryKey('xoct_invitations', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_invitations')) {
+        $ilDB->createSequence('xoct_invitations');
+    }
+
+}
+
+
 ?>
 <#3>
 <?php
-srag\Plugins\Opencast\Model\Event\EventAdditionsAR::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'text',
+        'length' => '64',
+
+    ),
+    'is_online' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_event_additions')) {
+    $ilDB->createTable('xoct_event_additions', $fields);
+    $ilDB->addPrimaryKey('xoct_event_additions', array( 'id' ));
+
+}
+
+
 ?>
 <#4>
 <?php
@@ -36,7 +338,7 @@ if ($offering_admin) {
 ?>
 <#5>
 <?php
-\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+// \srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB(); no longer needed
 ?>
 <#6>
 <?php
@@ -58,7 +360,7 @@ if ($offering_admin) {
 ?>
 <#8>
 <?php
-\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+//\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB(); no longer needed
 ?>
 <#9>
 <?php
@@ -72,21 +374,265 @@ if ($offering_admin) {
 ?>
 <#10>
 <?php
-\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+//\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB(); no longer needed
 //xoctConf::set(xoctConf::F_VIDEO_PORTAL_TITLE, 'Video Portal');
 ?>
 <#11>
 <?php
-\srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'sort' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'is_default' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'title_de' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'title_en' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'info_de' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'info_en' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'role' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'read_access' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'write_access' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'additional_acl_actions' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'additional_actions_download' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'additional_actions_annotate' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'added_role' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'added_role_name' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'added_role_read_access' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'added_role_write_access' => array(
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'added_role_acl_actions' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'added_role_actions_download' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'added_role_actions_annotate' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_perm_template')) {
+    $ilDB->createTable('xoct_perm_template', $fields);
+    $ilDB->addPrimaryKey('xoct_perm_template', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_perm_template')) {
+        $ilDB->createSequence('xoct_perm_template');
+    }
+
+}
 ?>
 <#12>
 <?php
-\srag\Plugins\Opencast\Model\Report\Report::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'user_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'created_at' => array(
+        'notnull' => '1',
+        'type' => 'timestamp',
+
+    ),
+    'type' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'ref_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'event_id' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'subject' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'message' => array(
+        'notnull' => '1',
+        'type' => 'clob',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_report')) {
+    $ilDB->createTable('xoct_report', $fields);
+    $ilDB->addPrimaryKey('xoct_report', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_report')) {
+        $ilDB->createSequence('xoct_report');
+    }
+
+}
+
 ?>
 <#13>
 <?php
-\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::updateDB();
-\srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::updateDB();
+$fields = array(
+    'id' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '250',
+
+    ),
+    'title' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'type' => array(
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'default_value_member' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'default_value_admin' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_workflow_param')) {
+    $ilDB->createTable('xoct_workflow_param', $fields);
+    $ilDB->addPrimaryKey('xoct_workflow_param', array( 'id' ));
+
+}
+
+$fields = array(
+    'id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'obj_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'param_id' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '250',
+
+    ),
+    'value_member' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'value_admin' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_series_param')) {
+    $ilDB->createTable('xoct_series_param', $fields);
+    $ilDB->addPrimaryKey('xoct_series_param', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_series_param')) {
+        $ilDB->createSequence('xoct_series_param');
+    }
+
+}
+
 ?>
 <#14>
 <?php
@@ -155,23 +701,196 @@ if (\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::cou
 ?>
 <#15>
 <?php
-\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
-\srag\Plugins\Opencast\Model\UserSettings\UserSetting::updateDB();
+//\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+$fields = array(
+    'id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'ref_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'user_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'name' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '56',
+
+    ),
+    'value' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_user_setting')) {
+    $ilDB->createTable('xoct_user_setting', $fields);
+    $ilDB->addPrimaryKey('xoct_user_setting', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_user_setting')) {
+        $ilDB->createSequence('xoct_user_setting');
+    }
+
+}
+
 ?>
 <#16>
 <?php
-\srag\Plugins\Opencast\Model\UserSettings\UserSetting::updateDB();
+//\srag\Plugins\Opencast\Model\UserSettings\UserSetting::updateDB();
 ?>
 <#17>
 <?php
-\srag\Plugins\Opencast\Chat\Model\ChatroomAR::updateDB();
-\srag\Plugins\Opencast\Chat\Model\MessageAR::updateDB();
-\srag\Plugins\Opencast\Chat\Model\TokenAR::updateDB();
-\srag\Plugins\Opencast\Chat\Model\ConfigAR::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'event_id' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '56',
+
+    ),
+    'obj_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+
+);
+if (! $ilDB->tableExists('sr_chat_room')) {
+    $ilDB->createTable('sr_chat_room', $fields);
+    $ilDB->addPrimaryKey('sr_chat_room', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('sr_chat_room')) {
+        $ilDB->createSequence('sr_chat_room');
+    }
+
+}
+
+$fields = array(
+    'id' => array(
+        'type' => 'text',
+        'length' => '56',
+
+    ),
+    'chat_room_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'usr_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'message' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'sent_at' => array(
+        'notnull' => '1',
+        'type' => 'timestamp',
+
+    ),
+
+);
+if (! $ilDB->tableExists('sr_chat_message')) {
+    $ilDB->createTable('sr_chat_message', $fields);
+    $ilDB->addPrimaryKey('sr_chat_message', array( 'id' ));
+
+}
+
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'chat_room_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'usr_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'public_name' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '128',
+
+    ),
+    'token' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '128',
+
+    ),
+    'valid_until_unix' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+
+);
+if (! $ilDB->tableExists('sr_chat_token')) {
+    $ilDB->createTable('sr_chat_token', $fields);
+    $ilDB->addPrimaryKey('sr_chat_token', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('sr_chat_token')) {
+        $ilDB->createSequence('sr_chat_token');
+    }
+
+}
+$fields = array(
+    'name' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '250',
+
+    ),
+    'value' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+
+);
+if (! $ilDB->tableExists('sr_chat_config')) {
+    $ilDB->createTable('sr_chat_config', $fields);
+    $ilDB->addPrimaryKey('sr_chat_config', array( 'name' ));
+
+}
+
+
 ?>
 <#18>
 <?php
-\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+//\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 ?>
 <#19>
 <?php
@@ -191,7 +910,7 @@ $DIC->database()->query('ALTER TABLE sr_chat_message MODIFY message varchar(512)
  * publications can alternatively search for tags now, so we set all publications to
  * 'flavor', to keep the existing behavior
  */
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+//\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 /** @var \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage $publication_usage */
 foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
     $publication_usage->setSearchKey(xoctPublicationUsageFormGUI::F_FLAVOR);
@@ -205,7 +924,7 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get()
  * if the internal player is active, change player publication to search for media
  * with the tag 'engage-streaming' (that was hard-coded until now)
  */
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+//\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 if (\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Opencast\Model\Config\PluginConfig::F_INTERNAL_VIDEO_PLAYER)) {
     // to keep the existing behavior
     $player_pub = (new \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository())->getUsage(\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_PLAYER);
@@ -236,7 +955,47 @@ if (\srag\Plugins\Opencast\Model\Config\PluginConfig::getConfig(\srag\Plugins\Op
 ?>
 <#24>
 <?php
-\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'workflow_id' => array(
+        'type' => 'text',
+        'length' => '64',
+
+    ),
+    'title' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'description' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'tags' => array(
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'config_panel' => array(
+        'type' => 'clob',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_workflow')) {
+    $ilDB->createTable('xoct_workflow', $fields);
+    $ilDB->addPrimaryKey('xoct_workflow', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_workflow')) {
+        $ilDB->createSequence('xoct_workflow');
+    }
+
+}
 ?>
 <#25>
 <?php
@@ -253,7 +1012,7 @@ if (!is_null($segments_pub)) {
 ?>
 <#26>
 <?php
-\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+//\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
 ?>
 <#27>
 <?php
@@ -308,13 +1067,178 @@ if (! $DIC->database()->tableExists('xoct_cache')) {
 ?>
 <#31>
 <?php
-\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
-\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'field_id' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '128',
+
+    ),
+    'title_de' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'title_en' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'visible_for_permissions' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'required' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'read_only' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'prefill' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+    'sort' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'values' => array(
+        'type' => 'text',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_md_field_event')) {
+    $ilDB->createTable('xoct_md_field_event', $fields);
+    $ilDB->addPrimaryKey('xoct_md_field_event', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_md_field_event')) {
+        $ilDB->createSequence('xoct_md_field_event');
+    }
+
+}
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'field_id' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '128',
+
+    ),
+    'title_de' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'title_en' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '256',
+
+    ),
+    'visible_for_permissions' => array(
+        'notnull' => '1',
+        'type' => 'text',
+        'length' => '512',
+
+    ),
+    'required' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'read_only' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+    'prefill' => array(
+        'type' => 'text',
+        'length' => '4000',
+
+    ),
+    'sort' => array(
+        'type' => 'integer',
+        'length' => '8',
+
+    ),
+    'values' => array(
+        'type' => 'text',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_md_field_series')) {
+    $ilDB->createTable('xoct_md_field_series', $fields);
+    $ilDB->addPrimaryKey('xoct_md_field_series', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_md_field_series')) {
+        $ilDB->createSequence('xoct_md_field_series');
+    }
+
+}
 // \srag\Plugins\Opencast\Model\Cache\CacheFactory::getInstance()->flush(); removed since a new caching mechanism is used
 ?>
 <#32>
 <?php
-\srag\Plugins\Opencast\Model\TermsOfUse\AcceptedToU::updateDB();
+$fields = array(
+    'id' => array(
+        'type' => 'integer',
+
+    ),
+    'user_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+
+    ),
+    'oc_instance_id' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+
+    ),
+    'tou_accepted' => array(
+        'notnull' => '1',
+        'type' => 'integer',
+        'length' => '1',
+
+    ),
+
+);
+if (! $ilDB->tableExists('xoct_accepted_tou')) {
+    $ilDB->createTable('xoct_accepted_tou', $fields);
+    $ilDB->addPrimaryKey('xoct_accepted_tou', array( 'id' ));
+
+    if (! $ilDB->sequenceExists('xoct_accepted_tou')) {
+        $ilDB->createSequence('xoct_accepted_tou');
+    }
+
+}
+
+
 ?>
 <#33>
 <?php
@@ -417,7 +1341,7 @@ if ($DIC->database()->query('select id from xoct_md_field_series')->rowCount() =
 ?>
 <#34>
 <?php
-\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
+//\srag\Plugins\Opencast\Model\Object\ObjectSettings::updateDB();
 /** @var $objectSettings \srag\Plugins\Opencast\Model\Object\ObjectSettings */
 foreach (\srag\Plugins\Opencast\Model\Object\ObjectSettings::get() as $objectSettings) {
     $objectSettings->setPaellaPlayerOption('default');
@@ -467,7 +1391,7 @@ $ilDB->update(
 ?>
 <#38>
 <?php
-srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
+//srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate::updateDB();
 ?>
 <#39>
 <?php
@@ -564,7 +1488,7 @@ if (!$ilDB->tableExists('xoct_pub_sub_usage')) {
     $ilDB->addPrimaryKey('xoct_pub_sub_usage', ['id']);
 }
 // Add new columns to PublicationUsage.
-\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+//\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
 
 foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
     if ($publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
@@ -593,13 +1517,13 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
 <#44>
 <?php
 // To apply new changes into WorkflowAP model as well as xoct_workflow table.
-\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+//\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
 ?>
 <#45>
 <?php
 // The small column changes must be applied.
-\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
-\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
+//\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
+//\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
 // Since we get rid of MDPrefillOption, we need to update the prefill column on both
 // MDFieldConfigEventAR & MDFieldConfigSeriesAR models.
 $mapping = [
