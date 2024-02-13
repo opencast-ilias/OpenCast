@@ -12,7 +12,14 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
  */
 class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
 {
-    use LocaleTrait;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
 
     public const F_NAME = 'name';
     public const F_DISPLAY_NAME = 'display_name';
@@ -52,7 +59,7 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $te = new ilTextInputGUI($this->getLocaleString(self::F_NAME), self::F_NAME);
+        $te = new ilTextInputGUI($this->getLocaleString('group_' . self::F_NAME,), self::F_NAME);
         $te->setRequired(true);
         $this->addItem($te);
 
