@@ -2,7 +2,7 @@
 	/**
 	 * @author Theodor Truffer <tt@studer-raimann.ch>
 	 */
-	$(document).ready(function () {
+	window.onload = function(event) {
 		il.Opencast.UI.waitOverlay.init();
 		xoctChangeOwner.init('{BASE_URL}', '#xoct_owner_container', '#xoct_available_participant_container', function () {
 			il.Opencast.UI.waitOverlay.show()
@@ -10,7 +10,7 @@
 			il.Opencast.UI.waitOverlay.hide()
 		});
 		xoctChangeOwner.lngFromJson('{LANGUAGE}');
-	});
+	};
 </script>
 <div class="row">
 	<div class="col-xs-4">

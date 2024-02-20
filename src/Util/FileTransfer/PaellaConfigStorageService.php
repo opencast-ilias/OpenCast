@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use ILIAS\Data\DataSize;
@@ -23,7 +25,7 @@ class PaellaConfigStorageService extends UploadStorageService
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid('oc_');
+        $identifier = uniqid('oc_', false);
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::WEB);
         return $identifier;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI\Metadata\Config;
 
 use ILIAS\DI\Container;
@@ -19,14 +21,6 @@ class MDConfigTable extends ilTable2GUI
      */
     private $parent;
     /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var string
-     */
-    public $title;
-    /**
      * @var ilPlugin
      */
     private $plugin;
@@ -34,6 +28,10 @@ class MDConfigTable extends ilTable2GUI
      * @var Container
      */
     private $dic;
+    /**
+     * @var \ilTemplate
+     */
+    private $main_tpl;
 
     public function __construct(
         xoctGUI $parent,
@@ -45,7 +43,8 @@ class MDConfigTable extends ilTable2GUI
         $this->parent = $parent;
         $this->plugin = $plugin;
         $this->dic = $dic;
-        $this->main_tpl = $this->dic->ui()->mainTemplate();
+        $this->main_tpl = $dic->ui()->mainTemplate();
+        new WaitOverlay($this->dic->ui()->mainTemplate());
         $this->setId('xoct_md_config');
         $this->setDescription($this->plugin->txt('msg_md_config_info'));
         parent::__construct($parent);
@@ -62,8 +61,6 @@ class MDConfigTable extends ilTable2GUI
 
     private function initJS(): void
     {
-        new WaitOverlay($this->main_tpl); // TODO check if needed
-
         $this->main_tpl->addJavaScript(
             $this->plugin->getDirectory() . '/templates/default/sortable.js'
         );
@@ -71,7 +68,7 @@ class MDConfigTable extends ilTable2GUI
         $this->main_tpl->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
     }
 
-    protected function initColumns()
+    protected function initColumns(): void
     {
         $this->addColumn("", "", "10px", true);
         $this->addColumn($this->plugin->txt('md_field_id'));
@@ -84,7 +81,8 @@ class MDConfigTable extends ilTable2GUI
         $this->addColumn("", "", '30px', true);
     }
 
-    protected function fillRow($a_set)
+    #[\ReturnTypeWillChange]
+    protected function fillRow(/*array*/ $a_set): void
     {
         $a_set['actions'] = $this->buildActions($a_set);
         $a_set['required'] = $a_set['required'] ? 'ok' : 'not_ok';

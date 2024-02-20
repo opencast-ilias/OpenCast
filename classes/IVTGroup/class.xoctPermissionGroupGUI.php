@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
@@ -24,18 +26,14 @@ class xoctPermissionGroupGUI extends xoctGUI
      * @var ObjectSettings
      */
     private $objectSettings;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
+
 
     public function __construct(?ObjectSettings $objectSettings = null)
     {
         global $DIC;
         parent::__construct();
         $tabs = $DIC->tabs();
-        $main_tpl = $DIC->ui()->mainTemplate();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
+
         if ($objectSettings instanceof ObjectSettings) {
             $this->objectSettings = $objectSettings;
         } else {
@@ -45,32 +43,31 @@ class xoctPermissionGroupGUI extends xoctGUI
 
         new WaitOverlay($this->main_tpl); // TODO check if needed
 
-        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/groups.css'));
-        $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/groups.js'));
+        $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/groups.css'));
+        $this->main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/groups.js'));
     }
 
     /**
-     * @param $cmd
+     * @param string $cmd
      */
-    protected function performCommand($cmd)
+    protected function performCommand(string $cmd): void
     {
-        if (in_array($cmd, self::$admin_commands)) {
+        if (in_array($cmd, self::$admin_commands, true)) {
             $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
         } else {
             $access = ilObjOpenCastAccess::hasPermission('read');
         }
         if (!$access) {
-            ilUtil::sendFailure('No access.');
+            $this->main_tpl->setOnScreenMessage('failure', 'No access.');
             $this->ctrl->redirectByClass('xoctEventGUI');
         }
         parent::performCommand($cmd);
     }
 
     /**
-     * @throws DICException
      * @throws ilTemplateException
      */
-    protected function index()
+    protected function index(): void
     {
         $temp = $this->plugin->getTemplate('default/tpl.groups.html', false, false);
         $temp->setVariable(
@@ -121,12 +118,10 @@ class xoctPermissionGroupGUI extends xoctGUI
      */
     protected function outJson($data)
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
-    protected function add()
+    protected function add(): void
     {
     }
 
@@ -138,7 +133,9 @@ class xoctPermissionGroupGUI extends xoctGUI
             $stdClass = $group->__asStdClass();
             $stdClass->user_count = count($users);
             $stdClass->name = $stdClass->title;
-            $stdClass->users = $users;
+            $stdClass->users = array_values(array_filter(array_map('intval', $users), function ($user_id) {
+                return $user_id > 0;
+            }));
             $arr[] = $stdClass;
         }
         usort($arr, ['xoctGUI', 'compareStdClassByName']);
@@ -149,12 +146,17 @@ class xoctPermissionGroupGUI extends xoctGUI
     {
         $data = [];
         /**
-         * @var $xoctGroupParticipant PermissionGroupParticipant
+         * @var $group_participant PermissionGroupParticipant
          */
-        foreach (PermissionGroupParticipant::getAvailable($_GET['ref_id']) as $xoctGroupParticipant) {
+        $ref_id = $this->http->request()->getQueryParams()['ref_id'] ?? null;
+        if($ref_id === null) {
+            $this->outJson([]);
+        }
+        $ref_id = (int) $ref_id;
+        foreach (PermissionGroupParticipant::getAvailable($ref_id) as $group_participant) {
             $data[] = [
-                'user_id' => $xoctGroupParticipant->getUserId(),
-                'name' => $xoctGroupParticipant->getXoctUser()->getNamePresentation(
+                'user_id' => (int) $group_participant->getUserId(),
+                'name' => $group_participant->getXoctUser()->getNamePresentation(
                     ilObjOpenCastAccess::hasWriteAccess()
                 )
             ];
@@ -164,13 +166,13 @@ class xoctPermissionGroupGUI extends xoctGUI
     }
 
     /**
-     * @return never
+     * @return void
      */
-    protected function create()
+    protected function create(): void
     {
         $obj = new PermissionGroup();
         $obj->setSerieId($this->objectSettings->getObjId());
-        $obj->setTitle($_POST['title']);
+        $obj->setTitle($this->http->request()->getParsedBody()['title']);
         $obj->create();
         $json = $obj->__asStdClass();
         $json->users = [];
@@ -178,25 +180,25 @@ class xoctPermissionGroupGUI extends xoctGUI
         $this->outJson($json);
     }
 
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
-    protected function delete()
+    protected function delete(): void
     {
         /**
          * @var $xoctIVTGroup PermissionGroup
          */
         $status = false;
-        $xoctIVTGroup = PermissionGroup::find($_GET['id']);
+        $xoctIVTGroup = PermissionGroup::find($this->http->request()->getQueryParams()['id']);
         if ($xoctIVTGroup->getSerieId() == $this->objectSettings->getObjId()) {
             $xoctIVTGroup->delete();
             $status = true;

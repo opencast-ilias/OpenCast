@@ -4,7 +4,13 @@ admin_import_success#:#Neue Einstellungen wurden erfolgreich importiert
 admin_import_failed#:#Neue Einstellungen können nicht importiert werden.
 admin_import_file_missign#:#Die Einstellungsdatei ist nicht ausgewählt.
 msg_admin_import_freindly_reminder_info#:#Bitte beachten Sie, dass beim Importieren neuer Einstellungen die alten Einstellungen überschrieben und/oder gelöscht werden. Daher wird dringend empfohlen, die neu importierten Einstellungen durchzugehen und sicherzustellen, dass alles vorhanden ist.
+common_save#:#Speichern
+common_create#:#Erstellen
+common_delete#:#Löschen
+common_edit#:#Bearbeiten
+common_cancel#:#Abbrechen
 common_actions#:#Aktionen
+common_confirm#:#Bestätigen
 config_accept_terms#:#Alle User müssen Nutzungsbedingungen akzeptieren.
 config_accept_terms_info#:#Alle User müssen beim ersten Videoupload die Nutzungsbedingungen akzeptieren.
 config_activate_cache#:#Caching
@@ -511,13 +517,16 @@ msg_quality_report_sent#:#Die Meldung wurde abgeschickt. Der Support wurde benac
 date_from#:#Datum Von
 date_to#:#Datum Bis
 sender#:#Verfasser
-workflow_parameters#:#Workflow Parameter
-processing_settings#:#Verarbeitungseinstellungen
-default_values#:#Standardwerte
-default_value_member#:#Verwendung Mitglieder
-default_value_admin#:#Verwendung Admins
-value_member#:#Verwendung Mitglieder
-value_admin#:#Verwendung Admins
+workflow_params_table_title#:#Workflow Parameter
+workflow_params_id#:#ID
+workflow_params_title#:#Titel
+workflow_params_type#:#Typ
+workflow_params_processing_settings#:#Verarbeitungseinstellungen
+workflow_params_default_values#:#Standardwerte
+workflow_params_default_value_member#:#Verwendung Mitglieder
+workflow_params_default_value_admin#:#Verwendung Admins
+workflow_params_value_member#:#Verwendung Mitglieder
+workflow_params_value_admin#:#Verwendung Admins
 list#:#Liste
 tiles#:#Kacheln
 tiles_per_page#:#Kacheln pro Seite:
@@ -529,6 +538,9 @@ msg_workflow_created#:#Workflow erfolgreich erstellt.
 msg_workflow_updated#:#Workflow erfolgreich aktualisiert.
 config_button_add_workflow#:#Neuen Workflow hinzufügen
 workflow_table_title#:#Workflows
+workflow_id#:#ID
+workflow_title#:#Titel
+workflow_description#:#Beschreibung
 tab_workflows#:#Workflows
 workflow#:#Workflow
 event_msg_republish_started#:#Workflow erfolgreich gestartet.

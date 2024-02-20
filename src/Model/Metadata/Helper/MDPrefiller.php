@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Helper;
 
 use ILIAS\DI\Container;
@@ -71,7 +73,10 @@ class MDPrefiller
     public function getMetadataArray(): array
     {
         $metadata = [];
-        $ref_id = $this->dic->http()->request()->getQueryParams()['ref_id'];
+        $ref_id = (int) ($this->dic->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if($ref_id === 0) {
+            return [];
+        }
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
             if (!empty($course_or_group)) {
@@ -111,7 +116,10 @@ class MDPrefiller
     public function getCourseArray(): array
     {
         $course = [];
-        $ref_id = $this->dic->http()->request()->getQueryParams()['ref_id'];
+        $ref_id = (int) ($this->dic->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if($ref_id === 0) {
+            return [];
+        }
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
             foreach (self::$course_properties as $prop_name => $method_name) {
@@ -168,21 +176,31 @@ class MDPrefiller
                 // For those combonation of key value pairs containing 2 parts.
                 if (count($splitted) === 2 &&
                     ($splitted[0] === self::COURSE_PLACEHOLDER_FLAG || $splitted[0] === self::USER_PLACEHOLDER_FLAG)) {
-                    if ($splitted[0] === self::COURSE_PLACEHOLDER_FLAG && isset($this->course[strtolower($splitted[1])])) {
+                    if ($splitted[0] === self::COURSE_PLACEHOLDER_FLAG && isset(
+                            $this->course[strtolower(
+                                $splitted[1]
+                            )]
+                        )) {
                         $replacement = $this->course[strtolower($splitted[1])];
-                    } else if ($splitted[0] === self::USER_PLACEHOLDER_FLAG && isset($this->user[strtolower($splitted[1])])) {
+                    } elseif ($splitted[0] === self::USER_PLACEHOLDER_FLAG && isset(
+                            $this->user[strtolower(
+                                $splitted[1]
+                            )]
+                        )) {
                         $replacement = $this->user[strtolower($splitted[1])];
                     }
-                } else if (count($splitted) === 3 && $splitted[0] === self::MD_PLACEHOLDER_FLAG) {
-                    // For the combination of 3 parts consisting key value and sub-value.
-                    // In case of these form (3 parts), we need to pass empty string as replacement,
-                    // becasue the case might not be concrete and might not apply everywhere!
-                    $index = intval($splitted[2]) - 1;
-                    if ($index >= 0 && isset($this->metadata[strtolower($splitted[1])]) &&
-                        isset($this->metadata[strtolower($splitted[1])][$index])) {
-                        $replacement = $this->metadata[strtolower($splitted[1])][$index];
-                    } else {
-                        $replacement = '';
+                } else {
+                    if (count($splitted) === 3 && $splitted[0] === self::MD_PLACEHOLDER_FLAG) {
+                        // For the combination of 3 parts consisting key value and sub-value.
+                        // In case of these form (3 parts), we need to pass empty string as replacement,
+                        // becasue the case might not be concrete and might not apply everywhere!
+                        $index = (int) $splitted[2] - 1;
+                        if ($index >= 0 && isset($this->metadata[strtolower($splitted[1])]) &&
+                            isset($this->metadata[strtolower($splitted[1])][$index])) {
+                            $replacement = $this->metadata[strtolower($splitted[1])][$index];
+                        } else {
+                            $replacement = '';
+                        }
                     }
                 }
                 if (!is_null($replacement)) {

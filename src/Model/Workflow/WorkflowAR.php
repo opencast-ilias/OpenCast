@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Workflow;
 
 use ActiveRecord;
@@ -67,13 +69,13 @@ class WorkflowAR extends ActiveRecord
      * @var string
      *
      * @con_has_field  true
-     * @con_fieldtype clob
+     * @con_fieldtype  clob
      */
     protected $config_panel;
 
     public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
     public function setId(int $id): void
@@ -83,7 +85,7 @@ class WorkflowAR extends ActiveRecord
 
     public function getWorkflowId(): string
     {
-        return $this->workflow_id;
+        return (string) $this->workflow_id;
     }
 
     public function setWorkflowId(string $workflow_id): void
@@ -93,7 +95,7 @@ class WorkflowAR extends ActiveRecord
 
     public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
     public function setTitle(string $title): void
@@ -103,7 +105,7 @@ class WorkflowAR extends ActiveRecord
 
     public function getDescription(): string
     {
-        return $this->description ?: '';
+        return $this->description ?? '';
     }
 
     public function setDescription(string $description): void
@@ -113,7 +115,7 @@ class WorkflowAR extends ActiveRecord
 
     public function getTags(): string
     {
-        return $this->tags ?: '';
+        return $this->tags ?? '';
     }
 
     public function setTags(string $tags): void
@@ -123,7 +125,7 @@ class WorkflowAR extends ActiveRecord
 
     public function getConfigPanel(): string
     {
-        return $this->config_panel ?: '';
+        return $this->config_panel ?? '';
     }
 
     public function setConfigPanel(string $config_panel): void

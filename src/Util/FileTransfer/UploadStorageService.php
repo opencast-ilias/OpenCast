@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use ILIAS\Data\DataSize;
@@ -39,7 +41,7 @@ class UploadStorageService
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid('');
+        $identifier = uniqid('', false);
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
         return $identifier;
     }
@@ -126,7 +128,7 @@ class UploadStorageService
 
     public function buildACLUploadFile(ACL $acl): xoctUploadFile
     {
-        $tmp_name = uniqid('tmp');
+        $tmp_name = uniqid('tmp', false);
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(

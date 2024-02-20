@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
@@ -19,20 +21,18 @@ class PublicationSubUsage extends ActiveRecord
      * @return string
      * @deprecated
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @return string
      */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var int
@@ -176,7 +176,6 @@ class PublicationSubUsage extends ActiveRecord
         return intval($this->id);
     }
 
-
     /**
      * @param int $id
      */
@@ -184,7 +183,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         $this->id = $id;
     }
-
 
     /**
      * @return string
@@ -194,7 +192,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->parent_usage_id;
     }
 
-
     /**
      * @param string $parent_usage_id
      */
@@ -202,7 +199,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         $this->parent_usage_id = $parent_usage_id;
     }
-
 
     /**
      * @return string
@@ -212,7 +208,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->title ?? '';
     }
 
-
     /**
      * @param string $title
      */
@@ -220,7 +215,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         $this->title = $title;
     }
-
 
     /**
      * @return string
@@ -230,7 +224,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->display_name ?? '';
     }
 
-
     /**
      * @param string $description
      */
@@ -239,7 +232,6 @@ class PublicationSubUsage extends ActiveRecord
         $this->display_name = $display_name;
     }
 
-
     /**
      * @return string
      */
@@ -247,7 +239,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         return $this->description ?? '';
     }
-
 
     /**
      * @param string $description
@@ -265,7 +256,6 @@ class PublicationSubUsage extends ActiveRecord
         return (!is_null($this->group_id) ? intval($this->group_id) : null);
     }
 
-
     /**
      * @param $group_id
      */
@@ -282,7 +272,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->channel ?? '';
     }
 
-
     /**
      * @param string $channel
      */
@@ -291,7 +280,6 @@ class PublicationSubUsage extends ActiveRecord
         $this->channel = $channel;
     }
 
-
     /**
      * @return boolean
      */
@@ -299,7 +287,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         return $this->status;
     }
-
 
     /**
      * @param boolean $status
@@ -333,7 +320,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->flavor ?? '';
     }
 
-
     /**
      * @param string $flavor
      */
@@ -341,7 +327,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         $this->flavor = $flavor;
     }
-
 
     /**
      * @return string
@@ -351,7 +336,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->search_key ?? '';
     }
 
-
     /**
      * @param string $search_key
      */
@@ -359,7 +343,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         $this->search_key = $search_key;
     }
-
 
     /**
      * @return string
@@ -369,7 +352,6 @@ class PublicationSubUsage extends ActiveRecord
         return $this->tag ?? '';
     }
 
-
     /**
      * @param string $tag
      */
@@ -378,7 +360,6 @@ class PublicationSubUsage extends ActiveRecord
         $this->tag = $tag;
     }
 
-
     /**
      * @return int
      */
@@ -386,7 +367,6 @@ class PublicationSubUsage extends ActiveRecord
     {
         return (int) $this->md_type;
     }
-
 
     /**
      * @param int $md_type
@@ -414,7 +394,6 @@ class PublicationSubUsage extends ActiveRecord
         $mediatypes = array_map('trim', $mediatypes);
         return $mediatypes;
     }
-
 
     /**
      * @param string $mediatype
@@ -460,7 +439,7 @@ class PublicationSubUsage extends ActiveRecord
      * Create the object, but we check if it is allowed!
      * @throws xoctException
      */
-    public function create()
+    public function create(): void
     {
         if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
             throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());

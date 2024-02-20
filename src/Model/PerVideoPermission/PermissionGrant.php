@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
@@ -82,12 +84,13 @@ class PermissionGrant extends ActiveRecord
     protected static $series_id_to_groups_map = [];
 
     /**
-     * @param          $event_identifier
-     *
-     * @return array
+     * @return PermissionGrant[]
      */
-    public static function getAllInvitationsOfUser($event_identifier, xoctUser $xoctUser, $grant_access_rights = true)
-    {
+    public static function getAllInvitationsOfUser(
+        string $event_identifier,
+        xoctUser $xoctUser,
+        bool $grant_access_rights = true
+    ): array {
         $invitations = self::where([
             'user_id' => $xoctUser->getIliasUserId(),
             'event_identifier' => $event_identifier
@@ -108,12 +111,13 @@ class PermissionGrant extends ActiveRecord
     }
 
     /**
-     * @param bool $grant_access_rights
-     * @param bool $count
-     * @return mixed
+     * @return PermissionGrant[]|int
      */
-    public static function getActiveInvitationsForEvent(Event $xoctEvent, $grant_access_rights = false, $count = false)
-    {
+    public static function getActiveInvitationsForEvent(
+        Event $xoctEvent,
+        bool $grant_access_rights = false,
+        bool $count = false
+    ) {
         $all_invitations = self::where([
             'event_identifier' => $xoctEvent->getIdentifier(),
         ])->get();
@@ -149,103 +153,53 @@ class PermissionGrant extends ActiveRecord
         return $active_invitations;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
-        return $this->user_id;
+        return (int) $this->user_id;
     }
 
-    /**
-     * @param int $user_id
-     */
-    public function setUserId($user_id): void
+    public function setUserId(int $user_id): void
     {
         $this->user_id = $user_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getOwnerId()
+    public function getOwnerId(): int
     {
-        return $this->owner_id;
+        return (int) $this->owner_id;
     }
 
-    /**
-     * @param int $owner_id
-     */
-    public function setOwnerId($owner_id): void
+    public function setOwnerId(int $owner_id): void
     {
         $this->owner_id = $owner_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getStatus()
+    public function getStatus(): int
     {
-        return $this->status;
+        return (int) $this->status;
     }
 
-    /**
-     * @param int $status
-     */
-    public function setStatus($status): void
+    public function setStatus(int $status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return int
-     */
-    public function getEventIdentifier()
+    public function getEventIdentifier(): string
     {
-        return $this->event_identifier;
+        return (string)$this->event_identifier;
     }
 
-    /**
-     * @param int $event_identifier
-     */
-    public function setEventIdentifier($event_identifier): void
+    public function setEventIdentifier(string $event_identifier): void
     {
         $this->event_identifier = $event_identifier;
-    }
-
-    /**
-     * @return xoctUser
-     */
-    public function getXoctUser()
-    {
-        if (!$this->xoct_user && $this->getUserId()) {
-            $this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
-        }
-
-        return $this->xoct_user;
-    }
-
-    /**
-     * @param xoctUser $xoct_user
-     */
-    public function setXoctUser($xoct_user): void
-    {
-        $this->xoct_user = $xoct_user;
     }
 }

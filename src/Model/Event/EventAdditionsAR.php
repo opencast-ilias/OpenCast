@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Event;
 
 use ActiveRecord;
@@ -36,10 +38,10 @@ class EventAdditionsAR extends ActiveRecord
         }
     }
 
-    public function create()
+    public function create(): void
     {
         if ($this->getId() === '' || $this->getId() === '0') {
-            return false;
+            return;
         }
         parent::create();
     }
@@ -65,34 +67,22 @@ class EventAdditionsAR extends ActiveRecord
      */
     protected $is_online = true;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id): void
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getIsOnline()
+    public function getIsOnline(): bool
     {
-        return $this->is_online;
+        return (bool) $this->is_online;
     }
 
-    /**
-     * @param boolean $is_online
-     */
-    public function setIsOnline($is_online): void
+    public function setIsOnline(bool $is_online): void
     {
         $this->is_online = $is_online;
     }

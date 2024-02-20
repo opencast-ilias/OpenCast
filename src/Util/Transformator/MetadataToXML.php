@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\Transformator;
 
 use ilDateTime;
@@ -51,7 +53,11 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:rightsHolder', [], $this->metadata->getField('rightsHolder')->getValue());
 
         $start_end_string_iso = (new ilDateTime(
-            strtotime($this->metadata->getField('startDate')->getValueFormatted() . ' ' . $this->metadata->getField('startTime')->getValueFormatted()),
+            strtotime(
+                $this->metadata->getField('startDate')->getValueFormatted() . ' ' . $this->metadata->getField(
+                    'startTime'
+                )->getValueFormatted()
+            ),
             IL_CAL_UNIX
         )
         )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z');

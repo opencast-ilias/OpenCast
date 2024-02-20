@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPermissionTemplateFormGUI
@@ -9,7 +12,14 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
  */
 class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'perm_tpl_form' : $module, $fallback);
+    }
 
     public const F_DEFAULT = 'is_default';
     public const F_TITLE_DE = 'title_de';
@@ -63,71 +73,71 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->initForm();
     }
 
-    /**
-     *
-     */
-    protected function initForm()
+    protected function initForm(): void
     {
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_DEFAULT), self::F_DEFAULT);
-        $input->setInfo($this->txt(self::F_DEFAULT . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_DEFAULT), self::F_DEFAULT);
+        $input->setInfo($this->getLocaleString(self::F_DEFAULT . '_info'));
         $this->addItem($input);
 
-        $input = new ilTextInputGUI($this->txt(self::F_TITLE_DE), self::F_TITLE_DE);
-        $input->setInfo($this->txt(self::F_TITLE_DE . '_info'));
+        $input = new ilTextInputGUI($this->getLocaleString(self::F_TITLE_DE), self::F_TITLE_DE);
+        $input->setInfo($this->getLocaleString(self::F_TITLE_DE . '_info'));
         $input->setRequired(true);
         $this->addItem($input);
 
-        $input = new ilTextInputGUI($this->txt(self::F_TITLE_EN), self::F_TITLE_EN);
-        $input->setInfo($this->txt(self::F_TITLE_EN . '_info'));
+        $input = new ilTextInputGUI($this->getLocaleString(self::F_TITLE_EN), self::F_TITLE_EN);
+        $input->setInfo($this->getLocaleString(self::F_TITLE_EN . '_info'));
         $input->setRequired(true);
         $this->addItem($input);
 
-        $input = new ilTextAreaInputGUI($this->txt(self::F_INFO_DE), self::F_INFO_DE);
-        $input->setInfo($this->txt(self::F_INFO_DE . '_info'));
+        $input = new ilTextAreaInputGUI($this->getLocaleString(self::F_INFO_DE), self::F_INFO_DE);
+        $input->setInfo($this->getLocaleString(self::F_INFO_DE . '_info'));
         $input->setRequired(false);
         $this->addItem($input);
 
-        $input = new ilTextAreaInputGUI($this->txt(self::F_INFO_EN), self::F_INFO_EN);
-        $input->setInfo($this->txt(self::F_INFO_EN . '_info'));
+        $input = new ilTextAreaInputGUI($this->getLocaleString(self::F_INFO_EN), self::F_INFO_EN);
+        $input->setInfo($this->getLocaleString(self::F_INFO_EN . '_info'));
         $input->setRequired(false);
         $this->addItem($input);
 
-        $input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ROLE);
-        $input->setInfo($this->txt(self::F_ROLE . '_info'));
+        $input = new ilTextInputGUI($this->getLocaleString(self::F_ROLE), self::F_ROLE);
+        $input->setInfo($this->getLocaleString(self::F_ROLE . '_info'));
         $input->setRequired(true);
         $this->addItem($input);
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_READ), self::F_READ);
-        $input->setInfo($this->txt(self::F_READ . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_READ), self::F_READ);
+        $input->setInfo($this->getLocaleString(self::F_READ . '_info'));
         $this->addItem($input);
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_WRITE), self::F_WRITE);
-        $input->setInfo($this->txt(self::F_WRITE . '_info'));
-        $this->addItem($input);
-
-        $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACL_ACTIONS), self::F_ADDITIONAL_ACL_ACTIONS);
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_WRITE), self::F_WRITE);
+        $input->setInfo($this->getLocaleString(self::F_WRITE . '_info'));
         $this->addItem($input);
 
         $input = new ilTextInputGUI(
-            $this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD),
+            $this->getLocaleString(self::F_ADDITIONAL_ACL_ACTIONS),
+            self::F_ADDITIONAL_ACL_ACTIONS
+        );
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
+        $this->addItem($input);
+
+        $input = new ilTextInputGUI(
+            $this->getLocaleString(self::F_ADDITIONAL_ACTIONS_DOWNLOAD),
             self::F_ADDITIONAL_ACTIONS_DOWNLOAD
         );
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
         $this->addItem($input);
 
         $input = new ilTextInputGUI(
-            $this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE),
+            $this->getLocaleString(self::F_ADDITIONAL_ACTIONS_ANNOTATE),
             self::F_ADDITIONAL_ACTIONS_ANNOTATE
         );
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
         $this->addItem($input);
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS), self::F_ADDED_ROLE);
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ROLE_ACTIONS . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_ADDITIONAL_ROLE_ACTIONS), self::F_ADDED_ROLE);
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ROLE_ACTIONS . '_info'));
 
         if ($input->getValue() !== '' && $input->getValue() !== '0') {
             $newRole = $this->addAdditionalRolePermission();
@@ -138,10 +148,7 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->addItem($input);
     }
 
-    /**
-     *
-     */
-    protected function initButtons()
+    protected function initButtons(): void
     {
         $this->ctrl->setParameter(
             $this->parent_gui,
@@ -151,55 +158,58 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         if ($this->is_new) {
             $this->setTitle($this->lng->txt('create'));
             $this->addCommandButton(
-                xoctPermissionTemplateGUI::CMD_CREATE,
-                $this->lng->txt(xoctPermissionTemplateGUI::CMD_CREATE)
+                xoctGUI::CMD_CREATE,
+                $this->getLocaleString(xoctGUI::CMD_CREATE, 'common')
             );
         } else {
             $this->setTitle($this->lng->txt('edit'));
             $this->addCommandButton(
                 xoctPermissionTemplateGUI::CMD_UPDATE_TEMPLATE,
-                $this->lng->txt(xoctPermissionTemplateGUI::CMD_UPDATE)
+                $this->getLocaleString('save', 'common')
             );
         }
 
         $this->addCommandButton(
-            xoctPermissionTemplateGUI::CMD_CANCEL,
-            $this->lng->txt(xoctPermissionTemplateGUI::CMD_CANCEL)
+            xoctGUI::CMD_CANCEL,
+            $this->getLocaleString(xoctGUI::CMD_CANCEL, 'common')
         );
     }
 
     protected function addAdditionalRolePermission(): array
     {
         $array = [];
-        $input = new ilTextInputGUI($this->txt(self::F_ROLE), self::F_ADDED_ROLE_NAME);
-        $input->setInfo($this->txt(self::F_ROLE . '_info'));
+        $input = new ilTextInputGUI($this->getLocaleString(self::F_ROLE), self::F_ADDED_ROLE_NAME);
+        $input->setInfo($this->getLocaleString(self::F_ROLE . '_info'));
         $input->setRequired(true);
         $array[] = $input;
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_READ), self::F_ADDED_ROLE_READ);
-        $input->setInfo($this->txt(self::F_READ . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_READ), self::F_ADDED_ROLE_READ);
+        $input->setInfo($this->getLocaleString(self::F_READ . '_info'));
         $array[] = $input;
 
-        $input = new ilCheckboxInputGUI($this->txt(self::F_WRITE), self::F_ADDED_ROLE_WRITE);
-        $input->setInfo($this->txt(self::F_WRITE . '_info'));
-        $array[] = $input;
-
-        $input = new ilTextInputGUI($this->txt(self::F_ADDITIONAL_ACL_ACTIONS), self::F_ADDED_ROLE_ACL_ACTIONS);
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
+        $input = new ilCheckboxInputGUI($this->getLocaleString(self::F_WRITE), self::F_ADDED_ROLE_WRITE);
+        $input->setInfo($this->getLocaleString(self::F_WRITE . '_info'));
         $array[] = $input;
 
         $input = new ilTextInputGUI(
-            $this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD),
+            $this->getLocaleString(self::F_ADDITIONAL_ACL_ACTIONS),
+            self::F_ADDED_ROLE_ACL_ACTIONS
+        );
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACL_ACTIONS . '_info'));
+        $array[] = $input;
+
+        $input = new ilTextInputGUI(
+            $this->getLocaleString(self::F_ADDITIONAL_ACTIONS_DOWNLOAD),
             self::F_ADDED_ROLE_ACTIONS_DOWNLOAD
         );
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACTIONS_DOWNLOAD . '_info'));
         $array[] = $input;
 
         $input = new ilTextInputGUI(
-            $this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE),
+            $this->getLocaleString(self::F_ADDITIONAL_ACTIONS_ANNOTATE),
             self::F_ADDED_ROLE_ACTIONS_ANNOTATE
         );
-        $input->setInfo($this->txt(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
+        $input->setInfo($this->getLocaleString(self::F_ADDITIONAL_ACTIONS_ANNOTATE . '_info'));
         $array[] = $input;
 
         return $array;
@@ -237,14 +247,14 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             return false;
         }
 
-        $this->object->setDefault($this->getInput(self::F_DEFAULT));
+        $this->object->setDefault((bool)$this->getInput(self::F_DEFAULT));
         $this->object->setTitleDE($this->getInput(self::F_TITLE_DE));
         $this->object->setTitleEN($this->getInput(self::F_TITLE_EN));
         $this->object->setInfoDE($this->getInput(self::F_INFO_DE));
         $this->object->setInfoEN($this->getInput(self::F_INFO_EN));
         $this->object->setRole($this->getInput(self::F_ROLE));
-        $this->object->setRead($this->getInput(self::F_READ));
-        $this->object->setWrite($this->getInput(self::F_WRITE));
+        $this->object->setRead((int)$this->getInput(self::F_READ));
+        $this->object->setWrite((int)$this->getInput(self::F_WRITE));
         $this->object->setAdditionalAclActions($this->getInput(self::F_ADDITIONAL_ACL_ACTIONS));
         $this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
         $this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
@@ -253,8 +263,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
         if ($this->getInput(self::F_ADDED_ROLE) !== '' && $this->getInput(self::F_ADDED_ROLE) !== '0') {
             $this->object->setAddedRoleName($this->getInput(self::F_ADDED_ROLE_NAME));
-            $this->object->setAddedRoleRead($this->getInput(self::F_ADDED_ROLE_READ));
-            $this->object->setAddedRoleWrite($this->getInput(self::F_ADDED_ROLE_WRITE));
+            $this->object->setAddedRoleRead((int)$this->getInput(self::F_ADDED_ROLE_READ));
+            $this->object->setAddedRoleWrite((int)$this->getInput(self::F_ADDED_ROLE_WRITE));
             $this->object->setAddedRoleAclActions($this->getInput(self::F_ADDED_ROLE_ACL_ACTIONS));
             $this->object->setAddedRoleActionsDownload($this->getInput(self::F_ADDED_ROLE_ACTIONS_DOWNLOAD));
             $this->object->setAddedRoleActionsAnnotate($this->getInput(self::F_ADDED_ROLE_ACTIONS_ANNOTATE));
@@ -270,8 +280,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         if ($this->getInput(self::F_DEFAULT) !== '' && $this->getInput(self::F_DEFAULT) !== '0') {
             foreach (PermissionTemplate::where(['is_default' => 1])->get() as $default_template) {
                 /** @var $default_template PermissionTemplate */
-                if ($default_template->getId() != $this->object->getId()) {
-                    $default_template->setDefault(0);
+                if ($default_template->getId() !== $this->object->getId()) {
+                    $default_template->setDefault(false);
                     $default_template->update();
                 }
             }
@@ -280,15 +290,5 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->object->store();
 
         return true;
-    }
-
-    /**
-     * @param $lang_var
-     *
-     * @return string
-     */
-    protected function txt($lang_var)
-    {
-        return $this->plugin->txt('perm_tpl_form_' . $lang_var);
     }
 }

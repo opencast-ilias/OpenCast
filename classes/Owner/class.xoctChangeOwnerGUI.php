@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -37,10 +39,6 @@ class xoctChangeOwnerGUI extends xoctGUI
      * @var \ilObjUser
      */
     private $user;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
 
     public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
     {
@@ -50,9 +48,8 @@ class xoctChangeOwnerGUI extends xoctGUI
         $ctrl = $DIC->ctrl();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->user = $DIC->user();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->objectSettings = $objectSettings;
-        $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
+        $this->event = $event_repository->find($this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
         $this->event_repository = $event_repository;
         $tabs->clearTargets();
@@ -68,7 +65,7 @@ class xoctChangeOwnerGUI extends xoctGUI
         $ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);
     }
 
-    protected function index()
+    protected function index(): void
     {
         $xoctUser = xoctUser::getInstance($this->user);
         if (!ilObjOpenCastAccess::checkAction(
@@ -77,7 +74,7 @@ class xoctChangeOwnerGUI extends xoctGUI
             $xoctUser,
             $this->objectSettings
         )) {
-            ilUtil::sendFailure('Access denied', true);
+            $this->main_tpl->setOnScreenMessage('failure', 'Access denied', true);
             $this->ctrl->redirectByClass(xoctEventGUI::class);
         }
         $temp = $this->plugin->getTemplate('default/tpl.change_owner.html', false, false);
@@ -110,15 +107,13 @@ class xoctChangeOwnerGUI extends xoctGUI
      */
     protected function outJson($data)
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
     /**
      *
      */
-    protected function add()
+    protected function add(): void
     {
     }
 
@@ -128,9 +123,9 @@ class xoctChangeOwnerGUI extends xoctGUI
     public function getAll(): void
     {
         $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
-        $owner_data = $owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser ? ['id' => $owner->getIliasUserId(),
-                                                                                      'name' => $owner->getNamePresentation(
-                                                                                      )
+        $owner_data = $owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser ? [
+            'id' => $owner->getIliasUserId(),
+            'name' => $owner->getNamePresentation()
         ] : [];
 
         $available_user_ids = $this->getCourseMembers();
@@ -159,20 +154,21 @@ class xoctChangeOwnerGUI extends xoctGUI
 
     protected function getCourseMembers(): array
     {
-        $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
+        global $DIC;
+        $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+
+        $parent = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
+        if ($parent === null) {
+            return [];
+        }
         $p = $parent->getMembersObject();
 
         return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
     }
 
-    /**
-     * async function
-     *
-     * @throws xoctException
-     */
-    protected function setOwner()
+    protected function setOwner(): void
     {
-        $user_id = $_GET['user_id'];
+        $user_id = (int) $this->http->request()->getQueryParams()['user_id'];
         $this->event->setAcl(
             $this->ACLUtils->changeOwner(
                 $this->event->getAcl(),
@@ -204,35 +200,35 @@ class xoctChangeOwnerGUI extends xoctGUI
     /**
      *
      */
-    protected function create()
+    protected function create(): void
     {
     }
 
     /**
      *
      */
-    protected function edit()
+    protected function edit(): void
     {
     }
 
     /**
      *
      */
-    protected function update()
+    protected function update(): void
     {
     }
 
     /**
      *
      */
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
     /**
      *
      */
-    protected function delete()
+    protected function delete(): void
     {
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
 use DateTimeImmutable;
@@ -94,8 +96,7 @@ class MDDataType
             case self::TYPE_TEXT_LONG:
                 return is_string($value);
             case self::TYPE_TIME:
-                return is_string($value) &&
-                    (empty($value) || preg_match("/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/", $value));
+                return is_string($value);// && (empty($value) || preg_match("/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/", $value));
             case self::TYPE_DATETIME:
             case self::TYPE_DATE:
                 return ($value instanceof DateTimeImmutable);

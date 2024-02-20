@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI;
 
 use ilPropertyFormGUI;
@@ -21,9 +23,10 @@ class LegacyFormWrapper extends ilPropertyFormGUI
     public function __construct(string $html)
     {
         $this->html = $html;
+        parent::__construct();
     }
 
-    public function getHTML()
+    public function getHTML(): string
     {
         return $this->html;
     }

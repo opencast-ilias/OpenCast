@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\DI;
 
 use ILIAS\DI\Container as DIC;
@@ -25,7 +27,6 @@ use srag\Plugins\Opencast\Model\Publication\PublicationRepository;
 use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesParser;
-use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowDBRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
@@ -43,8 +44,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
-use xoctFileUploadHandler;
-use srag\Plugins\Opencast\Model\Cache\Services;
+use xoctFileUploadHandlerGUI;
 
 /**
  * @deperecated use srag\Plugins\Opencast\Container\Container instead
@@ -102,8 +102,8 @@ class OpencastDIC
                 return new UploadStorageService($this->dic->filesystem()->temp(), $this->dic->upload());
             }
         );
-        $this->container['upload_handler'] = $this->container->factory(function ($c): \xoctFileUploadHandler {
-            return new xoctFileUploadHandler($c['upload_storage_service']);
+        $this->container['upload_handler'] = $this->container->factory(function ($c): \xoctFileUploadHandlerGUI {
+            return new xoctFileUploadHandlerGUI($c['upload_storage_service']);
         });
         $this->container['paella_config_storage_service'] = $this->container->factory(
             function ($c): \srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService {
@@ -111,8 +111,8 @@ class OpencastDIC
             }
         );
         $this->container['paella_config_upload_handler'] = $this->container->factory(
-            function ($c): \xoctFileUploadHandler {
-                return new xoctFileUploadHandler($c['paella_config_storage_service']);
+            function ($c): \xoctFileUploadHandlerGUI {
+                return new xoctFileUploadHandlerGUI($c['paella_config_storage_service']);
             }
         );
         $this->container['agent_repository'] = $this->container->factory(

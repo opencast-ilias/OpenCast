@@ -50,7 +50,7 @@ var xoctGroupParticipant = {
         //$('.xoct_available_group_participant').
         var self = this;
         $(document).on('click', '.xoct_add_user', function () {
-            var user_id = $(this).parent().data('user-id');
+            var user_id = parseInt($(this).parent().data('user-id'));
             self.addUser(user_id);
         });
         $(document).on('click', '.xoct_remove_user', function () {
@@ -92,7 +92,6 @@ var xoctGroupParticipant = {
             $.ajax({url: url + "&cmd=delete", type: "POST", data: {"id": id, "group_id": xoctGroup.selected_id}}).done(function (data) {
                 xoctGroup.removeParticipant(id);
                 self.after_load();
-                console.log('load');
                 self.load();
                 self.loadForGroupId();
                 // xoctGroup.load(function () {
@@ -170,6 +169,14 @@ var xoctGroupParticipant = {
         self.container_per_group.empty();
         var participants = xoctGroup.getSelectedGroupParticipants();
         participants.forEach(function(participant) {
+            // continue if participant has no properties user_id or name
+            if(!participant || !participant.hasOwnProperty('user_id') || !participant.hasOwnProperty('name')) {
+                return;
+            }
+
+            if (!participant.user_id || !participant.name) {
+                return;
+            }
             self.container_per_group.append('<li class="list-group-item" data-id="'
                 + participant.user_id
                 + '"><div style="margin-right:30px;">'

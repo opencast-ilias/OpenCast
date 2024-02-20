@@ -1,6 +1,7 @@
 <?php
 
-use srag\Plugins\Opencast\API\OpencastAPI;
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\API\API;
 
 /**

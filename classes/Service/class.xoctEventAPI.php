@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
@@ -63,22 +65,6 @@ class xoctEventAPI
         return self::$instance;
     }
 
-    /**
-     * possible additional data:
-     *
-     *  description => text
-     *  presenters => text
-     *  workflow_parameters => array(text => int)
-     *
-     * @param String          $series_id
-     * @param String          $title
-     * @param String|DateTime $start
-     * @param String|DateTime $end
-     * @param String          $location
-     * @param array           $additional_data
-     *
-     * @throws xoctException
-     */
     public function create(
         string $series_id,
         string $title,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 use ActiveRecord;
@@ -18,20 +20,18 @@ class PublicationUsageGroup extends ActiveRecord
     /**
      * @return string
      */
-    public static function returnDbTableName()
+    public static function returnDbTableName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @return string
      */
-    public function getConnectorContainerName()
+    public function getConnectorContainerName(): string
     {
         return self::TABLE_NAME;
     }
-
 
     /**
      * @var int
@@ -71,7 +71,6 @@ class PublicationUsageGroup extends ActiveRecord
      */
     protected $description;
 
-
     /**
      * @return int
      */
@@ -79,7 +78,6 @@ class PublicationUsageGroup extends ActiveRecord
     {
         return $this->id;
     }
-
 
     /**
      * @param int $id
@@ -89,7 +87,6 @@ class PublicationUsageGroup extends ActiveRecord
         $this->id = $id;
     }
 
-
     /**
      * @return string
      */
@@ -97,7 +94,6 @@ class PublicationUsageGroup extends ActiveRecord
     {
         return $this->name ?? '';
     }
-
 
     /**
      * @param string $name
@@ -107,7 +103,6 @@ class PublicationUsageGroup extends ActiveRecord
         $this->name = $name;
     }
 
-
     /**
      * @return string
      */
@@ -115,7 +110,6 @@ class PublicationUsageGroup extends ActiveRecord
     {
         return $this->display_name ?? '';
     }
-
 
     /**
      * @param string $description
@@ -125,7 +119,6 @@ class PublicationUsageGroup extends ActiveRecord
         $this->display_name = $display_name;
     }
 
-
     /**
      * @return string
      */
@@ -133,7 +126,6 @@ class PublicationUsageGroup extends ActiveRecord
     {
         return $this->description ?? '';
     }
-
 
     /**
      * @param string $description

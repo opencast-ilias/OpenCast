@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctReportOverviewGUI
@@ -11,37 +14,19 @@ use srag\Plugins\Opencast\Model\Report\Report;
  */
 class xoctReportOverviewGUI extends xoctGUI
 {
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var \ilLanguage
-     */
-    private $language;
+    use LocaleTrait;
 
-    public function __construct()
-    {
-        global $DIC;
-        parent::__construct();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
-        $this->language = $DIC->language();
-    }
+    public const CMD_APPLY_FILTER = 'applyFilter';
+    public const CMD_RESET_FILTER = 'resetFilter';
 
-    /**
-     *
-     */
-    protected function index()
+    protected function index(): void
     {
-        ilUtil::sendInfo($this->plugin->txt('msg_reports_table'));
+        $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('msg_reports_table'));
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $this->main_tpl->setContent($xoctReportOverviewTableGUI->getHTML());
     }
 
-    /**
-     *
-     */
-    protected function applyFilter()
+    protected function applyFilter(): void
     {
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $xoctReportOverviewTableGUI->writeFilterToSession();
@@ -49,10 +34,7 @@ class xoctReportOverviewGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    /**
-     *
-     */
-    protected function resetFilter()
+    protected function resetFilter(): void
     {
         $xoctReportOverviewTableGUI = new xoctReportOverviewTableGUI($this, self::CMD_STANDARD);
         $xoctReportOverviewTableGUI->resetOffset();
@@ -60,64 +42,46 @@ class xoctReportOverviewGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    /**
-     *
-     */
-    protected function add()
+    protected function add(): void
     {
     }
 
-    /**
-     *
-     */
-    protected function create()
+    protected function create(): void
     {
     }
 
-    /**
-     *
-     */
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    /**
-     *
-     */
-    protected function update()
+    protected function update(): void
     {
     }
 
-    /**
-     *
-     */
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
-        foreach ($_POST['id'] as $id) {
-            $report = Report::find($id);
+        foreach ($this->http->request()->getParsedBody()['id'] ?? [] as $id) {
+            $report = Report::find((int) $id);
             $report->delete();
         }
-        ilUtil::sendSuccess($this->plugin->txt('msg_success'));
+        $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'));
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    /**
-     *
-     */
-    protected function delete()
+    protected function delete(): void
     {
-        if (!is_array($_POST['id']) || empty($_POST['id'])) {
+        if (!is_array($this->http->request()->getParsedBody()['id'] ?? null)) {
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this, self::CMD_STANDARD));
-        $ilConfirmationGUI->setHeaderText($this->plugin->txt('msg_confirm_delete_reports'));
-        foreach ($_POST['id'] as $id) {
-            $report = Report::find($id);
+        $ilConfirmationGUI->setHeaderText($this->getLocaleString('msg_confirm_delete_reports'));
+        foreach ($this->http->request()->getParsedBody()['id'] ?? [] as $id) {
+            $report = Report::find((int) $id);
             $ilConfirmationGUI->addItem('id[]', $id, $report->getSubject() . ' (' . $report->getCreatedAt() . ')');
         }
-        $ilConfirmationGUI->addButton($this->language->txt('delete'), self::CMD_CONFIRM);
-        $ilConfirmationGUI->addButton($this->language->txt('cancel'), self::CMD_STANDARD);
+        $ilConfirmationGUI->setConfirm($this->getLocaleString('delete', 'common'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_STANDARD);
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 }

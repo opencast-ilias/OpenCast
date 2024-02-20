@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Implementation\Component\Input\Container\Form\Form;
 use srag\Plugins\Opencast\DI\OpencastDIC;
-use srag\Plugins\Opencast\Model\Cache\Service\DB\DBCacheService;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Group\Group;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\LegacyFormWrapper;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
+use ILIAS\DI\HTTPServices;
 
 /**
  * User Interface class for example repository object.
@@ -32,11 +33,7 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
  */
 class ilObjOpenCastGUI extends ilObjectPluginGUI
 {
-    /**
-     * @var mixed
-     */
-    public $creation_mode;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use ilObjShowDuplicates; // handles the recognition of duplicates and shows them in delete confirmation
 
     public const CMD_SHOW_CONTENT = 'showContent';
     public const CMD_REDIRECT_SETTING = 'redirectSettings';
@@ -45,19 +42,19 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     public const TAB_INFO = 'info_short';
     public const TAB_GROUPS = 'groups';
     public const TAB_EULA = "eula";
-
     /**
-     * @var ilObjOpenCast
+     * @var array|null
      */
-    //	public $object;
+    private $form_data = null;
+    /**
+     * @var HTTPServices
+     */
+    protected $http;
+
     /**
      * @var ilPropertyFormGUI
      */
     protected $form;
-    /**
-     * @var ilObjOpenCast
-     */
-    public $object;
     /**
      * @var OpencastDIC
      */
@@ -76,9 +73,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
         global $opencastContainer;
         $this->container = $opencastContainer;
+        $this->http = $this->container->get(HTTPServices::class);
     }
 
-    protected function afterConstructor()
+    protected function afterConstructor(): void
     {
         global $DIC;
         $this->ilias_dic = $DIC;
@@ -106,11 +104,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             PluginConfig::setApiSettings();
             $next_class = $this->ilias_dic->ctrl()->getNextClass();
             $cmd = $this->ilias_dic->ctrl()->getCmd();
-            if (xoct::isIlias6()) {
-                $this->ilias_dic->ui()->mainTemplate()->loadStandardTemplate();
-            } else {
-                $this->ilias_dic->ui()->mainTemplate()->getStandardTemplate();
-            }
+            $this->ilias_dic->ui()->mainTemplate()->loadStandardTemplate();
 
             switch (strtolower($next_class)) {
                 case strtolower(xoctPermissionGroupParticipantGUI::class):
@@ -197,7 +191,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     break;
             }
         } catch (xoctException $e) {
-            ilUtil::sendFailure($e->getMessage());
+            throw $e; // DEBUG
+            $this->tpl->setOnScreenMessage('failure', $e->getMessage());
             $this->ilias_dic->logger()->root()->error($e->getMessage());
             $this->ilias_dic->logger()->root()->error($e->getTraceAsString());
             if (!$this->creation_mode) {
@@ -216,11 +211,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      */
     protected function showMainTemplate()
     {
-        if (xoct::isIlias6()) {
-            $this->ilias_dic->ui()->mainTemplate()->printToStdout();
-        } else {
-            $this->ilias_dic->ui()->mainTemplate()->show();
-        }
+        $this->ilias_dic->ui()->mainTemplate()->printToStdout();
     }
 
     protected function showContent()
@@ -243,17 +234,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         return self::CMD_SHOW_CONTENT;
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function setTabs(): bool
+    protected function setTabs(): void
     {
         /**
          * @var $objectSettings ObjectSettings
          */
         $objectSettings = ObjectSettings::find($this->obj_id);
         if (!$objectSettings instanceof ObjectSettings) {
-            return false;
+            return;
         }
 
         $this->ilias_dic->tabs()->addTab(
@@ -314,7 +302,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->ilias_dic->ctrl()->getLinkTarget($this, "showEula")
             );
         }
-        return true;
     }
 
     private function showEula(): void
@@ -325,14 +312,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     /**
      * @param string $a_new_type
-     * @throws DICException
      * @throws arException
      * @throws xoctException
      */
     protected function initCreationForms($a_new_type): array
     {
-        if (!ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id'])) {
-            ilUtil::sendFailure($this->plugin->txt('msg_creation_failed'), true);
+        global $DIC;
+        $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if (!ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+            $this->tpl->setOnScreenMessage('failure', $this->plugin->txt('msg_creation_failed'), true);
             ilUtil::redirect('/');
         }
         $this->ilias_dic->ctrl()->setParameter($this, 'new_type', ilOpenCastPlugin::PLUGIN_ID);
@@ -361,27 +349,25 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     }
 
     /**
-     * @throws DICException
      * @throws arException
      * @throws xoctException
      */
     public function save(): void
     {
         $creation_form = $this->buildUIForm()->withRequest($this->ilias_dic->http()->request());
-        $data = $creation_form->getData();
+        $this->form_data = $creation_form->getData();
 
-        if (!$data) {
+        if (!$this->form_data) {
             $this->ilias_dic->ui()->mainTemplate()->setContent(
                 $this->ilias_dic->ui()->renderer()->render($creation_form)
             );
             return;
         }
 
-        $this->saveObject($data);
+        $this->saveObject();
     }
 
     /**
-     * @throws DICException
      * @throws xoctException
      */
     public function afterSave(ilObject $newObj): void
@@ -390,22 +376,23 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         /**
          * @var $settings ObjectSettings
          */
-        // set object id for objectSettings object
-        $args = func_get_args();
-        $additional_args = $args[1][0];
-        /** @var ObjectSettings $settings */
-        $settings = $additional_args['settings']['object'];
-        /** @var Metadata $metadata */
-        $metadata = $additional_args['series_type']['metadata'];
-        /** @var string|false $series_id */
-        $series_id = $additional_args['series_type']['channel_id'];
-        /** @var bool $is_memberupload_enabled */
-        $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
-        /** @var int $perm_tpl_id */
-        $perm_tpl_id = $additional_args['settings']['permission_template'];
+
+        $additional_args = $this->form_data;
+        if ($additional_args !== null) {
+            /** @var ObjectSettings $settings */
+            $settings = $additional_args['settings']['object'] ?? null;
+            /** @var Metadata $metadata */
+            $metadata = $additional_args['series_type']['metadata'] ?? null;
+            /** @var string|false $series_id */
+            $series_id = $additional_args['series_type']['channel_id'] ?? null;
+            /** @var bool $is_memberupload_enabled */
+            $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
+            /** @var int $perm_tpl_id */
+            $perm_tpl_id = $additional_args['settings']['permission_template'] ?? null;
+        }
 
         // set current user & course/group roles with the perm 'edit_videos' in series' access policy and in group 'ilias_producers'
-        $producers = ilObjOpenCastAccess::getProducersForRefID($newObj->getRefId());
+        $producers = ilObjOpenCastAccess::getProducersForRefID((int) $newObj->getRefId());
         $producers[] = xoctUser::getInstance($this->ilias_dic->user());
 
         try {
@@ -425,14 +412,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
         }
 
-        if ($perm_tpl_id == '') {
+        if (empty($perm_tpl_id)) {
             $perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
         } else {
             $acl = PermissionTemplate::removeAllTemplatesFromAcls($acl);
             /** @var PermissionTemplate $perm_tpl */
             $perm_tpl = PermissionTemplate::find($perm_tpl_id);
         }
-        if ($perm_tpl) {
+        if (!empty($perm_tpl)) {
             $acl = $perm_tpl->addToAcls(
                 $acl,
                 !$settings->getStreamingOnly(),
@@ -440,7 +427,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             );
         }
         // TODO: do we need contributor / organizer?
-        if (!$series_id) {
+        if (empty($series_id)) {
             $series_id = $this->container->get(SeriesAPIRepository::class)->create(
                 new CreateSeriesRequest(
                     new CreateSeriesRequestPayload(
@@ -460,7 +447,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $settings->create();
 
         if ($settings->getDuplicatesOnSystem()) {
-            ilUtil::sendInfo($this->plugin->txt('msg_info_multiple_aftersave'), true);
+            $this->tpl->setOnScreenMessage('info', $this->plugin->txt('msg_info_multiple_aftersave'), true);
         }
 
         // checkbox from creation gui to activate "upload" permission for members
@@ -469,7 +456,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
 
         $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
-        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue());
+        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
         $newObj->update();
 
         $this->opencast_dic->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());
@@ -481,7 +468,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @param bool $render_locator
      *
      * @return ObjectSettings
-     * @throws DICException
      * @throws xoctException
      */
     protected function initHeader($render_locator = true)
@@ -499,12 +485,15 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             return $objectSettings;
         }
 
+        $ref_id = $this->ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+
         if ($objectSettings instanceof ObjectSettings && $this->object) {
             $this->ilias_dic->ui()->mainTemplate()->setTitle($this->object->getTitle());
             $this->ilias_dic->ui()->mainTemplate()->setDescription($this->object->getDescription());
-            if ($this->ilias_dic->access()->checkAccess('read', '', $_GET['ref_id'])) {
+
+            if ($this->ilias_dic->access()->checkAccess('read', '', $ref_id)) {
                 $DIC['ilNavigationHistory']->addItem(
-                    $_GET['ref_id'],
+                    $ref_id,
                     $this->ilias_dic->ctrl()->getLinkTarget($this, $this->getStandardCmd()),
                     $this->getType(),
                     $this->object->getTitle()
@@ -521,7 +510,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->ilias_dic->ui()->mainTemplate()->setTitle($this->plugin->txt('series_create'));
         }
         $this->ilias_dic->ui()->mainTemplate()->setTitleIcon(ilObjOpenCast::_getIcon($this->object_id));
-        $this->ilias_dic->ui()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $_GET['ref_id']);
+        $this->ilias_dic->ui()->mainTemplate()->setPermanentLink(ilOpenCastPlugin::PLUGIN_ID, $ref_id);
 
         return $objectSettings;
     }
@@ -542,6 +531,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         $info = new ilInfoScreenGUI($this);
         $info->enablePrivateNotes();
+        /** @var $objectSettings ObjectSettings */
         $objectSettings = ObjectSettings::find($this->obj_id);
         if ($refs = $objectSettings->getDuplicatesOnSystem()) {
             $info->addSection($this->plugin->txt('info_linked_items'));
@@ -562,10 +552,13 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             && $this->container->get(SeriesAPIRepository::class)->find(
                 $objectSettings->getSeriesIdentifier()
             )->isPublishedOnVideoPortal()) {
+            $video_portal_title = PluginConfig::getConfig(PluginConfig::F_VIDEO_PORTAL_TITLE);
             $info->addSection($this->plugin->txt('series_links'));
             $info->addProperty(
-                $this->plugin->txt(
-                    'series_video_portal_link'
+                sprintf(
+                    $this->plugin->txt(
+                        'series_video_portal_link'
+                    ), $video_portal_title
                 ),
                 $objectSettings->getVideoPortalLink()
             );
@@ -578,238 +571,5 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         // forward the command
         $this->ilias_dic->ctrl()->forwardCommand($info);
-    }
-
-    /**
-     * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     *
-     * @param bool $a_error
-     */
-    public function deleteObject($a_error = false): void
-    {
-        if ($_GET["item_ref_id"] != "") {
-            $_POST["id"] = [$_GET["item_ref_id"]];
-        }
-
-        if (is_array($_POST["id"])) {
-            foreach ($_POST["id"] as $idx => $id) {
-                $_POST["id"][$idx] = (int) $id;
-            }
-        }
-
-        // SAVE POST VALUES (get rid of this
-        ilSession::set("saved_post", $_POST["id"]);
-
-        if (!$this->showDeleteConfirmation($_POST["id"], $a_error)) {
-            $this->ilias_dic->ctrl()->returnToParent($this);
-        }
-    }
-
-    /**
-     * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     */
-    public function showDeleteConfirmation($a_ids, $a_supress_message = false): bool
-    {
-        if (!is_array($a_ids) || count($a_ids) == 0) {
-            ilUtil::sendFailure($this->ilias_dic->language()->txt("no_checkbox"), true);
-
-            return false;
-        }
-
-        // Remove duplicate entries
-        $a_ids = array_unique($a_ids);
-
-        $cgui = new ilConfirmationGUI();
-
-        if (!$a_supress_message) {
-            $msg = $this->ilias_dic->language()->txt("info_delete_sure");
-
-            if ($this->ilias_dic->settings()->get('enable_trash') === '' || $this->ilias_dic->settings()->get(
-                'enable_trash'
-            ) === '0') {
-                $msg .= "<br/>" . $this->ilias_dic->language()->txt("info_delete_warning_no_trash");
-            }
-
-            $cgui->setHeaderText($msg);
-        }
-        $cgui->setFormAction($this->ilias_dic->ctrl()->getFormAction($this));
-        $cgui->setCancel($this->ilias_dic->language()->txt("cancel"), "cancelDelete");
-        $cgui->setConfirm($this->ilias_dic->language()->txt("confirm"), "confirmedDelete");
-
-        $form_name = "cgui_" . md5(uniqid(''));
-        $cgui->setFormName($form_name);
-
-        $deps = [];
-        foreach ($a_ids as $ref_id) {
-            $obj_id = ilObject::_lookupObjId($ref_id);
-            $type = ilObject::_lookupType($obj_id);
-            $title = call_user_func([ilObjectFactory::getClassByType($type), '_lookupTitle'], $obj_id);
-            $alt = $this->ilias_dic->language()->txt("icon") . " " . ilPlugin::lookupTxt(
-                "rep_robj",
-                $type,
-                "obj_" . $type
-            );
-
-            $title .= $this->handleMultiReferences($obj_id, $ref_id, $form_name);
-
-            $cgui->addItem("id[]", $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), $alt);
-
-            ilObject::collectDeletionDependencies($deps, $ref_id, $obj_id, $type);
-        }
-        $deps_html = "";
-
-        if (is_array($deps) && $deps !== []) {
-            $tab = new ilRepDependenciesTableGUI($deps);
-            $deps_html = "<br/><br/>" . $tab->getHTML();
-        }
-
-        $this->ilias_dic->ui()->mainTemplate()->setContent($cgui->getHTML() . $deps_html);
-
-        return true;
-    }
-
-    /**
-     * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     * @param int    $a_obj_id
-     * @param int    $a_ref_id
-     * @param string $a_form_name
-     * @return string
-     * @throws Exception
-     */
-    public function handleMultiReferences($a_obj_id, $a_ref_id, $a_form_name)
-    {
-        // process
-
-        /** @var ObjectSettings $objectSettings */
-        $objectSettings = ObjectSettings::find($a_obj_id);
-        if ($all_refs = $objectSettings->getDuplicatesOnSystem()) {
-            $this->ilias_dic->language()->loadLanguageModule("rep");
-
-            $may_delete_any = 0;
-            $counter = 0;
-            $items = [];
-            foreach ($all_refs as $mref_id) {
-                // not the already selected reference, no refs from trash
-                if ($mref_id != $a_ref_id && !$this->ilias_dic->repositoryTree()->isDeleted($mref_id)) {
-                    if ($this->ilias_dic->access()->checkAccess("read", "", $mref_id)) {
-                        $may_delete = false;
-                        if ($this->ilias_dic->access()->checkAccess("delete", "", $mref_id)) {
-                            $may_delete = true;
-                            $may_delete_any++;
-                        }
-
-                        $path = $this->buildPath([$mref_id]);
-                        $items[] = [
-                            "id" => $mref_id,
-                            "path" => array_shift($path),
-                            "delete" => $may_delete
-                        ];
-                    } else {
-                        $counter++;
-                    }
-                }
-            }
-
-            // render
-
-            $tpl = new ilTemplate("tpl.rep_multi_ref.html", true, true, "Services/Repository");
-
-            $tpl->setVariable("TXT_INTRO", $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_intro"));
-
-            if ($may_delete_any !== 0) {
-                $tpl->setVariable(
-                    "TXT_INSTRUCTION",
-                    $this->ilias_dic->language()->txt("rep_multiple_reference_deletion_instruction")
-                );
-            }
-
-            if ($items !== []) {
-                $var_name = "mref_id[]";
-
-                foreach ($items as $item) {
-                    if ($item["delete"]) {
-                        $tpl->setCurrentBlock("cbox");
-                        $tpl->setVariable("ITEM_NAME", $var_name);
-                        $tpl->setVariable("ITEM_VALUE", $item["id"]);
-                        $tpl->parseCurrentBlock();
-                    } else {
-                        $tpl->setCurrentBlock("item_info");
-                        $tpl->setVariable(
-                            "TXT_ITEM_INFO",
-                            $this->ilias_dic->language()->txt("rep_no_permission_to_delete")
-                        );
-                        $tpl->parseCurrentBlock();
-                    }
-
-                    $tpl->setCurrentBlock("item");
-                    $tpl->setVariable("ITEM_TITLE", $item["path"]);
-                    $tpl->parseCurrentBlock();
-                }
-
-                if ($may_delete_any > 1) {
-                    $tpl->setCurrentBlock("cbox");
-                    $tpl->setVariable("ITEM_NAME", "sall_" . $a_ref_id);
-                    $tpl->setVariable("ITEM_VALUE", "");
-                    $tpl->setVariable(
-                        "ITEM_ADD",
-                        " onclick=\"il.Util.setChecked('" . $a_form_name . "', '" . $var_name . "', document."
-                        . $a_form_name . ".sall_" . $a_ref_id . ".checked)\""
-                    );
-                    $tpl->parseCurrentBlock();
-
-                    $tpl->setCurrentBlock("item");
-                    $tpl->setVariable("ITEM_TITLE", $this->ilias_dic->language()->txt("select_all"));
-                    $tpl->parseCurrentBlock();
-                }
-            }
-
-            if ($counter !== 0) {
-                $tpl->setCurrentBlock("add_info");
-                $tpl->setVariable(
-                    "TXT_ADDITIONAL_INFO",
-                    sprintf($this->ilias_dic->language()->txt("rep_object_references_cannot_be_read"), $counter)
-                );
-                $tpl->parseCurrentBlock();
-            }
-
-            return $tpl->get();
-        }
-    }
-
-    /**
-     * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
-     *
-     * @param array $ref_ids
-     *
-     * @return    array
-     */
-    protected function buildPath($ref_ids)
-    {
-        if ($ref_ids === []) {
-            return false;
-        }
-
-        $result = [];
-        foreach ($ref_ids as $ref_id) {
-            $path = "";
-            $path_full = $this->ilias_dic->repositoryTree()->getPathFull($ref_id);
-            foreach ($path_full as $idx => $data) {
-                if ($idx) {
-                    $path .= " &raquo; ";
-                }
-                if ($ref_id != $data['ref_id']) {
-                    $path .= $data['title'];
-                } else {
-                    $path .= ('<a target="_top" href="' . ilLink::_getLink(
-                        $data['ref_id'],
-                        $data['type']
-                    ) . '">' . $data['title'] . '</a>');
-                }
-            }
-
-            $result[] = $path;
-        }
-
-        return $result;
     }
 }

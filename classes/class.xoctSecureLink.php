@@ -1,7 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 
 /**
@@ -48,7 +49,10 @@ class xoctSecureLink
 
         if ($data->error) {
             // We would only be able to log it here as error to avoid further confilicts.
-            xoctLog::getInstance()->write("[Error]: Signing link ($url) failed: {$data->error}", xoctLog::DEBUG_LEVEL_1);
+            xoctLog::getInstance()->write(
+                "[Error]: Signing link ($url) failed: {$data->error}",
+                xoctLog::DEBUG_LEVEL_1
+            );
             return '';
         }
         self::$cache[$url] = $data->url;

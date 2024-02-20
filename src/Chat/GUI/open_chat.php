@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * this script is the entry point for the chat iframe:
  * it checks the connection to the nodejs server and redirectes accordingly

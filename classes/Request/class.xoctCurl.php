@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Class xoctCurl
  *
@@ -7,6 +9,15 @@
  */
 class xoctCurl
 {
+    /**
+     * @var bool
+     */
+    private static $verify_host = false;
+    /**
+     * @var bool
+     */
+    private static $verify_peer = false;
+
     public static function init(xoctCurlSettings $xoctCurlSettings): void
     {
         self::$ip_v4 = $xoctCurlSettings->isIpV4();
@@ -193,14 +204,9 @@ class xoctCurl
      */
     protected $files = [];
 
-    /**
-     * @param $ch
-     */
     public static function getErrorText($ch): string
     {
-        $xoctCurlError = new xoctCurlError($ch);
-
-        return $xoctCurlError->getMessage();
+        return (new xoctCurlError($ch))->getMessage();
     }
 
     /**
@@ -560,7 +566,7 @@ class xoctCurl
         $xoctLog->write($backtrace, xoctLog::DEBUG_LEVEL_4);
         if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
             curl_setopt($ch, CURLOPT_VERBOSE, true);
-            curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'a'));
+            curl_setopt($ch, CURLOPT_STDERR, fopen(xoctLog::getFullPath(), 'ab'));
         }
     }
 
@@ -591,7 +597,7 @@ class xoctCurl
         foreach ($this->getPostFields() as $k => $v) {
             $k = str_replace($disallow, "", $k);
             $body[] = implode("\r\n", [
-                "Content-Disposition: form-data; name=\"{$k}\"",
+                "Content-Disposition: form-data; name=\"$k\"",
                 "",
                 filter_var($v),
             ]);
@@ -614,7 +620,7 @@ class xoctCurl
             $k = str_replace($disallow, "_", $k);
             $v = str_replace($disallow, "_", $v);
             $body[] = implode("\r\n", [
-                "Content-Disposition: form-data; name=\"{$k}\"; filename=\"{$v}\"",
+                "Content-Disposition: form-data; name=\"$k\"; filename=\"$v\"",
                 "Content-Type: application/octet-stream",
                 "",
                 $data,
@@ -624,15 +630,15 @@ class xoctCurl
         // generate safe boundary
         do {
             $boundary = "---------------------" . md5(random_int(0, mt_getrandmax()) . microtime());
-        } while (preg_grep("/{$boundary}/", $body));
+        } while (preg_grep("/$boundary/", $body));
 
         // add boundary for each parameters
         array_walk($body, function (&$part) use ($boundary): void {
-            $part = "--{$boundary}\r\n{$part}";
+            $part = "--$boundary\r\n$part";
         });
 
         // add final boundary
-        $body[] = "--{$boundary}--";
+        $body[] = "--$boundary--";
         $body[] = "";
 
         // set options
@@ -640,6 +646,6 @@ class xoctCurl
         //		curl_setopt($ch, CURLOPT_POSTFIELDS, $this->getPostBody());
         curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
         $this->addHeader('Expect: 100-continue');
-        $this->addHeader("Content-Type: multipart/form-data; boundary={$boundary}");
+        $this->addHeader("Content-Type: multipart/form-data; boundary=$boundary");
     }
 }

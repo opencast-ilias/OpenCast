@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -7,12 +9,10 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class xoctMetadataConfigRouterGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const SUBTAB_EVENTS = 'events';
     public const SUBTAB_SERIES = 'series';
     /**
-     * @var \ilCtrlInterface
+     * @var \ilCtrl
      */
     private $ctrl;
     /**

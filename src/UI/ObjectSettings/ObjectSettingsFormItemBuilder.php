@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI\ObjectSettings;
 
 use ILIAS\Refinery\Factory as RefineryFactory;
@@ -14,7 +16,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
-use xoctFileUploadHandler;
+use xoctFileUploadHandlerGUI;
 
 class ObjectSettingsFormItemBuilder
 {
@@ -58,7 +60,7 @@ class ObjectSettingsFormItemBuilder
      */
     private $objectSettingsParser;
     /**
-     * @var xoctFileUploadHandler
+     * @var xoctFileUploadHandlerGUI
      */
     private $fileUploadHandler;
 
@@ -67,7 +69,7 @@ class ObjectSettingsFormItemBuilder
         RefineryFactory $refinery_factory,
         PublicationUsageRepository $publicationUsageRepository,
         ObjectSettingsParser $objectSettingsParser,
-        xoctFileUploadHandler $fileUploadHandler,
+        xoctFileUploadHandlerGUI $fileUploadHandler,
         ilPlugin $plugin
     ) {
         $this->ui_factory = $ui_factory;
@@ -141,7 +143,7 @@ class ObjectSettingsFormItemBuilder
                              ->withAdditionalTransformation(
                                  $this->refinery_factory->custom()->transformation(function ($vs) {
                                      $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
-                                     if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {
+                                     if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL] ?? null)) {
                                          $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][0];
                                          unset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]);
                                      }
@@ -248,7 +250,7 @@ class ObjectSettingsFormItemBuilder
         $radio = $this->ui_factory->input()->field()->radio($this->txt(self::F_PERMISSION_TEMPLATE));
         /** @var PermissionTemplate $ptpl */
         foreach (PermissionTemplate::where(['is_default' => 0])->orderBy('sort')->get() as $ptpl) {
-            $radio = $radio->withOption($ptpl->getId(), $ptpl->getTitle(), $ptpl->getInfo() ?? null);
+            $radio = $radio->withOption((string) $ptpl->getId(), $ptpl->getTitle(), $ptpl->getInfo());
         }
         return $radio->withRequired(true);
     }

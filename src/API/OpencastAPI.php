@@ -1,8 +1,8 @@
 <?php
 
-namespace srag\Plugins\Opencast\API;
+declare(strict_types=1);
 
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
+namespace srag\Plugins\Opencast\API;
 
 /**
  * Class srag\Plugins\Opencast\API\OpencastAPI
@@ -21,7 +21,6 @@ class OpencastAPI implements API
      * $array_data = $opencastContainer[API::class]->routes()->search->getEpisodes(['id' => $this->event->getIdentifier()], srag\Plugins\Opencast\API\OpencastAPI::RETURN_ARRAY);
      */
     public const RETURN_ARRAY = 'return_array_flag';
-
 
     /**
      * @var \OpencastApi\Opencast instance
@@ -95,9 +94,9 @@ class OpencastAPI implements API
      */
     public function activateIngest(bool $activate): void
     {
-        if ($activate === true && $this->api->ingest->object === null) {
+        if ($activate === true && ($this->api->ingest->object ?? null) === null) {
             $this->api = $this->decorateApiServicesForXoct($activate);
-        } elseif ($activate === false && $this->api->ingest->object !== null) {
+        } elseif ($activate === false && ($this->api->ingest->object ?? null) !== null) {
             $this->api = $this->decorateApiServicesForXoct($activate);
         }
     }

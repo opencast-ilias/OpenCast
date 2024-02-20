@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use ilObjOpenCastAccess;
@@ -10,7 +12,6 @@ use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
-use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use stdClass;
@@ -26,7 +27,6 @@ use xoctSecureLink;
  */
 class PublicationSelector
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
     public const NO_PREVIEW = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/no_preview.png';
     public const THUMBNAIL_SCHEDULED = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled.png';
     public const THUMBNAIL_SCHEDULED_LIVE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/thumbnail_scheduled_live.png';
@@ -168,7 +168,9 @@ class PublicationSelector
         if (!isset($this->download_publications)) {
             $pubs = [];
             $download_pub_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD);
-            $download_pub_sub_usages = $this->publication_sub_usage_repository->convertSubsToUsage(PublicationUsage::USAGE_DOWNLOAD);
+            $download_pub_sub_usages = $this->publication_sub_usage_repository->convertSubsToUsage(
+                PublicationUsage::USAGE_DOWNLOAD
+            );
             $download_usages = array_merge([$download_pub_usage], $download_pub_sub_usages);
             foreach ($download_usages as $download_usage) {
                 $usage_pubs = $this->getPublicationMetadataForUsage($download_usage);
@@ -177,7 +179,9 @@ class PublicationSelector
                 }
             }
             if (empty($pubs)) {
-                $download_fallback_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD_FALLBACK);
+                $download_fallback_usage = $this->publication_usage_repository->getUsage(
+                    PublicationUsage::USAGE_DOWNLOAD_FALLBACK
+                );
                 $download_usages = array_merge([$download_fallback_usage], $download_usages);
                 $pubs = $this->getPublicationMetadataForUsage($download_fallback_usage);
             }
@@ -226,7 +230,8 @@ class PublicationSelector
         $categorized_dtos = [];
         foreach ($download_publications as $index => $pub) {
             $i = ($index + 1);
-            $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight() . 'p' : 'Download ' . $i) :
+            $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight(
+                ) . 'p' : 'Download ' . $i) :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
@@ -491,8 +496,8 @@ class PublicationSelector
         }
         /**
          * @var $publication_usage       PublicationUsage
-         * @var $attachment             Attachment
-         * @var $medium                 Media
+         * @var $attachment              Attachment
+         * @var $medium                  Media
          */
         $media = [];
         $attachments = [];
@@ -630,16 +635,15 @@ class PublicationSelector
 
     /**
      * Returns the publication if the media type matches the usage media type, null otherwise.
-     * @param publicationMetadata $publicationType
-     * @param PublicationUsage $publication_usage
+     * @param PublicationMetadata $publicationType
+     * @param PublicationUsage    $publication_usage
      *
-     * @return publicationMetadata|null
+     * @return PublicationMetadata|null
      */
     private function checkMediaTypes(
-        publicationMetadata $publicationType,
+        PublicationMetadata $publicationType,
         PublicationUsage $publication_usage
-    ): ?publicationMetadata
-    {
+    ): ?PublicationMetadata {
         $media_types = $publication_usage->getArrayMediaTypes();
         if (empty($media_types)) {
             return $publicationType;
@@ -660,7 +664,9 @@ class PublicationSelector
             $captions = $this->getPublicationMetadataForUsage(
                 $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS)
             );
-            $captions_fallback = $this->getPublicationMetadataForUsage($this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS_FALLBACK));
+            $captions_fallback = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_CAPTIONS_FALLBACK)
+            );
             $this->caption_publications = array_merge($captions, $captions_fallback);
         }
 

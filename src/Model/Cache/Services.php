@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -27,7 +29,6 @@ use srag\Plugins\Opencast\Model\Cache\Container\ActiveContainer;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
 use srag\Plugins\Opencast\Model\Cache\Container\Container;
 use srag\Plugins\Opencast\Model\Cache\Container\VoidContainer;
-use srag\Plugins\Opencast\API\Config;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Config\Event;
 
 use srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR;

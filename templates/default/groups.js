@@ -183,7 +183,7 @@ var xoctGroup = {
     },
 
     addParticipant: function (id) {
-        this.getSelectedGroup().users.push(id.toString());
+        this.getSelectedGroup().users.push(parseInt(id.toString()));
         $('#xoct_user_counter_' + this.selected_id).html(this.getSelectedGroup().users.length);
     },
 
@@ -224,7 +224,7 @@ var xoctGroup = {
 
     getParticipant: function(user_id) {
         return this.participants.find(function(participant) {
-            return participant.user_id === user_id;
+            return parseInt(participant.user_id) === parseInt(user_id);
         });
     },
 

@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctConfGUI
@@ -16,6 +20,7 @@ use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 class xoctConfGUI extends xoctGUI
 {
     use TranslatorTrait;
+    use LocaleTrait;
 
     public const CMD_PLAYER = 'player';
     public const CMD_UPDATE_PLAYER = 'updatePlayer';
@@ -36,14 +41,6 @@ class xoctConfGUI extends xoctGUI
      * @var \ilTabsGUI
      */
     private $tabs;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var \ILIAS\HTTP\Services
-     */
-    private $http;
 
     public function __construct(
         Renderer $renderer,
@@ -53,8 +50,6 @@ class xoctConfGUI extends xoctGUI
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
-        $this->http = $DIC->http();
         $this->renderer = $renderer;
         $this->fileUploadHandler = $fileUploadHandler;
         $this->paellConfigFormBuilder = $paellConfigFormBuilder;
@@ -65,9 +60,9 @@ class xoctConfGUI extends xoctGUI
         $nextClass = $this->ctrl->getNextClass();
 
         switch ($nextClass) {
-            case strtolower(xoctFileUploadHandler::class):
+            case strtolower(xoctFileUploadHandlerGUI::class):
                 if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
-                    ilUtil::sendFailure($this->plugin->txt("msg_no_access"), true);
+                    $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString("msg_no_access"), true);
                     $this->cancel();
                 }
                 $this->ctrl->forwardCommand($this->fileUploadHandler);
@@ -79,24 +74,14 @@ class xoctConfGUI extends xoctGUI
         }
     }
 
-    public function txt(
-        string $key,
-        string $module = "",
-        array $placeholders = [],
-        bool $plugin = true,
-        string $lang = "",
-        string $default = "MISSING %s"
-    ): string {
-        return $this->translate('config_' . $key, $module, $placeholders, $plugin, $lang, $default);
-    }
 
     /**
      *
      */
-    protected function index()
+    protected function index(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
-        $subtab_active = $_GET['subtab_active'] ?: xoctMainGUI::SUBTAB_API;
+        $subtab_active = $this->http->request()->getQueryParams()['subtab_active'] ?? xoctMainGUI::SUBTAB_API;
         $this->tabs->setSubTabActive($subtab_active);
         $xoctConfFormGUI = new xoctConfFormGUI($this, $subtab_active);
         $xoctConfFormGUI->fillForm();
@@ -107,16 +92,16 @@ class xoctConfGUI extends xoctGUI
      * Subtab Player has an own method, since it is rendered with the UI service and not with xoctConfFormGUI
      * @return void
      */
-    protected function player()
+    protected function player(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
-        $subtab_active = $_GET['subtab_active'] ?: xoctMainGUI::SUBTAB_API;
+        $subtab_active = $this->http->request()->getQueryParams()['subtab_active'] ?? xoctMainGUI::SUBTAB_API;
         $this->tabs->setSubTabActive($subtab_active);
         $form = $this->paellConfigFormBuilder->buildForm($this->ctrl->getFormAction($this, self::CMD_UPDATE_PLAYER));
         $this->main_tpl->setContent($this->renderer->render($form));
     }
 
-    protected function updatePlayer()
+    protected function updatePlayer(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
         $form = $this->paellConfigFormBuilder->buildForm($this->ctrl->getFormAction($this, self::CMD_UPDATE_PLAYER))
@@ -151,14 +136,20 @@ class xoctConfGUI extends xoctGUI
             $paella_player_live_theme = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][0];
             PluginConfig::set(PluginConfig::F_PAELLA_THEME_LIVE, $paella_player_live_theme);
             if ($paella_player_live_theme === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(PluginConfig::F_PAELLA_THEME_URL_LIVE, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']);
+                PluginConfig::set(
+                    PluginConfig::F_PAELLA_THEME_URL_LIVE,
+                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']
+                );
             }
         }
         if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK])) {
             $paella_player_preview_fallback = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][0];
             PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK, $paella_player_preview_fallback);
             if ($paella_player_preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL, $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][1]['url']);
+                PluginConfig::set(
+                    PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL,
+                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][1]['url']
+                );
             }
         }
         if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION])) {
@@ -176,14 +167,14 @@ class xoctConfGUI extends xoctGUI
     /**
      *
      */
-    protected function update()
+    protected function update(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
-        $subtab_active = $_GET['subtab_active'] ?: xoctMainGUI::SUBTAB_API;
+        $subtab_active = $this->http->request()->getQueryParams()['subtab_active'] ?? xoctMainGUI::SUBTAB_API;
         $xoctConfFormGUI = new xoctConfFormGUI($this, $subtab_active);
         $xoctConfFormGUI->setValuesByPost();
         if ($xoctConfFormGUI->saveObject()) {
-            ilUtil::sendSuccess($this->txt('msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
         $this->main_tpl->setContent($xoctConfFormGUI->getHTML());
@@ -192,35 +183,35 @@ class xoctConfGUI extends xoctGUI
     /**
      *
      */
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
     /**
      *
      */
-    protected function delete()
+    protected function delete(): void
     {
     }
 
     /**
      *
      */
-    protected function add()
+    protected function add(): void
     {
     }
 
     /**
      *
      */
-    protected function create()
+    protected function create(): void
     {
     }
 
     /**
      *
      */
-    protected function edit()
+    protected function edit(): void
     {
     }
 }

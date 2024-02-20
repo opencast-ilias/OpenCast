@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI\PaellaConfig;
 
 use ILIAS\UI\Component\Input\Container\Form\Standard;
@@ -64,7 +66,12 @@ class PaellaConfigFormBuilder
     {
         $inputs = [];
         $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_PATH)),
+            $this->ui_renderer->render(
+                $this->ui_factory->link()->standard(
+                    $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
+                    PluginConfig::PAELLA_DEFAULT_PATH
+                )
+            ),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_OPTION) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_URL) ?? '',
             self::F_PAELLA_PLAYER_OPTION,
@@ -72,7 +79,12 @@ class PaellaConfigFormBuilder
         );
 
         $inputs[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), PluginConfig::PAELLA_DEFAULT_THEME)),
+            $this->ui_renderer->render(
+                $this->ui_factory->link()->standard(
+                    $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
+                    PluginConfig::PAELLA_DEFAULT_THEME
+                )
+            ),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL) ?? '',
             self::F_PAELLA_PLAYER_THEME,
@@ -85,7 +97,12 @@ class PaellaConfigFormBuilder
             $live_theme_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE_BUFFERED;
         }
         $inputs[self::F_PAELLA_PLAYER_LIVE_THEME] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"), $live_theme_url)),
+            $this->ui_renderer->render(
+                $this->ui_factory->link()->standard(
+                    $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
+                    $live_theme_url
+                )
+            ),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_LIVE) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL_LIVE) ?? '',
             self::F_PAELLA_PLAYER_LIVE_THEME,
@@ -93,7 +110,12 @@ class PaellaConfigFormBuilder
         );
 
         $inputs[self::F_PAELLA_PLAYER_PREVIEW_FALLBACK] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render($this->ui_factory->link()->standard($this->plugin->txt(self::F_PAELLA_PLAYER_IMAGE . "_link"), PluginConfig::PAELLA_DEFAULT_PREVIEW)),
+            $this->ui_renderer->render(
+                $this->ui_factory->link()->standard(
+                    $this->plugin->txt(self::F_PAELLA_PLAYER_IMAGE . "_link"),
+                    PluginConfig::PAELLA_DEFAULT_PREVIEW
+                )
+            ),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL) ?? '',
             self::F_PAELLA_PLAYER_PREVIEW_FALLBACK,
@@ -103,16 +125,32 @@ class PaellaConfigFormBuilder
         $availableLanguages = $this->getAvailablePlayerLanguages();
         $defaultLanuages = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [];
         $inputs[self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION] = $this->ui_factory->input()->field()
-            ->tag($this->txt(self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION), array_keys($availableLanguages), $this->txt(self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION . '_info'))
-            ->withUserCreatedTagsAllowed(true)
-            ->withValue($defaultLanuages);
+                                                                                ->tag(
+                                                                                    $this->txt(
+                                                                                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION
+                                                                                    ),
+                                                                                    array_keys($availableLanguages),
+                                                                                    $this->txt(
+                                                                                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION . '_info'
+                                                                                    )
+                                                                                )
+                                                                                ->withUserCreatedTagsAllowed(true)
+                                                                                ->withValue($defaultLanuages);
 
         $commonCaptions = ['de', 'en'];
         $defaultCaptions = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS) ?? [];
         $inputs[self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION] = $this->ui_factory->input()->field()
-            ->tag($this->txt(self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION), $commonCaptions, $this->txt(self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION . '_info'))
-            ->withUserCreatedTagsAllowed(true)
-            ->withValue($defaultCaptions);
+                                                                                   ->tag(
+                                                                                       $this->txt(
+                                                                                           self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION
+                                                                                       ),
+                                                                                       $commonCaptions,
+                                                                                       $this->txt(
+                                                                                           self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION . '_info'
+                                                                                       )
+                                                                                   )
+                                                                                   ->withUserCreatedTagsAllowed(true)
+                                                                                   ->withValue($defaultCaptions);
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
@@ -120,24 +158,29 @@ class PaellaConfigFormBuilder
         );
     }
 
-    private function generateSwichableGroupWithUrl(string $link, string $option, string $url, string $text, bool $required): Input
-    {
+    private function generateSwichableGroupWithUrl(
+        string $link,
+        string $option,
+        string $url,
+        string $text,
+        bool $required
+    ): Input {
         $f = $this->ui_factory->input()->field();
         return $f->switchableGroup([
             PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt("pp_default_string") . " " . $link),
             PluginConfig::PAELLA_OPTION_URL => $f->group(
                 [
                     'url' => $f->text($this->plugin->txt('link'))
-                                ->withByline($this->plugin->txt('pp_link_info'))
-                                ->withRequired(true)
-                                ->withValue($url)
+                               ->withByline($this->plugin->txt('pp_link_info'))
+                               ->withRequired(true)
+                               ->withValue($url)
                 ],
                 $this->plugin->txt('pp_url')
             )
         ], $this->txt($text))
-            ->withByline($this->txt($text . '_info'))
-            ->withValue($option)
-            ->withRequired($required);
+                 ->withByline($this->txt($text . '_info'))
+                 ->withValue($option)
+                 ->withRequired($required);
     }
 
     private function buildInlineDownload(string $file_id): string
@@ -165,7 +208,7 @@ class PaellaConfigFormBuilder
             'es' => 'es'
         ];
         foreach (scandir(PluginConfig::PAELLA_LANG_PATH) as $langFile) {
-            if ('.' === $file || '..' === $file) {
+            if ('.' === $langFile || '..' === $langFile) {
                 continue;
             }
             $ext = pathinfo($langFile, PATHINFO_EXTENSION);

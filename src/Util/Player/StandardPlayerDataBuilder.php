@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\Player;
 
 use DateTime;
@@ -9,7 +11,7 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Publication\Attachment;
 use srag\Plugins\Opencast\Model\Publication\Media;
-use srag\Plugins\Opencast\Model\Publication\publicationMetadata;
+use srag\Plugins\Opencast\Model\Publication\PublicationMetadata;
 use xoctException;
 use xoctSecureLink;
 
@@ -27,8 +29,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     ];
 
     private static $role_mapping = [
-        publicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
-        publicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
+        PublicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
+        PublicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
     ];
 
     /**
@@ -89,7 +91,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 foreach ($caption->tags as $tag) {
                     if (strpos($tag, 'lang:') !== false) {
                         $tag_lang = str_replace('lang:', '', $tag);
-                        if (!empty($tag_lang)) $lang = $tag_lang;
+                        if (!empty($tag_lang)) {
+                            $lang = $tag_lang;
+                        }
                     }
 
                     if (strpos($tag, 'generator-type:') !== false) {
@@ -113,7 +117,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                         }
                     }
                 }
-            } else if ($caption instanceof Attachment) {
+            } elseif ($caption instanceof Attachment) {
                 list($format, $lang) = explode('+', $sub_flavor, 2);
             }
 
@@ -132,7 +136,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
     /**
      * @param string $lang
-     * @param array $tag_info_array
+     * @param array  $tag_info_array
      * @return string
      * @throws xoctException
      */
@@ -140,7 +144,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     {
         $text_array[] = $lang;
         if (array_key_exists('generator_type', $tag_info_array)) {
-            $generator_type = $tag_info_array['generator_type'] == 'auto' ? 'Auto': 'Manual';
+            $generator_type = ($tag_info_array['generator_type'] ?? '') === 'auto' ? 'Auto' : 'Manual';
             $text_array[] = "($generator_type)";
         }
         if (array_key_exists('type', $tag_info_array)) {
@@ -163,17 +167,26 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         $duration = 0;
         $streams = [];
         $sources = [
-            publicationMetadata::ROLE_PRESENTER => [],
-            publicationMetadata::ROLE_PRESENTATION => []
+            PublicationMetadata::ROLE_PRESENTER => [],
+            PublicationMetadata::ROLE_PRESENTATION => []
         ];
 
+        $source_type_master_mapping = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
-            if (!is_array($sources[$medium->getRole()][$source_type])) {
+            if (!isset($sources[$medium->getRole()][$source_type]) || !is_array($sources[$medium->getRole()][$source_type])) {
                 $sources[$medium->getRole()][$source_type] = [];
             }
-            $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
+            $is_master_playlist = $medium->isMasterPlaylist();
+            if ($is_master_playlist) {
+                $source_type_master_mapping[$source_type] = true;
+                $sources[$medium->getRole()][$source_type] = [];
+            }
+
+            if ($is_master_playlist || empty($source_type_master_mapping[$source_type])) {
+                $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
+            }
         }
 
         foreach ($sources as $role => $source) {
@@ -217,7 +230,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         $frameList = [];
         $segments = $event->publications()->getSegmentPublications();
         if ($segments !== []) {
-            $segments = array_reduce($segments, function (array &$segments, Attachment $segment): array {
+            $segments = array_reduce($segments, function (array $segments, Attachment $segment): array {
                 if (!isset($segments[$segment->getRef()])) {
                     $segments[$segment->getRef()] = [];
                 }

@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\OpenCast\UI\Component\Input\Field;
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFileRenderer;
 use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
+use ILIAS\UI\Implementation\Render\ComponentRenderer;
+use ILIAS\UI\Implementation\Render\RendererFactory;
 
 /**
  * Class Loader
@@ -28,7 +32,7 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
         $this->plugin = $plugin;
     }
 
-    public function getRendererFor(Component $component, array $contexts)
+    public function getRendererFor(Component $component, array $contexts): ComponentRenderer
     {
         if ($component instanceof ChunkedFile) {
             $renderer = new ChunkedFileRenderer(
@@ -48,7 +52,7 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
         return $this->dic['ui.component_renderer_loader']->getRendererFor($component, $contexts);
     }
 
-    public function getRendererFactoryFor(Component $component)
+    public function getRendererFactoryFor(Component $component): RendererFactory
     {
         return $this->dic['ui.component_renderer_loader']->getRendererFactoryFor($component);
     }

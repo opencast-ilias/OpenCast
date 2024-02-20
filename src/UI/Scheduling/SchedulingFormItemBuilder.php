@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI\Scheduling;
 
 use DateTimeZone;
@@ -102,14 +104,14 @@ class SchedulingFormItemBuilder
             'weekdays' => $this->ui_factory->input()->field()->multiSelect(
                 $this->plugin->txt('event_multiple_weekdays'),
                 [
-                'MO' => $this->plugin->txt('monday'),
-                'TU' => $this->plugin->txt('tuesday'),
-                'WE' => $this->plugin->txt('wednesday'),
-                'TH' => $this->plugin->txt('thursday'),
-                'FR' => $this->plugin->txt('friday'),
-                'SA' => $this->plugin->txt('saturday'),
-                'SU' => $this->plugin->txt('sunday'),
-            ]
+                    'MO' => $this->plugin->txt('monday'),
+                    'TU' => $this->plugin->txt('tuesday'),
+                    'WE' => $this->plugin->txt('wednesday'),
+                    'TH' => $this->plugin->txt('thursday'),
+                    'FR' => $this->plugin->txt('friday'),
+                    'SA' => $this->plugin->txt('saturday'),
+                    'SU' => $this->plugin->txt('sunday'),
+                ]
             )->withRequired(true),
             'start_time' => $this->ui_factory->input()->field()->dateTime(
                 $this->plugin->txt('event_multiple_start_time')

@@ -2,7 +2,7 @@
 	/**
 	 * @author Fabian Schmid <fs@studer-raimann.ch>
 	 */
-	$(document).ready(function () {
+	window.onload = function(event) {
         il.Opencast.UI.waitOverlay.init();
         xoctInvitation.lngFromJson('{LANGUAGE}');
         xoctInvitation.init('{BASE_URL}', '#xoct_invitations_container', '#xoct_available_participant_container', function () {
@@ -10,7 +10,7 @@
 		}, function () {
 			il.Opencast.UI.waitOverlay.hide()
 		});
-	});
+	};
 </script>
 <div class="row">
 	<div class="col-xs-4">

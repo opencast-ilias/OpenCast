@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\API;
 
 use stdClass;
@@ -42,18 +44,13 @@ abstract class APIObject implements Request
             $data = $container->get($key);
         }
 
-        if ($existing) {
-            xoctLog::getInstance()->write('CACHE: used cached: ' . $key, xoctLog::DEBUG_LEVEL_2);
 
-            return $existing;
-        }
         xoctLog::getInstance()->write('CACHE: cached not used: ' . $key, xoctLog::DEBUG_LEVEL_2);
         $instance = new $class_name($identifier);
         self::cache($identifier, $instance);
 
         return $instance;
     }
-
 
     /**
      * @param            $identifier

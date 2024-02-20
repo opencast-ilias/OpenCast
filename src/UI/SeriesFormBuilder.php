@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI;
 
 use ILIAS\DI\Container;
@@ -114,7 +116,7 @@ class SeriesFormBuilder
             return $existing_series;
         }
 
-        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName()); 
+        $user_series = $this->seriesRepository->getAllForUser($xoctUser->getUserRoleName());
         foreach ($user_series as $series) {
             $existing_series[$series->getIdentifier()] = $series->getMetadata()->getField(
                 MDFieldDefinition::F_TITLE

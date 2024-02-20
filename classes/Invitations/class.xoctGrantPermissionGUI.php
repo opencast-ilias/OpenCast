@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
  * Class xoctGrantPermissionGUI
@@ -16,6 +19,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctGrantPermissionGUI extends xoctGUI
 {
+    use OutputResponse;
     /**
      * @var Event
      */
@@ -32,10 +36,6 @@ class xoctGrantPermissionGUI extends xoctGUI
      * @var \ilObjUser
      */
     private $user;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
 
     public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
     {
@@ -44,9 +44,8 @@ class xoctGrantPermissionGUI extends xoctGUI
         $tabs = $DIC->tabs();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->user = $DIC->user();
-        $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->objectSettings = $objectSettings;
-        $this->event = $event_repository->find($_GET[xoctEventGUI::IDENTIFIER]);
+        $this->event = $event_repository->find($this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER]);
         $this->ACLUtils = $ACLUtils;
         $tabs->clearTargets();
 
@@ -58,11 +57,10 @@ class xoctGrantPermissionGUI extends xoctGUI
     }
 
     /**
-     * @throws DICException
      * @throws ilTemplateException
      * @throws xoctException
      */
-    protected function index()
+    protected function index(): void
     {
         $xoctUser = xoctUser::getInstance($this->user);
         if (!ilObjOpenCastAccess::checkAction(
@@ -71,7 +69,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             $xoctUser,
             $this->objectSettings
         )) {
-            ilUtil::sendFailure('Access denied', true);
+            $this->main_tpl->setOnScreenMessage('failure', 'Access denied', true);
             $this->ctrl->redirectByClass(xoctEventGUI::class);
         }
         $temp = $this->plugin->getTemplate('default/tpl.invitations.html', false, false);
@@ -101,12 +99,10 @@ class xoctGrantPermissionGUI extends xoctGUI
      */
     protected function outJson($data)
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
-    protected function add()
+    protected function add(): void
     {
     }
 
@@ -168,17 +164,24 @@ class xoctGrantPermissionGUI extends xoctGUI
 
     protected function getCourseMembers(): array
     {
-        $parent = ilObjOpenCast::_getParentCourseOrGroup($_GET['ref_id']);
+        global $DIC;
+        $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+
+        $parent = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
+        if ($parent === null) {
+            return [];
+        }
         $p = $parent->getMembersObject();
 
         return array_merge($p->getMembers(), $p->getTutors(), $p->getAdmins());
     }
 
-    protected function create()
+    protected function create(): void
     {
+        $user_id = (int) ($this->http->request()->getParsedBody()['id'] ?? 0);
         $obj = PermissionGrant::where([
             'event_identifier' => $this->event->getIdentifier(),
-            'user_id' => $_POST['id'],
+            'user_id' => $user_id,
         ])->first();
         $new = false;
         if (!$obj instanceof PermissionGrant) {
@@ -186,7 +189,7 @@ class xoctGrantPermissionGUI extends xoctGUI
             $new = true;
         }
         $obj->setEventIdentifier($this->event->getIdentifier());
-        $obj->setUserId($_POST['id']);
+        $obj->setUserId($user_id);
         $obj->setOwnerId($this->user->getId());
         if ($new) {
             $obj->create();
@@ -202,7 +205,8 @@ class xoctGrantPermissionGUI extends xoctGUI
     protected function createMultiple()
     {
         $objects = [];
-        foreach ($_POST['ids'] as $id) {
+        foreach ($this->http->request()->getParsedBody()['ids'] as $id) {
+            $id = (int) $id;
             $obj = PermissionGrant::where([
                 'event_identifier' => $this->event->getIdentifier(),
                 'user_id' => $id,
@@ -225,23 +229,23 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->outJson(json_encode($objects));
     }
 
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
-    protected function delete()
+    protected function delete(): void
     {
         $obj = PermissionGrant::where([
             'event_identifier' => $this->event->getIdentifier(),
-            'user_id' => $_POST['id'],
+            'user_id' => $this->http->request()->getParsedBody()['id'],
         ])->first();
         if ($obj instanceof PermissionGrant) {
             $obj->delete();
