@@ -1,31 +1,31 @@
 <script>
-	/**
-	 * @author Fabian Schmid <fs@studer-raimann.ch>
-	 */
-	$(document).ready(function () {
-		il.Opencast.UI.waitOverlay.init();
-		xoctGroup.init('{BASE_URL}', '#xoct_groups_container', {IS_ADMIN}, function () {
-			il.Opencast.UI.waitOverlay.show()
-		}, function () {
-			il.Opencast.UI.waitOverlay.hide()
-		});
-		xoctGroup.lngFromJson('{GROUP_LANGUAGE}');
-		xoctGroupParticipant.init('{GP_BASE_URL}', '#xoct_available_participant_container', '#xoct_group_participants_container', function () {
-			il.Opencast.UI.waitOverlay.show()
-		}, function () {
-			il.Opencast.UI.waitOverlay.hide()
-		});
-		xoctGroupParticipant.lngFromJson('{PARTICIPANTS_LANGUAGE}');
-
-		$('#xoct_add_new').click(function () {
-			var title = $('#group_name').val();
-			xoctGroup.create(title, function () {
-				$('#group_name').val('');
+	window.onload = function(event) {
+		try {
+			il.Opencast.UI.waitOverlay.init();
+			xoctGroup.init('{BASE_URL}', '#xoct_groups_container', {IS_ADMIN}, function () {
+				il.Opencast.UI.waitOverlay.show()
+			}, function () {
+				il.Opencast.UI.waitOverlay.hide()
 			});
+			xoctGroup.lngFromJson('{GROUP_LANGUAGE}');
+			xoctGroupParticipant.init('{GP_BASE_URL}', '#xoct_available_participant_container', '#xoct_group_participants_container', function () {
+				il.Opencast.UI.waitOverlay.show()
+			}, function () {
+				il.Opencast.UI.waitOverlay.hide()
+			});
+			xoctGroupParticipant.lngFromJson('{PARTICIPANTS_LANGUAGE}');
 
-		});
+			$('#xoct_add_new').click(function () {
+				var title = $('#group_name').val();
+				xoctGroup.create(title, function () {
+					$('#group_name').val('');
+				});
 
-	});
+			});
+		} catch (err) {
+			console.error(err);
+		}
+	};
 </script>
 <div class="row">
 	<div class="col-xs-4">

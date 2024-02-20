@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\API;
 
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use OpencastApi\Opencast;
 use OpencastApi\Rest\OcRestClient;
 

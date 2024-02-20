@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\Model;
 
 use ActiveRecord;
@@ -33,17 +35,11 @@ class ConfigAR extends ActiveRecord
      * @var array
      */
     protected static $cache_loaded = [];
-    /**
-     * @var bool
-     */
-    protected $ar_safe_read = false;
 
     /**
-     * @param $name
-     *
      * @return mixed
      */
-    public static function getConfig($name)
+    public static function getConfig(string $name)
     {
         if (!self::$cache_loaded[$name]) {
             $obj = new self($name);
@@ -55,10 +51,9 @@ class ConfigAR extends ActiveRecord
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @param mixed $value
      */
-    public static function set($name, $value): void
+    public static function set(string $name, $value): void
     {
         $obj = new self($name);
         $obj->setValue(json_encode($value));
@@ -90,34 +85,22 @@ class ConfigAR extends ActiveRecord
      */
     protected $value;
 
-    /**
-     * @param string $name
-     */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value): void
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }

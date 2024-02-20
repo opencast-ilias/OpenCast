@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 namespace srag\Plugins\Opencast\Model\PermissionTemplate;
@@ -273,12 +275,8 @@ class PermissionTemplate extends ActiveRecord
         return $ACL;
     }
 
-    /**
-     * @param $with_download
-     * @param $with_annotate
-     *
-     */
-    public function getAcls($with_download, $with_annotate): ACL
+
+    public function getAcls(bool $with_download, bool $with_annotate): ACL
     {
         $entries = [];
 
@@ -345,9 +343,6 @@ class PermissionTemplate extends ActiveRecord
         return new ACLEntry($role, $action, true);
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return (int) $this->id;
@@ -492,7 +487,7 @@ class PermissionTemplate extends ActiveRecord
 
     public function getAddedRoleRead(): ?int
     {
-        return $this->added_role_read_access;
+        return $this->added_role_read_access === null ? null : (int) $this->added_role_read_access;
     }
 
     public function setAddedRoleRead(?int $read): void
@@ -502,7 +497,7 @@ class PermissionTemplate extends ActiveRecord
 
     public function getAddedRoleWrite(): ?int
     {
-        return $this->added_role_write_access;
+        return $this->added_role_write_access === null ? null : (int) $this->added_role_write_access;
     }
 
     public function setAddedRoleWrite(?int $write): void

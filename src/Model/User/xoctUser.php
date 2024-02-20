@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\User;
 
 use ilObjUser;
@@ -15,8 +17,6 @@ use xoctException;
  */
 class xoctUser
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     public const MAP_EMAIL = 1;
     public const MAP_EXT_ID = 2;
     public const MAP_LOGIN = 3;
@@ -80,7 +80,7 @@ class xoctUser
      * @return int
      * @throws xoctException
      */
-    public static function lookupUserIdForOwnerRole($role)
+    public static function lookupUserIdForOwnerRole(string $role): ?int
     {
         global $DIC;
         $db = $DIC->database();
@@ -95,7 +95,8 @@ class xoctUser
         $sql = 'SELECT usr_id FROM usr_data WHERE ' . $field . ' = ' . $db->quote($matches[1], 'text');
         $set = $db->query($sql);
 
-        return $db->fetchObject($set)->usr_id;
+        $usr_id = $db->fetchObject($set)->usr_id ?? null;
+        return $usr_id === null ? null : (int) $usr_id;
     }
 
     /**
@@ -262,10 +263,8 @@ class xoctUser
         return self::$user_mapping;
     }
 
-    /**
-     * @param int $user_mapping
-     */
-    public static function setUserMapping($user_mapping): void
+
+    public static function setUserMapping(int $user_mapping): void
     {
         self::$user_mapping = $user_mapping;
     }
@@ -280,9 +279,9 @@ class xoctUser
     /**
      * @return string
      */
-    public function getUserRoleName()
+    public function getUserRoleName(): ?string
     {
-        return $this->getIdentifier() !== '' && $this->getIdentifier() !== '0' ?
+        return !empty($this->getIdentifier()) ?
             str_replace(
                 '{IDENTIFIER}',
                 $this->getIdentifier(),

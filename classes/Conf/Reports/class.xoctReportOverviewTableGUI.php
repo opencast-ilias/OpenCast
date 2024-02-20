@@ -1,26 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Report\Report;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
 
 /**
  * Class xoctReportOverviewTableGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctReportOverviewTableGUI extends TableGUI
+class xoctReportOverviewTableGUI extends ilTable2GUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait;
+    use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
+
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
-    /**
-     * @var ilLanguage
-     */
-    protected $lng;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+    private ilOpenCastPlugin $plugin;
 
     /**
      * xoctReportOverviewTableGUI constructor.
@@ -31,19 +30,20 @@ class xoctReportOverviewTableGUI extends TableGUI
     {
         global $DIC, $opencastContainer;
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->lng = $DIC->language();
-        $this->addMultiCommand(xoctReportOverviewGUI::CMD_DELETE, $this->lng->txt(xoctReportOverviewGUI::CMD_DELETE));
         $this->setSelectAllCheckbox('id[]');
         parent::__construct($parent, $parent_cmd);
+        $this->setFormAction($DIC->ctrl()->getFormAction($parent));
+        $this->addMultiCommand(xoctGUI::CMD_DELETE, $this->getLocaleString(xoctGUI::CMD_DELETE, 'common'));
+        $this->initId();
+        $this->initRowTemplate();
+        $this->initFilter2();
+        $this->initTitle();
+        $this->initData();
     }
 
-    /**
-     * @param array $row
-     *
-     * @return string|void
-     */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    protected function getRowTemplate(): string
     {
+        return $this->plugin->getDirectory() . '/templates/default/' . self::ROW_TEMPLATE;
     }
 
     protected function getSelectableColumns2(): array
@@ -51,31 +51,25 @@ class xoctReportOverviewTableGUI extends TableGUI
         return [];
     }
 
-    /**
-     * @throws \srag\DIC\OpenCast\Exception\DICException
-     */
     protected function initColumns(): void
     {
         $this->addColumn('', '', '', true);
-        $this->addColumn($this->lng->txt('message'));
-        $this->addColumn($this->plugin->txt('sender'));
-        $this->addColumn($this->lng->txt('date'), 'created_at');
+        $this->addColumn($this->getLocaleString('message'));
+        $this->addColumn($this->getLocaleString('sender'));
+        $this->addColumn($this->getLocaleString('date'), 'created_at');
     }
 
-    /**
-     * @throws Exception
-     */
     protected function initData(): void
     {
         $filter_date_from = null;
         $filter_date_to = null;
-        $filter_values = $this->getFilterValues();
-        $filter_sender = $filter_values['sender'];
+        $filter_values = $this->filter;
+        $filter_sender = $filter_values['sender'] ?? '';
         /** @var ilDate $ilDate */
-        if ($ilDate = $filter_values['date_from']) {
+        if ($ilDate = $filter_values['date_from'] ?? null) {
             $filter_date_from = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
-        if ($ilDate = $filter_values['date_to']) {
+        if ($ilDate = $filter_values['date_to'] ?? null) {
             $filter_date_to = $ilDate->get(IL_CAL_DATE, 'Y-m-d H:i:s');
         }
 
@@ -94,9 +88,9 @@ class xoctReportOverviewTableGUI extends TableGUI
 
         $filtered = [];
         foreach ($data as $key => $value) {
-            $value['sender'] = ilObjUser::_lookupLogin($value['user_id']) . ', ' . ilObjUser::_lookupEmail(
-                $value['user_id']
-            );
+            $value['sender'] = ilObjUser::_lookupLogin((int) $value['user_id']) . ', ' . ilObjUser::_lookupEmail(
+                    (int) $value['user_id']
+                );
             if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
                 unset($data[$key]);
             } else {
@@ -107,43 +101,54 @@ class xoctReportOverviewTableGUI extends TableGUI
         $this->setData($filtered);
     }
 
-    /**
-     *
-     */
-    protected function initFilterFields(): void
+    private function initFilter2(): void // ilTable2GUI has it's own initFilter method final
     {
-        $this->filter_fields = [
-            "sender" => [
-                PropertyFormGUI::PROPERTY_CLASS => ilTextInputGUI::class
-            ],
-            "date_from" => [
-                PropertyFormGUI::PROPERTY_CLASS => ilDateTimeInputGUI::class
-            ],
-            "date_to" => [
-                PropertyFormGUI::PROPERTY_CLASS => ilDateTimeInputGUI::class
-            ],
-        ];
+        $this->setFilterCommand(xoctReportOverviewGUI::CMD_APPLY_FILTER);
+        //$this->setDefaultFilterVisiblity(false);
+        //$this->setDisableFilterHiding(false);
+        $this->initFilterFields();
+
+        foreach ($this->filter_fields as $key => $field) {
+            $this->filter_cache[$key] = $item;
+
+            $this->addFilterItem($item);
+
+            if ($this->hasSessionValue($item->getFieldId())) { // Supports filter default values
+                $item->readFromSession();
+            }
+        }
     }
 
-    /**
-     *
-     */
+    protected function initFilterFields(): void
+    {
+        $sender = $this->addFilterItemByMetaType(
+            'sender', self::FILTER_TEXT, false, $this->getLocaleString('sender')
+        );
+        $this->filter['sender'] = $sender->getValue();
+
+        $range = new ilDateDurationInputGUI($this->getLocaleString('event_start'), 'date_range');
+        $range->setAllowOpenIntervals(true);
+        $range->setStartText('');
+        $range->setEndText('');
+        $this->addFilterItem($range, false);
+        $range->readFromSession();
+        $range = $range->getValue();
+        $start = $range['start'] ?? null;
+        $this->filter['date_from'] = $start === null ? null : new ilDateTime($start, IL_CAL_UNIX);
+        $end = $range['end'] ?? null;
+        $this->filter['date_to'] = $end === null ? null : new ilDateTime($end, IL_CAL_UNIX);
+    }
+
     protected function initId(): void
     {
         $this->setId('xoct_reports');
     }
 
-    /**
-     *
-     */
     protected function initTitle(): void
     {
     }
 
-    /**
-     * @param array $row
-     */
-    protected function fillRow($row): void
+    protected function fillRow(array $row): void
     {
         $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();

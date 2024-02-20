@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use ILIAS\Data\DataSize;
@@ -39,7 +41,7 @@ class UploadStorageService
      */
     public function moveUploadToStorage(UploadResult $uploadResult): string
     {
-        $identifier = uniqid('');
+        $identifier = uniqid('', false);
         $this->fileUpload->moveOneFileTo($uploadResult, $this->idToDirPath($identifier), Location::TEMPORARY);
         return $identifier;
     }
@@ -115,9 +117,15 @@ class UploadStorageService
     {
         $metadata = $this->idToFileMetadata($identifier);
         /** TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way to get the path dynamically from the file service */
+        try {
+            $data_size = $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit);
+        } catch (\Throwable $t) {
+            $data_size = new DataSize(0, $fileSizeUnit);
+        }
+
         return [
             'path' => ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $metadata->getPath(),
-            'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),
+            'size' => $data_size,
             'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath()),
             'id' => $identifier
@@ -126,7 +134,7 @@ class UploadStorageService
 
     public function buildACLUploadFile(ACL $acl): xoctUploadFile
     {
-        $tmp_name = uniqid('tmp');
+        $tmp_name = uniqid('tmp', false);
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(

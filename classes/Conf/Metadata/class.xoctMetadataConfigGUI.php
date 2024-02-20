@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory as UIFactory;
@@ -12,14 +14,13 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogueFactory;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\UI\Metadata\Config\MDConfigTable;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
-use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
 use srag\Plugins\Opencast\Model\ListProvider\ListProvider;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use ILIAS\DI\HTTPServices;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
-    use OutputTrait;
     use TranslatorTrait;
     use LocaleTrait;
 
@@ -44,7 +45,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         self::CMD_CONFIRM_LOAD_LIST,
         self::CMD_LOAD_LIST
     ];
-
 
     protected static $listprovider_sources = [
         'license' => 'LICENSES',
@@ -80,10 +80,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      */
     private $ui;
     /**
-     * @var \ILIAS\HTTP\Services
-     */
-    private $http;
-    /**
      * @var \srag\Plugins\Opencast\Model\ListProvider\ListProvider
      */
     private $listprovider;
@@ -102,7 +98,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $ui = $this->dic->ui();
         $this->toolbar = $this->dic->toolbar();
         $this->ui = $this->dic->ui();
-        $this->http = $this->dic->http();
         $this->repository = $repository;
         $this->ui_factory = $ui->factory();
         $this->renderer = $ui->renderer();
@@ -111,9 +106,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->post_ids = $this->http->request()->getParsedBody()['ids'] ?? [];
     }
 
-    /**
-     * @throws xoctException
-     */
+
     public function executeCommand(): void
     {
         $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
@@ -123,11 +116,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->$cmd();
     }
 
-    /**
-     * @throws DICException
-     * @throws ilTemplateException
-     */
-    protected function index()
+
+    protected function index(): void
     {
         $items = [];
         foreach ($this->getAvailableMetadataFields() as $field_id) {
@@ -146,7 +136,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             );
         }
 
-        $this->ui->mainTemplate()->setContent($this->buildTable()->getHTML());
+        $this->main_tpl->setContent($this->buildTable()->getHTML());
     }
 
     protected function buildTable(): MDConfigTable
@@ -160,30 +150,24 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         );
     }
 
-    /**
-     * @throws ilTemplateException
-     * @throws xoctException
-     * @throws DICException
-     */
-    protected function add()
+    protected function add(): void
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $this->initLoadValuesToolbar($field_id, self::CMD_ADD);
         $form = $this->buildForm($field_id);
-        $this->output($this->renderer->render($form));
+        $this->main_tpl->setContent($this->renderer->render($form));
     }
 
     /**
      * @throws xoctException
      * @throws ilTemplateException
-     * @throws DICException
      */
-    protected function edit()
+    protected function edit(): void
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $this->initLoadValuesToolbar($field_id, self::CMD_EDIT);
         $form = $this->buildForm($field_id);
-        $this->output($this->renderer->render($form));
+        $this->main_tpl->setContent($this->renderer->render($form));
     }
 
     /**
@@ -192,7 +176,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
      * @param string $field_id the field id
      * @param string $redirect where to redirect to (either add or edit)
      */
-    protected function initLoadValuesToolbar($field_id, $redirect): void
+    protected function initLoadValuesToolbar(string $field_id, string $redirect): void
     {
         $md_field_def = $this->getMetadataCatalogue()->getFieldById($field_id);
         $md_field_config = $this->repository->findByFieldId($field_id);
@@ -221,7 +205,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $ilConfirmationGUI->setHeaderText($this->plugin->txt('msg_md_confirm_load_list'));
         $ilConfirmationGUI->setConfirm($this->plugin->txt('md_accept'), self::CMD_LOAD_LIST);
         $ilConfirmationGUI->setCancel($this->plugin->txt('md_cancel'), $redirect);
-        $this->ui->mainTemplate()->setContent($ilConfirmationGUI->getHTML());
+        $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 
     /**
@@ -234,32 +218,32 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         $this->ctrl->setParameter($this, 'field_id', $field_id);
         $redirect = filter_input(INPUT_GET, 'redirect', FILTER_SANITIZE_STRING);
         try {
-            if ($this->listprovider->hasList($field_id) && key_exists($field_id, self::$listprovider_sources)) {
+            if ($this->listprovider->hasList($field_id) && array_key_exists($field_id, self::$listprovider_sources)) {
                 $md_field_config = $this->repository->findByFieldId($field_id);
                 $source = self::$listprovider_sources[$field_id];
                 $digested_list = $this->digestList($this->listprovider->getList($source), $field_id);
                 if (!empty($digested_list)) {
                     $separator = MDFieldConfigAR::VALUE_SEPERATOR;
                     $converted_list = array_map(function ($key, $value) use ($separator) {
-                        return "{$key}{$separator}{$value}";
+                        return "$key$separator$value";
                     }, array_keys($digested_list), array_values($digested_list));
                     if (!empty($converted_list)) {
                         $encoded_list = base64_encode(json_encode($converted_list));
                         $this->ctrl->setParameter($this, 'possible_values_list', $encoded_list);
-                        ilUtil::sendSuccess($this->plugin->txt('msg_md_listproviders_load_success'), true);
+                        $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_md_listproviders_load_success'), true);
                     } else {
-                        ilUtil::sendFailure($this->plugin->txt('msg_md_listproviders_load_invalid'), true);
+                        $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt('msg_md_listproviders_load_invalid'), true);
                     }
                 }
             } else {
-                ilUtil::sendFailure($this->plugin->txt('msg_md_listproviders_empty'), true);
+                $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt('msg_md_listproviders_empty'), true);
             }
         } catch (xoctException $ex) {
             $error_message = $ex->getMessage();
             if ($ex->getCode() == 403) {
                 $error_message = $this->plugin->txt('msg_md_listproviders_no_access');
             }
-            ilUtil::sendFailure($error_message, true);
+            $this->main_tpl->setOnScreenMessage('failure', $error_message, true);
         }
 
         $this->ctrl->redirect($this, $redirect);
@@ -268,7 +252,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     /**
      * Converts or better say digest the loaded list and replaces the translation to be processed by the plugin.
      *
-     * @param array $raw_list the raw list that comes from the listprovider endpoints
+     * @param array  $raw_list the raw list that comes from the listprovider endpoints
      * @param string $field_id the field id to differentiate between the list type
      *
      * @return array of digested list.
@@ -306,37 +290,31 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                     );
                     $digested[$key] = $translated;
                 }
-                continue;
             }
         }
         return $digested;
     }
 
-    /**
-     * @throws xoctException
-     * @throws ilTemplateException
-     * @throws DICException
-     */
-    protected function store()
+    protected function store(): void
     {
         $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
         $form = $this->buildForm($field_id)->withRequest($this->http->request());
         $data = $form->getData();
         if (is_null($data)) {
-            $this->dic->ui()->mainTemplate()->setContent($this->renderer->render($form));
+            $this->main_tpl->setContent($this->renderer->render($form));
             return;
         }
         $this->repository->storeFromArray($data['fields']);
-        ilUtil::sendSuccess($this->plugin->txt('msg_success'), true);
+        $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
         // TODO: Implement confirmDelete() method.
     }
 
-    protected function delete()
+    protected function delete(): void
     {
         $field_id = $this->dic->http()->request()->getQueryParams()['field_id'];
         $this->repository->delete($field_id);
@@ -356,11 +334,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     abstract protected function getMetadataCatalogue(): MDCatalogue;
 
-    /**
-     * @param string $cmd
-     * @throws DICException
-     * @throws xoctException
-     */
+
     protected function buildForm(string $field_id): Standard
     {
         $this->ctrl->setParameter($this, 'field_id', $field_id);
@@ -370,27 +344,27 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             'field_id' => $this->ui_factory->input()->field()->text(
                 $this->plugin->txt('md_field_id')
             )
-                ->withDisabled(true)
-                ->withValue($field_id)
-                ->withRequired(true),
+                                           ->withDisabled(true)
+                                           ->withValue($field_id)
+                                           ->withRequired(true),
             'title_de' => $this->ui_factory->input()->field()->text(
                 $this->plugin->txt('md_title_de')
             )
-                ->withRequired(true)
-                ->withValue(
-                    $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
-                        'de'
-                    ) : ''
-                ),
+                                           ->withRequired(true)
+                                           ->withValue(
+                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                                   'de'
+                                               ) : ''
+                                           ),
             'title_en' => $this->ui_factory->input()->field()->text(
                 $this->plugin->txt('md_title_en')
             )
-                ->withRequired(true)
-                ->withValue(
-                    $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
-                        'en'
-                    ) : ''
-                ),
+                                           ->withRequired(true)
+                                           ->withValue(
+                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                                   'en'
+                                               ) : ''
+                                           ),
             'visible_for_permissions' => $this->ui_factory->input()->field()->select(
                 $this->plugin->txt('md_visible_for_permissions'),
                 [
@@ -398,37 +372,42 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                     MDFieldConfigAR::VISIBLE_ADMIN => $this->plugin->txt('md_visible_admin')
                 ]
             )->withRequired(true)
-                ->withValue(
-                    $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getVisibleForPermissions(
-                    ) : null
-                ),
+                                                          ->withValue(
+                                                              $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getVisibleForPermissions(
+                                                              ) : null
+                                                          ),
             'required' => $this->ui_factory->input()->field()->checkbox(
                 $this->plugin->txt('md_required')
             )
-                ->withDisabled(
-                    $md_field_def->isRequired() || $md_field_def->isReadOnly()
-                )
-                ->withValue(
-                    $md_field_def->isRequired(
-                    ) || ($md_field_config && $md_field_config->isRequired())
-                ),
-                'read_only' => $this->ui_factory->input()->field()->checkbox(
+                                           ->withDisabled(
+                                               $md_field_def->isRequired() || $md_field_def->isReadOnly()
+                                           )
+                                           ->withValue(
+                                               $md_field_def->isRequired(
+                                               ) || ($md_field_config && $md_field_config->isRequired())
+                                           ),
+            'read_only' => $this->ui_factory->input()->field()->checkbox(
                 $this->plugin->txt('md_read_only')
             )
-                ->withDisabled($md_field_def->isReadOnly())
-                ->withValue(
-                    $md_field_def->isReadOnly(
-                    ) || ($md_field_config && $md_field_config->isReadOnly())
-                )
+                                            ->withDisabled($md_field_def->isReadOnly())
+                                            ->withValue(
+                                                $md_field_def->isReadOnly(
+                                                ) || ($md_field_config && $md_field_config->isReadOnly())
+                                            )
         ];
 
         // When the data type is selection, we only provide possible values.
         if ($md_field_def->getType()->getTitle() === MDDataType::TYPE_TEXT_SELECTION) {
-            $info = vsprintf($this->plugin->txt('md_values_info'),
+            $info = vsprintf(
+                $this->plugin->txt('md_values_info'),
                 array_fill(0, 3, MDFieldConfigAR::VALUE_SEPERATOR)
             );
             $values = $md_field_config instanceof MDFieldConfigAR ? $md_field_config->getValuesAsEditableString() : '';
-            if ($encoded_possible_values_list = filter_input(INPUT_GET, 'possible_values_list', FILTER_SANITIZE_STRING)) {
+            if ($encoded_possible_values_list = filter_input(
+                INPUT_GET,
+                'possible_values_list',
+                FILTER_SANITIZE_STRING
+            )) {
                 $decoded_list = base64_decode($encoded_possible_values_list);
                 $possible_values_list = implode("\n", json_decode($decoded_list, true));
                 $values = $possible_values_list;
@@ -437,35 +416,62 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $this->plugin->txt('md_values'),
                 $info
             )
-                ->withValue($values)
-                ->withRequired(true)
-                ->withDisabled($md_field_def->isReadOnly());
+                                                 ->withValue($values)
+                                                 ->withRequired(true)
+                                                 ->withDisabled($md_field_def->isReadOnly());
         } else {
             // Other mds with different data types other than selection, we provide prefill.
             $fields['prefill'] = $this->ui_factory->input()->field()->text(
-                        $this->plugin->txt('md_prefill')
-                    )
-                ->withValue($md_field_config instanceof MDFieldConfigAR ? $md_field_config->getPrefill() : '')
-                ->withByline(
-                    $this->translate('prefill_info', 'md', [
-                        '['. MDPrefiller::USER_PLACEHOLDER_FLAG  . '.' .
-                            strtoupper(array_keys(MDPrefiller::$user_properties)[0]) . '], [' .
-                            MDPrefiller::USER_PLACEHOLDER_FLAG  . '.' .
-                            strtoupper(array_keys(MDPrefiller::$user_properties)[1]) . ']',
-                            MDPrefiller::USER_PLACEHOLDER_FLAG,
-                            MDPrefiller::COURSE_PLACEHOLDER_FLAG,
-                            MDPrefiller::MD_PLACEHOLDER_FLAG,
-                            MDPrefiller::COURSE_PLACEHOLDER_FLAG,
-                            implode(', ', array_map('strtoupper', array_keys(MDPrefiller::$course_properties))),
-                            MDPrefiller::USER_PLACEHOLDER_FLAG,
-                            implode(', ', array_map('strtoupper', array_keys(MDPrefiller::$user_properties))),
-                            MDPrefiller::MD_PLACEHOLDER_FLAG,
-                            implode(', ', array_map('strtoupper', array_keys(MDPrefiller::$md_properties))),
-                            MDPrefiller::MD_PLACEHOLDER_FLAG,
-                            '['. MDPrefiller::MD_PLACEHOLDER_FLAG  . '.' .
-                            strtoupper(array_keys(MDPrefiller::$md_properties)[0]) . '.1]',
-                    ])
-            );
+                $this->plugin->txt('md_prefill')
+            )
+                                                  ->withValue(
+                                                      $md_field_config instanceof MDFieldConfigAR ? $md_field_config->getPrefill(
+                                                      ) : ''
+                                                  )
+                                                  ->withByline(
+                                                      $this->translate('prefill_info', 'md', [
+                                                          '[' . MDPrefiller::USER_PLACEHOLDER_FLAG . '.' .
+                                                          strtoupper(
+                                                              array_keys(MDPrefiller::$user_properties)[0]
+                                                          ) . '], [' .
+                                                          MDPrefiller::USER_PLACEHOLDER_FLAG . '.' .
+                                                          strtoupper(
+                                                              array_keys(MDPrefiller::$user_properties)[1]
+                                                          ) . ']',
+                                                          MDPrefiller::USER_PLACEHOLDER_FLAG,
+                                                          MDPrefiller::COURSE_PLACEHOLDER_FLAG,
+                                                          MDPrefiller::MD_PLACEHOLDER_FLAG,
+                                                          MDPrefiller::COURSE_PLACEHOLDER_FLAG,
+                                                          implode(
+                                                              ', ',
+                                                              array_map(
+                                                                  'strtoupper',
+                                                                  array_keys(MDPrefiller::$course_properties)
+                                                              )
+                                                          ),
+                                                          MDPrefiller::USER_PLACEHOLDER_FLAG,
+                                                          implode(
+                                                              ', ',
+                                                              array_map(
+                                                                  'strtoupper',
+                                                                  array_keys(MDPrefiller::$user_properties)
+                                                              )
+                                                          ),
+                                                          MDPrefiller::MD_PLACEHOLDER_FLAG,
+                                                          implode(
+                                                              ', ',
+                                                              array_map(
+                                                                  'strtoupper',
+                                                                  array_keys(MDPrefiller::$md_properties)
+                                                              )
+                                                          ),
+                                                          MDPrefiller::MD_PLACEHOLDER_FLAG,
+                                                          '[' . MDPrefiller::MD_PLACEHOLDER_FLAG . '.' .
+                                                          strtoupper(
+                                                              array_keys(MDPrefiller::$md_properties)[0]
+                                                          ) . '.1]',
+                                                      ])
+                                                  );
         }
 
         return $this->ui_factory->input()->container()->form()->standard(
@@ -481,11 +487,11 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         );
     }
 
-    protected function create()
+    protected function create(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
@@ -502,6 +508,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $sort++;
             }
         }
-        exit;
+        $this->closeResponse();
     }
 }

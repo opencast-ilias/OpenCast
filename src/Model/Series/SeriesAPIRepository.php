@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Series;
 
 use ilException;
@@ -44,7 +46,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
     /**
      * @var MDParser
      */
-    private $MDParser;
+    private $md_parser;
     /**
      * @var API
      */
@@ -63,7 +65,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
         $this->metadataFactory = $metadataFactory;
-        $this->MDParser = $MDParser;
+        $this->md_parser = $MDParser;
     }
 
     public function getContainerKey(): string
@@ -101,7 +103,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
             $this->cache->set($key, $data);
         }
-        return $this->MDParser->parseAPIResponseSeries($data);
+        return $this->md_parser->parseAPIResponseSeries($data);
     }
 
     public function create(CreateSeriesRequest $request): ?string
@@ -153,11 +155,15 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $data = $this->cache->get($user_string);
         } else {
             try {
-                $data = $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
+                $data = (array)$this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
                     'onlyWithWriteAccess' => true,
                     'withacl' => true,
                     'limit' => 5000
                 ]);
+                $data = array_filter($data, static function ($series) {
+                    return $series instanceof \stdClass;
+                });
+
             } catch (ilException $e) {
                 $data = [];
             }
@@ -177,7 +183,6 @@ class SeriesAPIRepository implements SeriesRepository, Request
                 continue;
             }
         }
-
 
         return $return;
     }

@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\GUI;
 
-use arException;
 use ilObjUser;
 use ilOpenCastPlugin;
 use ilTemplate;
-use ilTemplateException;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
 
 /**
@@ -17,8 +17,6 @@ use srag\Plugins\Opencast\Chat\Model\MessageAR;
  */
 class ChatHistoryGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     /**
      * @var integer
      */
@@ -45,17 +43,10 @@ class ChatHistoryGUI
         $this->chat_room_id = $chat_room_id;
     }
 
-    /**
-     * @param bool $async
-     *
-     * @return string
-     * @throws DICException
-     * @throws arException
-     * @throws ilTemplateException
-     */
-    public function render($async = false)
+
+    public function render(bool $async = false): string
     {
-        $template = new ilTemplate($this->plugin->getDirectory() . '/src/Chat/GUI/templates/history.html', true, true);
+        $template = new ilTemplate($this->plugin->getDirectory() . '/templates/default/Chat/history.html', true, true);
         $users = [];
         foreach (
             MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message

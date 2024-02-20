@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI\Modal;
 
-use ilHiddenInputGUI;
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Component\Modal\RoundTrip;
 use ilOpenCastPlugin;
-use ilPropertyFormGUI;
-use ilSelectInputGUI;
 use ilTemplate;
 use ilTemplateException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -73,18 +72,25 @@ class EventModals
                 $this->dic->ctrl()->getFormAction($this->parent_gui, $this->parent_gui::CMD_START_WORKFLOW)
             );
 
-
             $workflow_options = $this->workflow_repository->buildWorkflowSelectOptions();
             $tpl->setVariable('WORKFLOW_OPTIONS', $workflow_options);
 
             // Descriptions.
-            $description_section_tpl = new ilTemplate("tpl.startworkflow_description_section.html",
-                true, true, $this->plugin->getDirectory());
+            $description_section_tpl = new ilTemplate(
+                "tpl.startworkflow_description_section.html",
+                true,
+                true,
+                $this->plugin->getDirectory()
+            );
             $description_blocks = [];
             $workflow_selection_array = $this->workflow_repository->getWorkflowSelectionArray();
             foreach ($this->workflow_repository->getFilteredWorkflowsArray() as $workflow) {
-                $description_block_tpl = new ilTemplate("tpl.startworkflow_description_block.html",
-                    true, true, $this->plugin->getDirectory());
+                $description_block_tpl = new ilTemplate(
+                    "tpl.startworkflow_description_block.html",
+                    true,
+                    true,
+                    $this->plugin->getDirectory()
+                );
                 $description = $workflow->getDescription();
                 $id = $workflow->getId();
                 $header = $workflow_selection_array[$id] ?? $this->plugin->txt('workflow_description_section_header');
@@ -101,14 +107,24 @@ class EventModals
             }
 
             // Configuration Panel
-            $configpanel_section_tpl = new ilTemplate("tpl.startworkflow_configpanel_section.html",
-                true, true, $this->plugin->getDirectory());
-            $configpanel_section_tpl->setVariable('HEADER',
-                $this->plugin->txt('workflow_configpanel_section_header'));
+            $configpanel_section_tpl = new ilTemplate(
+                "tpl.startworkflow_configpanel_section.html",
+                true,
+                true,
+                $this->plugin->getDirectory()
+            );
+            $configpanel_section_tpl->setVariable(
+                'HEADER',
+                $this->plugin->txt('workflow_configpanel_section_header')
+            );
             $configpanel_blocks = [];
             foreach ($this->workflow_repository->parseConfigPanels() as $id => $configpanel) {
-                $configpanel_block_tpl = new ilTemplate("tpl.startworkflow_configpanel_block.html",
-                    true, true, $this->plugin->getDirectory());
+                $configpanel_block_tpl = new ilTemplate(
+                    "tpl.startworkflow_configpanel_block.html",
+                    true,
+                    true,
+                    $this->plugin->getDirectory()
+                );
                 $configpanel_block_tpl->setVariable('BLOCK_ID', $id);
                 $configpanel_block_tpl->setVariable('CONFIGPANEL_BLOCK', $configpanel);
                 $configpanel_blocks[] = $configpanel_block_tpl->get();
@@ -119,8 +135,14 @@ class EventModals
             }
 
             // Error messages.
-            $tpl->setVariable('NO_WORKFLOW_SELECTED_ERROR_TEXT', $this->plugin->txt('msg_startworkflow_no_workflow_seleced'));
-            $tpl->setVariable('CONFIG_PANEL_REQUIRED_ERROR_TEXT', $this->plugin->txt('msg_startworkflow_required_config_panel_item'));
+            $tpl->setVariable(
+                'NO_WORKFLOW_SELECTED_ERROR_TEXT',
+                $this->plugin->txt('msg_startworkflow_no_workflow_seleced')
+            );
+            $tpl->setVariable(
+                'CONFIG_PANEL_REQUIRED_ERROR_TEXT',
+                $this->plugin->txt('msg_startworkflow_required_config_panel_item')
+            );
 
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
                                     ->withOnLoadCode(function ($id) use ($form_submit_btn_id): string {
@@ -173,7 +195,7 @@ class EventModals
     {
         $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->plugin->getDirectory());
 
-        $form_id = uniqid('form');
+        $form_id = uniqid('form', false);
         $tpl->setVariable('FORM_ID', $form_id);
         $tpl->setVariable('FORM_ACTION', $this->dic->ctrl()->getFormAction($this->parent_gui, $cmd));
         $tpl->setVariable('BODY', $body);

@@ -19,10 +19,7 @@
   "require": {
     "php": ">=7.3",
     "elan-ev/opencast-api": "1.5",
-    "srag/custominputguis": ">=0.1.0",
-    "srag/datatable": ">=0.1.0",
-    "srag/dic": ">=0.1.0",
-    "srag/librariesnamespacechanger": ">=0.1.0"
+    "ext-dom": "*"
   },
   "autoload": {
     "exclude-from-classmap": ["vendor/guzzlehttp/", "vendor/ralouphie/", "vendor/psr/http-message", "vendor/psr/http-factory", "vendor/psr/http-client"],
@@ -38,8 +35,6 @@
   },
   "scripts": {
     "pre-autoload-dump": [
-      "srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger::rewriteLibrariesNamespaces",
-      "srag\\LibrariesNamespaceChanger\\PHP72Backport::PHP72Backport"
     ]
   },
   "require-dev": {

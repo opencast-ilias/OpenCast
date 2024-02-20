@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication\Config;
 
 /**
@@ -20,7 +22,9 @@ class PublicationUsageGroupRepository
         if (empty($sub_ids)) {
             $list = PublicationUsageGroup::orderBy(PublicationUsageGroup::SORT_BY)->getArray();
         } else {
-            $list = PublicationUsageGroup::where(['id' => $sub_ids], 'IN')->orderBy(PublicationUsageGroup::SORT_BY)->getArray();
+            $list = PublicationUsageGroup::where(['id' => $sub_ids], 'IN')->orderBy(
+                PublicationUsageGroup::SORT_BY
+            )->getArray();
         }
 
         return $list;

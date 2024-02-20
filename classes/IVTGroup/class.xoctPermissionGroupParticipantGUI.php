@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 
@@ -44,9 +46,9 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
     }
 
     /**
-     * @param $cmd
+     * @param string $cmd
      */
-    protected function performCommand($cmd)
+    protected function performCommand(string $cmd): void
     {
         if (in_array($cmd, self::$admin_commands)) {
             $access = ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_MANAGE_IVT_GROUPS);
@@ -54,7 +56,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
             $access = ilObjOpenCastAccess::hasPermission('read');
         }
         if (!$access) {
-            ilUtil::sendFailure('No access.');
+            $this->main_tpl->setOnScreenMessage('failure', 'No access.');
             $this->ctrl->redirectByClass('xoctEventGUI');
         }
         parent::performCommand($cmd);
@@ -64,18 +66,16 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
      * @param $data
      * @return never
      */
-    protected function outJson($data)
+    protected function outJson($data): void
     {
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        $this->sendJsonResponse(json_encode($data));
     }
 
-    protected function index()
+    protected function index(): void
     {
     }
 
-    protected function getAvailable()
+    protected function getAvailable(): void
     {
         $data = [];
         /**
@@ -83,11 +83,11 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
          */
         foreach (
             PermissionGroupParticipant::getAvailable(
-                $_GET['ref_id'],
-                $_GET['group_id']
+                (int) $this->http->request()->getQueryParams()['ref_id'],
+                (int) $this->http->request()->getQueryParams()['group_id']
             ) as $xoctGroupParticipant
         ) {
-            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass = $xoctGroupParticipant->asStdClass();
             $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation(
                 ilObjOpenCastAccess::hasWriteAccess()
             );
@@ -99,10 +99,10 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         $this->outJson($data);
     }
 
-    protected function getPerGroup()
+    protected function getPerGroup(): void
     {
         $data = [];
-        $group_id = $_GET['group_id'];
+        $group_id = $this->http->request()->getQueryParams()['group_id'];
         if (!$group_id) {
             $this->outJson(null);
         }
@@ -110,7 +110,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
          * @var $xoctGroupParticipant PermissionGroupParticipant
          */
         foreach (PermissionGroupParticipant::where(['group_id' => $group_id])->get() as $xoctGroupParticipant) {
-            $stdClass = $xoctGroupParticipant->__asStdClass();
+            $stdClass = $xoctGroupParticipant->asStdClass();
             $stdClass->name = $xoctGroupParticipant->getXoctUser()->getNamePresentation();
             $data[] = $stdClass;
         }
@@ -120,40 +120,43 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         $this->outJson($data);
     }
 
-    protected function add()
+    protected function add(): void
     {
     }
 
-    protected function create()
+    protected function create(): void
     {
-        if (!$_POST['user_id'] || !$_POST['group_id']) {
+        if (
+            !$this->http->request()->getParsedBody()['user_id']
+            || !$this->http->request()->getParsedBody()['group_id']
+        ) {
             $this->outJson(false);
         }
-        $xoctGroupParticipant = new PermissionGroupParticipant();
-        $xoctGroupParticipant->setUserId($_POST['user_id']);
-        $xoctGroupParticipant->setGroupId($_POST['group_id']);
-        $xoctGroupParticipant->create();
+        $group_participant = new PermissionGroupParticipant();
+        $group_participant->setUserId((int) $this->http->request()->getParsedBody()['user_id']);
+        $group_participant->setGroupId((int) $this->http->request()->getParsedBody()['group_id']);
+        $group_participant->create();
         $this->outJson(true);
     }
 
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
-    protected function delete()
+    protected function delete(): void
     {
-        if (!$_POST['id'] || !$_POST['group_id']) {
+        if (!$this->http->request()->getParsedBody()['id'] || !$this->http->request()->getParsedBody()['group_id']) {
             $this->outJson(false);
         }
-        $o = PermissionGroupParticipant::where(['user_id' => $_POST['id'], 'group_id' => $_POST['group_id']])->first();
+        $o = PermissionGroupParticipant::where(['user_id' => $this->http->request()->getParsedBody()['id'], 'group_id' => $this->http->request()->getParsedBody()['group_id']])->first();
         $o->delete();
         $this->outJson(true);
     }

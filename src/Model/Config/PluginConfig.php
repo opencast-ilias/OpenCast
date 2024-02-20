@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Config;
 
 use ActiveRecord;
@@ -21,7 +23,6 @@ use xoctCurlSettings;
 use xoctLog;
 use xoctRequest;
 use xoctRequestSettings;
-use srag\Plugins\Opencast\API\OpencastAPI;
 
 /**
  * Class xoctConf
@@ -180,19 +181,19 @@ class PluginConfig extends ActiveRecord
         xoctLog::init(self::getConfig(self::F_CURL_DEBUG_LEVEL));
 
         // USER
-        xoctUser::setUserMapping(self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN);
+        xoctUser::setUserMapping((int) (self::getConfig(self::F_USER_MAPPING) ?: xoctUser::MAP_LOGIN));
     }
 
     public static function importFromXML(string $xml_file_path): void
     {
-        $domxml = new DOMDocument('1.0', 'UTF-8');
-        $domxml->loadXML(file_get_contents($xml_file_path));
+        $dom_xml = new DOMDocument('1.0', 'UTF-8');
+        $dom_xml->loadXML(file_get_contents($xml_file_path));
 
         /**
          * @var $node DOMElement
          */
-        $xoct_confs = $domxml->getElementsByTagName('xoct_conf');
-        foreach ($xoct_confs as $node) {
+        $configuration_nodes = $dom_xml->getElementsByTagName('xoct_conf');
+        foreach ($configuration_nodes as $node) {
             $name = $node->getElementsByTagName('name')->item(0)->nodeValue;
             $value = $node->getElementsByTagName('value')->item(0)->nodeValue;
             if ($name) {
@@ -206,7 +207,7 @@ class PluginConfig extends ActiveRecord
         /**
          * @var $xoctMDFieldConfigEventAR MDFieldConfigEventAR
          */
-        $xoct_md_field_event = $domxml->getElementsByTagName('xoct_md_field_event');
+        $xoct_md_field_event = $dom_xml->getElementsByTagName('xoct_md_field_event');
 
         // Clear MDFieldConfigEventAR
         MDFieldConfigEventAR::flushDB();
@@ -223,14 +224,16 @@ class PluginConfig extends ActiveRecord
             $xoctMDFieldConfigEventAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
-            $xoctMDFieldConfigEventAR->setValuesFromEditableString($node->getElementsByTagName('values')->item(0)->nodeValue ?? '');
+            $xoctMDFieldConfigEventAR->setValuesFromEditableString(
+                $node->getElementsByTagName('values')->item(0)->nodeValue ?? ''
+            );
             $xoctMDFieldConfigEventAR->store();
         }
 
         /**
          * @var $xoctMDFieldConfigSeriesAR MDFieldConfigSeriesAR
          */
-        $xoct_md_field_series = $domxml->getElementsByTagName('xoct_md_field_series');
+        $xoct_md_field_series = $dom_xml->getElementsByTagName('xoct_md_field_series');
 
         // Clear MDFieldConfigSeriesAR
         MDFieldConfigSeriesAR::flushDB();
@@ -247,14 +250,16 @@ class PluginConfig extends ActiveRecord
             $xoctMDFieldConfigSeriesAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
-            $xoctMDFieldConfigSeriesAR->setValuesFromEditableString($node->getElementsByTagName('values')->item(0)->nodeValue ?? '');
+            $xoctMDFieldConfigSeriesAR->setValuesFromEditableString(
+                $node->getElementsByTagName('values')->item(0)->nodeValue ?? ''
+            );
             $xoctMDFieldConfigSeriesAR->store();
         }
 
         /**
          * @var $xoctWorkflowParameter WorkflowParameter
          */
-        $xoct_workflow_parameter = $domxml->getElementsByTagName('xoct_workflow_parameter');
+        $xoct_workflow_parameter = $dom_xml->getElementsByTagName('xoct_workflow_parameter');
 
         foreach ($xoct_workflow_parameter as $node) {
             $id = $node->getElementsByTagName('id')->item(0)->nodeValue;
@@ -281,7 +286,7 @@ class PluginConfig extends ActiveRecord
         /**
          * @var $xoctWorkflowParameter WorkflowParameter
          */
-        $xoct_workflow = $domxml->getElementsByTagName('xoct_workflow');
+        $xoct_workflow = $dom_xml->getElementsByTagName('xoct_workflow');
 
         // We need to reset the workflow table.
         WorkflowAR::flushDB();
@@ -299,7 +304,7 @@ class PluginConfig extends ActiveRecord
         /**
          * @var $xoctPublicationUsage PublicationUsage
          */
-        $xoct_publication_usage = $domxml->getElementsByTagName('xoct_publication_usage');
+        $xoct_publication_usage = $dom_xml->getElementsByTagName('xoct_publication_usage');
 
         // We need to reset the main usages, otherwise we end with an already filled unwanted usages!
         PublicationUsage::flushDB();
@@ -338,7 +343,7 @@ class PluginConfig extends ActiveRecord
         /**
          * @var $xoctPublicationSubUsage PublicationSubUsage
          */
-        $xoct_publication_sub_usage = $domxml->getElementsByTagName('xoct_publication_sub_usage');
+        $xoct_publication_sub_usage = $dom_xml->getElementsByTagName('xoct_publication_sub_usage');
 
         // We need to reset the subs.
         PublicationSubUsage::flushDB();
@@ -349,13 +354,17 @@ class PluginConfig extends ActiveRecord
                 continue;
             }
             $xoctPublicationSubUsage = PublicationSubUsage::findOrGetInstance(0);
-            $xoctPublicationSubUsage->setParentUsageId($node->getElementsByTagName('parent_usage_id')->item(0)->nodeValue);
+            $xoctPublicationSubUsage->setParentUsageId(
+                $node->getElementsByTagName('parent_usage_id')->item(0)->nodeValue
+            );
             $xoctPublicationSubUsage->setTitle($node->getElementsByTagName('title')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setDescription($node->getElementsByTagName('description')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setChannel($node->getElementsByTagName('channel')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setFlavor($node->getElementsByTagName('flavor')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setTag($node->getElementsByTagName('tag')->item(0)->nodeValue ?: '');
-            $xoctPublicationSubUsage->setSearchKey($node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor');
+            $xoctPublicationSubUsage->setSearchKey(
+                $node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor'
+            );
             $xoctPublicationSubUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue);
             $xoctPublicationSubUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue);
@@ -371,7 +380,7 @@ class PluginConfig extends ActiveRecord
         /**
          * @var $xoctPublicationUsageGroup PublicationUsageGroup
          */
-        $xoct_publication_usage_groups = $domxml->getElementsByTagName('xoct_publication_usage_group');
+        $xoct_publication_usage_groups = $dom_xml->getElementsByTagName('xoct_publication_usage_group');
 
         // We need to remove the publication usage groups no matter what!
         PublicationUsageGroup::flushDB();
@@ -410,7 +419,7 @@ class PluginConfig extends ActiveRecord
         $xml_info = $config->appendChild(new DOMElement('info'));
         $xml_info->appendChild(new DOMElement('plugin_version', $opencast_plugin->getVersion()));
         $xml_info->appendChild(new DOMElement('plugin_db_version', $opencast_plugin->getDBVersion()));
-        $xml_info->appendChild(new DOMElement('config_version', PluginConfig::getConfig(PluginConfig::CONFIG_VERSION)));
+        $xml_info->appendChild(new DOMElement('config_version', PluginConfig::getConfig(PluginConfig::F_CONFIG_VERSION)));
 
         // xoctConf
         $xml_xoctConfs = $config->appendChild(new DOMElement('xoct_confs'));
@@ -425,7 +434,6 @@ class PluginConfig extends ActiveRecord
             $value = is_array($value) ? json_encode($value) : $value;
             $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
         }
-
 
         // xoctMDFieldConfigEventARs
         $xml_xoctMDFieldConfigEventARs = $config->appendChild(new DOMElement('xoct_md_field_events'));
@@ -652,7 +660,9 @@ class PluginConfig extends ActiveRecord
          */
         foreach (PublicationUsageGroup::get() as $xoctPublicationUsageGroup) {
             $xml_xoctPUG = $xml_xoctPublicationUsageGroups->appendChild(new DOMElement('xoct_publication_usage_group'));
-            $xml_xoctPUG->appendChild(new DOMElement('id'))->appendChild(new DOMCdataSection($xoctPublicationUsageGroup->getId()));
+            $xml_xoctPUG->appendChild(new DOMElement('id'))->appendChild(
+                new DOMCdataSection($xoctPublicationUsageGroup->getId())
+            );
             $xml_xoctPUG->appendChild(new DOMElement('name'))->appendChild(
                 new DOMCdataSection($xoctPublicationUsageGroup->getName())
             );
@@ -675,10 +685,6 @@ class PluginConfig extends ActiveRecord
      * @var array
      */
     protected static $cache_loaded = [];
-    /**
-     * @var bool
-     */
-    protected $ar_safe_read = false;
 
     public static function isConfigUpToDate(): bool
     {
@@ -691,14 +697,13 @@ class PluginConfig extends ActiveRecord
     }
 
     /**
-     * @param $name
      * @return mixed
      */
-    public static function getConfig($name)
+    public static function getConfig(string $name)
     {
-        if (!self::$cache_loaded[$name]) {
-            $obj = new self($name);
+        if (!(self::$cache_loaded[$name] ?? false)) {
             try {
+                $obj = new self($name);
                 self::$cache[$name] = json_decode($obj->getValue());
                 self::$cache_loaded[$name] = true;
             } catch (\Exception $e) {
@@ -710,12 +715,17 @@ class PluginConfig extends ActiveRecord
     }
 
     /**
-     * @param $name
      * @param $value
      */
-    public static function set($name, $value): void
+    public static function set(string $name, $value): void
     {
-        $obj = new self($name);
+        try {
+            $obj = new self($name);
+        } catch (\Throwable $t) {
+            $obj = new self();
+            $obj->setName($name);
+        }
+
 
         /*
          * If the terms of use have been updated,
@@ -754,34 +764,22 @@ class PluginConfig extends ActiveRecord
      */
     protected $value;
 
-    /**
-     * @param string $name
-     */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value): void
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
-    public function getValue()
+    public function getValue(): ?string
     {
         return $this->value;
     }

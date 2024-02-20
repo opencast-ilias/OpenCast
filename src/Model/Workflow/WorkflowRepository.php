@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Workflow;
 
 /**
@@ -14,9 +16,10 @@ interface WorkflowRepository
     public function anyWorkflowExists(): bool;
 
     /**
+     * @param bool $as_array
      * @return WorkflowAR[]
      */
-    public function getAllWorkflows(): array;
+    public function getAllWorkflows(bool $as_array): array;
 
     /**
      * @param null $key
@@ -24,8 +27,14 @@ interface WorkflowRepository
      */
     public function getAllWorkflowsAsArray($key = null, $values = null): array;
 
-    public function store(string $workflow_id, string $title, string $description,
-        string $tags, string $config_panel, int $id = 0);
+    public function store(
+        string $workflow_id,
+        string $title,
+        string $description,
+        string $tags,
+        string $config_panel,
+        int $id = 0
+    );
 
     public function exists(string $workflow_id): bool;
 
@@ -48,14 +57,22 @@ interface WorkflowRepository
      * @return array
      * @throws xoctException
      */
-    public function getWorkflowsFromOpencastApi(array $filter = [], bool $with_configuration_panel = false,
-        bool $with_tags = false): array;
+    public function getWorkflowsFromOpencastApi(
+        array $filter = [],
+        bool $with_configuration_panel = false,
+        bool $with_tags = false
+    ): array;
 
     /**
      * @return WorkflowAR
      */
-    public function createOrUpdate(string $workflow_id, string $title, string $description,
-        string $tags = '', string $config_panel = ''): WorkflowAR;
+    public function createOrUpdate(
+        string $workflow_id,
+        string $title,
+        string $description,
+        string $tags = '',
+        string $config_panel = ''
+    ): WorkflowAR;
 
     /**
      * @return array
@@ -93,5 +110,5 @@ interface WorkflowRepository
     /**
      * @return array
      */
-    public function getConfigPanelAsArrayById(string $id): array;
+    public function getConfigPanelAsArrayById(int $id): array;
 }

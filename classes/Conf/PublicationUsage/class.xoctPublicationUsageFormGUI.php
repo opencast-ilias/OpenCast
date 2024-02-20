@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctPublicationUsageFormGUI
@@ -12,8 +15,19 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
  */
 class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 {
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
+    }
+
+    /**
+     * @var bool
+     */
     public $is_new;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
 
     public const F_USAGE_ID = 'usage_id';
     public const F_TITLE = 'title';
@@ -50,10 +64,12 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 
     /**
      * @param xoctPublicationUsageGUI $parent_gui
-     * @param PublicationUsage        $xoctPublicationUsage
+     * @param PublicationUsage        $publication_usage
      */
-    public function __construct($parent_gui, $xoctPublicationUsage)
-    {
+    public function __construct(
+        xoctPublicationUsageGUI $parent_gui,
+        PublicationUsage $publication_usage
+    ) {
         global $DIC;
         $ctrl = $DIC->ctrl();
         $this->container = OpencastDIC::getInstance();
@@ -63,7 +79,7 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         );
         $DIC->ui()->mainTemplate()->addOnLoadCode('il.Opencast.Form.publicationUsage.init()');
         parent::__construct();
-        $this->object = $xoctPublicationUsage;
+        $this->object = $publication_usage;
         $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
         $ctrl->saveParameter($parent_gui, xoctPublicationUsageGUI::IDENTIFIER);
@@ -71,71 +87,69 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->initForm();
     }
 
-    /**
-     *
-     */
-    protected function initForm()
+    protected function initForm(): void
     {
         $this->setTarget('_top');
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_USAGE_ID), self::F_USAGE_ID);
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_USAGE_ID), self::F_USAGE_ID);
         $te->setRequired(true);
         $te->setDisabled(true);
         $this->addItem($te);
 
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_TITLE), self::F_TITLE);
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_TITLE), self::F_TITLE);
         $te->setRequired(true);
         $this->addItem($te);
 
         // F_DISPLAY_NAME
         $max_lenght = 20;
-        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName() : '{added display name}');
-        $info = sprintf($this->parent_gui->txt(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
+        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName(
+        ) : '{added display name}');
+        $info = sprintf($this->getLocaleString(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);
         $te->setMaxLength($max_lenght);
         $this->addItem($te);
 
-        $te = new ilTextAreaInputGUI($this->parent_gui->txt(self::F_DESCRIPTION), self::F_DESCRIPTION);
+        $te = new ilTextAreaInputGUI($this->getLocaleString(self::F_DESCRIPTION), self::F_DESCRIPTION);
         $this->addItem($te);
 
         // F_GROUP_ID
         $xoctPublicationUsageGroupsArray = PublicationUsageGroup::getArray('id', 'name');
         $empty_groups = ['' => '-'];
         $publication_groups = $empty_groups + $xoctPublicationUsageGroupsArray;
-        $te = new ilSelectInputGUI($this->parent_gui->txt(self::F_GROUP_ID), self::F_GROUP_ID);
+        $te = new ilSelectInputGUI($this->getLocaleString(self::F_GROUP_ID), self::F_GROUP_ID);
         $te->setOptions($publication_groups);
         $this->addItem($te);
 
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_CHANNEL), self::F_CHANNEL);
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_CHANNEL), self::F_CHANNEL);
         $te->setRequired(true);
         $this->addItem($te);
 
-        $te = new ilSelectInputGUI($this->parent_gui->txt(self::F_MD_TYPE), self::F_MD_TYPE);
+        $te = new ilSelectInputGUI($this->getLocaleString(self::F_MD_TYPE), self::F_MD_TYPE);
         $te->setRequired(true);
         $te->setOptions([
-            PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->parent_gui->txt(
+            PublicationUsage::MD_TYPE_PUBLICATION_ITSELF => $this->getLocaleString(
                 'md_type_' . PublicationUsage::MD_TYPE_PUBLICATION_ITSELF
             ),
-            PublicationUsage::MD_TYPE_ATTACHMENT => $this->parent_gui->txt(
+            PublicationUsage::MD_TYPE_ATTACHMENT => $this->getLocaleString(
                 'md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT
             ),
-            PublicationUsage::MD_TYPE_MEDIA => $this->parent_gui->txt('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
+            PublicationUsage::MD_TYPE_MEDIA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
         ]);
         $this->addItem($te);
 
-        $radio = new ilRadioGroupInputGUI($this->parent_gui->txt(self::F_SEARCH_KEY), self::F_SEARCH_KEY);
-        $radio->setInfo($this->parent_gui->txt(self::F_SEARCH_KEY . '_info'));
+        $radio = new ilRadioGroupInputGUI($this->getLocaleString(self::F_SEARCH_KEY), self::F_SEARCH_KEY);
+        $radio->setInfo($this->getLocaleString(self::F_SEARCH_KEY . '_info'));
 
-        $opt = new ilRadioOption($this->parent_gui->txt(self::F_FLAVOR), self::F_FLAVOR);
+        $opt = new ilRadioOption($this->getLocaleString(self::F_FLAVOR), self::F_FLAVOR);
         $te = new ilTextInputGUI('', self::F_FLAVOR);
-        $te->setInfo($this->parent_gui->txt(self::F_FLAVOR . '_info'));
+        $te->setInfo($this->getLocaleString(self::F_FLAVOR . '_info'));
         $opt->addSubItem($te);
         $radio->addOption($opt);
 
-        $opt = new ilRadioOption($this->parent_gui->txt(self::F_TAG), self::F_TAG);
+        $opt = new ilRadioOption($this->getLocaleString(self::F_TAG), self::F_TAG);
         $te = new ilTextInputGUI('', self::F_TAG);
         $opt->addSubItem($te);
         $radio->addOption($opt);
@@ -144,8 +158,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->addItem($radio);
 
         //F_MEDIATYPE
-        $te = new ilTextInputGUI($this->parent_gui->txt(self::F_MEDIATYPE), self::F_MEDIATYPE);
-        $te->setInfo($this->parent_gui->txt(self::F_MEDIATYPE . '_info'));
+        $te = new ilTextInputGUI($this->getLocaleString(self::F_MEDIATYPE), self::F_MEDIATYPE);
+        $te->setInfo($this->getLocaleString(self::F_MEDIATYPE . '_info'));
         $this->addItem($te);
 
         if (in_array(
@@ -153,36 +167,36 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             [PublicationUsage::USAGE_DOWNLOAD, PublicationUsage::USAGE_DOWNLOAD_FALLBACK],
             true
         )) {
-            $allow_multiple = new ilCheckboxInputGUI($this->parent_gui->txt(self::F_ALLOW_MULTIPLE), self::F_ALLOW_MULTIPLE);
-            $allow_multiple->setInfo($this->parent_gui->txt(self::F_ALLOW_MULTIPLE . '_info'));
+            $allow_multiple = new ilCheckboxInputGUI(
+                $this->getLocaleString(self::F_ALLOW_MULTIPLE),
+                self::F_ALLOW_MULTIPLE
+            );
+            $allow_multiple->setInfo($this->getLocaleString(self::F_ALLOW_MULTIPLE . '_info'));
             //F_IGNORE_OBJECT_SETTINGS
             $ignore_object_setting = new ilCheckboxInputGUI(
-                $this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS),
+                $this->getLocaleString(self::F_IGNORE_OBJECT_SETTINGS),
                 self::F_IGNORE_OBJECT_SETTINGS
             );
-            $ignore_object_setting->setInfo($this->parent_gui->txt(self::F_IGNORE_OBJECT_SETTINGS . '_info'));
+            $ignore_object_setting->setInfo($this->getLocaleString(self::F_IGNORE_OBJECT_SETTINGS . '_info'));
             //F_EXT_DL_SOURCE
             $ext_dl_source = new ilCheckboxInputGUI(
-                $this->parent_gui->txt(self::F_EXT_DL_SOURCE),
+                $this->getLocaleString(self::F_EXT_DL_SOURCE),
                 self::F_EXT_DL_SOURCE
             );
-            $ext_dl_source->setInfo($this->parent_gui->txt(self::F_EXT_DL_SOURCE . '_info'));
+            $ext_dl_source->setInfo($this->getLocaleString(self::F_EXT_DL_SOURCE . '_info'));
         } else {
             $allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
-            $allow_multiple->setValue(0);
+            $allow_multiple->setValue('0');
             $ignore_object_setting = new ilHiddenInputGUI(self::F_IGNORE_OBJECT_SETTINGS);
-            $ignore_object_setting->setValue(0);
+            $ignore_object_setting->setValue('0');
             $ext_dl_source = new ilHiddenInputGUI(self::F_EXT_DL_SOURCE);
-            $ext_dl_source->setValue(0);
+            $ext_dl_source->setValue('0');
         }
         $this->addItem($allow_multiple);
         $this->addItem($ignore_object_setting);
         $this->addItem($ext_dl_source);
     }
 
-    /**
-     *
-     */
     public function fillForm(): void
     {
         $array = [
@@ -227,14 +241,11 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         $this->object->setAllowMultiple((bool) $this->getInput(self::F_ALLOW_MULTIPLE));
         $this->object->setMediaType($this->getInput(self::F_MEDIATYPE));
         $this->object->setIgnoreObjectSettings((bool) $this->getInput(self::F_IGNORE_OBJECT_SETTINGS));
-        $this->object->setExternalDownloadSource((bool)$this->getInput(self::F_EXT_DL_SOURCE));
+        $this->object->setExternalDownloadSource((bool) $this->getInput(self::F_EXT_DL_SOURCE));
 
         return true;
     }
 
-    /**
-     * @return bool|string
-     */
     public function saveObject(): bool
     {
         if (!$this->fillObject()) {
@@ -249,28 +260,25 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
         return true;
     }
 
-    /**
-     *
-     */
-    protected function initButtons()
+    protected function initButtons(): void
     {
         if ($this->is_new) {
-            $this->setTitle($this->parent_gui->txt('create'));
+            $this->setTitle($this->getLocaleString('create'));
             $this->addCommandButton(
-                xoctPublicationUsageGUI::CMD_CREATE,
-                $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CREATE)
+                xoctGUI::CMD_CREATE,
+                $this->getLocaleString(xoctGUI::CMD_CREATE)
             );
         } else {
-            $this->setTitle($this->parent_gui->txt('edit'));
+            $this->setTitle($this->getLocaleString('edit'));
             $this->addCommandButton(
-                xoctPublicationUsageGUI::CMD_UPDATE,
-                $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_UPDATE)
+                xoctGUI::CMD_UPDATE,
+                $this->getLocaleString(xoctGUI::CMD_UPDATE)
             );
         }
 
         $this->addCommandButton(
-            xoctPublicationUsageGUI::CMD_CANCEL,
-            $this->parent_gui->txt(xoctPublicationUsageGUI::CMD_CANCEL)
+            xoctGUI::CMD_CANCEL,
+            $this->getLocaleString(xoctGUI::CMD_CANCEL)
         );
     }
 }

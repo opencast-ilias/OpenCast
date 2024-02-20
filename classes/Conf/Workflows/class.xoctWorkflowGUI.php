@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
-use srag\Plugins\Opencast\LegacyHelpers\OutputTrait;
-use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctWorkflowGUI
@@ -17,15 +19,17 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctWorkflowGUI extends xoctGUI
 {
-    use TranslatorTrait;
-    use OutputTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait;
 
     public const LANG_MODULE = 'workflow';
     public const CMD_SAVE_SETTINGS = 'saveSettings';
     public const CMD_UPDATE_WORKFLOWS = 'updateWorkflows';
     public const CMD_CONFIRM_RESET_WORKFLOWS = 'confirmResetWorkflows';
     public const CMD_RESET_WORKFLOWS = 'resetWorkflows';
+    /**
+     * @var \ILIAS\UI\Renderer
+     */
+    private $ui_renderer;
     /**
      * @var Factory
      */
@@ -43,15 +47,7 @@ class xoctWorkflowGUI extends xoctGUI
      */
     private $language;
     /**
-     * @var \ILIAS\HTTP\Services
-     */
-    private $http;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var \ilTabs
+     * @var \ilTabsGUI
      */
     private $tabs;
     /**
@@ -67,40 +63,37 @@ class xoctWorkflowGUI extends xoctGUI
         $this->toolbar = $DIC->toolbar();
         $this->language = $DIC->language();
         $this->tabs = $DIC->tabs();
-        $this->http = $DIC->http();
         $this->workflow_repository = $workflow_repository;
         $this->factory = $ui->factory();
-        $this->main_tpl = $ui->mainTemplate();
+        $this->ui_renderer = $ui->renderer();
         $this->wf_subtab_active =
             $this->http->request()->getQueryParams()['wf_subtab_active'] ?? xoctMainGUI::SUBTAB_WORKFLOWS_SETTINGS;
         $this->setTab();
     }
 
-    /**
-     * @throws DICException
-     * @throws ilTemplateException
-     */
-    protected function index()
+    protected function index(): void
     {
         if ($this->wf_subtab_active === xoctMainGUI::SUBTAB_WORKFLOWS_LIST) {
             $this->initToolbar();
             $table = new xoctWorkflowTableGUI($this, self::CMD_STANDARD, $this->workflow_repository);
-            $this->output($table);
+            $this->main_tpl->setContent($table->getHTML());
         } else {
-            $this->output($this->getWorkflowSettingsForm());
+            $this->main_tpl->setContent(
+                $this->ui_renderer->render($this->getWorkflowSettingsForm())
+            );
         }
     }
 
     /**
      * Helps setting the tabs at all time.
      */
-    public function setTab()
+    public function setTab(): void
     {
         $this->ctrl->saveParameter($this, 'wf_subtab_active');
         $this->tabs->setSubTabActive($this->wf_subtab_active);
     }
 
-    public function setTabParameter($tab = xoctMainGUI::SUBTAB_WORKFLOWS_SETTINGS)
+    public function setTabParameter(string $tab = xoctMainGUI::SUBTAB_WORKFLOWS_SETTINGS): void
     {
         $this->ctrl->setParameter(
             $this,
@@ -109,14 +102,11 @@ class xoctWorkflowGUI extends xoctGUI
         );
     }
 
-    /**
-     *
-     */
-    protected function getWorkflowSettingsForm()
+    protected function getWorkflowSettingsForm(): Standard
     {
-        $tags = $this->factory->input()->field()->text($this->translate(PluginConfig::F_WORKFLOWS_TAGS))
-            ->withByline($this->translate(PluginConfig::F_WORKFLOWS_TAGS . '_info'))
-            ->withValue(PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_TAGS) ?? '');
+        $tags = $this->factory->input()->field()->text($this->getLocaleString(PluginConfig::F_WORKFLOWS_TAGS))
+                              ->withByline($this->getLocaleString(PluginConfig::F_WORKFLOWS_TAGS . '_info'))
+                              ->withValue(PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_TAGS) ?? '');
         return $this->factory->input()->container()->form()->standard(
             $this->ctrl->getFormAction($this, self::CMD_SAVE_SETTINGS),
             [
@@ -124,14 +114,14 @@ class xoctWorkflowGUI extends xoctGUI
                     [
                         PluginConfig::F_WORKFLOWS_TAGS => $tags,
                     ],
-                    $this->txt('settings_header'),
-                    $this->txt('settings_header_description')
+                    $this->getLocaleString('settings_header', self::LANG_MODULE),
+                    $this->getLocaleString('settings_header_description', self::LANG_MODULE)
                 )
             ]
         );
     }
 
-    protected function saveSettings()
+    protected function saveSettings(): void
     {
         $this->setTabParameter();
         $form = $this->getWorkflowSettingsForm()->withRequest($this->http->request());
@@ -145,26 +135,28 @@ class xoctWorkflowGUI extends xoctGUI
             try {
                 $update_succeeded = $this->workflow_repository->updateList($new_tags);
                 if ($update_succeeded) {
-                    ilUtil::sendSuccess($this->translate('msg_workflow_settings_saved'), true);
+                    $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_workflow_settings_saved'), true);
                     PluginConfig::set(
                         PluginConfig::F_WORKFLOWS_TAGS,
                         trim($new_tags)
                     );
                 } else {
-                    ilUtil::sendFailure($this->translate('msg_workflow_settings_saved_update_failed'), true);
+                    $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('msg_workflow_settings_saved_update_failed'), true);
                     // Reverting back!
                     PluginConfig::set(PluginConfig::F_WORKFLOWS_TAGS, $current_tags);
                 }
             } catch (xoctException $e) {
-                ilUtil::sendFailure($e->getMessage(), true);
+                $this->main_tpl->setOnScreenMessage('failure', $e->getMessage(), true);
             }
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         } else {
-            $this->output($form);
+            $this->main_tpl->setContent(
+                $this->ui_renderer->render($form)
+            );
         }
     }
 
-    protected function initToolbar()
+    protected function initToolbar(): void
     {
         $update_workflows_button = $this->factory->button()->primary(
             $this->plugin->txt('config_workflows_update_btn'),
@@ -178,19 +170,19 @@ class xoctWorkflowGUI extends xoctGUI
         $this->toolbar->addComponent($reset_workflows_button);
     }
 
-    protected function updateWorkflows()
+    protected function updateWorkflows(): void
     {
         $this->setTabParameter(xoctMainGUI::SUBTAB_WORKFLOWS_LIST);
         $update_succeeded = $this->workflow_repository->updateList();
         if ($update_succeeded) {
-            ilUtil::sendSuccess($this->translate('msg_workflow_list_update_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_workflow_list_update_success'), true);
         } else {
-            ilUtil::sendFailure($this->translate('msg_workflow_list_update_failed'), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('msg_workflow_list_update_failed'), true);
         }
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    protected function confirmResetWorkflows()
+    protected function confirmResetWorkflows(): void
     {
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
@@ -200,32 +192,31 @@ class xoctWorkflowGUI extends xoctGUI
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 
-    protected function resetWorkflows()
+    protected function resetWorkflows(): void
     {
         try {
             $reset_succeeded = $this->workflow_repository->resetList();
             if ($reset_succeeded) {
-                ilUtil::sendSuccess($this->translate('msg_workflow_list_reset_success'), true);
+                $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_workflow_list_reset_success'), true);
             } else {
-                ilUtil::sendFailure($this->translate('msg_workflow_list_reset_failed'), true);
+                $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('msg_workflow_list_reset_failed'), true);
             }
         } catch (xoctException $e) {
-            ilUtil::sendFailure($e->getMessage(), true);
+            $this->main_tpl->setOnScreenMessage('failure', $e->getMessage(), true);
         }
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    /**
-     * @throws DICException
-     */
     protected function getForm(WorkflowAR $workflow = null): Standard
     {
         $id = $this->factory->input()->field()->text($this->language->txt('id'))->withDisabled(true);
         $title = $this->factory->input()->field()->text($this->language->txt('title'));
         $description = $this->factory->input()->field()->textarea($this->language->txt('description'));
-        $tags = $this->factory->input()->field()->text($this->translate('tags', self::LANG_MODULE))->withDisabled(true);
-        $configuration_panel = $this->factory->input()->field()->textarea($this->translate('config_panel', self::LANG_MODULE))
-            ->withDisabled(true);
+        $tags = $this->factory->input()->field()->text($this->getLocaleString('tags', self::LANG_MODULE))->withDisabled(true);
+        $configuration_panel = $this->factory->input()->field()->textarea(
+            $this->getLocaleString('config_panel', self::LANG_MODULE)
+        )
+                                             ->withDisabled(true);
 
         if (!is_null($workflow)) {
             $this->ctrl->setParameter($this, 'workflow_id', $workflow->getId());
@@ -239,9 +230,13 @@ class xoctWorkflowGUI extends xoctGUI
                     [
                         'id' => is_null($workflow) ? $id : $id->withValue($workflow->getWorkflowId()),
                         'title' => is_null($workflow) ? $title : $title->withValue($workflow->getTitle()),
-                        'description' => is_null($workflow) ? $description : $description->withValue($workflow->getDescription()),
+                        'description' => is_null($workflow) ? $description : $description->withValue(
+                            $workflow->getDescription()
+                        ),
                         'tags' => is_null($workflow) ? $tags : $tags->withValue($workflow->getTags()),
-                        'configuration_panel' => is_null($workflow) ? $configuration_panel : $configuration_panel->withValue(
+                        'configuration_panel' => is_null(
+                            $workflow
+                        ) ? $configuration_panel : $configuration_panel->withValue(
                             json_encode($workflow->getConfigPanel())
                         )
                     ],
@@ -251,89 +246,73 @@ class xoctWorkflowGUI extends xoctGUI
         );
     }
 
-    /**
-     *
-     */
-    protected function add()
+
+    protected function add(): void
     {
-        $this->output($this->getForm());
+        $this->main_tpl->setContent(
+            $this->ui_renderer->render($this->getForm())
+        );
     }
 
-    /**
-     *
-     */
-    protected function create()
+    protected function create(): void
     {
         $form = $this->getForm()->withRequest($this->http->request());
         if ($data = $form->getData()) {
             $wf = reset($data);
             $this->workflow_repository->createOrUpdate($wf['id'], $wf['title'], $wf['description'], $wf['tags']);
-            ilUtil::sendSuccess($this->plugin->txt('msg_workflow_created'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_workflow_created'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         } else {
-            $this->output($form);
+            $this->ui_renderer->render($form);
         }
     }
 
-    /**
-     * @throws DICException
-     * @throws ilTemplateException
-     */
-    protected function edit()
+    protected function edit(): void
     {
         $workflow_id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
-        $this->output($this->getForm(WorkflowAR::find($workflow_id)));
+        $this->main_tpl->setContent(
+            $this->ui_renderer->render(
+                $this->getForm(WorkflowAR::find($workflow_id))
+            )
+        );
     }
 
-    /**
-     * @throws DICException
-     * @throws ilTemplateException
-     */
-    protected function update()
+    protected function update(): void
     {
         $id = filter_input(INPUT_GET, 'workflow_id', FILTER_SANITIZE_STRING);
         $form = $this->getForm(WorkflowAR::find($id))->withRequest($this->http->request());
         if ($data = $form->getData()) {
             $wf = reset($data);
             $this->workflow_repository->createOrUpdate($wf['id'], $wf['title'], $wf['description']);
-            ilUtil::sendSuccess($this->plugin->txt('msg_workflow_updated'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_workflow_updated'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         } else {
-            $this->output($form);
+            $this->main_tpl->setContent(
+                $this->ui_renderer->render($form)
+            );
         }
     }
 
-    /**
-     *
-     */
-    protected function confirmDelete()
+
+    protected function confirmDelete(): void
     {
         // not required, using modal
     }
 
-    /**
-     * @throws DICException
-     */
-    protected function delete()
+    protected function delete(): void
     {
         $items = $this->http->request()->getParsedBody();
         $items = $items['interruptive_items'];
         if (is_array($items) && count($items) === 1) {
             $id = array_shift($items);
             $this->workflow_repository->delete($id);
-            ilUtil::sendSuccess($this->plugin->txt('workflow_msg_workflow_deleted'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('workflow_msg_workflow_deleted'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
     }
 
-    /**
-     * @param $key
-     *
-     * @return string
-     * @throws DICException
-     */
-    public function txt($key): string
+    public function txt(string $key): string
     {
-        return $this->translate($key, self::LANG_MODULE);
+        return $this->getLocaleString($key, self::LANG_MODULE);
     }
 }

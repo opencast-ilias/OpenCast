@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\UserSettings;
 
 use ActiveRecord;
@@ -66,55 +68,34 @@ class UserSetting extends ActiveRecord
      */
     protected $value;
 
-    /**
-     * @return int
-     */
-    public function getRefId()
+    public function getRefId(): int
     {
-        return $this->ref_id;
+        return (int) $this->ref_id;
     }
 
-    /**
-     * @param int $ref_id
-     * @return UserSetting
-     */
-    public function setRefId($ref_id)
+    public function setRefId(int $ref_id): self
     {
         $this->ref_id = $ref_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
-        return $this->user_id;
+        return (int) $this->user_id;
     }
 
-    /**
-     * @param int $user_id
-     * @return UserSetting
-     */
-    public function setUserId($user_id)
+    public function setUserId(int $user_id): self
     {
         $this->user_id = $user_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getValue()
+    public function getValue(): int
     {
-        return $this->value;
+        return (int) $this->value;
     }
 
-    /**
-     * @param int $value
-     * @return UserSetting
-     */
-    public function setValue($value)
+    public function setValue(int $value): self
     {
         $this->value = $value;
         return $this;
@@ -125,10 +106,7 @@ class UserSetting extends ActiveRecord
         return $this->name;
     }
 
-    /**
-     * @return UserSetting
-     */
-    public function setName(string $name)
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;

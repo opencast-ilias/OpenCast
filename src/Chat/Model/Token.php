@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\Model;
 
 /**
@@ -16,25 +18,16 @@ class Token
      */
     protected $token;
 
-    /**
-     * Token constructor.
-     *
-     * @param string $token
-     * @throws \Exception
-     */
-    public function __construct($token = '')
+    public function __construct(string $token = null)
     {
-        if ($token === '') {
+        if (empty($token)) {
             $token = random_bytes(16);
             $token = bin2hex($token);
         }
         $this->token = $token;
     }
 
-    /**
-     * @return string
-     */
-    public function toString()
+    public function toString(): string
     {
         return $this->token;
     }

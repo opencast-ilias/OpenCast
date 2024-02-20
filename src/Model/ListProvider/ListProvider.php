@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\ListProvider;
 
 use xoctException;
@@ -38,10 +40,8 @@ class ListProvider
     private function mandatoryVersionCheck(): bool
     {
         $api_version = PluginConfig::getConfig(PluginConfig::F_API_VERSION);
-        if (!$api_version || version_compare($api_version, $this->required_api_version, '<')) {
-            return false;
-        }
-        return true;
+
+        return ($api_version && version_compare($api_version, $this->required_api_version, '>'));
     }
 
     /**
@@ -58,11 +58,15 @@ class ListProvider
         }
         $providers = $this->api->routes()->listProvidersApi->getProviders(OpencastAPI::RETURN_ARRAY);
         if (is_array($providers) && isset($providers['available'])) {
-            return count($providers['available']) == 1 ? reset($providers['available']) : $providers['available'];
-        } else if (is_array($providers) && count($providers) > 0) {
-            return count($providers) == 1 ? reset($providers) : $providers;
-        } else if (is_object($providers) && property_exists($providers, 'available')) {
-            return count($providers->available) == 1 ? reset($providers->available) : $providers->available;
+            return count($providers['available']) === 1 ? reset($providers['available']) : $providers['available'];
+        }
+
+        if (is_array($providers) && count($providers) > 0) {
+            return count($providers) === 1 ? reset($providers) : $providers;
+        }
+
+        if (is_object($providers) && property_exists($providers, 'available')) {
+            return count($providers->available) === 1 ? reset($providers->available) : $providers->available;
         }
         return [];
     }
@@ -102,9 +106,13 @@ class ListProvider
         $list = $this->api->routes()->listProvidersApi->getList($source, OpencastAPI::RETURN_ARRAY);
         if (is_array($list) && isset($list['available'])) {
             return $list['available'];
-        } else if (is_array($list) && count($list) > 0) {
+        }
+
+        if (is_array($list) && count($list) > 0) {
             return $list;
-        } else if (is_object($list) && property_exists($list, 'available')) {
+        }
+
+        if (is_object($list) && property_exists($list, 'available')) {
             return $list->available;
         }
         return [];

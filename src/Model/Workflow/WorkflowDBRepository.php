@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Workflow;
+
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -24,44 +27,42 @@ class WorkflowDBRepository implements WorkflowRepository
         $this->api = $opencastContainer[API::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function anyWorkflowExists(): bool
     {
         return (WorkflowAR::count() > 0);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function anyWorkflowAvailable(): bool
     {
         return (count($this->getFilteredWorkflowsArray()) > 0);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllWorkflows(): array
+
+    public function getAllWorkflows(bool $as_array): array
     {
+        if ($as_array) {
+            return WorkflowAR::getArray();
+        }
         return WorkflowAR::get();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getAllWorkflowsAsArray($key = null, $values = null): array
     {
         return WorkflowAR::getArray($key, $values);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function store(string $workflow_id, string $title, string $description,
-        string $tags, string $config_panel, int $id = 0): void
-    {
+
+    public function store(
+        string $workflow_id,
+        string $title,
+        string $description,
+        string $tags,
+        string $config_panel,
+        int $id = 0
+    ): void {
         /** @var WorkflowAR $workflow */
         $workflow = new WorkflowAR($id == 0 ? null : $id);
         $workflow->setWorkflowId($workflow_id);
@@ -82,46 +83,39 @@ class WorkflowDBRepository implements WorkflowRepository
         $workflow->store();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function exists(string $workflow_id): bool
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->hasSets();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function delete($id): void
     {
         $workflow = WorkflowAR::find($id);
         $workflow->delete();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getByWorkflowId(string $workflow_id)
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->first();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getById(int $id)
     {
         return WorkflowAR::where(['id' => $id])->first();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigPanelAsArrayById(string $id): array
+
+    public function getConfigPanelAsArrayById(int $id): array
     {
         $config_panel_array = [];
         $workflow = $this->getById($id);
+        if (empty($workflow)) {
+            return $config_panel_array;
+        }
         $configuration_panel_html = $workflow->getConfigPanel();
         $configuration_panel_html = trim(str_replace("\n", "", $configuration_panel_html));
         if (!empty($configuration_panel_html)) {
@@ -140,8 +134,10 @@ class WorkflowDBRepository implements WorkflowRepository
                 }
                 if ($input->hasAttribute('name')) {
                     $key = $input->getAttribute('name');
-                } else if ($input->hasAttribute('id')) {
-                    $key = $input->getAttribute('id');
+                } else {
+                    if ($input->hasAttribute('id')) {
+                        $key = $input->getAttribute('id');
+                    }
                 }
 
                 if ($input->hasAttribute('value')) {
@@ -164,8 +160,10 @@ class WorkflowDBRepository implements WorkflowRepository
                 $value = '';
                 if ($input->hasAttribute('name')) {
                     $key = $input->getAttribute('name');
-                } else if ($input->hasAttribute('id')) {
-                    $key = $input->getAttribute('id');
+                } else {
+                    if ($input->hasAttribute('id')) {
+                        $key = $input->getAttribute('id');
+                    }
                 }
 
                 if ($input->hasAttribute('value')) {
@@ -183,12 +181,12 @@ class WorkflowDBRepository implements WorkflowRepository
         return $config_panel_array;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWorkflowsFromOpencastApi(array $filter = [], bool $with_configuration_panel = false,
-        bool $with_tags = false): array
-    {
+
+    public function getWorkflowsFromOpencastApi(
+        array $filter = [],
+        bool $with_configuration_panel = false,
+        bool $with_tags = false
+    ): array {
         $workflows = $this->api->routes()->workflowsApi->getAllDefinitions([
             'withconfigurationpanel' => $with_configuration_panel,
             'filter' => $filter,
@@ -201,9 +199,7 @@ class WorkflowDBRepository implements WorkflowRepository
         return $workflows;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function updateList(?string $tags_str = null): bool
     {
         $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
@@ -214,15 +210,16 @@ class WorkflowDBRepository implements WorkflowRepository
 
         // First remove from workflowsAR list.
         foreach ($current_workflows as $cr_wf_id => $cr_wf) {
-            if (!in_array($cr_wf_id, $filtered_oc_workflows_ids)) {
+            if (!in_array($cr_wf_id, $filtered_oc_workflows_ids, true)) {
                 $this->delete($cr_wf['id']);
             }
         }
 
         // Then, update the list if it is not there, without touching the current ones
         foreach ($filtered_oc_workflows as $oc_wd_id => $oc_wf) {
+            $oc_wd_id = (string) $oc_wd_id;
             // Exists, we check the diffs!
-            if (in_array($oc_wd_id, $current_workflows_ids)) {
+            if (in_array($oc_wd_id, $current_workflows_ids, true)) {
                 $current_workflow = $this->getByWorkflowId($oc_wd_id);
                 // Check the configuration panel changes only.
                 $current_config_panel = json_encode(
@@ -266,9 +263,7 @@ class WorkflowDBRepository implements WorkflowRepository
         return $success;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function resetList(): bool
     {
         $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
@@ -309,11 +304,14 @@ class WorkflowDBRepository implements WorkflowRepository
         return $success;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createOrUpdate(string $workflow_id, string $title, string $description, string $tags = '', string $config_panel = ''): WorkflowAR
-    {
+
+    public function createOrUpdate(
+        string $workflow_id,
+        string $title,
+        string $description,
+        string $tags = '',
+        string $config_panel = ''
+    ): WorkflowAR {
         $id = 0;
         if ($this->exists($workflow_id)) {
             $workflow = $this->getByWorkflowId($workflow_id);
@@ -348,25 +346,23 @@ class WorkflowDBRepository implements WorkflowRepository
      * @param array $base
      * @param string|int $check
      *
-     *  @return bool
+     * @return bool
      */
-    private function hasItem($base, $check): bool
+    private function hasItem(array $base, $check): bool
     {
         foreach ($base as $item) {
-            if (in_array($item, $check)) {
+            if (in_array($item, $check, false)) {
                 return true;
             }
         }
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getFilteredWorkflowsArray(
         array $workflows = [],
-        ?string $tags_str = null): array
-    {
+        ?string $tags_str = null
+    ): array {
         $filtered_list = [];
 
         $tags_to_include = PluginConfig::getConfig(PluginConfig::F_WORKFLOWS_TAGS) ?? '';
@@ -384,7 +380,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
         // If the list is empty, then we get all currect ones from WorkflowAR
         if (empty($workflows)) {
-            $workflows = $this->getAllWorkflows();
+            $workflows = $this->getAllWorkflows(false);
         }
 
         foreach ($workflows as $workflow) {
@@ -395,7 +391,7 @@ class WorkflowDBRepository implements WorkflowRepository
                 $workflow_id = $workflow->getWorkflowId();
             } else {
                 $workflow_id = $workflow->identifier;
-                if (isset($workflow->tags)) {
+                if (!empty($workflow->tags)) {
                     $tags_array = $workflow->tags;
                 }
             }
@@ -415,9 +411,6 @@ class WorkflowDBRepository implements WorkflowRepository
     }
 
 
-    /**
-     * {@inheritdoc}
-     */
     public function getWorkflowSelectionArray(): array
     {
         $workflow_selection_list = [];
@@ -438,9 +431,7 @@ class WorkflowDBRepository implements WorkflowRepository
         return $workflow_selection_list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function buildWorkflowSelectOptions(): string
     {
         $options = [
@@ -452,9 +443,7 @@ class WorkflowDBRepository implements WorkflowRepository
         return implode("\n", $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function parseConfigPanels(): array
     {
         $config_panels = [];
@@ -476,7 +465,7 @@ class WorkflowDBRepository implements WorkflowRepository
      *
      * @return string
      */
-    private function mapConfigPanelElements(string $workflow_id, string $configuration_panel_html): string
+    private function mapConfigPanelElements(int $workflow_id, string $configuration_panel_html): string
     {
         $dom = new \DOMDocument();
         $dom->strictErrorChecking = false;
@@ -648,7 +637,6 @@ class WorkflowDBRepository implements WorkflowRepository
                 }
             }
 
-
             // Replace the 'for' attribute and translate the text for label elements
             foreach ($labels as $label) {
                 $label_text = $label->nodeValue;
@@ -694,7 +682,6 @@ class WorkflowDBRepository implements WorkflowRepository
                 $dom->appendChild($hidden_input_default);
             }
 
-
             $modified = $dom->saveHTML();
             foreach ($ids as $old_id => $new_id) {
                 $modified = str_replace(
@@ -706,10 +693,22 @@ class WorkflowDBRepository implements WorkflowRepository
 
             foreach ($names as $old_name => $new_name) {
                 $modified = str_replace(
-                    ["name={$old_name}", 'name="{$old_name}"', "name='{$old_name}'",
-                        'getElementsByName("{$old_name}")', "getElementsByName('{$old_name}')", 'getElementsByName({$old_name})'],
-                    ["name*={$old_name}", 'name*="{$old_name}"', "name*='{$old_name}'",
-                        'getElementsByName("{$new_name}")', "getElementsByName('{$new_name}')", 'getElementsByName({$new_name})'],
+                    [
+                        "name={$old_name}",
+                        'name="{$old_name}"',
+                        "name='{$old_name}'",
+                        'getElementsByName("{$old_name}")',
+                        "getElementsByName('{$old_name}')",
+                        'getElementsByName({$old_name})'
+                    ],
+                    [
+                        "name*={$old_name}",
+                        'name*="{$old_name}"',
+                        "name*='{$old_name}'",
+                        'getElementsByName("{$new_name}")',
+                        "getElementsByName('{$new_name}')",
+                        'getElementsByName({$new_name})'
+                    ],
                     $modified
                 );
             }

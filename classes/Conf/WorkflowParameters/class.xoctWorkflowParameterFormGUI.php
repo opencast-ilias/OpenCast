@@ -1,17 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\PropertyFormGUI\PropertyFormGUI;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class xoctWorkflowParameterFormGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowParameterFormGUI extends PropertyFormGUI
+class xoctWorkflowParameterFormGUI extends ilPropertyFormGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'workflow_params' : $module, $fallback);
+    }
 
     public const PROPERTY_TITLE = 'setTitle';
 
@@ -21,9 +31,9 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
     public const F_DEFAULT_VALUE_MEMBER = 'default_value_member';
     public const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
     /**
-     * @var ilOpenCastPlugin
+     * @var xoctWorkflowParameterGUI
      */
-    protected $plugin;
+    private $parent;
 
     /**
      * @var WorkflowParameter
@@ -34,93 +44,76 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
      */
     private $workflowParameterRepository;
 
-    public function __construct($parent, WorkflowParameterRepository $workflowParameterRepository, $param_id = '')
+    public function __construct(xoctWorkflowParameterGUI $parent, WorkflowParameterRepository $workflowParameterRepository, string $param_id = null)
     {
-        $this->plugin = ilOpenCastPlugin::getInstance();
+        $this->parent = $parent;
         $this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
         $this->workflowParameterRepository = $workflowParameterRepository;
-        parent::__construct($parent);
+        parent::__construct();
+        $this->initForm();
     }
 
-    /**
-     * @return mixed|void
-     */
-    protected function getValue(string $key)
+    private function initForm(): void
     {
+        $this->initAction();
+        $this->initCommands();
+        $this->initTitle();
+        $this->initFields();
     }
 
-    /**
-     *
-     */
+    protected function initAction(): void
+    {
+        $this->setFormAction($this->ctrl->getFormAction($this->parent));
+    }
+
+
     protected function initCommands(): void
     {
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, $this->lng->txt('save'));
-        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_CANCEL, $this->lng->txt('cancel'));
+        $this->addCommandButton(xoctWorkflowParameterGUI::CMD_UPDATE_PARAMETER, $this->getLocaleString('save', 'common'));
+        $this->addCommandButton(xoctGUI::CMD_CANCEL, $this->getLocaleString('cancel', 'common'));
     }
 
-    /**
-     *
-     */
     protected function initFields(): void
     {
-        $this->fields = [
-            self::F_ID => [
-                self::PROPERTY_TITLE => $this->lng->txt(self::F_ID),
-                self::PROPERTY_CLASS => ilTextInputGUI::class,
-                self::PROPERTY_REQUIRED => true,
-                self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getId()
-            ],
-            self::F_TITLE => [
-                self::PROPERTY_TITLE => $this->lng->txt(self::F_TITLE),
-                self::PROPERTY_CLASS => ilTextInputGUI::class,
-                self::PROPERTY_REQUIRED => true,
-                self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getTitle()
-            ],
-            self::F_TYPE => [
-                self::PROPERTY_TITLE => $this->lng->txt(self::F_TYPE),
-                self::PROPERTY_CLASS => ilSelectInputGUI::class,
-                self::PROPERTY_REQUIRED => true,
-                self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getType(),
-                self::PROPERTY_OPTIONS => [
-                    WorkflowParameter::TYPE_CHECKBOX => 'Checkbox'
-                ]
-            ],
-            self::F_DEFAULT_VALUE_MEMBER => [
-                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_MEMBER),
-                self::PROPERTY_CLASS => ilSelectInputGUI::class,
-                self::PROPERTY_REQUIRED => true,
-                self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueMember(),
-                self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
-            ],
-            self::F_DEFAULT_VALUE_ADMIN => [
-                self::PROPERTY_TITLE => $this->plugin->txt(self::F_DEFAULT_VALUE_ADMIN),
-                self::PROPERTY_CLASS => ilSelectInputGUI::class,
-                self::PROPERTY_REQUIRED => true,
-                self::PROPERTY_VALUE => $this->xoctWorkflowParameter->getDefaultValueAdmin(),
-                self::PROPERTY_OPTIONS => $this->workflowParameterRepository->getSelectionOptions()
-            ],
+        $field = new ilTextInputGUI($this->getLocaleString(self::F_ID), self::F_ID);
+        $field->setRequired(true);
+        $field->setValue($this->xoctWorkflowParameter->getId());
+        $this->addItem($field);
 
-        ];
+        $field = new ilTextInputGUI($this->getLocaleString(self::F_TITLE), self::F_TITLE);
+        $field->setRequired(true);
+        $field->setValue($this->xoctWorkflowParameter->getTitle());
+        $this->addItem($field);
+
+        $field = new ilSelectInputGUI($this->getLocaleString(self::F_TYPE), self::F_TYPE);
+        $field->setRequired(true);
+        $field->setValue($this->xoctWorkflowParameter->getType());
+        $field->setOptions([
+            WorkflowParameter::TYPE_CHECKBOX => 'Checkbox'
+        ]);
+        $this->addItem($field);
+
+        $field = new ilSelectInputGUI($this->getLocaleString(self::F_DEFAULT_VALUE_MEMBER), self::F_DEFAULT_VALUE_MEMBER);
+        $field->setRequired(true);
+        $field->setValue($this->xoctWorkflowParameter->getDefaultValueMember());
+        $field->setOptions($this->workflowParameterRepository->getSelectionOptions());
+        $this->addItem($field);
+
+        $field = new ilSelectInputGUI($this->getLocaleString(self::F_DEFAULT_VALUE_ADMIN), self::F_DEFAULT_VALUE_ADMIN);
+        $field->setRequired(true);
+        $field->setValue($this->xoctWorkflowParameter->getDefaultValueAdmin());
+        $field->setOptions($this->workflowParameterRepository->getSelectionOptions());
+        $this->addItem($field);
     }
 
-    /**
-     *
-     */
-    protected function initId(): void
-    {
-    }
-
-    /**
-     *
-     */
     protected function initTitle(): void
     {
-        $this->setTitle($this->lng->txt('edit'));
+        $this->setTitle($this->getLocaleString('table_title'));
     }
 
     public function storeForm(): bool
     {
-        if (!$this->storeFormCheck()) {
+        if (!$this->checkInput()) {
             return false;
         }
 
@@ -133,12 +126,5 @@ class xoctWorkflowParameterFormGUI extends PropertyFormGUI
         );
 
         return true;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    protected function storeValue(string $key, $value): void
-    {
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
@@ -48,7 +50,6 @@ class xoctMainGUI extends xoctGUI
     }
 
     /**
-     * @throws DICException
      * @throws ilCtrlException
      */
     public function executeCommand(): void
@@ -220,19 +221,31 @@ class xoctMainGUI extends xoctGUI
 
     protected function setPublicationSubTabs()
     {
-        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_USAGE);
+        $this->ctrl->setParameterByClass(
+            xoctPublicationUsageGUI::class,
+            'pub_subtab_active',
+            self::SUBTAB_PUBLICATION_USAGE
+        );
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_USAGE,
             $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_USAGE),
             $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
         );
-        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_SUB_USAGE);
+        $this->ctrl->setParameterByClass(
+            xoctPublicationUsageGUI::class,
+            'pub_subtab_active',
+            self::SUBTAB_PUBLICATION_SUB_USAGE
+        );
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_SUB_USAGE,
             $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_SUB_USAGE),
             $this->ctrl->getLinkTargetByClass(xoctPublicationUsageGUI::class)
         );
-        $this->ctrl->setParameterByClass(xoctPublicationUsageGUI::class, 'pub_subtab_active', self::SUBTAB_PUBLICATION_GROUPS);
+        $this->ctrl->setParameterByClass(
+            xoctPublicationUsageGUI::class,
+            'pub_subtab_active',
+            self::SUBTAB_PUBLICATION_GROUPS
+        );
         $this->tabs->addSubTab(
             self::SUBTAB_PUBLICATION_GROUPS,
             $this->plugin->txt('subtab_' . self::SUBTAB_PUBLICATION_GROUPS),
@@ -241,32 +254,31 @@ class xoctMainGUI extends xoctGUI
         $this->ctrl->clearParametersByClass(xoctPublicationUsageGUI::class);
     }
 
-
-    protected function index()
+    protected function index(): void
     {
     }
 
-    protected function add()
+    protected function add(): void
     {
     }
 
-    protected function create()
+    protected function create(): void
     {
     }
 
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
-    protected function delete()
+    protected function delete(): void
     {
     }
 }

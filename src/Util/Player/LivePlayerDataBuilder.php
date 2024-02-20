@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\API\OpencastAPI;
@@ -43,7 +45,9 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                     ]
                 ];
                 if (isset($track['video']['resolution'])) {
-                    $streams[$role]['sources'][$source_format][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+                    $streams[$role]['sources'][$source_format][0]['res'] = $this->getConsumableResolution(
+                        $track['video']['resolution']
+                    );
                 }
             }
         } else {    // single stream
@@ -60,7 +64,9 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 ]
             ];
             if (isset($track['video']['resolution'])) {
-                $streams[0]['sources'][$source_format][0]['res'] = $this->getConsumableResolution($track['video']['resolution']);
+                $streams[0]['sources'][$source_format][0]['res'] = $this->getConsumableResolution(
+                    $track['video']['resolution']
+                );
             }
         }
 
@@ -73,7 +79,8 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         ];
     }
 
-    private function getConsumableResolution($resolution) {
+    private function getConsumableResolution($resolution)
+    {
         $video_res = [
             "w" => '1920',
             "h" => '1080'

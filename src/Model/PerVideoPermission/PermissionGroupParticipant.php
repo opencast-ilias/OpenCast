@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\PerVideoPermission;
 
 use ActiveRecord;
@@ -59,9 +61,9 @@ class PermissionGroupParticipant extends ActiveRecord
      */
     protected $group_id;
     /**
-     * @var xoctUser
+     * @var xoctUser|null
      */
-    protected $xoct_user;
+    protected $xoct_user = null;
     /**
      * @var int
      *
@@ -76,22 +78,22 @@ class PermissionGroupParticipant extends ActiveRecord
     protected static $crs_members_cache = [];
 
     /**
-     * @param $ref_id
-     * @param $group_id
-     *
-     * @return array
-     * @throws \xoctException
+     * @return PermissionGroupParticipant[]
      */
-    public static function getAvailable($ref_id, $group_id = null)
+    public static function getAvailable(int $ref_id, ?int $group_id = null): array
     {
         if (isset(self::$crs_members_cache[$ref_id][$group_id])) {
             return self::$crs_members_cache[$ref_id][$group_id];
         }
-        $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
+        if ($group_id === null) {
+            $existing = self::getAllUserIdsForOpenCastObjId($ref_id);
+        } else {
+            $existing = self::getAllUserIdsForOpenCastObjIdAndGroupId(ilObject2::_lookupObjId($ref_id), $group_id);
+        }
 
         $return = [];
         foreach (ilObjOpenCastAccess::getAllParticipants() as $user_id) {
-            if (in_array($user_id, $existing)) {
+            if (in_array($user_id, $existing, true)) {
                 continue;
             }
             $obj = new self();
@@ -104,12 +106,7 @@ class PermissionGroupParticipant extends ActiveRecord
         return $return;
     }
 
-    /**
-     * @param $obj_id
-     *
-     * @return array
-     */
-    public function getAllUserIdsForOpenCastObjId($obj_id)
+    public static function getAllUserIdsForOpenCastObjId(int $obj_id): array
     {
         $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
         if (count($all) == 0) {
@@ -119,102 +116,66 @@ class PermissionGroupParticipant extends ActiveRecord
         return self::where(['group_id' => $all])->getArray(null, 'user_id');
     }
 
-    /**
-     * @param $obj_id
-     * @param $group_id
-     *
-     * @return array
-     */
-    public static function getAllUserIdsForOpenCastObjIdAndGroupId($obj_id, $group_id)
+    public static function getAllUserIdsForOpenCastObjIdAndGroupId(int $obj_id, int $group_id): array
     {
         $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
-        if (count($all) == 0) {
+        if (count($all) === 0) {
             return [];
         }
 
         return self::where(['group_id' => $group_id])->getArray(null, 'user_id');
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
-        return $this->id;
+        return (int) $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
-        return $this->user_id;
+        return (int) $this->user_id;
     }
 
-    /**
-     * @param int $user_id
-     */
-    public function setUserId($user_id): void
+    public function setUserId(int $user_id): void
     {
         $this->user_id = $user_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getGroupId()
+    public function getGroupId(): int
     {
-        return $this->group_id;
+        return (int) $this->group_id;
     }
 
-    /**
-     * @param $group_id
-     */
-    public function setGroupId($group_id): void
+    public function setGroupId(int $group_id): void
     {
         $this->group_id = $group_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getStatus()
+    public function getStatus(): int
     {
-        return $this->status;
+        return (int) $this->status;
     }
 
-    /**
-     * @param int $status
-     */
-    public function setStatus($status): void
+    public function setStatus(int $status): void
     {
         $this->status = $status;
     }
 
-    /**
-     * @return xoctUser
-     */
-    public function getXoctUser()
+    public function getXoctUser(): ?xoctUser
     {
         if (!$this->xoct_user && $this->getUserId()) {
-            $this->xoct_user = xoctUser::getInstance(new ilObjUser($this->getUserId()));
+            $this->xoct_user = xoctUser::getInstance(new ilObjUser((int) $this->getUserId()));
         }
 
         return $this->xoct_user;
     }
 
-    /**
-     * @param xoctUser $xoct_user
-     */
-    public function setXoctUser($xoct_user): void
+    public function setXoctUser(xoctUser $xoct_user): void
     {
         $this->xoct_user = $xoct_user;
     }

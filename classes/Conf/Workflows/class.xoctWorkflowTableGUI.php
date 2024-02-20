@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -7,16 +9,27 @@ use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowAR;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
 
 /**
  * Class xoctWorkflowTableGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctWorkflowTableGUI extends TableGUI
+class xoctWorkflowTableGUI extends ilTable2GUI
 {
-    use TranslatorTrait;
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+    use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? self::LANG_MODULE : $module, $fallback);
+    }
+
 
     public const LANG_MODULE = 'workflow';
 
@@ -52,19 +65,22 @@ class xoctWorkflowTableGUI extends TableGUI
         $this->setExternalSorting(true);
         $this->setExternalSegmentation(true);
         parent::__construct($parent, $parent_cmd);
-        $this->setDescription($this->translate('msg_workflows_info'));
+        $this->initTable();
+        $this->setDescription($this->getLocaleString('workflows_info', 'msg'));
         $parent->setTabParameter(xoctMainGUI::SUBTAB_WORKFLOWS_LIST);
     }
 
-    /**
-     * @throws DICException
-     */
+    protected function getRowTemplate(): string
+    {
+        return $this->plugin->getDirectory() . '/templates/default/tpl.table_row.html';
+    }
+
     protected function initColumns(): void
     {
         foreach ($this->getSelectableColumns2() as $col) {
             $txt = $col['txt'];
             $id = $col['id'];
-            $sort = false;
+            $sort = '';
             $width = '';
             switch ($id) {
                 case 'description':
@@ -77,13 +93,13 @@ class xoctWorkflowTableGUI extends TableGUI
                     $width = '24px';
                     break;
             }
-            $action = ($id == 'action');
+            $action = ($id === 'action');
 
             $this->addColumn($txt, $sort, $width, $action);
         }
     }
 
-    public function getHTML()
+    public function getHTML(): string
     {
         $html = parent::getHTML();
         foreach ($this->modals as $modal) {
@@ -97,12 +113,11 @@ class xoctWorkflowTableGUI extends TableGUI
      *
      * @param     $column
      * @param     $row WorkflowAR
-     *
-     * @throws DICException
-     * @throws ilTemplateException
      */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    protected function getColumnValue(string $column, /*array*/ $row, int $format = TableGUIConstants::DEFAULT_FORMAT): string
     {
+        $row = WorkflowAR::find($row['id']);
+
         switch ($column) {
             case 'id':
                 return $row->getWorkflowId();
@@ -120,21 +135,21 @@ class xoctWorkflowTableGUI extends TableGUI
                 $tpl->setVariable('ICON_SRC', ilUtil::getHtmlPath(ilUtil::getImagePath($icon)));
                 $tpl->setVariable('ICON_ALT', $icon);
                 $icon_title = $has_config_panel ?
-                    $this->translate('config_panel_icon_with', self::LANG_MODULE) :
-                    $this->translate('config_panel_icon_without', self::LANG_MODULE);
+                    $this->getLocaleString('config_panel_icon_with', self::LANG_MODULE) :
+                    $this->getLocaleString('config_panel_icon_without', self::LANG_MODULE);
                 $tpl->setVariable('ICON_TITLE', $icon_title);
                 $tpl->parseCurrentBlock();
                 return $tpl->get();
             case 'actions':
                 $this->ctrl->setParameter($this->parent_obj, 'workflow_id', $row->getId());
                 $delete_modal = $this->factory->modal()->interruptive(
-                    $this->lng->txt('delete'),
+                    $this->getLocaleString('delete', 'common'),
                     $this->txt('msg_confirm_delete_workflow'),
-                    $this->ctrl->getFormAction($this->parent_obj, xoctWorkflowGUI::CMD_DELETE)
+                    $this->ctrl->getFormAction($this->parent_obj, xoctGUI::CMD_DELETE)
                 )->withAffectedItems(
                     [
                         $this->factory->modal()->interruptiveItem(
-                            $row->getId(),
+                            (string) $row->getId(),
                             $row->getTitle()
                         )
                     ]
@@ -143,75 +158,50 @@ class xoctWorkflowTableGUI extends TableGUI
                 $actions = $this->factory->dropdown()->standard(
                     [
                         $this->factory->button()->shy(
-                            $this->lng->txt('edit'),
-                            $this->ctrl->getLinkTarget($this->parent_obj, xoctWorkflowGUI::CMD_EDIT)
+                            $this->getLocaleString('edit', 'common'),
+                            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
                         ),
                         $this->factory->button()->shy(
-                            $this->lng->txt('delete'),
+                            $this->getLocaleString('delete', 'common'),
                             $delete_modal->getShowSignal()
                         )
                     ]
-                )->withLabel($this->lng->txt('actions'));
-                return self::output()->getHTML($actions);
+                )->withLabel($this->getLocaleString('actions', 'common'));
+                return $this->renderer->render($actions);
         }
 
         return '';
     }
 
-    /**
-     * @inheritDoc
-     * @throws DICException
-     */
     protected function getSelectableColumns2(): array
     {
         return [
-            ['txt' => $this->lng->txt('id'), 'id' => 'id'],
-            ['txt' => $this->lng->txt('title'), 'id' => 'title'],
-            ['txt' => $this->lng->txt('description'), 'id' => 'description'],
-            ['txt' => $this->translate('tags', self::LANG_MODULE), 'id' => 'tags'],
-            ['txt' => $this->translate('config_panel', self::LANG_MODULE), 'id' => 'config_panel'],
-            ['txt' => $this->lng->txt('actions'), 'id' => 'actions']
+            ['txt' => $this->getLocaleString('id'), 'id' => 'id'],
+            ['txt' => $this->getLocaleString('title'), 'id' => 'title'],
+            ['txt' => $this->getLocaleString('description'), 'id' => 'description'],
+            ['txt' => $this->getLocaleString('tags', self::LANG_MODULE), 'id' => 'tags'],
+            ['txt' => $this->getLocaleString('config_panel', self::LANG_MODULE), 'id' => 'config_panel'],
+            ['txt' => $this->getLocaleString('actions', 'common'), 'id' => 'actions']
         ];
     }
 
-    /**
-     * @param string $col
-     */
     public function isColumnSelected($col): bool
     {
         return true;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function initData(): void
     {
-        $this->setData($this->workflow_repository->getAllWorkflows());
+        $this->setData($this->workflow_repository->getAllWorkflows(true));
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function initFilterFields(): void
-    {
-        // TODO: Implement initFilterFields() method.
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected function initId(): void
     {
         $this->setId('xoct_workflows');
     }
 
-    /**
-     * @inheritDoc
-     * @throws DICException
-     */
     protected function initTitle(): void
     {
-        $this->setTitle($this->translate('table_title', self::LANG_MODULE));
+        $this->setTitle($this->getLocaleString('table_title', self::LANG_MODULE));
     }
 }

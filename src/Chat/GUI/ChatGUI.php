@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Chat\GUI;
 
 use ilOpenCastPlugin;
@@ -18,8 +20,6 @@ use srag\Plugins\Opencast\Chat\Model\TokenAR;
  */
 class ChatGUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
-
     /**
      * @var ChatroomAR
      */
@@ -45,14 +45,8 @@ class ChatGUI
         $this->token = $token;
     }
 
-    /**
-     * @param bool $async
-     *
-     * @return string
-     * @throws DICException
-     * @throws ilTemplateException
-     */
-    public function render($async = false)
+
+    public function render(bool $async = false): string
     {
         $port = ConfigAR::getConfig(ConfigAR::C_PORT);
         $protocol = ConfigAR::getConfig(ConfigAR::C_PROTOCOL);
@@ -67,7 +61,7 @@ class ChatGUI
             $url .= '&host=' . $host;
         }
 
-        $template = new ilTemplate($this->plugin->getDirectory() . '/src/Chat/GUI/templates/iframe.html', true, true);
+        $template = new ilTemplate($this->plugin->getDirectory() . '/templates/default/Chat/iframe.html', true, true);
         $template->setVariable('URL', $url);
         $template->setVariable(
             'REFRESH_ICON',

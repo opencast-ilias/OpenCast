@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\WorkflowInstance;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
 use xoctException;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 
 /**
@@ -60,7 +61,10 @@ class WorkflowInstanceCollection extends APIObject
             $opencast_version = $opencast_api->sysinfo->getVersion()->version;
             // A deep check to avoid error in advance.
             // workflows get all endpoint is removed from Opencast Verison 12.x and in OpencastAPI v1.3 is flagged depricated.
-            if (version_compare($opencastversion, '12.0.0', '<') && method_exists($opencast_api->workflowsApi, 'getAll')) {
+            if (version_compare($opencast_version, '12.0.0', '<') && method_exists(
+                $opencast_api->workflowsApi,
+                'getAll'
+            )) {
                 $workflow_instance = $opencast_api->workflowsApi->getAll([
                     'filter' => [
                         'event_identifier' => $this->getEventId()

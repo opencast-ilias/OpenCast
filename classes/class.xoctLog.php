@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Class xoctLog
  * TODO: initialize and make available in OpencastDIC
@@ -95,9 +97,9 @@ class xoctLog extends ilLog
         if (ILIAS_LOG_DIR === "php:/" && ILIAS_LOG_FILE === "stdout") {
             // Fix Docker-ILIAS log
             return ILIAS_LOG_FILE;
-        } else {
-            return self::OD_LOG;
         }
+
+        return self::OD_LOG;
     }
 
     public static function getFullPath(): string

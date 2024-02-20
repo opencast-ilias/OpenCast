@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\UI;
 
 use ILIAS\DI\Container;
@@ -8,7 +10,7 @@ use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Field\Input;
-use ilMimeTypeUtil;
+use srag\Plugins\Opencast\Util\MimeType as MimeTypeUtil;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -37,17 +39,17 @@ class EventFormBuilder
     public const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
 
     private static $accepted_video_mimetypes = [
-        ilMimeTypeUtil::VIDEO__AVI,
-        ilMimeTypeUtil::VIDEO__QUICKTIME,
-        ilMimeTypeUtil::VIDEO__MPEG,
-        ilMimeTypeUtil::VIDEO__MP4,
-        ilMimeTypeUtil::VIDEO__OGG,
-        ilMimeTypeUtil::VIDEO__WEBM,
-        ilMimeTypeUtil::VIDEO__X_MS_WMV,
-        ilMimeTypeUtil::VIDEO__X_FLV,
-        ilMimeTypeUtil::VIDEO__X_MSVIDEO,
-        ilMimeTypeUtil::VIDEO__X_DV,
-        ilMimeTypeUtil::VIDEO__X_MSVIDEO,
+        MimeTypeUtil::VIDEO__AVI,
+        MimeTypeUtil::VIDEO__QUICKTIME,
+        MimeTypeUtil::VIDEO__MPEG,
+        MimeTypeUtil::VIDEO__MP4,
+        MimeTypeUtil::VIDEO__OGG,
+        MimeTypeUtil::VIDEO__WEBM,
+        MimeTypeUtil::VIDEO__X_MS_WMV,
+        MimeTypeUtil::VIDEO__X_FLV,
+        MimeTypeUtil::VIDEO__X_MSVIDEO,
+        MimeTypeUtil::VIDEO__X_DV,
+        MimeTypeUtil::VIDEO__X_MSVIDEO,
         'video/mkv',
         'video/x-matroska',
         'video/x-m4v',
@@ -62,16 +64,16 @@ class EventFormBuilder
     ];
 
     private static $accepted_audio_mimetypes = [
-        ilMimeTypeUtil::AUDIO__MP4,
-        ilMimeTypeUtil::AUDIO__OGG,
-        ilMimeTypeUtil::AUDIO__MPEG,
-        ilMimeTypeUtil::AUDIO__MPEG3,
-        ilMimeTypeUtil::AUDIO__X_AIFF,
-        ilMimeTypeUtil::AUDIO__AIFF,
-        ilMimeTypeUtil::AUDIO__X_WAV,
-        ilMimeTypeUtil::AUDIO__WAV,
-        ilMimeTypeUtil::AUDIO__X_MS_WMA,
-        ilMimeTypeUtil::AUDIO__BASIC,
+        MimeTypeUtil::AUDIO__MP4,
+        MimeTypeUtil::AUDIO__OGG,
+        MimeTypeUtil::AUDIO__MPEG,
+        MimeTypeUtil::AUDIO__MPEG3,
+        MimeTypeUtil::AUDIO__X_AIFF,
+        MimeTypeUtil::AUDIO__AIFF,
+        MimeTypeUtil::AUDIO__X_WAV,
+        MimeTypeUtil::AUDIO__WAV,
+        MimeTypeUtil::AUDIO__X_MS_WMA,
+        MimeTypeUtil::AUDIO__BASIC,
         'audio/aac',
         'audio/flac',
         'audio/x-m4a',
@@ -105,7 +107,7 @@ class EventFormBuilder
      */
     private $uploadStorageService;
     /**
-     * @var UploadHandler|\xoctFileUploadHandler
+     * @var UploadHandler|\xoctFileUploadHandlerGUI
      */
     private $uploadHandler;
     /**
@@ -170,7 +172,7 @@ class EventFormBuilder
 
         // Chunk Size
         $chunk_size = (int) PluginConfig::getConfig(PluginConfig::F_CURL_CHUNK_SIZE);
-        $chunk_size = $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilUtil::getUploadSizeLimitBytes();
+        $chunk_size = $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilFileUtils::getUploadSizeLimitBytes();
 
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
@@ -179,7 +181,7 @@ class EventFormBuilder
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
-                                             $id = $file[0];
+                                             $id = $file[0] ?? '';
                                              return $upload_storage_service->getFileInfo($id);
                                          }
                                      )
@@ -193,7 +195,7 @@ class EventFormBuilder
         );
 
         $file_section_inputs = ['file' => $file_input];
-        if ($obj_id == 0) {
+        if ($obj_id === 0) {
             $file_section_inputs['isPartOf'] = $this->buildSeriesSelector();
         }
         $file_section = $factory->section(
@@ -201,11 +203,11 @@ class EventFormBuilder
             $this->plugin->txt('file')
         );
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
                 $as_admin,
-                $this->plugin->txt('processing_settings')
+                $this->plugin->txt('workflow_params_processing_settings')
             );
         $inputs = [
             'file' => $file_section,
@@ -238,11 +240,11 @@ class EventFormBuilder
         bool $as_admin = false
     ): Form {
         $workflow_param_section = $obj_id == 0 ?
-            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('processing_settings'))
+            $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
                 $as_admin,
-                $this->plugin->txt('processing_settings')
+                $this->plugin->txt('workflow_params_processing_settings')
             );
         $inputs = [
             'metadata' => $this->formItemBuilder->schedule_section($as_admin),
@@ -276,7 +278,7 @@ class EventFormBuilder
             $form_action,
             $inputs
         )->withAdditionalTransformation(
-            $this->refinery_factory->custom()->constraint(function ($vs) {
+            $this->refinery_factory->custom()->transformation(function ($vs): array {
                 $date_field = new MetadataField(MDFieldDefinition::F_START_DATE, MDDataType::datetime());
                 $date_field->setValue($vs['scheduling'] ["start_date_time"]);
                 $vs['metadata']['object']->addField($date_field);
@@ -287,7 +289,7 @@ class EventFormBuilder
                 );
                 $vs['metadata']['object']->addField($time_field);
                 return $vs;
-            }, \xoctException::INTERNAL_ERROR)
+            })
         );
     }
 
@@ -326,7 +328,8 @@ class EventFormBuilder
         // fetch early, because acls will be refreshed
         $own_series = $this->seriesRepository->getOwnSeries($xoct_user);
         $series_options = [];
-        foreach ($this->seriesRepository->getAllForUser($xoct_user->getUserRoleName()) as $series) {
+        $user_string = $xoct_user->getUserRoleName() ?? '';
+        foreach ($this->seriesRepository->getAllForUser($user_string) as $series) {
             $series_options[$series->getIdentifier()] =
                 $series->getMetadata()->getField(MDFieldDefinition::F_TITLE)->getValue()
                 . ' (...' . substr($series->getIdentifier(), -4, 4) . ')';
@@ -339,9 +342,21 @@ class EventFormBuilder
                 + $series_options;
         }
 
-        return $this->ui_factory->input()->field()->select(
-            $this->plugin->txt('event_series'),
-            $series_options
-        )->withRequired(true);
+        return $this->ui_factory
+            ->input()
+            ->field()
+            ->select(
+                $this->plugin->txt('event_series'),
+                $series_options
+            )
+            ->withRequired(true);
+            /*->withAdditionalTransformation(
+                $this->refinery_factory->custom()->constraint(
+                    function ($v): bool {
+                        return false;
+                    },
+                    'HELLO WORLD' // error message if no ("-") series is selected. Only works if required is set to false
+                )
+            )*/
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
@@ -24,9 +26,9 @@ class xoctConfExportGUI extends xoctGUI
         $this->toolbar = $DIC->toolbar();
     }
 
-    protected function index()
+    protected function index(): void
     {
-        ilUtil::sendInfo($this->plugin->txt('msg_admin_import_freindly_reminder_info'));
+        $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('msg_admin_import_freindly_reminder_info'));
         $b = ilLinkButton::getInstance();
         $b->setCaption('rep_robj_xoct_admin_export');
         $b->setUrl($this->ctrl->getLinkTarget($this, 'export'));
@@ -41,30 +43,23 @@ class xoctConfExportGUI extends xoctGUI
         $this->toolbar->addFormButton($this->plugin->txt('admin_import'), 'import');
     }
 
-    /**
-     *
-     */
-    protected function import()
+    protected function import(): void
     {
         if (!isset($_FILES['xoct_import']) || empty($_FILES['xoct_import']['tmp_name'])) {
-            ilUtil::sendFailure($this->plugin->txt("admin_import_file_missign"), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt("admin_import_file_missign"), true);
             $this->cancel();
         }
 
         try {
             PluginConfig::importFromXML($_FILES['xoct_import']['tmp_name']);
-            ilUtil::sendSuccess($this->plugin->txt('admin_import_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('admin_import_success'), true);
         } catch (\Throwable $th) {
-            ilUtil::sendFailure($this->plugin->txt("admin_import_failed"), true);
+            $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt("admin_import_failed"), true);
         }
         $this->cancel();
     }
 
-    /**
-     *
-     * @return never
-     */
-    protected function export()
+    protected function export(): void
     {
         // ob_end_clean();
         header('Content-Disposition: attachment; filename="opencastexport.xml"');
@@ -72,27 +67,27 @@ class xoctConfExportGUI extends xoctGUI
         exit;
     }
 
-    protected function add()
+    protected function add(): void
     {
     }
 
-    protected function create()
+    protected function create(): void
     {
     }
 
-    protected function edit()
+    protected function edit(): void
     {
     }
 
-    protected function update()
+    protected function update(): void
     {
     }
 
-    protected function confirmDelete()
+    protected function confirmDelete(): void
     {
     }
 
-    protected function delete()
+    protected function delete(): void
     {
     }
 }

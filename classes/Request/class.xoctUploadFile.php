@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ILIAS\Data\DataSize;
 
 /**
@@ -28,9 +30,7 @@ class xoctUploadFile
     public function getCURLFile(): \CURLFile
     {
         // opencast doesn't like mimetype and name for some reason
-        $CURLFile = new CURLFile($this->getPath());
-
-        return $CURLFile;
+        return new CURLFile($this->getPath());
     }
 
     /**
@@ -133,6 +133,6 @@ class xoctUploadFile
      */
     public function getFileStream()
     {
-        return fopen($this->getPath(), 'r');
+        return fopen($this->getPath(), 'rb');
     }
 }

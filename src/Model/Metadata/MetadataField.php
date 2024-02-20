@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata;
 
 use DateTimeImmutable;
@@ -38,7 +40,7 @@ class MetadataField implements JsonSerializable
      */
     public function __construct(string $id, MDDataType $type)
     {
-        if (strlen($id) == 0) {
+        if ($id === '') {
             throw new xoctException(
                 xoctException::INTERNAL_ERROR,
                 "id of MetadataField cannot be empty"
@@ -121,9 +123,8 @@ class MetadataField implements JsonSerializable
 
     /**
      * @param $value T
-     * @throws xoctException
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         if (!$this->type->isValidValue($value)) {
             $class = gettype($value) === 'object' ? get_class($value) : gettype($value);
@@ -137,8 +138,6 @@ class MetadataField implements JsonSerializable
 
     /**
      * @param $value T
-     * @return $this
-     * @throws xoctException
      */
     public function withValue($value): self
     {

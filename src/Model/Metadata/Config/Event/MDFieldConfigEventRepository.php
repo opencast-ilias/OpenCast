@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Metadata\Config\Event;
 
 use Exception;
@@ -50,7 +52,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            function (MDFieldConfigEventAR $ar) use ($MDCatalogue): bool {
+            static function (MDFieldConfigEventAR $ar) use ($MDCatalogue): bool {
                 return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
             }
         );
@@ -98,7 +100,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
             $this->getAll($is_admin),
             function (MDFieldConfigEventAR $fieldConfig) use ($catalogue): bool {
                 return $catalogue->getFieldById($fieldConfig->getFieldId())
-                    ->getType()->isFilterable();
+                                 ->getType()->isFilterable();
             }
         );
     }

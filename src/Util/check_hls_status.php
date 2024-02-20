@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * simple script to check http code of an url
  */
@@ -40,7 +43,7 @@ function parsePlaylist(string $body, string $livestream_type): array
             $playlist_exts = ['.ts'];
         }
         foreach ($playlist_exts as $ext) {
-            $len = strlen($ext) ;
+            $len = strlen($ext);
             if (strtolower(substr($piece, -($len))) === $ext) {
                 $is_valid_chunk = true;
                 break;

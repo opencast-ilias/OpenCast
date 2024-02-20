@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Group;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
-use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 
 /**
@@ -61,10 +62,7 @@ class Group extends APIObject
         }
     }
 
-    /**
-     * @throws xoctException
-     */
-    protected function read()
+    protected function read(): void
     {
         $data = $this->api->routes()->groupsApi->get($this->getIdentifier());
         if (!empty($data)) {
@@ -73,10 +71,7 @@ class Group extends APIObject
     }
 
     /**
-     * objects xoctUser or uniqueIds as string possible
-     *
-     *
-     * @throws xoctException
+     * @param xoctUser[] $xoctUsers
      */
     public function addMembers(array $xoctUsers): void
     {
@@ -92,31 +87,19 @@ class Group extends APIObject
      *
      * @throws xoctException
      */
-    public function addMember($xoctUser): bool
+    public function addMember(xoctUser $xoctUser): bool
     {
-        if ($xoctUser instanceof xoctUser) {
-            $xoctUser = $xoctUser->getIdentifier();
-        }
+        $user_string = $xoctUser->getIdentifier();
 
-        if ($xoctUser && !in_array($xoctUser, $this->getMembers())) {
-            $this->api->routes()->groupsApi->addMember($this->getIdentifier(), $xoctUser);
-            $this->members[] = $xoctUser;
+        if (!empty($user_string) && !in_array($user_string, $this->getMembers(), true)) {
+            $this->api->routes()->groupsApi->addMember($this->getIdentifier(), $user_string);
+            $this->members[] = $user_string;
 
             return true;
         }
 
         return false;
     }
-
-
-    //	/**
-    //	 * only allow changes on members for now, so we don't break anything
-    //	 */
-    //	public function update() {
-    //		$data['members'] = json_encode(array($this->getMembers()->__toStdClass()));
-    //		xoctRequest::root()->groups($this->getIdentifier())->put($data);
-    //		self::removeFromCache($this->getIdentifier());
-    //	}
 
     /**
      * @param $fieldname
@@ -167,37 +150,16 @@ class Group extends APIObject
         return $this->role;
     }
 
-
-    //	/**
-    //	 * @param mixed $role
-    //	 */
-    //	public function setRole($role) {
-    //		$this->role = $role;
-    //	}
     public function getOrganization(): string
     {
         return $this->organization;
     }
 
-
-    //	/**
-    //	 * @param mixed $organization
-    //	 */
-    //	public function setOrganization($organization) {
-    //		$this->organization = $organization;
-    //	}
     public function getRoles(): array
     {
         return (array) $this->roles;
     }
 
-
-    //	/**
-    //	 * @param mixed $roles
-    //	 */
-    //	public function setRoles($roles) {
-    //		$this->roles = $roles;
-    //	}
     public function getMembers(): array
     {
         return (array) $this->members;
@@ -213,23 +175,8 @@ class Group extends APIObject
         return $this->name;
     }
 
-
-    //	/**
-    //	 * @param mixed $name
-    //	 */
-    //	public function setName($name) {
-    //		$this->name = $name;
-    //	}
     public function getDescription(): string
     {
         return $this->description;
     }
-
-
-    //	/**
-    //	 * @param mixed $description
-    //	 */
-    //	public function setDescription($description) {
-    //		$this->description = $description;
-    //	}
 }

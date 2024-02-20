@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\API;
 
 use GuzzleHttp\HandlerStack;
@@ -62,13 +64,6 @@ class Handlers
                 $xoctLog->write('execute *************************************************', xoctLog::DEBUG_LEVEL_1);
                 $xoctLog->write(urldecode($completeUri), xoctLog::DEBUG_LEVEL_1);
                 $xoctLog->write($request->getMethod(), xoctLog::DEBUG_LEVEL_1);
-                $backtrace = "Backtrace: \n";
-                foreach (debug_backtrace() as $b) {
-                    if (strpos($b['file'], 'OpenCast/vendor/') === false) {
-                        $backtrace .= $b['file'] . ': ' . $b["function"] . "\n";
-                    }
-                }
-                $xoctLog->write($backtrace, xoctLog::DEBUG_LEVEL_4);
                 if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
                     $options[RequestOptions::DEBUG] = fopen(xoctLog::getFullPath(), 'a');
                 }

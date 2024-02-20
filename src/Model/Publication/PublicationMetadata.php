@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Publication;
 
 use srag\Plugins\Opencast\Model\API\APIObject;
 
 /**
- * Class publicationMetadata
+ * Class PublicationMetadata
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
-class publicationMetadata extends APIObject
+class PublicationMetadata extends APIObject
 {
     public const MEDIA_TYPE_VIDEO = "video";
     public const ROLE_PRESENTATION = "presentation";

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -19,11 +21,6 @@
 declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Model\Cache\Container;
-
-use srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor;
-use srag\Plugins\Opencast\Model\Cache\Config;
-use ILIAS\Refinery\Transformation;
-use ILIAS\Refinery\ByTrying;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>

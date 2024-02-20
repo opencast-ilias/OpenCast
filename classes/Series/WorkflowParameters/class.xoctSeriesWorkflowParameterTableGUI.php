@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
@@ -10,19 +12,15 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class xoctSeriesWorkflowParameterTableGUI extends TableGUI
+class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
 {
-    public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class;
+    use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
+
     public const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
     /**
      * @var ilOpenCastPlugin
      */
     protected $plugin;
-    protected $lng;
-    /**
-     * @var xoctSeriesGUI
-     */
-    protected $parent_obj;
     /**
      * @var WorkflowParameterRepository
      */
@@ -38,28 +36,25 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
     {
         global $DIC, $opencastContainer;
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->lng = $DIC->language();
         parent::__construct($parent, $parent_cmd);
+        $this->initTable();
         $this->setEnableNumInfo(false);
         $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
-    /**
-     *
-     */
+    protected function getRowTemplate(): string
+    {
+        return $this->plugin->getDirectory() . '/templates/default/' . self::ROW_TEMPLATE;
+    }
+
     protected function initCommands(): void
     {
         $this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
     }
 
-    /**
-     * @param array  $row
-     * @param        $format
-     *
-     */
     protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
     {
-        $column = $row[$column];
+        return $row[$column] ?? '';
     }
 
     protected function getSelectableColumns2(): array
@@ -67,9 +62,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         return [];
     }
 
-    /**
-     *
-     */
     protected function initColumns(): void
     {
         $this->addColumn($this->lng->txt("id"));
@@ -80,13 +72,7 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $this->addColumn('', '', '', true);
     }
 
-    /**
-     * @param array $row
-     *
-     * @throws \srag\DIC\OpenCast\Exception\DICException
-     * @throws ilTemplateException
-     */
-    protected function fillRow($row): void
+    protected function fillRow(array $row): void
     {
         $this->tpl->setVariable("ID", $row["id"]);
         $this->tpl->setVariable("TITLE", $row["title"]);
@@ -105,9 +91,6 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         $this->ctrl->setParameter($this->parent_obj, "xhfp_content", null);
     }
 
-    /**
-     *
-     */
     protected function initData(): void
     {
         $this->setData(
@@ -117,23 +100,10 @@ class xoctSeriesWorkflowParameterTableGUI extends TableGUI
         );
     }
 
-    /**
-     *
-     */
-    protected function initFilterFields(): void
-    {
-    }
-
-    /**
-     *
-     */
     protected function initId(): void
     {
     }
 
-    /**
-     *
-     */
     protected function initTitle(): void
     {
     }

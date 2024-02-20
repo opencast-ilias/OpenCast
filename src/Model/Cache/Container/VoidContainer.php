@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of ILIAS, a powerful learning management system
  * published by ILIAS open source e-Learning e.V.
@@ -29,6 +31,7 @@ final class VoidContainer implements Container
      * @var \srag\Plugins\Opencast\Model\Cache\Container\Request
      */
     private $request;
+
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -66,7 +69,11 @@ final class VoidContainer implements Container
                 });
             }
         } catch (\TypeError $exception) {
-            throw new \InvalidArgumentException('Only strings, integers and arrays containing those values are allowed, ' . gettype($value) . ' given.', $exception->getCode(), $exception);
+            throw new \InvalidArgumentException(
+                'Only strings, integers and arrays containing those values are allowed, ' . gettype($value) . ' given.',
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 

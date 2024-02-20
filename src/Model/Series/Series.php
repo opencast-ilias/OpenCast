@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace srag\Plugins\Opencast\Model\Series;
 
 use srag\Plugins\Opencast\Model\ACL\ACL;
@@ -72,7 +74,7 @@ class Series
     {
         $this->theme = $theme;
     }
-    
+
     public function getPermissionTemplateId(): ?int
     {
         $template = PermissionTemplate::getTemplateForAcls($this->getAccessPolicies());
