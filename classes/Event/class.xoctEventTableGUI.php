@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Util\OutputResponse;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class xoctEventTableGUI
@@ -25,6 +26,10 @@ class xoctEventTableGUI extends ilTable2GUI
 {
     use OutputResponse;
     public const TBL_ID = 'tbl_xoct';
+    /**
+     * @var bool
+     */
+    private $async;
     /**
      * @var ilOpenCastPlugin
      */
@@ -93,6 +98,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->object_settings = $object_settings;
         $this->container = OpencastDIC::getInstance();
         $this->plugin = $this->container->plugin();
+        $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
         $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
         $this->setPrefix($a_val);
         $this->setFormName($a_val);
@@ -107,8 +113,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $data = array_filter(
             $data,
             $this->filterPermissions() ?? function ($v, $k): bool {
-            return !empty($v);
-        },
+                return !empty($v);
+            },
             $this->filterPermissions() === null ? ARRAY_FILTER_USE_BOTH : 0
         );
         $this->setData($data);
@@ -275,9 +281,9 @@ class xoctEventTableGUI extends ilTable2GUI
             return $owner_visible;
         }
         $owner_visible = (ilObjOpenCastAccess::isActionAllowedForRole(
-                'upload',
-                'member'
-            ) || $this->object_settings->getPermissionPerClip());
+            'upload',
+            'member'
+        ) || $this->object_settings->getPermissionPerClip());
 
         return $owner_visible;
     }
@@ -309,7 +315,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
         $this->tpl->setVariable(
             'ACTIONS',
-            $this->ui->renderer()->renderAsync($dropdown)
+            $this->async ? $this->ui->renderer()->renderAsync($dropdown) : $this->ui->renderer()->render($dropdown)
         );
     }
 
