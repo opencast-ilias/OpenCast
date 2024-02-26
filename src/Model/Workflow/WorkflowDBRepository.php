@@ -472,7 +472,7 @@ class WorkflowDBRepository implements WorkflowRepository
         $configuration_panel_html = trim(str_replace("\n", "", $configuration_panel_html));
         $mapped_configuration_panel_html = $configuration_panel_html;
 
-        if (strlen($configuration_panel_html) > 0) {
+        if ($configuration_panel_html !== '') {
             $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA|LIBXML_NOWARNING|LIBXML_NOERROR);
             $inputs = $dom->getElementsByTagName('input');
             $selects = $dom->getElementsByTagName('select');
@@ -480,6 +480,13 @@ class WorkflowDBRepository implements WorkflowRepository
             $uls = $dom->getElementsByTagName('ul');
             $legends = $dom->getElementsByTagName('legend');
             $main_div = $dom->getElementById('workflow-configuration');
+
+            $scripts = $dom->getElementsByTagName('script');
+
+            foreach ($scripts as $script) {
+                // replace content of the scripts surrounded by a try catch block. we do so because those scripts can break the whole page.
+                $script->textContent = "try { " . $script->textContent . " } catch (e) { console.error(e); }";
+            }
 
             if ($main_div) {
                 $main_div->setAttribute('id', "{$workflow_id}_workflow-configuration");
