@@ -1487,8 +1487,47 @@ if (!$ilDB->tableExists('xoct_pub_sub_usage')) {
     $ilDB->createSequence('xoct_pub_sub_usage');
     $ilDB->addPrimaryKey('xoct_pub_sub_usage', ['id']);
 }
+
 // Add new columns to PublicationUsage.
-//\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::updateDB();
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'display_name')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'display_name', [
+        'type' => 'text',
+        'length' => 512,
+        'notnull' => false
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'group_id')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'group_id', [
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => false
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'mediatype')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'mediatype', [
+        'type' => 'text',
+        'length' => 512,
+        'notnull' => false
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'ignore_object_setting')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'ignore_object_setting', [
+        'type' => 'integer',
+        'length' => 1,
+        'notnull' => false
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'ext_dl_source')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'ext_dl_source', [
+        'type' => 'integer',
+        'length' => 1,
+        'notnull' => false
+    ]);
+}
 
 foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::get() as $publication_usage) {
     if ($publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD || $publication_usage->getUsageId() == \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
