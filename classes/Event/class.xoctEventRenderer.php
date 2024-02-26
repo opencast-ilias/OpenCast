@@ -32,6 +32,7 @@ class xoctEventRenderer
     use LocaleTrait;
 
     public const LANG_MODULE = 'event';
+    private bool $async;
     /**
      * @var ilOpenCastPlugin
      */
@@ -92,6 +93,7 @@ class xoctEventRenderer
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
         $this->dropdowns = [];
+        $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
     }
 
     public static function initModals(EventModals $modals): void
@@ -144,7 +146,9 @@ class xoctEventRenderer
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
                 )->withLabel($display_name);
-                $value .= $this->renderer->renderAsync($dropdown);
+                $value .= $this->async
+                    ? $this->renderer->renderAsync($dropdown)
+                    : $this->renderer->render($dropdown);
             } else {
                 $content = reset($dropdown_contents);
                 $this->insert($tpl, $content['variable'], $content['html'], $content['block_title']);
@@ -357,7 +361,9 @@ class xoctEventRenderer
                 $dropdown = $this->factory->dropdown()->standard(
                     $items
                 )->withLabel($display_name);
-                $html = $this->renderer->renderAsync($dropdown);
+                $html = $this->async
+                    ? $this->renderer->renderAsync($dropdown)
+                    : $this->renderer->render($dropdown);
             } else {
                 $usage_type = $download_publication_usage->isSub() ? 'sub' : 'org';
                 $this->ctrl->setParameterByClass(xoctEventGUI::class, 'usage_type', $usage_type);

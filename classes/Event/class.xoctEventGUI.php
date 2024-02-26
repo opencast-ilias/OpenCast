@@ -739,9 +739,9 @@ class xoctEventGUI extends xoctGUI
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
-                        'Y.m.d H:i:s',
-                        strtotime($conflict['start'])
-                    ) . ' - '
+                    'Y.m.d H:i:s',
+                    strtotime($conflict['start'])
+                ) . ' - '
                     . date('Y.m.d H:i:s', strtotime($conflict['end'])) . '<br>';
             }
             $this->main_tpl->setOnScreenMessage('failure', $message);
@@ -1170,8 +1170,11 @@ class xoctEventGUI extends xoctGUI
     protected function getModalsHTML(): string
     {
         $modals_html = '';
+        $asyc = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
         foreach ($this->getModals()->getAllComponents() as $modal) {
-            $modals_html .= $this->ui->renderer()->renderAsync($modal);
+            $modals_html .= $asyc
+                ? $this->ui->renderer()->renderAsync($modal)
+                : $this->ui->renderer()->render($modal);
         }
 
         return $modals_html;

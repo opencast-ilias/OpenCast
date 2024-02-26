@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * Class xoctEventTileGUI
@@ -17,6 +18,7 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 class xoctEventTileGUI
 {
     public const GET_PAGE = 'page';
+    private bool $async;
     /**
      * @var ilOpenCastPlugin
      */
@@ -88,6 +90,7 @@ class xoctEventTileGUI
         $this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
         $ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
         $this->limit = UserSettingsRepository::getTileLimitForUser($user->getId(), $ref_id);
+        $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
         $this->events = array_values(
             array_map(static function ($item) {
                 return $item['object'];
@@ -166,7 +169,12 @@ class xoctEventTileGUI
             $card = $card->withSections($sections);
 
             $container_tpl->setCurrentBlock('tile');
-            $container_tpl->setVariable('TILE', $this->renderer->renderAsync($card));
+            $container_tpl->setVariable(
+                'TILE',
+                $this->async
+                    ? $this->renderer->renderAsync($card)
+                    : $this->renderer->render($card)
+            );
             $container_tpl->parseCurrentBlock();
         }
         return $container_tpl->get();
@@ -254,7 +262,9 @@ class xoctEventTileGUI
                                     )
                                     ->withPageSize($this->limit);
 
-        return $this->renderer->renderAsync($pagination);
+        return $this->async
+            ? $this->renderer->renderAsync($pagination)
+            : $this->renderer->render($pagination);
     }
 
     /**
