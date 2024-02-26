@@ -17,5 +17,10 @@
 	</div>
 </form>
 <script type="text/javascript">
-	il.Opencast.Workflow.startWorkflow.init("{FORM_SUBMIT_BTN_ID}", "{FORM_ID}")
+	// the same code is in EventModals.php but we currently need both (to provide async/sync table laoding)
+	try {
+		il.Opencast.Workflow.startWorkflow.init("{FORM_SUBMIT_BTN_ID}", "{FORM_ID}")
+	} catch (e) {
+		console.log(e);
+	}
 </script>
