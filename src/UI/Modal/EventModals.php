@@ -65,6 +65,18 @@ class EventModals
 
             $form_id = 'startworkflow_modal_form';
             $form_submit_btn_id = 'startworkflow-form-submit-btn';
+
+            // the same code is inline in tpl.startworkflow_modal.html but we currently need both (to provide async/sync table laoding)
+            $this->dic->ui()->mainTemplate()->addOnLoadCode(
+                "
+                try {
+                    il.Opencast.Workflow.startWorkflow.init('$form_submit_btn_id', '$form_id');
+                } catch (e) {
+                    console.log(e);
+                }
+                "
+            );
+
             $tpl->setVariable('FORM_SUBMIT_BTN_ID', $form_submit_btn_id);
             $tpl->setVariable('FORM_ID', $form_id);
             $tpl->setVariable(
