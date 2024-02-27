@@ -1,5 +1,15 @@
 # Change Log
 
+## [8.0.1]
+- [FIX] various issues with workflows and the associated forms in modals
+- [FIX] several db-colums in xoct_publication_usage were missing when
+  updating from a specifig version
+
+## [8.0.0]
+- Major refactoring for ILIAS 8. all external libraries that were no longer 
+  needed were removed and the code was adapted to the new requirements of 
+  ILIAS 8. This version is not compatible with ILIAS 7 anymore.
+
 ## [5.6.0]
 - Introduced Dynamic Workflows and fix Issue #13
 - Added Metadata Enhancement and fix Issue #181
