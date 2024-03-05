@@ -40,7 +40,7 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
      */
     private $plugin;
 
-    public function __construct($parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
+    public function __construct(xoctWorkflowParameterGUI $parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
         global /** @var Container $opencastContainer */
         $DIC, $opencastContainer;
@@ -68,7 +68,6 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
         $this->addColumn($this->getLocaleString("default_value_admin", ''));
         $this->addColumn('', '', '', false);
     }
-
 
     protected function initData(): void
     {
@@ -125,7 +124,7 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
         $actions = new ilAdvancedSelectionListGUI();
         $actions->setListTitle($this->getLocaleString("actions", 'common'));
 
-        $this->ctrl->setParameterByClass(xoctWorkflowParameterGUI::class, 'param_id', $row["id"]);
+        $this->ctrl->setParameter($this->parent_obj, xoctWorkflowParameterGUI::P_PARAM_ID, $row["id"]);
 
         $actions->addItem(
             $this->getLocaleString("edit", 'common'),
@@ -142,7 +141,5 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
         );
 
         $this->tpl->setVariable("ACTIONS", $actions->getHTML());
-
-        $this->ctrl->setParameter($this->parent_obj, "xhfp_content", null);
     }
 }

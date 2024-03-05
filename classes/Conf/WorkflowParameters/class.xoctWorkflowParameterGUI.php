@@ -20,6 +20,8 @@ class xoctWorkflowParameterGUI extends xoctGUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
+    const P_PARAM_ID = 'param_id';
+
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
         return $this->_getLocaleString($string, empty($module) ? 'workflow_params' : $module, $fallback);
@@ -146,13 +148,13 @@ class xoctWorkflowParameterGUI extends xoctGUI
             $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
             $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_SHOW_TABLE);
             $ilConfirmationGUI->setConfirm($this->getLocaleString('confirm', 'common'), self::CMD_LOAD_WORKFLOW_PARAMS_CONFIRMED);
-            $ilConfirmationGUI->setHeaderText($this->getLocaleString('msg_load_workflow_params'));
+            $ilConfirmationGUI->setHeaderText($this->getLocaleString('load_workflow_params', 'msg'));
             /** @var WorkflowParameter $param */
             foreach ($params as $param) {
                 $ilConfirmationGUI->addItem(
                     'workflow_params[' . $param->getId() . '][title]',
-                    $param->getTitle(),
-                    $param->getTitle()
+                    $param->getTitle() ?? '',
+                    $param->getTitle() ?? ''
                 );
                 $ilConfirmationGUI->addHiddenItem('workflow_params[' . $param->getId() . '][type]', $param->getType());
             }
@@ -206,7 +208,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         $xoctWorkflowParameterFormGUI = new xoctWorkflowParameterFormGUI(
             $this,
             $this->workflowParameterRepository,
-            filter_input(INPUT_GET, 'param_id')
+            filter_input(INPUT_GET, self::P_PARAM_ID)
         );
         $this->main_tpl->setContent($xoctWorkflowParameterFormGUI->getHTML());
     }
@@ -296,7 +298,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
     protected function confirmDelete(): void
     {
         $this->workflowParameterRepository->deleteById(
-            (int) ($this->http->request()->getParsedBody()['param_id'] ?? 0)
+            (string) ($this->http->request()->getParsedBody()[self::P_PARAM_ID] ?? '')
         );
         $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);
@@ -306,11 +308,11 @@ class xoctWorkflowParameterGUI extends xoctGUI
     {
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
-        $ilConfirmationGUI->setConfirm($this->getLocaleString('confirm'), self::CMD_CONFIRM);
-        $ilConfirmationGUI->setCancel($this->getLocaleString('cancel'), self::CMD_SHOW_TABLE);
-        $param_id = (int) ($this->http->request()->getQueryParams()['param_id'] ?? 0);
+        $ilConfirmationGUI->setConfirm($this->getLocaleString('confirm', 'common'), self::CMD_CONFIRM);
+        $ilConfirmationGUI->setCancel($this->getLocaleString('cancel', 'common'), self::CMD_SHOW_TABLE);
+        $param_id = (string) ($this->http->request()->getQueryParams()[self::P_PARAM_ID] ?? '');
         $ilConfirmationGUI->addItem(
-            'param_id',
+            self::P_PARAM_ID,
             (string) $param_id,
             WorkflowParameter::find($param_id)->getTitle() ?? ''
         );

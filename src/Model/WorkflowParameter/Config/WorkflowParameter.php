@@ -36,7 +36,6 @@ class WorkflowParameter extends ActiveRecord
         return self::TABLE_NAME;
     }
 
-
     /**
      * @var string
      *
@@ -82,58 +81,34 @@ class WorkflowParameter extends ActiveRecord
      */
     protected $default_value_admin = self::VALUE_IGNORE;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
-        return $this->id;
+        return $this->id ?? '';
     }
 
-    /**
-     * @param $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
-    /**
-     * @param $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
-        return $this->type;
+        return $this->type ?? '';
     }
 
-    /**
-     * @param $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;

@@ -416,12 +416,6 @@ class PluginConfig extends ActiveRecord
 
     public static function getXMLExport(): string
     {
-        global $DIC;
-
-        /** @var \ilComponentRepository $component_repo */
-        $component_repo = $DIC['component.repository'];
-        $plugin_infos = $component_repo->getPluginById('xoct');
-
         $opencast_plugin = ilOpenCastPlugin::getInstance();
         $domxml = new DOMDocument('1.0', 'UTF-8');
         $domxml->preserveWhiteSpace = false;
@@ -430,7 +424,7 @@ class PluginConfig extends ActiveRecord
 
         $xml_info = $config->appendChild(new DOMElement('info'));
         $xml_info->appendChild(new DOMElement('plugin_version', (string) $opencast_plugin->getVersion()));
-        $xml_info->appendChild(new DOMElement('plugin_db_version', (string) $plugin_infos->getCurrentDBVersion()));
+        $xml_info->appendChild(new DOMElement('plugin_db_version', (string) $opencast_plugin->getDBVersion()));
         $xml_info->appendChild(
             new DOMElement('config_version', (string) PluginConfig::getConfig(PluginConfig::F_CONFIG_VERSION))
         );
@@ -555,16 +549,16 @@ class PluginConfig extends ActiveRecord
                 new DOMCdataSection((string) $xoctWorkflows->getWorkflowId())
             );
             $xml_xoctWf->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getTitle() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTitle() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getDescription() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getDescription() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('tags'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getTags() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTags() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('config_panel'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getConfigPanel() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getConfigPanel() ?? ''))
             );
         }
 
