@@ -73,6 +73,7 @@ class MetadataToXML
         );
 
         $xml_writer->xmlEndTag('dublincore');
-        return $xml_writer->xmlStr;
+        
+        return $xml_writer->xmlDumpMem(false);
     }
 }
