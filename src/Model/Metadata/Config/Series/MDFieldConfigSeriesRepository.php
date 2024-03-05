@@ -75,13 +75,13 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
             $ar = new MDFieldConfigSeriesAR();
             $ar->setSort($this->getNextSort());
         }
-        $ar->setFieldId($data['field_id']);
-        $ar->setTitleDe($data['title_de']);
-        $ar->setTitleEn($data['title_en']);
-        $ar->setVisibleForPermissions($data['visible_for_permissions']);
-        $ar->setPrefill($data['prefill']);
-        $ar->setReadOnly($data['read_only']);
-        $ar->setRequired($data['required']);
+        $ar->setFieldId($data['field_id'] ?? '');
+        $ar->setTitleDe($data['title_de'] ?? '');
+        $ar->setTitleEn($data['title_en'] ?? '');
+        $ar->setVisibleForPermissions($data['visible_for_permissions'] ?? '');
+        $ar->setPrefill($data['prefill'] ?? null);
+        $ar->setReadOnly((bool) $data['read_only']);
+        $ar->setRequired((bool) $data['required']);
         $ar->setValuesFromEditableString($data['values'] ?? '');
         if ($is_new) {
             $ar->create();
