@@ -1555,9 +1555,9 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
 ?>
 <#44>
 <?php
-// Re remove the column parameter from xoct_workflow if it's existent.
-if($ilDB->tableColumnExists('xoct_workflow', 'parameter')) {
-    $ilDB->dropTableColumn('xoct_workflow', 'parameter');
+// Re remove the column parameters from xoct_workflow if it's existent.
+if($ilDB->tableColumnExists('xoct_workflow', 'parameters')) {
+    $ilDB->dropTableColumn('xoct_workflow', 'parameters');
 }
 
 // we need to add the new columns to the xoct_workflow table if they are not existent.
@@ -1647,8 +1647,8 @@ foreach ($mapping as $old => $new) {
 // Since there can be cases where step 44 was not executed the right way, we must ensure that the changes to the xoct_workflow table are applied.
 
 // Re remove the column parameter from xoct_workflow if it's existent.
-if($ilDB->tableColumnExists('xoct_workflow', 'parameter')) {
-    $ilDB->dropTableColumn('xoct_workflow', 'parameter');
+if($ilDB->tableColumnExists('xoct_workflow', 'parameters')) {
+    $ilDB->dropTableColumn('xoct_workflow', 'parameters');
 }
 
 // we need to add the new columns to the xoct_workflow table if they are not existent.
