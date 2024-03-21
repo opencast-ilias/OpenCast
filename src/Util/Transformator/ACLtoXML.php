@@ -89,6 +89,6 @@ class ACLtoXML
 
         $xml_writer->xmlEndTag('Policy');
 
-        return $xml_writer->xmlStr;
+        return $xml_writer->xmlDumpMem(false);
     }
 }

@@ -186,6 +186,10 @@ class PluginConfig extends ActiveRecord
 
     public static function importFromXML(string $xml_file_path): void
     {
+        if (!is_readable($xml_file_path)) {
+            throw new \InvalidArgumentException("File not readable: " . $xml_file_path);
+        }
+
         $dom_xml = new DOMDocument('1.0', 'UTF-8');
         $dom_xml->loadXML(file_get_contents($xml_file_path));
 
@@ -214,7 +218,7 @@ class PluginConfig extends ActiveRecord
 
         foreach ($xoct_md_field_event as $node) {
             $xoctMDFieldConfigEventAR = new MDFieldConfigEventAR();
-            $xoctMDFieldConfigEventAR->setSort($node->getElementsByTagName('sort')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setSort((int) $node->getElementsByTagName('sort')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setFieldId($node->getElementsByTagName('field_id')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setTitleDe($node->getElementsByTagName('title_de')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setTitleEn($node->getElementsByTagName('title_en')->item(0)->nodeValue);
@@ -222,8 +226,8 @@ class PluginConfig extends ActiveRecord
                 $node->getElementsByTagName('visible_for_permissions')->item(0)->nodeValue
             );
             $xoctMDFieldConfigEventAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
-            $xoctMDFieldConfigEventAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
-            $xoctMDFieldConfigEventAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setReadOnly((bool) $node->getElementsByTagName('read_only')->item(0)->nodeValue);
+            $xoctMDFieldConfigEventAR->setRequired((bool) $node->getElementsByTagName('required')->item(0)->nodeValue);
             $xoctMDFieldConfigEventAR->setValuesFromEditableString(
                 $node->getElementsByTagName('values')->item(0)->nodeValue ?? ''
             );
@@ -240,7 +244,7 @@ class PluginConfig extends ActiveRecord
 
         foreach ($xoct_md_field_series as $node) {
             $xoctMDFieldConfigSeriesAR = new MDFieldConfigSeriesAR();
-            $xoctMDFieldConfigSeriesAR->setSort($node->getElementsByTagName('sort')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setSort((int) $node->getElementsByTagName('sort')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setFieldId($node->getElementsByTagName('field_id')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setTitleDe($node->getElementsByTagName('title_de')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setTitleEn($node->getElementsByTagName('title_en')->item(0)->nodeValue);
@@ -248,8 +252,10 @@ class PluginConfig extends ActiveRecord
                 $node->getElementsByTagName('visible_for_permissions')->item(0)->nodeValue
             );
             $xoctMDFieldConfigSeriesAR->setPrefill($node->getElementsByTagName('prefill')->item(0)->nodeValue);
-            $xoctMDFieldConfigSeriesAR->setReadOnly($node->getElementsByTagName('read_only')->item(0)->nodeValue);
-            $xoctMDFieldConfigSeriesAR->setRequired($node->getElementsByTagName('required')->item(0)->nodeValue);
+            $xoctMDFieldConfigSeriesAR->setReadOnly(
+                (bool) $node->getElementsByTagName('read_only')->item(0)->nodeValue
+            );
+            $xoctMDFieldConfigSeriesAR->setRequired((bool) $node->getElementsByTagName('required')->item(0)->nodeValue);
             $xoctMDFieldConfigSeriesAR->setValuesFromEditableString(
                 $node->getElementsByTagName('values')->item(0)->nodeValue ?? ''
             );
@@ -417,9 +423,11 @@ class PluginConfig extends ActiveRecord
         $config = $domxml->appendChild(new DOMElement('opencast_settings'));
 
         $xml_info = $config->appendChild(new DOMElement('info'));
-        $xml_info->appendChild(new DOMElement('plugin_version', $opencast_plugin->getVersion()));
-        $xml_info->appendChild(new DOMElement('plugin_db_version', $opencast_plugin->getDBVersion()));
-        $xml_info->appendChild(new DOMElement('config_version', PluginConfig::getConfig(PluginConfig::F_CONFIG_VERSION)));
+        $xml_info->appendChild(new DOMElement('plugin_version', (string) $opencast_plugin->getVersion()));
+        $xml_info->appendChild(new DOMElement('plugin_db_version', (string) $opencast_plugin->getDBVersion()));
+        $xml_info->appendChild(
+            new DOMElement('config_version', (string) PluginConfig::getConfig(PluginConfig::F_CONFIG_VERSION))
+        );
 
         // xoctConf
         $xml_xoctConfs = $config->appendChild(new DOMElement('xoct_confs'));
@@ -429,10 +437,9 @@ class PluginConfig extends ActiveRecord
         foreach (PluginConfig::getCollection()->get() as $xoctConf) {
             $xml_xoctConf = $xml_xoctConfs->appendChild(new DOMElement('xoct_conf'));
             $xml_xoctConf->appendChild(new DOMElement('name', $xoctConf->getName()));
-            //			$xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($xoctConf->getValue()));
             $value = PluginConfig::getConfig($xoctConf->getName());
             $value = is_array($value) ? json_encode($value) : $value;
-            $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection($value));
+            $xml_xoctConf->appendChild(new DOMElement('value'))->appendChild(new DOMCdataSection((string) $value));
         }
 
         // xoctMDFieldConfigEventARs
@@ -443,31 +450,31 @@ class PluginConfig extends ActiveRecord
         foreach (MDFieldConfigEventAR::get() as $xoctMDFieldConfigEventAR) {
             $xml_xoctMDE = $xml_xoctMDFieldConfigEventARs->appendChild(new DOMElement('xoct_md_field_event'));
             $xml_xoctMDE->appendChild(new DOMElement('sort'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getSort())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getSort())
             );
             $xml_xoctMDE->appendChild(new DOMElement('field_id'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getFieldId())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getFieldId())
             );
             $xml_xoctMDE->appendChild(new DOMElement('title_de'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getTitle('de'))
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getTitle('de'))
             );
             $xml_xoctMDE->appendChild(new DOMElement('title_en'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getTitle('en'))
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getTitle('en'))
             );
             $xml_xoctMDE->appendChild(new DOMElement('visible_for_permissions'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getVisibleForPermissions())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getVisibleForPermissions())
             );
             $xml_xoctMDE->appendChild(new DOMElement('prefill'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getPrefill())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getPrefill())
             );
             $xml_xoctMDE->appendChild(new DOMElement('read_only'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->isReadOnly())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->isReadOnly())
             );
             $xml_xoctMDE->appendChild(new DOMElement('required'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->isRequired())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->isRequired())
             );
             $xml_xoctMDE->appendChild(new DOMElement('values'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigEventAR->getValuesAsEditableString())
+                new DOMCdataSection((string) $xoctMDFieldConfigEventAR->getValuesAsEditableString())
             );
         }
 
@@ -479,31 +486,31 @@ class PluginConfig extends ActiveRecord
         foreach (MDFieldConfigSeriesAR::get() as $xoctMDFieldConfigSeriesAR) {
             $xml_xoctMDS = $xml_xoctMDFieldConfigSeriesARs->appendChild(new DOMElement('xoct_md_field_series'));
             $xml_xoctMDS->appendChild(new DOMElement('sort'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getSort())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getSort())
             );
             $xml_xoctMDS->appendChild(new DOMElement('field_id'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getFieldId())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getFieldId())
             );
             $xml_xoctMDS->appendChild(new DOMElement('title_de'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getTitle('de'))
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getTitle('de'))
             );
             $xml_xoctMDS->appendChild(new DOMElement('title_en'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getTitle('en'))
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getTitle('en'))
             );
             $xml_xoctMDS->appendChild(new DOMElement('visible_for_permissions'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getVisibleForPermissions())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getVisibleForPermissions())
             );
             $xml_xoctMDS->appendChild(new DOMElement('prefill'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getPrefill())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getPrefill())
             );
             $xml_xoctMDS->appendChild(new DOMElement('read_only'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->isReadOnly())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->isReadOnly())
             );
             $xml_xoctMDS->appendChild(new DOMElement('required'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->isRequired())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->isRequired())
             );
             $xml_xoctMDS->appendChild(new DOMElement('values'))->appendChild(
-                new DOMCdataSection($xoctMDFieldConfigSeriesAR->getValuesAsEditableString())
+                new DOMCdataSection((string) $xoctMDFieldConfigSeriesAR->getValuesAsEditableString())
             );
         }
 
@@ -515,19 +522,19 @@ class PluginConfig extends ActiveRecord
         foreach (WorkflowParameter::get() as $xoctWorkflowParameter) {
             $xml_xoctPU = $xml_xoctWorkflowParameters->appendChild(new DOMElement('xoct_workflow_parameter'));
             $xml_xoctPU->appendChild(new DOMElement('id'))->appendChild(
-                new DOMCdataSection($xoctWorkflowParameter->getId())
+                new DOMCdataSection((string) $xoctWorkflowParameter->getId())
             );
             $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection($xoctWorkflowParameter->getTitle())
+                new DOMCdataSection((string) $xoctWorkflowParameter->getTitle())
             );
             $xml_xoctPU->appendChild(new DOMElement('type'))->appendChild(
-                new DOMCdataSection($xoctWorkflowParameter->getType())
+                new DOMCdataSection((string) $xoctWorkflowParameter->getType())
             );
             $xml_xoctPU->appendChild(new DOMElement('default_value_member'))->appendChild(
-                new DOMCdataSection($xoctWorkflowParameter->getDefaultValueMember())
+                new DOMCdataSection((string) $xoctWorkflowParameter->getDefaultValueMember())
             );
             $xml_xoctPU->appendChild(new DOMElement('default_value_admin'))->appendChild(
-                new DOMCdataSection($xoctWorkflowParameter->getDefaultValueAdmin())
+                new DOMCdataSection((string) $xoctWorkflowParameter->getDefaultValueAdmin())
             );
         }
 
@@ -539,19 +546,19 @@ class PluginConfig extends ActiveRecord
         foreach (WorkflowAR::get() as $xoctWorkflows) {
             $xml_xoctWf = $xml_xoctWorkflows->appendChild(new DOMElement('xoct_workflow'));
             $xml_xoctWf->appendChild(new DOMElement('workflow_id'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getWorkflowId())
+                new DOMCdataSection((string) $xoctWorkflows->getWorkflowId())
             );
             $xml_xoctWf->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getTitle() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTitle() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getDescription() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getDescription() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('tags'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getTags() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTags() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('config_panel'))->appendChild(
-                new DOMCdataSection($xoctWorkflows->getConfigPanel() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getConfigPanel() ?? ''))
             );
         }
 
@@ -565,43 +572,43 @@ class PluginConfig extends ActiveRecord
                 new DOMElement('xoct_publication_usage')
             );
             $xml_xoctPU->appendChild(new DOMElement('usage_id'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getUsageId())
+                new DOMCdataSection((string) $xoctPublicationUsage->getUsageId())
             );
             $xml_xoctPU->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getTitle())
+                new DOMCdataSection((string) $xoctPublicationUsage->getTitle())
             );
             $xml_xoctPU->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getDescription())
+                new DOMCdataSection((string) $xoctPublicationUsage->getDescription())
             );
             $xml_xoctPU->appendChild(new DOMElement('channel'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getChannel())
+                new DOMCdataSection((string) $xoctPublicationUsage->getChannel())
             );
             $xml_xoctPU->appendChild(new DOMElement('flavor'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getFlavor())
+                new DOMCdataSection((string) $xoctPublicationUsage->getFlavor())
             );
             $xml_xoctPU->appendChild(new DOMElement('tag'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getTag())
+                new DOMCdataSection((string) $xoctPublicationUsage->getTag())
             );
             $xml_xoctPU->appendChild(new DOMElement('search_key'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getSearchKey())
+                new DOMCdataSection((string) $xoctPublicationUsage->getSearchKey())
             );
             $xml_xoctPU->appendChild(new DOMElement('md_type'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getMdType())
+                new DOMCdataSection((string) $xoctPublicationUsage->getMdType())
             );
             $xml_xoctPU->appendChild(new DOMElement('group_id'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getGroupId())
+                new DOMCdataSection((string) $xoctPublicationUsage->getGroupId())
             );
             $xml_xoctPU->appendChild(new DOMElement('display_name'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getDisplayName())
+                new DOMCdataSection((string) $xoctPublicationUsage->getDisplayName())
             );
             $xml_xoctPU->appendChild(new DOMElement('mediatype'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->getMediaType())
+                new DOMCdataSection((string) $xoctPublicationUsage->getMediaType())
             );
             $xml_xoctPU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->ignoreObjectSettings())
+                new DOMCdataSection((string) $xoctPublicationUsage->ignoreObjectSettings())
             );
             $xml_xoctPU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsage->isExternalDownloadSource())
+                new DOMCdataSection((string) $xoctPublicationUsage->isExternalDownloadSource())
             );
         }
 
@@ -613,43 +620,43 @@ class PluginConfig extends ActiveRecord
         foreach (PublicationSubUsage::get() as $xoctPublicationSubUsage) {
             $xml_xoctPSU = $xml_xoctPublicationSubUsages->appendChild(new DOMElement('xoct_publication_sub_usage'));
             $xml_xoctPSU->appendChild(new DOMElement('parent_usage_id'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getParentUsageId())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getParentUsageId())
             );
             $xml_xoctPSU->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getTitle())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getTitle())
             );
             $xml_xoctPSU->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getDescription())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getDescription())
             );
             $xml_xoctPSU->appendChild(new DOMElement('channel'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getChannel())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getChannel())
             );
             $xml_xoctPSU->appendChild(new DOMElement('flavor'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getFlavor())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getFlavor())
             );
             $xml_xoctPSU->appendChild(new DOMElement('tag'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getTag())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getTag())
             );
             $xml_xoctPSU->appendChild(new DOMElement('search_key'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getSearchKey())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getSearchKey())
             );
             $xml_xoctPSU->appendChild(new DOMElement('md_type'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getMdType())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getMdType())
             );
             $xml_xoctPSU->appendChild(new DOMElement('group_id'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getGroupId())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getGroupId())
             );
             $xml_xoctPSU->appendChild(new DOMElement('display_name'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getDisplayName())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getDisplayName())
             );
             $xml_xoctPSU->appendChild(new DOMElement('mediatype'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->getMediaType())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->getMediaType())
             );
             $xml_xoctPSU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->ignoreObjectSettings())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->ignoreObjectSettings())
             );
             $xml_xoctPSU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
-                new DOMCdataSection($xoctPublicationSubUsage->isExternalDownloadSource())
+                new DOMCdataSection((string) $xoctPublicationSubUsage->isExternalDownloadSource())
             );
         }
 
@@ -661,16 +668,16 @@ class PluginConfig extends ActiveRecord
         foreach (PublicationUsageGroup::get() as $xoctPublicationUsageGroup) {
             $xml_xoctPUG = $xml_xoctPublicationUsageGroups->appendChild(new DOMElement('xoct_publication_usage_group'));
             $xml_xoctPUG->appendChild(new DOMElement('id'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsageGroup->getId())
+                new DOMCdataSection((string) $xoctPublicationUsageGroup->getId())
             );
             $xml_xoctPUG->appendChild(new DOMElement('name'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsageGroup->getName())
+                new DOMCdataSection((string) $xoctPublicationUsageGroup->getName())
             );
             $xml_xoctPUG->appendChild(new DOMElement('display_name'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsageGroup->getDisplayName())
+                new DOMCdataSection((string) $xoctPublicationUsageGroup->getDisplayName())
             );
             $xml_xoctPUG->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection($xoctPublicationUsageGroup->getDescription())
+                new DOMCdataSection((string) $xoctPublicationUsageGroup->getDescription())
             );
         }
 
@@ -725,7 +732,6 @@ class PluginConfig extends ActiveRecord
             $obj = new self();
             $obj->setName($name);
         }
-
 
         /*
          * If the terms of use have been updated,
