@@ -1112,7 +1112,7 @@ $fields = array(
     'prefill' => array(
         'type' => 'text',
         'length' => '4000',
-
+        'notnull' => '1', // this will be set to 'none' in step 45
     ),
     'sort' => array(
         'type' => 'integer',
@@ -1179,7 +1179,7 @@ $fields = array(
     'prefill' => array(
         'type' => 'text',
         'length' => '4000',
-
+        'notnull' => '1', // this will be set to 'none' in step 45
     ),
     'sort' => array(
         'type' => 'integer',
@@ -1555,14 +1555,41 @@ foreach (\srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage::ge
 ?>
 <#44>
 <?php
-// To apply new changes into WorkflowAP model as well as xoct_workflow table.
-//\srag\Plugins\Opencast\Model\Workflow\WorkflowAR::updateDB();
+// Re remove the column parameters from xoct_workflow if it's existent.
+if($ilDB->tableColumnExists('xoct_workflow', 'parameters')) {
+    $ilDB->dropTableColumn('xoct_workflow', 'parameters');
+}
+
+// we need to add the new columns to the xoct_workflow table if they are not existent.
+if(!$ilDB->tableColumnExists('xoct_workflow', 'description')) {
+    $ilDB->addTableColumn('xoct_workflow', 'description', [
+        'type' => 'text',
+        'length' => '512',
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_workflow', 'tags')) {
+    $ilDB->addTableColumn('xoct_workflow', 'tags', [
+        'type' => 'text',
+        'length' => '512',
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_workflow', 'config_panel')) {
+    $ilDB->addTableColumn('xoct_workflow', 'config_panel', [
+        'type' => 'clob',
+    ]);
+}
 ?>
 <#45>
 <?php
 // The small column changes must be applied.
-//\srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR::updateDB();
-//\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR::updateDB();
+$ilDB->modifyTableColumn('xoct_md_field_event', 'prefill', [
+    'notnull' => false
+]);
+$ilDB->modifyTableColumn('xoct_md_field_series', 'prefill', [
+    'notnull' => false
+]);
 // Since we get rid of MDPrefillOption, we need to update the prefill column on both
 // MDFieldConfigEventAR & MDFieldConfigSeriesAR models.
 $mapping = [
@@ -1582,4 +1609,96 @@ foreach (\srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeries
         $md_config_series->update();
     }
 }
+?>
+<#46>
+<?php
+// We must ensure that those two columns modified in step 45 are not null, because there can be situations while
+// switching from an older version to release_7 or release_8 where the step 45 was not executed the right way.
+$ilDB->modifyTableColumn('xoct_md_field_event', 'prefill', [
+    'notnull' => false
+]);
+$ilDB->modifyTableColumn('xoct_md_field_series', 'prefill', [
+    'notnull' => false
+]);
+?>
+<#47>
+<?php
+// And we perform the matching again if this step was not executed the right way in 45.
+$mapping = [
+    'none' => '',
+    'crs_title' => '[COURSE.TITLE]',
+    'username_creator' => '[USER.FIRSTNAME] [USER.LASTNAME]'
+];
+foreach ($mapping as $old => $new) {
+    $ilDB->manipulateF(
+        'UPDATE xoct_md_field_event SET prefill = %s WHERE prefill = %s'
+        , ['text', 'text'],
+        [$new, $old]
+    );
+    $ilDB->manipulateF(
+        'UPDATE xoct_md_field_series SET prefill = %s WHERE prefill = %s'
+        , ['text', 'text'],
+        [$new, $old]
+    );
+}
+?>
+<#48>
+<?php
+// Since there can be cases where step 44 was not executed the right way, we must ensure that the changes to the xoct_workflow table are applied.
+
+// Re remove the column parameter from xoct_workflow if it's existent.
+if($ilDB->tableColumnExists('xoct_workflow', 'parameters')) {
+    $ilDB->dropTableColumn('xoct_workflow', 'parameters');
+}
+
+// we need to add the new columns to the xoct_workflow table if they are not existent.
+if(!$ilDB->tableColumnExists('xoct_workflow', 'description')) {
+    $ilDB->addTableColumn('xoct_workflow', 'description', [
+        'type' => 'text',
+        'length' => '512',
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_workflow', 'tags')) {
+    $ilDB->addTableColumn('xoct_workflow', 'tags', [
+        'type' => 'text',
+        'length' => '512',
+    ]);
+}
+
+if(!$ilDB->tableColumnExists('xoct_workflow', 'config_panel')) {
+    $ilDB->addTableColumn('xoct_workflow', 'config_panel', [
+        'type' => 'clob',
+    ]);
+}
+
+?>
+<?php
+// Dear colleague!
+//
+// Please note the last line of this comment!
+//
+// Important information about the database updates and this file:
+// The Opencast plugin is now maintained for several releases, we must also take this into account for database updates.
+// Let's consider the following situation:
+//
+// - An ILIAS installation uses the plugin on branch release_7
+// - A bugfix requires a database update to be made, but this is only necessary for ILIAS 7
+// - Before the fix, the latest step was, for example, 51, with the fix then 52
+// - After the update, the installation uses the plugin with a database version 52
+// - Later the installation changes to release_8
+// - Step 52 must also be present here in any case (even if this fix was not necessary here, for example), because
+//   otherwise the release_8 version is on step 51, but the plugin is already installed with step 52. If a new step
+//   52 were to be added to release_8 (e.g. with a new feature), it would no longer be executed.
+//
+// For us, this means that we now always have to update steps (the numbers) on all supported branches, even if the steps
+// are empty. This is important for bugfixes, but also for new features. For features it is important whether they are
+// introduced for both branches or not.
+//
+// For new features that are only introduced in ILIAS 8 or higher, we should consider switching to the new mechanism
+// of ILIAS ore: https://github.com/ILIAS-eLearning/ILIAS/blob/trunk/docs/development/database-updates.md
+//
+// Therefore: If you need to introduce a new step in a development here, please contact us via the developer channel
+// in Matrix so that we can consider together how this can be implemented:
+// https://matrix.to/#/#oc-ilias-development:chat.virtuos.uni-osnabrueck.de
 ?>

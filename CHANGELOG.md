@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.0.2]
+- [FIX] Issue 249: Unable to import new settings
+- [FIX] Issue 250: Can't create export from settings
+- [FIX] Issue 251: Error when deleting workflow parameters
+- [FIX] Issue 252: Metadata -> Series -> license (and language)
+- [FIX] Issue 254: Upload / Addition of a Video fails when 'upload via ingest nodes' is active
+
 ## [8.0.1]
 - [FIX] various issues with workflows and the associated forms in modals
 - [FIX] several db-colums in xoct_publication_usage were missing when

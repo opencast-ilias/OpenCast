@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use ILIAS\Filesystem\Stream\Streams;
 
 /**
  * Class xoctConfExportGUI
@@ -14,6 +15,8 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
  */
 class xoctConfExportGUI extends xoctGUI
 {
+    private const EXPORT_FILE_NAME = 'opencastexport.xml';
+    private \ILIAS\FileUpload\FileUpload $upload;
     /**
      * @var \ilToolbarGUI
      */
@@ -24,6 +27,7 @@ class xoctConfExportGUI extends xoctGUI
         global $DIC;
         parent::__construct();
         $this->toolbar = $DIC->toolbar();
+        $this->upload = $DIC->upload();
     }
 
     protected function index(): void
@@ -45,15 +49,20 @@ class xoctConfExportGUI extends xoctGUI
 
     protected function import(): void
     {
-        if (!isset($_FILES['xoct_import']) || empty($_FILES['xoct_import']['tmp_name'])) {
+        $this->upload->process();
+
+        if (!$this->upload->hasUploads()) {
             $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt("admin_import_file_missign"), true);
             $this->cancel();
         }
 
         try {
-            PluginConfig::importFromXML($_FILES['xoct_import']['tmp_name']);
+            $upload_results = $this->upload->getResults();
+            $upload = end($upload_results);
+            PluginConfig::importFromXML($upload->getPath());
             $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('admin_import_success'), true);
         } catch (\Throwable $th) {
+            throw $th;
             $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt("admin_import_failed"), true);
         }
         $this->cancel();
@@ -61,10 +70,23 @@ class xoctConfExportGUI extends xoctGUI
 
     protected function export(): void
     {
-        // ob_end_clean();
-        header('Content-Disposition: attachment; filename="opencastexport.xml"');
-        echo PluginConfig::getXMLExport();
-        exit;
+        $body = Streams::ofString(PluginConfig::getXMLExport());
+
+        $response = $this->http->response()->withHeader(
+            'Content-Type',
+            'application/xml'
+        )->withHeader(
+            'Content-Disposition',
+            'attachment; filename="' . self::EXPORT_FILE_NAME . '"'
+        )->withBody(
+            $body
+        )->withHeader(
+            'Content-Length',
+            (string) $body->getSize()
+        );
+        $this->http->saveResponse($response);
+        $this->http->sendResponse();
+        $this->http->close();
     }
 
     protected function add(): void
