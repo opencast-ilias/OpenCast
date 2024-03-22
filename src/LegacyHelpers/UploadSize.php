@@ -31,8 +31,8 @@ class UploadSize
         if (class_exists('\ilFileUtils') && method_exists('\ilFileUtils', 'getUploadSizeLimitBytes')) {
             $limit = (int) \ilFileUtils::getUploadSizeLimitBytes();
         }
-        if (class_exists('\ilUtils') && method_exists('\ilUtils', 'getUploadSizeLimitBytes')) {
-            $limit = (int) \ilUtils::getUploadSizeLimitBytes();
+        if (class_exists('ilUtil') && method_exists('ilUtil', 'getUploadSizeLimitBytes')) {
+            $limit = (int) \ilUtil::getUploadSizeLimitBytes();
         }
         return $limit;
     }
