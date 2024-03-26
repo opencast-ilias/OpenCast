@@ -48,6 +48,56 @@ class ChunkedFileRenderer extends Renderer
         return $this->renderFileField($component, $default_renderer);
     }
 
+
+    protected function renderFileField(File $component, RendererInterface $default_renderer) : string
+    {
+        $tpl = $this->getTemplateInternal("tpl.chunked_file.html", true, true);
+        $this->applyName($component, $tpl);
+
+        $settings = new \stdClass();
+        $settings->upload_url = $component->getUploadHandler()->getUploadURL();
+        $settings->removal_url = $component->getUploadHandler()->getFileRemovalURL();
+        $settings->info_url = $component->getUploadHandler()->getExistingFileInfoURL();
+        $settings->file_identifier_key = $component->getUploadHandler()->getFileIdentifierParameterName();
+        $settings->accepted_files = implode(',', $component->getAcceptedMimeTypes());
+        $settings->existing_file_ids = $component->getValue();
+        $settings->existing_files = $component->getUploadHandler()->getInfoForExistingFiles($component->getValue() ?? []);
+        $settings->max_file_size = $component->getMaxFileFize();
+        $settings->max_file_size_text = sprintf(
+            $this->txt('ui_file_input_invalid_size'),
+            (string) round($settings->max_file_size, 3)
+        );
+        $settings->chunk_size = $component->getChunkSizeInBytes();
+        $settings->chunking = true;
+
+        /**
+         * @var $component F\File
+         */
+        $component = $component->withAdditionalOnLoadCode(
+            function ($id) use ($settings) {
+                $settings = json_encode($settings);
+                return "$(document).ready(function() {
+                    il.UI.Input.ChunkedFile.init('$id', '{$settings}');
+                });";
+            }
+        );
+        $id = $this->bindJSandApplyId($component, $tpl);
+
+        $tpl->setVariable(
+            'BUTTON',
+            $default_renderer->render(
+                $this->getUIFactory()->button()->shy(
+                    $this->txt('select_files_from_computer'),
+                    "#"
+                )
+            )
+        );
+
+        $this->maybeDisable($component, $tpl);
+        return $this->wrapInFormContext($component, $tpl->get(), $id);
+    }
+
+
     protected function initClientsideFileInput(\ILIAS\UI\Component\Input\Field\File $input): \ILIAS\UI\Component\Input\Field\File
     {
         /** @var ChunkedFile $input */
@@ -85,5 +135,20 @@ class ChunkedFileRenderer extends Renderer
         return [
             ChunkedFile::class,
         ];
+    }
+
+    /**
+     * @description from original Renderer, but with other location, cannot override since the original is final
+     */
+    final protected function getTemplateInternal(
+        string $name,
+        bool $purge_unfilled_vars,
+        bool $purge_unused_blocks
+    ): ilTemplateWrapper {
+        global $DIC;
+        return new ilTemplateWrapper(
+            $DIC->ui()->mainTemplate(),
+            new \ilTemplate(self::TEMPLATES . $name, $purge_unfilled_vars, $purge_unused_blocks)
+        );
     }
 }
