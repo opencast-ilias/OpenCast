@@ -204,7 +204,7 @@ class MDPrefiller
                     }
                 }
                 if (!is_null($replacement)) {
-                    $prefilled_replaced_text = str_replace($match, $replacement, $prefilled_replaced_text);
+                    $prefilled_replaced_text = str_replace($match, (string) $replacement, $prefilled_replaced_text);
                 }
             }
         }
