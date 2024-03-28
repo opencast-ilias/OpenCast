@@ -100,13 +100,12 @@ class xoctUser
     }
 
     /**
-     * @param ilObjUser|integer $ilUser
-     * @return xoctUser
+     * @param ilObjUser|int|numeric-string $ilUser
      * @throws xoctException
      */
-    public static function getInstance($ilUser)
+    public static function getInstance($ilUser): self
     {
-        $key = (is_numeric($ilUser)) ? $ilUser : $ilUser->getId();
+        $key = (is_numeric($ilUser)) ? (int) $ilUser : $ilUser->getId();
         if (!isset(self::$instances[$key])) {
             self::$instances[$key] = new self($key);
         }
