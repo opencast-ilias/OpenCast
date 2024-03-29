@@ -9,8 +9,8 @@
   "license": "GPL-3.0-only",
   "dependencies": {
     "console-stamp": "^0.2.10",
-    "ejs": "^3.1.7",
-    "express": "^4.17.3",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
     "ini": "^1.3.5",
     "moment": "^2.29.4",
     "mysql": "^2.17.1",
