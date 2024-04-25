@@ -1,5 +1,13 @@
 # Change Log
 
+## [7.0.3]
+- [FIX] Issue 248: Chunk size can be configured again
+- [FIX] General Upload Issues of new Events
+- [FIX] Issue 266: Type casting in xoctUser
+- [FIX] Issue 263: Type casting in metadata prefiller
+- [FIX] German translation typos in paella player
+- [FIX] Issue 261: Error while importing old settings
+
 ## [7.0.2]
 - [FIX] Issue 249: Unable to import new settings
 - [FIX] Issue 250: Can't create export from settings
