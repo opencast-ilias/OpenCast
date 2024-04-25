@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.0.3]
+- [FIX] Issue 266: Type casting in xoctUser
+- [FIX] Issue 263: Type casting in metadata prefiller
+- [FIX] German translation typos in paella player
+- [FIX] Issue 261: Error while importing old settings
+- [FIX] wrong PHP 8 syntax in workflow parameters
+
 ## [8.0.2]
 - [FIX] Issue 249: Unable to import new settings
 - [FIX] Issue 250: Can't create export from settings
