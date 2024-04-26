@@ -28,17 +28,23 @@ class UploadEventRequestPayload
      * @var CURLFile
      */
     protected $presentation;
+    /**
+     * @var CURLFile[]
+     */
+    protected $subtitles;
 
     public function __construct(
         Metadata $metadata,
         ACL $acl,
         Processing $processing,
-        xoctUploadFile $presentation
+        xoctUploadFile $presentation,
+        array $subtitles = []
     ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->processing = $processing;
         $this->presentation = $presentation;
+        $this->subtitles = $subtitles;
     }
 
     public function getMetadata(): Metadata
@@ -59,6 +65,16 @@ class UploadEventRequestPayload
     public function getPresentation(): xoctUploadFile
     {
         return $this->presentation;
+    }
+
+    public function getSubtitles(): array
+    {
+        return $this->subtitles;
+    }
+
+    public function hasSubtitles(): bool
+    {
+        return count($this->subtitles) > 0;
     }
 
     /**

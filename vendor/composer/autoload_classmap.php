@@ -182,6 +182,7 @@ return array(
     'srag\\Plugins\\Opencast\\UI\\PaellaConfig\\PaellaConfigFormBuilder' => $baseDir . '/src/UI/PaellaConfig/PaellaConfigFormBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\Scheduling\\SchedulingFormItemBuilder' => $baseDir . '/src/UI/Scheduling/SchedulingFormItemBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\SeriesFormBuilder' => $baseDir . '/src/UI/SeriesFormBuilder.php',
+    'srag\\Plugins\\Opencast\\UI\\SubtitleConfig\\SubtitleConfigFormBuilder' => $baseDir . '/src/UI/Subtitle/SubtitleConfigFormBuilder.php',
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\OpencastIngestService' => $baseDir . '/src/Util/FileTransfer/OpencastIngestService.php',
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\PaellaConfigStorageService' => $baseDir . '/src/Util/FileTransfer/PaellaConfigStorageService.php',
     'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => $baseDir . '/src/Util/FileTransfer/UploadStorageService.php',

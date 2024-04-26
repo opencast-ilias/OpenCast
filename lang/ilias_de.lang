@@ -719,3 +719,16 @@ config_paella_player_live_theme_info#:#Die Themendatei, die für Livestream-Vide
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hintergrundbilddatei, die angezeigt werden soll. Das übliche Bilddateiformat wie PNG oder JPG wird empfohlen.<br> HINWEIS: Standardmäßig wird das Vorschaubild aus den Videoressourcen geladen.
 pp_image_link#:#aktuelle Bilddatei
+subtab_subtitles#:#Untertitel
+config_subtitle#:#Untertitel
+config_subtitle_upload_enabled#:#Untertitel-Upload aktivieren
+config_subtitle_upload_enabled_info#:#Wenn aktiviert, können beim Upload eines Videos auch Untertitel-Dateien hochgeladen werden.
+config_subtitle_accepted_mimetypes#:#Akzeptierte Dateitypen
+config_subtitle_accepted_mimetypes_info#:#Die akzeptierte Dateitypen der Untertiteldateien, die Benutzer hochladen dürfen.<br/>Achtung: Bitte stellen Sie sicher, dass die ausgewählten Dateitypen auch zur Dateisuffix-Positivliste (Anpassungen) der ILIAS-Verwaltungseinstellungen hinzugefügt werden unter:<br/>Verwaltung > Systemeinstellungen und Wartung > Dateidienste
+config_subtitle_languages#:#Unterstützte Sprachen
+config_subtitle_languages_info#:#Diese Sprachen werden den Benutzern zur Auswahl als Untertitelsprache zum Hochladen angeboten.<br>Ein Eintrag pro Zeile im Format wie "[Wert]%s[Label]". Das Trennzeichen ist %s, und ändern Sie [Wert] und [Beschriftung] nach Ihren Wünschen: z. B. eng%sEnglisch
+config_subtitle_load_lang_list#:#Sprachenliste von der API laden
+config_subtitle_load_lang_list_confirmation#:#Sind Sie sicher, dass Sie die Sprachliste von der API laden möchten?<br>Achtung:API-Version 1.10.0 oder höher ist erforderlich.
+config_subtitle_load_lang_list_abtn_label#:#Laden
+upload_ui_subtitle_section#:#Untertitel
+

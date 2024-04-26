@@ -53,6 +53,25 @@ class OpencastIngestService
             $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
         );
 
+        // Subtitles using addTrack ingest method.
+        if ($payload->hasSubtitles()) {
+            foreach ($payload->getSubtitles() as $lang_code => $subtitle_uploadfile) {
+                // Important tags to set for subtitles.
+                $tags = [
+                    'subtitle',
+                    'type:subtitle',
+                    'generator-type:manual',
+                    "lang:$lang_code",
+                ];
+                $media_package = $this->api->routes()->ingest->addTrack(
+                    $media_package,
+                    'captions/source', // Important flavor to set for subtitles.
+                    $subtitle_uploadfile->getFileStream(),
+                    implode(',', $tags)
+                );
+            }
+        }
+
         // track
         $media_package = $this->api->routes()->ingest->addTrack(
             $media_package,

@@ -722,3 +722,15 @@ config_paella_player_live_theme_info#:#The theme file to be loaded into Paella P
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#The (fallback) player preview background image file to be displayed. The usual image file format like PNG or JPG is encouraged.<br> NOTE: By default the preview image is loaded from the video resources.
 pp_image_link#:#current image file
+subtab_subtitles#:#Subtitles
+config_subtitle#:#Subtitles
+config_subtitle_upload_enabled#:#Enable Subtitle Upload
+config_subtitle_upload_enabled_info#:#If enabled, subtitle files can also be uploaded when uploading a video.
+config_subtitle_accepted_mimetypes#:#Accepted File Types
+config_subtitle_accepted_mimetypes_info#:#List of accepted extensions of the subtitle files that users are allowed to upload.<br/>NOTE: Please make sure that the selected file types are also added into File Suffix Positive List (Adaptations) of ILIAS Administrative Settings under:<br/>Adminstration > System Settings and Maintenance > File Services
+config_subtitle_languages#:#Supported Languages
+config_subtitle_languages_info#:#These languages will be offered to the users to select as the subtitle language to upload.<br>One entry per line in the format like "[value]%s[label]". The separator is %s, and change [value] and [label] with whatever you want: e.g. eng%sEnglish
+config_subtitle_load_lang_list#:#Load language list from API
+config_subtitle_load_lang_list_confirmation#:#Are you sure you would like to load the language list from API?<br>NOTE: API Version 1.10.0 or later is required.
+config_subtitle_load_lang_list_abtn_label#:#Load
+upload_ui_subtitle_section#:#Subtitles

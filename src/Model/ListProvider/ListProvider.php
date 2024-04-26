@@ -41,7 +41,7 @@ class ListProvider
     {
         $api_version = PluginConfig::getConfig(PluginConfig::F_API_VERSION);
 
-        return ($api_version && version_compare($api_version, $this->required_api_version, '>'));
+        return ($api_version && version_compare($api_version, $this->required_api_version, '>='));
     }
 
     /**

@@ -40,6 +40,7 @@ use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\UI\SeriesFormBuilder;
+use srag\Plugins\Opencast\UI\SubtitleConfig\SubtitleConfigFormBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\OpencastIngestService;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
@@ -315,6 +316,16 @@ class OpencastDIC
                 );
             }
         );
+        $this->container['subtitle_config_form_builder'] = $this->container->factory(
+            function ($c): \srag\Plugins\Opencast\UI\SubtitleConfig\SubtitleConfigFormBuilder
+            {
+                return new SubtitleConfigFormBuilder(
+                    $c['plugin'],
+                    $this->dic->ui()->factory(),
+                    $this->dic->ui()->renderer()
+                );
+            }
+        );
     }
 
     public function ingest_service(): OpencastIngestService
@@ -400,6 +411,11 @@ class OpencastDIC
     public function paella_config_form_builder(): PaellaConfigFormBuilder
     {
         return $this->container['paella_config_form_builder'];
+    }
+
+    public function subtitle_config_form_builder() : SubtitleConfigFormBuilder
+    {
+        return $this->container['subtitle_config_form_builder'];
     }
 
     public function overwriteService(string $service_identifier, $value): void

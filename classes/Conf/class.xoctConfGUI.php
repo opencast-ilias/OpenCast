@@ -6,9 +6,11 @@ use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
+use srag\Plugins\Opencast\UI\SubtitleConfig\SubtitleConfigFormBuilder;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use ILIAS\UI\Component\Modal\Interruptive as InterruptiveModal;
 
 /**
  * Class xoctConfGUI
@@ -24,6 +26,11 @@ class xoctConfGUI extends xoctGUI
 
     public const CMD_PLAYER = 'player';
     public const CMD_UPDATE_PLAYER = 'updatePlayer';
+    public const CMD_SUBTITLE = 'subtitle';
+    public const CMD_UPDATE_SUBTITLE = 'updateSubtitle';
+    public const CMD_LOAD_SUBTITLE_LANG_LIST = 'loadSubtitleLangList';
+    public const LOAD_SUBTITLE_LANG_LIST_LABEL = 'subtitle_load_lang_list';
+    public const LOAD_SUBTITLE_LANG_LIST_ABTN_LABEL = 'rep_robj_xoct_config_subtitle_load_lang_list_abtn_label';
 
     /**
      * @var Renderer
@@ -38,21 +45,37 @@ class xoctConfGUI extends xoctGUI
      */
     private $paellConfigFormBuilder;
     /**
+     * @var SubtitleConfigFormBuilder
+     */
+    private $subtitleConfigFormBuilder;
+    /**
      * @var \ilTabsGUI
      */
     private $tabs;
+    /**
+     * @var \ilToolbarGUI
+     */
+    private $toolbar;
+    /**
+     * @var UIFactory
+     */
+    protected $ui_factory;
 
     public function __construct(
         Renderer $renderer,
         UploadHandler $fileUploadHandler,
-        PaellaConfigFormBuilder $paellConfigFormBuilder
+        PaellaConfigFormBuilder $paellConfigFormBuilder,
+        SubtitleConfigFormBuilder $subtitleConfigFormBuilder
     ) {
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
+        $this->toolbar = $DIC->toolbar();
+        $this->ui_factory = $DIC->ui()->factory();
         $this->renderer = $renderer;
         $this->fileUploadHandler = $fileUploadHandler;
         $this->paellConfigFormBuilder = $paellConfigFormBuilder;
+        $this->subtitleConfigFormBuilder = $subtitleConfigFormBuilder;
     }
 
     public function executeCommand(): void
@@ -69,6 +92,9 @@ class xoctConfGUI extends xoctGUI
                 break;
             default:
                 $cmd = $this->ctrl->getCmd(self::CMD_STANDARD);
+                if ($cmd === self::LOAD_SUBTITLE_LANG_LIST_ABTN_LABEL) {
+                    $cmd = self::CMD_LOAD_SUBTITLE_LANG_LIST;
+                }
                 $this->performCommand($cmd);
                 break;
         }
@@ -162,6 +188,94 @@ class xoctConfGUI extends xoctGUI
         }
 
         $this->ctrl->redirect($this, self::CMD_PLAYER);
+    }
+
+    /**
+     * Render the subtitle subtab menu.
+     * Subtab Subtitle has an own action method, since it is rendered with the UI service and not with xoctConfFormGUI.
+     *
+     * @param bool $load_languages flag that determines whether to load languages from listproviders. Default false.
+     *
+     * @return void
+     */
+    protected function subtitle(bool $load_languages = false): void
+    {
+        $this->ctrl->saveParameter($this, 'subtab_active');
+        $subtab_active = $this->http->request()->getQueryParams()['subtab_active'] ?? xoctMainGUI::SUBTAB_API;
+        $this->tabs->setSubTabActive($subtab_active);
+        $form = $this->subtitleConfigFormBuilder->buildForm(
+            $this->ctrl->getFormAction($this, self::CMD_UPDATE_SUBTITLE), $load_languages);
+
+        // A confirmation modal is required for loading language list from API.
+        $confirmation_modal = $this->ui_factory->modal()->interruptive(
+            $this->getLocaleString(self::LOAD_SUBTITLE_LANG_LIST_LABEL, 'config'),
+            $this->getLocaleString('subtitle_load_lang_list_confirmation', 'config'),
+            $this->ctrl->getFormAction($this, self::CMD_LOAD_SUBTITLE_LANG_LIST)
+        )->withActionButtonLabel(self::LOAD_SUBTITLE_LANG_LIST_ABTN_LABEL);
+        $this->populateSubtitleToolbar($confirmation_modal);
+        $rendered_modal = $this->renderer->render($confirmation_modal);
+
+        $this->main_tpl->setContent($this->renderer->render($form) . $rendered_modal);
+    }
+
+    /**
+     * Action command by which to perform the loading subtitle languages from listprovider api.
+     */
+    protected function loadSubtitleLangList(): void
+    {
+        $this->subtitle(true);
+    }
+
+    /**
+     * Helper function to populate subtitle toolbar button.
+     *
+     * @param InterruptiveModal $confirmation_modal the confirmation modal object instance.
+     */
+    private function populateSubtitleToolbar(InterruptiveModal $confirmation_modal): void
+    {
+        $load_lang_list_button = $this->ui_factory->button()->primary(
+            $this->getLocaleString(self::LOAD_SUBTITLE_LANG_LIST_LABEL, 'config'),
+            $confirmation_modal->getShowSignal()
+        );
+        $this->toolbar->addComponent($load_lang_list_button);
+    }
+
+    /**
+     * Action to update subtitle related config data.
+     */
+    protected function updateSubtitle(): void
+    {
+        $this->ctrl->saveParameter($this, 'subtab_active');
+        $form = $this->subtitleConfigFormBuilder->buildForm($this->ctrl->getFormAction($this, self::CMD_UPDATE_SUBTITLE))
+            ->withRequest($this->http->request());
+        $data = $form->getData();
+        if (!$data) {
+            $this->main_tpl->setContent($this->renderer->render($form));
+            return;
+        }
+        // Main enable upload subtitle option.
+        $subtitle_upload_enabled = false;
+        if (isset($data[SubtitleConfigFormBuilder::F_SUBTITLE_UPLOAD_ENABLED])) {
+            $optional_data_enabled_subtitle = $data[SubtitleConfigFormBuilder::F_SUBTITLE_UPLOAD_ENABLED];
+            $subtitle_upload_enabled = true;
+            // Accepted mimetypes.
+            if (isset($optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_ACCEPTED_MIMETYPES])) {
+                $subtitle_upload_accepted_mimetypes =
+                    $optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_ACCEPTED_MIMETYPES];
+                PluginConfig::set(PluginConfig::F_SUBTITLE_ACCEPTED_MIMETYPES, $subtitle_upload_accepted_mimetypes);
+            }
+
+            // Supported languages.
+            if (isset($optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_LANGS])) {
+                $subtitle_supported_languages_str = $optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_LANGS];
+                $subtitle_supported_languages_arr = $this->subtitleConfigFormBuilder->formattedLanguagesToArray(
+                    $subtitle_supported_languages_str
+                );
+                PluginConfig::set(PluginConfig::F_SUBTITLE_LANGS, $subtitle_supported_languages_arr);
+            }
+        }
+        PluginConfig::set(PluginConfig::F_SUBTITLE_UPLOAD_ENABLED, $subtitle_upload_enabled);
+        $this->ctrl->redirect($this, self::CMD_SUBTITLE);
     }
 
     /**
