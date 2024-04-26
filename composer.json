@@ -18,8 +18,8 @@
   "prefer-stable": true,
   "require": {
     "php": ">=7.3",
-    "elan-ev/opencast-api": "1.5",
-    "ext-dom": "*"
+    "ext-dom": "*",
+    "elan-ev/opencast-api": "1.6"
   },
   "autoload": {
     "exclude-from-classmap": ["vendor/guzzlehttp/", "vendor/ralouphie/", "vendor/psr/http-message", "vendor/psr/http-factory", "vendor/psr/http-client"],
