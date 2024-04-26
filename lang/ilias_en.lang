@@ -727,7 +727,7 @@ config_subtitle#:#Subtitles
 config_subtitle_upload_enabled#:#Enable Subtitle Upload
 config_subtitle_upload_enabled_info#:#If enabled, subtitle files can also be uploaded when uploading a video.
 config_subtitle_accepted_mimetypes#:#Accepted File Types
-config_subtitle_accepted_mimetypes_info#:#List of accepted extensions of the subtitle files that users are allowed to upload.<br/>NOTE: Please make sure that the selected file types are also added into File Suffix Positive List (Adaptations) of ILIAS Administrative Settings under:<br/>Adminstration > System Settings and Maintenance > File Services
+config_subtitle_accepted_mimetypes_info#:#List of accepted extensions of the subtitle files that users are allowed to upload.<br/>NOTE: Please make sure that the selected file types are also added into File Suffix Positive List (Adaptations) of ILIAS Administrative Settings under:<br/>Adminstration > System Settings and Maintenance > File Services<br/>IMPORTANT: In order to convert other file types to WebVTT, it is necessary to install and configure FFmpeg in ILIAS.
 config_subtitle_languages#:#Supported Languages
 config_subtitle_languages_info#:#These languages will be offered to the users to select as the subtitle language to upload.<br>One entry per line in the format like "[value]%s[label]". The separator is %s, and change [value] and [label] with whatever you want: e.g. eng%sEnglish
 config_subtitle_load_lang_list#:#Load language list from API

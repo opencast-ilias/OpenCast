@@ -8,6 +8,8 @@ use srag\Plugins\Opencast\Model\Event\Request\UploadEventRequest;
 use srag\Plugins\Opencast\Util\Transformator\MetadataToXML;
 use xoctException;
 use srag\Plugins\Opencast\API\API;
+use ilFFmpeg;
+use ilShellUtil;
 
 class OpencastIngestService
 {
@@ -56,6 +58,22 @@ class OpencastIngestService
         // Subtitles using addTrack ingest method.
         if ($payload->hasSubtitles()) {
             foreach ($payload->getSubtitles() as $lang_code => $subtitle_uploadfile) {
+                // Perform conversion of supported subtitles files to WebVTT format.
+                $file_stream = $subtitle_uploadfile->getFileStream();
+                if (ilFFmpeg::enabled() && $subtitle_uploadfile->getMimeType() != 'text/vtt') {
+                    $path = $subtitle_uploadfile->getPath();
+                    $extension = pathinfo($path, PATHINFO_EXTENSION);
+                    $new_vtt_path = str_replace(".$extension", '.vtt', $path);
+                    $escaped_path = ilShellUtil::escapeShellArg($path);
+                    $escaped_new_vtt_path = ilShellUtil::escapeShellArg($new_vtt_path);
+                    $ffmpeg_cmd = "-i {$path} -c:s webvtt {$new_vtt_path}";
+                    $escaped_cmd = ilShellUtil::escapeShellCmd($ffmpeg_cmd);
+                    ilFFmpeg::exec($escaped_cmd);
+                    if (file_exists($new_vtt_path)) {
+                        $file_stream = fopen($new_vtt_path, 'rb');
+                        unlink($new_vtt_path);
+                    }
+                }
                 // Important tags to set for subtitles.
                 $tags = [
                     'subtitle',
@@ -66,7 +84,7 @@ class OpencastIngestService
                 $media_package = $this->api->routes()->ingest->addTrack(
                     $media_package,
                     'captions/source', // Important flavor to set for subtitles.
-                    $subtitle_uploadfile->getFileStream(),
+                    $file_stream,
                     implode(',', $tags)
                 );
             }

@@ -29,11 +29,8 @@ class SubtitleConfigFormBuilder
     private static $accepted_subtitle_extensions = [
         'text/vtt' => '*.vtt',
         '.srt' => '*.srt',
-        // Since opencast uses only .vtt extension, and there is no simple way of converting the following extensions to vtt
-        // therefore, we should not offer them to the admins directly.
-        // '.ass' => '*.ass',
-        // '.ssa' => '*.ssa',
-        // '.sub' => '*.sub',
+        '.ass' => '*.ass',
+        '.ssa' => '*.ssa',
     ];
     /**
      * @var ilPlugin
