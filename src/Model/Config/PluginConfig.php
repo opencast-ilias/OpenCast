@@ -335,14 +335,14 @@ class PluginConfig extends ActiveRecord
                 $node->getElementsByTagName('search_key')->item(0)->nodeValue ?: 'flavor'
             );
             $xoctPublicationUsage->setMdType($node->getElementsByTagName('md_type')->item(0)->nodeValue);
-            $xoctPublicationUsage->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue);
-            $xoctPublicationUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue);
-            $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue;
-            $xoctPublicationUsage->setMediaType($mediatype ?? '');
-            $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
-            $xoctPublicationUsage->setIgnoreObjectSettings($ignore_object_setting);
-            $ext_dl_source = (bool) $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue;
-            $xoctPublicationUsage->setExternalDownloadSource($ext_dl_source);
+            $xoctPublicationUsage->setDisplayName($node->getElementsByTagName('display_name')->item(0)->nodeValue ?? '');
+            $xoctPublicationUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue ?? '');
+            $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue ?? '';
+            $xoctPublicationUsage->setMediaType($mediatype);
+            $ignore_object_setting = $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue ?? false;
+            $xoctPublicationUsage->setIgnoreObjectSettings((bool) $ignore_object_setting);
+            $ext_dl_source = $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue ?? false;
+            $xoctPublicationUsage->setExternalDownloadSource((bool) $ext_dl_source);
 
             if (!PublicationUsage::where(['usage_id' => $xoctPublicationUsage->getUsageId()])->hasSets()) {
                 $xoctPublicationUsage->create();

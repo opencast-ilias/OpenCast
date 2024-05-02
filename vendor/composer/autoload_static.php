@@ -83,6 +83,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'OpencastApi\\Rest\\OcGroupsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcGroupsApi.php',
         'OpencastApi\\Rest\\OcIngest' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcIngest.php',
         'OpencastApi\\Rest\\OcListProvidersApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcListProvidersApi.php',
+        'OpencastApi\\Rest\\OcPlaylistsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcPlaylistsApi.php',
         'OpencastApi\\Rest\\OcRecordings' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRecordings.php',
         'OpencastApi\\Rest\\OcRest' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRest.php',
         'OpencastApi\\Rest\\OcRestClient' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRestClient.php',

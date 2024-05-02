@@ -19,6 +19,7 @@ return array(
     'OpencastApi\\Rest\\OcGroupsApi' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcGroupsApi.php',
     'OpencastApi\\Rest\\OcIngest' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcIngest.php',
     'OpencastApi\\Rest\\OcListProvidersApi' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcListProvidersApi.php',
+    'OpencastApi\\Rest\\OcPlaylistsApi' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcPlaylistsApi.php',
     'OpencastApi\\Rest\\OcRecordings' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRecordings.php',
     'OpencastApi\\Rest\\OcRest' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRest.php',
     'OpencastApi\\Rest\\OcRestClient' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcRestClient.php',
