@@ -7,7 +7,7 @@ namespace srag\Plugins\Opencast\UI;
 use ILIAS\DI\Container;
 use ILIAS\UI\Factory as UIFactory;
 use ILIAS\UI\Implementation\Component\Input\Container\Filter\Standard;
-use ILIAS\UI\Implementation\Component\Input\Field\Input;
+use ILIAS\UI\Implementation\Component\Input\Field\Text;
 use ilObjOpenCastAccess;
 use ilUIService;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -125,7 +125,7 @@ class EventTableBuilder
         return array_filter($this->ui_service->filter()->getData($this->filter('')) ?? []);
     }
 
-    private function mdFieldConfigToFilterItem(MDFieldConfigEventAR $mdFieldConfig): Input
+    private function mdFieldConfigToFilterItem(MDFieldConfigEventAR $mdFieldConfig): Text
     {
         $input_f = $this->ui_factory->input()->field();
         $fieldDefinition = $this->MDCatalogue->getFieldById($mdFieldConfig->getFieldId());
