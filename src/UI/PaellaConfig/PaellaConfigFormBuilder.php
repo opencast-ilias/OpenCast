@@ -6,12 +6,12 @@ namespace srag\Plugins\Opencast\UI\PaellaConfig;
 
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
-use ILIAS\UI\Implementation\Component\Input\Field\Input;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
+use ILIAS\UI\Component\Input\Field\SwitchableGroup;
 
 class PaellaConfigFormBuilder
 {
@@ -164,7 +164,7 @@ class PaellaConfigFormBuilder
         string $url,
         string $text,
         bool $required
-    ): Input {
+    ): SwitchableGroup {
         $f = $this->ui_factory->input()->field();
         return $f->switchableGroup([
             PluginConfig::PAELLA_OPTION_DEFAULT => $f->group([], $this->plugin->txt("pp_default_string") . " " . $link),
