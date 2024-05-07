@@ -22,7 +22,7 @@ trait ilObjShowDuplicates
      * Overwritten/copied to allow recognition of duplicates and show them in delete confirmation
      */
     #[ReturnTypeWillChange]
-    public function deleteObject($a_error = false): void
+    public function deleteObject($error = false): void
     {
         $item_ref_id = $this->http->request()->getQueryParams()["item_ref_id"] ?? null;
 
@@ -99,7 +99,7 @@ trait ilObjShowDuplicates
 
             $title .= $this->handleMultiReferences($obj_id, $ref_id, $form_name);
 
-            $cgui->addItem("id[]", (string) $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), $alt ?? '');
+            $cgui->addItem("id[]", (string) $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), '');
 
             ilObject::collectDeletionDependencies($deps, $ref_id, $obj_id, $type);
         }
