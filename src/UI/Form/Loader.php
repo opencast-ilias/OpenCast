@@ -10,6 +10,7 @@ use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFileRenderer;
 use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 use ILIAS\UI\Implementation\Render\ComponentRenderer;
 use ILIAS\UI\Implementation\Render\RendererFactory;
+use ILIAS\Data\Factory;
 
 /**
  * Class Loader
@@ -41,7 +42,8 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
                 $this->dic["lng"],
                 $this->dic["ui.javascript_binding"],
                 $this->dic["refinery"],
-                $this->dic["ui.pathresolver"] ?? null
+                $this->dic["ui.pathresolver"] ?? null,
+                new Factory()
             );
             $renderer->registerResources($this->dic["ui.resource_registry"]);
             $renderer->setPluginInstance($this->plugin);

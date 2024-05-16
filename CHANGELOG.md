@@ -1,5 +1,9 @@
 # Change Log
 
+## [8.0.4]
+- [FIX] this version fixes some incompatibilities with ILIAS 8.11. the 
+  plugin can no longer be used with ILIAS 8.10 or older.
+
 ## [8.0.3]
 - [FIX] Issue 266: Type casting in xoctUser
 - [FIX] Issue 263: Type casting in metadata prefiller

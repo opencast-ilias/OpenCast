@@ -87,7 +87,7 @@ class ChunkedFile extends File
         return $this->max_file_size ?? -1;
     }
 
-    protected function isClientSideValueOk($value): bool
+    public function isClientSideValueOk($value): bool
     {
         if (is_null($value)) {
             return true;

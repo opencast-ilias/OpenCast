@@ -26,6 +26,7 @@ use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use DateTimeZone;
+use ILIAS\UI\Component\Input\Field\Section;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -293,7 +294,7 @@ class EventFormBuilder
         );
     }
 
-    private function buildTermsOfUseSection(): Input
+    private function buildTermsOfUseSection(): Section
     {
         return $this->ui_factory->input()->field()->section([
             self::F_ACCEPT_EULA => $this->ui_factory->input()->field()->checkbox(
