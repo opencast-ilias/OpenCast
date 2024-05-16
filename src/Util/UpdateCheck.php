@@ -48,6 +48,7 @@ class UpdateCheck
 
     public function isUpdatePossible(): bool
     {
+        return true; // we no longer check for compatibility, since there is no fork of the plugin anymore.
         // Older versions
         if (version_compare($this->last_update_version, '4.0.2', '<=')) {
             return true;
@@ -61,6 +62,7 @@ class UpdateCheck
 
     public function isNewInstallation(): bool
     {
+        return false; // todo: check if this still possible
         return $this->last_update_version === '0.0.0';
     }
 }
