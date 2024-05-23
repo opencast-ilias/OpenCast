@@ -330,13 +330,22 @@ class xoctEventRenderer
     ): string {
         $html = '';
         $ignore_object_settings = $download_publication_usage->ignoreObjectSettings();
-        $has_streaming_only = $this->objectSettings instanceof ObjectSettings && $this->objectSettings->getStreamingOnly(
-            );
+        $has_streaming_only = $this->objectSettings instanceof ObjectSettings &&
+            $this->objectSettings->getStreamingOnly();
         $show_download = true;
         if ($has_streaming_only && !$ignore_object_settings) {
             $show_download = false;
         }
-        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
+        /**
+         * @var $xoctUser xoctUser
+         */
+        $xoctUser = xoctUser::getInstance($this->user);
+        if ((ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
+            $this->event,
+            $xoctUser,
+            $this->objectSettings
+        )) && (count($download_dtos) > 0)) {
             if (!$show_download) {
                 return '';
             }

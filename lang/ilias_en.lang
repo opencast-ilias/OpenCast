@@ -33,13 +33,13 @@ config_curl_chunk_size_info#:#Defines the size of individual upload chunks in MB
 config_audio_allowed#:#Audio Files
 config_cancel#:#Cancel
 config_create_scheduled_allowed#:#Activate "Schedule Event(s)"
-config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.
+config_create_scheduled_allowed_info#:#Warning: Scheduling events requires Opencast API v1.1.0.<br>NOTE: In a series object, the users must have the permission "Schedule" to use this feature.
 config_schedule_channel#:#Input value for scheduling
 config_schedule_channel_info#:#Input value sent to the capture agents when scheduling events via plugin. Warning: Scheduling events requires API v1.1.0.
 config_common_idp#:#Common IdP
 config_common_idp_info#:#Check if ILIAS and Opencast are using the same identity provider (e.g. Shibboleth or LDAP). This allows for more precise permission checks ("as-user" instead of "with-user-role").
 config_oc_studio_allowed#:#Enable Opencast Studio
-config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)
+config_oc_studio_allowed_info#:#Allow users to access to Opencast Studio from Ilias (Requires Opencast > 8.3)<br>NOTE: In a series object, the users must have the permission "Record" to use this feature.
 config_oc_studio_url#:#Opencast Studio URL
 config_oc_studio_url_info#:#A custom URL for Opencast Studio. Default: https://[your-opencast-url.com]/studio
 config_curl#:#cURL
@@ -391,8 +391,6 @@ series_use_annotations#:#Activate Annotations
 series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
 series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
 series_has_duplicates_events_delete#:#MISSING
-series_member_upload#:#Upload by members
-series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
 series_existing_series#:#Existing Series
 series_video_portal_link#:#Link to Series in %s
 series_view_changeable#:#View changeable
@@ -722,3 +720,16 @@ config_paella_player_live_theme_info#:#The theme file to be loaded into Paella P
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#The (fallback) player preview background image file to be displayed. The usual image file format like PNG or JPG is encouraged.<br> NOTE: By default the preview image is loaded from the video resources.
 pp_image_link#:#current image file
+xoct_rep_robj_xoct_perm_download#:#Download Videos
+perm_download#:#Download
+xoct_rep_robj_xoct_perm_record#:#Record Videos using Opencast Studio (Must be activated in the settings)
+perm_record#:#Record
+xoct_rep_robj_xoct_perm_schedule#:#Schedule a recording (Must be activated in the settings)
+perm_schedule#:#Schedule
+object_member_rights_section#:#Rights for members
+series_member_upload#:#Upload
+series_member_upload_info#:#The “Upload” right gives course or group members the ability to upload videos and download, delete and edit their own videos (without cutting). This can be changed later in the rights settings.
+series_member_download#:#Download
+series_member_download_info#:#Course or group members are given the option to download videos through the “Download” right. This can be changed later in the rights settings.
+series_member_record#:#Recording
+series_member_record_info#:#The "Record" right gives course or group members the opportunity to create videos with the ‘Opencast Studio’ tool and to download, delete and edit their own videos (without cutting). This can be changed later in the rights settings.
