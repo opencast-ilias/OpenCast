@@ -110,7 +110,6 @@ class ilObjOpenCast extends ilObjectPlugin
         $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
         $new_object_settings->setOnline(false);
         $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
-        $new_object_settings->setStreamingOnly($existing_object_settings->getStreamingOnly());
         $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
         $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
 

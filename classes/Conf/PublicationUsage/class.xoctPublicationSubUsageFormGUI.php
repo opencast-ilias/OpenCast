@@ -37,7 +37,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     public const F_MD_TYPE = 'md_type';
     public const F_ALLOW_MULTIPLE = 'allow_multiple';
     public const F_MEDIATYPE = 'mediatype';
-    public const F_IGNORE_OBJECT_SETTINGS = 'ignore_object_settings';
+    public const F_OVERWRITE_DOWNLOAD_PERM = 'overwrite_download_perm';
     public const F_EXT_DL_SOURCE = 'ext_dl_source';
 
     /**
@@ -172,12 +172,12 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
                 self::F_ALLOW_MULTIPLE
             );
             $allow_multiple->setInfo($this->getLocaleString(self::F_ALLOW_MULTIPLE . '_info'));
-            //F_IGNORE_OBJECT_SETTINGS
-            $ignore_object_setting = new ilCheckboxInputGUI(
-                $this->getLocaleString(self::F_IGNORE_OBJECT_SETTINGS),
-                self::F_IGNORE_OBJECT_SETTINGS
+            //F_OVERWRITE_DOWNLOAD_PERM
+            $overwrite_download_perm = new ilCheckboxInputGUI(
+                $this->getLocaleString(self::F_OVERWRITE_DOWNLOAD_PERM),
+                self::F_OVERWRITE_DOWNLOAD_PERM
             );
-            $ignore_object_setting->setInfo($this->getLocaleString(self::F_IGNORE_OBJECT_SETTINGS . '_info'));
+            $overwrite_download_perm->setInfo($this->getLocaleString(self::F_OVERWRITE_DOWNLOAD_PERM . '_info'));
             //F_EXT_DL_SOURCE
             $ext_dl_source = new ilCheckboxInputGUI(
                 $this->getLocaleString(self::F_EXT_DL_SOURCE),
@@ -187,13 +187,13 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         } else {
             $allow_multiple = new ilHiddenInputGUI(self::F_ALLOW_MULTIPLE);
             $allow_multiple->setValue('0');
-            $ignore_object_setting = new ilHiddenInputGUI(self::F_IGNORE_OBJECT_SETTINGS);
-            $ignore_object_setting->setValue('0');
+            $overwrite_download_perm = new ilHiddenInputGUI(self::F_OVERWRITE_DOWNLOAD_PERM);
+            $overwrite_download_perm->setValue('0');
             $ext_dl_source = new ilHiddenInputGUI(self::F_EXT_DL_SOURCE);
             $ext_dl_source->setValue('0');
         }
         $this->addItem($allow_multiple);
-        $this->addItem($ignore_object_setting);
+        $this->addItem($overwrite_download_perm);
         $this->addItem($ext_dl_source);
     }
 
@@ -212,7 +212,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
             self::F_MD_TYPE => $this->object->getMdType(),
             self::F_ALLOW_MULTIPLE => $this->object->isAllowMultiple(),
             self::F_MEDIATYPE => $this->object->getMediaType(),
-            self::F_IGNORE_OBJECT_SETTINGS => $this->object->ignoreObjectSettings(),
+            self::F_OVERWRITE_DOWNLOAD_PERM => $this->object->overwriteDownloadPerm(),
             self::F_EXT_DL_SOURCE => $this->object->isExternalDownloadSource(),
         ];
 
@@ -242,7 +242,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         $this->object->setMdType($this->getInput(self::F_MD_TYPE));
         $this->object->setAllowMultiple((bool) $this->getInput(self::F_ALLOW_MULTIPLE));
         $this->object->setMediaType($this->getInput(self::F_MEDIATYPE));
-        $this->object->setIgnoreObjectSettings((bool) $this->getInput(self::F_IGNORE_OBJECT_SETTINGS));
+        $this->object->setOverwriteDownloadPerm((bool) $this->getInput(self::F_OVERWRITE_DOWNLOAD_PERM));
         $this->object->setExternalDownloadSource((bool) $this->getInput(self::F_EXT_DL_SOURCE));
 
         return true;

@@ -383,8 +383,6 @@ series_save#:#Save
 series_saved#:#Series-Information saved
 series_show_upload_token#:#Show Upload-Token
 series_show_upload_token_info#:#Displays a code which students can use to upload own Events
-series_streaming_only#:#No Download
-series_streaming_only_info#:#Hides 'Download' Buttons.
 series_title#:#Title
 series_update#:#Update
 series_use_annotations#:#Activate Annotations
@@ -686,8 +684,8 @@ publication_usage_group_description#:#Description
 publication_usage_group_not_found#:#Group not found!
 publication_usage_mediatype#:#Mediatype(s)
 publication_usage_mediatype_info#:#An optional comma-separated list of media types to be extracted from the publication, e.g. "video/mp4, application/x-mpegURL"
-publication_usage_ignore_object_settings#:#Ignore Object Settings
-publication_usage_ignore_object_settings_info#:#The applied settings for "No Download" in the series object would have no effect for this usage and will be ignored. Use responsibly.
+publication_usage_overwrite_download_perm#:#Overwrite Download Permission
+publication_usage_overwrite_download_perm_info#:#By activating this option, the download permission of the users in the series object will be ignored and overwritten, meaning download for members is always allowed. Use this option responsibly.
 publication_usage_create_sub#:#Create Sub-Usage
 publication_usage_delete_sub#:#Delete Sub-Usage
 publication_usage_edit_sub#:#Edit Sub-Usage

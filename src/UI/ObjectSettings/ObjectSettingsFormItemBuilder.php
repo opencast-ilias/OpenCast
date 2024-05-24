@@ -26,7 +26,6 @@ class ObjectSettingsFormItemBuilder
     public const F_INTRODUCTION_TEXT = 'introduction_text';
     public const F_LICENSE = 'license';
     public const F_DEPARTMENT = 'department';
-    public const F_STREAMING_ONLY = 'streaming_only';
     public const F_USE_ANNOTATIONS = 'use_annotations';
     public const F_PERMISSION_PER_CLIP = 'permission_per_clip';
     public const F_PERMISSION_ALLOW_SET_OWN = 'permission_allow_set_own';
@@ -119,13 +118,6 @@ class ObjectSettingsFormItemBuilder
             $inputs[self::F_USE_ANNOTATIONS] = $field_factory->checkbox($this->txt(self::F_USE_ANNOTATIONS));
         }
 
-        if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_DOWNLOAD)) {
-            $inputs[self::F_STREAMING_ONLY] = $field_factory->checkbox(
-                $this->txt(self::F_STREAMING_ONLY),
-                $this->txt(self::F_STREAMING_ONLY . '_info')
-            );
-        }
-
         $inputs[self::F_PERMISSION_PER_CLIP] = $field_factory->optionalGroup(
             [
                 self::F_PERMISSION_ALLOW_SET_OWN => $field_factory->checkbox(
@@ -196,13 +188,6 @@ class ObjectSettingsFormItemBuilder
         if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_ANNOTATE)) {
             $inputs[self::F_USE_ANNOTATIONS] = $field_factory->checkbox($this->txt(self::F_USE_ANNOTATIONS))
                                                             ->withValue($objectSettings->getUseAnnotations());
-        }
-
-        if ($this->publicationUsageRepository->exists(PublicationUsage::USAGE_DOWNLOAD)) {
-            $inputs[self::F_STREAMING_ONLY] = $field_factory->checkbox(
-                $this->txt(self::F_STREAMING_ONLY),
-                $this->txt(self::F_STREAMING_ONLY . '_info')
-            )->withValue($objectSettings->getStreamingOnly());
         }
 
         $inputs[self::F_PERMISSION_PER_CLIP] = $field_factory->optionalGroup(

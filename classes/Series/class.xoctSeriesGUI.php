@@ -190,7 +190,6 @@ class xoctSeriesGUI extends xoctGUI
             $series->setAccessPolicies(
                 $perm_tpl->addToAcls(
                     $series->getAccessPolicies(),
-                    !$objectSettings->getStreamingOnly(),
                     $objectSettings->getUseAnnotations()
                 )
             );

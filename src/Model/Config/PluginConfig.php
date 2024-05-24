@@ -334,8 +334,15 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue ?? '');
             $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue ?? '';
             $xoctPublicationUsage->setMediaType($mediatype);
+
+            // The following field has been renamed to "overwrite_download_perm",
+            // therefore we still look for the old name from the old imported settings.
             $ignore_object_setting = $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue ?? false;
-            $xoctPublicationUsage->setIgnoreObjectSettings((bool) $ignore_object_setting);
+            $overwrite_download_perm = $node->getElementsByTagName('overwrite_download_perm')->item(0)->nodeValue ?? false;
+            if ($ignore_object_setting && !$overwrite_download_perm) {
+                $overwrite_download_perm = true;
+            }
+            $xoctPublicationUsage->setOverwriteDownloadPerm((bool) $overwrite_download_perm);
             $ext_dl_source = $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue ?? false;
             $xoctPublicationUsage->setExternalDownloadSource((bool) $ext_dl_source);
 
@@ -376,8 +383,14 @@ class PluginConfig extends ActiveRecord
             $xoctPublicationSubUsage->setGroupId($node->getElementsByTagName('group_id')->item(0)->nodeValue);
             $mediatype = $node->getElementsByTagName('mediatype')->item(0)->nodeValue;
             $xoctPublicationSubUsage->setMediaType($mediatype ?? '');
-            $ignore_object_setting = (bool) $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue;
-            $xoctPublicationSubUsage->setIgnoreObjectSettings($ignore_object_setting);
+            // The following field has been renamed to "overwrite_download_perm",
+            // therefore we still look for the old name from the old imported settings.
+            $ignore_object_setting = $node->getElementsByTagName('ignore_object_setting')->item(0)->nodeValue ?? false;
+            $overwrite_download_perm = $node->getElementsByTagName('overwrite_download_perm')->item(0)->nodeValue ?? false;
+            if ($ignore_object_setting && !$overwrite_download_perm) {
+                $overwrite_download_perm = true;
+            }
+            $xoctPublicationSubUsage->setOverwriteDownloadPerm((bool) $overwrite_download_perm);
             $ext_dl_source = (bool) $node->getElementsByTagName('ext_dl_source')->item(0)->nodeValue;
             $xoctPublicationSubUsage->setExternalDownloadSource($ext_dl_source);
             $xoctPublicationSubUsage->create();
@@ -610,8 +623,8 @@ class PluginConfig extends ActiveRecord
             $xml_xoctPU->appendChild(new DOMElement('mediatype'))->appendChild(
                 new DOMCdataSection((string) $xoctPublicationUsage->getMediaType())
             );
-            $xml_xoctPU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
-                new DOMCdataSection((string) $xoctPublicationUsage->ignoreObjectSettings())
+            $xml_xoctPU->appendChild(new DOMElement('overwrite_download_perm'))->appendChild(
+                new DOMCdataSection((string) $xoctPublicationUsage->overwriteDownloadPerm())
             );
             $xml_xoctPU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
                 new DOMCdataSection((string) $xoctPublicationUsage->isExternalDownloadSource())
@@ -658,8 +671,8 @@ class PluginConfig extends ActiveRecord
             $xml_xoctPSU->appendChild(new DOMElement('mediatype'))->appendChild(
                 new DOMCdataSection((string) $xoctPublicationSubUsage->getMediaType())
             );
-            $xml_xoctPSU->appendChild(new DOMElement('ignore_object_setting'))->appendChild(
-                new DOMCdataSection((string) $xoctPublicationSubUsage->ignoreObjectSettings())
+            $xml_xoctPSU->appendChild(new DOMElement('overwrite_download_perm'))->appendChild(
+                new DOMCdataSection((string) $xoctPublicationSubUsage->overwriteDownloadPerm())
             );
             $xml_xoctPSU->appendChild(new DOMElement('ext_dl_source'))->appendChild(
                 new DOMCdataSection((string) $xoctPublicationSubUsage->isExternalDownloadSource())

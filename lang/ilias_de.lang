@@ -380,8 +380,6 @@ series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
 series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen können
-series_streaming_only#:#Ohne Download
-series_streaming_only_info#:#Entfernt 'Download'-Buttons.
 series_title#:#Titel
 series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren
@@ -683,8 +681,8 @@ publication_usage_group_description#:#Beschreibung
 publication_usage_group_not_found#:#Unternutzungsgruppe nicht gefunden!
 publication_usage_mediatype#:#Mediatyp(en)
 publication_usage_mediatype_info#:#Eine durch Kommas getrennte optionale Liste von Mediatypen, die aus der gewählten Opencast-Publikation extrahiert werden sollen, z. B. „video/mp4, application/x-mpegURL“
-publication_usage_ignore_object_settings#:#Objekteinstellungen ignorieren
-publication_usage_ignore_object_settings_info#:#Die auf das Opencast-Serienobjekt bezogene Einstellung "ohne Download" wird ignoriert.Sorgsam benutzen.
+publication_usage_overwrite_download_perm#:#Download-Berechtigung überschreiben
+publication_usage_overwrite_download_perm_info#:#Durch die Aktivierung dieser Option wird die Download-Berechtigung der Benutzer im Serienobjekt ignoriert und überschrieben, sodass der Download für Mitglieder immer erlaubt ist. Gehen Sie verantwortungsbewusst mit dieser Option um.
 publication_usage_create_sub#:#Unternutzung erstellen
 publication_usage_delete_sub#:#Unternutzung löschen
 publication_usage_edit_sub#:#Unternutzung bearbeiten

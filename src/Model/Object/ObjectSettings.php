@@ -167,14 +167,6 @@ class ObjectSettings extends ActiveRecord
      * @con_fieldtype integer
      * @con_length    1
      */
-    protected $streaming_only = false;
-    /**
-     * @var
-     *
-     * @con_has_field true
-     * @con_fieldtype integer
-     * @con_length    1
-     */
     protected $permission_per_clip = false;
     /**
      * @var
@@ -253,16 +245,6 @@ class ObjectSettings extends ActiveRecord
     public function setUseAnnotations(bool $use_annotations): void
     {
         $this->use_annotations = $use_annotations;
-    }
-
-    public function getStreamingOnly(): bool
-    {
-        return (bool) $this->streaming_only;
-    }
-
-    public function setStreamingOnly(bool $streaming_only): void
-    {
-        $this->streaming_only = $streaming_only;
     }
 
     public function getPermissionPerClip(): bool

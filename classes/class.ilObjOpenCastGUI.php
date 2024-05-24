@@ -425,7 +425,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         if (!empty($perm_tpl)) {
             $acl = $perm_tpl->addToAcls(
                 $acl,
-                !$settings->getStreamingOnly(),
                 $settings->getUseAnnotations()
             );
         }

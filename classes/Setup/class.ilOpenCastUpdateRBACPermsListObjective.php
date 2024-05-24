@@ -31,7 +31,8 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
      */
     public function getLabel(): string
     {
-        return 'Updating Opencast RBAC permissions list of each Object to add (Record, Download and Schedule) prems based on their current permissions set. By admin dicision copy right can also be removed!';
+        return 'Updating Opencast RBAC permissions list of each Object to add (Record, Download and Schedule) perms' .
+                ' based on their current permissions set. By admin decision, the copy right can also be removed!';
     }
 
     /**
@@ -244,6 +245,13 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
                 $member_ops_ids = array_map('intval', array_unique($member_ops_ids));
                 $GLOBALS["DIC"]["rbacadmin"]->grantPermission($member_role_id, $member_ops_ids, $ref_id);
             }
+
+            // Change the streaming_only to -1 in order to have it tagged as processed.
+            $this->db->manipulateF(
+                "UPDATE xoct_data SET streaming_only = %s WHERE obj_id = %s",
+                ['integer', 'integer'],
+                [-1, $obj_id]
+            );
         }
 
         // Remove the Copy prem from the object perms
