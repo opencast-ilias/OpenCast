@@ -10,6 +10,7 @@ use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFileRenderer;
 use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 use ILIAS\UI\Implementation\Render\ComponentRenderer;
 use ILIAS\UI\Implementation\Render\RendererFactory;
+use ILIAS\Data\Factory;
 
 /**
  * Class Loader
@@ -32,17 +33,24 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
         $this->plugin = $plugin;
     }
 
+    protected function buildChunkedFileRenderer(): ChunkedFileRenderer
+    {
+        $renderer = new ChunkedFileRenderer(
+            $this->dic['ui.factory'],
+            $this->dic["ui.template_factory"],
+            $this->dic["lng"],
+            $this->dic["ui.javascript_binding"],
+            $this->dic["refinery"],
+            $this->dic["ui.pathresolver"] ?? null,
+            new Factory() // this is only needed after ILIAS 8.11
+        );
+        return $renderer;
+    }
+
     public function getRendererFor(Component $component, array $contexts): ComponentRenderer
     {
         if ($component instanceof ChunkedFile) {
-            $renderer = new ChunkedFileRenderer(
-                $this->dic['ui.factory'],
-                $this->dic["ui.template_factory"],
-                $this->dic["lng"],
-                $this->dic["ui.javascript_binding"],
-                $this->dic["refinery"],
-                $this->dic["ui.pathresolver"] ?? null
-            );
+            $renderer = $this->buildChunkedFileRenderer();
             $renderer->registerResources($this->dic["ui.resource_registry"]);
             $renderer->setPluginInstance($this->plugin);
 

@@ -1,5 +1,8 @@
 # Change Log
 
+## [8.0.4]
+- [FIX] Make Plugin compliant with ILIAS 8.11
+
 ## [8.0.3]
 - [FIX] Issue 266: Type casting in xoctUser
 - [FIX] Issue 263: Type casting in metadata prefiller
