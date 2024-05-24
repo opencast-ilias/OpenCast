@@ -18,8 +18,6 @@ declare(strict_types=1);
  *
  *********************************************************************/
 
-declare(strict_types=1);
-
 namespace srag\Plugins\Opencast\Model\Cache;
 
 use srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor;
