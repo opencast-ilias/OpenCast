@@ -126,10 +126,16 @@ class SubtitleConfigFormBuilder
      */
     private function getFormatedLanguages(bool $load_languages = false): string
     {
-        $formatted_languages_arr = (array) PluginConfig::getConfig(PluginConfig::F_SUBTITLE_LANGS) ?? [];
+        $formatted_languages_str = PluginConfig::getConfig(PluginConfig::F_SUBTITLE_LANGS) ?? '';
+        if (!$load_languages) {
+            return $formatted_languages_str;
+        }
+
+        // As a form of fallback to what was saved before, we convert the formatted lang str to array here.
+        $formatted_languages_arr = $this->formattedLanguagesToArray($formatted_languages_str);
         $listprovider = new ListProvider();
         $source = 'LANGUAGES';
-        if ($load_languages && $listprovider->hasList($source)) {
+        if ($listprovider->hasList($source)) {
             $digested_list = [];
             $language_list = $listprovider->getList($source);
             foreach ($language_list as $key => $value) {

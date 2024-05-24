@@ -27,6 +27,7 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use DateTimeZone;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\DI\OpencastDIC;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -130,6 +131,10 @@ class EventFormBuilder
      * @var Container
      */
     private $dic;
+    /**
+     * @var OpencastDIC
+     */
+    private $opencast_dic;
 
     public function __construct(
         UIFactory $ui_factory,
@@ -153,6 +158,7 @@ class EventFormBuilder
         $this->schedulingFormItemBuilder = $schedulingFormItemBuilder;
         $this->seriesRepository = $seriesRepository;
         $this->dic = $dic;
+        $this->opencast_dic = OpencastDIC::getInstance();
     }
 
     /**
@@ -224,8 +230,10 @@ class EventFormBuilder
         if ($subtitles_enabled && !empty($accepted_subtitle_mimetypes)) {
             $subtitles_section_inputs = [];
             // Get the languages.
-            $supported_languages = (array) PluginConfig::getConfig(PluginConfig::F_SUBTITLE_LANGS) ?? [];
-            foreach ($supported_languages as $lang_code => $lang_name) {
+            $supported_languages_str = PluginConfig::getConfig(PluginConfig::F_SUBTITLE_LANGS) ?? '';
+            $supported_languages_arr = $this->opencast_dic->subtitle_config_form_builder()
+                                            ->formattedLanguagesToArray($supported_languages_str);
+            foreach ($supported_languages_arr as $lang_code => $lang_name) {
                 $no_chunked_upload_handler = clone $this->uploadHandler;
                 $no_chunked_upload_handler->toggleChunkedUploadSupport(false);
                 $subtitle_file_input = ChunkedFile::getInstance(

@@ -268,10 +268,7 @@ class xoctConfGUI extends xoctGUI
             // Supported languages.
             if (isset($optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_LANGS])) {
                 $subtitle_supported_languages_str = $optional_data_enabled_subtitle[SubtitleConfigFormBuilder::F_SUBTITLE_LANGS];
-                $subtitle_supported_languages_arr = $this->subtitleConfigFormBuilder->formattedLanguagesToArray(
-                    $subtitle_supported_languages_str
-                );
-                PluginConfig::set(PluginConfig::F_SUBTITLE_LANGS, $subtitle_supported_languages_arr);
+                PluginConfig::set(PluginConfig::F_SUBTITLE_LANGS, $subtitle_supported_languages_str);
             }
         }
         PluginConfig::set(PluginConfig::F_SUBTITLE_UPLOAD_ENABLED, $subtitle_upload_enabled);
