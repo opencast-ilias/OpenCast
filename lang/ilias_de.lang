@@ -717,9 +717,9 @@ config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hint
 pp_image_link#:#aktuelle Bilddatei
 xoct_rep_robj_xoct_perm_download#:#Videos herunterladen
 perm_download#:#Herunterladen
-xoct_rep_robj_xoct_perm_record#:#Video aufzeichen mit Opencast Studio (Muss in den Einstellungen aktiviert werden)
+xoct_rep_robj_xoct_perm_record#:#Video aufzeichen mit Opencast Studio (Muss in den Konfigurationen aktiviert werden)
 perm_record#:#Aufzeichen
-xoct_rep_robj_xoct_perm_schedule#:#Aufzeichnungstermin(e) planen (Muss in den Einstellungen aktiviert werden)
+xoct_rep_robj_xoct_perm_schedule#:#Aufzeichnungstermin(e) planen (Muss in den Konfigurationen aktiviert werden)
 perm_schedule#:#Schedule
 object_member_rights_section#:#Rechte für Mitglieder
 series_member_upload#:#Upload

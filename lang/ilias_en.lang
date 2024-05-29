@@ -720,9 +720,9 @@ config_paella_player_preview_fallback_info#:#The (fallback) player preview backg
 pp_image_link#:#current image file
 xoct_rep_robj_xoct_perm_download#:#Download Videos
 perm_download#:#Download
-xoct_rep_robj_xoct_perm_record#:#Record Videos using Opencast Studio (Must be activated in the settings)
+xoct_rep_robj_xoct_perm_record#:#Record Videos using Opencast Studio (Must be activated in the configurations)
 perm_record#:#Record
-xoct_rep_robj_xoct_perm_schedule#:#Schedule a recording (Must be activated in the settings)
+xoct_rep_robj_xoct_perm_schedule#:#Schedule a recording (Must be activated in the configurations)
 perm_schedule#:#Schedule
 object_member_rights_section#:#Rights for members
 series_member_upload#:#Upload
