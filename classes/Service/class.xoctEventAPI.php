@@ -18,6 +18,8 @@ use srag\Plugins\Opencast\Model\Metadata\MetadataFactory;
 use srag\Plugins\Opencast\Model\Scheduling\Scheduling;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
+use srag\Plugins\Opencast\Model\Metadata\MetadataField;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 
 /**
  * Class xoctEventAPI
@@ -106,7 +108,7 @@ class xoctEventAPI
 
         $acl = $this->acl_utils->getStandardRolesACL();
 
-        $this->event_repository->schedule(
+        $identifier = $this->event_repository->schedule(
             new ScheduleEventRequest(
                 new ScheduleEventRequestPayload(
                     $metadata->withoutEmptyFields(),
@@ -116,6 +118,10 @@ class xoctEventAPI
                 )
             )
         );
+
+        $id_field = new MetadataField('identifier', new MDDataType(MDDataType::TYPE_TEXT));
+        $id_field->setValue($identifier);
+        $metadata->addField($id_field);
 
         $event = new Event();
         $event->setMetadata($metadata);
