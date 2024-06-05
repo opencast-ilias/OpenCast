@@ -1,5 +1,13 @@
 # Changelog
 
+
+## Version 8.2.0
+- [FEATURE] new internal Plugin API for UI Components needed in other
+  PLugins such as InteractiveVideo or PageComponent
+- [IMPROVEMENT] a lot more type declarations in the code
+- [IMPROVEMENT] new Dependency Container
+- [FIX] fixed missing identifier in event metadata
+
 ## Version 8.1.4
 - also disable restorePlaybackRate for buffered livestreams
 - disable restorePlaybackRate feature for livestreams
