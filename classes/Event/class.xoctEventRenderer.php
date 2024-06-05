@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use srag\Plugins\Opencast\Container\Container;
+use ILIAS\DI\UIServices;
+use ILIAS\UI\Component\Link\Standard;
 
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
@@ -20,6 +23,7 @@ use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctEventRenderer
@@ -33,51 +37,21 @@ class xoctEventRenderer
 
     public const LANG_MODULE = 'event';
     private bool $async;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
-
-    /**
-     * @var Event
-     */
-    protected $event;
-    /**
-     * @var null | ObjectSettings
-     */
-    protected $objectSettings;
-    /**
-     * @var Factory
-     */
-    protected $factory;
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
+    private Container $container;
+    protected ilOpenCastPlugin$plugin;
+    protected OpencastDIC $legacy_container;
+    protected Event  $event;
+    protected ?ObjectSettings $objectSettings = null;
+    protected Factory $factory;
+    protected Renderer $renderer;
     /**
      * @var EventModals
      */
     protected static $modals;
-    /**
-     * @var array
-     */
-    private $dropdowns;
-    /**
-     * @var \ilCtrl
-     */
-    private $ctrl;
-    /**
-     * @var \ILIAS\DI\UIServices
-     */
-    private $ui;
-    /**
-     * @var \ilObjUser
-     */
-    private $user;
+    private array $dropdowns = [];
+    private ilCtrlInterface $ctrl;
+    private UIServices $ui;
+    private \ilObjUser $user;
 
     public function __construct(Event $event, ?ObjectSettings $objectSettings = null)
     {
@@ -86,13 +60,13 @@ class xoctEventRenderer
         $this->ctrl = $DIC->ctrl();
         $this->ui = $DIC->ui();
         $this->user = $DIC->user();
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init($DIC);
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->event = $event;
         $this->objectSettings = $objectSettings;
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
-        $this->dropdowns = [];
         $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
     }
 
@@ -473,7 +447,7 @@ class xoctEventRenderer
             $state_tpl->setVariable('STATE_CSS', Event::$state_mapping[$processing_state]);
 
             $suffix = '';
-            if ($this->container->acl_utils()->isUserOwnerOfEvent(xoctUser::getInstance($this->user), $this->event)
+            if ($this->legacy_container->acl_utils()->isUserOwnerOfEvent(xoctUser::getInstance($this->user), $this->event)
                 && in_array($processing_state, [
                     Event::STATE_FAILED,
                     Event::STATE_ENCODING
@@ -570,7 +544,7 @@ class xoctEventRenderer
     {
         $owner_tpl = $this->plugin->getTemplate('default/tpl.event_owner.html');
         if ($owner_username === null) {
-            $owner_username = $this->container->acl_utils()->getOwnerUsernameOfEvent($this->event);
+            $owner_username = $this->legacy_container->acl_utils()->getOwnerUsernameOfEvent($this->event);
         }
         $owner_tpl->setVariable('OWNER', $owner_username);
 

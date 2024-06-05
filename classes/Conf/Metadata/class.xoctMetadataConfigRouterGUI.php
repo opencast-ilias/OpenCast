@@ -1,8 +1,10 @@
 <?php
 
 declare(strict_types=1);
+use srag\Plugins\Opencast\Container\Container;
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * @ilCtrl_IsCalledBy xoctMetadataConfigRouterGUI : xoctMainGUI
@@ -11,29 +13,19 @@ class xoctMetadataConfigRouterGUI
 {
     public const SUBTAB_EVENTS = 'events';
     public const SUBTAB_SERIES = 'series';
-    /**
-     * @var \ilCtrl
-     */
-    private $ctrl;
-    /**
-     * @var \ilTabsGUI
-     */
-    private $tabs;
-    /**
-     * @var OpencastDIC
-     */
-    private $container;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+    private ilCtrlInterface  $ctrl;
+    private ilTabsGUI  $tabs;
+    private OpencastDIC $legacy_container;
+    private ilOpenCastPlugin $plugin;
+    private Container $container;
 
     public function __construct()
     {
         global $DIC;
         $this->ctrl = $DIC->ctrl();
         $this->tabs = $DIC->tabs();
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init();
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
     }
 

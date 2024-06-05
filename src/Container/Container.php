@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Container;
 
+use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Util\Locale\Translator;
+
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  *
@@ -25,5 +28,24 @@ final class Container extends \ILIAS\DI\Container
     public function ilias(): \ILIAS\DI\Container
     {
         return $this->get(\ILIAS\DI\Container::class);
+    }
+
+    public function plugin(): \ilOpenCastPlugin
+    {
+        return $this->get(\ilOpenCastPlugin::class);
+    }
+
+    public function translator(): Translator
+    {
+        return $this->get(Translator::class);
+    }
+
+    /**
+     * @deprecated We should use the new container instead of the legacy container.
+     * but therefore we must move all dependencies to the new container first.
+     */
+    public function legacy(): OpencastDIC
+    {
+        return $this->get(OpencastDIC::class);
     }
 }

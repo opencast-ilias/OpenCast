@@ -3,7 +3,7 @@
         'name' => 'opencast-ilias/opencast',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2028d7230ad494717cca8b83dc50787922c8b1f7',
+        'reference' => '474634eaf5d729a03cd35f0ef91028a96464e9ec',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -49,7 +49,7 @@
         'opencast-ilias/opencast' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2028d7230ad494717cca8b83dc50787922c8b1f7',
+            'reference' => '474634eaf5d729a03cd35f0ef91028a96464e9ec',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

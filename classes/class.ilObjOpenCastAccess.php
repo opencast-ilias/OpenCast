@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Access/Condition checking for OpenCast object
@@ -186,7 +187,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
 
         $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
 
-        $opencastDIC = OpencastDIC::getInstance();
+        $opencastDIC = Init::init($DIC)->legacy();
 
         switch ($cmd) {
             case self::ACTION_EDIT_OWNER:

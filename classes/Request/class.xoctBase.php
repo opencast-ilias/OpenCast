@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctBase
@@ -42,7 +43,7 @@ class xoctBase
 
     public function __construct()
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $version = $this->api->routes()->baseApi->getVersion();
         if (isset($version->default)) {

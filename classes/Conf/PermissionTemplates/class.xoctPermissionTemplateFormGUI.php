@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctPermissionTemplateFormGUI
@@ -40,30 +41,17 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
     public const F_ADDED_ROLE_ACL_ACTIONS = 'added_role_acl_actions';
     public const F_ADDED_ROLE_ACTIONS_DOWNLOAD = 'added_role_actions_download';
     public const F_ADDED_ROLE_ACTIONS_ANNOTATE = 'added_role_actions_annotate';
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
-
-    /**
-     * @var  PermissionTemplate
-     */
-    protected $object;
-    /**
-     * @var xoctPermissionTemplateGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var bool
-     */
-    protected $is_new;
+    private ilOpenCastPlugin $plugin;
+    protected PermissionTemplate $object;
+    protected xoctPermissionTemplateGUI $parent_gui;
+    protected bool $is_new;
 
     /**
      * @param xoctPermissionTemplateGUI $parent_gui
      */
     public function __construct($parent_gui, PermissionTemplate $xoctPermissionTemplate)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         parent::__construct();
         $this->object = $xoctPermissionTemplate;
@@ -247,14 +235,14 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
             return false;
         }
 
-        $this->object->setDefault((bool)$this->getInput(self::F_DEFAULT));
+        $this->object->setDefault((bool) $this->getInput(self::F_DEFAULT));
         $this->object->setTitleDE($this->getInput(self::F_TITLE_DE));
         $this->object->setTitleEN($this->getInput(self::F_TITLE_EN));
         $this->object->setInfoDE($this->getInput(self::F_INFO_DE));
         $this->object->setInfoEN($this->getInput(self::F_INFO_EN));
         $this->object->setRole($this->getInput(self::F_ROLE));
-        $this->object->setRead((int)$this->getInput(self::F_READ));
-        $this->object->setWrite((int)$this->getInput(self::F_WRITE));
+        $this->object->setRead((int) $this->getInput(self::F_READ));
+        $this->object->setWrite((int) $this->getInput(self::F_WRITE));
         $this->object->setAdditionalAclActions($this->getInput(self::F_ADDITIONAL_ACL_ACTIONS));
         $this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
         $this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
@@ -263,8 +251,8 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
 
         if ($this->getInput(self::F_ADDED_ROLE) !== '' && $this->getInput(self::F_ADDED_ROLE) !== '0') {
             $this->object->setAddedRoleName($this->getInput(self::F_ADDED_ROLE_NAME));
-            $this->object->setAddedRoleRead((int)$this->getInput(self::F_ADDED_ROLE_READ));
-            $this->object->setAddedRoleWrite((int)$this->getInput(self::F_ADDED_ROLE_WRITE));
+            $this->object->setAddedRoleRead((int) $this->getInput(self::F_ADDED_ROLE_READ));
+            $this->object->setAddedRoleWrite((int) $this->getInput(self::F_ADDED_ROLE_WRITE));
             $this->object->setAddedRoleAclActions($this->getInput(self::F_ADDED_ROLE_ACL_ACTIONS));
             $this->object->setAddedRoleActionsDownload($this->getInput(self::F_ADDED_ROLE_ACTIONS_DOWNLOAD));
             $this->object->setAddedRoleActionsAnnotate($this->getInput(self::F_ADDED_ROLE_ACTIONS_ANNOTATE));

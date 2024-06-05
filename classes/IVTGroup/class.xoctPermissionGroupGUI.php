@@ -22,10 +22,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         self::CMD_CREATE,
         self::CMD_DELETE
     ];
-    /**
-     * @var ObjectSettings
-     */
-    private $objectSettings;
+    private ?ObjectSettings $objectSettings;
 
 
     public function __construct(?ObjectSettings $objectSettings = null)
@@ -34,11 +31,7 @@ class xoctPermissionGroupGUI extends xoctGUI
         parent::__construct();
         $tabs = $DIC->tabs();
 
-        if ($objectSettings instanceof ObjectSettings) {
-            $this->objectSettings = $objectSettings;
-        } else {
-            $this->objectSettings = new ObjectSettings();
-        }
+        $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 
         new WaitOverlay($this->main_tpl); // TODO check if needed

@@ -124,7 +124,7 @@ class WorkflowParameter extends ActiveRecord
      *
      * @return WorkflowParameter
      */
-    public function setDefaultValueMember($default_value_member)
+    public function setDefaultValueMember($default_value_member): self
     {
         $this->default_value_member = $default_value_member;
         return $this;
@@ -140,7 +140,7 @@ class WorkflowParameter extends ActiveRecord
      *
      * @return WorkflowParameter
      */
-    public function setDefaultValueAdmin($default_value_admin)
+    public function setDefaultValueAdmin($default_value_admin): self
     {
         $this->default_value_admin = $default_value_admin;
         return $this;

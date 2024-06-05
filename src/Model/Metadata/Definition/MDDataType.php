@@ -16,7 +16,7 @@ class MDDataType
     public const TYPE_TEXT_ARRAY = 'text_array';
     public const TYPE_TEXT_SELECTION = 'text_selection';
     public const TYPE_TIME = 'time';
-    private static $types = [
+    private static array $types = [
         self::TYPE_TEXT,
         self::TYPE_TEXT_LONG,
         self::TYPE_TEXT_ARRAY,
@@ -26,10 +26,7 @@ class MDDataType
         self::TYPE_TEXT_SELECTION,
     ];
 
-    /**
-     * @var string
-     */
-    private $title;
+    private string $title;
 
     /**
      * @throws xoctException

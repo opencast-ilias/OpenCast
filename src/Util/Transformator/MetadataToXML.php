@@ -18,10 +18,7 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
  */
 class MetadataToXML
 {
-    /**
-     * @var Metadata
-     */
-    protected $metadata;
+    protected Metadata $metadata;
 
     /**
      * MetadataToXML constructor.
@@ -73,7 +70,7 @@ class MetadataToXML
         );
 
         $xml_writer->xmlEndTag('dublincore');
-        
+
         return $xml_writer->xmlDumpMem(false);
     }
 }

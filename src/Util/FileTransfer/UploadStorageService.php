@@ -21,14 +21,8 @@ class UploadStorageService
 {
     public const TEMP_SUB_DIR = 'opencast';
 
-    /**
-     * @var Filesystem
-     */
-    protected $fileSystem;
-    /**
-     * @var FileUpload
-     */
-    protected $fileUpload;
+    protected Filesystem $fileSystem;
+    protected FileUpload $fileUpload;
 
     public function __construct(Filesystem $file_system, FileUpload $fileUpload)
     {

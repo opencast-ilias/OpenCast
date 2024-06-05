@@ -20,7 +20,7 @@ use xoctLog;
  */
 class Handlers
 {
-    public static function getHandlerStack()
+    public static function getHandlerStack(): HandlerStack
     {
         $stack = new HandlerStack();
         $stack->setHandler(new CurlHandler());
@@ -28,9 +28,9 @@ class Handlers
         return $stack;
     }
 
-    private static function registerMiddlewares(&$stack)
+    private static function registerMiddlewares(HandlerStack $stack): void
     {
-        $classmethods = get_class_methods('srag\Plugins\Opencast\API\Handlers');
+        $classmethods = get_class_methods(Handlers::class);
         // Request middlewares.
         foreach ($classmethods as $methodname) {
             // Registering methods that start with 'request'.
@@ -41,41 +41,37 @@ class Handlers
         }
     }
 
-    private static function requestDebug()
+    private static function requestDebug(): \Closure
     {
-        return function (callable $handler) {
-            return function (RequestInterface $request, array $options) use ($handler) {
-                $path = $request->getUri()->getPath();
-                $query = $request->getUri()->getQuery();
-                $method = $request->getMethod();
-                $completeUri = $request->getUri()->__toString();
+        return static fn (callable $handler): \Closure => function (RequestInterface $request, array $options) use ($handler) {
+            $path = $request->getUri()->getPath();
+            $query = $request->getUri()->getQuery();
+            $method = $request->getMethod();
+            $completeUri = $request->getUri()->__toString();
 
-                // Exclude requests.
-                $isExcluded = array_filter(self::excludedRequests(), function ($excReq) use ($path, $query, $method) {
-                    return ltrim($excReq['path'], '/') === ltrim(
-                        $path,
-                        '/'
-                    ) && $excReq['query'] === $query && $excReq['method'] === $method;
-                });
-                if (!empty($isExcluded)) {
-                    return $handler($request, $options);
-                }
-                $xoctLog = xoctLog::getInstance();
-                $xoctLog->write('execute *************************************************', xoctLog::DEBUG_LEVEL_1);
-                $xoctLog->write(urldecode($completeUri), xoctLog::DEBUG_LEVEL_1);
-                $xoctLog->write($request->getMethod(), xoctLog::DEBUG_LEVEL_1);
-                if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
-                    $options[RequestOptions::DEBUG] = fopen(xoctLog::getFullPath(), 'a');
-                }
-                $options[RequestOptions::ON_STATS] = self::statsCallback();
+            // Exclude requests.
+            $isExcluded = array_filter(self::excludedRequests(), fn (array $excReq): bool => ltrim($excReq['path'], '/') === ltrim(
+                $path,
+                '/'
+            ) && $excReq['query'] === $query && $excReq['method'] === $method);
+            if (!empty($isExcluded)) {
                 return $handler($request, $options);
-            };
+            }
+            $xoctLog = xoctLog::getInstance();
+            $xoctLog->write('execute *************************************************', xoctLog::DEBUG_LEVEL_1);
+            $xoctLog->write(urldecode($completeUri), xoctLog::DEBUG_LEVEL_1);
+            $xoctLog->write($request->getMethod(), xoctLog::DEBUG_LEVEL_1);
+            if (xoctLog::getLogLevel() >= xoctLog::DEBUG_LEVEL_3) {
+                $options[RequestOptions::DEBUG] = fopen(xoctLog::getFullPath(), 'a');
+            }
+            $options[RequestOptions::ON_STATS] = self::statsCallback();
+            return $handler($request, $options);
         };
     }
 
-    private static function statsCallback()
+    private static function statsCallback(): \Closure
     {
-        return function (TransferStats $stats) {
+        return static function (TransferStats $stats): void {
             $time = $stats->getTransferTime();
             $handlerStats = $stats->getHandlerStats();
 
@@ -108,7 +104,7 @@ class Handlers
         };
     }
 
-    private static function excludedRequests()
+    private function excludedRequests(): array
     {
         return [
             // This request is a necessary call for OpencastAPI class to get Ingest service up and running.

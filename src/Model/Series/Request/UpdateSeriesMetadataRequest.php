@@ -6,14 +6,8 @@ namespace srag\Plugins\Opencast\Model\Series\Request;
 
 class UpdateSeriesMetadataRequest
 {
-    /**
-     * @var string
-     */
-    protected $identifier;
-    /**
-     * @var UpdateSeriesMetadataRequestPayload
-     */
-    protected $payload;
+    protected string $identifier;
+    protected UpdateSeriesMetadataRequestPayload $payload;
 
     public function __construct(string $identifier, UpdateSeriesMetadataRequestPayload $payload)
     {

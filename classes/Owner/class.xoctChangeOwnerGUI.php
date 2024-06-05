@@ -19,22 +19,10 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  */
 class xoctChangeOwnerGUI extends xoctGUI
 {
-    /**
-     * @var Event
-     */
-    protected $event;
-    /**
-     * @var ObjectSettings
-     */
-    protected $objectSettings;
-    /**
-     * @var ACLUtils
-     */
-    private $ACLUtils;
-    /**
-     * @var EventRepository
-     */
-    private $event_repository;
+    protected Event $event;
+    protected ObjectSettings $objectSettings;
+    private ACLUtils $ACLUtils;
+    private EventRepository $event_repository;
     /**
      * @var \ilObjUser
      */
@@ -123,7 +111,7 @@ class xoctChangeOwnerGUI extends xoctGUI
     public function getAll(): void
     {
         $owner = $this->ACLUtils->getOwnerOfEvent($this->event);
-        $owner_data = $owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser ? [
+        $owner_data = $owner instanceof xoctUser ? [
             'id' => $owner->getIliasUserId(),
             'name' => $owner->getNamePresentation()
         ] : [];

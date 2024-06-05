@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\API\OpencastAPI;
 use xoctWorkflowParameterGUI;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctWorkflowParameterRepository
@@ -30,46 +31,22 @@ class WorkflowParameterRepository
      * @var self
      */
     protected static $instance;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    private $container;
-    /**
-     * @var API
-     */
-    protected $api;
-    /**
-     * @var array
-     */
-    protected $parameters;
-    /**
-     * @var SeriesWorkflowParameterRepository
-     */
-    protected $seriesWorkflowParameterRepository;
-    /**
-     * @var \ilCtrlInterface
-     */
-    private $ctrl;
-    /**
-     * @var \ilDBInterface
-     */
-    private $db;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
+    private ilOpenCastPlugin$plugin;
+    private OpencastDIC $container;
+    protected API $api;
+    protected array $parameters = [];
+    protected SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
+    private \ilCtrlInterface $ctrl;
+    private \ilDBInterface $db;
+    private \ilGlobalTemplateInterface $main_tpl;
 
     public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
         global $DIC;
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->api = $opencastContainer[API::class];
-        $this->container = OpencastDIC::getInstance();
+        $this->container = $opencastContainer->legacy();
         $this->plugin = $this->container->plugin();
         $this->ctrl = $DIC->ctrl();
         $this->db = $DIC->database();
@@ -120,7 +97,7 @@ class WorkflowParameterRepository
     /**
      * @param $configuration_panel_html
      *
-     * @return \srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter[]
+     * @return WorkflowParameter[]
      */
     protected function parseConfigurationPanelHTML($configuration_panel_html): array
     {
@@ -130,7 +107,7 @@ class WorkflowParameterRepository
         $workflow_parameters = [];
 
         if (strlen($configuration_panel_html) > 0) {
-            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA|LIBXML_NOWARNING|LIBXML_NOERROR);
+            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
             $inputs = $dom->getElementsByTagName('input');
             $labels = $dom->getElementsByTagName('label');
             /** @var DOMElement $input */

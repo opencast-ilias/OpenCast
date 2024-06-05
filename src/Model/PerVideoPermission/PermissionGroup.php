@@ -35,7 +35,7 @@ class PermissionGroup extends ActiveRecord
     /**
      * @return PermissionGroup[]
      */
-    public static function getAllForId(int $id, bool $call_by_reference = false)
+    public static function getAllForId(int $id, bool $call_by_reference = false): array
     {
         if ($call_by_reference) {
             $id = ilObject::_lookupObjectId($id);

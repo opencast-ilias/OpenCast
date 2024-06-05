@@ -25,10 +25,7 @@ namespace srag\Plugins\Opencast\Model\Cache\Container;
  */
 final class VoidContainer implements Container
 {
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Container\Request
-     */
-    private $request;
+    private Request $request;
 
     public function __construct(Request $request)
     {

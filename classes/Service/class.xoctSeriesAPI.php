@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctSeriesAPI
@@ -26,35 +27,23 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
  */
 class xoctSeriesAPI
 {
-    /**
-     * @var self
-     */
     protected static $instance;
-    /**
-     * @var SeriesRepository
-     */
-    private $series_repository;
-    /**
-     * @var SeriesWorkflowParameterRepository
-     */
-    private $seriesWorkflowParameterRepository;
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
-    /**
-     * @var ACLUtils
-     */
-    private $aclUtils;
+    private SeriesRepository $series_repository;
+
+    private SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
+
+    private MetadataFactory $metadataFactory;
+
+    private ACLUtils $aclUtils;
 
     /**
      * SeriesAPI constructor.
      */
     public function __construct()
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->series_repository = $opencastContainer->get(SeriesAPIRepository::class);
-        $opencastDIC = OpencastDIC::getInstance();
+        $opencastDIC = $opencastContainer->legacy();
         $this->seriesWorkflowParameterRepository = $opencastDIC->workflow_parameter_series_repository();
         $this->metadataFactory = $opencastDIC->metadata()->metadataFactory();
         $this->aclUtils = $opencastDIC->acl_utils();

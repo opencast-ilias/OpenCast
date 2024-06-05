@@ -30,7 +30,7 @@ class xoct
     /**
      * @return int
      */
-    public static function getILIASVersion()
+    public static function getILIASVersion(): int
     {
         if (self::isVersionGreaterString(ILIAS_VERSION_NUMERIC, '6.999')) {
             return self::ILIAS_7;
@@ -68,7 +68,7 @@ class xoct
     /**
      * @return bool
      */
-    public static function isIlias54()
+    public static function isIlias54(): bool
     {
         return self::getILIASVersion() >= self::ILIAS_54;
     }
@@ -86,7 +86,7 @@ class xoct
     /**
      *
      */
-    public static function isApi11()
+    public static function isApi11(): bool
     {
         return self::isApiVersionGreaterThan('v1.1.0');
     }
@@ -102,7 +102,7 @@ class xoct
         //			return $path;
         //		}
 
-        $path = realpath(dirname(__FILE__) . '/../../../../../../../..');
+        $path = realpath(__DIR__ . '/../../../../../../../..');
 
         return rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }

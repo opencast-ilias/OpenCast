@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class ilObjOpenCast
@@ -70,7 +71,7 @@ class ilObjOpenCast extends ilObjectPlugin
 
     protected function doDelete(): void
     {
-        $opencast_dic = OpencastDIC::getInstance();
+        $opencast_dic = Init::init()->legacy();
         /** @var ObjectSettings $objectSettings */
         $objectSettings = ObjectSettings::find($this->getId());
         if ($objectSettings) {
@@ -121,7 +122,7 @@ class ilObjOpenCast extends ilObjectPlugin
         }
     }
 
-    public function getParentCourseOrGroup()
+    public function getParentCourseOrGroup(): ?\ilContainer
     {
         return self::_getParentCourseOrGroup($this->ref_id);
     }

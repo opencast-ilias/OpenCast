@@ -6,14 +6,8 @@ namespace srag\Plugins\Opencast\Model\Metadata\Definition;
 
 class MDCatalogueFactory
 {
-    /**
-     * @var MDCatalogue
-     */
-    private $event_catalogue;
-    /**
-     * @var MDCatalogue
-     */
-    private $series_catalogue;
+    private ?MDCatalogue $event_catalogue = null;
+    private ?MDCatalogue $series_catalogue = null;
 
     final public function __construct()
     {

@@ -36,22 +36,10 @@ class xoctConfGUI extends xoctGUI
     public const CMD_THUMBNAIL = 'thumbnail';
     public const CMD_UPDATE_THUMBNAIL = 'updateThumbnail';
 
-    /**
-     * @var Renderer
-     */
-    private $renderer;
-    /**
-     * @var UploadHandler
-     */
-    private $fileUploadHandler;
-    /**
-     * @var PaellaConfigFormBuilder
-     */
-    private $paellConfigFormBuilder;
-    /**
-     * @var SubtitleConfigFormBuilder
-     */
-    private $subtitleConfigFormBuilder;
+    private Renderer $renderer;
+    private UploadHandler $fileUploadHandler;
+    private PaellaConfigFormBuilder $paellConfigFormBuilder;
+    private SubtitleConfigFormBuilder $subtitleConfigFormBuilder;
     /**
      * @var \ilTabsGUI
      */
@@ -64,10 +52,7 @@ class xoctConfGUI extends xoctGUI
      * @var UIFactory
      */
     protected $ui_factory;
-    /**
-         * @var ThumbnailConfigFormBuilder
-         */
-    private $thumbnailConfigFormBuilder;
+    private ThumbnailConfigFormBuilder $thumbnailConfigFormBuilder;
 
     public function __construct(
         Renderer $renderer,

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Util\OutputResponse;
+use srag\Plugins\Opencast\Container\Init;
+use ILIAS\HTTP\Services;
 
 /**
  * Class xoctGUI
@@ -25,38 +27,21 @@ abstract class xoctGUI
     public const CMD_DELETE = 'delete';
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
-    /**
-     * @var \ILIAS\DI\HTTPServices
-     */
-    protected $http;
-    /**
-     * @var ilGlobalTemplateInterface
-     */
-    protected $main_tpl;
-    /**
-     * @var API
-     */
-    protected $api;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
-    /**
-     * @var \ilCtrl
-     */
-    protected $ctrl;
+    protected Services $http;
+    protected ilGlobalTemplateInterface $main_tpl;
+    protected API $api;
+    protected ilOpenCastPlugin $plugin;
+    protected OpencastDIC $legacy_container;
+    protected ilCtrlInterface $ctrl;
 
     public function __construct()
     {
-        global $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->ctrl = $DIC->ctrl();
-        $this->container = OpencastDIC::getInstance();
-        $this->plugin = $this->container->plugin();
+        $this->legacy_container = $opencastContainer->legacy();
+        $this->plugin = $this->legacy_container->plugin();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->http = $DIC->http();
     }

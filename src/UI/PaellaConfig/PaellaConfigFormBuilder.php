@@ -48,23 +48,11 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_PREVIEW_PREVIEW = 'paella_player_section_preview';
     public const F_PAELLA_PLAYER_PREVIEW_CAPTION = 'paella_player_section_caption';
 
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var PaellaConfigStorageService
-     */
-    private $paellaStorageService;
-    /**
-     * @var Factory
-     */
-    private $ui_factory;
+    private \ilPlugin $plugin;
+    private PaellaConfigStorageService $paellaStorageService;
+    private Factory $ui_factory;
 
-    /**
-     * @var Renderer
-     */
-    private $ui_renderer;
+    private Renderer $ui_renderer;
 
     public function __construct(
         ilPlugin $plugin,

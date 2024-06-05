@@ -11,7 +11,7 @@ class MDCatalogue
     /**
      * @var MDFieldDefinition[]
      */
-    private $field_definitions;
+    private array $field_definitions;
 
     /**
      * @param MDFieldDefinition[] $field_definitions

@@ -9,14 +9,8 @@ declare(strict_types=1);
  */
 class xoctCurl
 {
-    /**
-     * @var bool
-     */
-    private static $verify_host = false;
-    /**
-     * @var bool
-     */
-    private static $verify_peer = false;
+    private static bool $verify_host = false;
+    private static bool $verify_peer = false;
 
     public static function init(xoctCurlSettings $xoctCurlSettings): void
     {

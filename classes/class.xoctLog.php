@@ -39,7 +39,7 @@ class xoctLog extends ilLog
      *
      * @return bool
      */
-    public static function relevant($log_level)
+    public static function relevant($log_level): bool
     {
         return $log_level <= self::$log_level;
     }
@@ -65,14 +65,14 @@ class xoctLog extends ilLog
      * @param      $a_msg
      * @param null $log_level
      */
-    public function write($a_msg, $log_level = null): void
+    public function write(string $a_msg, $log_level = null): void
     {
         if (self::relevant($log_level)) {
             parent::write($a_msg);
         }
     }
 
-    public function writeTrace()
+    public function writeTrace(): void
     {
         try {
             throw new Exception();

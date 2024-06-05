@@ -36,14 +36,8 @@ class Config
      * @var int
      */
     protected $default_ttl = 5 * 60;
-    /**
-     * @var string
-     */
-    protected $adaptor_name;
-    /**
-     * @var bool
-     */
-    protected $activated = false;
+    protected string $adaptor_name;
+    protected bool $activated;
 
     public function __construct(
         string $adaptor_name,

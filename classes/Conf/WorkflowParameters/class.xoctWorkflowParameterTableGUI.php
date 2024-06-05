@@ -10,6 +10,7 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\CustomInputGUIs\OpenCast\Template\Template;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUI as LegacyTableGUI;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctWorkflowParameterTableGUI
@@ -31,19 +32,14 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
     public const PLUGIN_CLASS_NAME = ilOpenCastPlugin::class; // TODO remove
 
     public const ROW_TEMPLATE = "tpl.workflow_parameter_table_row.html";
-    /**
-     * @var WorkflowParameterRepository
-     */
-    private $workflowParameterRepository;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+
+    private WorkflowParameterRepository $workflowParameterRepository;
+    private ilOpenCastPlugin $plugin;
 
     public function __construct(xoctWorkflowParameterGUI $parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
     {
-        global /** @var Container $opencastContainer */
-        $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         parent::__construct($parent, $parent_cmd);
         $this->initTable();

@@ -28,30 +28,12 @@ use xoctEventTileGUI;
  */
 class EventTableBuilder
 {
-    /**
-     * @var UIFactory
-     */
-    private $ui_factory;
-    /**
-     * @var ilUIService
-     */
-    private $ui_service;
-    /**
-     * @var MDFieldConfigEventRepository
-     */
-    private $MDFieldConfigEventRepository;
-    /**
-     * @var MDCatalogue
-     */
-    private $MDCatalogue;
-    /**
-     * @var EventRepository
-     */
-    private $eventRepository;
-    /**
-     * @var Container
-     */
-    private $dic;
+    private UIFactory $ui_factory;
+    private \ilUIService $ui_service;
+    private MDFieldConfigEventRepository $MDFieldConfigEventRepository;
+    private MDCatalogue $MDCatalogue;
+    private EventRepository $eventRepository;
+    private Container $dic;
 
     public function __construct(
         MDFieldConfigEventRepository $MDFieldConfigEventRepository,

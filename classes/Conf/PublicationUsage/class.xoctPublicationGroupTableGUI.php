@@ -1,12 +1,14 @@
 <?php
 
 declare(strict_types=1);
+use srag\Plugins\Opencast\Container\Container;
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\DIC\OpenCast\Exception\DICException;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupRepository;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctPublicationGroupTableGUI
@@ -19,31 +21,25 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
+    private Container $container;
+
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
         return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
     }
 
     public const TBL_ID = 'tbl_xoct_pub_g';
-    /**
-     * @var array
-     */
-    protected $filter = [];
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
+    protected array $filter = [];
+    protected ilOpenCastPlugin $plugin;
+    protected OpencastDIC $legacy_container;
 
     public function __construct(
         xoctPublicationUsageGUI $a_parent_obj,
         string $a_parent_cmd
     ) {
         parent::__construct($a_parent_obj, $a_parent_cmd);
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init();
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->setId(self::TBL_ID);
         $this->setPrefix(self::TBL_ID);
@@ -115,10 +111,6 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
     {
         $this->addFilterItem($item);
         $item->readFromSession();
-        if ($item instanceof ilCheckboxInputGUI) {
-            $this->filter[$item->getPostVar()] = $item->getChecked();
-        } else {
-            $this->filter[$item->getPostVar()] = $item->getValue();
-        }
+        $this->filter[$item->getPostVar()] = $item instanceof ilCheckboxInputGUI ? $item->getChecked() : $item->getValue();
     }
 }

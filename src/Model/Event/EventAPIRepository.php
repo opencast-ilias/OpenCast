@@ -16,6 +16,7 @@ use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Model\Cache\Container\Container;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class EventRepository
@@ -26,31 +27,19 @@ use srag\Plugins\Opencast\Model\Cache\Container\Container;
  */
 class EventAPIRepository implements EventRepository, Request
 {
-    /**
-     * @var API
-     */
-    protected $api;
+    protected API $api;
     public $opencastDIC;
 
-    /**
-     * @var Container
-     */
-    private $cache;
-    /**
-     * @var OpencastIngestService|null
-     */
-    private $ingestService;
-    /**
-     * @var EventParser
-     */
-    private $eventParser;
+    private Container $cache;
+    private OpencastIngestService $ingestService;
+    private EventParser $eventParser;
 
     public function __construct(
         Services $cache_services,
         EventParser $eventParser,
         OpencastIngestService $ingestService
     ) {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->cache = $cache_services->get($this);
         $this->ingestService = $ingestService;
@@ -130,7 +119,7 @@ class EventAPIRepository implements EventRepository, Request
     }
 
     /**
-     * @return \srag\Plugins\Opencast\Model\Event\Event[]|string[][]
+     * @return Event[]|string[][]
      */
     public function getFiltered(
         array $filter,
@@ -163,7 +152,7 @@ class EventAPIRepository implements EventRepository, Request
         );
         $return = [];
 
-        $this->opencastDIC = OpencastDIC::getInstance();
+        $this->opencastDIC = Init::init()->legacy();
 
         foreach ($data as $d) {
             $event = $this->eventParser->parseAPIResponse($d, $d->identifier);

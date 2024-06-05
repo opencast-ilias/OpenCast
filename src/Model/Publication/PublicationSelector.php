@@ -39,22 +39,13 @@ class PublicationSelector
      * @var bool
      */
     protected $loaded = false;
-    /**
-     * @var Event
-     */
-    protected $event;
+    protected Event $event;
     /**
      * @var Publication[]
      */
     protected $publications;
-    /**
-     * @var PublicationUsageRepository
-     */
-    protected $publication_usage_repository;
-    /**
-     * @var PublicationSubUsageRepository
-     */
-    protected $publication_sub_usage_repository;
+    protected PublicationUsageRepository $publication_usage_repository;
+    protected PublicationSubUsageRepository $publication_sub_usage_repository;
     /**
      * @var Publication[]|Media[]|Attachment[]
      */

@@ -29,7 +29,7 @@ class EventAdditionsAR extends ActiveRecord
     public function update()
     {
         if ($this->getId() === '' || $this->getId() === '0') {
-            return false;
+            return;
         }
         if (!self::where(['id' => $this->getId()])->hasSets()) {
             $this->create();

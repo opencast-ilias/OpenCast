@@ -10,6 +10,7 @@ use xoctException;
 use srag\Plugins\Opencast\API\API;
 use ilFFmpeg;
 use ilShellUtil;
+use srag\Plugins\Opencast\Container\Init;
 
 class OpencastIngestService
 {
@@ -21,7 +22,7 @@ class OpencastIngestService
 
     public function __construct(UploadStorageService $uploadStorageService)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->uploadStorageService = $uploadStorageService;
     }

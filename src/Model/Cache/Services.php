@@ -36,21 +36,15 @@ class Services
     /**
      * @var ActiveContainer[]
      */
-    private $containers = [];
+    private array $containers = [];
     /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor|null
+     * @var Adaptor|null
      */
     private $adaptor;
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Adaptor\Factory
-     */
-    private $adaptor_factory;
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Config
-     */
-    private $config;
+    private Factory $adaptor_factory;
+    private Config $config;
 
-    public function __construct(\srag\Plugins\Opencast\Model\Cache\Config $config, \ilDBInterface $db)
+    public function __construct(Config $config, \ilDBInterface $db)
     {
         $this->config = $config;
         $this->adaptor_factory = new Factory();
@@ -84,7 +78,7 @@ class Services
 
     private function getAdaptor(): Adaptor
     {
-        if (!$this->adaptor instanceof \srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor) {
+        if (!$this->adaptor instanceof Adaptor) {
             $this->adaptor = $this->adaptor_factory->getWithConfig($this->config);
         }
         return $this->adaptor;

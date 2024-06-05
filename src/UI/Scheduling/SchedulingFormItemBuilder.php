@@ -19,26 +19,12 @@ use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 
 class SchedulingFormItemBuilder
 {
-    /**
-     * @var UIFactory
-     */
-    protected $ui_factory;
-    /**
-     * @var RefineryFactory
-     */
-    private $refinery_factory;
-    /**
-     * @var SchedulingParser
-     */
-    private $schedulingParser;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var AgentRepository
-     */
-    private $agentApiRepository;
+    protected UIFactory $ui_factory;
+    private RefineryFactory $refinery_factory;
+    private SchedulingParser $schedulingParser;
+    private \ilPlugin $plugin;
+    private AgentRepository $agentApiRepository;
+
 
     public function __construct(
         UIFactory $ui_factory,
@@ -63,7 +49,7 @@ class SchedulingFormItemBuilder
             ],
             $this->plugin->txt('event_scheduling')
         )->withAdditionalTransformation(
-            $this->refinery_factory->custom()->transformation(function ($vs) {
+            $this->refinery_factory->custom()->transformation(function (array $vs): array {
                 $vs['object'] = $this->schedulingParser->parseCreateFormData($vs);
                 return $vs;
             })
@@ -79,7 +65,7 @@ class SchedulingFormItemBuilder
             ] + $this->buildEditSchedulingInputs($scheduling),
             $this->plugin->txt('event_scheduling')
         )->withAdditionalTransformation(
-            $this->refinery_factory->custom()->transformation(function ($vs) {
+            $this->refinery_factory->custom()->transformation(function (array $vs): array {
                 $vs['object'] = $this->schedulingParser->parseUpdateFormData($vs);
                 return $vs;
             })
@@ -166,7 +152,7 @@ class SchedulingFormItemBuilder
 
     private function buildConstraintStartBeforeEnd(): Constraint
     {
-        return $this->refinery_factory->custom()->constraint(function ($vs): bool {
+        return $this->refinery_factory->custom()->constraint(function (array $vs): bool {
             /** @var Scheduling $scheduling */
             $scheduling = $vs['object'];
             return $scheduling->getStart()->getTimestamp() < $scheduling->getEnd()->getTimestamp();
@@ -175,7 +161,7 @@ class SchedulingFormItemBuilder
 
     private function buildConstraintStartAfterNow(): Constraint
     {
-        return $this->refinery_factory->custom()->constraint(function ($vs): bool {
+        return $this->refinery_factory->custom()->constraint(function (array $vs): bool {
             /** @var Scheduling $scheduling */
             $scheduling = $vs['object'];
             return $scheduling->getStart()->getTimestamp() > time();

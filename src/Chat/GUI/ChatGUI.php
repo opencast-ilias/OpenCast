@@ -10,6 +10,7 @@ use ilTemplateException;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class ChatGUI
@@ -20,27 +21,19 @@ use srag\Plugins\Opencast\Chat\Model\TokenAR;
  */
 class ChatGUI
 {
+    private TokenAR $token;
+    private ?ilTemplate $template = null;
     /**
-     * @var ChatroomAR
+     * @var
      */
-    private $token;
-    /**
-     * @var ilTemplate
-     */
-    private $template;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+    private ilOpenCastPlugin $plugin;
 
     /**
      * ChatGUI constructor.
-     *
-     *
      */
     public function __construct(TokenAR $token)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->token = $token;
     }

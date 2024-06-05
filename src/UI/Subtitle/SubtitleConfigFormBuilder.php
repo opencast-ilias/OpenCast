@@ -26,7 +26,7 @@ class SubtitleConfigFormBuilder
     public const F_SUBTITLE_ACCEPTED_MIMETYPES = 'subtitle_accepted_mimetypes';
     public const F_SUBTITLE_LANGS = 'subtitle_languages';
     public const LANG_VALUE_SEPARATOR = '|||';
-    private static $accepted_subtitle_extensions = [
+    private static array $accepted_subtitle_extensions = [
         'text/vtt' => '*.vtt',
         '.srt' => '*.srt',
         '.ass' => '*.ass',
@@ -36,14 +36,8 @@ class SubtitleConfigFormBuilder
      * @var ilPlugin
      */
     private $plugin;
-    /**
-     * @var Factory
-     */
-    private $ui_factory;
-    /**
-     * @var Renderer
-     */
-    private $ui_renderer;
+    private Factory $ui_factory;
+    private Renderer $ui_renderer;
 
     public function __construct(
         ilPlugin $plugin,

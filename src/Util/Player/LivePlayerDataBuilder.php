@@ -81,7 +81,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         ];
     }
 
-    private function getConsumableResolution($resolution)
+    private function getConsumableResolution($resolution): array
     {
         $video_res = [
             "w" => '1920',

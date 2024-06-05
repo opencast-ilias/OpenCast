@@ -43,14 +43,8 @@ class xoctPublicationUsageGUI extends xoctGUI
     public const CMD_UPDATE_GROUP = 'updateGroup';
     public const CMD_DELETE_GROUP = 'deleteGroup';
     public const CMD_CONFIRM_DELETE_GROUP = 'confirmDeleteGroup';
-    /**
-     * @var PublicationUsageRepository
-     */
-    protected $repository;
-    /**
-     * @var PublicationSubUsageRepository
-     */
-    protected $sub_repository;
+    protected PublicationUsageRepository $repository;
+    protected PublicationSubUsageRepository $sub_repository;
     /**
      * @var string
      */
@@ -67,14 +61,8 @@ class xoctPublicationUsageGUI extends xoctGUI
      * @var string
      */
     protected $identifier;
-    /**
-     * @var int
-     */
-    protected $get_id;
-    /**
-     * @var int
-     */
-    protected $post_id;
+    protected int $get_id;
+    protected int $post_id;
     /**
      * @var string
      */

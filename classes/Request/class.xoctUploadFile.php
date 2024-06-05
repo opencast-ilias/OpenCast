@@ -17,7 +17,7 @@ class xoctUploadFile
      *
      * @return xoctUploadFile
      */
-    public static function getInstanceFromFileArray(array $fileinfo)
+    public static function getInstanceFromFileArray(array $fileinfo): self
     {
         $inst = new self();
         $inst->setTitle($fileinfo['name']);

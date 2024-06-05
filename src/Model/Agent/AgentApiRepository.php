@@ -8,13 +8,11 @@ use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Model\Cache\Container\Container;
+use srag\Plugins\Opencast\Container\Init;
 
 class AgentApiRepository implements AgentRepository, Request
 {
-    /**
-     * @var AgentParser
-     */
-    private $agentParser;
+    private AgentParser $agentParser;
     /**
      * @var API
      */
@@ -26,7 +24,7 @@ class AgentApiRepository implements AgentRepository, Request
 
     public function __construct(AgentParser $agentParser)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->agentParser = $agentParser;
         $this->api = $opencastContainer[API::class];
         $this->cache = $opencastContainer[Services::class]->get($this);

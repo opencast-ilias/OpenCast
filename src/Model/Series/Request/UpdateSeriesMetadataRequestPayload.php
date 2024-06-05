@@ -12,10 +12,7 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
 {
     use SanitizeSeriesMetadata;
 
-    /**
-     * @var Metadata
-     */
-    protected $metadata;
+    protected Metadata $metadata;
 
     public function __construct(Metadata $metadata)
     {

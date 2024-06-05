@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctReportingFormGUI
@@ -13,19 +14,9 @@ class xoctReportingModalGUI extends ilModalGUI
 {
     public const REPORTING_TYPE_DATE = 1;
     public const REPORTING_TYPE_QUALITY = 2;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
-
-    /**
-     * @var xoctEventGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var \ilCtrl
-     */
-    private $ctrl;
+    private ilOpenCastPlugin $plugin;
+    protected xoctEventGUI $parent_gui;
+    private ilCtrlInterface $ctrl;
 
     /**
      * xoctReportingFormGUI constructor.
@@ -33,7 +24,8 @@ class xoctReportingModalGUI extends ilModalGUI
      */
     protected function __construct($parent_gui, $type)
     {
-        global $opencastContainer, $DIC;
+        global $DIC;
+        $opencastContainer = Init::init();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->ctrl = $DIC->ctrl();
         $this->parent_gui = $parent_gui;

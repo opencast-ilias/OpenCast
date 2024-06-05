@@ -65,7 +65,7 @@ class Event
     /**
      * @var string
      */
-    private $status;
+    private string $status;
 
     /**
      * @var bool

@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Init;
 
 class WorkflowDBRepository implements WorkflowRepository
 {
@@ -16,14 +17,11 @@ class WorkflowDBRepository implements WorkflowRepository
 
     public const SELECTION_TEXT_LANG_MODULE = 'workflow_selection_text';
     public const CONFIG_PANEL_LABEL_LANG_MODULE = 'workflow_config_panel_label';
-    /**
-     * @var API
-     */
-    protected $api;
+    protected API $api;
 
     public function __construct()
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
     }
 
@@ -97,13 +95,13 @@ class WorkflowDBRepository implements WorkflowRepository
     }
 
 
-    public function getByWorkflowId(string $workflow_id)
+    public function getByWorkflowId(string $workflow_id): ?\ActiveRecord
     {
         return WorkflowAR::where(['workflow_id' => $workflow_id])->first();
     }
 
 
-    public function getById(int $id)
+    public function getById(int $id): ?\ActiveRecord
     {
         return WorkflowAR::where(['id' => $id])->first();
     }
@@ -121,7 +119,7 @@ class WorkflowDBRepository implements WorkflowRepository
         if (!empty($configuration_panel_html)) {
             $dom = new \DOMDocument();
             $dom->strictErrorChecking = false;
-            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA|LIBXML_NOWARNING|LIBXML_NOERROR);
+            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
             $inputs = $dom->getElementsByTagName('input');
             $selects = $dom->getElementsByTagName('select');
 
@@ -473,7 +471,7 @@ class WorkflowDBRepository implements WorkflowRepository
         $mapped_configuration_panel_html = $configuration_panel_html;
 
         if ($configuration_panel_html !== '') {
-            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA|LIBXML_NOWARNING|LIBXML_NOERROR);
+            $dom->loadHTML($configuration_panel_html, LIBXML_NOCDATA | LIBXML_NOWARNING | LIBXML_NOERROR);
             $inputs = $dom->getElementsByTagName('input');
             $selects = $dom->getElementsByTagName('select');
             $labels = $dom->getElementsByTagName('label');

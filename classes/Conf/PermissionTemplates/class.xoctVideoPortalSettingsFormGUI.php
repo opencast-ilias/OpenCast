@@ -28,7 +28,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     /**
      * @var xoctConfGUI
      */
-    protected $parent_gui;
+    protected \xoctPermissionTemplateGUI $parent_gui;
     /**
      * @var string
      */
@@ -62,7 +62,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
             $this->getLocaleString(PluginConfig::F_VIDEO_PORTAL_TITLE),
             PluginConfig::F_VIDEO_PORTAL_TITLE
         );
-//        $te->setInfo($this->getLocaleString(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
+        //        $te->setInfo($this->getLocaleString(xoctConf::F_VIDEO_PORTAL_TITLE . '_info'));
         $te->setRequired(true);
         $this->addItem($te);
 

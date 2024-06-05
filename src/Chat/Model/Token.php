@@ -13,10 +13,7 @@ namespace srag\Plugins\Opencast\Chat\Model;
  */
 class Token
 {
-    /**
-     * @var string
-     */
-    protected $token;
+    protected ?string $token;
 
     public function __construct(string $token = null)
     {

@@ -6,10 +6,7 @@ namespace srag\Plugins\Opencast\Model\Series\Request;
 
 class CreateSeriesRequest
 {
-    /**
-     * @var CreateSeriesRequestPayload
-     */
-    private $payload;
+    private CreateSeriesRequestPayload $payload;
 
     public function __construct(CreateSeriesRequestPayload $payload)
     {

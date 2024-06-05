@@ -9,10 +9,7 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
 
 class UpdateSeriesACLRequestPayload implements JsonSerializable
 {
-    /**
-     * @var ACL
-     */
-    private $ACL;
+    private ACL $ACL;
 
     public function __construct(ACL $ACL)
     {

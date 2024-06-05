@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use ILIAS\UI\Implementation\DefaultRenderer;
+use ILIAS\DI\UIServices;
 
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
@@ -40,6 +42,7 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\OutputResponse;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctEventGUI
@@ -72,79 +75,40 @@ class xoctEventGUI extends xoctGUI
     public const CMD_CREATE_SCHEDULED = 'createScheduled';
     public const CMD_EDIT_SCHEDULED = 'editScheduled';
     public const CMD_UPDATE_SCHEDULED = 'updateScheduled';
-    /**
-     * @var ilObjOpenCastGUI
-     */
-    private $parent_gui;
-    /**
-     * @var WaitOverlay
-     */
-    private $wait_overlay;
+    private \ilObjOpenCastGUI $parent_gui;
+    private \WaitOverlay $wait_overlay;
     /**
      * @var Services
      */
-    private $cache;
+    private object $cache;
+    private int $ref_id;
     /**
-     * @var int
-     */
-    private $ref_id;
-    /**
-     * @var \ILIAS\UI\Implementation\DefaultRenderer
+     * @var DefaultRenderer
      */
     protected $custom_renderer;
 
-    /**
-     * @var ObjectSettings
-     */
-    protected $objectSettings;
+    protected ObjectSettings $objectSettings;
     /**
      * @var EventModals|null
      */
     protected $modals = null;
-    /**
-     * @var EventRepository
-     */
-    protected $event_repository;
+    protected EventRepository $event_repository;
     /**
      * @var Renderer
      */
-    private $ui_renderer;
-    /**
-     * @var EventFormBuilder
-     */
-    private $formBuilder;
-    /**
-     * @var WorkflowRepository
-     */
-    private $workflowRepository;
-    /**
-     * @var ACLUtils
-     */
-    private $ACLUtils;
-    /**
-     * @var Container
-     */
-    private $dic;
-    /**
-     * @var SeriesRepository
-     */
-    private $seriesRepository;
-    /**
-     * @var EventTableBuilder
-     */
-    private $eventTableBuilder;
+    private DefaultRenderer $ui_renderer;
+    private EventFormBuilder $formBuilder;
+    private WorkflowRepository $workflowRepository;
+    private ACLUtils $ACLUtils;
+    private Container $dic;
+    private SeriesRepository $seriesRepository;
+    private EventTableBuilder $eventTableBuilder;
     /**
      * @var xoctFileUploadHandlerGUI
      */
-    private $uploadHandler;
-    /**
-     * @var PaellaConfigStorageService
-     */
-    private $paellaConfigStorageService;
-    /**
-     * @var PaellaConfigServiceFactory
-     */
-    private $paellaConfigServiceFactory;
+    private UploadHandler $uploadHandler;
+    private PaellaConfigStorageService $paellaConfigStorageService;
+    private PaellaConfigServiceFactory $paellaConfigServiceFactory;
     /**
      * @var \ilObjUser
      */
@@ -158,7 +122,7 @@ class xoctEventGUI extends xoctGUI
      */
     private $toolbar;
     /**
-     * @var \ILIAS\DI\UIServices
+     * @var UIServices
      */
     private $ui;
 
@@ -176,7 +140,8 @@ class xoctEventGUI extends xoctGUI
         PaellaConfigServiceFactory $paellaConfigServiceFactory,
         Container $dic
     ) {
-        global $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer  = Init::init();
         parent::__construct();
 
         $this->user = $DIC->user();
@@ -195,7 +160,7 @@ class xoctEventGUI extends xoctGUI
         $this->uploadHandler = $uploadHandler;
         $this->paellaConfigStorageService = $paellaConfigStorageService;
         $this->paellaConfigServiceFactory = $paellaConfigServiceFactory;
-        $this->ui_renderer = new \ILIAS\UI\Implementation\DefaultRenderer(
+        $this->ui_renderer = new DefaultRenderer(
             new Loader($DIC, ilOpenCastPlugin::getInstance())
         );
         $this->wait_overlay = new WaitOverlay($this->main_tpl);
@@ -1366,7 +1331,7 @@ class xoctEventGUI extends xoctGUI
     }
 
 
-    public function txt($key): string
+    public function txt(string $key): string
     {
         return $this->plugin->txt('event_' . $key);
     }

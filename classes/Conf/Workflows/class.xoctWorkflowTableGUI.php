@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctWorkflowTableGUI
@@ -19,7 +20,6 @@ use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
  */
 class xoctWorkflowTableGUI extends ilTable2GUI
 {
-
     use LocaleTrait {
         LocaleTrait::getLocaleString as _getLocaleString;
     }
@@ -33,30 +33,19 @@ class xoctWorkflowTableGUI extends ilTable2GUI
 
     public const LANG_MODULE = 'workflow';
 
-    /**
-     * @var WorkflowRepository
-     */
-    protected $workflow_repository;
-    /**
-     * @var Factory
-     */
-    protected $factory;
+    protected WorkflowRepository $workflow_repository;
+    protected Factory $factory;
     /**
      * @var Modal[]
      */
-    protected $modals = [];
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+    protected array $modals = [];
+    protected Renderer $renderer;
+    private ilOpenCastPlugin $plugin;
 
     public function __construct($parent, string $parent_cmd, WorkflowRepository $workflow_repository)
     {
-        global $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer  = Init::init();
         $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         $ui = $DIC->ui();
         $this->workflow_repository = $workflow_repository;

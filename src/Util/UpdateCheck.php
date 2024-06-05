@@ -6,10 +6,10 @@ namespace srag\Plugins\Opencast\Util;
 
 class UpdateCheck
 {
-    private $path_to_plugin_php = __DIR__ . '/../../plugin.php';
-    private $db;
+    private string $path_to_plugin_php = __DIR__ . '/../../plugin.php';
+    private \ilDBInterface $db;
     private $last_update_version = '';
-    private $version_check_string = '';
+    private string $version_check_string = '';
     private $version_check_string_db = '';
 
     public function __construct(\ilDBInterface $db)

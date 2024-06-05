@@ -94,51 +94,21 @@ class EventFormBuilder
         '.aiff',
         '.wav',
     ];
-    /**
-     * @var UIFactory
-     */
-    protected $ui_factory;
-    /**
-     * @var RefineryFactory
-     */
-    private $refinery_factory;
-    /**
-     * @var MDFormItemBuilder
-     */
-    private $formItemBuilder;
-    /**
-     * @var SeriesWorkflowParameterRepository
-     */
-    private $workflowParameterRepository;
-    /**
-     * @var UploadStorageService
-     */
-    private $uploadStorageService;
-    /**
-     * @var UploadHandler|\xoctFileUploadHandlerGUI
-     */
-    private $uploadHandler;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var SchedulingFormItemBuilder
-     */
-    private $schedulingFormItemBuilder;
-    /**
-     * @var SeriesRepository
-     */
-    private $seriesRepository;
-    /**
-     * @var Container
-     */
-    private $dic;
-    /**
-     * @var OpencastDIC
-     */
-    private $opencast_dic;
+    protected UIFactory $ui_factory;
+    private RefineryFactory $refinery_factory;
+    private MDFormItemBuilder $formItemBuilder;
+    private SeriesWorkflowParameterRepository $workflowParameterRepository;
+    private UploadStorageService $uploadStorageService;
+    private UploadHandler $uploadHandler;
+    private \ilOpenCastPlugin $plugin;
+    private SchedulingFormItemBuilder $schedulingFormItemBuilder;
+    private SeriesRepository $seriesRepository;
+    private Container $dic;
+    private OpencastDIC $opencast_dic;
 
+    /**
+     * @param mixed $refinery_factory
+     */
     public function __construct(
         UIFactory $ui_factory,
         RefineryFactory $refinery_factory,
@@ -146,7 +116,7 @@ class EventFormBuilder
         SeriesWorkflowParameterRepository $workflowParameterRepository,
         UploadStorageService $uploadStorageService,
         UploadHandler $uploadHandler,
-        ilPlugin $plugin,
+        \ilOpenCastPlugin $plugin,
         SchedulingFormItemBuilder $schedulingFormItemBuilder,
         SeriesRepository $seriesRepository,
         Container $dic

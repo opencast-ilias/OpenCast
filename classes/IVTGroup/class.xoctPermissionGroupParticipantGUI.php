@@ -14,7 +14,7 @@ use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroupParticipant;
 class xoctPermissionGroupParticipantGUI extends xoctGUI
 {
     /**
-     * @var \srag\Plugins\Opencast\Model\Object\ObjectSettings
+     * @var ObjectSettings
      */
     public $objectSettings;
     /**
@@ -31,11 +31,7 @@ class xoctPermissionGroupParticipantGUI extends xoctGUI
         parent::__construct();
         $tabs = $DIC->tabs();
         $main_tpl = $DIC->ui()->mainTemplate();
-        if ($objectSettings instanceof ObjectSettings) {
-            $this->objectSettings = $objectSettings;
-        } else {
-            $this->objectSettings = new ObjectSettings();
-        }
+        $this->objectSettings = $objectSettings instanceof ObjectSettings ? $objectSettings : new ObjectSettings();
         $tabs->setTabActive(ilObjOpenCastGUI::TAB_GROUPS);
 
         new WaitOverlay($main_tpl); // TODO check if needed

@@ -6,7 +6,6 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
-use srag\Plugins\Opencast\Traits\Singleton;
 
 /**
  * Class PlayerDataBuilderFactory
@@ -15,7 +14,15 @@ use srag\Plugins\Opencast\Traits\Singleton;
  */
 class PlayerDataBuilderFactory
 {
-    use Singleton;
+    protected static ?self $instance = null;
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function getBuilder(Event $event): PlayerDataBuilder
     {

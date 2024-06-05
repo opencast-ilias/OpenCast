@@ -7,6 +7,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\LegacyHelpers\UploadSize;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctConfFormGUI
@@ -25,33 +26,18 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         return $this->_getLocaleString($string, empty($module) ? 'config' : $module, $fallback);
     }
 
-    /**
-     * @var  PluginConfig
-     */
-    protected $object;
-    /**
-     * @var xoctConfGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var string
-     */
-    protected $subtab_active;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    protected $main_tpl;
+    protected PluginConfig $object;
+    protected xoctConfGUI $parent_gui;
+    protected string $subtab_active;
+    protected ilOpenCastPlugin $plugin;
+    protected \ilGlobalTemplateInterface $main_tpl;
 
     public function __construct(
         xoctConfGUI $parent_gui,
         string $subtab_active
     ) {
         global $DIC;
-        $container = OpencastDIC::getInstance();
+        $container = Init::init($DIC);
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $container->plugin();
         $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
@@ -162,7 +148,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      *
      * @return bool
      */
-    public static function checkItem($item)
+    public static function checkItem($item): bool
     {
         return !$item instanceof ilFormSectionHeaderGUI;
     }
@@ -405,12 +391,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $ro = new ilRadioOption(
             $this->getLocaleString(PluginConfig::F_REPORT_QUALITY_ACCESS . '_' . PluginConfig::ACCESS_ALL),
-            (string)PluginConfig::ACCESS_ALL
+            (string) PluginConfig::ACCESS_ALL
         );
         $ri->addOption($ro);
         $ro = new ilRadioOption(
             $this->getLocaleString(PluginConfig::F_REPORT_QUALITY_ACCESS . '_' . PluginConfig::ACCESS_OWNER_ADMIN),
-            (string)PluginConfig::ACCESS_OWNER_ADMIN
+            (string) PluginConfig::ACCESS_OWNER_ADMIN
         );
         $ri->addOption($ro);
         $ri->setRequired(true);
@@ -463,12 +449,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $ro = new ilRadioOption(
             $this->getLocaleString(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::NO_METADATA),
-            (string)PluginConfig::NO_METADATA
+            (string) PluginConfig::NO_METADATA
         );
         $ri->addOption($ro);
         $ro = new ilRadioOption(
             $this->getLocaleString(PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::ALL_METADATA),
-            (string)PluginConfig::ALL_METADATA
+            (string) PluginConfig::ALL_METADATA
         );
         $ro->setInfo(
             $this->getLocaleString(
@@ -480,7 +466,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
             $this->getLocaleString(
                 PluginConfig::F_SCHEDULED_METADATA_EDITABLE . '_' . PluginConfig::METADATA_EXCEPT_DATE_PLACE
             ),
-            (string)PluginConfig::METADATA_EXCEPT_DATE_PLACE
+            (string) PluginConfig::METADATA_EXCEPT_DATE_PLACE
         );
         $ri->addOption($ro);
         $this->addItem($ri);

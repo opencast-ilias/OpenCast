@@ -13,10 +13,7 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 
 class MetadataService
 {
-    /**
-     * @var Container
-     */
-    private $container;
+    private Container $container;
 
     public function __construct(Container $container)
     {

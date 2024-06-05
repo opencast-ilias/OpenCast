@@ -20,26 +20,12 @@ use ActiveRecord;
  */
 class SeriesWorkflowParameterRepository
 {
-    /**
-     * @var self
-     */
     protected static $instance;
-    /**
-     * @var array
-     */
-    protected $parameters;
-    /**
-     * @var Factory
-     */
-    private $ui_factory;
-    /**
-     * @var RefineryFactory
-     */
-    private $refinery;
-    /**
-     * @var WorkflowParameterParser
-     */
-    private $workflowParameterParser;
+    protected array $parameters = [];
+    private \ILIAS\UI\Factory $ui_factory;
+    private RefineryFactory $refinery;
+    private WorkflowParameterParser $workflowParameterParser;
+
 
     public function __construct(
         Factory $ui_factory,
@@ -57,7 +43,7 @@ class SeriesWorkflowParameterRepository
      */
     public static function getInstance()
     {
-        if (self::$instance == null) {
+        if (self::$instance === null) {
             global $DIC;
             self::$instance = new self(
                 $DIC->ui()->factory(),
@@ -343,7 +329,7 @@ class SeriesWorkflowParameterRepository
     {
         return $this->ui_factory->input()->field()->section($items, $workflow_section_title)
                                 ->withAdditionalTransformation(
-                                    $this->refinery->custom()->transformation(function ($vs) {
+                                    $this->refinery->custom()->transformation(function (array $vs): array {
                                         $vs['object'] = $this->workflowParameterParser->configurationFromFormData($vs);
                                         return $vs;
                                     })

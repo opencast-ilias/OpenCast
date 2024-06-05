@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use ILIAS\DI\UIServices;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -38,40 +39,19 @@ class xoctSeriesGUI extends xoctGUI
     public const SUBTAB_GENERAL = 'general';
     public const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
 
-    /**
-     * @var ilObjOpenCastGUI
-     */
-    private $parent_gui;
-    /**
-     * @var ObjectSettings
-     */
-    protected $objectSettings;
-    /**
-     * @var ilObjOpenCast
-     */
-    protected $object;
-    /**
-     * @var SeriesFormBuilder
-     */
-    private $seriesFormBuilder;
-    /**
-     * @var SeriesRepository
-     */
-    private $seriesRepository;
-    /**
-     * @var SeriesWorkflowParameterRepository
-     */
-    private $seriesWorkflowParameterRepository;
-    /**
-     * @var WorkflowParameterRepository
-     */
-    private $workflowParameterRepository;
+    private \ilObjOpenCastGUI $parent_gui;
+    protected ?\ActiveRecord $objectSettings;
+    protected \ilObjOpenCast $object;
+    private SeriesFormBuilder $seriesFormBuilder;
+    private SeriesRepository $seriesRepository;
+    private SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
+    private WorkflowParameterRepository $workflowParameterRepository;
     /**
      * @var \ilTabsGUI
      */
     private $tabs;
     /**
-     * @var \ILIAS\DI\UIServices
+     * @var UIServices
      */
     private $ui;
 
@@ -270,15 +250,16 @@ class xoctSeriesGUI extends xoctGUI
         ) {
             $value_admin = $value['value_admin'] ?? null;
             $value_member = $value['value_member'] ?? null;
-            if (
-                in_array($value_member, WorkflowParameter::$possible_values, true)
-                && in_array($value_admin, WorkflowParameter::$possible_values, true)
-            ) {
-                SeriesWorkflowParameterRepository::getByObjAndParamId(
-                    $this->getObjId(),
-                    $param_id
-                )->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
+            if (!in_array($value_member, WorkflowParameter::$possible_values, true)) {
+                continue;
             }
+            if (!in_array($value_admin, WorkflowParameter::$possible_values, true)) {
+                continue;
+            }
+            SeriesWorkflowParameterRepository::getByObjAndParamId(
+                $this->getObjId(),
+                $param_id
+            )->setDefaultValueAdmin($value_admin)->setValueMember($value_member)->update();
         }
         $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_EDIT_WORKFLOW_PARAMS);

@@ -41,18 +41,9 @@ final class ActiveContainer implements Container
     private const TRUE = 'true';
     private const FALSE = 'false';
 
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Container\Request
-     */
-    private $request;
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Adaptor\Adaptor
-     */
-    private $adaptor;
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Config
-     */
-    private $config;
+    private Request $request;
+    private Adaptor $adaptor;
+    private Config $config;
 
     public function __construct(
         Request $request,
@@ -95,7 +86,7 @@ final class ActiveContainer implements Container
         if (is_float($value)) {
             return self::FLOAT_PREFIX . $value;
         }
-        if (is_double($value)) {
+        if (is_float($value)) {
             return self::DOUBLE_PREFIX . $value;
         }
         if (is_bool($value)) {

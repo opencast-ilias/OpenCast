@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\API;
 
+use OpencastApi\Opencast;
+use OpencastApi\Rest\OcRestClient;
+
 /**
  * Class srag\Plugins\Opencast\API\OpencastAPI
  * This class integrates Opencast PHP Library into xoct.
@@ -22,22 +25,10 @@ class OpencastAPI implements API
      */
     public const RETURN_ARRAY = 'return_array_flag';
 
-    /**
-     * @var \OpencastApi\Opencast instance
-     */
-    private $api;
-    /**
-     * @var \OpencastApi\Rest\OcRestClient instance
-     */
-    public $rest;
-    /**
-     * @var array
-     */
-    private $config;
-    /**
-     * @var array
-     */
-    private $engage_config;
+    private Opencast $api;
+    public OcRestClient $rest;
+    private array $config;
+    private array $engage_config;
 
     public function __construct(Config $config)
     {
@@ -51,19 +42,19 @@ class OpencastAPI implements API
         // By default we don't need to activate ingest, hence we pass false to decorate services.
         // We deal with ingest on demand!
         $this->api = $this->decorateApiServicesForXoct(false);
-        $this->rest = new \OpencastApi\Rest\OcRestClient($this->config);
+        $this->rest = new OcRestClient($this->config);
     }
 
     /**
      * It decorates the services provided by Opencast Api class to be customised for xoct specifically.
      * @param bool $activate_ingest whether to activate ingest service or not.
-     * @return \OpencastApi\Opencast $api customised instance of \OpencastAPI\Opencast
+     * @return Opencast $api customised instance of \OpencastAPI\Opencast
      */
-    private function decorateApiServicesForXoct(bool $activate_ingest = false): \OpencastApi\Opencast
+    private function decorateApiServicesForXoct(bool $activate_ingest = false): Opencast
     {
-        $decorated_opencast_api = new \OpencastApi\Opencast($this->config, $this->engage_config, $activate_ingest);
+        $decorated_opencast_api = new Opencast($this->config, $this->engage_config, $activate_ingest);
         $class_vars = get_object_vars($decorated_opencast_api);
-        foreach ($class_vars as $name => $value) {
+        foreach (array_keys($class_vars) as $name) {
             $decorated_opencast_api->{$name} = new DecorateProxy($decorated_opencast_api->{$name});
         }
         return $decorated_opencast_api;
@@ -72,18 +63,18 @@ class OpencastAPI implements API
     /**
      * Gets the static OpencastAPI instance.
      * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
-     * @return \OpencastApi\Opencast $api instance of \OpencastAPI\Opencast
+     * @return Opencast $api instance of \OpencastAPI\Opencast
      */
-    public function routes(): \OpencastApi\Opencast
+    public function routes(): Opencast
     {
         return $this->api;
     }
 
     /**
      * Gets the static OpencastRestClient instance.
-     * @return \OpencastApi\Rest\OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
+     * @return OcRestClient $opencastRestClient instance of \OpencastAPI\Rest\OcRestClient
      */
-    public function rest(): \OpencastApi\Rest\OcRestClient
+    public function rest(): OcRestClient
     {
         return $this->rest;
     }
@@ -94,7 +85,7 @@ class OpencastAPI implements API
      */
     public function activateIngest(bool $activate): void
     {
-        if ($activate === true && ($this->api->ingest->object ?? null) === null) {
+        if ($activate && ($this->api->ingest->object ?? null) === null) {
             $this->api = $this->decorateApiServicesForXoct($activate);
         } elseif ($activate === false && ($this->api->ingest->object ?? null) !== null) {
             $this->api = $this->decorateApiServicesForXoct($activate);

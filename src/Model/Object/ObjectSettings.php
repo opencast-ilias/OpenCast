@@ -416,8 +416,8 @@ class ObjectSettings extends ActiveRecord
         $description = $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue();
         foreach ($this->getDuplicatesOnSystem() as $ref_id) {
             $object = new ilObjOpencast($ref_id);
-            $object->setTitle($title);
-            $object->setDescription($description);
+            $object->setTitle((string) $title);
+            $object->setDescription((string) $description);
             $object->update();
         }
     }

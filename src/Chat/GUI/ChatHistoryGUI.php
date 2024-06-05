@@ -8,6 +8,7 @@ use ilObjUser;
 use ilOpenCastPlugin;
 use ilTemplate;
 use srag\Plugins\Opencast\Chat\Model\MessageAR;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class ChatHistoryGUI
@@ -17,27 +18,19 @@ use srag\Plugins\Opencast\Chat\Model\MessageAR;
  */
 class ChatHistoryGUI
 {
-    /**
-     * @var integer
-     */
-    private $chat_room_id;
-    /**
-     * @var \ilGlobalTemplateInterface
-     */
-    private $main_tpl;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
+    private ?int $chat_room_id = null;
+    private \ilGlobalTemplateInterface $main_tpl;
+
+    private ilOpenCastPlugin $plugin;
 
     /**
      * ChatHistoryGUI constructor.
      *
      * @param $chat_room_id
      */
-    public function __construct($chat_room_id)
+    public function __construct(?int $chat_room_id)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->main_tpl = $opencastContainer->ilias()->ui()->mainTemplate();
         $this->chat_room_id = $chat_room_id;

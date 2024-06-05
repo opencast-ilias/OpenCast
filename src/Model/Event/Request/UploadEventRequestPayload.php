@@ -12,30 +12,15 @@ use xoctUploadFile;
 
 class UploadEventRequestPayload
 {
-    /**
-     * @var Metadata
-     */
-    protected $metadata;
-    /**
-     * @var ?ACL
-     */
-    protected $acl;
-    /**
-     * @var ?Processing
-     */
-    protected $processing;
-    /**
-     * @var xoctUploadFile
-     */
-    protected $presentation;
+    protected Metadata $metadata;
+    protected ACL $acl;
+    protected Processing $processing;
+    protected \xoctUploadFile $presentation;
     /**
      * @var xoctUploadFile[]
      */
-    protected $subtitles;
-    /**
-     * @var ?xoctUploadFile
-     */
-    protected $thumbnail = null;
+    protected array $subtitles;
+    protected ?\xoctUploadFile $thumbnail;
 
     public function __construct(
         Metadata $metadata,

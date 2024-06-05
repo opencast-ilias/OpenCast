@@ -12,8 +12,7 @@ use xoctException;
 
 class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
 {
-    /** @var MDCatalogueFactory */
-    private $MDCatalogueFactory;
+    private MDCatalogueFactory $MDCatalogueFactory;
 
     public function __construct(MDCatalogueFactory $MDCatalogueFactory)
     {

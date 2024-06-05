@@ -12,14 +12,8 @@ class CreateSeriesRequestPayload implements JsonSerializable
 {
     use SanitizeSeriesMetadata;
 
-    /**
-     * @var Metadata
-     */
-    private $metadata;
-    /**
-     * @var ACL
-     */
-    private $acl;
+    private Metadata $metadata;
+    private ACL $acl;
 
     /**
      * @param int $theme

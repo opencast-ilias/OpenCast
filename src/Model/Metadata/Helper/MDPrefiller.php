@@ -11,14 +11,11 @@ use xoctLog;
 
 class MDPrefiller
 {
-    /**
-     * @var Container
-     */
-    private $dic;
+    private Container $dic;
 
-    private $course;
-    private $user;
-    private $metadata;
+    private array $course;
+    private array $user;
+    private array $metadata;
 
     public const PLACEHOLDER_REGEX = "/\[[^\]]*\]/";
 
@@ -177,16 +174,16 @@ class MDPrefiller
                 if (count($splitted) === 2 &&
                     ($splitted[0] === self::COURSE_PLACEHOLDER_FLAG || $splitted[0] === self::USER_PLACEHOLDER_FLAG)) {
                     if ($splitted[0] === self::COURSE_PLACEHOLDER_FLAG && isset(
-                            $this->course[strtolower(
-                                $splitted[1]
-                            )]
-                        )) {
+                        $this->course[strtolower(
+                            $splitted[1]
+                        )]
+                    )) {
                         $replacement = $this->course[strtolower($splitted[1])];
                     } elseif ($splitted[0] === self::USER_PLACEHOLDER_FLAG && isset(
-                            $this->user[strtolower(
-                                $splitted[1]
-                            )]
-                        )) {
+                        $this->user[strtolower(
+                            $splitted[1]
+                        )]
+                    )) {
                         $replacement = $this->user[strtolower($splitted[1])];
                     }
                 } else {

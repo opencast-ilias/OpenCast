@@ -185,7 +185,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
     }
 
-    protected function reorder():void
+    protected function reorder(): void
     {
         $ids = $this->http->request()->getParsedBody()['ids'] ?? [];
         $sort = 1;
@@ -202,7 +202,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
     /**
      * @param $key
      */
-    public function txt($key): string
+    public function txt(string $key): string
     {
         return $this->plugin->txt('config_' . $key);
     }

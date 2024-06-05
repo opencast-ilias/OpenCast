@@ -20,18 +20,9 @@ use srag\Plugins\Opencast\Util\OutputResponse;
 class xoctGrantPermissionGUI extends xoctGUI
 {
     use OutputResponse;
-    /**
-     * @var Event
-     */
-    protected $event;
-    /**
-     * @var ObjectSettings
-     */
-    protected $objectSettings;
-    /**
-     * @var ACLUtils
-     */
-    private $ACLUtils;
+    protected Event $event;
+    protected ObjectSettings $objectSettings;
+    private ACLUtils $ACLUtils;
     /**
      * @var \ilObjUser
      */

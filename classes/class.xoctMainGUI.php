@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use srag\Plugins\Opencast\DI\OpencastDIC;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctMainGUI
@@ -105,7 +106,7 @@ class xoctMainGUI extends xoctGUI
             $this->ctrl->getLinkTarget(new xoctReportOverviewGUI())
         );
 
-        $opencast_dic = OpencastDIC::getInstance();
+        $opencast_dic = Init::init($DIC)->legacy();
         switch ($nextClass) {
             case strtolower(xoctPublicationUsageGUI::class):
                 $this->tabs->activateTab(self::TAB_PUBLICATION_USAGE);

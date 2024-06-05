@@ -28,18 +28,9 @@ class Metadata implements JsonSerializable
     public const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
     public const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
 
-    /**
-     * @var MDCatalogue
-     */
-    protected $md_catalogue;
-    /**
-     * @var string
-     */
-    protected $title;
-    /**
-     * @var string
-     */
-    protected $flavor;
+    protected MDCatalogue $md_catalogue;
+    protected string $title;
+    protected string $flavor;
     /**
      * @var MetadataField[]
      */

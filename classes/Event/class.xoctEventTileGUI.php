@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use srag\Plugins\Opencast\Container\Container;
 
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -9,6 +10,7 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctEventTileGUI
@@ -19,59 +21,23 @@ class xoctEventTileGUI
 {
     public const GET_PAGE = 'page';
     private bool $async;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
-
-    /**
-     * @var xoctEventGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var ObjectSettings
-     */
-    protected $objectSettings;
-    /**
-     * @var bool
-     */
-    protected $has_scheduled_events = false;
+    private Container $container;
+    protected ilOpenCastPlugin $plugin;
+    protected OpencastDIC $leagcy_container;
+    protected xoctEventGUI $parent_gui;
+    protected ObjectSettings $objectSettings;
+    protected bool $has_scheduled_events = false;
     /**
      * @var Event[]
      */
-    protected $events;
-    /**
-     * @var Factory
-     */
-    protected $factory;
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
-    /**
-     * @var int
-     */
-    protected $page = 0;
-    /**
-     * @var int
-     */
-    protected $limit;
-    /**
-     * @var \ilLanguage
-     */
-    private $language;
-    /**
-     * @var \ilObjUser
-     */
-    private $user;
-    /**
-     * @var \ilCtrl
-     */
-    private $ctrl;
+    protected array $events = [];
+    protected Factory $factory;
+    protected Renderer $renderer;
+    protected int $page = 0;
+    protected int $limit;
+    private \ilLanguage $language;
+    private \ilObjUser $user;
+    private ilCtrlInterface  $ctrl;
 
     public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, array $data)
     {
@@ -79,7 +45,8 @@ class xoctEventTileGUI
         $ui = $DIC->ui();
         $user = $DIC->user();
         $this->language = $DIC->language();
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init($DIC);
+        $this->leagcy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->user = $DIC->user();
         $this->ctrl = $DIC->ctrl();
@@ -110,7 +77,7 @@ class xoctEventTileGUI
      * @throws ilTemplateException
      * @throws xoctException
      */
-    public function getHTML()
+    public function getHTML(): string
     {
         $container_tpl = $this->plugin->getTemplate('default/tpl.tile_container.html');
         $container_tpl->setVariable('LIMIT_SELECTOR', $this->getLimitSelectorHTML());
@@ -235,7 +202,7 @@ class xoctEventTileGUI
     /**
      * @return bool
      */
-    public function hasScheduledEvents()
+    public function hasScheduledEvents(): bool
     {
         return $this->has_scheduled_events;
     }

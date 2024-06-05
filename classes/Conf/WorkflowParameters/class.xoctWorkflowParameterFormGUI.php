@@ -30,19 +30,13 @@ class xoctWorkflowParameterFormGUI extends ilPropertyFormGUI
     public const F_TYPE = 'type';
     public const F_DEFAULT_VALUE_MEMBER = 'default_value_member';
     public const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
-    /**
-     * @var xoctWorkflowParameterGUI
-     */
-    private $parent;
+    private \xoctWorkflowParameterGUI $parent;
 
     /**
      * @var WorkflowParameter
      */
     protected $xoctWorkflowParameter;
-    /**
-     * @var WorkflowParameterRepository
-     */
-    private $workflowParameterRepository;
+    private WorkflowParameterRepository $workflowParameterRepository;
 
     public function __construct(xoctWorkflowParameterGUI $parent, WorkflowParameterRepository $workflowParameterRepository, string $param_id = null)
     {

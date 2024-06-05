@@ -26,22 +26,13 @@ class ThumbnailConfigFormBuilder
     public const F_THUMBNAIL_UPLOAD_MODE_TIMEPOINT = 'thumbnail_upload_mode_timepoint';
     public const F_THUMBNAIL_UPLOAD_MODE_BOTH = 'thumbnail_upload_mode_both';
     public const F_THUMBNAIL_ACCEPTED_MIMETYPES = 'thumbnail_accepted_mimetypes';
-    private static $accepted_thumbnail_extensions = [
+    private static array $accepted_thumbnail_extensions = [
         MimeTypeUtil::IMAGE__JPEG => '.jpg',
         MimeTypeUtil::IMAGE__PNG => '.png',
     ];
-    /**
-     * @var ilPlugin
-     */
     // private $plugin;
-    /**
-     * @var Factory
-     */
-    private $ui_factory;
-    /**
-     * @var Renderer
-     */
-    private $ui_renderer;
+    private Factory $ui_factory;
+    private Renderer $ui_renderer;
 
     public function __construct(
         Factory $ui_factory,

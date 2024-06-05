@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use ILIAS\FileUpload\FileUpload;
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use ILIAS\Filesystem\Stream\Streams;
@@ -16,7 +17,7 @@ use ILIAS\Filesystem\Stream\Streams;
 class xoctConfExportGUI extends xoctGUI
 {
     private const EXPORT_FILE_NAME = 'opencastexport.xml';
-    private \ILIAS\FileUpload\FileUpload $upload;
+    private FileUpload $upload;
     /**
      * @var \ilToolbarGUI
      */

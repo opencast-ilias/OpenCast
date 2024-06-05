@@ -25,22 +25,10 @@ class MDFieldDefinition
     public const F_CREATED_BY = 'createdBy';
     public const F_LOCATION = 'location';
 
-    /**
-     * @var string
-     */
-    private $id;
-    /**
-     * @var MDDataType
-     */
-    private $type;
-    /**
-     * @var boolean
-     */
-    private $read_only;
-    /**
-     * @var boolean
-     */
-    private $required;
+    private string $id;
+    private MDDataType $type;
+    private bool $read_only;
+    private bool $required;
 
     public function __construct(string $id, MDDataType $type, bool $read_only, bool $required)
     {

@@ -15,26 +15,14 @@ use DateTimeImmutable;
  */
 class Agent
 {
-    /**
-     * @var string
-     */
-    private $agent_id;
+    private string $agent_id;
     /**
      * @var string[]
      */
-    private $inputs;
-    /**
-     * @var DateTimeImmutable
-     */
-    private $update;
-    /**
-     * @var string
-     */
-    private $url;
-    /**
-     * @var string
-     */
-    private $status;
+    private array $inputs;
+    private \DateTimeImmutable $update;
+    private string $url;
+    private string $status;
 
     /**
      * @param string[] $inputs

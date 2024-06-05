@@ -18,30 +18,15 @@ use stdClass;
  */
 class Scheduling implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $agent_id;
-    /**
-     * @var DateTimeImmutable
-     */
-    protected $start;
-    /**
-     * @var ?DateTimeImmutable
-     */
-    protected $end;
-    /**
-     * @var ?int
-     */
-    protected $duration;
+    protected string $agent_id;
+    protected \DateTimeImmutable $start;
+    protected ?\DateTimeImmutable $end;
+    protected ?int $duration;
     /**
      * @var string[]
      */
-    protected $inputs;
-    /**
-     * @var ?RRule
-     */
-    protected $rrule;
+    protected ?array $inputs;
+    protected ?RRule $rrule;
 
     public function __construct(
         string $agent_id,
@@ -75,7 +60,7 @@ class Scheduling implements JsonSerializable
             $stdClass->inputs = $this->getInputs();
         }
 
-        if ($this->getRrule() instanceof \srag\Plugins\Opencast\Model\Scheduling\RRule) {
+        if ($this->getRrule() instanceof RRule) {
             $stdClass->rrule = $this->rrule->getValue();
 
             if ($this->getDuration()) {

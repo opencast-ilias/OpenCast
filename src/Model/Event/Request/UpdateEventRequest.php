@@ -6,14 +6,8 @@ namespace srag\Plugins\Opencast\Model\Event\Request;
 
 class UpdateEventRequest
 {
-    /**
-     * @var string
-     */
-    protected $identifier;
-    /**
-     * @var UpdateEventRequestPayload
-     */
-    protected $payload;
+    protected string $identifier;
+    protected UpdateEventRequestPayload $payload;
 
     public function __construct(
         string $identifier,

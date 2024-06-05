@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctException;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctGroup
@@ -16,10 +17,7 @@ use srag\Plugins\Opencast\API\API;
  */
 class Group extends APIObject
 {
-    /**
-     * @var API
-     */
-    protected $api;
+    protected API $api;
     /**
      * @var String
      */
@@ -54,7 +52,7 @@ class Group extends APIObject
      */
     public function __construct(string $identifier = '')
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         if ($identifier !== '' && $identifier !== '0') {
             $this->setIdentifier($identifier);

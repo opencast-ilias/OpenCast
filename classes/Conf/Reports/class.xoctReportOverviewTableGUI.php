@@ -7,6 +7,7 @@ use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
 use srag\Plugins\Opencast\Model\Report\Report;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctReportOverviewTableGUI
@@ -28,7 +29,8 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
      */
     public function __construct($parent, string $parent_cmd)
     {
-        global $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->setSelectAllCheckbox('id[]');
         parent::__construct($parent, $parent_cmd);
@@ -89,8 +91,8 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
         $filtered = [];
         foreach ($data as $key => $value) {
             $value['sender'] = ilObjUser::_lookupLogin((int) $value['user_id']) . ', ' . ilObjUser::_lookupEmail(
-                    (int) $value['user_id']
-                );
+                (int) $value['user_id']
+            );
             if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
                 unset($data[$key]);
             } else {
@@ -122,7 +124,10 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     protected function initFilterFields(): void
     {
         $sender = $this->addFilterItemByMetaType(
-            'sender', self::FILTER_TEXT, false, $this->getLocaleString('sender')
+            'sender',
+            self::FILTER_TEXT,
+            false,
+            $this->getLocaleString('sender')
         );
         $this->filter['sender'] = $sender->getValue();
 

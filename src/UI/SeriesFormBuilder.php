@@ -30,35 +30,13 @@ class SeriesFormBuilder
     public const EXISTING_YES = 2;
     public const F_CHANNEL_ID = 'channel_id';
     public const F_EXISTING_IDENTIFIER = 'existing_identifier';
-
-    /**
-     * @var UIFactory
-     */
-    private $ui_factory;
-    /**
-     * @var Refinery
-     */
-    private $refinery;
-    /**
-     * @var MDFormItemBuilder
-     */
-    private $formItemBuilder;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var Container
-     */
-    private $dic;
-    /**
-     * @var ObjectSettingsFormItemBuilder
-     */
-    private $objectSettingsFormItemBuilder;
-    /**
-     * @var SeriesRepository
-     */
-    private $seriesRepository;
+    private UIFactory $ui_factory;
+    private Refinery $refinery;
+    private MDFormItemBuilder $formItemBuilder;
+    private \ilPlugin $plugin;
+    private Container $dic;
+    private ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder;
+    private SeriesRepository $seriesRepository;
 
     public function __construct(
         UIFactory $ui_factory,
@@ -160,8 +138,8 @@ class SeriesFormBuilder
         )
                                 ->withAdditionalTransformation(
                                     $this->refinery->custom()->transformation(function (
-                                        $vs
-                                    ) {
+                                        array $vs
+                                    ): array {
                                         if ($vs[self::F_EXISTING_IDENTIFIER][0] == self::EXISTING_YES) {
                                             $vs[self::F_CHANNEL_ID] = $vs[self::F_EXISTING_IDENTIFIER][1][self::F_CHANNEL_ID];
                                         } else {

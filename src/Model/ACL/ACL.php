@@ -11,7 +11,7 @@ class ACL implements JsonSerializable
     /**
      * @var ACLEntry[]
      */
-    private $acl_entries;
+    private array $acl_entries;
 
     /**
      * @param ACLEntry[] $acl_entries

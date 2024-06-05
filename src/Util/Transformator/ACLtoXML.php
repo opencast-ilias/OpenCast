@@ -16,10 +16,7 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
  */
 class ACLtoXML
 {
-    /**
-     * @var ACL
-     */
-    protected $acl;
+    protected ACL $acl;
 
     /**
      * ACLtoXML constructor.

@@ -11,10 +11,7 @@ class MetadataFactory
     public const MD_TITLE_EVENT = 'EVENTS.EVENTS.DETAILS.CATALOG.EPISODE';
     public const MD_TITLE_SERIS = 'Opencast Series DublinCore';
 
-    /**
-     * @var MDCatalogueFactory
-     */
-    private $catalogueFactory;
+    private MDCatalogueFactory $catalogueFactory;
 
     public function __construct(MDCatalogueFactory $catalogueFactory)
     {

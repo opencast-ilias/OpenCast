@@ -6,10 +6,7 @@ namespace srag\Plugins\Opencast\Model\Event\Request;
 
 class UploadEventRequest
 {
-    /**
-     * @var UploadEventRequestPayload
-     */
-    protected $payload;
+    protected UploadEventRequestPayload $payload;
 
     public function __construct(UploadEventRequestPayload $payload)
     {

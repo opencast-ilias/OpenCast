@@ -30,10 +30,7 @@ class xoctWorkflowParametersFormGUI extends ilPropertyFormGUI
 
     public const F_OVERWRITE_SERIES_PARAMS = 'overwrite_series_params';
 
-    /**
-     * @var xoctWorkflowParameterGUI
-     */
-    protected $parent;
+    protected \xoctWorkflowParameterGUI $parent;
 
     public function __construct(xoctWorkflowParameterGUI $parent)
     {

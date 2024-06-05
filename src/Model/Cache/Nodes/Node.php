@@ -25,18 +25,9 @@ namespace srag\Plugins\Opencast\Model\Cache\Nodes;
  */
 class Node
 {
-    /**
-     * @var string
-     */
-    private $host;
-    /**
-     * @var int
-     */
-    private $port;
-    /**
-     * @var int|null
-     */
-    private $weight;
+    private string $host;
+    private int $port;
+    private ?int $weight;
 
     public function __construct(string $host, int $port, ?int $weight = null)
     {

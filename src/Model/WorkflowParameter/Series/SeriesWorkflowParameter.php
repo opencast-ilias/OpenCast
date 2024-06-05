@@ -89,7 +89,7 @@ class SeriesWorkflowParameter extends ActiveRecord
      *
      * @return static
      */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
 
@@ -109,7 +109,7 @@ class SeriesWorkflowParameter extends ActiveRecord
      *
      * @return static
      */
-    public function setObjId($obj_id)
+    public function setObjId($obj_id): self
     {
         $this->obj_id = $obj_id;
 
@@ -129,7 +129,7 @@ class SeriesWorkflowParameter extends ActiveRecord
      *
      * @return static
      */
-    public function setParamId($param_id)
+    public function setParamId($param_id): self
     {
         $this->param_id = $param_id;
 
@@ -146,7 +146,7 @@ class SeriesWorkflowParameter extends ActiveRecord
      *
      * @return static
      */
-    public function setValueMember($value_member)
+    public function setValueMember($value_member): self
     {
         $this->value_member = $value_member;
 
@@ -163,7 +163,7 @@ class SeriesWorkflowParameter extends ActiveRecord
      *
      * @return static
      */
-    public function setDefaultValueAdmin($value_admin)
+    public function setDefaultValueAdmin($value_admin): self
     {
         $this->value_admin = $value_admin;
 

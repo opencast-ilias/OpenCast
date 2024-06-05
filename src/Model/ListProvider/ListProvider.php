@@ -8,6 +8,7 @@ use xoctException;
 use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class ListProvider
@@ -28,7 +29,7 @@ class ListProvider
      */
     public function __construct()
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
     }
 

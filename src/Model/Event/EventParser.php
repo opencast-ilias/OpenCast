@@ -11,18 +11,9 @@ use stdClass;
 
 class EventParser
 {
-    /**
-     * @var MDParser
-     */
-    private $MDParser;
-    /**
-     * @var ACLParser
-     */
-    private $ACLParser;
-    /**
-     * @var SchedulingParser
-     */
-    private $schedulingParser;
+    private MDParser $MDParser;
+    private ACLParser $ACLParser;
+    private SchedulingParser $schedulingParser;
 
     public function __construct(MDParser $MDParser, ACLParser $ACLParser, SchedulingParser $schedulingParser)
     {

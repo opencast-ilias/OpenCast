@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Model\Cache\Container\Container;
+use srag\Plugins\Opencast\Container\Init;
 
 class PublicationAPIRepository implements PublicationRepository, Request
 {
@@ -22,7 +23,7 @@ class PublicationAPIRepository implements PublicationRepository, Request
 
     public function __construct()
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->cache = $opencastContainer[Services::class]->get($this);
     }

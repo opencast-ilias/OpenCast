@@ -9,6 +9,7 @@ use xoctException;
 use xoctLog;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
 use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class Object
@@ -33,7 +34,7 @@ abstract class APIObject implements Request
      */
     public static function find(string $identifier)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         /** @var Services $cache_services */
         $cache_services = $opencastContainer[Services::class];
         $container = $cache_services->get(new static());

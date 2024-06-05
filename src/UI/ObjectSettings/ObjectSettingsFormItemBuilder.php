@@ -41,30 +41,12 @@ class ObjectSettingsFormItemBuilder
     public const F_MEMBER_DOWNLOAD = 'member_download';
     public const F_MEMBER_RECORD = 'member_record';
 
-    /**
-     * @var UIFactory
-     */
-    protected $ui_factory;
-    /**
-     * @var RefineryFactory
-     */
-    private $refinery_factory;
-    /**
-     * @var PublicationUsageRepository
-     */
-    private $publicationUsageRepository;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var ObjectSettingsParser
-     */
-    private $objectSettingsParser;
-    /**
-     * @var xoctFileUploadHandlerGUI
-     */
-    private $fileUploadHandler;
+    protected UIFactory $ui_factory;
+    private RefineryFactory $refinery_factory;
+    private PublicationUsageRepository $publicationUsageRepository;
+    private \ilPlugin $plugin;
+    private ObjectSettingsParser $objectSettingsParser;
+    private \xoctFileUploadHandlerGUI $fileUploadHandler;
 
     public function __construct(
         UIFactory $ui_factory,

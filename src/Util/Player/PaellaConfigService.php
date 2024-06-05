@@ -10,10 +10,7 @@ use xoctLog;
 
 class PaellaConfigService
 {
-    /**
-     * @var PaellaConfigStorageService
-     */
-    private $storageService;
+    private PaellaConfigStorageService $storageService;
 
     public function __construct(PaellaConfigStorageService $storageService)
     {

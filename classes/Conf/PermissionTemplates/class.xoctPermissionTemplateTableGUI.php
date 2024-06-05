@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctPermissionTemplateTableGUI
@@ -15,18 +16,13 @@ use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 class xoctPermissionTemplateTableGUI extends ilTable2GUI
 {
     use LocaleTrait;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
-    /**
-     * @var \ilObjUser
-     */
-    private $user;
+    private ilOpenCastPlugin $plugin;
+    private ilObjUser $user;
 
-    public function __construct(xoctPermissionTemplateGUI $a_parent_obj, $a_parent_cmd = "", $a_template_context = "")
+    public function __construct(xoctPermissionTemplateGUI $a_parent_obj, string $a_parent_cmd = "", string $a_template_context = "")
     {
-        global $DIC, $opencastContainer;
+        global $DIC;
+        $opencastContainer = Init::init();
         $this->ctrl = $DIC->ctrl();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];

@@ -17,18 +17,12 @@ use xoctException;
  */
 class MetadataField implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
     /**
      * @var mixed
      */
     protected $value;
-    /**
-     * @var MDDataType
-     */
-    private $type;
+    private MDDataType $type;
 
     public function getType(): MDDataType
     {

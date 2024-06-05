@@ -50,10 +50,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     {
         // we create the Opencast Container here and
         global $DIC;
-        /** @var Container $opencastContainer */
-        global $opencastContainer;
         $this->_db = $DIC->database();
-        $opencastContainer = Init::init($DIC);
     }
 
     protected function beforeUpdate(): bool

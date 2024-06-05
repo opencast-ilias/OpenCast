@@ -11,14 +11,11 @@ use GuzzleHttp\HandlerStack;
  */
 final class Config
 {
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config;
     /**
      * @var array|mixed
      */
-    private $engage_config;
+    private array $engage_config;
 
     public function __construct(
         HandlerStack $handler_stack,

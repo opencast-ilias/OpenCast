@@ -8,6 +8,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
 use stdClass;
 use xoctException;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctWorkflowCollection
@@ -24,10 +25,7 @@ class WorkflowInstanceCollection extends APIObject
      * @var bool
      */
     protected $has_changed = false;
-    /**
-     * @var string
-     */
-    protected $event_id;
+    protected string $event_id;
     /**
      * @var WorkflowInstance[]
      */
@@ -41,7 +39,7 @@ class WorkflowInstanceCollection extends APIObject
      */
     public function __construct(string $event_id = '')
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->event_id = $event_id;
         if ($event_id !== '') {

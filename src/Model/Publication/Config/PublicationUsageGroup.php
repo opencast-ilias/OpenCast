@@ -76,13 +76,13 @@ class PublicationUsageGroup extends ActiveRecord
      */
     public function getId(): int
     {
-        return (int)$this->id;
+        return (int) $this->id;
     }
 
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -98,7 +98,7 @@ class PublicationUsageGroup extends ActiveRecord
     /**
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -114,7 +114,7 @@ class PublicationUsageGroup extends ActiveRecord
     /**
      * @param string $description
      */
-    public function setDisplayName($display_name)
+    public function setDisplayName($display_name): void
     {
         $this->display_name = $display_name;
     }
@@ -130,12 +130,12 @@ class PublicationUsageGroup extends ActiveRecord
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
 
-    public function delete()
+    public function delete(): void
     {
         /**
          * @var $pu PublicationUsage

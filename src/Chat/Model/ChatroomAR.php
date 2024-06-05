@@ -22,7 +22,7 @@ class ChatroomAR extends ActiveRecord
     public static function findOrCreate(string $event_id, int $obj_id): ChatroomAR
     {
         $chatroom = self::where(['event_id' => $event_id, 'obj_id' => $obj_id])->first();
-        if (!$chatroom) {
+        if ($chatroom === null) {
             $chatroom = new self();
             $chatroom->setEventId($event_id);
             $chatroom->setObjId($obj_id);

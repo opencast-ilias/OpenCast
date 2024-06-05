@@ -6,10 +6,7 @@ namespace srag\Plugins\Opencast\Model\Event\Request;
 
 class ScheduleEventRequest
 {
-    /**
-     * @var ScheduleEventRequestPayload
-     */
-    protected $payload;
+    protected ScheduleEventRequestPayload $payload;
 
     public function __construct(ScheduleEventRequestPayload $payload)
     {

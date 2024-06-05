@@ -19,6 +19,8 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
+    private $container;
+
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
         return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
@@ -40,18 +42,9 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     public const F_OVERWRITE_DOWNLOAD_PERM = 'overwrite_download_perm';
     public const F_EXT_DL_SOURCE = 'ext_dl_source';
 
-    /**
-     * @var PublicationSubUsage
-     */
-    protected $object;
-    /**
-     * @var xoctPublicationUsageGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var bool $is_new
-     */
-    protected $is_new = true;
+    protected PublicationSubUsage $object;
+    protected \xoctPublicationUsageGUI $parent_gui;
+    protected bool $is_new;
     /**
      * @var ilOpenCastPlugin
      */
@@ -59,7 +52,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     /**
      * @var OpencastDIC
      */
-    protected $container;
+    protected $legacy_container;
 
     public function __construct(
         xoctPublicationUsageGUI $parent_gui,
@@ -67,7 +60,8 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         bool $is_new = true
     ) {
         global $DIC;
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init();
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $DIC->ui()->mainTemplate()->addJavaScript(
             $this->plugin->getDirectory() . '/js/opencast/dist/index.js'

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\API\API;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctSecureLink
@@ -31,7 +32,7 @@ class xoctSecureLink
      */
     protected static function sign($url, $valid_until = null, $restict_ip = false)
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         if (strpos($url, 'policy=') !== false && strpos($url, 'signature=') !== false) {
             // already signed, e.g. when presigning is active
             return $url;

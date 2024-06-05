@@ -9,10 +9,7 @@ use stdClass;
 
 class SeriesParser
 {
-    /**
-     * @var ACLParser
-     */
-    private $ACLParser;
+    private ACLParser $ACLParser;
 
     public function __construct(ACLParser $ACLParser)
     {
@@ -24,7 +21,7 @@ class SeriesParser
         $series = new Series();
         $series->setIdentifier($data->identifier);
         $series->setAccessPolicies($this->ACLParser->parseAPIResponse($data->acl ?? []));
-        $series->setMetadata($data->metadata);
+        $series->setMetadata($data->metadata ?? []);
         if (isset($data->theme) && is_int($data->theme)) {
             $series->setTheme($data->theme);
         }

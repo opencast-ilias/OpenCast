@@ -28,10 +28,7 @@ use srag\Plugins\Opencast\Model\Cache\Config;
 abstract class BaseAdaptor implements Adaptor
 {
     protected const LOCK_UNTIL = '_lock_until';
-    /**
-     * @var \srag\Plugins\Opencast\Model\Cache\Config
-     */
-    protected $config;
+    protected Config $config;
 
     public function __construct(Config $config)
     {

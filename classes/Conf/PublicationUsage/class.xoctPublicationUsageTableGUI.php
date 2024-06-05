@@ -7,6 +7,8 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\Container\Container;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctEventTableGUI
@@ -21,37 +23,28 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
+    private Container $container;
+
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
         return $this->_getLocaleString($string, empty($module) ? 'publication_usage' : $module, $fallback);
     }
 
     public const TBL_ID = 'tbl_xoct_pub_u';
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var array
-     */
-    protected $filter = [];
-    /**
-     * @var PublicationUsageRepository
-     */
-    protected $repository;
+    protected OpencastDIC $legacy_container;
+    protected ilOpenCastPlugin $plugin;
+    protected array $filter = [];
+    protected PublicationUsageRepository $repository;
 
     /**
      * @param string $a_parent_cmd
      */
-    public function __construct(xoctPublicationUsageGUI $a_parent_obj, $a_parent_cmd)
+    public function __construct(xoctPublicationUsageGUI $a_parent_obj, string $a_parent_cmd)
     {
         global $DIC;
         $this->ctrl = $DIC->ctrl();
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init($DIC);
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->repository = new PublicationUsageRepository();
         $this->setId(self::TBL_ID);

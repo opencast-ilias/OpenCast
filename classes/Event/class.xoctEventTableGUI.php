@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+use srag\Plugins\Opencast\Container\Container;
+use ILIAS\DI\UIServices;
 
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
@@ -14,6 +16,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
 use srag\Plugins\Opencast\Util\OutputResponse;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctEventTableGUI
@@ -26,58 +29,23 @@ class xoctEventTableGUI extends ilTable2GUI
 {
     use OutputResponse;
     public const TBL_ID = 'tbl_xoct';
-    /**
-     * @var true
-     */
     private bool $async;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    protected $plugin;
-    /**
-     * @var OpencastDIC
-     */
-    protected $container;
-    /**
-     * @var array
-     */
-    protected $filter = [];
-    /**
-     * @var ObjectSettings
-     */
-    protected $object_settings;
-    /**
-     * @var bool
-     */
-    protected $has_scheduled_events = false;
-    /**
-     * @var bool
-     */
-    protected $has_unprotected_links = false;
-    /**
-     * @var EventRepository
-     */
-    protected $event_repository;
+    private Container $container;
+    protected ilOpenCastPlugin $plugin;
+    protected OpencastDIC $legacy_container;
+    protected array  $filter = [];
+    protected ObjectSettings $object_settings;
+    protected bool $has_scheduled_events = false;
+    protected bool $has_unprotected_links = false;
+    protected EventRepository $event_repository;
     /**
      * @var MDFieldConfigEventAR[]
      */
-    private $md_fields;
-    /**
-     * @var string
-     */
-    private $lang_key;
-    /**
-     * @var \ILIAS\DI\UIServices
-     */
-    private $ui;
-    /**
-     * @var \ilObjUser
-     */
-    private $user;
-    /**
-     * @var \MDCatalogue
-     */
-    private $md_catalogue_event;
+    private array $md_fields;
+    private string $lang_key;
+    private UIServices $ui;
+    private \ilObjUser $user;
+    private MDCatalogue  $md_catalogue_event;
 
     public function __construct(
         xoctEventGUI $a_parent_obj,
@@ -96,7 +64,8 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->md_fields = $md_fields;
         $this->lang_key = $lang_key;
         $this->object_settings = $object_settings;
-        $this->container = OpencastDIC::getInstance();
+        $this->container = Init::init($DIC);
+        $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
         $a_val = static::getGeneratedPrefix($a_parent_obj->getObjId());
@@ -321,7 +290,7 @@ class xoctEventTableGUI extends ilTable2GUI
      */
     protected function filterArray(): Closure
     {
-        return function ($array): bool {
+        return function (array $array): bool {
             $return = true;
             foreach ($this->filter as $field => $value) {
                 switch ($field) {
@@ -353,7 +322,7 @@ class xoctEventTableGUI extends ilTable2GUI
 
     protected function filterPermissions(): Closure
     {
-        return function ($array): bool {
+        return function (array $array): bool {
             $xoctUser = xoctUser::getInstance($this->user);
             $event = $array['object'] instanceof Event ? $array['object'] : $this->event_repository->find(
                 $array['identifier']
@@ -480,7 +449,7 @@ class xoctEventTableGUI extends ilTable2GUI
     /**
      * @return bool
      */
-    public function hasScheduledEvents()
+    public function hasScheduledEvents(): bool
     {
         return $this->has_scheduled_events;
     }

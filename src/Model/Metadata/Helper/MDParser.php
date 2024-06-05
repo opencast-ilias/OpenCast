@@ -20,14 +20,8 @@ use xoctException;
 
 class MDParser
 {
-    /**
-     * @var MDCatalogueFactory
-     */
-    private $catalogueFactory;
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
+    private MDCatalogueFactory $catalogueFactory;
+    private MetadataFactory $metadataFactory;
 
     public function __construct(MDCatalogueFactory $catalogueFactory, MetadataFactory $metadataFactory)
     {
@@ -175,7 +169,7 @@ class MDParser
                 if (is_string($value)) {
                     return $value;
                 }
-            // no break
+                // no break
             case MDDataType::TYPE_TEXT:
             case MDDataType::TYPE_TEXT_LONG:
                 return (string) $value;
@@ -183,7 +177,7 @@ class MDParser
                 if (!is_array($value)) {
                     return [$value];
                 }
-            // no break
+                // no break
             default:
                 return $value;
         }

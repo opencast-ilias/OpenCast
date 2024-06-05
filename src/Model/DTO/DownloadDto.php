@@ -11,19 +11,10 @@ namespace srag\Plugins\Opencast\Model\DTO;
  */
 class DownloadDto
 {
-    /**
-     * @var string
-     */
-    private $publication_id;
+    private string $publication_id;
 
-    /**
-     * @var string
-     */
-    private $resolution;
-    /**
-     * @var string
-     */
-    private $url;
+    private string $resolution;
+    private string $url;
 
     /**
      * DownloadDto constructor.

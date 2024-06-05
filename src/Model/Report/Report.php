@@ -155,7 +155,7 @@ class Report extends ActiveRecord
      * @param int $id
      * @return static
      */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->id = $id;
         return $this;
@@ -173,7 +173,7 @@ class Report extends ActiveRecord
      * @param int $user_id
      * @return static
      */
-    public function setUserId($user_id)
+    public function setUserId($user_id): self
     {
         $this->user_id = $user_id;
         return $this;
@@ -191,7 +191,7 @@ class Report extends ActiveRecord
      * @param int $created_at
      * @return static
      */
-    public function setCreatedAt($created_at)
+    public function setCreatedAt($created_at): self
     {
         $this->created_at = $created_at;
         return $this;
@@ -209,7 +209,7 @@ class Report extends ActiveRecord
      * @param int $type
      * @return static
      */
-    public function setType($type)
+    public function setType($type): self
     {
         $this->type = $type;
         return $this;
@@ -227,7 +227,7 @@ class Report extends ActiveRecord
      * @param int $ref_id
      * @return static
      */
-    public function setRefId($ref_id)
+    public function setRefId($ref_id): self
     {
         $this->ref_id = $ref_id;
         return $this;
@@ -245,7 +245,7 @@ class Report extends ActiveRecord
      * @param string $event_id
      * @return static
      */
-    public function setEventId($event_id)
+    public function setEventId($event_id): self
     {
         $this->event_id = $event_id;
         return $this;
@@ -263,7 +263,7 @@ class Report extends ActiveRecord
      * @param string $subject
      * @return static
      */
-    public function setSubject($subject)
+    public function setSubject($subject): self
     {
         $this->subject = $subject;
         return $this;
@@ -281,7 +281,7 @@ class Report extends ActiveRecord
      * @param string $message
      * @return static
      */
-    public function setMessage($message)
+    public function setMessage($message): self
     {
         $this->message = $message;
         return $this;

@@ -18,6 +18,7 @@ use srag\Plugins\Opencast\Model\ListProvider\ListProvider;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use ILIAS\DI\HTTPServices;
+use ILIAS\DI\UIServices;
 
 abstract class xoctMetadataConfigGUI extends xoctGUI
 {
@@ -29,10 +30,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     public const CMD_LOAD_LIST = 'loadList';
     public const CMD_CONFIRM_LOAD_LIST = 'confirmLoadList';
 
-    /**
-     * @var MDFieldConfigRepository
-     */
-    protected $repository;
+    protected MDFieldConfigRepository $repository;
 
     protected static $available_commands = [
         self::CMD_STANDARD,
@@ -46,47 +44,19 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
         self::CMD_LOAD_LIST
     ];
 
-    protected static $listprovider_sources = [
+    protected static array $listprovider_sources = [
         'license' => 'LICENSES',
         'language' => 'LANGUAGES'
     ];
 
-    /**
-     * @var UIFactory
-     */
-    protected $ui_factory;
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
-    /**
-     * @var MDCatalogueFactory
-     */
-    protected $md_catalogue_factory;
-    /**
-     * @var Container
-     */
-    protected $dic;
-    /**
-     * @var ilPlugin
-     */
-    protected $plugin;
-    /**
-     * @var \ilToolbarGUI
-     */
-    private $toolbar;
-    /**
-     * @var \ILIAS\DI\UIServices
-     */
-    private $ui;
-    /**
-     * @var \srag\Plugins\Opencast\Model\ListProvider\ListProvider
-     */
-    private $listprovider;
-    /**
-     * @var array
-     */
-    private $post_ids = [];
+    protected UIFactory $ui_factory;
+    protected Renderer $renderer;
+    protected MDCatalogueFactory $md_catalogue_factory;
+    protected Container $dic;
+    private ilToolbarGUI $toolbar;
+    private UIServices  $ui;
+    private ListProvider $listprovider;
+    private array $post_ids = [];
 
     public function __construct(
         MDFieldConfigRepository $repository,

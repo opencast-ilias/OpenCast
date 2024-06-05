@@ -26,18 +26,9 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
     public const F_DESCRIPTION = 'description';
     public const F_DISPLAY_NAME_MAX_LENGTH = 10;
 
-    /**
-     * @var PublicationUsageGroup
-     */
-    protected $object;
-    /**
-     * @var xoctPublicationUsageGUI
-     */
-    protected $parent_gui;
-    /**
-     * @var bool $is_new
-     */
-    protected $is_new = true;
+    protected PublicationUsageGroup $object;
+    protected \xoctPublicationUsageGUI $parent_gui;
+    protected bool $is_new;
 
     public function __construct(
         xoctPublicationUsageGUI $parent_gui,
@@ -59,7 +50,7 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
         $this->initButtons();
 
-        $te = new ilTextInputGUI($this->getLocaleString('group_' . self::F_NAME,), self::F_NAME);
+        $te = new ilTextInputGUI($this->getLocaleString('group_' . self::F_NAME, ), self::F_NAME);
         $te->setRequired(true);
         $this->addItem($te);
 

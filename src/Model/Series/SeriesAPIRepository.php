@@ -23,34 +23,17 @@ use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Model\Cache\Container\Container;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Model\Cache\Container\Request;
+use srag\Plugins\Opencast\Container\Init;
 
 class SeriesAPIRepository implements SeriesRepository, Request
 {
     public const OWN_SERIES_PREFIX = 'Eigene Serie von ';
-    /**
-     * @var Container
-     */
-    private $cache;
-    /**
-     * @var ACLUtils
-     */
-    private $ACLUtils;
-    /**
-     * @var SeriesParser
-     */
-    private $seriesParser;
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
-    /**
-     * @var MDParser
-     */
-    private $md_parser;
-    /**
-     * @var API
-     */
-    protected $api;
+    private Container $cache;
+    private ACLUtils $ACLUtils;
+    private SeriesParser $seriesParser;
+    private MetadataFactory $metadataFactory;
+    private MDParser $md_parser;
+    protected API $api;
 
     public function __construct(
         Services $cache,
@@ -59,7 +42,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
         MetadataFactory $metadataFactory,
         MDParser $MDParser
     ) {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->cache = $cache->get($this);
         $this->ACLUtils = $ACLUtils;
@@ -155,7 +138,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $data = $this->cache->get($user_string);
         } else {
             try {
-                $data = (array)$this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
+                $data = (array) $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
                     'onlyWithWriteAccess' => true,
                     'withacl' => true,
                     'limit' => 5000

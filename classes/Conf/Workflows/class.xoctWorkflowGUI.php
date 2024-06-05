@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use ILIAS\UI\Renderer;
 
 use ILIAS\UI\Component\Input\Container\Form\Standard;
 use ILIAS\UI\Factory;
@@ -27,17 +28,14 @@ class xoctWorkflowGUI extends xoctGUI
     public const CMD_CONFIRM_RESET_WORKFLOWS = 'confirmResetWorkflows';
     public const CMD_RESET_WORKFLOWS = 'resetWorkflows';
     /**
-     * @var \ILIAS\UI\Renderer
+     * @var Renderer
      */
     private $ui_renderer;
     /**
      * @var Factory
      */
     protected $factory;
-    /**
-     * @var WorkflowRepository
-     */
-    protected $workflow_repository;
+    protected WorkflowRepository $workflow_repository;
     /**
      * @var \ilToolbarGUI
      */

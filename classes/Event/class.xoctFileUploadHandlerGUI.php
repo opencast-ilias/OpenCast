@@ -14,26 +14,14 @@ use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
 
 /**
- * @ilCtrl_IsCalledBy xoctFileUploadHandlerGUI: xoctEventGUI, xoctConfGUI
+ * @ilCtrl_IsCalledBy xoctFileUploadHandlerGUI: xoctEventGUI, xoctConfGUI, ilUIPluginRouterGUI
  */
 class xoctFileUploadHandlerGUI extends AbstractCtrlAwareChunkedUploadHandler
 {
-    /**
-     * @var UploadStorageService
-     */
-    private $uploadStorageService;
-    /**
-     * @var string
-     */
-    private $upload_url;
-    /**
-     * @var string
-     */
-    private $file_info_url;
-    /**
-     * @var string
-     */
-    private $file_removal_url;
+    private UploadStorageService $uploadStorageService;
+    private string $upload_url;
+    private string $file_info_url;
+    private string $file_removal_url;
 
     public function __construct(
         UploadStorageService $uploadStorageService,

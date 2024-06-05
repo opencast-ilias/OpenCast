@@ -25,14 +25,8 @@ namespace srag\Plugins\Opencast\Model\Cache\Container;
  */
 class BaseRequest implements Request
 {
-    /**
-     * @var string
-     */
-    private $container_key;
-    /**
-     * @var bool
-     */
-    private $forced = false;
+    private string $container_key;
+    private bool $forced;
 
     public function __construct(string $container_key, bool $forced = false)
     {

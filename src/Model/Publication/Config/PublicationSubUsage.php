@@ -179,7 +179,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param int $id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -195,7 +195,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $parent_usage_id
      */
-    public function setParentUsageId($parent_usage_id)
+    public function setParentUsageId($parent_usage_id): void
     {
         $this->parent_usage_id = $parent_usage_id;
     }
@@ -211,7 +211,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
@@ -227,7 +227,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $description
      */
-    public function setDisplayName($display_name)
+    public function setDisplayName($display_name): void
     {
         $this->display_name = $display_name;
     }
@@ -243,7 +243,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $description
      */
-    public function setDescription($description)
+    public function setDescription($description): void
     {
         $this->description = $description;
     }
@@ -253,13 +253,13 @@ class PublicationSubUsage extends ActiveRecord
      */
     public function getGroupId(): ?int
     {
-        return (!is_null($this->group_id) ? intval($this->group_id) : null);
+        return (is_null($this->group_id) ? null : intval($this->group_id));
     }
 
     /**
      * @param $group_id
      */
-    public function setGroupId($group_id)
+    public function setGroupId($group_id): void
     {
         $this->group_id = ($group_id == '' || is_null($group_id) ? null : intval($group_id));
     }
@@ -275,7 +275,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $channel
      */
-    public function setChannel($channel)
+    public function setChannel($channel): void
     {
         $this->channel = $channel;
     }
@@ -291,7 +291,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param boolean $status
      */
-    public function setStatus($status)
+    public function setStatus($status): void
     {
         $this->status = $status;
     }
@@ -307,7 +307,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param bool $allow_multiple
      */
-    public function setAllowMultiple(bool $allow_multiple)
+    public function setAllowMultiple(bool $allow_multiple): void
     {
         $this->allow_multiple = $allow_multiple;
     }
@@ -323,7 +323,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $flavor
      */
-    public function setFlavor(string $flavor)
+    public function setFlavor(string $flavor): void
     {
         $this->flavor = $flavor;
     }
@@ -339,7 +339,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $search_key
      */
-    public function setSearchKey(string $search_key)
+    public function setSearchKey(string $search_key): void
     {
         $this->search_key = $search_key;
     }
@@ -355,7 +355,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param string $tag
      */
-    public function setTag(string $tag)
+    public function setTag(string $tag): void
     {
         $this->tag = $tag;
     }
@@ -371,7 +371,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param int $md_type
      */
-    public function setMdType($md_type)
+    public function setMdType($md_type): void
     {
         $this->md_type = $md_type;
     }
@@ -390,15 +390,14 @@ class PublicationSubUsage extends ActiveRecord
     public function getArrayMediaTypes(): array
     {
         $mediatype = $this->getMediaType();
-        $mediatypes = $mediatype ? explode(',', $mediatype) : [];
-        $mediatypes = array_map('trim', $mediatypes);
-        return $mediatypes;
+        $mediatypes = $mediatype !== '' && $mediatype !== '0' ? explode(',', $mediatype) : [];
+        return array_map('trim', $mediatypes);
     }
 
     /**
      * @param string $mediatype
      */
-    public function setMediaType(string $mediatype)
+    public function setMediaType(string $mediatype): void
     {
         $this->mediatype = $mediatype;
     }
@@ -414,7 +413,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param bool $overwrite_download_perm
      */
-    public function setOverwriteDownloadPerm(bool $overwrite_download_perm)
+    public function setOverwriteDownloadPerm(bool $overwrite_download_perm): void
     {
         $this->overwrite_download_perm = $overwrite_download_perm;
     }
@@ -430,7 +429,7 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @param bool $ext_dl_source
      */
-    public function setExternalDownloadSource(bool $ext_dl_source)
+    public function setExternalDownloadSource(bool $ext_dl_source): void
     {
         $this->ext_dl_source = $ext_dl_source;
     }
@@ -451,7 +450,7 @@ class PublicationSubUsage extends ActiveRecord
      * Updates the object, but we check if it is allowed!
      * @throws xoctException
      */
-    public function update()
+    public function update(): void
     {
         if (!in_array($this->getParentUsageId(), PublicationUsage::$sub_allowed_usage_ids)) {
             throw new xoctException('Unable to have sub-usage for publication usage: ' . $this->getParentUsageId());

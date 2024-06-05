@@ -19,6 +19,9 @@ use srag\Plugins\Opencast\UI\LegacyFormWrapper;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\DI\HTTPServices;
+use srag\Plugins\Opencast\Container\Init;
+use ILIAS\HTTP\Services;
+use srag\Plugins\Opencast\Container\Container as PluginContainer;
 
 /**
  * User Interface class for example repository object.
@@ -42,46 +45,28 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     public const TAB_INFO = 'info_short';
     public const TAB_GROUPS = 'groups';
     public const TAB_EULA = "eula";
-    /**
-     * @var array|null
-     */
-    private $form_data = null;
-    /**
-     * @var HTTPServices
-     */
-    protected $http;
+    private ?array $form_data = null;
 
-    /**
-     * @var ilPropertyFormGUI
-     */
-    protected $form;
-    /**
-     * @var OpencastDIC
-     */
-    private $opencast_dic;
-    /**
-     * @var Container
-     */
-    private $ilias_dic;
-    /**
-     * @var \srag\Plugins\Opencast\Container\Container
-     */
-    private $container;
+    protected Services $http;
+    protected ?ilPropertyFormGUI $form = null;
+
+    private OpencastDIC $legacy_container;
+    private Container $ilias_dic;
+    private PluginContainer $container;
 
     public function __construct($a_ref_id = 0, $a_id_type = self::REPOSITORY_NODE_ID, $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
-        global $opencastContainer;
-        $this->container = $opencastContainer;
-        $this->http = $this->container->get(HTTPServices::class);
+        $this->container = Init::init();
+        $this->http = $this->container->ilias()->http();
     }
 
     protected function afterConstructor(): void
     {
         global $DIC;
         $this->ilias_dic = $DIC;
-        $this->opencast_dic = OpencastDIC::getInstance();
-        $this->plugin = $this->opencast_dic->plugin();
+        $this->legacy_container = Init::init($DIC)->legacy();
+        $this->plugin = $this->legacy_container->plugin();
     }
 
     final public function getType(): string
@@ -120,7 +105,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctGrantPermissionGUI = new xoctGrantPermissionGUI(
                         $objectSettings,
                         $this->container[EventAPIRepository::class],
-                        $this->opencast_dic->acl_utils()
+                        $this->legacy_container->acl_utils()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctGrantPermissionGUI);
                     $this->showMainTemplate();
@@ -131,7 +116,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctChangeOwnerGUI = new xoctChangeOwnerGUI(
                         $objectSettings,
                         $this->container[EventAPIRepository::class],
-                        $this->opencast_dic->acl_utils()
+                        $this->legacy_container->acl_utils()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctChangeOwnerGUI);
                     $this->showMainTemplate();
@@ -142,10 +127,10 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $xoctSeriesGUI = new xoctSeriesGUI(
                         $this,
                         $this->object,
-                        $this->opencast_dic->series_form_builder(),
+                        $this->legacy_container->series_form_builder(),
                         $this->container->get(SeriesAPIRepository::class),
-                        $this->opencast_dic->workflow_parameter_series_repository(),
-                        $this->opencast_dic->workflow_parameter_conf_repository()
+                        $this->legacy_container->workflow_parameter_series_repository(),
+                        $this->legacy_container->workflow_parameter_conf_repository()
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctSeriesGUI);
                     $this->showMainTemplate();
@@ -157,14 +142,14 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                         $this,
                         $objectSettings,
                         $this->container[EventAPIRepository::class],
-                        $this->opencast_dic->event_form_builder(),
-                        $this->opencast_dic->event_table_builder(),
-                        $this->opencast_dic->workflow_repository(),
-                        $this->opencast_dic->acl_utils(),
+                        $this->legacy_container->event_form_builder(),
+                        $this->legacy_container->event_table_builder(),
+                        $this->legacy_container->workflow_repository(),
+                        $this->legacy_container->acl_utils(),
                         $this->container->get(SeriesAPIRepository::class),
-                        $this->opencast_dic->upload_handler(),
-                        $this->opencast_dic->paella_config_storage_service(),
-                        $this->opencast_dic->paella_config_service_factory(),
+                        $this->legacy_container->upload_handler(),
+                        $this->legacy_container->paella_config_storage_service(),
+                        $this->legacy_container->paella_config_service_factory(),
                         $this->ilias_dic
                     );
                     $this->ilias_dic->ctrl()->forwardCommand($xoctEventGUI);
@@ -332,7 +317,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @param string     $type
      * @param bool|false $from_post
      */
-    public function initCreateForm($type, $from_post = false): \srag\Plugins\Opencast\UI\LegacyFormWrapper
+    public function initCreateForm($type, $from_post = false): LegacyFormWrapper
     {
         return new LegacyFormWrapper(
             $this->ilias_dic->ui()->renderer()->render(
@@ -343,7 +328,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
     private function buildUIForm(): Form
     {
-        return $this->opencast_dic->series_form_builder()->create(
+        return $this->legacy_container->series_form_builder()->create(
             $this->ilias_dic->ctrl()->getFormAction($this, 'save')
         );
     }
@@ -411,9 +396,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             );
         }
 
-        $acl = $this->opencast_dic->acl_utils()->getStandardRolesACL();
+        $acl = $this->legacy_container->acl_utils()->getStandardRolesACL();
         foreach ($producers as $producer) {
-            $acl->merge($this->opencast_dic->acl_utils()->getUserRolesACL($producer));
+            $acl->merge($this->legacy_container->acl_utils()->getUserRolesACL($producer));
         }
 
         if (empty($perm_tpl_id)) {
@@ -471,7 +456,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
         $newObj->update();
 
-        $this->opencast_dic->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());
+        $this->legacy_container->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());
 
         parent::afterSave($newObj);
     }
@@ -482,7 +467,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @return ObjectSettings
      * @throws xoctException
      */
-    protected function initHeader($render_locator = true)
+    protected function initHeader($render_locator = true): ?\ActiveRecord
     {
         global $DIC;
         if ($render_locator && !$this->ilias_dic->ctrl()->isAsynch()) {

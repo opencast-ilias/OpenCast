@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Util\Locale;
 
+use srag\Plugins\Opencast\Container\Init;
+
 /**
  * Trait LocaleTrait
  *
@@ -29,7 +31,7 @@ trait LocaleTrait
         }
 
         // Make sure plugin object is there!
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         $plugin = property_exists($this, 'plugin') ? $this->plugin : $opencastContainer[\ilOpenCastPlugin::class];
 
         // Performing the regular txt translation.

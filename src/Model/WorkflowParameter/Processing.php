@@ -9,15 +9,11 @@ use stdClass;
 
 class Processing implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $workflow;
+    protected string $workflow;
     /**
      * key value pair for workflow configurations
-     * @var stdClass
      */
-    protected $configuration;
+    protected \stdClass $configuration;
 
     public function __construct(string $workflow, stdClass $configuration)
     {
