@@ -720,6 +720,7 @@ config_paella_player_live_theme_info#:#The theme file to be loaded into Paella P
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#The (fallback) player preview background image file to be displayed. The usual image file format like PNG or JPG is encouraged.<br> NOTE: By default the preview image is loaded from the video resources.
 pp_image_link#:#current image file
+select#:#Auswählen
 xoct_rep_robj_xoct_perm_download#:#Download Videos
 perm_download#:#Download
 xoct_rep_robj_xoct_perm_record#:#Record Videos using Opencast Studio (Must be activated in the configurations)

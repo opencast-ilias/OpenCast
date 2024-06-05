@@ -140,14 +140,12 @@ class SeriesAPIRepository implements SeriesRepository, Request
             try {
                 $data = (array) $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
                     'onlyWithWriteAccess' => true,
-                    'withacl' => true,
+                    'withacl' => false,
                     'limit' => 5000
                 ]);
-                $data = array_filter($data, static function ($series) {
-                    return $series instanceof \stdClass;
-                });
+                $data = array_filter($data, static fn($series): bool => $series instanceof \stdClass);
 
-            } catch (ilException $e) {
+            } catch (\Throwable $e) {
                 $data = [];
             }
         }

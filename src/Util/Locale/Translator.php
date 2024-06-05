@@ -17,6 +17,11 @@ class Translator
 
     public function __construct(Container $container)
     {
-        $this->plugin = $opencastContainer[\ilOpenCastPlugin::class];
+        $this->plugin = $container[\ilOpenCastPlugin::class];
+    }
+
+    public function translate(string $key): string
+    {
+        return $this->getLocaleString($key);
     }
 }

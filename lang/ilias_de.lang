@@ -717,6 +717,7 @@ config_paella_player_live_theme_info#:#Die Themendatei, die für Livestream-Vide
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hintergrundbilddatei, die angezeigt werden soll. Das übliche Bilddateiformat wie PNG oder JPG wird empfohlen.<br> HINWEIS: Standardmäßig wird das Vorschaubild aus den Videoressourcen geladen.
 pp_image_link#:#aktuelle Bilddatei
+select#:#Auswählen
 xoct_rep_robj_xoct_perm_download#:#Videos herunterladen
 perm_download#:#Herunterladen
 xoct_rep_robj_xoct_perm_record#:#Video aufzeichen mit Opencast Studio (Muss in den Konfigurationen aktiviert werden)
