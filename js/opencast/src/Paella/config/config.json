@@ -197,11 +197,7 @@
       "hlsConfig": {
         "enableWorker": true,
         "lowLatencyMode": true,
-        "maxBufferLength": 10,
-        "liveSyncDuration": 3,
-        "liveMaxLatencyDuration": 6,
-        "liveDurationInfinity": true,
-        "highBufferWatchdogPeriod": 1
+        "liveDurationInfinity": true
       },
       "corsConfig": {
         "withCredentials": false,
