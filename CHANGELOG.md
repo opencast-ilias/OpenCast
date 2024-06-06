@@ -1,5 +1,10 @@
 # Change Log
 
+## [8.0.5]
+- [FIX] compatibility issue with EULA section in form
+- [FIX] removed double strict-types declarations (code-style only)
+
+
 ## [8.0.4]
 - [FIX] Make Plugin compliant with ILIAS 8.11
 
