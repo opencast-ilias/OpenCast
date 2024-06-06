@@ -85,12 +85,8 @@ class xoctEventAPI
 
         $scheduling = new Scheduling(
             $location,
-            $start instanceof DateTime ? DateTimeImmutable::createFromMutable(
-                $start->setTimezone(new DateTimeZone('GMT'))
-            ) : new DateTimeImmutable($start),
-            $end instanceof DateTime ? DateTimeImmutable::createFromMutable(
-                $end->setTimezone(new DateTimeZone('GMT'))
-            ) : new DateTimeImmutable($end),
+            $this->getImmutableDateTime($start),
+            $this->getImmutableDateTime($end),
             PluginConfig::getConfig(PluginConfig::F_SCHEDULE_CHANNEL)[0] == "" ? ['default'] : PluginConfig::getConfig(
                 PluginConfig::F_SCHEDULE_CHANNEL
             )
@@ -171,9 +167,9 @@ class xoctEventAPI
                 $metadataField->setValue($value);
                 $metadata->addField($metadataField);
             } elseif ($title === 'start') {
-                $scheduling->setStart(new DateTimeImmutable($data['start']));
+                $scheduling->setStart($this->getImmutableDateTime($data['start']));
             } elseif ($title === 'end') {
-                $scheduling->setEnd(new DateTimeImmutable($data['end']));
+                $scheduling->setEnd($this->getImmutableDateTime($data['end']));
             } elseif ($title === 'location') {
                 $scheduling->setAgentId($data['location']);
             }
@@ -193,6 +189,18 @@ class xoctEventAPI
         }
 
         return $event;
+    }
+
+    /**
+     * Get an immetuble DateTime if type is unknown
+     */
+    protected function getImmutableDateTime($date_time_of_unknown_format): DateTimeImmutable
+    {
+        if($date_time_of_unknown_format instanceof DateTime) {
+            return DateTimeImmutable::createFromMutable($date_time_of_unknown_format->setTimezone(new DateTimeZone('GMT')));
+        } else {
+            return new DateTimeImmutable($date_time_of_unknown_format);
+        }
     }
 
     public function delete(string $event_id): bool
