@@ -30,6 +30,7 @@ class PublicationUsage extends ActiveRecord
     public const MD_TYPE_ATTACHMENT = 1;
     public const MD_TYPE_MEDIA = 2;
     public const MD_TYPE_PUBLICATION_ITSELF = 0;
+    public const MD_TYPE_METADATA = 3;
     public const SEARCH_KEY_FLAVOR = 'flavor';
     public const SEARCH_KEY_TAG = 'tag';
     public const DISPLAY_NAME_LANG_MODULE = 'pu_display_name';
@@ -37,6 +38,7 @@ class PublicationUsage extends ActiveRecord
     public const USAGE_TYPE_SUB = 'sub';
     public const USAGE_CAPTIONS = 'captions';
     public const USAGE_CAPTIONS_FALLBACK = 'captions_fallback';
+    public const USAGE_MPEG7_CATALOG = 'mpeg7_catalog';
     /**
      * @var array
      */
@@ -56,6 +58,7 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_UNPROTECTED_LINK,
             self::USAGE_CAPTIONS,
             self::USAGE_CAPTIONS_FALLBACK,
+            self::USAGE_MPEG7_CATALOG,
         ];
 
     /**

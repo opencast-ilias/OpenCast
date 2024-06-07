@@ -316,6 +316,7 @@ publication_usage_md_type#:#Typ
 publication_usage_md_type_0#:#Publikation
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
+publication_usage_md_type_3#:#Metadata
 publication_usage_md_type_select#:#Auswählen...
 publication_usage_msg_success#:#Gespeichert
 publication_usage_publication_id#:#Publikations-ID
@@ -719,3 +720,6 @@ config_paella_player_live_theme_info#:#Die Themendatei, die für Livestream-Vide
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hintergrundbilddatei, die angezeigt werden soll. Das übliche Bilddateiformat wie PNG oder JPG wird empfohlen.<br> HINWEIS: Standardmäßig wird das Vorschaubild aus den Videoressourcen geladen.
 pp_image_link#:#aktuelle Bilddatei
+config_paella_player_ocr_text_enable#:#OCT-Textfunktion aktivieren
+config_paella_player_ocr_text_enable_info#:#Wenn aktiviert, wird die OCR-Textfunktion in der Menüleiste des Paella Players angezeigt und funktioniert nur, wenn die entsprechende Publikationverwendung "mpeg7_catalog" richtig konfiguriert ist.
+publication_usage_type_mpeg7_catalog#:#MPEG7 Katalog

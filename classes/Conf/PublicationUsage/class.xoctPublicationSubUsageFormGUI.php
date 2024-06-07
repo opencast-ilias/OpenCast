@@ -136,7 +136,8 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
             PublicationUsage::MD_TYPE_ATTACHMENT => $this->getLocaleString(
                 'md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT
             ),
-            PublicationUsage::MD_TYPE_MEDIA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
+            PublicationUsage::MD_TYPE_MEDIA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_MEDIA),
+            PublicationUsage::MD_TYPE_METADATA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_METADATA)
         ]);
         $this->addItem($te);
 

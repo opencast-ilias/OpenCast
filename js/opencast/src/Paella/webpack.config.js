@@ -36,11 +36,13 @@ module.exports = {
                 use: {
                     loader: 'svg-inline-loader'
                 }
-            },
-            {
-                test: /\.css$/i,
-                use: ['style-loader', 'css-loader']
             }
         ]
+    },
+
+    performance: {
+        hints: false,
+        maxEntrypointSize: 4194304,
+        maxAssetSize: 4194304
     }
 };

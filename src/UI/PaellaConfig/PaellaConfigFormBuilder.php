@@ -31,6 +31,8 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION = 'paella_player_fallback_captions_option';
     // Paella Player language Settings
     public const F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION = 'paella_player_fallback_langs_option';
+    // Paella Player OCR Text
+    public const F_PAELLA_PLAYER_OCR_TEXT_ENABLE = 'paella_player_ocr_text_enable';
     /**
      * @var ilPlugin
      */
@@ -151,6 +153,15 @@ class PaellaConfigFormBuilder
                                                                                    )
                                                                                    ->withUserCreatedTagsAllowed(true)
                                                                                    ->withValue($defaultCaptions);
+
+        // OCR Text
+        $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
+        $inputs[self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE] =
+            $this->ui_factory->input()->field()->checkbox(
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE),
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE . '_info'),
+            )
+            ->withValue((bool) $ocr_text_default_value);
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,

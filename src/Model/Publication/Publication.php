@@ -50,6 +50,14 @@ class Publication extends APIObject
             $medias[] = $xoctMedia;
         }
         $this->setMedia($medias);
+
+        $metadata = [];
+        foreach ($this->getMetadata() as $mtd) {
+            $xoctMetadata = new Metadata();
+            $xoctMetadata->loadFromStdClass($mtd);
+            $metadata[] = $xoctMetadata;
+        }
+        $this->setMetadata($metadata);
     }
 
     /**
@@ -76,6 +84,10 @@ class Publication extends APIObject
      * @var Attachment[]
      */
     protected $attachments;
+    /**
+     * @var Metadata[]
+     */
+    protected $metadata;
     /**
      * @var string
      */
@@ -179,5 +191,21 @@ class Publication extends APIObject
     public function setAttachments($attachments): void
     {
         $this->attachments = $attachments;
+    }
+
+    /**
+     * @param Metadata[] $metadata
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+    * @param Metadata[] $Metadata
+    */
+    public function setMetadata($metadata): void
+    {
+        $this->metadata = $metadata;
     }
 }

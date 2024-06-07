@@ -161,6 +161,11 @@ class xoctConfGUI extends xoctGUI
             PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_LANGS, $paella_fallback_langs_option);
         }
 
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OCR_TEXT_ENABLE])) {
+            $paella_ocr_text_enable = (bool) $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OCR_TEXT_ENABLE];
+            PluginConfig::set(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE, $paella_ocr_text_enable);
+        }
+
         $this->ctrl->redirect($this, self::CMD_PLAYER);
     }
 

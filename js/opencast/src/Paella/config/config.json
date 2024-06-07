@@ -330,6 +330,12 @@
       "parentContainer": "settingsGroup",
       "order": 30
     },
+    "org.ilias.paella.transcriptionsPlugin": {
+      "enabled": true,
+      "parentContainer": "settingsGroup",
+      "order": 40,
+      "description": "Transcriptions"
+    },
     "es.upv.paella.keyboardShortcutsHelp": {
       "enabled": true,
       "order": 80,

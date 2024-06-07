@@ -199,6 +199,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroupRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageGroupRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => __DIR__ . '/../..' . '/src/Model/Publication/Config/PublicationUsageRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Media' => __DIR__ . '/../..' . '/src/Model/Publication/Media.php',
+        'srag\\Plugins\\Opencast\\Model\\Publication\\Metadata' => __DIR__ . '/../..' . '/src/Model/Publication/Metadata.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\Publication' => __DIR__ . '/../..' . '/src/Model/Publication/Publication.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationAPIRepository' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationAPIRepository.php',
         'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationMetadata' => __DIR__ . '/../..' . '/src/Model/Publication/PublicationMetadata.php',

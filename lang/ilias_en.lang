@@ -319,6 +319,7 @@ publication_usage_md_type#:#Type
 publication_usage_md_type_0#:#Publication itself
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
+publication_usage_md_type_3#:#Metadata
 publication_usage_md_type_select#:#Select...
 publication_usage_msg_success#:#Saved
 publication_usage_publication_id#:#Publication ID
@@ -722,3 +723,6 @@ config_paella_player_live_theme_info#:#The theme file to be loaded into Paella P
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#The (fallback) player preview background image file to be displayed. The usual image file format like PNG or JPG is encouraged.<br> NOTE: By default the preview image is loaded from the video resources.
 pp_image_link#:#current image file
+config_paella_player_ocr_text_enable#:#Enable OCT Text feature
+config_paella_player_ocr_text_enable_info#:#When enabled, the OCR Text feature will be displayed in Paella Player menu bar, and it only works when the respective Publication usage "mpeg7_catalog" is configured correctly.
+publication_usage_type_mpeg7_catalog#:#MPEG7 Catalog
