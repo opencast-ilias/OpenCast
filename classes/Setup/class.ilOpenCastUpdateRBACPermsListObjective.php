@@ -90,14 +90,6 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             throw new Setup\NoConfirmationException($message);
         }
 
-        /* $delete_copy_perm = false;
-        $message =
-            "Do you also want to remove the \"Copy\" permission from the OpenCast Object RBAC sets?\n";
-
-        if ($admin_interaction->confirmOrDeny($message)) {
-            $delete_copy_perm = true;
-        } */
-
         $ORIG_DIC = $this->initEnvironment($environment, $component_repository, $component_factory);
         $db = $GLOBALS['DIC']['ilDB'];
 
@@ -129,11 +121,6 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             // Admins perms.
             if ($admin_role_id = $parent_obj->getDefaultAdminRole()) {
                 $admin_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $admin_role_id);
-
-                /* // Take care of copy right.
-                if ($delete_copy_perm && in_array($copy_op_id, $admin_ops_ids)) {
-                    unset($admin_ops_ids[array_search($copy_op_id,  $admin_ops_ids)]);
-                } */
 
                 // Take care of download.
                 if (!$no_download && !in_array($download_op_id, $admin_ops_ids)) { // download allowed, add the download op id
@@ -170,11 +157,6 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             if ($tutor_role_id = $parent_obj->getDefaultTutorRole()) {
                 $tutor_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $tutor_role_id);
 
-                /* // Take care of copy right.
-                if ($delete_copy_perm && in_array($copy_op_id, $tutor_ops_ids)) {
-                    unset($tutor_ops_ids[array_search($copy_op_id,  $tutor_ops_ids)]);
-                } */
-
                 // Take care of download.
                 if (!$no_download && !in_array($download_op_id, $tutor_ops_ids)) { // download allowed, add the download op id
                     $tutor_ops_ids[] = $download_op_id;
@@ -209,11 +191,6 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             // Member perms.
             if ($member_role_id = $parent_obj->getDefaultMemberRole()) {
                 $member_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $member_role_id);
-
-                /* // Take care of copy right.
-                if ($delete_copy_perm && in_array($copy_op_id, $member_ops_ids)) {
-                    unset($member_ops_ids[array_search($copy_op_id,  $member_ops_ids)]);
-                } */
 
                 // Take care of download.
                 if (!$no_download && !in_array($download_op_id, $member_ops_ids)) { // download allowed, add the download op id
@@ -253,17 +230,6 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
                 [-1, $obj_id]
             );
         }
-
-        // Remove the Copy prem from the object perms
-        /* if ($delete_copy_perm) {
-            $rbac_copy_delete_objective = new ilAccessRBACOperationDeletedObjective(
-                ilOpenCastPlugin::PLUGIN_ID,
-                $copy_op_id
-            );
-            if ($rbac_copy_delete_objective->isApplicable($environment)) {
-                $rbac_copy_delete_objective->achieve($environment);
-            }
-        } */
 
         $GLOBALS["DIC"] = $ORIG_DIC;
         return $environment;

@@ -93,27 +93,32 @@ class ilObjOpenCast extends ilObjectPlugin
     #[ReturnTypeWillChange]
     protected function doCloneObject(/*ilObject2*/ $new_obj, /*int*/ $a_target_id, /*?int*/ $a_copy_id = null): void
     {
-        PluginConfig::setApiSettings();
-        /**
-         * @var $new_object_settings ObjectSettings
-         * @var $existing_object_settings ObjectSettings
-         */
-        $new_object_settings = new ObjectSettings();
-        $new_object_settings->setObjId($new_obj->getId());
-        $existing_object_settings = ObjectSettings::find($this->getId());
-        if ($existing_object_settings === null) {
-            return;
+
+        // Just in case, the main toggle variable to allow duplication "ALLOW_DUPLICATION" is enabled,
+        // then the actual cloning the object takes place!
+        if (ilOpenCastPlugin::ALLOW_DUPLICATION) {
+            PluginConfig::setApiSettings();
+            /**
+             * @var $new_object_settings ObjectSettings
+             * @var $existing_object_settings ObjectSettings
+             */
+            $new_object_settings = new ObjectSettings();
+            $new_object_settings->setObjId($new_obj->getId());
+            $existing_object_settings = ObjectSettings::find($this->getId());
+            if ($existing_object_settings === null) {
+                return;
+            }
+
+            $new_object_settings->setSeriesIdentifier($existing_object_settings->getSeriesIdentifier());
+            $new_object_settings->setIntroductionText($existing_object_settings->getIntroductionText());
+            $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
+            $new_object_settings->setOnline(false);
+            $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
+            $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
+            $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
+
+            $new_object_settings->create();
         }
-
-        $new_object_settings->setSeriesIdentifier($existing_object_settings->getSeriesIdentifier());
-        $new_object_settings->setIntroductionText($existing_object_settings->getIntroductionText());
-        $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
-        $new_object_settings->setOnline(false);
-        $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
-        $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
-        $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
-
-        $new_object_settings->create();
     }
 
     public function getParentCourseOrGroup()
