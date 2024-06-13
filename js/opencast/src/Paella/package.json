@@ -5,7 +5,7 @@
     "paella-basic-plugins": "^1.44.7",
     "paella-core": "^1.48.2",
     "paella-slide-plugins": "^1.41.4",
-    "paella-user-tracking": "^1.42.2",
+    "paella-user-tracking": "^1.42.4",
     "paella-zoom-plugin": "^1.41.3"
   },
   "scripts": {
