@@ -81,6 +81,7 @@ class Opencast
             'connect_timeout' => 0                          // The API connection timeout. In seconds (default 0 to wait indefinitely) (optional)
             'version' => null                               // The API Version. (Default null). (optional)
             'handler' => null                               // The callable Handler or HandlerStack. (Default null). (optional)
+            'features' => null                              // A set of additional features [e.g. lucene search]. (Default null). (optional)
         ]
 
         $engageConfig = [
@@ -91,6 +92,7 @@ class Opencast
             'connect_timeout' => 0                          // The API connection timeout. In seconds (default 0 to wait indefinitely) (optional)
             'version' => null                               // The API Version. (Default null). (optional)
             'handler' => null                               // The callable Handler or HandlerStack. (Default null). (optional)
+            'features' => null                              // A set of additional features [e.g. lucene search]. (Default null). (optional)
         ]
     */
     /**
@@ -170,6 +172,9 @@ class Opencast
         }
         if (!isset($engageConfig['handler']) && isset($config['handler'])) {
             $engageConfig['handler'] = $config['handler'];
+        }
+        if (!isset($engageConfig['features']) && isset($config['features'])) {
+            $engageConfig['features'] = $config['features'];
         }
         $this->engageRestClient = new OcRestClient($engageConfig);
     }

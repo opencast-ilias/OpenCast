@@ -20,7 +20,7 @@ class PlaylistsDataProvider {
 
     public static function getEntries()
     {
-        return '[{"contentId":"ID-about-opencast","type":"EVENT"},{"contentId":"ID-3d-print","type":"EVENT"}]';
+        return json_decode('[{"contentId":"ID-about-opencast","type":"EVENT"},{"contentId":"ID-3d-print","type":"EVENT"}]');
     }
 }
 ?>
