@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 7.0.5
+- [FIX] Improvements on paella player which fixes fixes #289, #292, #293,
+  #294 and #286
+
 ## Version 7.0.4
 - [IMPROVEMENT] Updated Opencast API Library to 1.7.0, fixes #298 as wel
 
