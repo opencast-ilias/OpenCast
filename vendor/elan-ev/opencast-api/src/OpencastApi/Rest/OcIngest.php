@@ -431,10 +431,11 @@ class OcIngest extends OcRest
      * @param string $mediaPackage The media package
      * @param string $workflowDefinitionId (optional) Workflow definition id
      * @param string $workflowInstanceId (optional) The workflow instance ID to associate this ingest with scheduled events.
+     * @param array $workflowConfiguration Workflow configuration
      *
      * @return array the response result ['code' => 200, 'body' => '{XML (text) media package}']
      */
-    public function ingest($mediaPackage, $workflowDefinitionId = '', $workflowInstanceId = '')
+    public function ingest($mediaPackage, $workflowDefinitionId = '', $workflowInstanceId = '', $workflowConfiguration = [])
     {
         $uri = self::URI . "/ingest";
         if (!empty($workflowDefinitionId) && empty($workflowInstanceId)) {
@@ -448,6 +449,13 @@ class OcIngest extends OcRest
         if (!empty($workflowDefinitionId) && !empty($workflowInstanceId)) {
             $formData['workflowDefinitionId'] = $workflowDefinitionId;
             $formData['workflowInstanceId'] = $workflowInstanceId;
+        }
+
+        if (!empty($workflowConfiguration)) {
+            // Adding workflow configuration params into the form data one by one.
+            foreach ($workflowConfiguration as $config => $value) {
+                $formData[$config] = $value;
+            }
         }
 
         $options = $this->restClient->getFormParams($formData);
