@@ -44,6 +44,7 @@ export default {
         paella_theme: '',
         paella_theme_live: '',
         paella_theme_info: '',
+        prevent_video_download: false,
     },
 
     caption_enabled: true,
@@ -68,8 +69,7 @@ export default {
         this.config = config;
         this.config.user_default_language = navigator?.language?.substring(0,2);
 
-        // If it is decided to display the full language name of a caption, just uncomment the following method call (compileCaptions)
-        // this.compileCaptions();
+        this.generateCaptionText();
 
         this.initPaella();
         if (this.config.is_live_stream === true) {
@@ -93,14 +93,27 @@ export default {
         } , false);
     },
 
-    compileCaptions: function() {
+    generateCaptionText: function() {
         if (this.data?.captions) {
             for (const captionIndex in this.data.captions) {
-                let lang = this.data.captions[captionIndex].lang;
-                let text = new Intl.DisplayNames([this.config.user_default_language], {type: 'language'}).of(lang);
-                if (text) {
+                const lang_code = this.data.captions[captionIndex].lang;
+                let iso_639_1_lang_code = lang_code;
+                let lang_name = lang_code;
+                try {
+                    iso_639_1_lang_code = lang_code.split('-', 2)?.[0].trim() ?? lang_code;
+                    const options = {
+                        type: "language",
+                        languageDisplay: "standard"
+                    };
+                    const display_name_obj = new Intl.DisplayNames([this.config.user_default_language], options);
+                    if (display_name_obj) {
+                        lang_name = display_name_obj.of(iso_639_1_lang_code);
+                    }
+                } catch (e) {}
+                if (lang_name) {
+                    let text = lang_name;
                     if (this.data.captions[captionIndex]?.text) {
-                        text = text + ' - ' + this.data.captions[captionIndex].text;
+                        text += '  ' + this.data.captions[captionIndex].text;
                     }
                     this.data.captions[captionIndex].text = text;
                 }
@@ -167,7 +180,18 @@ export default {
         );
         this.paella.bindEvent(
             Events.PLAYER_LOADED,
-            () => this.handleLiveAttributes(),
+            () => {
+                this.handleLiveAttributes();
+
+                // Apply prevent video download
+                if (this.config?.prevent_video_download) {
+                    this.paella.videoContainer.streamProvider.players.forEach(player => {
+                        player.video?.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                        });
+                    });
+                }
+            },
             false
         );
         this.paella.bindEvent(
