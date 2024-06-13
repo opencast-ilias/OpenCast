@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 8.0.7
+- [FIX] Improvements on paella player which fixes fixes #289, #292, #293, 
+  #294 and #286
+
 ## Version 8.0.6
 - [IMPROVEMENT] Updated Opencast API Library to 1.7.0, fixes #298 as well
 - [FIX] correct supports_cli variable (did support cli setup anyway)
