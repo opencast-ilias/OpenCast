@@ -132,14 +132,16 @@ class OcPlaylistsApi extends OcRest
      */
     public function updateEntries($playlistId, $playlistEntries)
     {
-        $uri = self::URI . "/{$playlistId}/entries";
+        $uri = self::URI . "/{$playlistId}";
 
         $formData = [
-            'playlistEntries' => $playlistEntries,
+            'playlist' => [
+                'entries' => $playlistEntries
+            ]
         ];
 
         $options = $this->restClient->getFormParams($formData);
-        return $this->restClient->performPost($uri, $options);
+        return $this->restClient->performPut($uri, $options);
     }
 
     /**
