@@ -99,7 +99,7 @@ trait ilObjShowDuplicates
 
             $title .= $this->handleMultiReferences($obj_id, $ref_id, $form_name);
 
-            $cgui->addItem("id[]", (string) $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), $alt ?? '');
+            $cgui->addItem("id[]", (string) $ref_id, $title, ilObject::_getIcon($obj_id, "small", $type), '');
 
             ilObject::collectDeletionDependencies($deps, $ref_id, $obj_id, $type);
         }
