@@ -97,10 +97,14 @@ class OpencastIngestService
             $payload->getPresentation()->getFileStream()
         );
 
+        // Get workflow configuration params ready, make sure it is array!
+        $workflow_configuration = json_decode(json_encode($payload->getProcessing()->getConfiguration() ?? []), true);
         // ingest
         $media_package = $this->api->routes()->ingest->ingest(
             $media_package,
-            $payload->getProcessing()->getWorkflow()
+            $payload->getProcessing()->getWorkflow(),
+            '',
+            $workflow_configuration
         );
 
         // When we are done, we deactivate the ingest to keep everything clean.
