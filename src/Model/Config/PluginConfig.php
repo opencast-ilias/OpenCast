@@ -120,6 +120,10 @@ class PluginConfig extends ActiveRecord
     public const F_PAELLA_FALLBACK_CAPTIONS = 'paella_conf_fallback_captions';
     public const F_PAELLA_FALLBACK_LANGS = 'paella_conf_fallback_langs';
     public const F_PAELLA_OCR_TEXT_ENABLE = 'paella_conf_ocr_text_enable';
+    public const F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE = 'paella_conf_display_caption_text_type';
+    public const F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR = 'paella_conf_display_caption_text_generator';
+    public const F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE = 'paella_conf_display_caption_text_generator_type';
+    public const F_PAELLA_PREVENT_VIDEO_DOWNLOAD = 'paella_conf_prevent_video_download';
 
     public const PAELLA_OPTION_DEFAULT = 'default';
     public const PAELLA_OPTION_URL = 'url';

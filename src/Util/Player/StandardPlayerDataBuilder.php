@@ -16,6 +16,7 @@ use xoctException;
 use xoctSecureLink;
 use xoctLog;
 
+use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 
 /**
  * Class DefaultPlayerDataBuilder
@@ -24,6 +25,15 @@ use xoctLog;
  */
 class StandardPlayerDataBuilder extends PlayerDataBuilder
 {
+    use LocaleTrait {
+        LocaleTrait::getLocaleString as _getLocaleString;
+    }
+
+    public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
+    {
+        return $this->_getLocaleString($string, empty($module) ? 'config_paella_player' : $module, $fallback);
+    }
+
     private static $mimetype_mapping = [
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
@@ -129,7 +139,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 list($format, $lang) = explode('+', $sub_flavor, 2);
             }
 
-            $text = $this->buildCaptionText($lang, $tag_info_array);
+            $text = $this->buildCaptionText($tag_info_array);
 
             $paella_captions[] = [
                 'lang' => $lang,
@@ -148,22 +158,27 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      * @return string
      * @throws xoctException
      */
-    private function buildCaptionText(string $lang, array $tag_info_array): string
+    private function buildCaptionText(array $tag_info_array): string
     {
-        $text_array[] = $lang;
-        if (array_key_exists('generator_type', $tag_info_array)) {
-            $generator_type = ($tag_info_array['generator_type'] ?? '') === 'auto' ? 'Auto' : 'Manual';
-            $text_array[] = "($generator_type)";
+        $text_array = [];
+        if (array_key_exists('generator_type', $tag_info_array) &&
+            !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE))) {
+            $generator_type = $tag_info_array['generator_type'];
+            $generator_type_lang_code = 'caption_text_generator_type_' . $generator_type;
+            $generator_type_text = $this->getLocaleString($generator_type_lang_code, '', ucfirst($generator_type));
+            $text_array[] = "($generator_type_text)";
         }
-        if (array_key_exists('type', $tag_info_array)) {
+        if (array_key_exists('type', $tag_info_array) &&
+            !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE))) {
             $type = ucfirst($tag_info_array['type']);
             $text_array[] = "($type)";
         }
-        if (array_key_exists('generator', $tag_info_array)) {
+        if (array_key_exists('generator', $tag_info_array) &&
+            !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR))) {
             $generator = ucfirst($tag_info_array['generator']);
             $text_array[] = "($generator)";
         }
-        return implode(' - ', $text_array);
+        return implode(' ', $text_array);
     }
 
     /**

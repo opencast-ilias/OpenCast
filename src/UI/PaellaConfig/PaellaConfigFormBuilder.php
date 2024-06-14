@@ -33,6 +33,21 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION = 'paella_player_fallback_langs_option';
     // Paella Player OCR Text
     public const F_PAELLA_PLAYER_OCR_TEXT_ENABLE = 'paella_player_ocr_text_enable';
+    // Paella Player Display Caption Text Type
+    public const F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE = 'paella_player_display_caption_text_type';
+    // Paella Player Display Caption Text Generator
+    public const F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR = 'paella_player_display_caption_text_generator';
+    // Paella Player Display Caption Generator Text Type
+    public const F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE = 'paella_player_display_caption_text_generator_type';
+
+    // Paella Player Prevent Video Download
+    public const F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD = 'paella_player_prevent_video_download';
+
+    public const F_PAELLA_PLAYER_SECTION_GENERAL = 'paella_player_section_general';
+    public const F_PAELLA_PLAYER_PREVIEW_THEME = 'paella_player_section_theme';
+    public const F_PAELLA_PLAYER_PREVIEW_PREVIEW = 'paella_player_section_preview';
+    public const F_PAELLA_PLAYER_PREVIEW_CAPTION = 'paella_player_section_caption';
+
     /**
      * @var ilPlugin
      */
@@ -66,8 +81,11 @@ class PaellaConfigFormBuilder
 
     public function buildForm(string $form_action): Standard
     {
-        $inputs = [];
-        $inputs[self::F_PAELLA_PLAYER_OPTION] = $this->generateSwichableGroupWithUrl(
+        $generals = [];
+        $themes = [];
+        $previews = [];
+        $captions = [];
+        $generals[self::F_PAELLA_PLAYER_OPTION] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
                 $this->ui_factory->link()->standard(
                     $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
@@ -80,7 +98,35 @@ class PaellaConfigFormBuilder
             true
         );
 
-        $inputs[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
+        $availableLanguages = $this->getAvailablePlayerLanguages();
+        $defaultLanuages = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [];
+        $generals[self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION] =
+            $this->ui_factory->input()->field()
+                ->tag(
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION
+                    ),
+                    array_keys($availableLanguages),
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION . '_info'
+                    )
+                )
+                ->withUserCreatedTagsAllowed(true)
+                ->withValue($defaultLanuages);
+
+        $generals[self::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD] =
+            $this->ui_factory->input()->field()
+                ->checkbox(
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD
+                    ),
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD . '_info'
+                    )
+                )
+                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
+
+        $themes[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
                 $this->ui_factory->link()->standard(
                     $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
@@ -98,7 +144,7 @@ class PaellaConfigFormBuilder
         if (PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED)) {
             $live_theme_url = PluginConfig::PAELLA_DEFAULT_THEME_LIVE_BUFFERED;
         }
-        $inputs[self::F_PAELLA_PLAYER_LIVE_THEME] = $this->generateSwichableGroupWithUrl(
+        $themes[self::F_PAELLA_PLAYER_LIVE_THEME] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
                 $this->ui_factory->link()->standard(
                     $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
@@ -111,7 +157,7 @@ class PaellaConfigFormBuilder
             true
         );
 
-        $inputs[self::F_PAELLA_PLAYER_PREVIEW_FALLBACK] = $this->generateSwichableGroupWithUrl(
+        $previews[self::F_PAELLA_PLAYER_PREVIEW_FALLBACK] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
                 $this->ui_factory->link()->standard(
                     $this->plugin->txt(self::F_PAELLA_PLAYER_IMAGE . "_link"),
@@ -124,35 +170,57 @@ class PaellaConfigFormBuilder
             false
         );
 
-        $availableLanguages = $this->getAvailablePlayerLanguages();
-        $defaultLanuages = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_LANGS) ?? [];
-        $inputs[self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION] = $this->ui_factory->input()->field()
-                                                                                ->tag(
-                                                                                    $this->txt(
-                                                                                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION
-                                                                                    ),
-                                                                                    array_keys($availableLanguages),
-                                                                                    $this->txt(
-                                                                                        self::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION . '_info'
-                                                                                    )
-                                                                                )
-                                                                                ->withUserCreatedTagsAllowed(true)
-                                                                                ->withValue($defaultLanuages);
-
         $commonCaptions = ['de', 'en'];
         $defaultCaptions = PluginConfig::getConfig(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS) ?? [];
-        $inputs[self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION] = $this->ui_factory->input()->field()
-                                                                                   ->tag(
-                                                                                       $this->txt(
-                                                                                           self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION
-                                                                                       ),
-                                                                                       $commonCaptions,
-                                                                                       $this->txt(
-                                                                                           self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION . '_info'
-                                                                                       )
-                                                                                   )
-                                                                                   ->withUserCreatedTagsAllowed(true)
-                                                                                   ->withValue($defaultCaptions);
+        $captions[self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION] =
+            $this->ui_factory->input()->field()
+                ->tag(
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION
+                    ),
+                    $commonCaptions,
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION . '_info'
+                    )
+                )
+                ->withUserCreatedTagsAllowed(true)
+                ->withValue($defaultCaptions);
+
+        $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE] =
+            $this->ui_factory->input()->field()
+            ->checkbox(
+                $this->txt(
+                    self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE
+                ),
+                $this->txt(
+                    self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE . '_info'
+                )
+            )
+            ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE) ?? false);
+
+        $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR] =
+            $this->ui_factory->input()->field()
+                ->checkbox(
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR
+                    ),
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR . '_info'
+                    )
+                )
+                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR) ?? false);
+
+        $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE] =
+            $this->ui_factory->input()->field()
+                ->checkbox(
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE
+                    ),
+                    $this->txt(
+                        self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE . '_info'
+                    )
+                )
+                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false);
 
         // OCR Text
         $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
@@ -165,7 +233,24 @@ class PaellaConfigFormBuilder
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
-            $inputs
+            [
+                self::F_PAELLA_PLAYER_SECTION_GENERAL => $this->ui_factory->input()->field()->section(
+                    $generals,
+                    $this->txt(self::F_PAELLA_PLAYER_SECTION_GENERAL)
+                ),
+                self::F_PAELLA_PLAYER_PREVIEW_THEME => $this->ui_factory->input()->field()->section(
+                    $themes,
+                    $this->txt(self::F_PAELLA_PLAYER_PREVIEW_THEME)
+                ),
+                self::F_PAELLA_PLAYER_PREVIEW_PREVIEW => $this->ui_factory->input()->field()->section(
+                    $previews,
+                    $this->txt(self::F_PAELLA_PLAYER_PREVIEW_PREVIEW)
+                ),
+                self::F_PAELLA_PLAYER_PREVIEW_CAPTION => $this->ui_factory->input()->field()->section(
+                    $captions,
+                    $this->txt(self::F_PAELLA_PLAYER_PREVIEW_CAPTION)
+                )
+            ]
         );
     }
 

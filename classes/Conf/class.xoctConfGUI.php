@@ -104,61 +104,111 @@ class xoctConfGUI extends xoctGUI
     protected function updatePlayer(): void
     {
         $this->ctrl->saveParameter($this, 'subtab_active');
-        $form = $this->paellConfigFormBuilder->buildForm($this->ctrl->getFormAction($this, self::CMD_UPDATE_PLAYER))
-                                             ->withRequest($this->http->request());
+        $form = $this->paellConfigFormBuilder
+                    ->buildForm($this->ctrl
+                    ->getFormAction($this, self::CMD_UPDATE_PLAYER))
+                    ->withRequest($this->http->request());
         $data = $form->getData();
         if (!$data) {
             $this->main_tpl->setContent($this->renderer->render($form));
             return;
         }
 
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION])) {
-            $paella_player_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][0];
-            PluginConfig::set(PluginConfig::F_PAELLA_OPTION, $paella_player_option);
-            if ($paella_player_option === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(
-                    PluginConfig::F_PAELLA_URL,
-                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][1]['url']
-                );
+        // General Settings
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_SECTION_GENERAL])) {
+            $generals = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_SECTION_GENERAL];
+            if (isset($generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION])) {
+                $paella_player_option = $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][0];
+                PluginConfig::set(PluginConfig::F_PAELLA_OPTION, $paella_player_option);
+                if ($paella_player_option === PluginConfig::PAELLA_OPTION_URL) {
+                    PluginConfig::set(
+                        PluginConfig::F_PAELLA_URL,
+                        $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OPTION][1]['url']
+                    );
+                }
+            }
+
+            if (isset($generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION])) {
+                $paella_fallback_langs_option = $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION];
+                PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_LANGS, $paella_fallback_langs_option);
+            }
+
+            if (isset($generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD])) {
+                $paella_prevent_video_download = $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD];
+                PluginConfig::set(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD, $paella_prevent_video_download);
             }
         }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME])) {
-            $paella_player_theme = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][0];
-            PluginConfig::set(PluginConfig::F_PAELLA_THEME, $paella_player_theme);
-            if ($paella_player_theme === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(
-                    PluginConfig::F_PAELLA_THEME_URL,
-                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][1]['url']
-                );
+
+
+        // Theme Settings
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_THEME])) {
+            $themes = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_THEME];
+            if (isset($themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME])) {
+                $paella_player_theme = $themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][0];
+                PluginConfig::set(PluginConfig::F_PAELLA_THEME, $paella_player_theme);
+                if ($paella_player_theme === PluginConfig::PAELLA_OPTION_URL) {
+                    PluginConfig::set(
+                        PluginConfig::F_PAELLA_THEME_URL,
+                        $themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_THEME][1]['url']
+                    );
+                }
+            }
+            if (isset($themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME])) {
+                $paella_player_live_theme = $themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][0];
+                PluginConfig::set(PluginConfig::F_PAELLA_THEME_LIVE, $paella_player_live_theme);
+                if ($paella_player_live_theme === PluginConfig::PAELLA_OPTION_URL) {
+                    PluginConfig::set(
+                        PluginConfig::F_PAELLA_THEME_URL_LIVE,
+                        $themes[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']
+                    );
+                }
             }
         }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME])) {
-            $paella_player_live_theme = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][0];
-            PluginConfig::set(PluginConfig::F_PAELLA_THEME_LIVE, $paella_player_live_theme);
-            if ($paella_player_live_theme === PluginConfig::PAELLA_OPTION_URL) {
-                PluginConfig::set(
-                    PluginConfig::F_PAELLA_THEME_URL_LIVE,
-                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_LIVE_THEME][1]['url']
-                );
+
+
+        // Preview Settings
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_PREVIEW])) {
+            $previews = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_PREVIEW];
+            if (isset($previews[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK])) {
+                $paella_player_preview_fallback = $previews[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][0];
+                PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK, $paella_player_preview_fallback);
+                if ($paella_player_preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
+                    PluginConfig::set(
+                        PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL,
+                        $previews[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][1]['url']
+                    );
+                }
             }
         }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK])) {
-            $paella_player_preview_fallback = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][0];
-            PluginConfig::set(PluginConfig::F_PAELLA_PREVIEW_FALLBACK, $paella_player_preview_fallback);
-            if ($paella_player_preview_fallback === PluginConfig::PAELLA_OPTION_URL) {
+
+
+        // General Settings
+        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_CAPTION])) {
+            $captions = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_CAPTION];
+            if (isset($captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION])) {
+                $paella_fallback_captions_option = $captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION];
+                PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS, $paella_fallback_captions_option);
+            }
+
+            if (isset($captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE])) {
+                $paella_display_caption_text_type = $captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE];
+                PluginConfig::set(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE, $paella_display_caption_text_type);
+            }
+
+            if (isset($captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR])) {
+                $paella_display_caption_text_generator =
+                    $captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR];
+                PluginConfig::set(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR, $paella_display_caption_text_generator);
+            }
+
+            if (isset($captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE])) {
+                $paella_display_caption_text_generator_type =
+                    $captions[PaellaConfigFormBuilder::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE];
                 PluginConfig::set(
-                    PluginConfig::F_PAELLA_PREVIEW_FALLBACK_URL,
-                    $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVIEW_FALLBACK][1]['url']
+                    PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE,
+                    $paella_display_caption_text_generator_type
                 );
             }
-        }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION])) {
-            $paella_fallback_captions_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION];
-            PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_CAPTIONS, $paella_fallback_captions_option);
-        }
-        if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION])) {
-            $paella_fallback_langs_option = $data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION];
-            PluginConfig::set(PluginConfig::F_PAELLA_FALLBACK_LANGS, $paella_fallback_langs_option);
         }
 
         if (isset($data[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OCR_TEXT_ENABLE])) {
