@@ -126,6 +126,15 @@ class PaellaConfigFormBuilder
                 )
                 ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
 
+        // OCR Text
+        $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
+        $generals[self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE] =
+            $this->ui_factory->input()->field()->checkbox(
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE),
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE . '_info'),
+            )
+            ->withValue((bool) $ocr_text_default_value);
+
         $themes[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
                 $this->ui_factory->link()->standard(
@@ -221,15 +230,6 @@ class PaellaConfigFormBuilder
                     )
                 )
                 ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false);
-
-        // OCR Text
-        $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
-        $inputs[self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE] =
-            $this->ui_factory->input()->field()->checkbox(
-                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE),
-                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE . '_info'),
-            )
-            ->withValue((bool) $ocr_text_default_value);
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
