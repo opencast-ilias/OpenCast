@@ -734,3 +734,17 @@ config_subtitle_load_lang_list#:#Load language list from API
 config_subtitle_load_lang_list_confirmation#:#Are you sure you would like to load the language list from API?<br>NOTE: API Version 1.10.0 or later is required.
 config_subtitle_load_lang_list_abtn_label#:#Load
 upload_ui_subtitle_section#:#Subtitles
+config_paella_player_display_caption_text_type#:#Display Caption Text (Type)
+config_paella_player_display_caption_text_type_info#:#When enabled, the caption text contains the type of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
+config_paella_player_display_caption_text_generator#:#Display Caption Text (Generator)
+config_paella_player_display_caption_text_generator_info#:#When enabled, the caption text contains the generator of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
+config_paella_player_display_caption_text_generator_type#:#Display Caption Text (Generator Type)
+config_paella_player_display_caption_text_generator_type_info#:#When enabled, the caption text contains the generator type of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
+config_paella_player_caption_text_generator_type_auto#:#automatically generated
+config_paella_player_caption_text_generator_type_manual#:#manually generated
+config_paella_player_section_general#:#Player
+config_paella_player_section_theme#:#Themes
+config_paella_player_section_preview#:#Preview
+config_paella_player_section_caption#:#Caption
+config_paella_player_prevent_video_download#:#Prevent video download
+config_paella_player_prevent_video_download_info#:#When enabled, the direct video download from the player is prevented. <br> This can be achieved by right clicking on the video and select "save video as" or similar.
