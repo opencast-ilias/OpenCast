@@ -101,8 +101,19 @@ export default class TranscriptionsPlugin extends PopUpButtonPlugin {
       `<input type="search" placeholder="${translate('Search')}"></input>`,
       container
     );
-    searchContainer.addEventListener('click', evt => evt.stopPropagation());
-    searchContainer.addEventListener('keyup',evt => { this.rebuildList(evt.target.value); });
+
+    searchContainer.addEventListener(
+      'click',
+      evt => evt.stopPropagation()
+    );
+
+    searchContainer.addEventListener(
+      'keyup',
+      evt => {
+        evt.stopPropagation();
+        this.rebuildList(evt.target.value);
+      }
+    );
 
     const transcriptionsContainer = createElementWithHtmlText(
       `<ul class="transcriptions-list"></ul>`,
