@@ -569,7 +569,7 @@ class xoctEventGUI extends xoctGUI
                                     'triggerer' : $(this),
                                     'options' : JSON.parse('[]')
                                 });
-                            });    
+                            });
                         };
                     </script>";
         }
@@ -598,6 +598,7 @@ class xoctEventGUI extends xoctGUI
 
     protected function create(): void
     {
+        $extra_workflow_params = new \stdClass();
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
             $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
             $this->cancel();
@@ -626,6 +627,56 @@ class xoctEventGUI extends xoctGUI
                 ->withValue($this->objectSettings->getSeriesIdentifier())
         );
 
+        // Thumbnail
+        $thumbnail_upload_enabled = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_ENABLED) ?? false;
+        $thumbnail_file = null;
+        $thumbnail_file_id = null;
+        $thumbnail_timepoint = null;
+        if ($thumbnail_upload_enabled && isset($data[EventFormBuilder::F_THUMBNAIL_SECTION])) {
+            $thumbnail_section_data = $data[EventFormBuilder::F_THUMBNAIL_SECTION];
+
+            // Both mode.
+            if (isset($thumbnail_section_data['mode'])) {
+                if ($thumbnail_section_data['mode'][0] == 'file' &&
+                    !empty($thumbnail_section_data['mode'][1]['file']['id'])) {
+                    $thumbnail_file_id = $thumbnail_section_data['mode'][1]['file']['id'];
+                    $thumbnail_file = xoctUploadFile::getInstanceFromFileArray($thumbnail_section_data['mode'][1]['file']);
+                }
+
+                if ($thumbnail_section_data['mode'][0] == 'timepoint' &&
+                    $thumbnail_section_data['mode'][1]['timepoint'] instanceof \DateTimeImmutable) {
+                    $thumbnail_timepoint = $thumbnail_section_data['mode'][1]['timepoint'];
+                }
+            }
+
+            // File Upload mode.
+            if (isset($thumbnail_section_data['file']) &&
+                !empty($thumbnail_section_data['file']['id'])) {
+                $thumbnail_file_id = $thumbnail_section_data['file']['id'];
+                $thumbnail_file = xoctUploadFile::getInstanceFromFileArray($thumbnail_section_data['file']);
+            }
+
+            // Timepoint mode.
+            if (isset($thumbnail_section_data['timepoint']) &&
+                $thumbnail_section_data['timepoint'] instanceof \DateTimeImmutable) {
+                $thumbnail_timepoint = $thumbnail_section_data['timepoint'];
+            }
+
+            // Taking care of file.
+            if (!empty($thumbnail_file)) {
+                $extra_workflow_params->withUploadedThumbnail = "true";
+            }
+
+            // Taking care of timepoint here and put it in the workflow configuration already.
+            if (!empty($thumbnail_timepoint)) {
+                $formatted_timepoint = $thumbnail_timepoint->format('H:i:s');
+                $timepoint_seconds = strtotime($formatted_timepoint) - strtotime('TODAY');
+                if ($timepoint_seconds > 0) {
+                    $extra_workflow_params->snapshotThumbnailTime = (string) $timepoint_seconds;
+                }
+            }
+        }
+
         $this->event_repository->upload(
             new UploadEventRequest(
                 new UploadEventRequestPayload(
@@ -633,18 +684,26 @@ class xoctEventGUI extends xoctGUI
                     $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->user)),
                     new Processing(
                         PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
-                        $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'] ?? null)
+                        $this->getDefaultWorkflowParameters(
+                            $data['workflow_configuration']['object'] ?? null,
+                            $extra_workflow_params
+                        )
                     ),
-                    xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
+                    xoctUploadFile::getInstanceFromFileArray($data['file']['file']),
+                    $thumbnail_file
                 )
             )
         );
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
+        // Get rid of thumbnail.
+        if (!empty($thumbnail_file_id)) {
+            $this->uploadHandler->getUploadStorageService()->delete($thumbnail_file_id);
+        }
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    public function getDefaultWorkflowParameters(?\stdClass $fromData = null): \stdClass
+    public function getDefaultWorkflowParameters(?\stdClass $fromData = null, ?\stdClass $extraParameters = null): \stdClass
     {
         $WorkflowParameter = new WorkflowParameter();
         $defaultParameter = $fromData ?? new stdClass();
@@ -657,6 +716,14 @@ class xoctEventGUI extends xoctGUI
                 $defaultParameter->{$id} = "true";
             }
         }
+
+        // Append extra parameters.
+        if (!empty($extraParameters)) {
+            foreach ($extraParameters as $key => $value) {
+                $defaultParameter->{$key} = $value;
+            }
+        }
+
         return $defaultParameter;
     }
 

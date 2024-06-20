@@ -733,3 +733,24 @@ config_paella_player_section_preview#:#Preview
 config_paella_player_section_caption#:#Caption
 config_paella_player_prevent_video_download#:#Video-Download verhindern
 config_paella_player_prevent_video_download_info#:#Wenn diese Option aktiviert ist, wird das direkte Herunterladen von Videos vom Player verhindert. <br> Dies können Sie erreichen, indem Sie mit der rechten Maustaste auf das Video klicken und "Video speichern unter" oder ähnliches auswählen.
+subtab_thumbnails#:#Vorschaubilder
+config_thumbnail_upload_enabled#:#Vorschaubilder hochladen aktivieren
+config_thumbnail_upload_enabled_info#:#Durch Aktivieren dieser Option wird das Hochladen des Vorschaubild zusammen mit dem Video in der Upload-Seite ermöglicht.<br><strong>Achtung:</strong> Damit diese Funktion funktioniert, muss der Workflow-Parameter "straightToPublishing" standardmäßig aktiviert sein. Denn wenn "straightToPublishing" deaktiviert ist, wird das Event in den Schnittmodus versetzt, in dem kein Vorschaubildprozess ausgeführt wird.
+config_thumbnail_accepted_mimetypes#:#Akzeptierte Dateitypen
+config_thumbnail_accepted_mimetypes_info#:#Liste der akzeptierten Erweiterungen der Vorschaubilddatei, die Benutzer hochladen dürfen.
+config_thumbnail_upload_mode#:#Upload-Modus
+config_thumbnail_upload_mode_info#:#Die Auswahl einer Option führt dazu, dass auf der Video-Upload-Seite ein Abschnitt mit Thumbnail-Sektion mit den erforderlichen Eingaben bereitgestellt wird
+config_thumbnail_upload_mode_both#:#Beide Modi (Dateiupload und Zeitpunkt)
+config_thumbnail_upload_mode_both_info#:#Bei dieser Option werden beide Modi angeboten, die Benutzer müssen jedoch nur einen auswählen.
+config_thumbnail_upload_mode_file#:#Datei-Hochladen
+config_thumbnail_upload_mode_file_info#:#Mit dieser Option wird den Benutzern lediglich eine Dateieingabe zum Hochladen einer Vorschaubildsdatei bereitgestellt.
+config_thumbnail_upload_mode_timepoint#:#Zeitpunkt
+config_thumbnail_upload_mode_timepoint_info#:#Mit dieser Option wird den Benutzern nur eine Zeitauswahleingabe bereitgestellt, um den Zeitpunkt des Videos auszuwählen, von dem das Vorschaubild extrahiert werden soll.
+upload_ui_thumbnail_section#:#Vorschaubild
+upload_ui_thumbnail_mode_sg#:#Modus
+upload_ui_thumbnail_mode_sg_info#:#Sie können nur einen Modus zum Generieren von Vorschaubilder auswählen, indem Sie entweder eine Datei hochladen oder einen Zeitpunkt auswählen.
+upload_ui_thumbnail_mode_sg_file#:#Durch Hochladen einer Datei
+upload_ui_thumbnail_mode_sg_timepoint#:#Durch Auswahl eines Videozeitpunkts
+upload_ui_thumbnail_file#:#Vorschaubilddatei
+upload_ui_thumbnail_timepoint#:#Zeitpunkt
+upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.

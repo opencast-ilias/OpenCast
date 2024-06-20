@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\UI\PaellaConfig\PaellaConfigFormBuilder;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
+use srag\Plugins\Opencast\UI\ThumbnailConfig\ThumbnailConfigFormBuilder;
 
 /**
  * Class xoctConfGUI
@@ -24,6 +25,9 @@ class xoctConfGUI extends xoctGUI
 
     public const CMD_PLAYER = 'player';
     public const CMD_UPDATE_PLAYER = 'updatePlayer';
+
+    public const CMD_THUMBNAIL = 'thumbnail';
+    public const CMD_UPDATE_THUMBNAIL = 'updateThumbnail';
 
     /**
      * @var Renderer
@@ -41,11 +45,16 @@ class xoctConfGUI extends xoctGUI
      * @var \ilTabsGUI
      */
     private $tabs;
+    /**
+     * @var ThumbnailConfigFormBuilder
+     */
+    private $thumbnailConfigFormBuilder;
 
     public function __construct(
         Renderer $renderer,
         UploadHandler $fileUploadHandler,
-        PaellaConfigFormBuilder $paellConfigFormBuilder
+        PaellaConfigFormBuilder $paellConfigFormBuilder,
+        ThumbnailConfigFormBuilder $thumbnailConfigFormBuilder
     ) {
         global $DIC;
         parent::__construct();
@@ -53,6 +62,7 @@ class xoctConfGUI extends xoctGUI
         $this->renderer = $renderer;
         $this->fileUploadHandler = $fileUploadHandler;
         $this->paellConfigFormBuilder = $paellConfigFormBuilder;
+        $this->thumbnailConfigFormBuilder = $thumbnailConfigFormBuilder;
     }
 
     public function executeCommand(): void
@@ -228,6 +238,57 @@ class xoctConfGUI extends xoctGUI
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         }
         $this->main_tpl->setContent($xoctConfFormGUI->getHTML());
+    }
+
+    /**
+     * Render the thumbnail subtab menu.
+     *
+     * @return void
+     */
+    protected function thumbnail(): void
+    {
+        $this->ctrl->saveParameter($this, 'subtab_active');
+        $subtab_active = $this->http->request()->getQueryParams()['subtab_active'] ?? xoctMainGUI::SUBTAB_API;
+        $this->tabs->setSubTabActive($subtab_active);
+        $form = $this->thumbnailConfigFormBuilder->buildForm(
+            $this->ctrl->getFormAction($this, self::CMD_UPDATE_THUMBNAIL));
+        $this->main_tpl->setContent($this->renderer->render($form));
+    }
+
+    /**
+     * Action to update thumbnail related config data.
+     */
+    protected function updateThumbnail(): void
+    {
+        $this->ctrl->saveParameter($this, 'subtab_active');
+        $form = $this->thumbnailConfigFormBuilder->buildForm($this->ctrl->getFormAction($this, self::CMD_UPDATE_THUMBNAIL))
+            ->withRequest($this->http->request());
+        $data = $form->getData();
+        if (!$data) {
+            $this->main_tpl->setContent($this->renderer->render($form));
+            return;
+        }
+        // Main enable upload thumbnail option.
+        $thumbnail_upload_enabled = false;
+        if (isset($data[ThumbnailConfigFormBuilder::F_THUMBNAIL_UPLOAD_ENABLED])) {
+            $optional_data_enabled_thumbnail = $data[ThumbnailConfigFormBuilder::F_THUMBNAIL_UPLOAD_ENABLED];
+            $thumbnail_upload_enabled = true;
+            // Accepted mimetypes.
+            if (isset($optional_data_enabled_thumbnail[ThumbnailConfigFormBuilder::F_THUMBNAIL_ACCEPTED_MIMETYPES])) {
+                $thumbnail_upload_accepted_mimetypes =
+                    $optional_data_enabled_thumbnail[ThumbnailConfigFormBuilder::F_THUMBNAIL_ACCEPTED_MIMETYPES];
+                PluginConfig::set(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES, $thumbnail_upload_accepted_mimetypes);
+            }
+
+            // Mode.
+            if (isset($optional_data_enabled_thumbnail[ThumbnailConfigFormBuilder::F_THUMBNAIL_UPLOAD_MODE])) {
+                $thumbnail_upload_mode =
+                    $optional_data_enabled_thumbnail[ThumbnailConfigFormBuilder::F_THUMBNAIL_UPLOAD_MODE];
+                PluginConfig::set(PluginConfig::F_THUMBNAIL_UPLOAD_MODE, $thumbnail_upload_mode);
+            }
+        }
+        PluginConfig::set(PluginConfig::F_THUMBNAIL_UPLOAD_ENABLED, $thumbnail_upload_enabled);
+        $this->ctrl->redirect($this, self::CMD_THUMBNAIL);
     }
 
     /**

@@ -105,7 +105,7 @@ class EventAPIRepository implements EventRepository, Request
      */
     public function upload(UploadEventRequest $request): void
     {
-        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
+        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD) || $request->getPayload()->hasThumbnail()) {
             $this->ingestService->ingest($request);
         } else {
             $payload = $request->getPayload()->jsonSerialize();

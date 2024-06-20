@@ -33,6 +33,9 @@ class xoctMainGUI extends xoctGUI
 
     public const SUBTAB_WORKFLOWS_SETTINGS = 'wf_settings';
     public const SUBTAB_WORKFLOWS_LIST = 'wf_list';
+
+    public const SUBTAB_THUMBNAILS = 'thumbnails';
+
     /**
      * @var \ilTabsGUI
      */
@@ -149,7 +152,8 @@ class xoctMainGUI extends xoctGUI
                 $xoctConfGUI = new xoctConfGUI(
                     $DIC->ui()->renderer(),
                     $opencast_dic->paella_config_upload_handler(),
-                    $opencast_dic->paella_config_form_builder()
+                    $opencast_dic->paella_config_form_builder(),
+                    $opencast_dic->thumbnail_config_form_builder()
                 );
                 $this->ctrl->forwardCommand($xoctConfGUI);
                 break;
@@ -175,6 +179,12 @@ class xoctMainGUI extends xoctGUI
             self::SUBTAB_PLAYER,
             $this->plugin->txt('subtab_' . self::SUBTAB_PLAYER),
             $this->ctrl->getLinkTargetByClass(xoctConfGUI::class, 'player')
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_THUMBNAILS);
+        $this->tabs->addSubTab(
+            self::SUBTAB_THUMBNAILS,
+            $this->plugin->txt('subtab_' . self::SUBTAB_THUMBNAILS),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class, xoctConfGUI::CMD_THUMBNAIL)
         );
         $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
         $this->tabs->addSubTab(

@@ -137,6 +137,11 @@ class PluginConfig extends ActiveRecord
     public const F_PAELLA_PREVIEW_FALLBACK = 'paella_config_preview_fallback';
     public const F_PAELLA_PREVIEW_FALLBACK_URL = 'paella_config_preview_fallback_url';
     public const PAELLA_DEFAULT_PREVIEW = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/default_preview.png';
+
+    public const F_THUMBNAIL_UPLOAD_ENABLED = 'thumbnail_config_upload_enabled';
+    public const F_THUMBNAIL_UPLOAD_MODE = 'thumbnail_config_upload_mode';
+    public const F_THUMBNAIL_ACCEPTED_MIMETYPES = 'thumbnail_config_accepted_mimetypes';
+
     /**
      * @var array
      */

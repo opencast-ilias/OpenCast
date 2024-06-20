@@ -53,6 +53,16 @@ class OpencastIngestService
             $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
         );
 
+        // If thumbnail exists, we add it into attachments
+        if ($payload->hasThumbnail()) {
+            $media_package = $this->api->routes()->ingest->addAttachment(
+                $media_package,
+                'presentation/preview', // NOTE: This is aligned with the workflow, change it if you use other flavors.
+                $payload->getThumbnail()->getFileStream(),
+                'player' // NOTE: This is aligned with the workflow, change it if you use other tags.
+            );
+        }
+
         // track
         $media_package = $this->api->routes()->ingest->addTrack(
             $media_package,
@@ -63,7 +73,9 @@ class OpencastIngestService
         // ingest
         $media_package = $this->api->routes()->ingest->ingest(
             $media_package,
-            $payload->getProcessing()->getWorkflow()
+            $payload->getProcessing()->getWorkflow(),
+            '',
+            (array) $payload->getProcessing()->getConfiguration()
         );
 
         // When we are done, we deactivate the ingest to keep everything clean.

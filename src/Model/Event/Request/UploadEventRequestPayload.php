@@ -28,17 +28,23 @@ class UploadEventRequestPayload
      * @var CURLFile
      */
     protected $presentation;
+    /**
+     * @var CURLFile
+     */
+    protected $thumbnail = null;
 
     public function __construct(
         Metadata $metadata,
         ACL $acl,
         Processing $processing,
-        xoctUploadFile $presentation
+        xoctUploadFile $presentation,
+        ?xoctUploadFile $thumbnail = null
     ) {
         $this->metadata = $metadata;
         $this->acl = $acl;
         $this->processing = $processing;
         $this->presentation = $presentation;
+        $this->thumbnail = $thumbnail;
     }
 
     public function getMetadata(): Metadata
@@ -59,6 +65,16 @@ class UploadEventRequestPayload
     public function getPresentation(): xoctUploadFile
     {
         return $this->presentation;
+    }
+
+    public function getThumbnail(): xoctUploadFile
+    {
+        return $this->thumbnail;
+    }
+
+    public function hasThumbnail(): bool
+    {
+        return !empty($this->thumbnail);
     }
 
     /**

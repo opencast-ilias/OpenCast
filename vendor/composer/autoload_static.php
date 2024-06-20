@@ -247,6 +247,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\UI\\PaellaConfig\\PaellaConfigFormBuilder' => __DIR__ . '/../..' . '/src/UI/PaellaConfig/PaellaConfigFormBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Scheduling\\SchedulingFormItemBuilder' => __DIR__ . '/../..' . '/src/UI/Scheduling/SchedulingFormItemBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\SeriesFormBuilder' => __DIR__ . '/../..' . '/src/UI/SeriesFormBuilder.php',
+        'srag\\Plugins\\Opencast\\UI\\ThumbnailConfig\\ThumbnailConfigFormBuilder' => __DIR__ . '/../..' . '/src/UI/Thumbnail/ThumbnailConfigFormBuilder.php',
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\OpencastIngestService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/OpencastIngestService.php',
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\PaellaConfigStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/PaellaConfigStorageService.php',
         'srag\\Plugins\\Opencast\\Util\\FileTransfer\\UploadStorageService' => __DIR__ . '/../..' . '/src/Util/FileTransfer/UploadStorageService.php',
