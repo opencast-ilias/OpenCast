@@ -39,6 +39,10 @@ class xoctSeriesGUI extends xoctGUI
     public const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
 
     /**
+     * @var ilObjOpenCastGUI
+     */
+    private $parent_gui;
+    /**
      * @var ObjectSettings
      */
     protected $objectSettings;
@@ -72,6 +76,7 @@ class xoctSeriesGUI extends xoctGUI
     private $ui;
 
     public function __construct(
+        ilObjOpenCastGUI $parent_gui,
         ilObjOpenCast $object,
         SeriesFormBuilder $seriesFormBuilder,
         SeriesRepository $seriesRepository,
@@ -83,6 +88,7 @@ class xoctSeriesGUI extends xoctGUI
         $this->tabs = $DIC->tabs();
         $this->ui = $DIC->ui();
         $this->objectSettings = ObjectSettings::find($object->getId());
+        $this->parent_gui = $parent_gui;
         $this->object = $object;
         $this->seriesFormBuilder = $seriesFormBuilder;
         $this->seriesRepository = $seriesRepository;
@@ -136,7 +142,8 @@ class xoctSeriesGUI extends xoctGUI
         $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
 
         $this->object->updateObjectFromSeries($series->getMetadata());
-        if ($this->objectSettings->getDuplicatesOnSystem()) {
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_GENERAL);
@@ -146,7 +153,7 @@ class xoctSeriesGUI extends xoctGUI
             $series,
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
-        $this->main_tpl->setContent($this->ui->renderer()->render($form));
+        $this->main_tpl->setContent($pre_form_data . $this->ui->renderer()->render($form));
     }
 
     protected function update(): void
@@ -222,7 +229,8 @@ class xoctSeriesGUI extends xoctGUI
     protected function editWorkflowParameters(): void
     {
         $this->seriesWorkflowParameterRepository->syncAvailableParameters($this->getObjId());
-        if ($this->objectSettings->getDuplicatesOnSystem()) {
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates'));
         }
         $this->tabs->activateSubTab(self::SUBTAB_WORKFLOW_PARAMETERS);
@@ -232,7 +240,7 @@ class xoctSeriesGUI extends xoctGUI
             self::CMD_EDIT_WORKFLOW_PARAMS,
             $this->workflowParameterRepository
         );
-        $this->main_tpl->setContent($xoctSeriesFormGUI->getHTML());
+        $this->main_tpl->setContent($pre_form_data . $xoctSeriesFormGUI->getHTML());
     }
 
     protected function updateWorkflowParameters(): void
