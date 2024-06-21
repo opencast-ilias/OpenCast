@@ -574,6 +574,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         $this->ilias_dic->ctrl()->forwardCommand($info);
     }
 
+    /**
+     * Checks the series duplicates and renders a list of linked series.
+     */
     public function renderLinksListSection(): string
     {
         $objectSettings = ObjectSettings::find($this->obj_id);
