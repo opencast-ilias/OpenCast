@@ -119,7 +119,8 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             }
 
             // Admins perms.
-            if ($admin_role_id = $parent_obj->getDefaultAdminRole()) {
+            if (method_exists($parent_obj, 'getDefaultAdminRole')) {
+                $admin_role_id = $parent_obj->getDefaultAdminRole();
                 $admin_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $admin_role_id);
 
                 // Take care of download.
@@ -154,7 +155,8 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             }
 
             // Tutor perms.
-            if ($tutor_role_id = $parent_obj->getDefaultTutorRole()) {
+            if (method_exists($parent_obj, 'getDefaultTutorRole')) {
+                $tutor_role_id = $parent_obj->getDefaultTutorRole();
                 $tutor_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $tutor_role_id);
 
                 // Take care of download.
@@ -189,7 +191,8 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             }
 
             // Member perms.
-            if ($member_role_id = $parent_obj->getDefaultMemberRole()) {
+            if (method_exists($parent_obj, 'getDefaultMemberRole')) {
+                $member_role_id = $parent_obj->getDefaultMemberRole();
                 $member_ops_ids = $GLOBALS["DIC"]["rbacreview"]->getActiveOperationsOfRole($ref_id, $member_role_id);
 
                 // Take care of download.
@@ -550,7 +553,20 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             return $GLOBALS["tree"];
         };
 
-        $GLOBALS["DIC"]["ilAppEventHandler"] = null;
+        $GLOBALS["DIC"]["ilAppEventHandler"] = new class () extends ilAppEventHandler {
+            public function __construct()
+            {
+            }
+            public function raise($a_component, $a_event, $a_parameter = ""): void
+            {
+            }
+        };
+        $GLOBALS["DIC"]["ilErr"] = new class () extends ilErrorHandling {
+            public function __construct()
+            {
+            }
+        };
+
         $GLOBALS["DIC"]["ilObjDataCache"] = new ilObjectDataCache();
         $GLOBALS["DIC"]["ilSetting"] = new ilSetting();
         $GLOBALS["DIC"]["ilUser"] = new class () extends ilObjUser {

@@ -519,34 +519,40 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         $parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
 
         // Admin defaults.
-        $admin_role_id = $parent_obj->getDefaultAdminRole();
-        $admins_allowed_defaults_perms = self::$admins_allowed_defaults ?? [];
-        if (!empty($additionals[self::ROLE_ADMIN])) {
-            $admins_allowed_defaults_perms = array_unique(
-                array_merge($admins_allowed_defaults_perms, $additionals[self::ROLE_ADMIN])
-            );
+        if (method_exists($parent_obj, 'getDefaultAdminRole')) {
+            $admin_role_id = $parent_obj->getDefaultAdminRole();
+            $admins_allowed_defaults_perms = self::$admins_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_ADMIN])) {
+                $admins_allowed_defaults_perms = array_unique(
+                    array_merge($admins_allowed_defaults_perms, $additionals[self::ROLE_ADMIN])
+                );
+            }
+            self::setDefaultPerms($ref_id, $admin_role_id, $admins_allowed_defaults_perms);
         }
-        self::setDefaultPerms($ref_id, $admin_role_id, $admins_allowed_defaults_perms);
 
         // Tutor defaults.
-        $tutor_role_id = $parent_obj->getDefaultTutorRole();
-        $tutors_allowed_defaults_perms = self::$tutors_allowed_defaults ?? [];
-        if (!empty($additionals[self::ROLE_TUTOR])) {
-            $tutors_allowed_defaults_perms = array_unique(
-                array_merge($tutors_allowed_defaults_perms, $additionals[self::ROLE_TUTOR])
-            );
+        if (method_exists($parent_obj, 'getDefaultTutorRole')) {
+            $tutor_role_id = $parent_obj->getDefaultTutorRole();
+            $tutors_allowed_defaults_perms = self::$tutors_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_TUTOR])) {
+                $tutors_allowed_defaults_perms = array_unique(
+                    array_merge($tutors_allowed_defaults_perms, $additionals[self::ROLE_TUTOR])
+                );
+            }
+            self::setDefaultPerms($ref_id, $tutor_role_id, $tutors_allowed_defaults_perms);
         }
-        self::setDefaultPerms($ref_id, $tutor_role_id, $tutors_allowed_defaults_perms);
 
         // Member defaults.
-        $member_role_id = $parent_obj->getDefaultMemberRole();
-        $members_allowed_defaults_perms = self::$members_allowed_defaults ?? [];
-        if (!empty($additionals[self::ROLE_MEMBER])) {
-            $members_allowed_defaults_perms = array_unique(
-                array_merge($members_allowed_defaults_perms, $additionals[self::ROLE_MEMBER])
-            );
+        if (method_exists($parent_obj, 'getDefaultMemberRole')) {
+            $member_role_id = $parent_obj->getDefaultMemberRole();
+            $members_allowed_defaults_perms = self::$members_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_MEMBER])) {
+                $members_allowed_defaults_perms = array_unique(
+                    array_merge($members_allowed_defaults_perms, $additionals[self::ROLE_MEMBER])
+                );
+            }
+            self::setDefaultPerms($ref_id, $member_role_id, $members_allowed_defaults_perms);
         }
-        self::setDefaultPerms($ref_id, $member_role_id, $members_allowed_defaults_perms);
     }
 
     /**
