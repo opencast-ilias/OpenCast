@@ -224,7 +224,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             }
 
             // Change the streaming_only to -1 in order to have it tagged as processed.
-            $this->db->manipulateF(
+            $db->manipulateF(
                 "UPDATE xoct_data SET streaming_only = %s WHERE obj_id = %s",
                 ['integer', 'integer'],
                 [-1, $obj_id]
