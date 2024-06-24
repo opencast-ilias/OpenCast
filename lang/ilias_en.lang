@@ -481,6 +481,7 @@ msg_workflow_params_parsing_failed#:#Parsing of parameters via API failed:
 msg_workflow_parameters_info#:#Workflow Parameter are information which are passed to Opencast through the variable 'processing' when creating or scheduling an event. Note that the parameters must match the given workflow definition (Settings -> Events -> Processing Workflow ID). Clicking the button "Load Parameters via API" will try to load the parameters automatically - however this will only work if the workflow definition in Opencast has configured a configuration panel.
 msg_invalid_time_format#:#Invalid format.
 msg_missing_file#:#Please upload a file.
+msg_empty_required_field#:#This input is required. Please enter a value.
 byline_timeformat#:#Format: 00:00:00
 table_column_default#:#Default
 table_column_is_default#:#Default
