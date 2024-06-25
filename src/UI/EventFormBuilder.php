@@ -28,6 +28,7 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use DateTimeZone;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use ILIAS\UI\Component\Input\Field\Section;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -231,6 +232,16 @@ class EventFormBuilder
         }
 
         // Thumbnails
+        // - First considering the straightToPublishing as a required wf param for this feature to work (by default).
+        $wf_id = 'straightToPublishing';
+        $stp_wf_value = WorkflowParameter::VALUE_ALWAYS_ACTIVE; // as default value in workflows are always true.
+        if (WorkflowParameter::where(['id' => $wf_id])->hasSets()) {
+            $workflow_parameter = WorkflowParameter::find($wf_id);
+            $stp_wf_value =
+                $as_admin ?
+                $workflow_parameter->getDefaultValueAdmin() :
+                $workflow_parameter->getDefaultValueMember();
+        }
         $thumbnail_upload_enabled = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_ENABLED) ?? false;
         $accepted_thumbnail_mimetypes = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES) ?? [];
         $thumbnail_upload_mode = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_MODE) ??
@@ -381,10 +392,19 @@ class EventFormBuilder
             }
 
             if (!empty($thumbnail_section_inputs)) {
+                $thumbnail_section_info = '';
+                if ($stp_wf_value == WorkflowParameter::VALUE_SHOW_IN_FORM
+                    || $stp_wf_value == WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET) {
+                    $thumbnail_section_info = $this->plugin->txt('upload_ui_thumbnail_section_stp_info');
+                } else if ($stp_wf_value == WorkflowParameter::VALUE_ALWAYS_INACTIVE) {
+                    $thumbnail_section_info = $this->plugin->txt('upload_ui_thumbnail_section_stp_disabled_info');
+                }
+
                 $thumbnail_section = $factory->section(
                     $thumbnail_section_inputs,
                     $this->plugin->txt('upload_ui_thumbnail_section'),
-                );
+                    $thumbnail_section_info
+                )->withDisabled($stp_wf_value == WorkflowParameter::VALUE_ALWAYS_INACTIVE);
                 $inputs[self::F_THUMBNAIL_SECTION] = $thumbnail_section;
             }
         }

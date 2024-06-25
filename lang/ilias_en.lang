@@ -750,6 +750,8 @@ config_thumbnail_upload_mode_file_info#:#With this option, only a file input to 
 config_thumbnail_upload_mode_timepoint#:#Timepoint
 config_thumbnail_upload_mode_timepoint_info#:#With this option, only a timepicker input is provided to the users to select the timepoint of the video from whihc the thumbnail should be extracted.
 upload_ui_thumbnail_section#:#Thumbnail
+upload_ui_thumbnail_section_stp_info#:#<strong>NOTE:</strong> "Straight to publishing" Processing setting must be enabled, in order for this feature to work.
+upload_ui_thumbnail_section_stp_disabled_info#:#<strong>NOTE:</strong> "Straight to publishing" Processing setting is disabled in the configurations, therefore this feature is disabled as well.
 upload_ui_thumbnail_mode_sg#:#Mode
 upload_ui_thumbnail_mode_sg_info#:#You can select only one mode to generate thumbnails, either by uploading a file or selecting a timepoint.
 upload_ui_thumbnail_mode_sg_file#:#By uploading a file

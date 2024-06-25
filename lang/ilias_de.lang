@@ -747,6 +747,8 @@ config_thumbnail_upload_mode_file_info#:#Mit dieser Option wird den Benutzern le
 config_thumbnail_upload_mode_timepoint#:#Zeitpunkt
 config_thumbnail_upload_mode_timepoint_info#:#Mit dieser Option wird den Benutzern nur eine Zeitauswahleingabe bereitgestellt, um den Zeitpunkt des Videos auszuwählen, von dem das Vorschaubild extrahiert werden soll.
 upload_ui_thumbnail_section#:#Vorschaubild
+upload_ui_thumbnail_section_stp_info#:#<strong>ACHTUNG:</strong> Damit diese Funktion funktioniert, müssen die "Straight to publishing" Verarbeitungseinstellung aktiviert sein.
+upload_ui_thumbnail_section_stp_disabled_info#:#<strong>ACHTUNG:</strong> Die "Straight to publishing" Verarbeitungseinstellung ist in den Konfigurationen deaktiviert, daher ist auch diese Funktion deaktiviert.
 upload_ui_thumbnail_mode_sg#:#Modus
 upload_ui_thumbnail_mode_sg_info#:#Sie können nur einen Modus zum Generieren von Vorschaubilder auswählen, indem Sie entweder eine Datei hochladen oder einen Zeitpunkt auswählen.
 upload_ui_thumbnail_mode_sg_file#:#Durch Hochladen einer Datei
