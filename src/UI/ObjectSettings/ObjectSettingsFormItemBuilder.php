@@ -243,13 +243,13 @@ class ObjectSettingsFormItemBuilder
         $inputs[self::F_MEMBER_DOWNLOAD] = $field_factory->checkbox(
             $this->txt(self::F_MEMBER_DOWNLOAD),
             $this->txt(self::F_MEMBER_DOWNLOAD . '_info')
-        );
+        )->withValue(true);
 
         // Upload
         $inputs[self::F_MEMBER_UPLOAD] = $field_factory->checkbox(
             $this->txt(self::F_MEMBER_UPLOAD),
             $this->txt(self::F_MEMBER_UPLOAD . '_info')
-        )->withValue(true);
+        );
 
         // Record with OC Studio.
         if (!empty(PluginConfig::getConfig(PluginConfig::F_STUDIO_ALLOWED))) {
