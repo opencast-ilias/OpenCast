@@ -726,11 +726,11 @@ xoct_rep_robj_xoct_perm_schedule#:#Schedule a recording (Must be activated in th
 perm_schedule#:#Schedule
 object_member_rights_section#:#Rights for members
 series_member_upload#:#Upload
-series_member_upload_info#:#The “Upload” right gives course or group members the ability to upload videos and download, delete and edit their own videos (without cutting). This can be changed later in the rights settings.
+series_member_upload_info#:#Course or group members are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
 series_member_download#:#Download
-series_member_download_info#:#Course or group members are given the option to download videos through the “Download” right. This can be changed later in the rights settings.
+series_member_download_info#:#Course or group members are given the permission "Download", which allows them to download videos. This setting can be changed later in the tab "Permissions".
 series_member_record#:#Recording
-series_member_record_info#:#The "Record" right gives course or group members the opportunity to create videos with the ‘Opencast Studio’ tool and to download, delete and edit their own videos (without cutting). This can be changed later in the rights settings.
+series_member_record_info#:#Course or group members are given the permission "Record", which allows them to record videos with the tool ‘Opencast Studio’, to download, delete and edit their own videos (without cutting). This setting can be changed later in the tab "Permissions".
 config_paella_player_display_caption_text_type#:#Display Caption Text (Type)
 config_paella_player_display_caption_text_type_info#:#When enabled, the caption text contains the type of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
 config_paella_player_display_caption_text_generator#:#Display Caption Text (Generator)

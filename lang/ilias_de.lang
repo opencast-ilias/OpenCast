@@ -723,11 +723,11 @@ xoct_rep_robj_xoct_perm_schedule#:#Aufzeichnungstermin(e) planen (Muss in den Ko
 perm_schedule#:#Schedule
 object_member_rights_section#:#Rechte für Mitglieder
 series_member_upload#:#Upload
-series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos herunterzuladen, zu löschen und zu editieren (ohne schneiden). Dies kann später in den Rechteeinstellungen geändert werden.
+series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Dies kann später im Tab "Rechte" geändert werden.
 series_member_download#:#Download
-series_member_download_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Download" die Möglichkeit, Videos herunterzuladen. Dies kann später in den Rechteeinstellungen geändert werden.
+series_member_download_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Download" die Möglichkeit, Videos herunterzuladen. Dies kann später im Tab "Rechte" geändert werden.
 series_member_record#:#Aufzeichnen
-series_member_record_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Aufzeichnen" die Möglichkeit, Videos mit dem Tool "Opencast Studio" zu erstellen und eigene Videos herunterzuladen, zu löschen und zu editieren (ohne schneiden). Dies kann später in den Rechteeinstellungen geändert werden.
+series_member_record_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Aufzeichnen" die Möglichkeit, Videos mit dem Tool "Opencast Studio" zu erstellen, eigene Videos herunterzuladen, zu löschen und zu editieren (ohne schneiden). Dies kann später im Tab "Rechte" geändert werden.
 config_paella_player_display_caption_text_type#:#Caption Text (Typ) anzeigen
 config_paella_player_display_caption_text_type_info#:#Wenn aktiviert, enthält der Untertiteltext den Typ der Überschrift, sofern diese in den <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">Tags</a> vorhanden ist.
 config_paella_player_display_caption_text_generator#:#Caption Text (Generator) anzeigen
