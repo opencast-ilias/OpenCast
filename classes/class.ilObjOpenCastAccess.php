@@ -211,13 +211,13 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             case self::ACTION_DELETE_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-                        || (self::hasPermission(self::PERMISSION_UPLOAD)
+                        || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
                     && $event->getProcessingState() != Event::STATE_ENCODING;
             case self::ACTION_EDIT_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-                        || (self::hasPermission(self::PERMISSION_UPLOAD)
+                        || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
                     && $event->getProcessingState() != Event::STATE_ENCODING
                     && $event->getProcessingState() != Event::STATE_FAILED
