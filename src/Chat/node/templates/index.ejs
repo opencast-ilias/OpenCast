@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<title>studer + raimann chat</title>
+	<title>ILIAS Opencast Plugin Chat</title>
 	<link href="/css/chat.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/fonts/glyphicons-halflings-regular.ttf" rel="icon">
@@ -10,23 +10,29 @@
 <script src="/js/jquery.min.js"></script>
 <script>
 	$(function () {
-		var mobile = ($(window).width() > 768);
-		if (!mobile) {
-			$("html,body").scrollTop($(document).height());
-		}
+		window.unread_messages = 0;
+		let chat_body_current = $("#chat_body")[0];
+		var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		var mobile = (width > 290);
 
 		var socket = io({query: {token: "<%= token %>"}});
 		$('form#srchat_form').submit(function(e){
 			e.preventDefault(); // prevents page reloading
 			if ($('#srchat_input').val() !== '') {
-				socket.emit('chat_msg', $('#srchat_input').val());
-				$('#srchat_input').val('');
+				// Force scroll to end when the user types something. (self type)
+				let completedCallback = function () {
+					socket.emit('chat_msg', $('#srchat_input').val());
+					$('#srchat_input').val('');
+				};
+				scrollToEnd('fast', completedCallback);
 			}
 			return false;
 		});
 
 		socket.on('chat_msg', function(msg){
-			var scroll_down = ($(window).scrollTop() + $(window).height() === $(document).height()) && !mobile;
+			var scroll_is_end = mobile ?
+				(chat_body_current.scrollTop == 0)
+				: (chat_body_current.scrollTop + chat_body_current.offsetHeight >= chat_body_current.scrollHeight);
 
 			var new_item = $('<li>')
 				.append($('<div>').attr('class', 'srchat_profile_picture_div')
@@ -41,13 +47,47 @@
 						)
 						.append($('<p>').attr("class", "srchat_message_content").text(msg.msg))
 				).hide();
+			let next_item_id = getNextMessageItemId();
+			new_item.attr('id', next_item_id);
+			new_item.toggleClass('unread', !scroll_is_end);
+			new_item.attr('data-seen', scroll_is_end);
 			$('#messages').append(new_item);
 			new_item.show('normal');
 
-			if (scroll_down) {
-				$("html,body").animate({scrollTop: $(document).height()}, "slow");
+			if (scroll_is_end) {
+				scrollToEnd();
+			} else {
+				window.unread_messages += 1;
+				showUnreadInfo();
+				let options = {
+					root: document.querySelector("#chat_body"),
+					rootMargin: "0px",
+					threshold: 1,
+				};
+				let observer = new IntersectionObserver(seenObserver, options);
+				observer.observe(document.getElementById(next_item_id));
 			}
 		});
+
+		function seenObserver(entries, observer) {
+			let disconnect = false;
+			for (const entry of entries) {
+				if (entry.intersectionRatio > 0.3) {
+					if ($(entry.target).data('seen') === false) {
+						$(entry.target).attr('data-seen', true);
+						$(entry.target).toggleClass('unread', false);
+						if (window.unread_messages > 0) {
+							window.unread_messages -= 1;
+						}
+						disconnect = true;
+					}
+				}
+			}
+			if (disconnect) {
+				showUnreadInfo('fast');
+				observer.disconnect();
+			}
+		}
 
 		socket.on('disconnect', function() {
 			console.log('srchat disconnected');
@@ -57,6 +97,7 @@
 		socket.on('connect', function() {
 			console.log('srchat connected');
             $('#srchat_retry_overlay_iframe').hide();
+			scrollToEnd('fast');
 		});
 
 		// Send message to the top window (parent) at 500ms interval
@@ -65,27 +106,58 @@
 			// second paramter is the domain of the parent
 			window.top.postMessage(document.body.scrollHeight, "<%= base_url %>");
 		}, 500);
+
+		function getMessagesNum() {
+			let msg_list = $('#messages').find('li');
+			return msg_list.length;
+		}
+
+		function getNextMessageItemId() {
+			let num = getMessagesNum();
+			let id = num + 1;
+			return `message-${id}`;
+		}
+
+		function scrollToEnd(speed = 'slow', completedCallback = undefined) {
+			let scroll_to = mobile ? 0 : $("#chat_body")[0].scrollHeight;
+			$("#chat_body").animate({scrollTop: scroll_to}, speed, completedCallback);
+		}
+
+		function showUnreadInfo(speed = 'normal') {
+			let num = window.unread_messages;
+			if (num > 0) {
+				$("#unread_info").text(`${num} new messages`);
+				$("#unread_info").show(speed);
+			} else {
+				$("#unread_info").hide(speed);
+			}
+		}
 	});
 </script>
 <body id="srchat_body">
-<div id="chat_body">
-	<ul id="messages">
-		<% messages.forEach(function(message){ %>
-		<li>
-			<div class="srchat_profile_picture_div">
-				<img class="srchat_profile_picture" height="30px" src="/srchat/get_profile_picture/<%= message.usr_id %>">
-			</div>
-			<div class="srchat_message_div">
-				<div class="srchat_message_top">
-					<p class="srchat_message_name"><%= message.public_name %></p>
-					<p class="srchat_message_sent"><%= message.sent_at %></p>
+	<div id="srchat_title">
+		<h4>Chat</h4>
+	</div>
+	<div id="chat_body">
+		<ul id="messages">
+			<% messages.forEach(function(message, index){ %>
+			<li id="message-<%= (index + 1) %>" data-seen="true">
+				<div class="srchat_profile_picture_div">
+					<img class="srchat_profile_picture" height="30px" src="/srchat/get_profile_picture/<%= message.usr_id %>">
 				</div>
-				<p class="srchat_message_content"><%= message.message %></p>
-			</div>
-		</li>
-		<% }) %>
-	</ul>
+				<div class="srchat_message_div">
+					<div class="srchat_message_top">
+						<p class="srchat_message_name"><%= message.public_name %></p>
+						<p class="srchat_message_sent"><%= message.sent_at %></p>
+					</div>
+					<p class="srchat_message_content"><%= message.message %></p>
+				</div>
+			</li>
+			<% }) %>
+		</ul>
+	</div>
 	<form id="srchat_form" action="">
+		<span id="unread_info"></span>
 		<div class="input-group">
 			<input class="form-control input-sm" id="srchat_input" maxlength="500" autocomplete="off" />
 			<span class="input-group-btn">
@@ -95,10 +167,9 @@
 			</span>
 		</div>
 	</form>
-</div>
-<div id="srchat_retry_overlay_iframe" hidden>
-    <span class="srchat_pseudo_element"></span>
-	<img src="/images/refresh_icon.png">
-</div>
+	<div id="srchat_retry_overlay_iframe" hidden>
+		<span class="srchat_pseudo_element"></span>
+		<img src="/images/refresh_icon.png">
+	</div>
 </body>
 </html>

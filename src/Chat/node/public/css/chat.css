@@ -6,13 +6,13 @@ html {
     display: inline-block;
     position: relative;
     float: right;
-    width: 20%;
+    width: 290px;
     height: 100%;
     overflow: hidden;
 }
 
-#srchat_container {
-    overflow: auto;
+#srchat_iframe_container {
+    border-left: 3px solid #ccc;
 }
 
 #srchat_iframe {
@@ -21,17 +21,42 @@ html {
 }
 
 #srchat_body {
+    display: flex;
+    flex-direction: column;
     font: 16px Helvetica, Arial;
     color: black;
     background-color: white;
     height: 100%;
+    min-width: 192px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#srchat_title {
+    text-align: center;
+    color: #a5a4a4;
+    width: 100%;
+    padding: 5px 10px;
+    border-bottom:1px solid #ccc;
+    flex-shrink: 0;
+}
+#srchat_title h4 {
+    line-height: 40px;
+    margin: 0px !important;
+}
+
+#chat_body {
+    flex-grow: 1;
+    overflow-y: auto;
 }
 
 #srchat_form {
-    background-color: lightgray;
-    padding: 3px;
-    position: fixed;
-    bottom: 0;
+    position: relative;
+    flex-shrink: 0;
+    height: 50px;
+    background-color: white;
+    padding: 10px 5px;
+    border-top:1px solid #ccc;
     width: 100%;
     margin-bottom: 0;
 }
@@ -46,7 +71,7 @@ html {
 #messages {
     list-style-type: none;
     margin: 0;
-    padding: 0px 0 40px 0;
+    padding: 10px;
 }
 
 #srchat_container {
@@ -61,9 +86,45 @@ html {
 }
 
 #messages li {
+    position: relative;
     clear: both;
-    display: flex;
+    display: inline-flex;
+    width: 100%;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
     height: fit-content;
+}
+#messages li:not(:last-of-type) {
+    margin-bottom: 10px;
+}
+
+#messages li.unread:before {
+    right: -7px;
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 20px;
+    top: -7px;
+    background-image: radial-gradient(circle at center, red 5px, transparent 5px), radial-gradient(circle at center, red 5px, transparent 5px);
+    background-size: 20px 20px;
+    background-position: top right;
+    background-repeat: no-repeat;
+}
+
+#unread_info {
+    position: absolute;
+    display: none;
+    top: -15px;
+    left: 10px;
+    width: 150px;
+    text-align: center;
+    padding: 3px;
+    color: white;
+    font-size: 12px;
+    font-weight: 100;
+    background-color: red;
+    border-radius: 5px;
 }
 
 .srchat_profile_picture {
@@ -74,19 +135,15 @@ html {
 .srchat_profile_picture_div {
     position: relative;
     float: left;
-    margin: 5px 0px 0 25px;
     height: 30px;
     width: 30px;
+    flex-shrink: 0;
 }
 
 .srchat_message_div {
     position: relative;
     float: left;
-    margin: 10px;
-    width: calc(100% - 75px);
-    /*width: -webkit-fill-available;*/
-    /*width: -moz-available;*/
-    /*width: fill-available;*/
+    flex-grow: 1;
 }
 
 .srchat_message_div p {
@@ -195,23 +252,30 @@ span.srchat_pseudo_element {
         transform: rotate(-180deg);
     }
 
-    #srchat_form {
-        position: fixed;
-        height: fit-content;
-        top: 0;
+    #srchat_iframe_container {
+        border-top: 3px solid #ccc;
+        border-left: none;
+    }
+    #srchat_title {
+        order: 0;
     }
 
+    #srchat_form {
+        height: fit-content;
+        order: 1;
+        border-top: none;
+        border-bottom:1px solid #ccc;
+    }
+    #chat_body {
+        order: 2;
+    }
 
-    #srchat_body, #srchat_input, #btn-chat {
-        font-size: 20px;
+    #srchat_body, #chat_body, #srchat_input, #btn-chat {
+        font-size: 16px;
     }
 
     #srchat_input {
-        height: 42px;
-    }
-
-    #messages {
-        padding-bottom: 60px;
+        height: 36px;
     }
 }
 
