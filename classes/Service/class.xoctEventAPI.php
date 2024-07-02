@@ -97,7 +97,7 @@ class xoctEventAPI
         );
 
         $workflow_parameters = $this->workflow_param_repository->getGeneralAutomaticallySetParameters();
-        if (is_array($additional_data['workflow_parameters'])) {
+        if (array_key_exists('workflow_parameters', $additional_data) && is_array($additional_data['workflow_parameters'])) {
             $workflow_parameters += $additional_data['workflow_parameters'];
         }
         $workflow_parameters = array_map(function ($value): string {
