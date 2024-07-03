@@ -138,10 +138,7 @@ class ilObjOpenCast extends ilObjectPlugin
             $crs_or_grp_cache = [];
         }
 
-        if (isset($crs_or_grp_cache[$ref_id])) {
-            return $crs_or_grp_cache[$ref_id];
-        }
-
+        // Finding the parent ref id first to make sure, it will be cached properly.
         while (!in_array(ilObject2::_lookupType($ref_id, true), ['crs', 'grp'])) {
             if ($ref_id === 1 || empty($ref_id)) {
                 return $crs_or_grp_cache[$ref_id] = null;
@@ -149,9 +146,19 @@ class ilObjOpenCast extends ilObjectPlugin
             $ref_id = (int) $DIC->repositoryTree()->getParentId($ref_id);
         }
 
-        /** @var ilObjCourse|ilObjGroup $course_or_group */
-        $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
-        return $crs_or_grp_cache[$ref_id] = $course_or_group;
+        // Check for the cache.
+        if (isset($crs_or_grp_cache[$ref_id])) {
+            return $crs_or_grp_cache[$ref_id];
+        }
+
+        $course_or_group = null;
+        if ($ref_id) {
+            /** @var ilObjCourse|ilObjGroup $course_or_group */
+            $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
+            $crs_or_grp_cache[$ref_id] = $course_or_group;
+        }
+
+        return $course_or_group;
     }
 
     public static function _getCourseOrGroupRole(): string
