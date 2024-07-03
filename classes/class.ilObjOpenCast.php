@@ -143,7 +143,7 @@ class ilObjOpenCast extends ilObjectPlugin
         }
 
         while (!in_array(ilObject2::_lookupType($ref_id, true), ['crs', 'grp'])) {
-            if ($ref_id === 1) {
+            if ($ref_id === 1 || empty($ref_id)) {
                 return $crs_or_grp_cache[$ref_id] = null;
             }
             $ref_id = (int) $DIC->repositoryTree()->getParentId($ref_id);
