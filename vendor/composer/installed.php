@@ -3,7 +3,7 @@
         'name' => 'opencast-ilias/opencast',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'cd0c32016e296c528cdf722864e7c92736aa8381',
+        'reference' => '6de0ddd0b40f905cd25f725469655d13879be57d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'elan-ev/opencast-api' => array(
-            'pretty_version' => '1.6.0',
-            'version' => '1.6.0.0',
-            'reference' => '4209600ff4690b9b35363703d297f2f2660fae57',
+            'pretty_version' => '1.7.0',
+            'version' => '1.7.0.0',
+            'reference' => '34dee9ad29c6059d6ec913438c48c3f3e6721b5c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../elan-ev/opencast-api',
             'aliases' => array(),
@@ -49,7 +49,7 @@
         'opencast-ilias/opencast' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'cd0c32016e296c528cdf722864e7c92736aa8381',
+            'reference' => '6de0ddd0b40f905cd25f725469655d13879be57d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
