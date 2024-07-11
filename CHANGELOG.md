@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 8.0.8
+- [FEATURE] OCT Text feature #71 (via PR #290)
 - [FEATURE] Upload Thumbnail (Preview) #291 (via PR #305)
 - [FEATURE] Upload Subtitles #10 (via PR #277)
 - [FEATURE] New Right management #14 (via PR #301)

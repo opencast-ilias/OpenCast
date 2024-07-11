@@ -138,6 +138,7 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageGroupRepository' => $baseDir . '/src/Model/Publication/Config/PublicationUsageGroupRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Config\\PublicationUsageRepository' => $baseDir . '/src/Model/Publication/Config/PublicationUsageRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Media' => $baseDir . '/src/Model/Publication/Media.php',
+    'srag\\Plugins\\Opencast\\Model\\Publication\\Metadata' => $baseDir . '/src/Model/Publication/Metadata.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\Publication' => $baseDir . '/src/Model/Publication/Publication.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationAPIRepository' => $baseDir . '/src/Model/Publication/PublicationAPIRepository.php',
     'srag\\Plugins\\Opencast\\Model\\Publication\\PublicationMetadata' => $baseDir . '/src/Model/Publication/PublicationMetadata.php',

@@ -30,6 +30,7 @@ class PublicationUsage extends ActiveRecord
     public const MD_TYPE_ATTACHMENT = 1;
     public const MD_TYPE_MEDIA = 2;
     public const MD_TYPE_PUBLICATION_ITSELF = 0;
+    public const MD_TYPE_METADATA = 3;
     public const SEARCH_KEY_FLAVOR = 'flavor';
     public const SEARCH_KEY_TAG = 'tag';
     public const DISPLAY_NAME_LANG_MODULE = 'pu_display_name';
@@ -37,6 +38,7 @@ class PublicationUsage extends ActiveRecord
     public const USAGE_TYPE_SUB = 'sub';
     public const USAGE_CAPTIONS = 'captions';
     public const USAGE_CAPTIONS_FALLBACK = 'captions_fallback';
+    public const USAGE_MPEG7_CATALOG = 'mpeg7_catalog';
     /**
      * @var array
      */
@@ -56,6 +58,7 @@ class PublicationUsage extends ActiveRecord
             self::USAGE_UNPROTECTED_LINK,
             self::USAGE_CAPTIONS,
             self::USAGE_CAPTIONS_FALLBACK,
+            self::USAGE_MPEG7_CATALOG,
         ];
 
     /**
@@ -253,7 +256,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param string $description
      */
-    public function setDisplayName($display_name)
+    public function setDisplayName($display_name): void
     {
         $this->display_name = $display_name;
     }
@@ -285,7 +288,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param $group_id
      */
-    public function setGroupId($group_id)
+    public function setGroupId($group_id): void
     {
         $this->group_id = ($group_id == '' || is_null($group_id) ? null : intval($group_id));
     }
@@ -397,7 +400,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param string $mediatype
      */
-    public function setMediaType(string $mediatype)
+    public function setMediaType(string $mediatype): void
     {
         $this->mediatype = $mediatype;
     }
@@ -413,7 +416,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param bool $overwrite_download_perm
      */
-    public function setOverwriteDownloadPerm(bool $overwrite_download_perm)
+    public function setOverwriteDownloadPerm(bool $overwrite_download_perm): void
     {
         $this->overwrite_download_perm = $overwrite_download_perm;
     }
@@ -429,7 +432,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param bool $ext_dl_source
      */
-    public function setExternalDownloadSource(bool $ext_dl_source)
+    public function setExternalDownloadSource(bool $ext_dl_source): void
     {
         $this->ext_dl_source = $ext_dl_source;
     }
@@ -445,7 +448,7 @@ class PublicationUsage extends ActiveRecord
     /**
      * @param bool $is_sub
      */
-    public function setAsSub(bool $is_sub)
+    public function setAsSub(bool $is_sub): void
     {
         $this->is_sub = $is_sub;
     }

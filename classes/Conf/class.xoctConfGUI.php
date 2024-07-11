@@ -173,6 +173,11 @@ class xoctConfGUI extends xoctGUI
                 $paella_prevent_video_download = $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD];
                 PluginConfig::set(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD, $paella_prevent_video_download);
             }
+
+            if (isset($generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OCR_TEXT_ENABLE])) {
+                $paella_ocr_text_enable = (bool) $generals[PaellaConfigFormBuilder::F_PAELLA_PLAYER_OCR_TEXT_ENABLE];
+                PluginConfig::set(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE, $paella_ocr_text_enable);
+            }
         }
 
 

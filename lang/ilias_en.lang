@@ -319,6 +319,7 @@ publication_usage_md_type#:#Type
 publication_usage_md_type_0#:#Publication itself
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
+publication_usage_md_type_3#:#Metadata
 publication_usage_md_type_select#:#Select...
 publication_usage_msg_success#:#Saved
 publication_usage_publication_id#:#Publication ID
@@ -743,6 +744,9 @@ config_subtitle_load_lang_list#:#Load language list from API
 config_subtitle_load_lang_list_confirmation#:#Are you sure you would like to load the language list from API?<br>NOTE: API Version 1.10.0 or later is required.
 config_subtitle_load_lang_list_abtn_label#:#Load
 upload_ui_subtitle_section#:#Subtitles
+config_paella_player_ocr_text_enable#:#Enable OCT Text feature
+config_paella_player_ocr_text_enable_info#:#When enabled, the OCR Text feature will be displayed in Paella Player menu bar, and it only works when the respective Publication usage "mpeg7_catalog" is configured correctly.
+publication_usage_type_mpeg7_catalog#:#MPEG7 Catalog
 config_paella_player_display_caption_text_type#:#Display Caption Text (Type)
 config_paella_player_display_caption_text_type_info#:#When enabled, the caption text contains the type of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
 config_paella_player_display_caption_text_generator#:#Display Caption Text (Generator)

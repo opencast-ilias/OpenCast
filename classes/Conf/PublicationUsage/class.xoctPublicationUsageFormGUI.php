@@ -104,8 +104,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
 
         // F_DISPLAY_NAME
         $max_lenght = 20;
-        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName(
-        ) : '{added display name}');
+        $display_name = (empty($this->object->getDisplayName()) ? '{added display name}' : $this->object->getDisplayName(
+        ));
         $info = sprintf($this->getLocaleString(self::F_DISPLAY_NAME . '_info'), $max_lenght, strtolower($display_name));
         $te = new ilTextInputGUI($this->getLocaleString(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);
@@ -136,7 +136,8 @@ class xoctPublicationUsageFormGUI extends ilPropertyFormGUI
             PublicationUsage::MD_TYPE_ATTACHMENT => $this->getLocaleString(
                 'md_type_' . PublicationUsage::MD_TYPE_ATTACHMENT
             ),
-            PublicationUsage::MD_TYPE_MEDIA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_MEDIA)
+            PublicationUsage::MD_TYPE_MEDIA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_MEDIA),
+            PublicationUsage::MD_TYPE_METADATA => $this->getLocaleString('md_type_' . PublicationUsage::MD_TYPE_METADATA)
         ]);
         $this->addItem($te);
 
