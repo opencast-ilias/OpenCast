@@ -301,7 +301,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "schedule" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && PluginConfig::getConfig(
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SCHEDULE_EVENT) && PluginConfig::getConfig(
             PluginConfig::F_CREATE_SCHEDULED_ALLOWED
         )) {
             $b = ilLinkButton::getInstance();
@@ -312,7 +312,7 @@ class xoctEventGUI extends xoctGUI
         }
 
         // add "Opencast Studio" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT) && PluginConfig::getConfig(
+        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_RECORD_EVENT) && PluginConfig::getConfig(
             PluginConfig::F_STUDIO_ALLOWED
         )) {
             $b = ilLinkButton::getInstance();
@@ -569,7 +569,7 @@ class xoctEventGUI extends xoctGUI
                                     'triggerer' : $(this),
                                     'options' : JSON.parse('[]')
                                 });
-                            });    
+                            });
                         };
                     </script>";
         }
@@ -589,7 +589,7 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_CREATE),
             !ToUManager::hasAcceptedToU($this->user->getId()),
             $this->objectSettings->getObjId(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         $this->wait_overlay->onUnload();
 
@@ -607,7 +607,7 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_CREATE),
             !ToUManager::hasAcceptedToU($this->user->getId()),
             $this->objectSettings->getObjId(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         )->withRequest($this->http->request());
         $data = $form->getData();
 
@@ -648,7 +648,7 @@ class xoctEventGUI extends xoctGUI
     {
         $WorkflowParameter = new WorkflowParameter();
         $defaultParameter = $fromData ?? new stdClass();
-        $admin = ilObjOpenCastAccess::hasPermission('edit_videos');
+        $admin = ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS);
         foreach ($WorkflowParameter::get() as $param) {
             $id = $param->getId();
             $defaultValue = $admin ? $param->getDefaultValueAdmin() : $param->getDefaultValueMember();
@@ -669,14 +669,14 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_CREATE_SCHEDULED),
             !ToUManager::hasAcceptedToU($this->user->getId()),
             $this->objectSettings->getObjId(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         $this->main_tpl->setContent($this->ui_renderer->render($form));
     }
 
     protected function createScheduled(): void
     {
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SCHEDULE_EVENT)) {
             $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
             $this->cancel();
         }
@@ -688,7 +688,7 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_CREATE_SCHEDULED),
             !ToUManager::hasAcceptedToU($this->user->getId()),
             $this->objectSettings->getObjId(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         )->withRequest($this->http->request());
         $data = $form->getData();
 
@@ -765,7 +765,7 @@ class xoctEventGUI extends xoctGUI
         $form = $this->formBuilder->update(
             $this->ctrl->getFormAction($this, self::CMD_UPDATE),
             $event->getMetadata(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         $this->main_tpl->setContent($this->ui_renderer->render($form));
     }
@@ -786,14 +786,14 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
             $event->getScheduling(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         $this->main_tpl->setContent($this->ui_renderer->render($form));
     }
 
     public function opencaststudio(): void
     {
-        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
+        if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_RECORD_EVENT)) {
             $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
             $this->cancel();
         }
@@ -846,6 +846,18 @@ class xoctEventGUI extends xoctGUI
         $usage_type = filter_input(INPUT_GET, 'usage_type', FILTER_SANITIZE_STRING);
         $usage_id = filter_input(INPUT_GET, 'usage_id', FILTER_SANITIZE_STRING);
         $event = $this->event_repository->find($event_id);
+        // Check permission to download before anything else.
+        $xoctUser = xoctUser::getInstance($this->user);
+        if (!ilObjOpenCastAccess::checkAction(
+            ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
+            $event,
+            $xoctUser,
+            $this->objectSettings
+        )) {
+            $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
+            $this->cancel();
+        }
+
         $download_publications = $event->publications()->getDownloadPublications();
         // Now that we have multiple sub-usages, we first check for publication_id which is passed by the multi-dropdowns.
         if ($publication_id) {
@@ -910,7 +922,7 @@ class xoctEventGUI extends xoctGUI
         $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
 
         // check access
-        if (ilObjOpenCastAccess::hasPermission('edit_videos') || ilObjOpenCastAccess::hasWriteAccess()) {
+        if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
             $this->addCurrentUserToProducers();
         }
 
@@ -946,7 +958,7 @@ class xoctEventGUI extends xoctGUI
         $form = $this->formBuilder->update(
             $this->ctrl->getFormAction($this, self::CMD_UPDATE),
             $event->getMetadata(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         )->withRequest($this->http->request());
         $data = $form->getData();
 
@@ -984,7 +996,7 @@ class xoctEventGUI extends xoctGUI
             $this->ctrl->getFormAction($this, self::CMD_UPDATE_SCHEDULED),
             $event->getMetadata(),
             $event->getScheduling(),
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         )->withRequest($this->http->request());
         $data = $form->getData();
 
@@ -1294,7 +1306,7 @@ class xoctEventGUI extends xoctGUI
     {
         $intro_text = '';
         if ($this->objectSettings->getIntroductionText() !== '' && $this->objectSettings->getIntroductionText(
-            ) !== '0') {
+        ) !== '0') {
             $intro = new ilTemplate(
                 './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html',
                 true,

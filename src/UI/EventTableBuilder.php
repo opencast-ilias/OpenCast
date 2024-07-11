@@ -74,7 +74,7 @@ class EventTableBuilder
             $parent_cmd,
             $objectSettings,
             $this->MDFieldConfigEventRepository->getAll(
-                ilObjOpenCastAccess::hasPermission('edit_videos')
+                ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
             ),
             $this->applyFilter(
                 $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
@@ -100,7 +100,7 @@ class EventTableBuilder
     public function filter(string $form_action): Standard
     {
         $mdFieldConfigs = $this->MDFieldConfigEventRepository->getAllFilterable(
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         return $this->ui_service->filter()->standard(
             'xoct_event_table',

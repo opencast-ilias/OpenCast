@@ -1,4 +1,8 @@
-# Change Log
+# Changelog
+
+- [FEATURE] New Right management #14 (via PR #301)
+- [FIX] The Opencast object cannot be deleted #275
+- [FIX] make code compliant to the ILIAS 7 version
 
 ## Version 8.0.7
 - [FIX] Improvements on paella player which fixes fixes #289, #292, #293, 
