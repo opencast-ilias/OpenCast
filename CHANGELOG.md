@@ -1,11 +1,14 @@
 # Changelog
 
+## Version 8.1.0
+
 - [FEATURE] OCT Text feature #71 (via PR #290)
 - [FEATURE] Upload Thumbnail (Preview) #291 (via PR #305)
 - [FEATURE] Upload Subtitles #10 (via PR #277)
 - [FEATURE] New Right management #14 (via PR #301)
 - [FIX] The Opencast object cannot be deleted #275
 - [FIX] make code compliant to the ILIAS 7 version
+
 
 ## Version 8.0.7
 - [FIX] Improvements on paella player which fixes fixes #289, #292, #293, 
