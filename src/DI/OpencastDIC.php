@@ -46,6 +46,7 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use xoctFileUploadHandlerGUI;
+use srag\Plugins\Opencast\UI\ThumbnailConfig\ThumbnailConfigFormBuilder;
 
 /**
  * @deperecated use srag\Plugins\Opencast\Container\Container instead
@@ -325,6 +326,14 @@ class OpencastDIC
                 );
             }
         );
+        $this->container['thumbnail_config_form_builder'] = $this->container->factory(
+            function ($c): \srag\Plugins\Opencast\UI\ThumbnailConfig\ThumbnailConfigFormBuilder {
+                return new ThumbnailConfigFormBuilder(
+                    $this->dic->ui()->factory(),
+                    $this->dic->ui()->renderer()
+                );
+            }
+        );
     }
 
     public function ingest_service(): OpencastIngestService
@@ -415,6 +424,10 @@ class OpencastDIC
     public function subtitle_config_form_builder(): SubtitleConfigFormBuilder
     {
         return $this->container['subtitle_config_form_builder'];
+    }
+    public function thumbnail_config_form_builder(): ThumbnailConfigFormBuilder
+    {
+        return $this->container['thumbnail_config_form_builder'];
     }
 
     public function overwriteService(string $service_identifier, $value): void

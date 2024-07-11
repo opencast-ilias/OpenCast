@@ -29,6 +29,7 @@ use DateTimeZone;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use ILIAS\UI\Component\Input\Field\Section;
+use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 
 /**
  * Responsible for creating forms to upload, schedule or edit an event.
@@ -43,8 +44,9 @@ class EventFormBuilder
     public const MB_IN_B = 1000 * 1000;
     public const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
     public const F_SUBTITLE_SECTION = 'subtitles';
+    public const F_THUMBNAIL_SECTION = 'thumbnail';
 
-    private static $accepted_video_mimetypes = [
+    private static array $accepted_video_mimetypes = [
         MimeTypeUtil::VIDEO__AVI,
         MimeTypeUtil::VIDEO__QUICKTIME,
         MimeTypeUtil::VIDEO__MPEG,
@@ -69,7 +71,7 @@ class EventFormBuilder
         '.mkv'
     ];
 
-    private static $accepted_audio_mimetypes = [
+    private static array $accepted_audio_mimetypes = [
         MimeTypeUtil::AUDIO__MP4,
         MimeTypeUtil::AUDIO__OGG,
         MimeTypeUtil::AUDIO__MPEG,
@@ -201,7 +203,11 @@ class EventFormBuilder
         // We must bind the WaitOverlay to an Input since the Form itself is not JS-bindable
         $file_input = $file_input->withAdditionalOnLoadCode(
             function ($id) {
-                return 'il.Opencast.UI.waitOverlay.onFormSubmit("#' . $id . '")';
+                $js = '
+                    il.Opencast.UI.waitOverlay.onFormSubmit("#' . $id . '");
+                    $("#' . $id . '").attr("data-videoFileInput", "' . $id . '");
+                ';
+                return $js;
             }
         );
 
@@ -220,6 +226,7 @@ class EventFormBuilder
                 $as_admin,
                 $this->plugin->txt('workflow_params_processing_settings')
             );
+
         $inputs = [
             'file' => $file_section,
             'metadata' => $this->formItemBuilder->create_section($as_admin),
@@ -272,6 +279,185 @@ class EventFormBuilder
         if (!is_null($workflow_param_section)) {
             $inputs['workflow_configuration'] = $workflow_param_section;
         }
+
+        // Thumbnails
+        // - First considering the straightToPublishing as a required wf param for this feature to work (by default).
+        $wf_id = 'straightToPublishing';
+        $stp_wf_value = WorkflowParameter::VALUE_ALWAYS_ACTIVE; // as default value in workflows are always true.
+        if (WorkflowParameter::where(['id' => $wf_id])->hasSets()) {
+            $workflow_parameter = WorkflowParameter::find($wf_id);
+            $stp_wf_value =
+                $as_admin ?
+                $workflow_parameter->getDefaultValueAdmin() :
+                $workflow_parameter->getDefaultValueMember();
+        }
+        $thumbnail_upload_enabled = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_ENABLED) ?? false;
+        $accepted_thumbnail_mimetypes = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES) ?? [];
+        $thumbnail_upload_mode = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_MODE) ??
+            $this->opencast_dic->thumbnail_config_form_builder()::F_THUMBNAIL_UPLOAD_MODE_BOTH;
+        // Prepare the mode.
+        $thumbnail_upload_mode_is_both =
+            $thumbnail_upload_mode == $this->opencast_dic->thumbnail_config_form_builder()::F_THUMBNAIL_UPLOAD_MODE_BOTH;
+        $thumbnail_upload_mode_is_file =
+            $thumbnail_upload_mode == $this->opencast_dic->thumbnail_config_form_builder()::F_THUMBNAIL_UPLOAD_MODE_FILE;
+        $thumbnail_upload_mode_is_timepoint =
+            $thumbnail_upload_mode == $this->opencast_dic->thumbnail_config_form_builder()::F_THUMBNAIL_UPLOAD_MODE_TIMEPOINT;
+
+        if ($thumbnail_upload_enabled && !empty($accepted_thumbnail_mimetypes)) {
+            $thumbnail_section_inputs = [];
+            // Thumbnail file input.
+            $thumbnail_file_input = ChunkedFile::getInstance(
+                $this->uploadHandler,
+                $this->plugin->txt('upload_ui_thumbnail_file'),
+                $this->plugin->txt('event_supported_filetypes') . ': ' .
+                    implode(', ', array_values($accepted_thumbnail_mimetypes))
+            )->withRequired(false);
+
+            $thumbnail_file_input =
+                $thumbnail_file_input->withAcceptedMimeTypes(array_values($accepted_thumbnail_mimetypes))
+                ->withRequired(false)
+                // Only 1 file per one subtitle is allowed!
+                ->withMaxFiles(1)
+                ->withMaxFileSize($upload_limit)
+                // Setting ChunkSize as upload limit, in order to prevent unwanted chunking.
+                ->withChunkSizeInBytes($upload_limit)
+                ->withAdditionalTransformation(
+                    $this->refinery_factory->custom()->transformation(
+                        function ($file) use ($upload_storage_service): array {
+                            $id = $file[0] ?? '';
+                            return $upload_storage_service->getFileInfo($id);
+                        }
+                    )
+                );
+
+            // Thumbnail timepoint timepicker input.
+            $target_accept_video_files = implode(',', $this->getMimeTypes());
+            $date_default = new \DateTime('today midnight');
+            $value_format_str = $date_default->format('H:i:s');
+            $timepoint_picker = $factory->dateTime(
+                $this->plugin->txt('upload_ui_thumbnail_timepoint'),
+                $this->plugin->txt('upload_ui_thumbnail_timepoint_info')
+            )
+                ->withValue($value_format_str)
+                ->withTimeOnly(true)
+                ->withAdditionalOnLoadCode(function ($id) use ($target_accept_video_files) {
+                    $js = '
+                    // On show: Set min date, in order to prevent infinite loop.
+                    $("#' . $id . '").on("dp.show", function () {
+                        let minDate = new Date();
+                        minDate.setHours(0,0,0,0);
+                        $("#' . $id . '").data("DateTimePicker").minDate(minDate);
+                    });
+                    // On change: reset placeholder and the date value if clear is performed.
+                    $("#' . $id . '").on("dp.change", function ({date, oldDate}) {
+                        if (!date) {
+                            // Reset placeholder on clear.
+                            $("#' . $id . '").find("input").attr("placeholder", "00:00:00");
+                            // Reset value on clear.
+                            let resetDate = new Date();
+                            resetDate.setHours(0,0,0,0);
+                            $("#' . $id . '").data("DateTimePicker").date(resetDate);
+                        }
+                    });
+                    // Extra: set max duration based on uploaded video file.
+                    window.URL = window.URL || window.webkitURL;
+                    function bindEventExtractVideoDuration() {
+                        var file_inputs = $("input:file");
+                        if (file_inputs.length > 0) {
+                            file_inputs.each(function (i, el) {
+                                if ($(el).attr("accept") == "' . $target_accept_video_files . '") {
+                                    $(el).on("change" , function () {
+                                        let files = this.files;
+                                        let video = document.createElement("video");
+                                        video.preload = "metadata";
+                                        video.onloadedmetadata = function() {
+                                            const duration = video.duration;
+                                            const hours = parseInt(Math.floor(duration / 3600), 10);
+                                            const minutes = parseInt(Math.floor((duration % 3600) / 60), 10);
+                                            const remainingSeconds = parseInt(duration % 60, 10);
+                                            // Reset date.
+                                            const resetDate = new Date();
+                                            resetDate.setHours(0,0,0,0);
+                                            $("#' . $id . '").data("DateTimePicker").date(resetDate);
+                                            // Max date,
+                                            const maxDate = new Date();
+                                            maxDate.setHours(hours,minutes,remainingSeconds,0);
+                                            $("#' . $id . '").data("DateTimePicker").maxDate(maxDate);
+                                        }
+                                        video.src = URL.createObjectURL(files[0]);
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    setTimeout(function () {
+                        bindEventExtractVideoDuration();
+                        $("[data-videoFileInput]").find(".ui-input-file-input-dropzone").on("drop", function () {
+                            bindEventExtractVideoDuration();
+                        });
+                        $("[data-videoFileInput]").find(".ui-input-file-input-dropzone > button").on("click", function () {
+                            bindEventExtractVideoDuration();
+                        });
+                    }, 500);';
+                    return $js;
+                })
+                ->withAdditionalPickerconfig([
+                    'useCurrent' => false,
+                    'format' => 'HH:mm:ss',
+                ]);
+
+            if ($thumbnail_upload_mode_is_both) {
+                $file_input_group = $factory->group(
+                    [
+                        "file" => $thumbnail_file_input
+                    ],
+                    $this->plugin->txt('upload_ui_thumbnail_mode_sg_file')
+                );
+                $timepoint_input_group = $factory->group(
+                    [
+                        "timepoint" => $timepoint_picker
+                    ],
+                    $this->plugin->txt('upload_ui_thumbnail_mode_sg_timepoint')
+                );
+
+                $switchable_group = $factory->switchableGroup(
+                    [
+                        'file' => $file_input_group,
+                        'timepoint' => $timepoint_input_group
+                    ],
+                    $this->plugin->txt('upload_ui_thumbnail_mode_sg'),
+                    $this->plugin->txt('upload_ui_thumbnail_mode_sg_info')
+                );
+                $thumbnail_section_inputs['mode'] = $switchable_group;
+            }
+            // Thumbnail File.
+            if ($thumbnail_upload_mode_is_file) {
+                $thumbnail_section_inputs['file'] = $thumbnail_file_input;
+            }
+
+            // Timepoint
+            if ($thumbnail_upload_mode_is_timepoint) {
+                $thumbnail_section_inputs['timepoint'] = $timepoint_picker;
+            }
+
+            if (!empty($thumbnail_section_inputs)) {
+                $thumbnail_section_info = '';
+                if ($stp_wf_value == WorkflowParameter::VALUE_SHOW_IN_FORM
+                    || $stp_wf_value == WorkflowParameter::VALUE_SHOW_IN_FORM_PRESET) {
+                    $thumbnail_section_info = $this->plugin->txt('upload_ui_thumbnail_section_stp_info');
+                } elseif ($stp_wf_value == WorkflowParameter::VALUE_ALWAYS_INACTIVE) {
+                    $thumbnail_section_info = $this->plugin->txt('upload_ui_thumbnail_section_stp_disabled_info');
+                }
+
+                $thumbnail_section = $factory->section(
+                    $thumbnail_section_inputs,
+                    $this->plugin->txt('upload_ui_thumbnail_section'),
+                    $thumbnail_section_info
+                )->withDisabled($stp_wf_value == WorkflowParameter::VALUE_ALWAYS_INACTIVE);
+                $inputs[self::F_THUMBNAIL_SECTION] = $thumbnail_section;
+            }
+        }
+
         if ($with_terms_of_use) {
             $inputs[self::F_ACCEPT_EULA] = $this->buildTermsOfUseSection();
         }

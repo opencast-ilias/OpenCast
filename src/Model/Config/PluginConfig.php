@@ -142,6 +142,10 @@ class PluginConfig extends ActiveRecord
     public const F_SUBTITLE_ACCEPTED_MIMETYPES = 'subtitle_config_accepted_mimetypes';
     public const F_SUBTITLE_LANGS = 'subtitle_config_langs';
 
+    public const F_THUMBNAIL_UPLOAD_ENABLED = 'thumbnail_config_upload_enabled';
+    public const F_THUMBNAIL_UPLOAD_MODE = 'thumbnail_config_upload_mode';
+    public const F_THUMBNAIL_ACCEPTED_MIMETYPES = 'thumbnail_config_accepted_mimetypes';
+
     /**
      * @var array
      */
@@ -577,16 +581,16 @@ class PluginConfig extends ActiveRecord
                 new DOMCdataSection((string) $xoctWorkflows->getWorkflowId())
             );
             $xml_xoctWf->appendChild(new DOMElement('title'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getTitle() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTitle() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('description'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getDescription() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getDescription() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('tags'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getTags() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getTags() ?? ''))
             );
             $xml_xoctWf->appendChild(new DOMElement('config_panel'))->appendChild(
-                new DOMCdataSection((string) $xoctWorkflows->getConfigPanel() ?? '')
+                new DOMCdataSection((string) ($xoctWorkflows->getConfigPanel() ?? ''))
             );
         }
 

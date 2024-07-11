@@ -13,10 +13,7 @@ use ilShellUtil;
 
 class OpencastIngestService
 {
-    /**
-     * @var UploadStorageService
-     */
-    private $uploadStorageService;
+    private UploadStorageService $uploadStorageService;
     /**
      * @var API
      */
@@ -89,6 +86,15 @@ class OpencastIngestService
                 );
             }
         }
+        // If thumbnail exists, we add it into attachments
+        if ($payload->hasThumbnail()) {
+            $media_package = $this->api->routes()->ingest->addAttachment(
+                $media_package,
+                'presentation/preview', // NOTE: This is aligned with the workflow, change it if you use other flavors.
+                $payload->getThumbnail()->getFileStream(),
+                'player' // NOTE: This is aligned with the workflow, change it if you use other tags.
+            );
+        }
 
         // track
         $media_package = $this->api->routes()->ingest->addTrack(
@@ -98,7 +104,7 @@ class OpencastIngestService
         );
 
         // Get workflow configuration params ready, make sure it is array!
-        $workflow_configuration = json_decode(json_encode($payload->getProcessing()->getConfiguration() ?? []), true);
+        $workflow_configuration = (array) $payload->getProcessing()->getConfiguration();
         // ingest
         $media_package = $this->api->routes()->ingest->ingest(
             $media_package,

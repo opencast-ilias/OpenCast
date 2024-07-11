@@ -757,3 +757,26 @@ config_paella_player_section_preview#:#Preview
 config_paella_player_section_caption#:#Caption
 config_paella_player_prevent_video_download#:#Prevent video download
 config_paella_player_prevent_video_download_info#:#When enabled, the direct video download from the player is prevented. <br> This can be achieved by right clicking on the video and select "save video as" or similar.
+subtab_thumbnails#:#Thumbnails
+config_thumbnail_upload_enabled#:#Enable thumbnail upload
+config_thumbnail_upload_enabled_info#:#Activating this option would enable uploading the thumbnail together with the video in the upload event form.<br><strong>NOTE:</strong> By default, "straightToPublishing" workflow parameter must be set to active, in order for this feature to work. This is because having "straightToPublishing" deactivated, puts the event in cutting mode, by which no thumbnail process is performed.
+config_thumbnail_accepted_mimetypes#:#Accepted File Types
+config_thumbnail_accepted_mimetypes_info#:#List of accepted extensions of the thumbnail file that users are allowed to upload.
+config_thumbnail_upload_mode#:#Upload Mode
+config_thumbnail_upload_mode_info#:#Selecting an option results in providing a thumbnail section in upload video page, with demanded input or inputs.
+config_thumbnail_upload_mode_both#:#Both modes (File upload and Timepoint)
+config_thumbnail_upload_mode_both_info#:#With this option, both modes are provided, but the users must select only one.
+config_thumbnail_upload_mode_file#:#File upload
+config_thumbnail_upload_mode_file_info#:#With this option, only a file input to upload thumbnail file is provided to the users.
+config_thumbnail_upload_mode_timepoint#:#Timepoint
+config_thumbnail_upload_mode_timepoint_info#:#With this option, only a timepicker input is provided to the users to select the timepoint of the video from whihc the thumbnail should be extracted.
+upload_ui_thumbnail_section#:#Thumbnail
+upload_ui_thumbnail_section_stp_info#:#<strong>NOTE:</strong> "Straight to publishing" Processing setting must be enabled, in order for this feature to work.
+upload_ui_thumbnail_section_stp_disabled_info#:#<strong>NOTE:</strong> "Straight to publishing" Processing setting is disabled in the configurations, therefore this feature is disabled as well.
+upload_ui_thumbnail_mode_sg#:#Mode
+upload_ui_thumbnail_mode_sg_info#:#You can select only one mode to generate thumbnails, either by uploading a file or selecting a timepoint.
+upload_ui_thumbnail_mode_sg_file#:#By uploading a file
+upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video tiempoint
+upload_ui_thumbnail_file#:#Thumbnail File
+upload_ui_thumbnail_timepoint#:#Timepoint
+upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract thumbnail from.
