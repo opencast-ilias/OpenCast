@@ -105,7 +105,8 @@ class EventAPIRepository implements EventRepository, Request
      */
     public function upload(UploadEventRequest $request): void
     {
-        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
+        // If there are subtitles to be uploaded alongside the video upload, we have to use ingest upload.
+        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD) || $request->getPayload()->hasSubtitles()) {
             $this->ingestService->ingest($request);
         } else {
             $payload = $request->getPayload()->jsonSerialize();

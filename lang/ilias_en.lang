@@ -731,6 +731,18 @@ series_member_download#:#Download
 series_member_download_info#:#Course or group members are given the permission "Download", which allows them to download videos. This setting can be changed later in the tab "Permissions".
 series_member_record#:#Recording
 series_member_record_info#:#Course or group members are given the permission "Record", which allows them to record videos with the tool ‘Opencast Studio’, to download, delete and edit their own videos (without cutting). This setting can be changed later in the tab "Permissions".
+subtab_subtitles#:#Subtitles
+config_subtitle#:#Subtitles
+config_subtitle_upload_enabled#:#Enable Subtitle Upload
+config_subtitle_upload_enabled_info#:#If enabled, subtitle files can also be uploaded when uploading a video.
+config_subtitle_accepted_mimetypes#:#Accepted File Types
+config_subtitle_accepted_mimetypes_info#:#List of accepted extensions of the subtitle files that users are allowed to upload.<br/>NOTE: Please make sure that the selected file types are also added into File Suffix Positive List (Adaptations) of ILIAS Administrative Settings under:<br/>Adminstration > System Settings and Maintenance > File Services<br/>IMPORTANT: In order to convert other file types to WebVTT, it is necessary to install and configure FFmpeg in ILIAS.
+config_subtitle_languages#:#Supported Languages
+config_subtitle_languages_info#:#These languages will be offered to the users to select as the subtitle language to upload.<br>One entry per line in the format like "[value]%s[label]". The separator is %s, and change [value] and [label] with whatever you want: e.g. eng%sEnglish
+config_subtitle_load_lang_list#:#Load language list from API
+config_subtitle_load_lang_list_confirmation#:#Are you sure you would like to load the language list from API?<br>NOTE: API Version 1.10.0 or later is required.
+config_subtitle_load_lang_list_abtn_label#:#Load
+upload_ui_subtitle_section#:#Subtitles
 config_paella_player_display_caption_text_type#:#Display Caption Text (Type)
 config_paella_player_display_caption_text_type_info#:#When enabled, the caption text contains the type of the caption if exists in the <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">tags</a>.
 config_paella_player_display_caption_text_generator#:#Display Caption Text (Generator)

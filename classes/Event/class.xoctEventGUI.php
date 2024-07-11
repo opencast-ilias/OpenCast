@@ -626,6 +626,18 @@ class xoctEventGUI extends xoctGUI
                 ->withValue($this->objectSettings->getSeriesIdentifier())
         );
 
+        // Subtitles.
+        $subtitles = [];
+        $subtitle_file_ids = [];
+        if (!empty($data[EventFormBuilder::F_SUBTITLE_SECTION])) {
+            foreach ($data[EventFormBuilder::F_SUBTITLE_SECTION] as $lang_code => $subtitle_file) {
+                if (!empty($subtitle_file['id'])) { // Make sure the file is not empty by checking the id!
+                    $subtitles[$lang_code] = xoctUploadFile::getInstanceFromFileArray($subtitle_file);
+                    $subtitle_file_ids[] = $subtitle_file['id'];
+                }
+            }
+        }
+
         $this->event_repository->upload(
             new UploadEventRequest(
                 new UploadEventRequestPayload(
@@ -635,11 +647,16 @@ class xoctEventGUI extends xoctGUI
                         PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
                         $this->getDefaultWorkflowParameters($data['workflow_configuration']['object'] ?? null)
                     ),
-                    xoctUploadFile::getInstanceFromFileArray($data['file']['file'])
+                    xoctUploadFile::getInstanceFromFileArray($data['file']['file']),
+                    $subtitles
                 )
             )
         );
         $this->uploadHandler->getUploadStorageService()->delete($data['file']['file']['id']);
+        // Removing subtitle files afterwards.
+        foreach ($subtitle_file_ids as $id) {
+            $this->uploadHandler->getUploadStorageService()->delete($id);
+        }
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }

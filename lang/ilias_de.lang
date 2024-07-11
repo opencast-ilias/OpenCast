@@ -728,6 +728,18 @@ series_member_download#:#Download
 series_member_download_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Download" die Möglichkeit, Videos herunterzuladen. Dies kann später im Tab "Rechte" geändert werden.
 series_member_record#:#Aufzeichnen
 series_member_record_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Aufzeichnen" die Möglichkeit, Videos mit dem Tool "Opencast Studio" zu erstellen, eigene Videos herunterzuladen, zu löschen und zu editieren (ohne schneiden). Dies kann später im Tab "Rechte" geändert werden.
+subtab_subtitles#:#Untertitel
+config_subtitle#:#Untertitel
+config_subtitle_upload_enabled#:#Untertitel-Upload aktivieren
+config_subtitle_upload_enabled_info#:#Wenn aktiviert, können beim Upload eines Videos auch Untertitel-Dateien hochgeladen werden.
+config_subtitle_accepted_mimetypes#:#Akzeptierte Dateitypen
+config_subtitle_accepted_mimetypes_info#:#Die akzeptierte Dateitypen der Untertiteldateien, die Benutzer hochladen dürfen.<br/>Achtung: Bitte stellen Sie sicher, dass die ausgewählten Dateitypen auch zur Dateisuffix-Positivliste (Anpassungen) der ILIAS-Verwaltungseinstellungen hinzugefügt werden unter:<br/>Verwaltung > Systemeinstellungen und Wartung > Dateidienste<br/>WICHTIG: Um Dateitypen in WebVTT zu konvertieren, ist es notwendig, FFmpeg in ILIAS zu installieren und zu konfigurieren.
+config_subtitle_languages#:#Unterstützte Sprachen
+config_subtitle_languages_info#:#Diese Sprachen werden den Benutzern zur Auswahl als Untertitelsprache zum Hochladen angeboten.<br>Ein Eintrag pro Zeile im Format wie "[Wert]%s[Label]". Das Trennzeichen ist %s, und ändern Sie [Wert] und [Beschriftung] nach Ihren Wünschen: z. B. eng%sEnglisch
+config_subtitle_load_lang_list#:#Sprachenliste von der API laden
+config_subtitle_load_lang_list_confirmation#:#Sind Sie sicher, dass Sie die Sprachliste von der API laden möchten?<br>Achtung:API-Version 1.10.0 oder höher ist erforderlich.
+config_subtitle_load_lang_list_abtn_label#:#Laden
+upload_ui_subtitle_section#:#Untertitel
 config_paella_player_display_caption_text_type#:#Caption Text (Typ) anzeigen
 config_paella_player_display_caption_text_type_info#:#Wenn aktiviert, enthält der Untertiteltext den Typ der Überschrift, sofern diese in den <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">Tags</a> vorhanden ist.
 config_paella_player_display_caption_text_generator#:#Caption Text (Generator) anzeigen

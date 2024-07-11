@@ -27,6 +27,7 @@ class xoctMainGUI extends xoctGUI
     public const SUBTAB_TOU = 'terms_of_use';
     public const SUBTAB_EVENTS = 'events';
     public const SUBTAB_PLAYER = 'player';
+    public const SUBTAB_SUBTITLES = 'subtitles';
     public const SUBTAB_GROUPS_ROLES = 'groups_roles';
     public const SUBTAB_SECURITY = 'security';
     public const SUBTAB_ADVANCED = 'advanced';
@@ -149,7 +150,8 @@ class xoctMainGUI extends xoctGUI
                 $xoctConfGUI = new xoctConfGUI(
                     $DIC->ui()->renderer(),
                     $opencast_dic->paella_config_upload_handler(),
-                    $opencast_dic->paella_config_form_builder()
+                    $opencast_dic->paella_config_form_builder(),
+                    $opencast_dic->subtitle_config_form_builder()
                 );
                 $this->ctrl->forwardCommand($xoctConfGUI);
                 break;
@@ -175,6 +177,12 @@ class xoctMainGUI extends xoctGUI
             self::SUBTAB_PLAYER,
             $this->plugin->txt('subtab_' . self::SUBTAB_PLAYER),
             $this->ctrl->getLinkTargetByClass(xoctConfGUI::class, 'player')
+        );
+        $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_SUBTITLES);
+        $this->tabs->addSubTab(
+            self::SUBTAB_SUBTITLES,
+            $this->plugin->txt('subtab_' . self::SUBTAB_SUBTITLES),
+            $this->ctrl->getLinkTargetByClass(xoctConfGUI::class, xoctConfGUI::CMD_SUBTITLE)
         );
         $this->ctrl->setParameterByClass(xoctConfGUI::class, 'subtab_active', self::SUBTAB_TOU);
         $this->tabs->addSubTab(
