@@ -61,8 +61,9 @@ class ThumbnailConfigFormBuilder
     {
         $dependant_fields = [];
         // Accepted mimetypes.
-        $selected_types = (array) PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES) ??
-            [ MimeTypeUtil::IMAGE__JPEG ];
+        $selected_types = (array) (PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES)
+            ?? [MimeTypeUtil::IMAGE__JPEG]);
+
         $dependant_fields[self::F_THUMBNAIL_ACCEPTED_MIMETYPES] = $this->ui_factory->input()->field()
             ->multiselect(
                 $this->txt(self::F_THUMBNAIL_ACCEPTED_MIMETYPES),
