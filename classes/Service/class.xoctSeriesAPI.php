@@ -78,7 +78,6 @@ class xoctSeriesAPI
      *  introduction_text => text
      *  license => text
      *  use_annotations => boolean
-     *  streaming_only => boolean
      *  permission_per_clip => boolean
      *  permission_allow_set_own => boolean
      *  member_upload => boolean
@@ -116,7 +115,6 @@ class xoctSeriesAPI
         $objectSettings->setAgreementAccepted(true);
         $objectSettings->setIntroductionText($additional_data['introduction_text'] ?? '');
         $objectSettings->setUseAnnotations($additional_data['use_annotations'] ?? false);
-        $objectSettings->setStreamingOnly($additional_data['streaming_only'] ?? false);
         $objectSettings->setPermissionPerClip($additional_data['permission_per_clip'] ?? false);
         $objectSettings->setPermissionAllowSetOwn($additional_data['permission_allow_set_own'] ?? false);
 
@@ -135,14 +133,12 @@ class xoctSeriesAPI
             $xoctPermissionTemplate = PermissionTemplate::find($additional_data['permission_template_id']);
             $xoctPermissionTemplate->addToAcls(
                 $acl,
-                !$objectSettings->getStreamingOnly(),
                 $objectSettings->getUseAnnotations()
             );
         } elseif ($default_template = PermissionTemplate::where(['is_default' => 1])->first()) {
             /** @var PermissionTemplate $default_template */
             $default_template->addToAcls(
                 $acl,
-                !$objectSettings->getStreamingOnly(),
                 $objectSettings->getUseAnnotations()
             );
         }
@@ -226,7 +222,6 @@ class xoctSeriesAPI
      *  introduction_text => text
      *  license => text
      *  use_annotations => boolean
-     *  streaming_only => boolean
      *  permission_per_clip => boolean
      *  permission_allow_set_own => boolean
      *  member_upload => boolean
@@ -252,7 +247,6 @@ class xoctSeriesAPI
                 'introduction_text',
                 'license',
                 'use_annotations',
-                'streaming_only',
                 'permission_per_clip',
                 'permission_allow_set_own'
             ] as $field
@@ -269,8 +263,7 @@ class xoctSeriesAPI
 
         // opencast data
         if (isset($data['permission_template_id']) ||
-            ($series->getPermissionTemplateId(
-                ) && (isset($data['use_annotations']) || isset($data['streaming_only'])))) {
+            ($series->getPermissionTemplateId() && isset($data['use_annotations']))) {
             $series_acls = $series->getAccessPolicies();
             PermissionTemplate::removeAllTemplatesFromAcls($series_acls);
             /** @var PermissionTemplate $xoctPermissionTemplate */
@@ -279,7 +272,6 @@ class xoctSeriesAPI
             );
             $xoctPermissionTemplate->addToAcls(
                 $series_acls,
-                !$settings->getStreamingOnly(),
                 $settings->getUseAnnotations()
             );
             $series->setAccessPolicies($series_acls);

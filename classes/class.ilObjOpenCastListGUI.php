@@ -45,7 +45,8 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 
         // Should be overwritten according to status
         $this->cut_enabled = true;
-        $this->copy_enabled = true;
+
+        $this->copy_enabled = ilOpenCastPlugin::ALLOW_DUPLICATION;
 
         return [
             [

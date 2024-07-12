@@ -295,7 +295,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             );
         }
 
-        // ToDo: Why does this access check not work?
         if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
             $this->ilias_dic->tabs()->addTab(
                 self::TAB_EULA,
@@ -387,7 +386,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             /** @var string|false $series_id */
             $series_id = $additional_args['series_type']['channel_id'] ?? null;
             /** @var bool $is_memberupload_enabled */
-            $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
+            $is_memberupload_enabled = (bool) ($additional_args['member_rights']['member_upload'] ?? false);
+            /** @var bool $is_memberdownload_enabled */
+            $is_memberdownload_enabled = (bool) ($additional_args['member_rights']['member_download'] ?? false);
+            /** @var bool $is_memberrecord_enabled */
+            $is_memberrecord_enabled = (bool) ($additional_args['member_rights']['member_record'] ?? false);
             /** @var int $perm_tpl_id */
             $perm_tpl_id = $additional_args['settings']['permission_template'] ?? null;
         }
@@ -423,7 +426,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         if (!empty($perm_tpl)) {
             $acl = $perm_tpl->addToAcls(
                 $acl,
-                !$settings->getStreamingOnly(),
                 $settings->getUseAnnotations()
             );
         }
@@ -451,10 +453,19 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->tpl->setOnScreenMessage('info', $this->plugin->txt('msg_info_multiple_aftersave'), true);
         }
 
-        // checkbox from creation gui to activate "upload" permission for members
-        if ($is_memberupload_enabled) {
-            ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
+        // Initiate the default perms for members.
+        // Looking for additionals when creating a new series object.
+        $additional_perms = [];
+        if (!empty($is_memberupload_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_UPLOAD;
         }
+        if (!empty($is_memberdownload_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_DOWNLOAD;
+        }
+        if (!empty($is_memberrecord_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_RECORD;
+        }
+        ilObjOpenCastAccess::applyDefaultPerms($newObj->getRefId(), $additional_perms);
 
         $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
         $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
@@ -559,7 +570,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 sprintf(
                     $this->plugin->txt(
                         'series_video_portal_link'
-                    ), $video_portal_title
+                    ),
+                    $video_portal_title
                 ),
                 $objectSettings->getVideoPortalLink()
             );

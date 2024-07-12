@@ -15,17 +15,24 @@
     --base-video-rect-background-color: #9CA3AF;
 }
 
-
-
-
-.button-group .button-plugin-wrapper .button-description,
 .button-group-title,
 .menu-button-title,
-button {
+.playback-bar button,
+.popup-content .title-bar {
     font-family: roboto;
-    font-weight: 600;
+    font-weight: bold;
 }
 
+.button-group .button-plugin-wrapper .button-description,
+ul.menu-button-content li.menu-button-item button {
+    font-family: roboto;
+    font-weight: normal;
+}
+
+.button-group .button-plugin-wrapper .button-description {
+    text-align: center;
+    flex: 1;
+}
 
 .progress-indicator-container {
     forced-color-adjust: none;

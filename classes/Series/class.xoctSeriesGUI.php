@@ -151,7 +151,7 @@ class xoctSeriesGUI extends xoctGUI
             $this->ctrl->getLinkTarget($this, self::CMD_UPDATE_GENERAL),
             $this->objectSettings,
             $series,
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
         $this->main_tpl->setContent($pre_form_data . $this->ui->renderer()->render($form));
     }
@@ -168,7 +168,7 @@ class xoctSeriesGUI extends xoctGUI
             $this->ctrl->getFormAction($this),
             $this->objectSettings,
             $series,
-            ilObjOpenCastAccess::hasPermission('edit_videos')
+            ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         )->withRequest($this->http->request());
 
         $data = $form->getData();
@@ -197,7 +197,6 @@ class xoctSeriesGUI extends xoctGUI
             $series->setAccessPolicies(
                 $perm_tpl->addToAcls(
                     $series->getAccessPolicies(),
-                    !$objectSettings->getStreamingOnly(),
                     $objectSettings->getUseAnnotations()
                 )
             );
