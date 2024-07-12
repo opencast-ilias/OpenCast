@@ -124,7 +124,7 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false));
 
         // OCR Text
         $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
@@ -205,7 +205,7 @@ class PaellaConfigFormBuilder
                     self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE . '_info'
                 )
             )
-            ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE) ?? false);
+            ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE) ?? false));
 
         $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR] =
             $this->ui_factory->input()->field()
@@ -217,7 +217,7 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR) ?? false));
 
         $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE] =
             $this->ui_factory->input()->field()
@@ -229,7 +229,7 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false));
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,

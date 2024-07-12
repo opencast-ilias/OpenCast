@@ -34,14 +34,12 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         return $this->_getLocaleString($string, empty($module) ? 'config_paella_player' : $module, $fallback);
     }
 
-    private static $mimetype_mapping = [
     private static array $mimetype_mapping = [
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
         'video/mp4' => 'mp4'
     ];
 
-    private static $role_mapping = [
     private static array $role_mapping = [
         PublicationMetadata::ROLE_PRESENTER => self::ROLE_MASTER,
         PublicationMetadata::ROLE_PRESENTATION => self::ROLE_SLAVE
