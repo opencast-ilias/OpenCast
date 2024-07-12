@@ -67,7 +67,7 @@ class SubtitleConfigFormBuilder
     {
         $dependant_fields = [];
         // Accepted mimetypes.
-        $selected_types = (array) PluginConfig::getConfig(PluginConfig::F_SUBTITLE_ACCEPTED_MIMETYPES) ?? [];
+        $selected_types = (array) (PluginConfig::getConfig(PluginConfig::F_SUBTITLE_ACCEPTED_MIMETYPES) ?? []);
         $dependant_fields[self::F_SUBTITLE_ACCEPTED_MIMETYPES] = $this->ui_factory->input()->field()
             ->multiselect(
                 $this->txt(
