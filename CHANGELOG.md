@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 8.1.1
+
+- [FIX] bad merge conflict leads to error in StandardPlayerDataBuilder #324
+
+
 ## Version 8.1.0
 
 - [FEATURE] OCT Text feature #71 (via PR #290)
