@@ -31,6 +31,8 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_FALLBACK_CAPTIONS_OPTION = 'paella_player_fallback_captions_option';
     // Paella Player language Settings
     public const F_PAELLA_PLAYER_FALLBACK_LANGS_OPTION = 'paella_player_fallback_langs_option';
+    // Paella Player OCR Text
+    public const F_PAELLA_PLAYER_OCR_TEXT_ENABLE = 'paella_player_ocr_text_enable';
     // Paella Player Display Caption Text Type
     public const F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE = 'paella_player_display_caption_text_type';
     // Paella Player Display Caption Text Generator
@@ -122,7 +124,16 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_PREVENT_VIDEO_DOWNLOAD . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false));
+
+        // OCR Text
+        $ocr_text_default_value = PluginConfig::getConfig(PluginConfig::F_PAELLA_OCR_TEXT_ENABLE) ?? false;
+        $generals[self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE] =
+            $this->ui_factory->input()->field()->checkbox(
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE),
+                $this->txt(self::F_PAELLA_PLAYER_OCR_TEXT_ENABLE . '_info'),
+            )
+            ->withValue((bool) $ocr_text_default_value);
 
         $themes[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
             $this->ui_renderer->render(
@@ -194,7 +205,7 @@ class PaellaConfigFormBuilder
                     self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_TYPE . '_info'
                 )
             )
-            ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE) ?? false);
+            ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE) ?? false));
 
         $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR] =
             $this->ui_factory->input()->field()
@@ -206,7 +217,7 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR) ?? false));
 
         $captions[self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE] =
             $this->ui_factory->input()->field()
@@ -218,7 +229,7 @@ class PaellaConfigFormBuilder
                         self::F_PAELLA_PLAYER_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE . '_info'
                     )
                 )
-                ->withValue((bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false);
+                ->withValue((bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE) ?? false));
 
         return $this->ui_factory->input()->container()->form()->standard(
             $form_action,
