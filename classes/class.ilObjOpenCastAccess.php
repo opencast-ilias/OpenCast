@@ -375,7 +375,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
-        $prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
+        $prefix = in_array($action, self::$custom_rights, true) ? "rep_robj_xoct_perm_" : "";
         if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
             return false;
         }
@@ -386,7 +386,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         );
         foreach ($active_operations as $op_id) {
             $operation = $DIC->rbac()->review()->getOperation($op_id);
-            if ($operation['operation'] == $prefix . $action) {
+            if (($operation['operation'] ?? null) === $prefix . $action) {
                 return true;
             }
         }
