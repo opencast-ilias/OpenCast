@@ -34,9 +34,13 @@ cd Customizing/global/plugins/Services/Repository/RepositoryObject/
 git clone https://github.com/opencast-ilias/OpenCast.git
 ```
 
-ILIAS < 8: As ILIAS administrator go to "Administration"->"Plugins" and 
-install/activate the plugin.
+ILIAS < 8: As ILIAS administrator go to "Administration"->"Plugins" and install/activate the plugin.
 ILIAS >= 8: You can install the plugin using CLI, see https://github.com/ILIAS-eLearning/ILIAS/blob/release_8/setup/README.md
+
+### Upgrade notes
+- **v8.1.x**
+  - If you are upgrading the plugin to version v8.1.x from older versions, you would have to perform CLI update command in order to avoid `SQLSTATE[42S22]: Column not found` error. For more info: [CLI update Command help](https://github.com/opencast-ilias/OpenCast/wiki/Rights-Settings-Extension#cli-commands-update--achieve-important)
+  - **NOTE**: The item 3 in the above help documentation is considered as a ricky action, therefore pay close attention to the printed messages along the way.
 
 ### Configuration
 After a fresh installation, the plugin configuration will already contain a basic configuration. A few things will have to be adjusted to make the plugin work though. Have a look at the [configuration manual](./doc/CONFIGURATION.md).
