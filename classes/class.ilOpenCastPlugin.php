@@ -37,6 +37,8 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
     public const PLUGIN_ID = 'xoct';
     public const PLUGIN_NAME = 'OpenCast';
+    // Toggle duplication capability, turning to off as it creates confusion!
+    public const ALLOW_DUPLICATION = false;
     /**
      * @var ilDBInterface|null
      */
@@ -126,6 +128,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
     public function allowCopy(): bool
     {
-        return true;
+        // No more copy!
+        return self::ALLOW_DUPLICATION;
     }
 }

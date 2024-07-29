@@ -158,7 +158,7 @@ class PublicationSubUsage extends ActiveRecord
      * @con_fieldtype  integer
      * @con_length     1
      */
-    protected $ignore_object_setting = false;
+    protected $overwrite_download_perm = false;
     /**
      * @var bool
      *
@@ -406,17 +406,17 @@ class PublicationSubUsage extends ActiveRecord
     /**
      * @return bool
      */
-    public function ignoreObjectSettings(): bool
+    public function overwriteDownloadPerm(): bool
     {
-        return (bool) $this->ignore_object_setting;
+        return (bool) $this->overwrite_download_perm;
     }
 
     /**
-     * @param bool $ignore_object_setting
+     * @param bool $overwrite_download_perm
      */
-    public function setIgnoreObjectSettings(bool $ignore_object_setting)
+    public function setOverwriteDownloadPerm(bool $overwrite_download_perm)
     {
-        $this->ignore_object_setting = $ignore_object_setting;
+        $this->overwrite_download_perm = $overwrite_download_perm;
     }
 
     /**
