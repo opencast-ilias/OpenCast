@@ -272,7 +272,7 @@ event_created_unix#:#Date
 event_event_created_unix#:#Date
 event_event_event_created_unix#:#Date
 event_set_online#:#Set online
-event_delete_confirm_w_duplicates#:#This will delete the Event in Opencast and in every linked series in ILIAS. Do you want to proceed?
+event_delete_confirm_w_duplicates#:#Deleting causes the recording to be permanently deleted (on Opencast and in every linked series in ILIAS (see below and in the "Info" tab)).<br />Do you really want to delete this recording?
 event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
@@ -388,8 +388,8 @@ series_streaming_only_info#:#Hides 'Download' Buttons.
 series_title#:#Title
 series_update#:#Update
 series_use_annotations#:#Activate Annotations
-series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
-series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
+series_has_duplicates#:#This Series has several links in ILIAS (see below and in tab «Info»).<br />Changes to the title, description, license and publication on Tobira affect all links.
+series_has_duplicates_events#:#This Series has several links in ILIAS (see below and in tab «Info»).<br />Uploads will appear in every linked series, too.
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload by members
 series_member_upload_info#:#Course- or groupmembers are given the permission "Upload", which allows them to upload videos and delete own videos. This setting can be changed later in the tab "Permissions".
@@ -462,7 +462,7 @@ xoct_edit_permission#:#User can change permission settings
 xoct_copy#:#User can copy the object
 form_msg_select#:#Please select fist a Videofile
 form_msg_not_supported#:#Filetype is not supported
-info_linked_items#:#Links
+info_linked_items#:#Links in ILIAS
 info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
