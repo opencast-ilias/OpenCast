@@ -18,6 +18,7 @@
         },
         "videoContainer": {
             "overPlaybackBar": false,
+            "restorePlaybackRate": false,
             "dynamicLayout": {
                 "landscapeVerticalAlignment": "align-bottom",
                 "portraitHorizontalAlignment": "align-center"
