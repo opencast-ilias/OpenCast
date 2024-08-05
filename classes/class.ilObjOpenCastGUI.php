@@ -140,6 +140,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctSeriesGUI(
+                        $this,
                         $this->object,
                         $this->opencast_dic->series_form_builder(),
                         $this->container->get(SeriesAPIRepository::class),
@@ -571,5 +572,31 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         // forward the command
         $this->ilias_dic->ctrl()->forwardCommand($info);
+    }
+
+    /**
+     * Checks the series duplicates and renders a list of linked series.
+     */
+    public function renderLinksListSection(): string
+    {
+        $objectSettings = ObjectSettings::find($this->obj_id);
+        if ($refs = $objectSettings->getDuplicatesOnSystem()) {
+            $links_list_tpl = $this->plugin->getTemplate('default/tpl.links_list.html');
+            $links_list_tpl->setVariable('TXT_SECTION', $this->plugin->txt('info_linked_items'));
+            $i = 1;
+            $list_items = [];
+            foreach ($refs as $ref) {
+                $links_list_item_tpl = $this->plugin->getTemplate('default/tpl.links_list_item.html');
+                $parent = $this->ilias_dic->repositoryTree()->getParentId($ref);
+                $links_list_item_tpl->setVariable('TXT_KEY', ($i) . '. ' . $this->plugin->txt('info_linked_item'));
+                $links_list_item_tpl->setVariable('TXT_LINK', ilLink::_getStaticLink($parent));
+                $links_list_item_tpl->setVariable('TXT_LINK_LABEL', ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)));
+                $list_items[] = $links_list_item_tpl->get();
+                $i++;
+            }
+            $links_list_tpl->setVariable('LIST_ITEMS', implode(' ', $list_items));
+            return $links_list_tpl->get();
+        }
+        return '';
     }
 }

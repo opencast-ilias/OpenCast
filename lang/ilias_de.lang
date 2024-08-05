@@ -270,7 +270,7 @@ event_supported_filetypes#:#Unterstützte Dateitypen
 event_set_offline#:#Offline schalten
 event_created_unix#:#Datum
 event_set_online#:#Online schalten
-event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf Opencast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
+event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf Opencast und in den anderen ILIAS-Verlinkungen, siehe unten und im Tab «Info»).<br />Wollen Sie diese Aufzeichnung wirklich löschen?
 event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
 event_report_date_modification#:#Terminanpassungen melden
@@ -385,8 +385,8 @@ series_streaming_only_info#:#Entfernt 'Download'-Buttons.
 series_title#:#Titel
 series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren
-series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
-series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
+series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Änderungen an Titel, Beschreibung, Lizenz und Publikation auf Tobira wirken sich auf alle Verlinkungen aus.
+series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Hochgeladene Aufzeichnungen erscheinen in allen Verlinkungen.
 series_has_duplicates_events_delete#:#MISSING
 series_member_upload#:#Upload durch Mitglieder
 series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
@@ -457,7 +457,7 @@ xoct_edit_permission#:#Rechteeinstellungen des Opencast-Objektes ändern
 xoct_copy#:#Benutzer kann das Objekt kopieren
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 form_msg_not_supported#:#Dateityp wird nicht unterstützt
-info_linked_items#:#Verlinkungen
+info_linked_items#:#Verlinkungen in ILIAS
 info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.

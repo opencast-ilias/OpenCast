@@ -569,7 +569,7 @@ class xoctEventGUI extends xoctGUI
                                     'triggerer' : $(this),
                                     'options' : JSON.parse('[]')
                                 });
-                            });    
+                            });
                         };
                     </script>";
         }
@@ -582,7 +582,8 @@ class xoctEventGUI extends xoctGUI
      */
     protected function add(): void
     {
-        if ($this->objectSettings->getDuplicatesOnSystem()) {
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->upload(
@@ -593,7 +594,7 @@ class xoctEventGUI extends xoctGUI
         );
         $this->wait_overlay->onUnload();
 
-        $this->main_tpl->setContent($this->ui_renderer->render($form));
+        $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
     }
 
     protected function create(): void
@@ -612,7 +613,11 @@ class xoctEventGUI extends xoctGUI
         $data = $form->getData();
 
         if (!$data) {
-            $this->main_tpl->setContent($this->ui_renderer->render($form));
+            $pre_form_data = $this->parent_gui->renderLinksListSection();
+            if (!empty($pre_form_data)) {
+                $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates_events'));
+            }
+            $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
             return;
         }
 
@@ -662,7 +667,8 @@ class xoctEventGUI extends xoctGUI
 
     protected function schedule(): void
     {
-        if ($this->objectSettings->getDuplicatesOnSystem()) {
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->schedule(
@@ -671,7 +677,7 @@ class xoctEventGUI extends xoctGUI
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission('edit_videos')
         );
-        $this->main_tpl->setContent($this->ui_renderer->render($form));
+        $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
     }
 
     protected function createScheduled(): void
@@ -681,7 +687,8 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
 
-        if ($this->objectSettings->getDuplicatesOnSystem()) {
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates_events'));
         }
         $form = $this->formBuilder->schedule(
@@ -693,7 +700,7 @@ class xoctEventGUI extends xoctGUI
         $data = $form->getData();
 
         if (!$data) {
-            $this->main_tpl->setContent($this->ui_renderer->render($form));
+            $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
             return;
         }
 
@@ -723,13 +730,13 @@ class xoctEventGUI extends xoctGUI
             );
         } catch (xoctException $e) {
             $this->checkAndShowConflictMessage($e);
-            $this->main_tpl->setContent($this->ui_renderer->render($form));
+            $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
             return;
         }
 
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
-        $this->main_tpl->setContent($this->ui_renderer->render($form));
+        $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
     }
 
     private function checkAndShowConflictMessage(xoctException $e): void
@@ -1123,7 +1130,8 @@ class xoctEventGUI extends xoctGUI
         $ilConfirmationGUI->setCancel($this->txt('cancel'), self::CMD_CANCEL);
         $ilConfirmationGUI->setConfirm($this->txt($action_text), self::CMD_DELETE);
         $ilConfirmationGUI->addItem(self::IDENTIFIER, $event->getIdentifier(), $event->getTitle());
-        $this->main_tpl->setContent($ilConfirmationGUI->getHTML());
+        $pre_form_data = $this->parent_gui->renderLinksListSection();
+        $this->main_tpl->setContent($pre_form_data . $ilConfirmationGUI->getHTML());
     }
 
     protected function delete(): void
