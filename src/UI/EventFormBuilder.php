@@ -200,14 +200,47 @@ class EventFormBuilder
                                      )
                                  );
 
-        // We must bind the WaitOverlay to an Input since the Form itself is not JS-bindable
+        // We must bind the WaitOverlay to an Input since the Form itself is not JS-bindable.
+        // We also create the callback function which uses the fileInputMutationObserver to update title.
         $file_input = $file_input->withAdditionalOnLoadCode(
             function ($id) {
-                $js = '
+                return '
+                    // Wait Overlay.
                     il.Opencast.UI.waitOverlay.onFormSubmit("#' . $id . '");
+
+                    // Thumbnail timepoint validation.
                     $("#' . $id . '").attr("data-videoFileInput", "' . $id . '");
+
+                    // Title Update with filename.
+                    let childlist_callback = [];
+                    let update_title = (c) => {
+                        const targetElement = $(c.targetNode);
+                        const titleElement = $("input[data-titleinput]");
+                        let last_filename = targetElement.data("last-filename");
+                        let title_val = titleElement.val();
+                        const selector = ".ui-input-file-input-list .ui-input-file-input .ui-input-file-info span[data-dz-name]";
+                        let dz_name_span_find = targetElement.find(selector);
+                        if (dz_name_span_find && dz_name_span_find.length > 0) {
+                            const dz_name_span = dz_name_span_find[0];
+                            const dz_name = dz_name_span.innerText;
+                            let filename = dz_name;
+                            if (filename && filename.includes(".")) {
+                                const filename_split = filename.split(".");
+                                const ext = filename_split.pop();
+                                filename = filename_split.join(".");
+                            }
+                            if (title_val == "") {
+                                titleElement.val(filename);
+                                targetElement.data("last-filename", filename);
+                            }
+                        } else if (last_filename == title_val) {
+                            titleElement.val("");
+                            targetElement.data("last-filename", "");
+                        }
+                    };
+                    childlist_callback.push(update_title);
+                    il.Opencast.UI.fileInputMutationObserver.init("' . $id . '", childlist_callback);
                 ';
-                return $js;
             }
         );
 

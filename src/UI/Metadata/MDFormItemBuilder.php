@@ -32,6 +32,9 @@ use xoctException;
 class MDFormItemBuilder
 {
     public const LABEL_PREFIX = 'md_';
+    public static $binding_fields = [
+        'title' => 'titleinput'
+    ];
 
     /**
      * @var UIFactory
@@ -247,8 +250,26 @@ class MDFormItemBuilder
                     'Unknown MDDataType: ' . $md_definition->getType()->getTitle()
                 );
         }
+        if (in_array($fieldConfigAR->getFieldId(), array_keys(self::$binding_fields))) {
+            $binding_data = self::$binding_fields[$fieldConfigAR->getFieldId()];
+            $field = $field->withAdditionalOnLoadCode(
+                function ($id) use ($binding_data) {
+                    return '
+                        $("#' . $id . '").attr("data-' . $binding_data . '", "bind");
+                    ';
+                }
+            );
+        }
         $field = $field
-            ->withRequired($fieldConfigAR->isRequired())
+            ->withRequired(
+                $fieldConfigAR->isRequired(),
+                // Custom required constraint, to provide better error message.
+                $this->refinery_factory->custom()->constraint(
+                    function ($value): bool {
+                        return !empty(trim($value));
+                    },
+                $this->plugin->txt('msg_empty_required_field')
+            ))
             ->withDisabled($fieldConfigAR->isReadOnly());
         return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
