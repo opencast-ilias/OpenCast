@@ -131,4 +131,12 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         // No more copy!
         return self::ALLOW_DUPLICATION;
     }
+
+    public function install(): void
+    {
+        if (PHP_SAPI === 'cli') {
+            $this->update();
+        }
+        parent::afterInstall();
+    }
 }
