@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 8.1.3
+- Merge PR #318
+- Merge PR #312
+- Merge PR #320
+- [FIX] Undefined array key "operation" when creating series #326
+- [IMPROVEMENT] Update readme to add CLI update info
+- [FIX] Issue preventing opening publications -> usage groups and export #319
+- [FIX] Issue with Scheduling Parser throws error on null inputs #317
+- [FIX] Issue Undefined array key "workflow_parameters" #311
+
+
 ## Version 8.1.2
 - Merge PR #306
 - Merge PR #308
