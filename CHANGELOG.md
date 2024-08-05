@@ -1,4 +1,9 @@
-# Change Log
+# Changelog
+
+## Version 7.0.6
+- Merge PR #307
+- [FIX] linked series listing, refs #270, refs #268
+- [FIX] ensure the series acl change call in needed
 
 ## Version 7.0.5
 - [FIX] Improvements on paella player which fixes fixes #289, #292, #293,
