@@ -1,5 +1,21 @@
 # Changelog
 
+## Version 8.1.2
+- Merge PR #306
+- Merge PR #308
+- Merge PR #309
+- Merge PR #322
+- Merge PR #332
+- [FIX] Issue with changing series metadata leads to unnecessary acl update #297
+- [FIX] Issue with installation #330
+- [FIX] Iissue with Events in the status "Ingesting" #148
+- [FIX] unused syntax
+- [FIX] Issue with Upload of a new event with missing title #171
+- [FIX] Issue with Upload mask: list all linked opencast series, before 
+  users upload new event #270
+- [FIX] Issue with List/show all linked series in the DeleteConfirmationDialog #268
+
+
 ## Version 8.1.1
 
 - [FIX] bad merge conflict leads to error in StandardPlayerDataBuilder #324
