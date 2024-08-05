@@ -199,7 +199,7 @@ event_cut#:#Cut
 event_date#:#Date
 event_delete#:#Delete
 event_unpublish#:#Delete Publications
-event_delete_confirm#:#This will delete the Event in ILIAS and in Opencast. Do you want to proceed?
+event_delete_confirm#:#Deleting causes the recording to be permanently deleted (also on Opencast).<br />Do you really want to delete this recording?
 event_unpublish_confirm#:#You have to remove all publications from this event in order to delete this event. Do you want to proceed?
 event_description#:#Subtitle
 event_download#:#Download
@@ -272,7 +272,7 @@ event_created_unix#:#Date
 event_event_created_unix#:#Date
 event_event_event_created_unix#:#Date
 event_set_online#:#Set online
-event_delete_confirm_w_duplicates#:#This will delete the Event in Opencast and in every linked series in ILIAS. Do you want to proceed?
+event_delete_confirm_w_duplicates#:#Deleting causes the recording to be permanently deleted (on Opencast and in every linked series in ILIAS (see below and in the "Info" tab).<br />Do you really want to delete this recording?
 event_state_failed_owner#:#Publication failed. Please contact the support.
 event_state_running_owner#:#Converting, not yet visible to other students
 event_report_date_modification#:#Report Date Modifications
@@ -387,8 +387,8 @@ series_show_upload_token_info#:#Displays a code which students can use to upload
 series_title#:#Title
 series_update#:#Update
 series_use_annotations#:#Activate Annotations
-series_has_duplicates#:#This Series has several links in ILIAS. Changes affect all links.
-series_has_duplicates_events#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
+series_has_duplicates#:#This Series has several links in ILIAS (see below and in tab «Info»).<br />Changes to the title, description, license and publication on Tobira affect all links.
+series_has_duplicates_events#:#This Series has several links in ILIAS (see below and in tab «Info»).<br />Uploads will appear in every linked series, too.
 series_has_duplicates_events_delete#:#MISSING
 series_existing_series#:#Existing Series
 series_video_portal_link#:#Link to Series in %s
@@ -459,7 +459,7 @@ xoct_edit_permission#:#User can change permission settings
 xoct_copy#:#User can copy the object
 form_msg_select#:#Please select fist a Videofile
 form_msg_not_supported#:#Filetype is not supported
-info_linked_items#:#Links
+info_linked_items#:#Links in ILIAS
 info_linked_item#:#Link
 info_auto_publish_forced#:#The video will be published automatically, since you don't own the rights to publish it manually.
 msg_info_multiple_aftersave#:#This Series has several links in ILIAS. Uploads will appear in every linked series, too.
