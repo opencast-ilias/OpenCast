@@ -44,7 +44,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
      */
     protected $_db = null; // to have compatibility with ILAIS 7 and 8, we double introduce the property
 
-    private $is_new_installation = false;
+    private bool $is_new_installation = false;
 
     protected function init(): void
     {
@@ -58,6 +58,16 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
     protected function beforeUpdate(): bool
     {
+        if (PHP_SAPI !== 'cli') {
+            global $DIC;
+            $DIC->ui()->mainTemplate()->setOnScreenMessage(
+                'failure',
+                'Please run the update with the command line interface (CLI) only! The Plugin uses DB Update steps which are not available in the ILIAS GUI. `php setup/cli.php install --plugin OpenCast`',
+                true
+            );
+            return false;
+        }
+
         // Check Version
         $check = new UpdateCheck($this->_db);
         $this->is_new_installation = $check->isNewInstallation();
@@ -130,13 +140,5 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
     {
         // No more copy!
         return self::ALLOW_DUPLICATION;
-    }
-
-    public function install(): void
-    {
-        if (PHP_SAPI === 'cli') {
-            $this->update();
-        }
-        parent::afterInstall();
     }
 }
