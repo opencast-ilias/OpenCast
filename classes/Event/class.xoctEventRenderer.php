@@ -701,9 +701,8 @@ class xoctEventRenderer
 
         // Republish
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)
-            && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(
-                self::$modals->getStartworkflowModal()
-            )
+            && !$this->event->isScheduled() && !$this->event->isRunning() && !is_null(self::$modals) &&
+            !is_null(self::$modals->getStartworkflowModal())
         ) {
             $actions[] = $this->factory->button()->shy(
                 $this->plugin->txt('event_startworkflow'),
