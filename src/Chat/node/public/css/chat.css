@@ -12,7 +12,7 @@ html {
 }
 
 #srchat_iframe_container {
-    border-left: 3px solid #ccc;
+    border-left: 3px solid #aeaeae;
 }
 
 #srchat_iframe {
@@ -34,15 +34,15 @@ html {
 
 #srchat_title {
     text-align: center;
-    color: #a5a4a4;
+    color: #404040;
     width: 100%;
     padding: 5px 10px;
-    border-bottom:1px solid #ccc;
+    border-bottom:1px solid #aeaeae;
     flex-shrink: 0;
 }
 #srchat_title h4 {
-    line-height: 40px;
-    margin: 0px !important;
+    line-height: 24px;
+    margin: 3px 0 0 0 !important;
 }
 
 #chat_body {
@@ -56,7 +56,7 @@ html {
     height: 50px;
     background-color: white;
     padding: 10px 5px;
-    border-top:1px solid #ccc;
+    border-top:1px solid #aeaeae;
     width: 100%;
     margin-bottom: 0;
 }
@@ -253,7 +253,7 @@ span.srchat_pseudo_element {
     }
 
     #srchat_iframe_container {
-        border-top: 3px solid #ccc;
+        border-top: 3px solid #aeaeae;
         border-left: none;
     }
     #srchat_title {
@@ -264,7 +264,7 @@ span.srchat_pseudo_element {
         height: fit-content;
         order: 1;
         border-top: none;
-        border-bottom:1px solid #ccc;
+        border-bottom:1px solid #aeaeae;
     }
     #chat_body {
         order: 2;
