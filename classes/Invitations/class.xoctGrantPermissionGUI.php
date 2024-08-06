@@ -21,23 +21,19 @@ class xoctGrantPermissionGUI extends xoctGUI
 {
     use OutputResponse;
     protected Event $event;
-    protected ObjectSettings $objectSettings;
-    private ACLUtils $ACLUtils;
     /**
      * @var \ilObjUser
      */
     private $user;
 
-    public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
+    public function __construct(protected ObjectSettings $objectSettings, EventRepository $event_repository, private ACLUtils $ACLUtils)
     {
         global $DIC;
         parent::__construct();
         $tabs = $DIC->tabs();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->user = $DIC->user();
-        $this->objectSettings = $objectSettings;
         $this->event = $event_repository->find($this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER]);
-        $this->ACLUtils = $ACLUtils;
         $tabs->clearTargets();
 
         $tabs->setBackTarget($this->plugin->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));

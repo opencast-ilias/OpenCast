@@ -9,11 +9,8 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
 
 class UpdateSeriesACLRequestPayload implements JsonSerializable
 {
-    private ACL $ACL;
-
-    public function __construct(ACL $ACL)
+    public function __construct(private readonly ACL $ACL)
     {
-        $this->ACL = $ACL;
     }
 
     public function getACL(): ACL
@@ -24,7 +21,7 @@ class UpdateSeriesACLRequestPayload implements JsonSerializable
     /**
      * @return array{acl: string}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return ['acl' => json_encode($this->ACL)];
     }

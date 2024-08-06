@@ -16,6 +16,7 @@ use srag\Plugins\Opencast\Model\ACL\ACLEntry;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PermissionTemplate extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_perm_template';
@@ -292,7 +293,7 @@ class PermissionTemplate extends ActiveRecord
             $entries[] = $this->constructAclForAction($additional_action);
         }
 
-        if ($this->getAdditionalActionsDownload()) {
+        if ($this->getAdditionalActionsDownload() !== '' && $this->getAdditionalActionsDownload() !== '0') {
             foreach (explode(',', $this->getAdditionalActionsDownload()) as $additional_action) {
                 $entries[] = $this->constructAclForAction($additional_action);
             }
@@ -313,7 +314,7 @@ class PermissionTemplate extends ActiveRecord
                 $entries[] = $this->constructAclActionForRole(ACLEntry::WRITE, $role_name);
             }
 
-            foreach (array_filter(explode(',', $this->getAddedRoleAclActions())) as $additional_action) {
+            foreach (array_filter(explode(',', (string) $this->getAddedRoleAclActions())) as $additional_action) {
                 $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
             }
 

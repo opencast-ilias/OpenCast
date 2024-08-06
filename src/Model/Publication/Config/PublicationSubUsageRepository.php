@@ -67,7 +67,7 @@ class PublicationSubUsageRepository
         $subs = $this->getSubUsages($parent_usage_id);
         $usages = [];
         foreach ($subs as $sub) {
-            if ($usage = $this->convertSingleSubToUsage($sub->getId())) {
+            if (($usage = $this->convertSingleSubToUsage($sub->getId())) !== null) {
                 $usages[] = $usage;
             }
         }

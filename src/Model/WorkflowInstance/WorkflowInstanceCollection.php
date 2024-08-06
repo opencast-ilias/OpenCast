@@ -25,7 +25,6 @@ class WorkflowInstanceCollection extends APIObject
      * @var bool
      */
     protected $has_changed = false;
-    protected string $event_id;
     /**
      * @var WorkflowInstance[]
      */
@@ -37,12 +36,11 @@ class WorkflowInstanceCollection extends APIObject
      *
      * @throws xoctException
      */
-    public function __construct(string $event_id = '')
+    public function __construct(protected string $event_id = '')
     {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
-        $this->event_id = $event_id;
-        if ($event_id !== '') {
+        if ($this->event_id !== '') {
             $this->read();
         }
     }

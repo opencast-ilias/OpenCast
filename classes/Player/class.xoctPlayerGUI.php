@@ -43,7 +43,6 @@ class xoctPlayerGUI extends xoctGUI
     private $identifier;
     protected ObjectSettings $object_settings;
     protected PublicationUsageRepository $publication_usage_repository;
-    private EventRepository $event_repository;
     private PaellaConfigService $paellaConfigService;
     /**
      * @var \ilObjUser
@@ -51,7 +50,7 @@ class xoctPlayerGUI extends xoctGUI
     private $user;
 
     public function __construct(
-        EventRepository $event_repository,
+        private EventRepository $event_repository,
         PaellaConfigStorageService $paellaConfigStorageService,
         PaellaConfigServiceFactory $paellaConfigServiceFactory,
         ?ObjectSettings $object_settings = null
@@ -61,7 +60,6 @@ class xoctPlayerGUI extends xoctGUI
         $this->user = $DIC->user();
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->object_settings = $object_settings instanceof ObjectSettings ? $object_settings : new ObjectSettings();
-        $this->event_repository = $event_repository;
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
         $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? null;
         $this->force_no_chat = (bool) ($this->http->request()->getQueryParams()['force_no_chat'] ?? false);
@@ -73,7 +71,7 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo(): void
     {
-        if (!isset($this->identifier) || empty($this->identifier)) {
+        if ($this->identifier === null || empty($this->identifier)) {
             $this->sendReponse("Error: invalid identifier");
         }
         $event = $this->event_repository->find($this->identifier);

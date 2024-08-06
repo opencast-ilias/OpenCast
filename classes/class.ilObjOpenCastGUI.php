@@ -54,7 +54,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
     private Container $ilias_dic;
     private PluginContainer $container;
 
-    public function __construct($a_ref_id = 0, $a_id_type = self::REPOSITORY_NODE_ID, $a_parent_node_id = 0)
+    public function __construct(int $a_ref_id = 0, int $a_id_type = self::REPOSITORY_NODE_ID, int $a_parent_node_id = 0)
     {
         parent::__construct($a_ref_id, $a_id_type, $a_parent_node_id);
         $this->container = Init::init();
@@ -91,7 +91,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $cmd = $this->ilias_dic->ctrl()->getCmd();
             $this->ilias_dic->ui()->mainTemplate()->loadStandardTemplate();
 
-            switch (strtolower($next_class)) {
+            switch (strtolower((string) $next_class)) {
                 case strtolower(xoctPermissionGroupParticipantGUI::class):
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
@@ -274,7 +274,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 "perm_settings",
                 $this->ilias_dic->language()->txt("perm_settings"),
                 $this->ilias_dic->ctrl()->getLinkTargetByClass([
-                    get_class($this),
+                    static::class,
                     "ilpermissiongui",
                 ], "perm")
             );
@@ -452,8 +452,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         }
         ilObjOpenCastAccess::applyDefaultPerms($newObj->getRefId(), $additional_perms);
 
-        $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
-        $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
+        $newObj->setTitle((string) $metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
+        $newObj->setDescription((string) ($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? ''));
         $newObj->update();
 
         $this->legacy_container->workflow_parameter_series_repository()->syncAvailableParameters($newObj->getId());

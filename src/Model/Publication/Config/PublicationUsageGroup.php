@@ -11,6 +11,7 @@ use ActiveRecord;
  *
  * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
+#[\AllowDynamicProperties]
 class PublicationUsageGroup extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_publication_group';

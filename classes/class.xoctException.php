@@ -44,7 +44,7 @@ class xoctException extends Exception
      * @param string $code
      * @param string $additional_message
      */
-    public function __construct($code, $additional_message = '')
+    public function __construct(int $code, string $additional_message = '')
     {
         $message = '';
         if (isset(self::$messages[$code])) {

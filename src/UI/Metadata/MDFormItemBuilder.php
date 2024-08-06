@@ -9,7 +9,7 @@ use DateTimeZone;
 use ILIAS\DI\Container;
 use ILIAS\Refinery\Custom\Transformation;
 use ILIAS\Refinery\Factory as RefineryFactory;
-use ILIAS\UI\Component\Input\Field\Input;
+use ILIAS\UI\Component\Input\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
 use ilTimeZone;
@@ -32,61 +32,12 @@ use xoctException;
 class MDFormItemBuilder
 {
     public const LABEL_PREFIX = 'md_';
-    public static $binding_fields = [
+    public static array $binding_fields = [
         'title' => 'titleinput'
     ];
 
-    /**
-     * @var UIFactory
-     */
-    protected $ui_factory;
-    /**
-     * @var MDCatalogue
-     */
-    protected $md_catalogue;
-    /**
-     * @var MDPrefiller
-     */
-    protected $prefiller;
-    /**
-     * @var MDFieldConfigRepository
-     */
-    private $md_conf_repository;
-    /**
-     * @var RefineryFactory
-     */
-    private $refinery_factory;
-    /**
-     * @var MDParser
-     */
-    private $MDParser;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var Container
-     */
-    private $dic;
-
-    public function __construct(
-        MDCatalogue $md_catalogue,
-        MDFieldConfigRepository $repository,
-        MDPrefiller $prefiller,
-        UIFactory $ui_factory,
-        RefineryFactory $refinery_factory,
-        MDParser $MDParser,
-        ilPlugin $plugin,
-        Container $dic
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->md_catalogue = $md_catalogue;
-        $this->prefiller = $prefiller;
-        $this->md_conf_repository = $repository;
-        $this->refinery_factory = $refinery_factory;
-        $this->MDParser = $MDParser;
-        $this->plugin = $plugin;
-        $this->dic = $dic;
+    public function __construct(protected MDCatalogue $md_catalogue, private readonly MDFieldConfigRepository $md_conf_repository, protected MDPrefiller $prefiller, protected UIFactory $ui_factory, private readonly RefineryFactory $refinery_factory, private readonly MDParser $MDParser, private readonly \ilPlugin $plugin, private readonly Container $dic)
+    {
     }
 
     public function create_section(bool $as_admin): Input
@@ -143,13 +94,12 @@ class MDFormItemBuilder
         $form_elements = [];
         $MDFieldConfigARS = array_filter(
             $this->md_conf_repository->getAllEditable($as_admin),
-            function (MDFieldConfigEventAR $fieldConfigAR): bool {
+            fn(MDFieldConfigEventAR $fieldConfigAR): bool =>
                 // start date is part of scheduling and location has a special input field
-                return !in_array(
+                !in_array(
                     $fieldConfigAR->getFieldId(),
                     [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
-                );
-            }
+                )
         );
         array_walk($MDFieldConfigARS, function (MDFieldConfigEventAR $md_field_config) use (&$form_elements): void {
             $key = $this->prefixPostVar($md_field_config->getFieldId());
@@ -167,13 +117,12 @@ class MDFormItemBuilder
         $form_elements = [];
         $MDFieldConfigARS = array_filter(
             $this->md_conf_repository->getAll($as_admin),
-            function (MDFieldConfigEventAR $fieldConfigAR): bool {
+            fn(MDFieldConfigEventAR $fieldConfigAR): bool =>
                 // start date is part of scheduling and location has a special input field
-                return !in_array(
+                !in_array(
                     $fieldConfigAR->getFieldId(),
                     [MDFieldDefinition::F_START_DATE, MDFieldDefinition::F_LOCATION]
-                );
-            }
+                )
         );
         array_walk(
             $MDFieldConfigARS,
@@ -195,69 +144,49 @@ class MDFormItemBuilder
     public function buildFormElementForMDField(MDFieldConfigAR $fieldConfigAR, $value): Input
     {
         $md_definition = $this->md_catalogue->getFieldById($fieldConfigAR->getFieldId());
-        switch ($md_definition->getType()->getTitle()) {
-            case MDDataType::TYPE_TEXT:
-                $field = $this->ui_factory->input()->field()->text(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                );
-                break;
-            case MDDataType::TYPE_TEXT_ARRAY:
-                $field = $this->ui_factory->input()->field()->text(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                )
-                                          ->withAdditionalTransformation(
-                                              $this->refinery_factory->custom()->transformation(
-                                                  function (string $value): array {
-                                                      return explode(',', $value);
-                                                  }
-                                              )
-                                          );
-                break;
-            case MDDataType::TYPE_TEXT_SELECTION:
-                $field = $this->ui_factory->input()->field()->select(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey()),
-                    $fieldConfigAR->getValues()
-                )->withValue(null);
-
-                break;
-            case MDDataType::TYPE_TEXT_LONG:
-                $field = $this->ui_factory->input()->field()->textarea(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                );
-                break;
-            case MDDataType::TYPE_TIME:
-                $field = $this->ui_factory->input()->field()->text(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                )
-                                          ->withByline($this->plugin->txt('byline_timeformat'))
-                                          ->withAdditionalTransformation(
-                                              $this->refinery_factory->custom()->constraint(function ($vs): bool {
-                                                  return empty($vs) || preg_match(
-                                                      "/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/",
-                                                      $vs
-                                                  );
-                                              }, $this->plugin->txt('msg_invalid_time_format'))
-                                          );
-                break;
-            case MDDataType::TYPE_DATETIME:
-                $field = $this->ui_factory->input()->field()->dateTime(
-                    $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                )->withUseTime(true);
-                break;
-            default:
-                throw new xoctException(
-                    xoctException::INTERNAL_ERROR,
-                    'Unknown MDDataType: ' . $md_definition->getType()->getTitle()
-                );
-        }
+        $field = match ($md_definition->getType()->getTitle()) {
+            MDDataType::TYPE_TEXT => $this->ui_factory->input()->field()->text(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+            ),
+            MDDataType::TYPE_TEXT_ARRAY => $this->ui_factory->input()->field()->text(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+            )
+                                      ->withAdditionalTransformation(
+                                          $this->refinery_factory->custom()->transformation(
+                                              fn(string $value): array => explode(',', $value)
+                                          )
+                                      ),
+            MDDataType::TYPE_TEXT_SELECTION => $this->ui_factory->input()->field()->select(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey()),
+                $fieldConfigAR->getValues()
+            )->withValue(null),
+            MDDataType::TYPE_TEXT_LONG => $this->ui_factory->input()->field()->textarea(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+            ),
+            MDDataType::TYPE_TIME => $this->ui_factory->input()->field()->text(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+            )
+                                      ->withByline($this->plugin->txt('byline_timeformat'))
+                                      ->withAdditionalTransformation(
+                                          $this->refinery_factory->custom()->constraint(fn($vs): bool => empty($vs) || preg_match(
+                                              "/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/",
+                                              (string) $vs
+                                          ), $this->plugin->txt('msg_invalid_time_format'))
+                                      ),
+            MDDataType::TYPE_DATETIME => $this->ui_factory->input()->field()->dateTime(
+                $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+            )->withUseTime(true),
+            default => throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Unknown MDDataType: ' . $md_definition->getType()->getTitle()
+            ),
+        };
         if (in_array($fieldConfigAR->getFieldId(), array_keys(self::$binding_fields))) {
             $binding_data = self::$binding_fields[$fieldConfigAR->getFieldId()];
             $field = $field->withAdditionalOnLoadCode(
-                function ($id) use ($binding_data) {
-                    return '
+                fn(string $id): string => '
                         $("#' . $id . '").attr("data-' . $binding_data . '", "bind");
-                    ';
-                }
+                    '
             );
         }
         $field = $field
@@ -265,11 +194,10 @@ class MDFormItemBuilder
                 $fieldConfigAR->isRequired(),
                 // Custom required constraint, to provide better error message.
                 $this->refinery_factory->custom()->constraint(
-                    function ($value): bool {
-                        return !empty(trim($value));
-                    },
-                $this->plugin->txt('msg_empty_required_field')
-            ))
+                    fn($value): bool => !empty(trim((string) $value)),
+                    $this->plugin->txt('msg_empty_required_field')
+                )
+            )
             ->withDisabled($fieldConfigAR->isReadOnly());
         return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
@@ -301,7 +229,7 @@ class MDFormItemBuilder
 
     public function transformation(): Transformation
     {
-        return $this->refinery_factory->custom()->transformation(function ($vs) {
+        return $this->refinery_factory->custom()->transformation(function (array $vs): array {
             // todo: remove this ugly instance check (maybe create subclasses MDEventFormItemBuilder and MDSeriesFormItemBuilder)
             $vs['object'] = ($this->md_conf_repository instanceof MDFieldConfigEventRepository) ?
                 $this->MDParser->parseFormDataEvent($vs)

@@ -1,3 +1,4 @@
+
 # Guzzle Promises
 
 [Promises/A+](https://promisesaplus.com/) implementation that handles promise
@@ -27,6 +28,21 @@ for a general introduction to promises.
 - Works with any object that has a `then` function.
 - C# style async/await coroutine promises using
   `GuzzleHttp\Promise\Coroutine::of()`.
+
+
+## Installation
+
+```shell
+composer require guzzlehttp/promises
+```
+
+
+## Version Guidance
+
+| Version | Status              | PHP Version  |
+|---------|---------------------|--------------|
+| 1.x     | Security fixes only | >=5.5,<8.3   |
+| 2.x     | Latest              | >=7.2.5,<8.5 |
 
 
 ## Quick Start
@@ -430,8 +446,6 @@ $loop = React\EventLoop\Factory::create();
 $loop->addPeriodicTimer(0, [$queue, 'run']);
 ```
 
-*TODO*: Perhaps adding a `futureTick()` on each tick would be faster?
-
 
 ## Implementation Notes
 
@@ -501,8 +515,8 @@ $promise->resolve('foo');
 
 A static API was first introduced in 1.4.0, in order to mitigate problems with
 functions conflicting between global and local copies of the package. The
-function API will be removed in 2.0.0. A migration table has been provided here
-for your convenience:
+function API was removed in 2.0.0. A migration table has been provided here for
+your convenience:
 
 | Original Function | Replacement Method |
 |----------------|----------------|

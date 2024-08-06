@@ -37,16 +37,14 @@ class Services
      * @var ActiveContainer[]
      */
     private array $containers = [];
+    private ?Adaptor $adaptor = null;
     /**
-     * @var Adaptor|null
+     * @readonly
      */
-    private $adaptor;
     private Factory $adaptor_factory;
-    private Config $config;
 
-    public function __construct(Config $config, \ilDBInterface $db)
+    public function __construct(private Config $config, \ilDBInterface $db)
     {
-        $this->config = $config;
         $this->adaptor_factory = new Factory();
     }
 

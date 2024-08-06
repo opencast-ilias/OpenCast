@@ -30,30 +30,9 @@ class SeriesFormBuilder
     public const EXISTING_YES = 2;
     public const F_CHANNEL_ID = 'channel_id';
     public const F_EXISTING_IDENTIFIER = 'existing_identifier';
-    private UIFactory $ui_factory;
-    private Refinery $refinery;
-    private MDFormItemBuilder $formItemBuilder;
-    private \ilPlugin $plugin;
-    private Container $dic;
-    private ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder;
-    private SeriesRepository $seriesRepository;
 
-    public function __construct(
-        UIFactory $ui_factory,
-        Refinery $refinery,
-        MDFormItemBuilder $formItemBuilder,
-        ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder,
-        SeriesRepository $seriesRepository,
-        ilPlugin $plugin,
-        Container $dic
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->refinery = $refinery;
-        $this->formItemBuilder = $formItemBuilder;
-        $this->plugin = $plugin;
-        $this->dic = $dic;
-        $this->objectSettingsFormItemBuilder = $objectSettingsFormItemBuilder;
-        $this->seriesRepository = $seriesRepository;
+    public function __construct(private readonly UIFactory $ui_factory, private readonly Refinery $refinery, private readonly MDFormItemBuilder $formItemBuilder, private readonly ObjectSettingsFormItemBuilder $objectSettingsFormItemBuilder, private readonly SeriesRepository $seriesRepository, private readonly \ilPlugin $plugin, private readonly Container $dic)
+    {
     }
 
     public function create(string $form_action): Standard
@@ -117,7 +96,7 @@ class SeriesFormBuilder
     /**
      * @throws xoctException
      */
-    private function buildSeriesSelectionSection(bool $is_admin): Input
+    private function buildSeriesSelectionSection(bool $is_admin): \ILIAS\UI\Component\Input\Input
     {
         $existing_series = $this->getSeriesSelectOptions();
         $series_type = $this->ui_factory->input()->field()->switchableGroup([

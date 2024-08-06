@@ -20,13 +20,11 @@ class PublicationUsageGroupRepository
         $list = [];
         // Return all but sorted!
         if (empty($sub_ids)) {
-            $list = PublicationUsageGroup::orderBy(PublicationUsageGroup::SORT_BY)->getArray();
-        } else {
-            $list = PublicationUsageGroup::where(['id' => $sub_ids], 'IN')->orderBy(
-                PublicationUsageGroup::SORT_BY
-            )->getArray();
+            return PublicationUsageGroup::orderBy(PublicationUsageGroup::SORT_BY)->getArray();
         }
 
-        return $list;
+        return PublicationUsageGroup::where(['id' => $sub_ids], 'IN')->orderBy(
+            PublicationUsageGroup::SORT_BY
+        )->getArray();
     }
 }

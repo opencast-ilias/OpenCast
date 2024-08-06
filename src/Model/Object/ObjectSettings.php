@@ -16,6 +16,7 @@ use xoctException;
 /**
  * Class ObjectSettings
  */
+#[\AllowDynamicProperties]
 class ObjectSettings extends ActiveRecord
 {
     public $paella_player_option;
@@ -85,7 +86,7 @@ class ObjectSettings extends ActiveRecord
         foreach ($duplicates_ar->get() as $oc) {
             /** @var ObjectSettings $oc */
             if ($oc->getObjId() != $this->getObjId()) {
-                $query = "SELECT ref_id FROM object_reference" . " WHERE deleted is null and obj_id = " . $DIC->database(
+                $query = 'SELECT ref_id FROM object_reference WHERE deleted is null and obj_id = ' . $DIC->database(
                 )->quote($oc->getObjId(), "integer");
                 $set = $DIC->database()->query($query);
                 $rec = $DIC->database()->fetchAssoc($set);

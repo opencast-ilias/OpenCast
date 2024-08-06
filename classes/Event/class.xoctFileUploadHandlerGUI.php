@@ -18,22 +18,13 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploa
  */
 class xoctFileUploadHandlerGUI extends AbstractCtrlAwareChunkedUploadHandler
 {
-    private UploadStorageService $uploadStorageService;
-    private string $upload_url;
-    private string $file_info_url;
-    private string $file_removal_url;
-
     public function __construct(
-        UploadStorageService $uploadStorageService,
-        string $upload_url = '',
-        string $file_info_url = '',
-        string $file_removal_url = ''
+        private readonly UploadStorageService $uploadStorageService,
+        private readonly string $upload_url = '',
+        private readonly string $file_info_url = '',
+        private readonly string $file_removal_url = ''
     ) {
         parent::__construct();
-        $this->uploadStorageService = $uploadStorageService;
-        $this->upload_url = $upload_url;
-        $this->file_info_url = $file_info_url;
-        $this->file_removal_url = $file_removal_url;
     }
 
     public function getUploadURL(): string
@@ -84,7 +75,7 @@ class xoctFileUploadHandlerGUI extends AbstractCtrlAwareChunkedUploadHandler
             $this->uploadStorageService->delete($identifier);
             $status = HandlerResult::STATUS_OK;
             $message = 'File Deleted';
-        } catch (FileNotFoundException $e) {
+        } catch (FileNotFoundException) {
             $status = HandlerResult::STATUS_FAILED;
             $message = "File not found";
         }

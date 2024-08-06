@@ -20,13 +20,8 @@ use xoctException;
 
 class MDParser
 {
-    private MDCatalogueFactory $catalogueFactory;
-    private MetadataFactory $metadataFactory;
-
-    public function __construct(MDCatalogueFactory $catalogueFactory, MetadataFactory $metadataFactory)
+    public function __construct(private readonly MDCatalogueFactory $catalogueFactory, private readonly MetadataFactory $metadataFactory)
     {
-        $this->catalogueFactory = $catalogueFactory;
-        $this->metadataFactory = $metadataFactory;
     }
 
     /**
@@ -57,37 +52,28 @@ class MDParser
         $fields = [];
 
         foreach ($data as $key => $entry) {
-            switch ($key) {
-                case "presenter":
-                    $field_data = (object) [
-                        "id" => "creator",
-                        "value" => $entry
-                    ];
-                    break;
-                case "creator":
-                    $field_data = (object) [
-                        "id" => "publisher",
-                        "value" => $entry
-                    ];
-                    break;
-                case "is_part_of":
-                    $field_data = (object) [
-                        "id" => "isPartOf",
-                        "value" => $entry
-                    ];
-                    break;
-                case "start":
-                    $field_data = (object) [
-                        "id" => "startDate",
-                        "value" => $entry
-                    ];
-                    break;
-                default:
-                    $field_data = (object) [
-                        "id" => $key,
-                        "value" => $entry
-                    ];
-            }
+            $field_data = match ($key) {
+                "presenter" => (object) [
+                    "id" => "creator",
+                    "value" => $entry
+                ],
+                "creator" => (object) [
+                    "id" => "publisher",
+                    "value" => $entry
+                ],
+                "is_part_of" => (object) [
+                    "id" => "isPartOf",
+                    "value" => $entry
+                ],
+                "start" => (object) [
+                    "id" => "startDate",
+                    "value" => $entry
+                ],
+                default => (object) [
+                    "id" => $key,
+                    "value" => $entry
+                ],
+            };
             if (!in_array($field_data, $fields, true)) {
                 $fields[] = $field_data;
             }
@@ -181,6 +167,7 @@ class MDParser
             default:
                 return $value;
         }
+        return null;
     }
 
     /**
@@ -203,9 +190,7 @@ class MDParser
     private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
         foreach (
-            array_filter($data, function ($key): bool {
-                return strpos($key, 'md_') === 0;
-            }, ARRAY_FILTER_USE_KEY)
+            array_filter($data, fn($key): bool => str_starts_with($key, 'md_'), ARRAY_FILTER_USE_KEY)
             as $id => $value
         ) {
             $id = substr($id, 3);
@@ -213,7 +198,7 @@ class MDParser
             if ($definition->isReadOnly()) {
                 continue;
             }
-            if ($id == MDFieldDefinition::F_START_DATE) {
+            if ($id === MDFieldDefinition::F_START_DATE) {
                 // start date must be split up into startDate and startTime for the OC api
                 $field = new MetadataField($id, MDDataType::date());
                 $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));
@@ -226,7 +211,7 @@ class MDParser
             }
             // todo: remove this if-clause as soon as this is fixed: https://mantis.ilias.de/view.php?id=31966
             if ($value && $definition->getType()->getTitle() === MDDataType::TYPE_TEXT_ARRAY && !is_array($value)) {
-                $value = explode(',', $value);
+                $value = explode(',', (string) $value);
             }
             $metadata->addField(
                 $value ? $field->withValue(

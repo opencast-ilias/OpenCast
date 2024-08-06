@@ -52,7 +52,7 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
      *
      * @param array $config Client configuration settings.
      *
-     * @see \GuzzleHttp\RequestOptions for a list of available request options.
+     * @see RequestOptions for a list of available request options.
      */
     public function __construct(array $config = [])
     {
@@ -120,13 +120,14 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
     public function send(RequestInterface $request, array $options = []): ResponseInterface
     {
         $options[RequestOptions::SYNCHRONOUS] = true;
+
         return $this->sendAsync($request, $options)->wait();
     }
 
     /**
      * The HttpClient PSR (PSR-18) specify this method.
      *
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
@@ -184,6 +185,7 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
     public function request(string $method, $uri = '', array $options = []): ResponseInterface
     {
         $options[RequestOptions::SYNCHRONOUS] = true;
+
         return $this->requestAsync($method, $uri, $options)->wait();
     }
 
@@ -228,11 +230,11 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
     {
         $defaults = [
             'allow_redirects' => RedirectMiddleware::$defaultSettings,
-            'http_errors'     => true,
-            'decode_content'  => true,
-            'verify'          => true,
-            'cookies'         => false,
-            'idn_conversion'  => false,
+            'http_errors' => true,
+            'decode_content' => true,
+            'verify' => true,
+            'cookies' => false,
+            'idn_conversion' => false,
         ];
 
         // Use the standard Linux HTTP_PROXY and HTTPS_PROXY if set.
@@ -435,6 +437,10 @@ class Client implements ClientInterface, \Psr\Http\Client\ClientInterface
             if (\is_bool($options['sink'])) {
                 throw new InvalidArgumentException('sink must not be a boolean');
             }
+        }
+
+        if (isset($options['version'])) {
+            $modify['version'] = $options['version'];
         }
 
         $request = Psr7\Utils::modifyRequest($request, $modify);

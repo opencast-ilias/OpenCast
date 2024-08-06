@@ -20,7 +20,7 @@ class xoctWorkflowParameterGUI extends xoctGUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
-    const P_PARAM_ID = 'param_id';
+    public const P_PARAM_ID = 'param_id';
 
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
@@ -43,14 +43,6 @@ class xoctWorkflowParameterGUI extends xoctGUI
      */
     protected $overwrite_series_parameters = false;
     /**
-     * @var WorkflowParameterRepository
-     */
-    private $workflowParameterRepository;
-    /**
-     * @var SeriesWorkflowParameterRepository
-     */
-    private $seriesWorkflowParameterRepository;
-    /**
      * @var \ilTabsGUI
      */
     private $tabs;
@@ -60,15 +52,13 @@ class xoctWorkflowParameterGUI extends xoctGUI
     private $toolbar;
 
     public function __construct(
-        WorkflowParameterRepository $workflowParameterRepository,
-        SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository
+        private WorkflowParameterRepository $workflowParameterRepository,
+        private SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository
     ) {
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
         $this->toolbar = $DIC->toolbar();
-        $this->workflowParameterRepository = $workflowParameterRepository;
-        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
     }
 
     protected function index(): void
@@ -275,14 +265,18 @@ class xoctWorkflowParameterGUI extends xoctGUI
         ) {
             $default_value_admin = $value['default_value_admin'];
             $default_value_member = $value['default_value_member'];
-            if (in_array($default_value_member, WorkflowParameter::$possible_values) && in_array(
+            if (!in_array($default_value_member, WorkflowParameter::$possible_values)) {
+                continue;
+            }
+            if (!in_array(
                 $default_value_admin,
                 WorkflowParameter::$possible_values
             )) {
-                WorkflowParameter::find($id)->setDefaultValueAdmin($default_value_admin)->setDefaultValueMember(
-                    $default_value_member
-                )->update();
+                continue;
             }
+            WorkflowParameter::find($id)->setDefaultValueAdmin($default_value_admin)->setDefaultValueMember(
+                $default_value_member
+            )->update();
         }
         $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success', 'config'), true);
         $this->ctrl->redirect($this, self::CMD_SHOW_TABLE);

@@ -18,30 +18,17 @@ use stdClass;
  */
 class Scheduling implements JsonSerializable
 {
-    protected string $agent_id;
-    protected \DateTimeImmutable $start;
-    protected ?\DateTimeImmutable $end;
-    protected ?int $duration;
-    /**
-     * @var string[]
-     */
-    protected ?array $inputs;
-    protected ?RRule $rrule;
-
     public function __construct(
-        string $agent_id,
-        DateTimeImmutable $start,
-        ?DateTimeImmutable $end = null,
-        ?array $inputs = ['default'],
-        ?int $duration = null,
-        ?RRule $rrule = null
+        protected string $agent_id,
+        protected \DateTimeImmutable $start,
+        protected ?\DateTimeImmutable $end = null,
+        /**
+         * @var string[]
+         */
+        protected ?array $inputs = ['default'],
+        protected ?int $duration = null,
+        protected ?RRule $rrule = null
     ) {
-        $this->agent_id = $agent_id;
-        $this->start = $start;
-        $this->end = $end;
-        $this->duration = $duration;
-        $this->rrule = $rrule;
-        $this->inputs = $inputs;
     }
 
     public function toStdClass(): stdClass
@@ -131,7 +118,7 @@ class Scheduling implements JsonSerializable
         $this->rrule = $rrule;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toStdClass();
     }

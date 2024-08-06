@@ -12,11 +12,8 @@ use xoctException;
 
 class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
 {
-    private MDCatalogueFactory $MDCatalogueFactory;
-
-    public function __construct(MDCatalogueFactory $MDCatalogueFactory)
+    public function __construct(private readonly MDCatalogueFactory $MDCatalogueFactory)
     {
-        $this->MDCatalogueFactory = $MDCatalogueFactory;
     }
 
     /**
@@ -49,9 +46,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            static function (MDFieldConfigSeriesAR $ar) use ($MDCatalogue): bool {
-                return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
-            }
+            static fn(MDFieldConfigSeriesAR $ar): bool => !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly()
         );
     }
 
@@ -100,7 +95,7 @@ class MDFieldConfigSeriesRepository implements MDFieldConfigRepository
     public function delete($field_id): void
     {
         $activeRecord = MDFieldConfigSeriesAR::where(['field_id' => $field_id])->first();
-        if ($activeRecord) {
+        if ($activeRecord !== null) {
             $activeRecord->delete();
         }
     }

@@ -13,10 +13,25 @@ class xoctMetadataConfigRouterGUI
 {
     public const SUBTAB_EVENTS = 'events';
     public const SUBTAB_SERIES = 'series';
+    /**
+     * @readonly
+     */
     private ilCtrlInterface  $ctrl;
+    /**
+     * @readonly
+     */
     private ilTabsGUI  $tabs;
+    /**
+     * @readonly
+     */
     private OpencastDIC $legacy_container;
+    /**
+     * @readonly
+     */
     private ilOpenCastPlugin $plugin;
+    /**
+     * @readonly
+     */
     private Container $container;
 
     public function __construct()

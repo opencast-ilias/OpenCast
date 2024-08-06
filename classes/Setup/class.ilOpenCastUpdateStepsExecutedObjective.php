@@ -10,11 +10,8 @@ use ILIAS\Setup\ObjectiveCollection;
  */
 class ilOpenCastUpdateStepsExecutedObjective extends ilDatabaseUpdateStepsExecutedObjective
 {
-    private ObjectiveCollection $precondition;
-
-    public function __construct(ObjectiveCollection $precondition, ilDatabaseUpdateSteps $steps)
+    public function __construct(private readonly ObjectiveCollection $precondition, ilDatabaseUpdateSteps $steps)
     {
-        $this->precondition = $precondition;
         parent::__construct($steps);
     }
 

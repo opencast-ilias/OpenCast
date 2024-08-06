@@ -12,16 +12,11 @@ class CreateSeriesRequestPayload implements JsonSerializable
 {
     use SanitizeSeriesMetadata;
 
-    private Metadata $metadata;
-    private ACL $acl;
-
     /**
      * @param int $theme
      */
-    public function __construct(Metadata $metadata, ACL $acl)
+    public function __construct(private Metadata $metadata, private ACL $acl)
     {
-        $this->metadata = $metadata;
-        $this->acl = $acl;
     }
 
     public function getMetadata(): Metadata
@@ -37,7 +32,7 @@ class CreateSeriesRequestPayload implements JsonSerializable
     /**
      * @return array{metadata: string, acl: string}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
         return [

@@ -11,6 +11,7 @@ use ActiveRecord;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class UserSetting extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_user_setting';

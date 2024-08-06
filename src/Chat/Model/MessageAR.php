@@ -13,6 +13,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class MessageAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_message';

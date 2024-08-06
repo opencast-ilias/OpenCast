@@ -7,6 +7,7 @@ namespace srag\Plugins\Opencast\Model\Metadata\Config;
 use ActiveRecord;
 use xoctException;
 
+#[\AllowDynamicProperties]
 abstract class MDFieldConfigAR extends ActiveRecord
 {
     public const VISIBLE_ALL = 'all';
@@ -107,14 +108,11 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function sleep($field_name)
     {
-        switch ($field_name) {
-            case 'prefill':
-                return $this->prefill ?? '';
-            case 'values':
-                return json_encode($this->values);
-            default:
-                return null;
-        }
+        return match ($field_name) {
+            'prefill' => $this->prefill ?? '',
+            'values' => json_encode($this->values),
+            default => null,
+        };
     }
 
     /**
@@ -127,7 +125,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
                 if (empty($field_value)) {
                     return [];
                 }
-                $decoded = json_decode($field_value, true);
+                $decoded = json_decode((string) $field_value, true);
                 return is_array($decoded) ? $decoded : [];
             default:
                 return null;
@@ -156,13 +154,10 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function getTitle(string $lang_key): string
     {
-        switch ($lang_key) {
-            case 'de':
-                return $this->title_de;
-            case 'en':
-            default:
-                return $this->title_en;
-        }
+        return match ($lang_key) {
+            'de' => $this->title_de,
+            default => $this->title_en,
+        };
     }
 
     public function setTitleDe(string $title_de): void
@@ -187,7 +182,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function isRequired(): bool
     {
-        return (bool)$this->required;
+        return (bool) $this->required;
     }
 
     public function setRequired(bool $required): void
@@ -197,7 +192,7 @@ abstract class MDFieldConfigAR extends ActiveRecord
 
     public function isReadOnly(): bool
     {
-        return (bool)$this->read_only;
+        return (bool) $this->read_only;
     }
 
     public function setReadOnly(bool $read_only): void

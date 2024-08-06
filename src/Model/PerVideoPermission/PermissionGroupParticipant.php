@@ -15,6 +15,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PermissionGroupParticipant extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_group_participant';
@@ -119,7 +120,7 @@ class PermissionGroupParticipant extends ActiveRecord
     public static function getAllUserIdsForOpenCastObjIdAndGroupId(int $obj_id, int $group_id): array
     {
         $all = PermissionGroup::where(['serie_id' => $obj_id])->getArray(null, 'id');
-        if (count($all) === 0) {
+        if ($all === []) {
             return [];
         }
 

@@ -177,7 +177,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
         $tpl_id = (int) ($this->http->request()->getQueryParams()['tpl_id'] ?? 0);
         $template = PermissionTemplate::find($tpl_id);
         $ilConfirmationGUI = new ilConfirmationGUI();
-        $ilConfirmationGUI->setHeaderText($this->plugin->txt('msg_confirm_delete_perm_template', 'common'));
+        $ilConfirmationGUI->setHeaderText($this->plugin->txt('msg_confirm_delete_perm_template'));
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
         $ilConfirmationGUI->addItem('tpl_id', (string) $tpl_id, $template->getTitle());
         $ilConfirmationGUI->setConfirm($this->getLocaleString('delete', 'common'), self::CMD_CONFIRM);

@@ -40,7 +40,7 @@ class PaellaConfigStorageService extends UploadStorageService
         $metadata = $this->idToFileMetadata($identifier);
         return [
             'size' => $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit),
-            'name' => pathinfo($metadata->getPath(), PATHINFO_BASENAME),
+            'name' => pathinfo((string) $metadata->getPath(), PATHINFO_BASENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath())
         ];
     }

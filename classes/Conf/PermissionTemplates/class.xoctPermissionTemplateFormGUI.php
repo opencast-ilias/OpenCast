@@ -42,21 +42,17 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
     public const F_ADDED_ROLE_ACTIONS_DOWNLOAD = 'added_role_actions_download';
     public const F_ADDED_ROLE_ACTIONS_ANNOTATE = 'added_role_actions_annotate';
     private ilOpenCastPlugin $plugin;
-    protected PermissionTemplate $object;
-    protected xoctPermissionTemplateGUI $parent_gui;
     protected bool $is_new;
 
     /**
      * @param xoctPermissionTemplateGUI $parent_gui
      */
-    public function __construct($parent_gui, PermissionTemplate $xoctPermissionTemplate)
+    public function __construct(protected xoctPermissionTemplateGUI $parent_gui, protected PermissionTemplate $object)
     {
         $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         parent::__construct();
-        $this->object = $xoctPermissionTemplate;
-        $this->parent_gui = $parent_gui;
-        $opencastContainer->ilias()->ctrl()->saveParameter($parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
+        $opencastContainer->ilias()->ctrl()->saveParameter($this->parent_gui, xoctPermissionTemplateGUI::IDENTIFIER);
         $this->is_new = ($this->object->getId() == 0);
         $this->initForm();
     }

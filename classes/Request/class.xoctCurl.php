@@ -238,7 +238,7 @@ class xoctCurl
     /**
      * @return boolean
      */
-    public function isVerifyHost()
+    public function isVerifyHost(): bool
     {
         return self::$verify_host;
     }
@@ -246,7 +246,7 @@ class xoctCurl
     /**
      * @param boolean $verify_host
      */
-    public function setVerifyHost($verify_host): void
+    public function setVerifyHost(bool $verify_host): void
     {
         self::$verify_host = $verify_host;
     }
@@ -254,7 +254,7 @@ class xoctCurl
     /**
      * @return boolean
      */
-    public function isVerifyPeer()
+    public function isVerifyPeer(): bool
     {
         return self::$verify_peer;
     }
@@ -262,7 +262,7 @@ class xoctCurl
     /**
      * @param boolean $verify_peer
      */
-    public function setVerifyPeer($verify_peer): void
+    public function setVerifyPeer(bool $verify_peer): void
     {
         self::$verify_peer = $verify_peer;
     }

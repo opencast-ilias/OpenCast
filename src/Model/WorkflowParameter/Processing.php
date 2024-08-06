@@ -9,16 +9,13 @@ use stdClass;
 
 class Processing implements JsonSerializable
 {
-    protected string $workflow;
-    /**
-     * key value pair for workflow configurations
-     */
-    protected \stdClass $configuration;
-
-    public function __construct(string $workflow, stdClass $configuration)
-    {
-        $this->workflow = $workflow;
-        $this->configuration = $configuration;
+    public function __construct(
+        protected string $workflow,
+        /**
+         * key value pair for workflow configurations
+         */
+        protected \stdClass $configuration
+    ) {
     }
 
     public function getWorkflow(): string
@@ -31,7 +28,7 @@ class Processing implements JsonSerializable
         return $this->configuration;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return (object) [
             'workflow' => $this->getWorkflow(),

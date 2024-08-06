@@ -35,11 +35,6 @@ class xoctConfGUI extends xoctGUI
 
     public const CMD_THUMBNAIL = 'thumbnail';
     public const CMD_UPDATE_THUMBNAIL = 'updateThumbnail';
-
-    private Renderer $renderer;
-    private UploadHandler $fileUploadHandler;
-    private PaellaConfigFormBuilder $paellConfigFormBuilder;
-    private SubtitleConfigFormBuilder $subtitleConfigFormBuilder;
     /**
      * @var \ilTabsGUI
      */
@@ -52,25 +47,19 @@ class xoctConfGUI extends xoctGUI
      * @var UIFactory
      */
     protected $ui_factory;
-    private ThumbnailConfigFormBuilder $thumbnailConfigFormBuilder;
 
     public function __construct(
-        Renderer $renderer,
-        UploadHandler $fileUploadHandler,
-        PaellaConfigFormBuilder $paellConfigFormBuilder,
-        SubtitleConfigFormBuilder $subtitleConfigFormBuilder,
-        ThumbnailConfigFormBuilder $thumbnailConfigFormBuilder
+        private Renderer $renderer,
+        private UploadHandler $fileUploadHandler,
+        private PaellaConfigFormBuilder $paellConfigFormBuilder,
+        private SubtitleConfigFormBuilder $subtitleConfigFormBuilder,
+        private ThumbnailConfigFormBuilder $thumbnailConfigFormBuilder
     ) {
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
         $this->toolbar = $DIC->toolbar();
         $this->ui_factory = $DIC->ui()->factory();
-        $this->renderer = $renderer;
-        $this->fileUploadHandler = $fileUploadHandler;
-        $this->paellConfigFormBuilder = $paellConfigFormBuilder;
-        $this->subtitleConfigFormBuilder = $subtitleConfigFormBuilder;
-        $this->thumbnailConfigFormBuilder = $thumbnailConfigFormBuilder;
     }
 
     public function executeCommand(): void

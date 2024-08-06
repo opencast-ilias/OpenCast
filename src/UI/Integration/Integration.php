@@ -15,6 +15,9 @@ use srag\Plugins\Opencast\Container\Init;
  */
 class Integration
 {
+    /**
+     * @readonly
+     */
     private MyEvents $my_events;
 
     public function __construct(

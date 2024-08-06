@@ -33,31 +33,41 @@ use ILIAS\UI\Implementation\Component\Symbol\Icon\Icon;
  */
 class MyEvents implements DataRetrieval
 {
-
-    private \ILIAS\UI\Factory $ui_factory;
-    private Container $container;
+    /**
+     * @readonly
+     */
     private \ILIAS\Refinery\Factory $refinery;
+    /**
+     * @readonly
+     */
     private EventAPIRepository $event_repository;
+    /**
+     * @readonly
+     */
     private SeriesAPIRepository $series_repository;
     private array $series_name_cache = [];
     private ?array $event_cache = null;
     private ?URI $target_url = null;
     private string $parameter_name = 'event_id';
+    /**
+     * @readonly
+     */
     private \ilUIFilterService $filter_service;
     private ?array $filter_data = null;
+    /**
+     * @readonly
+     */
     private xoctUser $user;
 
     public function __construct(
-        \ILIAS\UI\Factory $ui_factory,
-        Container $container
+        private \ILIAS\UI\Factory $ui_factory,
+        private Container $container
     ) {
-        $this->ui_factory = $ui_factory;
-        $this->container = $container;
-        $this->refinery = $container->ilias()->refinery();
-        $this->event_repository = $container->get(EventAPIRepository::class);
-        $this->series_repository = $container->get(SeriesAPIRepository::class);
-        $this->filter_service = $container->ilias()->uiService()->filter();
-        $this->user = $container->get(xoctUser::class);
+        $this->refinery = $this->container->ilias()->refinery();
+        $this->event_repository = $this->container->get(EventAPIRepository::class);
+        $this->series_repository = $this->container->get(SeriesAPIRepository::class);
+        $this->filter_service = $this->container->ilias()->uiService()->filter();
+        $this->user = $this->container->get(xoctUser::class);
     }
 
     protected function getFilter(URI $target_url): \ILIAS\UI\Component\Input\Container\Filter\Standard
@@ -130,7 +140,8 @@ class MyEvents implements DataRetrieval
         /** @var Event $event */
         foreach ($this->getEvents() as $event) {
             $action = (string) $target_url->withParameter(
-                $parameter_name, $event->getIdentifier()
+                $parameter_name,
+                $event->getIdentifier()
             );
             $items[] = $this->ui_factory
                 ->item()
@@ -250,7 +261,10 @@ class MyEvents implements DataRetrieval
 
         foreach (
             $this->getEvents(
-                $range->getStart(), $range->getLength(), key($sorting), current($sorting)
+                $range->getStart(),
+                $range->getLength(),
+                key($sorting),
+                current($sorting)
             ) as $event
         ) {
             $action = (string) $this->target_url->withParameter($this->parameter_name, $event->getIdentifier());
@@ -261,14 +275,12 @@ class MyEvents implements DataRetrieval
                         $event->publications()->getThumbnailUrl(),
                         $event->getTitle(),
                         Icon::LARGE
-                    )->withAdditionalOnLoadCode(function (string $id) use ($action): string {
-                        return "let img = document.getElementById('$id');
+                    )->withAdditionalOnLoadCode(fn(string $id): string => "let img = document.getElementById('$id');
                         img.style.cursor = 'pointer';
                         img.style.width = '220px';
                         img.style.height = 'auto';
                         img.onclick = function() { window.location.href = '$action';
-                        }";
-                    }),
+                        }"),
                     'title' => $event->getTitle(),
                     'date' => $event->getStart(),
                     'series' => $this->getSeriesName($event),
@@ -374,12 +386,10 @@ class MyEvents implements DataRetrieval
                 "$sort:$order",
                 true
             );
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return [];
         }
 
-        return array_filter($events, static function (Event $event): bool {
-            return $event->getProcessingState() === Event::STATE_SUCCEEDED;
-        });
+        return array_filter($events, static fn(Event $event): bool => $event->getProcessingState() === Event::STATE_SUCCEEDED);
     }
 }

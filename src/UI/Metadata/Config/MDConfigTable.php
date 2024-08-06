@@ -16,33 +16,17 @@ use WaitOverlay;
  */
 class MDConfigTable extends ilTable2GUI
 {
-    /**
-     * @var xoctGUI
-     */
-    private $parent;
-    /**
-     * @var ilPlugin
-     */
-    private $plugin;
-    /**
-     * @var Container
-     */
-    private $dic;
-
     public function __construct(
-        xoctGUI $parent,
+        private readonly \xoctGUI $parent,
         string $title,
-        Container $dic,
-        ilPlugin $plugin,
+        private readonly Container $dic,
+        private readonly \ilPlugin $plugin,
         array $data
     ) {
-        $this->parent = $parent;
-        $this->plugin = $plugin;
-        $this->dic = $dic;
         new WaitOverlay($this->dic->ui()->mainTemplate());
         $this->setId('xoct_md_config');
         $this->setDescription($this->plugin->txt('msg_md_config_info'));
-        parent::__construct($parent);
+        parent::__construct($this->parent);
         $this->setTitle($title);
         $this->setLimit(0);
         $this->setEnableNumInfo(false);
@@ -77,7 +61,7 @@ class MDConfigTable extends ilTable2GUI
     }
 
     #[\ReturnTypeWillChange]
-    protected function fillRow(/*array*/ $a_set): void
+    protected function fillRow(/*array*/ array $a_set): void
     {
         $a_set['actions'] = $this->buildActions($a_set);
         $a_set['required'] = $a_set['required'] ? 'ok' : 'not_ok';
@@ -85,7 +69,7 @@ class MDConfigTable extends ilTable2GUI
         parent::fillRow($a_set);
     }
 
-    protected function buildActions($a_set): string
+    protected function buildActions(array $a_set): string
     {
         $this->dic->ctrl()->setParameter($this->parent_obj, 'field_id', $a_set['field_id']);
         $actions = [
@@ -99,7 +83,8 @@ class MDConfigTable extends ilTable2GUI
             $this->plugin->txt('msg_confirm_delete'),
             $this->dic->ctrl()->getFormAction($this->parent_obj, 'delete')
         )->withAffectedItems([
-            $this->dic->ui()->factory()->modal()->interruptiveItem(
+            $this->dic->ui()->factory()->modal()->interruptiveItem()->keyValue(
+                $a_set['field_id'],
                 $a_set['field_id'],
                 $a_set['title_de']
             )

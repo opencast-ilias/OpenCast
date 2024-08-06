@@ -107,13 +107,10 @@ class Group extends APIObject
      */
     protected function wakeup($fieldname, $value)
     {
-        switch ($fieldname) {
-            case 'members':
-            case 'roles':
-                return explode(',', $value);
-            default:
-                return $value;
-        }
+        return match ($fieldname) {
+            'members', 'roles' => explode(',', (string) $value),
+            default => $value,
+        };
     }
 
     /**
@@ -124,13 +121,10 @@ class Group extends APIObject
      */
     protected function sleep($fieldname, $value)
     {
-        switch ($fieldname) {
-            case 'members':
-            case 'roles':
-                return implode(',', $value);
-            default:
-                return $value;
-        }
+        return match ($fieldname) {
+            'members', 'roles' => implode(',', $value),
+            default => $value,
+        };
     }
 
     public function getIdentifier(): string

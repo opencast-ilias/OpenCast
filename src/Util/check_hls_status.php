@@ -58,19 +58,19 @@ $url = urldecode(filter_input(INPUT_GET, 'url'));
 $livestream_type = filter_input(INPUT_GET, 'livestream_type');
 $response = fetch($url);
 $url = $response['effective_url'] ?? $url;
-$base_url = substr($url, 0, strrpos($url, '/') + 1);
+$base_url = substr((string) $url, 0, strrpos((string) $url, '/') + 1);
 
 $ext_x_type = $livestream_type === 'hls' ? 'EXT-X-STREAM-INF' : 'EXT-X-MEDIA-SEQUENCE';
 
 // check playlist
-if (($response['httpCode'] !== 200) || (strpos($response['body'], $ext_x_type) === false)) {
+if (($response['httpCode'] !== 200) || (!str_contains((string) $response['body'], $ext_x_type))) {
     echo 'false';
     exit;
 }
 
 // check chunklists in m3u8 playlist (only one has to be accessible)
 foreach (parsePlaylist($response['body'], $livestream_type) as $chunklist_url) {
-    $url = (strpos($chunklist_url, 'http') === 0) ? $chunklist_url : ($base_url . $chunklist_url);
+    $url = (str_starts_with((string) $chunklist_url, 'http')) ? $chunklist_url : ($base_url . $chunklist_url);
     $response = fetch($url);
     if ($response['httpCode'] === 200) {
         echo 'true';

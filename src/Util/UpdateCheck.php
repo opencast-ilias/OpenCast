@@ -7,14 +7,12 @@ namespace srag\Plugins\Opencast\Util;
 class UpdateCheck
 {
     private string $path_to_plugin_php = __DIR__ . '/../../plugin.php';
-    private \ilDBInterface $db;
     private $last_update_version = '';
     private string $version_check_string = '';
     private $version_check_string_db = '';
 
-    public function __construct(\ilDBInterface $db)
+    public function __construct(private readonly \ilDBInterface $db)
     {
-        $this->db = $db;
         if (!is_readable($this->path_to_plugin_php)) {
             throw new \Exception('Could not find plugin.php');
         }
@@ -39,7 +37,7 @@ class UpdateCheck
                 ['text'],
                 ['version_check']
             )->fetchObject();
-        } catch (\Throwable $t) {
+        } catch (\Throwable) {
             $res = null; // unable to read from config, maybe a new installation of the plugin
         }
 

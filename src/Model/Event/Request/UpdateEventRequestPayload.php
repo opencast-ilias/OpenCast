@@ -12,24 +12,11 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
 
 class UpdateEventRequestPayload implements JsonSerializable
 {
-    protected ?Metadata $metadata;
-    protected ?ACL $acl;
-    protected ?Scheduling $scheduling;
-    protected ?Processing $processing;
-
-    public function __construct(
-        ?Metadata $metadata,
-        ?ACL $acl = null,
-        ?Scheduling $scheduling = null,
-        ?Processing $processing = null
-    ) {
-        $this->metadata = $metadata;
-        $this->acl = $acl;
-        $this->scheduling = $scheduling;
-        $this->processing = $processing;
+    public function __construct(protected ?Metadata $metadata, protected ?ACL $acl = null, protected ?Scheduling $scheduling = null, protected ?Processing $processing = null)
+    {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $data = [];
         if (!is_null($this->metadata)) {

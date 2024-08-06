@@ -32,8 +32,6 @@ class xoctWorkflowTableGUI extends ilTable2GUI
 
 
     public const LANG_MODULE = 'workflow';
-
-    protected WorkflowRepository $workflow_repository;
     protected Factory $factory;
     /**
      * @var Modal[]
@@ -42,13 +40,12 @@ class xoctWorkflowTableGUI extends ilTable2GUI
     protected Renderer $renderer;
     private ilOpenCastPlugin $plugin;
 
-    public function __construct($parent, string $parent_cmd, WorkflowRepository $workflow_repository)
+    public function __construct(?object $parent, string $parent_cmd, protected WorkflowRepository $workflow_repository)
     {
         global $DIC;
-        $opencastContainer  = Init::init();
+        $opencastContainer = Init::init();
         $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         $ui = $DIC->ui();
-        $this->workflow_repository = $workflow_repository;
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
         $this->setExternalSorting(true);
@@ -103,7 +100,7 @@ class xoctWorkflowTableGUI extends ilTable2GUI
      * @param     $column
      * @param     $row WorkflowAR
      */
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = TableGUIConstants::DEFAULT_FORMAT): string
+    protected function getColumnValue(string $column, /*array*/ array $row, int $format = TableGUIConstants::DEFAULT_FORMAT): string
     {
         $row = WorkflowAR::find($row['id']);
 
@@ -118,7 +115,7 @@ class xoctWorkflowTableGUI extends ilTable2GUI
                 return str_replace(',', '<br />', $row->getTags());
             case 'config_panel':
                 $tpl = new ilTemplate("tpl.icon.html", true, true, $this->plugin->getDirectory());
-                $has_config_panel = !empty($row->getConfigPanel()) ? true : false;
+                $has_config_panel = !empty($row->getConfigPanel());
                 $icon = $has_config_panel ? 'checkbox_checked.png' : 'checkbox_unchecked.png';
                 $tpl->setCurrentBlock('icon');
                 $tpl->setVariable('ICON_SRC', ilUtil::getHtmlPath(ilUtil::getImagePath($icon)));

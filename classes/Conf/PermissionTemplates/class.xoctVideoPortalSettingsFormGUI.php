@@ -26,10 +26,6 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
      */
     protected $object;
     /**
-     * @var xoctConfGUI
-     */
-    protected \xoctPermissionTemplateGUI $parent_gui;
-    /**
      * @var string
      */
     protected $subtab_active;
@@ -37,10 +33,9 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
     /**
      * @param $parent_gui
      */
-    public function __construct(xoctPermissionTemplateGUI $parent_gui)
+    public function __construct(protected \xoctPermissionTemplateGUI $parent_gui)
     {
         parent::__construct();
-        $this->parent_gui = $parent_gui;
         $this->initForm();
     }
 
@@ -97,7 +92,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
      *
      * @internal param $key
      */
-    private function getValuesForItem($item, &$array): void
+    private function getValuesForItem($item, array &$array): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();
@@ -152,7 +147,7 @@ class xoctVideoPortalSettingsFormGUI extends ilPropertyFormGUI
      *
      * @return bool
      */
-    public static function checkItem($item)
+    public static function checkItem($item): bool
     {
         return !$item instanceof ilFormSectionHeaderGUI;
     }

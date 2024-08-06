@@ -12,7 +12,6 @@ use srag\Plugins\Opencast\Container\Init;
 
 class AgentApiRepository implements AgentRepository, Request
 {
-    private AgentParser $agentParser;
     /**
      * @var API
      */
@@ -22,10 +21,9 @@ class AgentApiRepository implements AgentRepository, Request
      */
     private $cache;
 
-    public function __construct(AgentParser $agentParser)
+    public function __construct(private readonly AgentParser $agentParser)
     {
         $opencastContainer = Init::init();
-        $this->agentParser = $agentParser;
         $this->api = $opencastContainer[API::class];
         $this->cache = $opencastContainer[Services::class]->get($this);
     }

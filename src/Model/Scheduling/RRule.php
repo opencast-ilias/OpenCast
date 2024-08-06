@@ -8,11 +8,8 @@ use DateTimeImmutable;
 
 class RRule
 {
-    private string $value;
-
-    public function __construct(string $value)
+    public function __construct(private readonly string $value)
     {
-        $this->value = $value;
     }
 
     public static function fromStartAndWeekdays(DateTimeImmutable $start, array $weekdays): self

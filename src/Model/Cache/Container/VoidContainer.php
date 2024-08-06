@@ -25,11 +25,8 @@ namespace srag\Plugins\Opencast\Model\Cache\Container;
  */
 final class VoidContainer implements Container
 {
-    private Request $request;
-
-    public function __construct(Request $request)
+    public function __construct(private readonly Request $request)
     {
-        $this->request = $request;
     }
 
     public function lock(float $seconds): void

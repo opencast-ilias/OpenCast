@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Model\Series;
 
-use ilException;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
@@ -28,27 +27,22 @@ use srag\Plugins\Opencast\Container\Init;
 class SeriesAPIRepository implements SeriesRepository, Request
 {
     public const OWN_SERIES_PREFIX = 'Eigene Serie von ';
+    /**
+     * @readonly
+     */
     private Container $cache;
-    private ACLUtils $ACLUtils;
-    private SeriesParser $seriesParser;
-    private MetadataFactory $metadataFactory;
-    private MDParser $md_parser;
     protected API $api;
 
     public function __construct(
         Services $cache,
-        SeriesParser $seriesParser,
-        ACLUtils $ACLUtils,
-        MetadataFactory $metadataFactory,
-        MDParser $MDParser
+        private SeriesParser $seriesParser,
+        private ACLUtils $ACLUtils,
+        private MetadataFactory $metadataFactory,
+        private MDParser $md_parser
     ) {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->cache = $cache->get($this);
-        $this->ACLUtils = $ACLUtils;
-        $this->seriesParser = $seriesParser;
-        $this->metadataFactory = $metadataFactory;
-        $this->md_parser = $MDParser;
     }
 
     public function getContainerKey(): string
@@ -145,7 +139,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
                 ]);
                 $data = array_filter($data, static fn($series): bool => $series instanceof \stdClass);
 
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 $data = [];
             }
         }
@@ -160,7 +154,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
                 );
                 $d->metadata = $metadata;
                 $return[] = $this->seriesParser->parseAPIResponse($d);
-            } catch (xoctException $e) {    // it's possible that the current user has access to more series than the configured API user
+            } catch (xoctException) {    // it's possible that the current user has access to more series than the configured API user
                 continue;
             }
         }

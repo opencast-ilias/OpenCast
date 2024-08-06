@@ -11,15 +11,8 @@ use stdClass;
 
 class EventParser
 {
-    private MDParser $MDParser;
-    private ACLParser $ACLParser;
-    private SchedulingParser $schedulingParser;
-
-    public function __construct(MDParser $MDParser, ACLParser $ACLParser, SchedulingParser $schedulingParser)
+    public function __construct(private readonly MDParser $MDParser, private readonly ACLParser $ACLParser, private readonly SchedulingParser $schedulingParser)
     {
-        $this->MDParser = $MDParser;
-        $this->ACLParser = $ACLParser;
-        $this->schedulingParser = $schedulingParser;
     }
 
     public function parseAPIResponse(stdClass $data, string $identifier): Event

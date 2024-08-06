@@ -16,14 +16,12 @@ class AgentParser
      */
     public function parseApiResponse(array $response): array
     {
-        return array_map(function (stdClass $item): \srag\Plugins\Opencast\Model\Agent\Agent {
-            return new Agent(
-                $item->agent_id,
-                $item->status,
-                $item->inputs,
-                new DateTimeImmutable($item->update),
-                $item->url
-            );
-        }, $response);
+        return array_map(fn(stdClass $item): Agent => new Agent(
+            $item->agent_id,
+            $item->status,
+            $item->inputs,
+            new DateTimeImmutable($item->update),
+            $item->url
+        ), $response);
     }
 }

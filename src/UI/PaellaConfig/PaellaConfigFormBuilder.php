@@ -48,23 +48,8 @@ class PaellaConfigFormBuilder
     public const F_PAELLA_PLAYER_PREVIEW_PREVIEW = 'paella_player_section_preview';
     public const F_PAELLA_PLAYER_PREVIEW_CAPTION = 'paella_player_section_caption';
 
-    private \ilPlugin $plugin;
-    private PaellaConfigStorageService $paellaStorageService;
-    private Factory $ui_factory;
-
-    private Renderer $ui_renderer;
-
-    public function __construct(
-        ilPlugin $plugin,
-        UploadHandler $fileUploadHandler,
-        PaellaConfigStorageService $paellaStorageService,
-        Factory $ui_factory,
-        Renderer $ui_renderer
-    ) {
-        $this->plugin = $plugin;
-        $this->paellaStorageService = $paellaStorageService;
-        $this->ui_factory = $ui_factory;
-        $this->ui_renderer = $ui_renderer;
+    public function __construct(private readonly \ilPlugin $plugin, UploadHandler $fileUploadHandler, private readonly PaellaConfigStorageService $paellaStorageService, private readonly Factory $ui_factory, private readonly Renderer $ui_renderer)
+    {
     }
 
     public function buildForm(string $form_action): Standard
@@ -292,7 +277,10 @@ class PaellaConfigFormBuilder
             'es' => 'es'
         ];
         foreach (scandir(PluginConfig::PAELLA_LANG_PATH) as $langFile) {
-            if ('.' === $langFile || '..' === $langFile) {
+            if ('.' === $langFile) {
+                continue;
+            }
+            if ('..' === $langFile) {
                 continue;
             }
             $ext = pathinfo($langFile, PATHINFO_EXTENSION);

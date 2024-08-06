@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class SeriesWorkflowParameter extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_series_param';

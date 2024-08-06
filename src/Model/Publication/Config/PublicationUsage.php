@@ -11,6 +11,7 @@ use ActiveRecord;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PublicationUsage extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_publication_usage';
@@ -282,7 +283,7 @@ class PublicationUsage extends ActiveRecord
      */
     public function getGroupId(): ?int
     {
-        return (!is_null($this->group_id) ? intval($this->group_id) : null);
+        return (is_null($this->group_id) ? null : intval($this->group_id));
     }
 
     /**
@@ -392,9 +393,8 @@ class PublicationUsage extends ActiveRecord
     public function getArrayMediaTypes(): array
     {
         $mediatype = $this->getMediaType();
-        $mediatypes = $mediatype ? explode(',', $mediatype) : [];
-        $mediatypes = array_map('trim', $mediatypes);
-        return $mediatypes;
+        $mediatypes = $mediatype !== '' && $mediatype !== '0' ? explode(',', $mediatype) : [];
+        return array_map('trim', $mediatypes);
     }
 
     /**

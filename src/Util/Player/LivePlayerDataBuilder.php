@@ -32,7 +32,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         $streams = [];
         if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
-                $role = strpos($track['type'], self::ROLE_MASTER) !== false ? self::ROLE_MASTER : self::ROLE_SLAVE;
+                $role = str_contains((string) $track['type'], self::ROLE_MASTER) ? self::ROLE_MASTER : self::ROLE_SLAVE;
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
@@ -87,7 +87,7 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             "w" => '1920',
             "h" => '1080'
         ];
-        $resolution_arr = explode('x', $resolution);
+        $resolution_arr = explode('x', (string) $resolution);
         if (count($resolution_arr) == 2) {
             $video_res['w'] = $resolution_arr[0];
             $video_res['h'] = $resolution_arr[1];

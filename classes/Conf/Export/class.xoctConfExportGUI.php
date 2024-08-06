@@ -17,6 +17,9 @@ use ILIAS\Filesystem\Stream\Streams;
 class xoctConfExportGUI extends xoctGUI
 {
     private const EXPORT_FILE_NAME = 'opencastexport.xml';
+    /**
+     * @readonly
+     */
     private FileUpload $upload;
     /**
      * @var \ilToolbarGUI

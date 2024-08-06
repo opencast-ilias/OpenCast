@@ -34,7 +34,7 @@ class Handlers
         // Request middlewares.
         foreach ($classmethods as $methodname) {
             // Registering methods that start with 'request'.
-            if (strpos($methodname, 'request') === 0) {
+            if (str_starts_with($methodname, 'request')) {
                 $middleware = self::$methodname();
                 $stack->unshift($middleware);
             }
@@ -43,14 +43,14 @@ class Handlers
 
     private static function requestDebug(): \Closure
     {
-        return static fn (callable $handler): \Closure => function (RequestInterface $request, array $options) use ($handler) {
+        return static fn(callable $handler): \Closure => function (RequestInterface $request, array $options) use ($handler) {
             $path = $request->getUri()->getPath();
             $query = $request->getUri()->getQuery();
             $method = $request->getMethod();
             $completeUri = $request->getUri()->__toString();
 
             // Exclude requests.
-            $isExcluded = array_filter(self::excludedRequests(), fn (array $excReq): bool => ltrim($excReq['path'], '/') === ltrim(
+            $isExcluded = array_filter(self::excludedRequests(), fn(array $excReq): bool => ltrim($excReq['path'], '/') === ltrim(
                 $path,
                 '/'
             ) && $excReq['query'] === $query && $excReq['method'] === $method);
@@ -104,7 +104,7 @@ class Handlers
         };
     }
 
-    private function excludedRequests(): array
+    private static function excludedRequests(): array
     {
         return [
             // This request is a necessary call for OpencastAPI class to get Ingest service up and running.

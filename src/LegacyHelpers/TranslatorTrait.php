@@ -44,7 +44,7 @@ trait TranslatorTrait
             $txt = $lng->exists($key) ? $lng->txt($key) : "";
         }
 
-        if (!(empty($txt) || $txt === "MISSING" || strpos($txt, "MISSING ") === 0)) {
+        if (!(empty($txt) || $txt === "MISSING" || str_starts_with((string) $txt, "MISSING "))) {
             try {
                 $txt = vsprintf($txt, $placeholders);
             } catch (\Exception $ex) {

@@ -27,7 +27,13 @@ class OpencastAPI implements API
 
     private Opencast $api;
     public OcRestClient $rest;
+    /**
+     * @readonly
+     */
     private array $config;
+    /**
+     * @readonly
+     */
     private array $engage_config;
 
     public function __construct(Config $config)

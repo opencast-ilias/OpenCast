@@ -18,18 +18,11 @@ use ILIAS\Refinery\Factory;
  */
 class ilOpenCastAgent extends ilPluginDefaultAgent
 {
-    private Factory $refinery;
-    private \ILIAS\Data\Factory $data_factory;
-    private \ilLanguage $lng;
-
     public function __construct(
-        Factory $refinery,
-        \ILIAS\Data\Factory $data_factory,
-        \ilLanguage $lng
+        private readonly Factory $refinery,
+        private readonly \ILIAS\Data\Factory $data_factory,
+        private readonly \ilLanguage $lng
     ) {
-        $this->refinery = $refinery;
-        $this->data_factory = $data_factory;
-        $this->lng = $lng;
         parent::__construct('OpenCast');
     }
 
@@ -108,7 +101,7 @@ class ilOpenCastAgent extends ilPluginDefaultAgent
         return [
             "OpencastRBACRights" => new ObjectiveConstructor(
                 "Updating Opencast RBAC permissions list",
-                fn (): \ilOpenCastUpdateRBACPermsListObjective => new ilOpenCastUpdateRBACPermsListObjective()
+                fn(): \ilOpenCastUpdateRBACPermsListObjective => new ilOpenCastUpdateRBACPermsListObjective()
             )
         ];
     }

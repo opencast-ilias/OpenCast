@@ -15,7 +15,6 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 trait ilObjShowDuplicates
 {
-
     private $items_to_delete = [];
 
     /**
@@ -139,9 +138,9 @@ trait ilObjShowDuplicates
                     $path .= $data['title'];
                 } else {
                     $path .= ('<a target="_top" href="' . ilLink::_getLink(
-                            (int) $data['ref_id'],
-                            $data['type']
-                        ) . '">' . $data['title'] . '</a>');
+                        (int) $data['ref_id'],
+                        $data['type']
+                    ) . '">' . $data['title'] . '</a>');
                 }
             }
 
@@ -173,31 +172,35 @@ trait ilObjShowDuplicates
             $items = [];
             foreach ($all_refs as $mref_id) {
                 // not the already selected reference, no refs from trash
-
-                if ($mref_id != $a_ref_id && !$il_tree->isDeleted($mref_id)) {
-                    if ($il_access_handler->checkAccess("read", "", $mref_id)) {
-                        $may_delete = false;
-                        if ($il_access_handler->checkAccess("delete", "", $mref_id)) {
-                            $may_delete = true;
-                            $may_delete_any++;
-                        }
-
-                        $path = $this->buildPath([$mref_id]);
-                        $items[] = [
-                            "id" => $mref_id,
-                            "path" => array_shift($path),
-                            "delete" => $may_delete
-                        ];
-                    } else {
-                        $counter++;
+                if ($mref_id == $a_ref_id) {
+                    continue;
+                }
+                if ($il_tree->isDeleted($mref_id)) {
+                    continue;
+                }
+                if ($il_access_handler->checkAccess("read", "", $mref_id)) {
+                    $may_delete = false;
+                    if ($il_access_handler->checkAccess("delete", "", $mref_id)) {
+                        $may_delete = true;
+                        $may_delete_any++;
                     }
+
+                    $path = $this->buildPath([$mref_id]);
+                    $items[] = [
+                        "id" => $mref_id,
+                        "path" => array_shift($path),
+                        "delete" => $may_delete
+                    ];
+                } else {
+                    $counter++;
                 }
             }
 
             // render
             $tpl = new ilTemplate(
                 "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.rep_multi_ref.html",
-                true, true
+                true,
+                true
             );
 
             $tpl->setVariable("TXT_INTRO", $il_language->txt("rep_multiple_reference_deletion_intro"));

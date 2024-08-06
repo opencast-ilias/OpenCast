@@ -34,36 +34,29 @@ class xoctEventTableGUI extends ilTable2GUI
     protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $legacy_container;
     protected array  $filter = [];
-    protected ObjectSettings $object_settings;
     protected bool $has_scheduled_events = false;
     protected bool $has_unprotected_links = false;
     protected EventRepository $event_repository;
-    /**
-     * @var MDFieldConfigEventAR[]
-     */
-    private array $md_fields;
-    private string $lang_key;
     private UIServices $ui;
     private \ilObjUser $user;
-    private MDCatalogue  $md_catalogue_event;
 
     public function __construct(
         xoctEventGUI $a_parent_obj,
         string $a_parent_cmd,
-        ObjectSettings $object_settings,
-        array $md_fields,
+        protected ObjectSettings $object_settings,
+        /**
+         * @var MDFieldConfigEventAR[]
+         */
+        private array $md_fields,
         array $data,
-        string $lang_key,
-        MDCatalogue $md_catalogue_event
+        private string $lang_key,
+        private MDCatalogue $md_catalogue_event
     ) {
         global $DIC;
         $ctrl = $DIC->ctrl();
         $this->ui = $DIC->ui();
         $this->user = $DIC->user();
         $this->parent_obj = $a_parent_obj;
-        $this->md_fields = $md_fields;
-        $this->lang_key = $lang_key;
-        $this->object_settings = $object_settings;
         $this->container = Init::init($DIC);
         $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
@@ -98,7 +91,6 @@ class xoctEventTableGUI extends ilTable2GUI
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->setExportFormats([self::EXPORT_CSV]);
         }
-        $this->md_catalogue_event = $md_catalogue_event;
     }
 
     public static function setDefaultRowValue(int $obj_id): void
@@ -160,7 +152,7 @@ class xoctEventTableGUI extends ilTable2GUI
                 }
                 $md_field_def = $this->md_catalogue_event->getFieldById($md_field->getFieldId());
                 $value = $a_set[$md_field->getFieldId()] ?? '';
-                if ($md_field_def->getType()->getTitle() == MDDataType::TYPE_TEXT_SELECTION) {
+                if ($md_field_def->getType()->getTitle() === MDDataType::TYPE_TEXT_SELECTION) {
                     $value = $md_field->getValues()[$value] ?? '';
                 }
                 $this->tpl->setVariable('VALUE', $value);
@@ -295,7 +287,10 @@ class xoctEventTableGUI extends ilTable2GUI
             foreach ($this->filter as $field => $value) {
                 switch ($field) {
                     case 'created_unix':
-                        if (!$value['start'] || !$value['end']) {
+                        if (!$value['start']) {
+                            continue 2;
+                        }
+                        if (!$value['end']) {
                             continue 2;
                         }
                         $dateObject = new ilDateTime($array['created_unix'], IL_CAL_UNIX);
@@ -305,10 +300,16 @@ class xoctEventTableGUI extends ilTable2GUI
                         }
                         break;
                     default:
-                        if ($value === null || $value === '' || $value === false) {
+                        if ($value === null) {
                             continue 2;
                         }
-                        $strpos = (stripos($array[$field], strtolower($value)) !== false);
+                        if ($value === '') {
+                            continue 2;
+                        }
+                        if ($value === false) {
+                            continue 2;
+                        }
+                        $strpos = (stripos((string) $array[$field], strtolower($value)) !== false);
                         if (!$strpos) {
                             $return = false;
                         }
@@ -337,27 +338,21 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->addFilterItem($item);
         $item->readFromSession();
 
-        switch (true) {
-            case ($item instanceof ilCheckboxInputGUI):
-                $this->filter[$item->getPostVar()] = $item->getChecked();
-                break;
-            case ($item instanceof ilDateDurationInputGUI):
-                $this->filter[$item->getPostVar()] = [
-                    'start' => $item->getStart(),
-                    'end' => $item->getEnd(),
-                ];
-                break;
-            default:
-                $this->filter[$item->getPostVar()] = $item->getValue();
-                break;
-        }
+        $this->filter[$item->getPostVar()] = match (true) {
+            $item instanceof ilCheckboxInputGUI => $item->getChecked(),
+            $item instanceof ilDateDurationInputGUI => [
+                'start' => $item->getStart(),
+                'end' => $item->getEnd(),
+            ],
+            default => $item->getValue(),
+        };
     }
 
     /**
      * @param int  $format
      * @param bool $send
      */
-    public function exportData($format, $send = false): void
+    public function exportData(int $format, bool $send = false): void
     {
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
             $this->sendReponse("Access Denied");
@@ -375,15 +370,19 @@ class xoctEventTableGUI extends ilTable2GUI
             }
 
             $title = strip_tags($column["text"]);
-            if ($title) {
-                $a_csv->addColumn($title);
+            if ($title === '') {
+                continue;
             }
+            if ($title === '0') {
+                continue;
+            }
+            $a_csv->addColumn($title);
         }
         $a_csv->addRow();
     }
 
     #[ReturnTypeWillChange]
-    protected function fillRowCSV(/*ilCSVWriter*/ $a_csv, /*array*/ $a_set): void
+    protected function fillRowCSV(/*ilCSVWriter*/ \ilCSVWriter $a_csv, /*array*/ $a_set): void
     {
         $selected_colums = $this->getSelectedColumns();
 

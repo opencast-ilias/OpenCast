@@ -13,11 +13,8 @@ use srag\Plugins\Opencast\Model\Metadata\Helper\MDPrefiller;
 
 class MetadataService
 {
-    private Container $container;
-
-    public function __construct(Container $container)
+    public function __construct(private Container $container)
     {
-        $this->container = $container;
     }
 
     public function catalogueFactory(): MDCatalogueFactory

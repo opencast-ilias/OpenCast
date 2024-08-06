@@ -12,6 +12,7 @@ use ActiveRecord;
  * @author fluxlabs <connect@fluxlabs.ch>
  * @author Sophie Pfister <sophie@fluxlabs.ch>
  */
+#[\AllowDynamicProperties]
 class AcceptedToU extends ActiveRecord
 {
     public const TABLE_NAME = "xoct_accepted_tou";
@@ -115,11 +116,9 @@ class AcceptedToU extends ActiveRecord
 
     public function wakeUp($field_name, $field_value)
     {
-        switch ($field_name) {
-            case "tou_accepted":
-                return (bool) $field_value;
-            default:
-                return parent::wakeUp($field_name, $field_value);
-        }
+        return match ($field_name) {
+            "tou_accepted" => (bool) $field_value,
+            default => parent::wakeUp($field_name, $field_value),
+        };
     }
 }

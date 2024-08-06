@@ -31,7 +31,7 @@ class ToUManager
     public static function hasAcceptedToU(int $user_id, int $instance_id = 0): bool
     {
         /** @var AcceptedToU $ar */
-        if ($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) {
+        if (($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) !== null) {
             return $ar->hasAccepted();
         }
         return false;
@@ -41,7 +41,7 @@ class ToUManager
     public static function setToUAccepted(int $user_id, int $instance_id = 0): void
     {
         /** @var AcceptedToU $ar */
-        if ($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) {
+        if (($ar = AcceptedToU::where(["user_id" => $user_id, "oc_instance_id" => $instance_id])->first()) !== null) {
             $ar->setAccepted();
             $ar->update();
         } else {

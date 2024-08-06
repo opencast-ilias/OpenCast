@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GuzzleHttp\Promise;
 
 /**
@@ -13,10 +15,10 @@ class RejectionException extends \RuntimeException
     private $reason;
 
     /**
-     * @param mixed  $reason      Rejection reason.
-     * @param string $description Optional description
+     * @param mixed       $reason      Rejection reason.
+     * @param string|null $description Optional description.
      */
-    public function __construct($reason, $description = null)
+    public function __construct($reason, ?string $description = null)
     {
         $this->reason = $reason;
 
@@ -29,8 +31,7 @@ class RejectionException extends \RuntimeException
         ) {
             $message .= ' with reason: ' . $this->reason;
         } elseif ($reason instanceof \JsonSerializable) {
-            $message .= ' with reason: '
-                . json_encode($this->reason, JSON_PRETTY_PRINT);
+            $message .= ' with reason: ' . json_encode($this->reason, JSON_PRETTY_PRINT);
         }
 
         parent::__construct($message);

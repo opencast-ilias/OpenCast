@@ -41,10 +41,6 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     public const F_MEDIATYPE = 'mediatype';
     public const F_OVERWRITE_DOWNLOAD_PERM = 'overwrite_download_perm';
     public const F_EXT_DL_SOURCE = 'ext_dl_source';
-
-    protected PublicationSubUsage $object;
-    protected \xoctPublicationUsageGUI $parent_gui;
-    protected bool $is_new;
     /**
      * @var ilOpenCastPlugin
      */
@@ -55,9 +51,9 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
     protected $legacy_container;
 
     public function __construct(
-        xoctPublicationUsageGUI $parent_gui,
-        PublicationSubUsage $publication_sub_usage,
-        bool $is_new = true
+        protected \xoctPublicationUsageGUI $parent_gui,
+        protected PublicationSubUsage $object,
+        protected bool $is_new = true
     ) {
         global $DIC;
         $this->container = Init::init();
@@ -68,11 +64,8 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         );
         $DIC->ui()->mainTemplate()->addOnLoadCode('il.Opencast.Form.publicationUsage.init()');
         parent::__construct();
-        $this->object = $publication_sub_usage;
-        $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
-        $this->ctrl->saveParameter($parent_gui, 'id');
-        $this->is_new = $is_new;
+        $this->ctrl->saveParameter($this->parent_gui, 'id');
         $this->initForm();
     }
 

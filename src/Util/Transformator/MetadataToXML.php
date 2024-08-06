@@ -18,14 +18,11 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
  */
 class MetadataToXML
 {
-    protected Metadata $metadata;
-
     /**
      * MetadataToXML constructor.
      */
-    public function __construct(Metadata $metadata)
+    public function __construct(protected Metadata $metadata)
     {
-        $this->metadata = $metadata;
     }
 
     public function getXML(): string

@@ -1383,6 +1383,10 @@ if (\srag\Plugins\Opencast\Model\Config\PluginConfig::count() > 0) {
 // course, this does not give any special security to make sure that other versions
 // do not try to update to this version. But another puzzle piece we can use.
 /** @var $ilDB ilDBInterface */
+if($ilDB->queryF('SELECT value FROM xoct_config WHERE name = %s', ['text'], ['version_check'])->rowCount() > 0) {
+    $ilDB->manipulateF('DELETE FROM xoct_config WHERE name = %s', ['text'], ['version_check']);
+}
+
 $ilDB->insert('xoct_config', [
     'name' => ['text', 'version_check'],
     'value' => ['text', '44ac530093a998b525b0a73ba536e64f03bbaff47446cf99e1a31d6a042a4549']

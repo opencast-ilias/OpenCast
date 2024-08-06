@@ -30,8 +30,6 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     public const CMD_LOAD_LIST = 'loadList';
     public const CMD_CONFIRM_LOAD_LIST = 'confirmLoadList';
 
-    protected MDFieldConfigRepository $repository;
-
     protected static $available_commands = [
         self::CMD_STANDARD,
         self::CMD_EDIT,
@@ -51,27 +49,22 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected UIFactory $ui_factory;
     protected Renderer $renderer;
-    protected MDCatalogueFactory $md_catalogue_factory;
-    protected Container $dic;
     private ilToolbarGUI $toolbar;
     private UIServices  $ui;
     private ListProvider $listprovider;
     private array $post_ids = [];
 
     public function __construct(
-        MDFieldConfigRepository $repository,
-        MDCatalogueFactory $md_catalogue_factory,
-        Container $dic
+        protected MDFieldConfigRepository $repository,
+        protected MDCatalogueFactory $md_catalogue_factory,
+        protected Container $dic
     ) {
         parent::__construct();
-        $this->dic = $dic;
         $ui = $this->dic->ui();
         $this->toolbar = $this->dic->toolbar();
         $this->ui = $this->dic->ui();
-        $this->repository = $repository;
         $this->ui_factory = $ui->factory();
         $this->renderer = $ui->renderer();
-        $this->md_catalogue_factory = $md_catalogue_factory;
         $this->listprovider = new ListProvider();
         $this->post_ids = $this->http->request()->getParsedBody()['ids'] ?? [];
     }
@@ -194,9 +187,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $digested_list = $this->digestList($this->listprovider->getList($source), $field_id);
                 if (!empty($digested_list)) {
                     $separator = MDFieldConfigAR::VALUE_SEPERATOR;
-                    $converted_list = array_map(function ($key, $value) use ($separator) {
-                        return "$key$separator$value";
-                    }, array_keys($digested_list), array_values($digested_list));
+                    $converted_list = array_map(fn($key, $value): string => "$key$separator$value", array_keys($digested_list), array_values($digested_list));
                     if (!empty($converted_list)) {
                         $encoded_list = base64_encode(json_encode($converted_list));
                         $this->ctrl->setParameter($this, 'possible_values_list', $encoded_list);
@@ -231,8 +222,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     {
         $digested = [];
         foreach ($raw_list as $key => $value) {
-            if ($field_id == 'language') {
-                $split = explode('.', $value);
+            if ($field_id === 'language') {
+                $split = explode('.', (string) $value);
                 $default_text = ucfirst(strtolower($split[count($split) - 1]));
                 $translated = $this->getLocaleString(
                     'md_lang_list_' . $key,
@@ -242,8 +233,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 $digested[$key] = $translated;
                 continue;
             }
-            if ($field_id == 'license') {
-                $value = json_decode($value);
+            if ($field_id === 'license') {
+                $value = json_decode((string) $value);
                 if (!$value) {
                     continue;
                 }
@@ -293,12 +284,8 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function getAvailableMetadataFields(): array
     {
-        $already_configured = array_map(function (MDFieldConfigAR $md_config): string {
-            return $md_config->getFieldId();
-        }, $this->repository->getAll(false));
-        $available_total = array_map(function (MDFieldDefinition $md_field_def): string {
-            return $md_field_def->getId();
-        }, $this->getMetadataCatalogue()->getFieldDefinitions());
+        $already_configured = array_map(fn(MDFieldConfigAR $md_config): string => $md_config->getFieldId(), $this->repository->getAll(false));
+        $available_total = array_map(fn(MDFieldDefinition $md_field_def): string => $md_field_def->getId(), $this->getMetadataCatalogue()->getFieldDefinitions());
         return array_diff($available_total, $already_configured);
     }
 
@@ -322,7 +309,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             )
                                            ->withRequired(true)
                                            ->withValue(
-                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                               $md_field_config instanceof MDFieldConfigAR ? $md_field_config->getTitle(
                                                    'de'
                                                ) : ''
                                            ),
@@ -331,7 +318,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
             )
                                            ->withRequired(true)
                                            ->withValue(
-                                               $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getTitle(
+                                               $md_field_config instanceof MDFieldConfigAR ? $md_field_config->getTitle(
                                                    'en'
                                                ) : ''
                                            ),
@@ -343,7 +330,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 ]
             )->withRequired(true)
                                                           ->withValue(
-                                                              $md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? $md_field_config->getVisibleForPermissions(
+                                                              $md_field_config instanceof MDFieldConfigAR ? $md_field_config->getVisibleForPermissions(
                                                               ) : null
                                                           ),
             'required' => $this->ui_factory->input()->field()->checkbox(
@@ -450,7 +437,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
                 'fields' => $this->ui_factory->input()->field()->section(
                     $fields,
                     $this->plugin->txt(
-                        'md_conf_form_' . ($md_field_config instanceof \srag\Plugins\Opencast\Model\Metadata\Config\MDFieldConfigAR ? 'edit' : 'create')
+                        'md_conf_form_' . ($md_field_config instanceof MDFieldConfigAR ? 'edit' : 'create')
                     )
                 )
             ]

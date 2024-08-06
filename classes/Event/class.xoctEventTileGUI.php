@@ -20,12 +20,16 @@ use srag\Plugins\Opencast\Container\Init;
 class xoctEventTileGUI
 {
     public const GET_PAGE = 'page';
+    /**
+     * @readonly
+     */
     private bool $async;
+    /**
+     * @readonly
+     */
     private Container $container;
     protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $leagcy_container;
-    protected xoctEventGUI $parent_gui;
-    protected ObjectSettings $objectSettings;
     protected bool $has_scheduled_events = false;
     /**
      * @var Event[]
@@ -35,11 +39,20 @@ class xoctEventTileGUI
     protected Renderer $renderer;
     protected int $page = 0;
     protected int $limit;
+    /**
+     * @readonly
+     */
     private \ilLanguage $language;
+    /**
+     * @readonly
+     */
     private \ilObjUser $user;
+    /**
+     * @readonly
+     */
     private ilCtrlInterface  $ctrl;
 
-    public function __construct(xoctEventGUI $parent_gui, ObjectSettings $objectSettings, array $data)
+    public function __construct(protected xoctEventGUI $parent_gui, protected ObjectSettings $objectSettings, array $data)
     {
         global $DIC;
         $ui = $DIC->ui();
@@ -50,8 +63,6 @@ class xoctEventTileGUI
         $this->plugin = $this->container->plugin();
         $this->user = $DIC->user();
         $this->ctrl = $DIC->ctrl();
-        $this->parent_gui = $parent_gui;
-        $this->objectSettings = $objectSettings;
         $this->factory = $ui->factory();
         $this->renderer = $ui->renderer();
         $this->page = (int) filter_input(INPUT_GET, self::GET_PAGE) ?: $this->page;
@@ -59,9 +70,7 @@ class xoctEventTileGUI
         $this->limit = UserSettingsRepository::getTileLimitForUser($user->getId(), $ref_id);
         $this->async = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
         $this->events = array_values(
-            array_map(static function ($item) {
-                return $item['object'];
-            }, $this->sortData($data))
+            array_map(static fn(array $item) => $item['object'], $this->sortData($data))
         );
 
         foreach ($this->events as $event) {
@@ -181,14 +190,15 @@ class xoctEventTileGUI
                 $order = 'created';
                 break;
         }
-
         if (class_exists('ilUtil') && method_exists('ilUtil', 'sortArray')) {
             return ilUtil::sortArray(
                 $events,
                 $order,
                 $direction
             );
-        } elseif (class_exists('ilArrayUtil') && method_exists('ilArrayUtil', 'sortArray')) {
+        }
+
+        if (class_exists('ilArrayUtil') && method_exists('ilArrayUtil', 'sortArray')) {
             return ilArrayUtil::sortArray(
                 $events,
                 $order,

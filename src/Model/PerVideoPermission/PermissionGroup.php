@@ -15,6 +15,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PermissionGroup extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_group';
@@ -77,7 +78,7 @@ class PermissionGroup extends ActiveRecord
                                                    ['group_id' => $group_ids]
                                                )
                                                ->getArray(null, 'group_id');
-        if (count($my_groups) === 0) {
+        if ($my_groups === []) {
             return [];
         }
 
@@ -147,20 +148,14 @@ class PermissionGroup extends ActiveRecord
         parent::delete();
     }
 
-    public function wakeUp($field_name, $field_value)
+    public function wakeUp($field_name, $field_value): int|string|null
     {
-        switch ($field_name) {
-            case 'id':
-            case 'serie_id':
-            case 'status':
-                return (int) $field_value;
-            case 'title':
-                return (string) $field_value;
-            case 'description':
-                return (string) $field_value;
-            default:
-                return null;
-        }
+        return match ($field_name) {
+            'id', 'serie_id', 'status' => (int) $field_value,
+            'title' => (string) $field_value,
+            'description' => (string) $field_value,
+            default => null,
+        };
         return null;
     }
 

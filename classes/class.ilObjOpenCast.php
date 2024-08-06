@@ -32,7 +32,7 @@ class ilObjOpenCast extends ilObjectPlugin
     /**
      * @param int $a_ref_id
      */
-    public function __construct($a_ref_id = 0)
+    public function __construct(int $a_ref_id = 0)
     {
         global $DIC;
         $this->ctrl = $DIC->ctrl();
@@ -59,8 +59,8 @@ class ilObjOpenCast extends ilObjectPlugin
         $title = $metadata->getField(MDFieldDefinition::F_TITLE)->getValue();
         $description = $metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue();
         if ($title != $this->getTitle() || $description != $this->getDescription()) {
-            $this->setTitle($title);
-            $this->setDescription($description);
+            $this->setTitle((string) $title);
+            $this->setDescription((string) $description);
             $this->update();
         }
     }
@@ -153,7 +153,7 @@ class ilObjOpenCast extends ilObjectPlugin
         }
 
         $course_or_group = null;
-        if ($ref_id) {
+        if ($ref_id !== 0) {
             /** @var ilObjCourse|ilObjGroup $course_or_group */
             $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
             $crs_or_grp_cache[$ref_id] = $course_or_group;

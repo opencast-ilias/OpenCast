@@ -12,6 +12,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class EventAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_event';

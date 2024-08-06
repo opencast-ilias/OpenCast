@@ -38,18 +38,17 @@ class PublicationUsageRepository
      */
     public function getSubAllowedUsageIds(): array
     {
-        $sub_allowed_configured = array_intersect(
+        return array_intersect(
             PublicationUsage::$sub_allowed_usage_ids,
             $this->getArray(null, 'usage_id')
         );
-        return $sub_allowed_configured;
     }
 
     /**
      * @param null $key
      * @param null $values
      */
-    public function getArray($key = null, $values = null): array
+    public function getArray(?string $key = null, $values = null): array
     {
         return PublicationUsage::getArray($key, $values);
     }

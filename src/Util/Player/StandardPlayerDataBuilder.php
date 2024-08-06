@@ -52,9 +52,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     public function buildStreamingData(): array
     {
         $media = array_values(
-            array_filter($this->event->publications()->getPlayerPublications(), function (Media $medium): bool {
-                return array_key_exists($medium->getMediatype(), self::$mimetype_mapping);
-            })
+            array_filter($this->event->publications()->getPlayerPublications(), fn(Media $medium): bool => array_key_exists($medium->getMediatype(), self::$mimetype_mapping))
         );
 
         if ($media === []) {
@@ -101,36 +99,36 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         foreach ($captions as $caption) {
             $tag_info_array = [];
 
-            list($flavor, $sub_flavor) = explode('/', $caption->flavor, 2);
+            [$flavor, $sub_flavor] = explode('/', $caption->flavor, 2);
             if ($flavor !== 'captions') {
                 continue;
             }
 
             if ($caption instanceof Media) {
-                list($mimefiletype, $format) = explode('/', $caption->mediatype, 2);
+                [$mimefiletype, $format] = explode('/', $caption->mediatype, 2);
                 foreach ($caption->tags as $tag) {
-                    if (strpos($tag, 'lang:') !== false) {
+                    if (str_contains((string) $tag, 'lang:')) {
                         $tag_lang = str_replace('lang:', '', $tag);
                         if (!empty($tag_lang)) {
                             $lang = $tag_lang;
                         }
                     }
 
-                    if (strpos($tag, 'generator-type:') !== false) {
+                    if (str_contains((string) $tag, 'generator-type:')) {
                         $tag_generator_type = str_replace('generator-type:', '', $tag);
                         if (!empty($tag_generator_type)) {
                             $tag_info_array['generator_type'] = $tag_generator_type;
                         }
                     }
 
-                    if (strpos($tag, 'generator:') !== false) {
+                    if (str_contains((string) $tag, 'generator:')) {
                         $tag_generator = str_replace('generator:', '', $tag);
                         if (!empty($tag_generator)) {
                             $tag_info_array['generator'] = $tag_generator;
                         }
                     }
 
-                    if (strpos($tag, 'type:') !== false) {
+                    if (str_contains((string) $tag, 'type:')) {
                         $tag_type = str_replace('type:', '', $tag);
                         if (!empty($tag_type)) {
                             $tag_info_array['type'] = $tag_type;
@@ -138,7 +136,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                     }
                 }
             } elseif ($caption instanceof Attachment) {
-                list($format, $lang) = explode('+', $sub_flavor, 2);
+                [$format, $lang] = explode('+', $sub_flavor, 2);
             }
 
             $text = $this->buildCaptionText($tag_info_array);
@@ -167,17 +165,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR_TYPE))) {
             $generator_type = $tag_info_array['generator_type'];
             $generator_type_lang_code = 'caption_text_generator_type_' . $generator_type;
-            $generator_type_text = $this->getLocaleString($generator_type_lang_code, '', ucfirst($generator_type));
+            $generator_type_text = $this->getLocaleString($generator_type_lang_code, '', ucfirst((string) $generator_type));
             $text_array[] = "($generator_type_text)";
         }
         if (array_key_exists('type', $tag_info_array) &&
             !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_TYPE))) {
-            $type = ucfirst($tag_info_array['type']);
+            $type = ucfirst((string) $tag_info_array['type']);
             $text_array[] = "($type)";
         }
         if (array_key_exists('generator', $tag_info_array) &&
             !empty(PluginConfig::getConfig(PluginConfig::F_PAELLA_DISPLAY_CAPTION_TEXT_GENERATOR))) {
-            $generator = ucfirst($tag_info_array['generator']);
+            $generator = ucfirst((string) $tag_info_array['generator']);
             $text_array[] = "($generator)";
         }
         return implode(' ', $text_array);
@@ -265,7 +263,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             }, []);
 
             ksort($segments);
-            $frame_list_raw = array_map(function (array $segment) {
+            $frame_list_raw = array_map(function (array $segment): array {
                 if (PluginConfig::getConfig(PluginConfig::F_USE_HIGH_LOW_RES_SEGMENT_PREVIEWS)) {
                     /**
                      * @var Attachment[] $segment
@@ -295,30 +293,25 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                         "url" => $high_url,
                         "thumb" => $low_url
                     ];
-                } else {
-                    $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
-
-                    if ($preview === null) {
-                        $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
-                    }
-
-                    $time = substr($preview->getRef(), strpos($preview->getRef(), ";time=") + 7, 8);
-                    $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
-                    $time = $time->getTimestamp();
-
-                    $url = $preview->getUrl();
-                    if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
-                        $url = xoctSecureLink::signThumbnail($url);
-                    }
-
-                    return [
-                        "id" => "frame_" . $time,
-                        "mimetype" => $preview->getMediatype(),
-                        "time" => $time,
-                        "url" => $url,
-                        "thumb" => $url
-                    ];
                 }
+                $preview = $segment[Metadata::FLAVOR_PRESENTATION_SEGMENT_PREVIEW];
+                if ($preview === null) {
+                    $preview = $segment[Metadata::FLAVOR_PRESENTER_SEGMENT_PREVIEW];
+                }
+                $time = substr((string) $preview->getRef(), strpos((string) $preview->getRef(), ";time=") + 7, 8);
+                $time = new DateTime("1970-01-01 $time", new DateTimeZone("UTC"));
+                $time = $time->getTimestamp();
+                $url = $preview->getUrl();
+                if (PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS)) {
+                    $url = xoctSecureLink::signThumbnail($url);
+                }
+                return [
+                    "id" => "frame_" . $time,
+                    "mimetype" => $preview->getMediatype(),
+                    "time" => $time,
+                    "url" => $url,
+                    "thumb" => $url
+                ];
             }, $segments);
         }
 
@@ -356,7 +349,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             foreach ($mc_nodes as $mc_node) {
                 if ($mc_node->hasChildNodes()) {
                     foreach ($mc_node->childNodes as $child_node) {
-                        if (!($child_node->nodeName == 'Video') && !($child_node->nodeName == 'AudioVisual')) {
+                        if ($child_node->nodeName != 'Video' && $child_node->nodeName != 'AudioVisual') {
                             continue;
                         }
 
@@ -364,7 +357,10 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                         $td_node = $td_nodes->length ? $td_nodes->item(0) : null;
                         if (!empty($td_node) && $td_node->hasChildNodes()) {
                             $vs_nodes = $td_node->getElementsByTagName('VideoSegment');
-                            if (empty($vs_nodes) || $vs_nodes->length == 0) {
+                            if (empty($vs_nodes)) {
+                                continue;
+                            }
+                            if ($vs_nodes->length == 0) {
                                 continue;
                             }
                             foreach ($vs_nodes as $vs_node) {
@@ -387,13 +383,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                                             if (!empty($vt_nodes) && $vt_nodes->length) {
                                                 foreach ($vt_nodes as $vt_node) {
                                                     $text_nodes = $vt_node->getElementsByTagName('Text');
-                                                    if (!empty($text_nodes) && $text_nodes->length) {
-                                                        foreach ($text_nodes as $text_node) {
-                                                            if (!empty($segment_text)) {
-                                                                $segment_text .= ' ';
-                                                            }
-                                                            $segment_text .= $text_node->nodeValue ?? '';
+                                                    if (empty($text_nodes)) {
+                                                        continue;
+                                                    }
+                                                    if (!$text_nodes->length) {
+                                                        continue;
+                                                    }
+                                                    foreach ($text_nodes as $text_node) {
+                                                        if (!empty($segment_text)) {
+                                                            $segment_text .= ' ';
                                                         }
+                                                        $segment_text .= $text_node->nodeValue ?? '';
                                                     }
                                                 }
                                             }
@@ -416,13 +416,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
                                                 // Free Text Annotations.
                                                 $fta_nodes = $ta_node->getElementsByTagName('FreeTextAnnotation');
-                                                if (!empty($fta_nodes) && $fta_nodes->length) {
-                                                    foreach ($fta_nodes as $fta_node) {
-                                                        if (!empty($segment_text)) {
-                                                            $segment_text .= ' ';
-                                                        }
-                                                        $segment_text .= $fta_node->nodeValue ?? '';
+                                                if (empty($fta_nodes)) {
+                                                    continue;
+                                                }
+                                                if (!$fta_nodes->length) {
+                                                    continue;
+                                                }
+                                                foreach ($fta_nodes as $fta_node) {
+                                                    if (!empty($segment_text)) {
+                                                        $segment_text .= ' ';
                                                     }
+                                                    $segment_text .= $fta_node->nodeValue ?? '';
                                                 }
                                             }
                                         }

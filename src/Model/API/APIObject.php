@@ -63,7 +63,7 @@ abstract class APIObject implements Request
         $cache_services = $opencastContainer[Services::class];
         $container = $cache_services->get($object);
 
-        $class_name = get_class($object);
+        $class_name = $object::class;
         $key = $class_name . '-' . $identifier;
         xoctLog::getInstance()->write('CACHE: added to cache: ' . $key, xoctLog::DEBUG_LEVEL_1);
 

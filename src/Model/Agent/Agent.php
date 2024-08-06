@@ -15,25 +15,11 @@ use DateTimeImmutable;
  */
 class Agent
 {
-    private string $agent_id;
-    /**
-     * @var string[]
-     */
-    private array $inputs;
-    private \DateTimeImmutable $update;
-    private string $url;
-    private string $status;
-
     /**
      * @param string[] $inputs
      */
-    public function __construct(string $agent_id, string $status, array $inputs, DateTimeImmutable $update, string $url)
+    public function __construct(private readonly string $agent_id, private readonly string $status, private readonly array $inputs, private readonly \DateTimeImmutable $update, private readonly string $url)
     {
-        $this->agent_id = $agent_id;
-        $this->status = $status;
-        $this->inputs = $inputs;
-        $this->update = $update;
-        $this->url = $url;
     }
 
     public function getAgentId(): string

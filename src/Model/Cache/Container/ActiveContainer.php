@@ -41,24 +41,11 @@ final class ActiveContainer implements Container
     private const TRUE = 'true';
     private const FALSE = 'false';
 
-    private Request $request;
-    private Adaptor $adaptor;
-    private Config $config;
-
-    public function __construct(
-        Request $request,
-        Adaptor $adaptor,
-        Config $config
-    ) {
-        $this->request = $request;
-        $this->adaptor = $adaptor;
-        $this->config = $config;
+    public function __construct(private readonly Request $request, private readonly Adaptor $adaptor, private readonly Config $config)
+    {
     }
 
-    /**
-     * @param mixed $value
-     */
-    private function pack($value): string
+    private function pack(mixed $value): string
     {
         if (is_string($value)) {
             return self::STRING_PREFIX . $value;
@@ -112,13 +99,13 @@ final class ActiveContainer implements Container
         if ($value === self::NULL_PREFIX) {
             return null;
         }
-        if (strncmp($value, self::STRING_PREFIX, strlen(self::STRING_PREFIX)) === 0) {
+        if (str_starts_with($value, self::STRING_PREFIX)) {
             return str_replace(self::STRING_PREFIX, '', $value);
         }
-        if (strncmp($value, self::BOOL_PREFIX, strlen(self::BOOL_PREFIX)) === 0) {
+        if (str_starts_with($value, self::BOOL_PREFIX)) {
             return (str_replace(self::BOOL_PREFIX, '', $value) === self::TRUE);
         }
-        if (strncmp($value, self::ARRAY_PREFIX, strlen(self::ARRAY_PREFIX)) === 0) {
+        if (str_starts_with($value, self::ARRAY_PREFIX)) {
             $value = substr($value, strlen(self::ARRAY_PREFIX));
             $value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
             array_walk_recursive($value, function (&$item): void {
@@ -127,7 +114,7 @@ final class ActiveContainer implements Container
 
             return $value;
         }
-        if (strncmp($value, self::STD_PREFIX, strlen(self::STD_PREFIX)) === 0) {
+        if (str_starts_with($value, self::STD_PREFIX)) {
             // cut the first occurence of the prefix
             $value = substr($value, strlen(self::STD_PREFIX));
             $value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
@@ -137,13 +124,13 @@ final class ActiveContainer implements Container
 
             return (object) $value;
         }
-        if (strncmp($value, self::INT_PREFIX, strlen(self::INT_PREFIX)) === 0) {
+        if (str_starts_with($value, self::INT_PREFIX)) {
             return (int) str_replace(self::INT_PREFIX, '', $value);
         }
-        if (strncmp($value, self::FLOAT_PREFIX, strlen(self::FLOAT_PREFIX)) === 0) {
+        if (str_starts_with($value, self::FLOAT_PREFIX)) {
             return (float) str_replace(self::FLOAT_PREFIX, '', $value);
         }
-        if (strncmp($value, self::DOUBLE_PREFIX, strlen(self::DOUBLE_PREFIX)) === 0) {
+        if (str_starts_with($value, self::DOUBLE_PREFIX)) {
             return (float) str_replace(self::DOUBLE_PREFIX, '', $value);
         }
         return null;

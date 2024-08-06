@@ -167,7 +167,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $access = $DIC->access();
-        $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
 
         return $access->checkAccess('write', '', $ref_id);
     }
@@ -181,11 +181,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     ): bool {
         global $DIC;
 
-        if (!$user instanceof \srag\Plugins\Opencast\Model\User\xoctUser) {
+        if (!$user instanceof xoctUser) {
             $user = xoctUser::getInstance($DIC->user());
         }
 
-        $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
 
         $opencastDIC = Init::init($DIC)->legacy();
 
@@ -193,45 +193,46 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             case self::ACTION_EDIT_OWNER:
                 return
                     self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
-                    && $event->getProcessingState() != Event::STATE_ENCODING
+                    && $event->getProcessingState() !== Event::STATE_ENCODING
                     && ilObjOpenCast::_getParentCourseOrGroup($ref_id)
                     && $objectSettings->getPermissionPerClip();
             case self::ACTION_SHARE_EVENT:
-                return
-                    (self::hasPermission(
-                        self::PERMISSION_EDIT_VIDEOS,
-                        $ref_id
-                    ) && $objectSettings->getPermissionPerClip())
-                    || ($opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)
-                        && $objectSettings->getPermissionAllowSetOwn()
-                        && $event->getProcessingState() != Event::STATE_ENCODING
-                        && $event->getProcessingState() != Event::STATE_FAILED);
+                if (self::hasPermission(
+                    self::PERMISSION_EDIT_VIDEOS,
+                    $ref_id
+                ) && $objectSettings->getPermissionPerClip()) {
+                    return true;
+                }
+                return $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)
+                    && $objectSettings->getPermissionAllowSetOwn()
+                    && $event->getProcessingState() !== Event::STATE_ENCODING
+                    && $event->getProcessingState() !== Event::STATE_FAILED;
             case self::ACTION_CUT:
                 return
                     self::hasPermission(self::PERMISSION_EDIT_VIDEOS, $ref_id)
                     && $event->hasPreviews()
-                    && $event->getProcessingState() != Event::STATE_FAILED;
+                    && $event->getProcessingState() !== Event::STATE_FAILED;
             case self::ACTION_DELETE_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
                         || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
-                    && $event->getProcessingState() != Event::STATE_ENCODING;
+                    && $event->getProcessingState() !== Event::STATE_ENCODING;
             case self::ACTION_EDIT_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
                         || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
-                    && $event->getProcessingState() != Event::STATE_ENCODING
-                    && $event->getProcessingState() != Event::STATE_FAILED
+                    && $event->getProcessingState() !== Event::STATE_ENCODING
+                    && $event->getProcessingState() !== Event::STATE_FAILED
                     && (!$event->isScheduled() || PluginConfig::getConfig(
                         PluginConfig::F_SCHEDULED_METADATA_EDITABLE
                     ) != PluginConfig::NO_METADATA);
             case self::ACTION_SET_ONLINE_OFFLINE:
                 return
                     self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-                    && $event->getProcessingState() != Event::STATE_ENCODING
-                    && $event->getProcessingState() != Event::STATE_FAILED;
+                    && $event->getProcessingState() !== Event::STATE_ENCODING
+                    && $event->getProcessingState() !== Event::STATE_FAILED;
             case self::ACTION_ADD_EVENT:
                 return
                     self::hasPermission(self::PERMISSION_UPLOAD);
@@ -260,7 +261,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
                         || (/* (self::hasPermission(self::PERMISSION_DOWNLOAD) || self::hasPermission(self::PERMISSION_UPLOAD)) && */
                             $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)
                         ))
-                    && $event->getProcessingState() == Event::STATE_SUCCEEDED;
+                    && $event->getProcessingState() === Event::STATE_SUCCEEDED;
             case self::ACTION_SCHEDULE_EVENT:
                 return
                     self::hasPermission(self::PERMISSION_SCHEDULE);
@@ -276,7 +277,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $access = $DIC->access();
-        $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
 
         $prefix = in_array($permission, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
         if ($usr_id === null) {
@@ -375,7 +376,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     public static function isActionAllowedForRole(string $action, string $role, ?int $ref_id = null): bool
     {
         global $DIC;
-        $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
         $prefix = in_array($action, self::$custom_rights, true) ? "rep_robj_xoct_perm_" : "";
         if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
             return false;
@@ -436,7 +437,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $parent_id = null;
-        $for_ref_id = $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        $for_ref_id = $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
         foreach ($DIC->repositoryTree()->getNodePath($for_ref_id) as $node) {
             if ($node['type'] ?? '' === 'crs' || $node['type'] ?? '' === 'grp') {
                 $parent_id = $node[$get_ref_id ? 'child' : 'obj_id'];

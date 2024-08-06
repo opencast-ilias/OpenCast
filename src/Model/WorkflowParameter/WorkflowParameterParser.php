@@ -12,7 +12,7 @@ class WorkflowParameterParser
     {
         $configuration = new stdClass();
         foreach ($data as $key => $value) {
-            if (strpos($key, 'wp_') === 0) {
+            if (str_starts_with($key, 'wp_')) {
                 $key = substr($key, 3);
                 $configuration->$key = $value ? 'true' : 'false';
             }

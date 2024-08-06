@@ -30,16 +30,9 @@ class ThumbnailConfigFormBuilder
         MimeTypeUtil::IMAGE__JPEG => '.jpg',
         MimeTypeUtil::IMAGE__PNG => '.png',
     ];
-    // private $plugin;
-    private Factory $ui_factory;
-    private Renderer $ui_renderer;
 
-    public function __construct(
-        Factory $ui_factory,
-        Renderer $ui_renderer
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->ui_renderer = $ui_renderer;
+    public function __construct(private Factory $ui_factory, private Renderer $ui_renderer)
+    {
     }
 
     /**

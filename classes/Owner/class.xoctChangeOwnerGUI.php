@@ -20,15 +20,16 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 class xoctChangeOwnerGUI extends xoctGUI
 {
     protected Event $event;
-    protected ObjectSettings $objectSettings;
-    private ACLUtils $ACLUtils;
+    /**
+     * @readonly
+     */
     private EventRepository $event_repository;
     /**
      * @var \ilObjUser
      */
     private $user;
 
-    public function __construct(ObjectSettings $objectSettings, EventRepository $event_repository, ACLUtils $ACLUtils)
+    public function __construct(protected ObjectSettings $objectSettings, EventRepository $event_repository, private ACLUtils $ACLUtils)
     {
         global $DIC;
         parent::__construct();
@@ -36,9 +37,7 @@ class xoctChangeOwnerGUI extends xoctGUI
         $ctrl = $DIC->ctrl();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->user = $DIC->user();
-        $this->objectSettings = $objectSettings;
         $this->event = $event_repository->find($this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER]);
-        $this->ACLUtils = $ACLUtils;
         $this->event_repository = $event_repository;
         $tabs->clearTargets();
         $tabs->setBackTarget(

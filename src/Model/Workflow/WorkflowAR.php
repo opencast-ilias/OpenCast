@@ -13,6 +13,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class WorkflowAR extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_workflow';

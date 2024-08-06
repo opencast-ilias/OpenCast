@@ -17,25 +17,13 @@ use ILIAS\Data\Factory;
  */
 class Loader implements \ILIAS\UI\Implementation\Render\Loader
 {
-    /**
-     * @var Container
-     */
-    protected $dic;
-
-    /**
-     * @var \ilOpenCastPlugin
-     */
-    protected $plugin;
-
-    public function __construct(Container $dic, \ilOpenCastPlugin $plugin)
+    public function __construct(protected Container $dic, protected \ilOpenCastPlugin $plugin)
     {
-        $this->dic = $dic;
-        $this->plugin = $plugin;
     }
 
     protected function buildChunkedFileRenderer(): ChunkedFileRenderer
     {
-        $renderer = new ChunkedFileRenderer(
+        return new ChunkedFileRenderer(
             $this->dic['ui.factory'],
             $this->dic["ui.template_factory"],
             $this->dic["lng"],
@@ -44,7 +32,6 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
             $this->dic["ui.pathresolver"] ?? null,
             new Factory() // this is only needed after ILIAS 8.11
         );
-        return $renderer;
     }
 
     public function getRendererFor(Component $component, array $contexts): ComponentRenderer

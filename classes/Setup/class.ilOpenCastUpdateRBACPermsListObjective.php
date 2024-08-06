@@ -1,6 +1,10 @@
 <?php
 
 declare(strict_types=1);
+use ILIAS\Setup\NoConfirmationException;
+use ILIAS\DI\Container;
+use ILIAS\Refinery\Factory;
+use ILIAS\Style\Content\Service;
 
 use ILIAS\Setup\Environment;
 use ILIAS\Setup\NullConfig;
@@ -70,8 +74,8 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
      */
     public function achieve(Environment $environment): Environment
     {
-        $component_repository = $environment->getResource(Setup\Environment::RESOURCE_COMPONENT_REPOSITORY);
-        $component_factory = $environment->getResource(Setup\Environment::RESOURCE_COMPONENT_FACTORY);
+        $component_repository = $environment->getResource(Environment::RESOURCE_COMPONENT_REPOSITORY);
+        $component_factory = $environment->getResource(Environment::RESOURCE_COMPONENT_FACTORY);
         $info = $component_repository->getPluginByName(ilOpenCastPlugin::PLUGIN_NAME);
 
         if (!$info->supportsCLISetup()) {
@@ -80,7 +84,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             );
         }
 
-        $admin_interaction = $environment->getResource(Setup\Environment::RESOURCE_ADMIN_INTERACTION);
+        $admin_interaction = $environment->getResource(Environment::RESOURCE_ADMIN_INTERACTION);
 
         $message =
             "You are about to perform an update action on RBAC record sets of the current OpenCast objects.\n" .
@@ -88,7 +92,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             "the action and the data is irreversible. Are you sure you would like to perform this action?.\n";
 
         if (!$admin_interaction->confirmOrDeny($message)) {
-            throw new Setup\NoConfirmationException($message);
+            throw new NoConfirmationException($message);
         }
 
         $ORIG_DIC = $this->initEnvironment($environment, $component_repository, $component_factory);
@@ -244,7 +248,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
      */
     public function isApplicable(Environment $environment): bool
     {
-        $component_repository = $environment->getResource(Setup\Environment::RESOURCE_COMPONENT_REPOSITORY);
+        $component_repository = $environment->getResource(Environment::RESOURCE_COMPONENT_REPOSITORY);
         return $component_repository->getPluginByName(\ilOpenCastPlugin::PLUGIN_NAME)->supportsCLISetup();
     }
 
@@ -272,9 +276,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
         $ops_ids = serialize($ops);
 
         // Remove first.
-        $query = 'DELETE FROM rbac_pa ' .
-            'WHERE rol_id = %s ' .
-            'AND ref_id = %s';
+        $query = 'DELETE FROM rbac_pa WHERE rol_id = %s AND ref_id = %s';
         $res = $db->queryF(
             $query,
             ['integer', 'integer'],
@@ -285,12 +287,10 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             return;
         }
 
-        $query = "INSERT INTO rbac_pa (rol_id,ops_id,ref_id) " .
-            "VALUES " .
-            "(" . $db->quote($role_id, 'integer') . "," . $db->quote(
-                $ops_ids,
-                'text'
-            ) . "," . $db->quote($ref_id, 'integer') . ")";
+        $query = 'INSERT INTO rbac_pa (rol_id,ops_id,ref_id) VALUES (' . $db->quote($role_id, 'integer') . "," . $db->quote(
+            $ops_ids,
+            'text'
+        ) . "," . $db->quote($ref_id, 'integer') . ")";
         $res = $db->manipulate($query);
     }
 
@@ -340,7 +340,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
         $role_key = "il_{$obj_type}_{$role_type}_{$ref_id}";
 
         $sql = 'SELECT rol_id FROM rbac_fa WHERE parent = %s';
-        if ($obj_type == 'grp') {
+        if ($obj_type === 'grp') {
             $sql .= ' AND assign = ' . $db->quote('y', 'string');
         }
         $set = $db->queryF(
@@ -351,7 +351,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
         while ($row = $db->fetchAssoc($set)) {
             $role_id = (int) $row['rol_id'];
             $role_name = $this->lookupTitle($role_id);
-            if (!strcmp($role_name, $role_key)) {
+            if (strcmp($role_name, $role_key) === 0) {
                 return $role_id;
             }
         }
@@ -483,34 +483,32 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
     /**
      * Helper function to initialize the environment for this Objective
      *
-     * @param \Setup\Environment $environment
+     * @param Environment $environment
      * @param \ilComponentRepository $component_repository
      * @param \ilComponentFactory $component_factory
      *
      * @return array old DIC values
      */
     protected function initEnvironment(
-        Setup\Environment $environment,
+        Environment $environment,
         \ilComponentRepository $component_repository,
         \ilComponentFactory $component_factory
-    ): DI\Container {
-        $db = $environment->getResource(Setup\Environment::RESOURCE_DATABASE);
-        $plugin_admin = $environment->getResource(Setup\Environment::RESOURCE_PLUGIN_ADMIN);
-        $ini = $environment->getResource(Setup\Environment::RESOURCE_ILIAS_INI);
-        $client_ini = $environment->getResource(Setup\Environment::RESOURCE_CLIENT_INI);
+    ): Container {
+        $db = $environment->getResource(Environment::RESOURCE_DATABASE);
+        $plugin_admin = $environment->getResource(Environment::RESOURCE_PLUGIN_ADMIN);
+        $ini = $environment->getResource(Environment::RESOURCE_ILIAS_INI);
+        $client_ini = $environment->getResource(Environment::RESOURCE_CLIENT_INI);
 
         // ATTENTION: This is a total abomination. It only exists to allow various
         // sub components of the various readers to run. This is a memento to the
         // fact, that dependency injection is something we want. Currently, every
         // component could just service locate the whole world via the global $DIC.
         $DIC = $GLOBALS["DIC"];
-        $GLOBALS["DIC"] = new DI\Container();
+        $GLOBALS["DIC"] = new Container();
         $GLOBALS["DIC"]["component.repository"] = $component_repository;
         $GLOBALS["DIC"]["component.factory"] = $component_factory;
         $GLOBALS["DIC"]["ilDB"] = $db;
-        $GLOBALS["DIC"]["database"] = function ($c) {
-            return $GLOBALS["DIC"]["ilDB"];
-        };
+        $GLOBALS["DIC"]["database"] = fn($c) => $GLOBALS["DIC"]["ilDB"];
         $GLOBALS["DIC"]["ilIliasIniFile"] = $ini;
         $GLOBALS["DIC"]["ilClientIniFile"] = $client_ini;
         $GLOBALS["DIC"]["ilLog"] = new class () extends ilLogger {
@@ -518,16 +516,16 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             public function __construct()
             {
             }
-            public function write(string $a_message, $a_level = ilLogLevel::INFO): void
+            public function write(string $message, $level = ilLogLevel::INFO, array $context = []): void
             {
             }
-            public function info(string $a_message): void
+            public function info(string $message, array $context = []): void
             {
             }
-            public function warning(string $a_message): void
+            public function warning(string $message, array $context = []): void
             {
             }
-            public function error(string $a_message): void
+            public function error(string $message, array $context = []): void
             {
             }
             public function debug(string $a_message, array $a_context = []): void
@@ -537,9 +535,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
             {
             }
         };
-        $GLOBALS["DIC"]["ilLoggerFactory"] = function ($c) {
-            return ilLoggerFactory::getInstance();
-        };
+        $GLOBALS["DIC"]["ilLoggerFactory"] = fn($c): \ilLoggerFactory => ilLoggerFactory::getInstance();
         $GLOBALS["DIC"]["ilBench"] = null;
         $GLOBALS["DIC"]["lng"] = new ilLanguage('en');
         $GLOBALS["DIC"]["ilPluginAdmin"] = $plugin_admin;
@@ -549,9 +545,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
 
         $tree = new ilTree(ROOT_FOLDER_ID);
         $GLOBALS['tree'] = $tree;
-        $GLOBALS["DIC"]["tree"] = function ($c) {
-            return $GLOBALS["tree"];
-        };
+        $GLOBALS["DIC"]["tree"] = fn($c) => $GLOBALS["tree"];
 
         $GLOBALS["DIC"]["ilAppEventHandler"] = new class () extends ilAppEventHandler {
             /** @noinspection MagicMethodsValidityInspection */
@@ -617,11 +611,11 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
         $init_http = new InitHttpServices();
         $init_http->init($GLOBALS["DIC"]);
         $container = $GLOBALS["DIC"];
-        $GLOBALS["DIC"]['refinery'] = function ($container) {
+        $GLOBALS["DIC"]['refinery'] = function (array $container): Factory {
             $dataFactory = new \ILIAS\Data\Factory();
             $language = $container['lng'];
 
-            return new \ILIAS\Refinery\Factory($dataFactory, $language);
+            return new Factory($dataFactory, $language);
         };
         $GLOBALS["DIC"]["rbacadmin"] = new class () extends ilRbacAdmin {
             /** @noinspection MagicMethodsValidityInspection */
@@ -651,7 +645,7 @@ class ilOpenCastUpdateRBACPermsListObjective extends ilSetupObjective /* Setup\O
 
         \ilInitialisation::initFileUploadService($GLOBALS["DIC"]);
 
-        $GLOBALS["DIC"]["contentStyle"] = new \ILIAS\Style\Content\Service($GLOBALS["DIC"]);
+        $GLOBALS["DIC"]["contentStyle"] = new Service($GLOBALS["DIC"]);
 
         return $DIC;
     }

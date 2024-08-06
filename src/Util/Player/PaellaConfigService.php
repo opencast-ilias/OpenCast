@@ -10,11 +10,8 @@ use xoctLog;
 
 class PaellaConfigService
 {
-    private PaellaConfigStorageService $storageService;
-
-    public function __construct(PaellaConfigStorageService $storageService)
+    public function __construct(private readonly PaellaConfigStorageService $storageService)
     {
-        $this->storageService = $storageService;
     }
 
     /**
@@ -81,19 +78,15 @@ class PaellaConfigService
                     $result['info'] = 'url for paella live theme unreachable, fallback to default live theme';
                 }
             }
-        } else {
-            if ($default_theme === PluginConfig::PAELLA_OPTION_URL) {
-                $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL);
-
-                $result['theme_url'] = $url;
-                $result['info'] = 'external theme fetched from url';
-
-                $reachable = $this->checkUrlReachable($url);
-                if (!$reachable) {
-                    xoctLog::getInstance()->writeWarning('url for paella theme unreachable: ' . $url);
-                    $result['theme_url'] = $default_theme_url;
-                    $result['info'] = 'url for paella theme unreachable, fallback to default theme';
-                }
+        } elseif ($default_theme === PluginConfig::PAELLA_OPTION_URL) {
+            $url = PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL);
+            $result['theme_url'] = $url;
+            $result['info'] = 'external theme fetched from url';
+            $reachable = $this->checkUrlReachable($url);
+            if (!$reachable) {
+                xoctLog::getInstance()->writeWarning('url for paella theme unreachable: ' . $url);
+                $result['theme_url'] = $default_theme_url;
+                $result['info'] = 'url for paella theme unreachable, fallback to default theme';
             }
         }
         return $result;

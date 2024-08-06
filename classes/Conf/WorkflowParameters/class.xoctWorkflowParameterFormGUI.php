@@ -30,19 +30,15 @@ class xoctWorkflowParameterFormGUI extends ilPropertyFormGUI
     public const F_TYPE = 'type';
     public const F_DEFAULT_VALUE_MEMBER = 'default_value_member';
     public const F_DEFAULT_VALUE_ADMIN = 'default_value_admin';
-    private \xoctWorkflowParameterGUI $parent;
 
     /**
      * @var WorkflowParameter
      */
-    protected $xoctWorkflowParameter;
-    private WorkflowParameterRepository $workflowParameterRepository;
+    protected \ActiveRecord $xoctWorkflowParameter;
 
-    public function __construct(xoctWorkflowParameterGUI $parent, WorkflowParameterRepository $workflowParameterRepository, string $param_id = null)
+    public function __construct(private \xoctWorkflowParameterGUI $parent, private WorkflowParameterRepository $workflowParameterRepository, string $param_id = null)
     {
-        $this->parent = $parent;
         $this->xoctWorkflowParameter = WorkflowParameter::findOrGetInstance($param_id);
-        $this->workflowParameterRepository = $workflowParameterRepository;
         parent::__construct();
         $this->initForm();
     }

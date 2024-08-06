@@ -84,7 +84,7 @@ class xoctUser
     {
         global $DIC;
         $db = $DIC->database();
-        if (!$role) {
+        if ($role === '' || $role === '0') {
             return null;
         }
         $regex = str_replace('{IDENTIFIER}', '(.*)', PluginConfig::getConfig(PluginConfig::F_ROLE_OWNER_PREFIX));
@@ -147,7 +147,7 @@ class xoctUser
     public function getNamePresentation($show_email = true): string
     {
         return $this->getLastName() . ', ' . $this->getFirstName() . ($show_email ? ' (' . $this->getEmail(
-                ) . ')' : '');
+        ) . ')' : '');
     }
 
     public function getIliasUserId(): int
@@ -280,13 +280,13 @@ class xoctUser
      */
     public function getUserRoleName(): ?string
     {
-        return !empty($this->getIdentifier()) ?
-            str_replace(
+        return empty($this->getIdentifier()) ?
+            null
+            : str_replace(
                 '{IDENTIFIER}',
                 $this->getIdentifier(),
                 PluginConfig::getConfig(PluginConfig::F_ROLE_USER_PREFIX)
-            )
-            : null;
+            );
     }
 
     public function getOwnerRoleName(): ?string

@@ -19,16 +19,14 @@ abstract class PlayerDataBuilder
     public const ROLE_MASTER = "presenter";
     public const ROLE_SLAVE = "presentation";
     protected API $api;
-    protected Event $event;
 
     /**
      * PlayerDataBuilder constructor.
      */
-    public function __construct(Event $event)
+    public function __construct(protected Event $event)
     {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
-        $this->event = $event;
     }
 
     /**

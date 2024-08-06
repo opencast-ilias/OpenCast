@@ -26,7 +26,7 @@ $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 if ($httpcode === 200) {
     header('Location: ' . $chat_base_url . '/srchat/open_chat/' . $token);
 } else {
-    $this_path = dirname($_SERVER['PHP_SELF']);
+    $this_path = dirname((string) $_SERVER['PHP_SELF']);
     echo str_replace(
         '{IMAGES_PATH}',
         $this_path . '/templates/images/',

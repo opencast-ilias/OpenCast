@@ -85,7 +85,7 @@ class ACLUtils
     public function getOwnerUsernameOfEvent(Event $event)
     {
         $owner = $this->getOwnerOfEvent($event);
-        if (!$owner instanceof \srag\Plugins\Opencast\Model\User\xoctUser) {
+        if (!$owner instanceof xoctUser) {
             return $event->getMetadata()->getField('rightsHolder')->getValue() ?: '&nbsp';
         }
         return $owner->getNamePresentation();
@@ -96,13 +96,16 @@ class ACLUtils
         $standard_roles = PluginConfig::getConfig(PluginConfig::F_STD_ROLES);
         $acl_entries = $acl->getEntries();
         foreach ($acl_entries as $i => $acl_entry) {
-            if ((strpos(
+            if (!str_contains(
                 $acl_entry->getRole(),
                 (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())
-            ) !== false)
-                && !in_array($acl_entry->getRole(), $standard_roles)) {
-                unset($acl_entries[$i]);
+            )) {
+                continue;
             }
+            if (in_array($acl_entry->getRole(), $standard_roles)) {
+                continue;
+            }
+            unset($acl_entries[$i]);
         }
         return new ACL($acl_entries);
     }
@@ -110,9 +113,7 @@ class ACLUtils
     public function getOwnerAclOfEvent(Event $event): ACL
     {
         return new ACL(
-            array_filter($event->getAcl()->getEntries(), function (ACLEntry $entry): bool {
-                return $this->isOwnerRole($entry);
-            })
+            array_filter($event->getAcl()->getEntries(), fn(ACLEntry $entry): bool => $this->isOwnerRole($entry))
         );
     }
 
@@ -124,10 +125,10 @@ class ACLUtils
 
     public function isOwnerRole(ACLEntry $ACLEntry): bool
     {
-        return strpos(
+        return str_contains(
             $ACLEntry->getRole(),
             (string) str_replace('{IDENTIFIER}', '', xoctUser::getOwnerRolePrefix())
-        ) !== false;
+        );
     }
 
     public function isUserOwnerOfEvent(xoctUser $user, Event $event): bool

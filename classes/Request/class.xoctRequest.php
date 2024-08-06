@@ -13,10 +13,7 @@ class xoctRequest
 {
     public const X_RUN_AS_USER = 'X-RUN-AS-USER';
     public const X_RUN_WITH_ROLES = 'X-RUN-WITH-ROLES';
-    /**
-     * @var bool
-     */
-    private $rest_api;
+    private ?bool $rest_api = null;
 
     public static function init(xoctRequestSettings $xoctRequestSettings): void
     {
@@ -198,7 +195,7 @@ class xoctRequest
         if ($this->getParameters()) {
             $path .= '?';
             foreach ($this->getParameters() as $k => $v) {
-                $path .= $k . '=' . urlencode($v) . '&';
+                $path .= $k . '=' . urlencode((string) $v) . '&';
             }
         }
 
@@ -216,7 +213,7 @@ class xoctRequest
      * @return self
      * @throws xoctException
      */
-    public function episodeJson($identifier)
+    public function episodeJson($identifier): self
     {
         $this->checkRoot();
         $this->branch = self::BRANCH_SEARCH;
@@ -235,7 +232,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function events($identifier = '')
+    public function events($identifier = ''): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_EVENTS]);
@@ -251,7 +248,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function publications($publication_id = '')
+    public function publications($publication_id = ''): self
     {
         $this->checkBranch([self::BRANCH_EVENTS]);
         $this->addPart('publications');
@@ -272,13 +269,13 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function series($series_id = '')
+    public function series($series_id = ''): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_SERIES]);
         $this->branch = self::BRANCH_SERIES;
         $this->addPart('series');
-//        $this->parameter('withacl', true);
+        //        $this->parameter('withacl', true);
         if ($series_id !== '' && $series_id !== '0') {
             $this->addPart($series_id);
         }
@@ -291,7 +288,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function groups($group_id = '')
+    public function groups($group_id = ''): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_GROUPS]);
@@ -310,7 +307,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function workflows($workflow_id = '')
+    public function workflows($workflow_id = ''): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_WORKFLOWS]);
@@ -329,7 +326,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function workflowDefinition($definition_id = '')
+    public function workflowDefinition($definition_id = ''): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_WORKFLOW_DEFINITIONS]);
@@ -346,7 +343,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function members()
+    public function members(): self
     {
         $this->checkBranch([self::BRANCH_GROUPS]);
         $this->addPart('members');
@@ -357,7 +354,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function properties()
+    public function properties(): self
     {
         $this->checkBranch([
             self::BRANCH_SERIES,
@@ -375,7 +372,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function metadata()
+    public function metadata(): self
     {
         $this->checkBranch([
             self::BRANCH_SERIES,
@@ -389,7 +386,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function acl($action = null)
+    public function acl($action = null): self
     {
         $this->checkBranch([
             self::BRANCH_SERIES,
@@ -411,7 +408,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function base()
+    public function base(): self
     {
         $this->checkBranch([self::BRANCH_BASE]);
         $this->checkRoot();
@@ -423,7 +420,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function version()
+    public function version(): self
     {
         $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('version');
@@ -434,7 +431,7 @@ class xoctRequest
     /**
      * @return $this
      */
-    public function organization()
+    public function organization(): self
     {
         $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('info');
@@ -454,7 +451,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function security()
+    public function security(): self
     {
         $this->checkRoot();
         $this->checkBranch([self::BRANCH_SECURITY]);
@@ -495,7 +492,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function agents()
+    public function agents(): self
     {
         $this->checkBranch([self::BRANCH_BASE]);
         $this->addPart('agents');
@@ -507,7 +504,7 @@ class xoctRequest
      * @return $this
      * @throws xoctException
      */
-    public function scheduling()
+    public function scheduling(): self
     {
         $this->checkBranch([self::BRANCH_EVENTS]);
 
@@ -707,7 +704,7 @@ class xoctRequest
      *
      * @return $this
      */
-    public function parameter($key, $value)
+    public function parameter($key, $value): self
     {
         if (is_bool($value)) {
             $value = ($value ? 'true' : 'false');

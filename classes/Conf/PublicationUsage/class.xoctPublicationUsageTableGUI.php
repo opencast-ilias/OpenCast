@@ -79,7 +79,7 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         if ($publication_usage->getMdType() === PublicationUsage::MD_TYPE_PUBLICATION_ITSELF) {
             $this->tpl->setVariable('FLAVOR', '&nbsp');
             $this->tpl->setVariable('TAG', '&nbsp');
-        } elseif ($publication_usage->getSearchKey() == xoctPublicationUsageFormGUI::F_FLAVOR) {
+        } elseif ($publication_usage->getSearchKey() === xoctPublicationUsageFormGUI::F_FLAVOR) {
             $this->tpl->setVariable('FLAVOR', $publication_usage->getFlavor());
             $this->tpl->setVariable('TAG', '&nbsp');
         } else {
@@ -89,16 +89,13 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
         $group_name = '';
         if (!is_null($publication_usage->getGroupId())) {
             $publication_usage_group = PublicationUsageGroup::find($publication_usage->getGroupId());
-            $group_name = $publication_usage_group ? $publication_usage_group->getName() : $group_name;
+            $group_name = $publication_usage_group !== null ? $publication_usage_group->getName() : $group_name;
         }
         $this->tpl->setVariable('GROUP_NAME', $group_name);
 
         $extras = [];
-        if ($publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
-            $publication_usage->getUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
-            if ($publication_usage->isExternalDownloadSource()) {
-                $extras[] = $this->getLocaleString('ext_dl_source');
-            }
+        if (($publication_usage->getUsageId() === PublicationUsage::USAGE_DOWNLOAD || $publication_usage->getUsageId() === PublicationUsage::USAGE_DOWNLOAD_FALLBACK) && $publication_usage->isExternalDownloadSource()) {
+            $extras[] = $this->getLocaleString('ext_dl_source');
         }
         $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
 

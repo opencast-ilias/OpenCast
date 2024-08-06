@@ -21,6 +21,10 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class ilObjOpenCastListGUI extends ilObjectPluginListGUI
 {
+    /**
+     * @var bool
+     */
+    public $payment_enabled;
     public function initType(): void
     {
         $this->setType(ilOpenCastPlugin::PLUGIN_ID);

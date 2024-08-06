@@ -38,14 +38,8 @@ class xoctSeriesGUI extends xoctGUI
 
     public const SUBTAB_GENERAL = 'general';
     public const SUBTAB_WORKFLOW_PARAMETERS = 'workflow_params';
-
-    private \ilObjOpenCastGUI $parent_gui;
     protected ?\ActiveRecord $objectSettings;
     protected \ilObjOpenCast $object;
-    private SeriesFormBuilder $seriesFormBuilder;
-    private SeriesRepository $seriesRepository;
-    private SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
-    private WorkflowParameterRepository $workflowParameterRepository;
     /**
      * @var \ilTabsGUI
      */
@@ -56,24 +50,19 @@ class xoctSeriesGUI extends xoctGUI
     private $ui;
 
     public function __construct(
-        ilObjOpenCastGUI $parent_gui,
+        private readonly \ilObjOpenCastGUI $parent_gui,
         ilObjOpenCast $object,
-        SeriesFormBuilder $seriesFormBuilder,
-        SeriesRepository $seriesRepository,
-        SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
-        WorkflowParameterRepository $workflowParameterRepository
+        private readonly SeriesFormBuilder $seriesFormBuilder,
+        private readonly SeriesRepository $seriesRepository,
+        private readonly SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository,
+        private readonly WorkflowParameterRepository $workflowParameterRepository
     ) {
         global $DIC;
         parent::__construct();
         $this->tabs = $DIC->tabs();
         $this->ui = $DIC->ui();
         $this->objectSettings = ObjectSettings::find($object->getId());
-        $this->parent_gui = $parent_gui;
         $this->object = $object;
-        $this->seriesFormBuilder = $seriesFormBuilder;
-        $this->seriesRepository = $seriesRepository;
-        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
-        $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
     public function executeCommand(): void
@@ -168,19 +157,13 @@ class xoctSeriesGUI extends xoctGUI
         $current_acls = $series->getAccessPolicies()->jsonSerialize();
         $current_acl_record = [];
         if (!empty($current_acls)) {
-            $current_acl_record = array_map(function ($acl_entry) {
-                return $acl_entry->jsonSerialize();
-            }, $current_acls);
+            $current_acl_record = array_map(fn($acl_entry) => $acl_entry->jsonSerialize(), $current_acls);
         }
 
         $series->setAccessPolicies(PermissionTemplate::removeAllTemplatesFromAcls($series->getAccessPolicies()));
         $default_perm_tpl = PermissionTemplate::where(['is_default' => 1])->first();
 
-        if (empty($perm_tpl_id)) {
-            $perm_tpl = $default_perm_tpl;
-        } else {
-            $perm_tpl = PermissionTemplate::find($perm_tpl_id) ?? $default_perm_tpl;
-        }
+        $perm_tpl = empty($perm_tpl_id) ? $default_perm_tpl : PermissionTemplate::find($perm_tpl_id) ?? $default_perm_tpl;
 
         if ($perm_tpl instanceof PermissionTemplate) {
             $series->setAccessPolicies(
@@ -204,9 +187,7 @@ class xoctSeriesGUI extends xoctGUI
         $new_acls = $series->getAccessPolicies()->jsonSerialize();
         $new_acl_record = [];
         if (!empty($new_acls)) {
-            $new_acl_record = array_map(function ($acl_entry) {
-                return $acl_entry->jsonSerialize();
-            }, $new_acls);
+            $new_acl_record = array_map(fn($acl_entry) => $acl_entry->jsonSerialize(), $new_acls);
         }
         if (json_encode($current_acl_record) !== json_encode($new_acl_record)) {
             $this->seriesRepository->updateACL(

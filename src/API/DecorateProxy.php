@@ -18,10 +18,8 @@ use OpencastApi\Rest\OcRest;
  */
 class DecorateProxy
 {
-    public ?OcRest $object;
-    public function __construct(?OcRest $client)
+    public function __construct(public ?OcRest $object)
     {
-        $this->object = $client;
     }
 
     public function __call($method, array $args)
@@ -46,7 +44,7 @@ class DecorateProxy
 
         // After method invocation.
         $origin = [
-            'class' => get_class($this->object),
+            'class' => $this->object !== null ? $this->object::class : self::class,
             'method' => $method,
             'args' => $args
         ];
@@ -86,26 +84,14 @@ class DecorateProxy
 
             $resp_orig_text .= ' => ' . $reason;
 
-            switch ($code) {
-                case 403:
-                    throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig_text);
-                    break;
-                case 401:
-                    throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS);
-                    break;
-                case 404:
-                    throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig_text);
-                    break;
-                case 409:
-                    throw new xoctException(xoctException::API_CALL_STATUS_409, $resp_orig_text);
-                    break;
-                case 400:
-                    throw new xoctException(xoctException::API_CALL_BAD_REQUEST, $resp_orig_text);
-                    break;
-                default:
-                    throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig_text);
-                    break;
-            }
+            match ($code) {
+                403 => throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig_text),
+                401 => throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS),
+                404 => throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig_text),
+                409 => throw new xoctException(xoctException::API_CALL_STATUS_409, $resp_orig_text),
+                400 => throw new xoctException(xoctException::API_CALL_BAD_REQUEST, $resp_orig_text),
+                default => throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig_text),
+            };
         }
 
         return $return_array ? $this->parseResponseBodyToArray($body) : $body;

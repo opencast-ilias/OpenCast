@@ -22,19 +22,10 @@ class SeriesWorkflowParameterRepository
 {
     protected static $instance;
     protected array $parameters = [];
-    private ?\ILIAS\UI\Factory $ui_factory;
-    private ?RefineryFactory $refinery;
-    private WorkflowParameterParser $workflowParameterParser;
 
 
-    public function __construct(
-        WorkflowParameterParser $workflowParameterParser,
-        ?Factory $ui_factory,
-        ?RefineryFactory $refinery
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->refinery = $refinery;
-        $this->workflowParameterParser = $workflowParameterParser;
+    public function __construct(private readonly WorkflowParameterParser $workflowParameterParser, private readonly ?\ILIAS\UI\Factory $ui_factory, private readonly ?RefineryFactory $refinery)
+    {
     }
 
     /**

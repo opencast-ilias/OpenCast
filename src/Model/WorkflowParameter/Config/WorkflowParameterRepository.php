@@ -31,16 +31,30 @@ class WorkflowParameterRepository
      * @var self
      */
     protected static $instance;
+    /**
+     * @readonly
+     */
     private ilOpenCastPlugin$plugin;
+    /**
+     * @readonly
+     */
     private OpencastDIC $container;
     protected API $api;
     protected array $parameters = [];
-    protected SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
+    /**
+     * @readonly
+     */
     private \ilCtrlInterface $ctrl;
+    /**
+     * @readonly
+     */
     private \ilDBInterface $db;
+    /**
+     * @readonly
+     */
     private \ilGlobalTemplateInterface $main_tpl;
 
-    public function __construct(SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
+    public function __construct(protected SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository)
     {
         global $DIC;
         $opencastContainer = Init::init();
@@ -50,7 +64,6 @@ class WorkflowParameterRepository
         $this->plugin = $this->container->plugin();
         $this->ctrl = $DIC->ctrl();
         $this->db = $DIC->database();
-        $this->seriesWorkflowParameterRepository = $seriesWorkflowParameterRepository;
     }
 
     /**
@@ -66,8 +79,7 @@ class WorkflowParameterRepository
         $response = $this->api->routes()->workflowsApi->getDefinition(
             $workflow_definition_id,
             true,
-            true,
-            OpencastAPI::RETURN_ARRAY
+            true
         );
 
         if ($response == false) {
@@ -159,7 +171,7 @@ class WorkflowParameterRepository
      *
      * @return WorkflowParameter
      */
-    public function createOrUpdate($id, $title, $type, $default_value_member = 0, $default_value_admin = 0)
+    public function createOrUpdate($id, string $title, string $type, $default_value_member = 0, $default_value_admin = 0)
     {
         $is_new = null;
         if (!WorkflowParameter::where(['id' => $id])->hasSets()) {

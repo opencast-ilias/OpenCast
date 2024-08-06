@@ -14,21 +14,25 @@ class xoctReportingModalGUI extends ilModalGUI
 {
     public const REPORTING_TYPE_DATE = 1;
     public const REPORTING_TYPE_QUALITY = 2;
+    /**
+     * @readonly
+     */
     private ilOpenCastPlugin $plugin;
-    protected xoctEventGUI $parent_gui;
+    /**
+     * @readonly
+     */
     private ilCtrlInterface $ctrl;
 
     /**
      * xoctReportingFormGUI constructor.
      * @noinspection MagicMethodsValidityInspection
      */
-    protected function __construct($parent_gui, $type)
+    protected function __construct(protected xoctEventGUI $parent_gui, $type)
     {
         global $DIC;
         $opencastContainer = Init::init();
         $main_tpl = $DIC->ui()->mainTemplate();
         $this->ctrl = $DIC->ctrl();
-        $this->parent_gui = $parent_gui;
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
 
         $this->setType(ilModalGUI::TYPE_LARGE);
@@ -49,13 +53,13 @@ class xoctReportingModalGUI extends ilModalGUI
             case self::REPORTING_TYPE_DATE:
                 $this->setId('xoct_report_date_modal');
                 $this->setHeading($this->plugin->txt('event_report_date_modification'));
-                $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
+                $this->setBody(nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)));
                 $send_button->setCommand(xoctEventGUI::CMD_REPORT_DATE);
                 break;
             case self::REPORTING_TYPE_QUALITY:
                 $this->setId('xoct_report_quality_modal');
                 $this->setHeading($this->plugin->txt('event_report_quality_problem'));
-                $this->setBody(nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
+                $this->setBody(nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)));
                 $send_button->setCommand(xoctEventGUI::CMD_REPORT_QUALITY);
                 break;
         }
@@ -101,15 +105,11 @@ class xoctReportingModalGUI extends ilModalGUI
         $tpl->setVariable("MOD_ID", $this->getId());
         $tpl->setVariable("BODY", $this->getBody());
 
-        switch ($this->getType()) {
-            case self::TYPE_LARGE:
-                $tpl->setVariable("CLASS", "modal-lg");
-                break;
-
-            case self::TYPE_SMALL:
-                $tpl->setVariable("CLASS", "modal-sm");
-                break;
-        }
+        match ($this->getType()) {
+            self::TYPE_LARGE => $tpl->setVariable("CLASS", "modal-lg"),
+            self::TYPE_SMALL => $tpl->setVariable("CLASS", "modal-sm"),
+            default => $tpl->get(),
+        };
 
         return $tpl->get();
     }

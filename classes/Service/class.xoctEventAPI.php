@@ -30,9 +30,21 @@ use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 class xoctEventAPI
 {
     protected static $instance;
+    /**
+     * @readonly
+     */
     private EventAPIRepository $event_repository;
+    /**
+     * @readonly
+     */
     private MetadataFactory $md_factory;
+    /**
+     * @readonly
+     */
     private ACLUtils $acl_utils;
+    /**
+     * @readonly
+     */
     private SeriesWorkflowParameterRepository $workflow_param_repository;
 
     public function __construct()
@@ -68,7 +80,7 @@ class xoctEventAPI
             $additional_data['description'] ?? ''
         );
         $metadata->getField(MDFieldDefinition::F_CREATOR)->setValue(
-            isset($additional_data['presenters']) ? explode(',', $additional_data['presenters']) : []
+            isset($additional_data['presenters']) ? explode(',', (string) $additional_data['presenters']) : []
         );
 
         $scheduling = new Scheduling(
@@ -84,9 +96,7 @@ class xoctEventAPI
         if (array_key_exists('workflow_parameters', $additional_data) && is_array($additional_data['workflow_parameters'])) {
             $workflow_parameters += $additional_data['workflow_parameters'];
         }
-        $workflow_parameters = array_map(function ($value): string {
-            return $value == 1 ? 'true' : 'false';
-        }, $workflow_parameters);
+        $workflow_parameters = array_map(fn($value): string => $value == 1 ? 'true' : 'false', $workflow_parameters);
         $processing = new Processing(
             PluginConfig::getConfig(PluginConfig::F_WORKFLOW),
             (object) $workflow_parameters
@@ -153,7 +163,7 @@ class xoctEventAPI
                 // presenters is actually an MD field called creator. this is a workaround to not break compatability
                 if ($title === 'presenters') {
                     $title = MDFieldDefinition::F_CREATOR;
-                    $value = explode(',', $value);
+                    $value = explode(',', (string) $value);
                 }
                 $metadataField = $event->getMetadata()->getField($title);
                 $metadataField->setValue($value);
@@ -190,9 +200,8 @@ class xoctEventAPI
     {
         if($date_time_of_unknown_format instanceof DateTime) {
             return DateTimeImmutable::createFromMutable($date_time_of_unknown_format->setTimezone(new DateTimeZone('GMT')));
-        } else {
-            return new DateTimeImmutable($date_time_of_unknown_format);
         }
+        return new DateTimeImmutable($date_time_of_unknown_format);
     }
 
     public function delete(string $event_id): bool

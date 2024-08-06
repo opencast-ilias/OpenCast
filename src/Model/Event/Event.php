@@ -114,16 +114,12 @@ class Event
     public function getArrayForTable(): array
     {
         $array = array_column(
-            array_map(function (MetadataField $mf): array {
-                return [$mf->getId(), $mf->toString()];
-            }, $this->getMetadata()->getFields()),
+            array_map(fn(MetadataField $mf): array => [$mf->getId(), $mf->toString()], $this->getMetadata()->getFields()),
             1,
             0
         );
         $sortable = array_column(
-            array_map(function (MetadataField $mf): array {
-                return [$mf->getId() . '_s', $mf->getValueFormatted()];
-            }, $this->getMetadata()->getFields()),
+            array_map(fn(MetadataField $mf): array => [$mf->getId() . '_s', $mf->getValueFormatted()], $this->getMetadata()->getFields()),
             1,
             0
         );

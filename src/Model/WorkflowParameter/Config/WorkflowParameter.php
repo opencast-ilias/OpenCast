@@ -11,6 +11,7 @@ use ActiveRecord;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class WorkflowParameter extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_workflow_param';

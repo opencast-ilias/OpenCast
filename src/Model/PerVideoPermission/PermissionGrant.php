@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 /**
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PermissionGrant extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_invitations';
@@ -117,7 +118,7 @@ class PermissionGrant extends ActiveRecord
         Event $xoctEvent,
         bool $grant_access_rights = false,
         bool $count = false
-    ) {
+    ): int|array {
         $all_invitations = self::where([
             'event_identifier' => $xoctEvent->getIdentifier(),
         ])->get();
@@ -195,7 +196,7 @@ class PermissionGrant extends ActiveRecord
 
     public function getEventIdentifier(): string
     {
-        return (string)$this->event_identifier;
+        return (string) $this->event_identifier;
     }
 
     public function setEventIdentifier(string $event_identifier): void

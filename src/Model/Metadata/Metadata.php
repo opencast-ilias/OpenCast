@@ -27,20 +27,13 @@ class Metadata implements JsonSerializable
     public const FLAVOR_PRESENTER_SEGMENT_PREVIEW_LOWRES = "presenter/segment+preview+lowres";
     public const FLAVOR_PRESENTATION_SEGMENT_PREVIEW = "presentation/segment+preview";
     public const FLAVOR_PRESENTER_SEGMENT_PREVIEW = "presenter/segment+preview";
-
-    protected MDCatalogue $md_catalogue;
-    protected string $title;
-    protected string $flavor;
     /**
      * @var MetadataField[]
      */
     protected $fields = [];
 
-    public function __construct(MDCatalogue $md_catalogue, string $title, string $flavor)
+    public function __construct(protected MDCatalogue $md_catalogue, protected string $title, protected string $flavor)
     {
-        $this->md_catalogue = $md_catalogue;
-        $this->title = $title;
-        $this->flavor = $flavor;
     }
 
     /**
@@ -123,22 +116,19 @@ class Metadata implements JsonSerializable
     {
         $clone = clone $this;
         $clone->fields = array_values(
-            array_filter($clone->fields, static function (MetadataField $field): bool {
+            array_filter($clone->fields, static fn(MetadataField $field): bool =>
                 // no nulls, no empty strings, no empty arrays
-                return (bool) $field->getValue();
-            })
+                (bool) $field->getValue())
         );
         return $clone;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $std_class = new stdClass();
         $std_class->label = $this->getTitle();
         $std_class->flavor = $this->getFlavor();
-        $std_class->fields = array_map(static function (MetadataField $field): array {
-            return $field->jsonSerialize();
-        }, $this->getFields());
+        $std_class->fields = array_map(static fn(MetadataField $field): array => $field->jsonSerialize(), $this->getFields());
         return $std_class;
     }
 }

@@ -20,7 +20,6 @@ class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
     public const ROW_TEMPLATE = "tpl.series_workflow_parameter_table_row.html";
 
     protected ilOpenCastPlugin $plugin;
-    private WorkflowParameterRepository $workflowParameterRepository;
 
     /**
      * xoctSeriesWorkflowParameterTableGUI constructor.
@@ -28,7 +27,7 @@ class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
      * @param $parent
      * @param $parent_cmd
      */
-    public function __construct(?object $parent, string $parent_cmd, WorkflowParameterRepository $workflowParameterRepository)
+    public function __construct(?object $parent, string $parent_cmd, private WorkflowParameterRepository $workflowParameterRepository)
     {
         global $DIC;
         $opencastContainer = Init::init();
@@ -36,7 +35,6 @@ class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
         parent::__construct($parent, $parent_cmd);
         $this->initTable();
         $this->setEnableNumInfo(false);
-        $this->workflowParameterRepository = $workflowParameterRepository;
     }
 
     protected function getRowTemplate(): string
@@ -49,7 +47,7 @@ class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
         $this->addCommandButton(xoctSeriesGUI::CMD_UPDATE_WORKFLOW_PARAMS, $this->lng->txt('save'));
     }
 
-    protected function getColumnValue(string $column, /*array*/ $row, int $format = self::DEFAULT_FORMAT): string
+    protected function getColumnValue(string $column, /*array*/ $row, int $format = 0): string
     {
         return $row[$column] ?? '';
     }

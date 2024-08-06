@@ -94,43 +94,25 @@ class EventFormBuilder
         '.aiff',
         '.wav',
     ];
-    protected UIFactory $ui_factory;
-    private RefineryFactory $refinery_factory;
-    private MDFormItemBuilder $formItemBuilder;
-    private SeriesWorkflowParameterRepository $workflowParameterRepository;
-    private UploadStorageService $uploadStorageService;
-    private UploadHandler $uploadHandler;
     private \ilOpenCastPlugin $plugin;
-    private SchedulingFormItemBuilder $schedulingFormItemBuilder;
-    private SeriesRepository $seriesRepository;
-    private Container $dic;
     private OpencastDIC $opencast_dic;
 
     /**
      * @param mixed $refinery_factory
      */
     public function __construct(
-        UIFactory $ui_factory,
-        RefineryFactory $refinery_factory,
-        MDFormItemBuilder $formItemBuilder,
-        SeriesWorkflowParameterRepository $workflowParameterRepository,
-        UploadStorageService $uploadStorageService,
-        UploadHandler $uploadHandler,
+        protected UIFactory $ui_factory,
+        private RefineryFactory $refinery_factory,
+        private MDFormItemBuilder $formItemBuilder,
+        private SeriesWorkflowParameterRepository $workflowParameterRepository,
+        private UploadStorageService $uploadStorageService,
+        private UploadHandler $uploadHandler,
         \ilOpenCastPlugin $plugin,
-        SchedulingFormItemBuilder $schedulingFormItemBuilder,
-        SeriesRepository $seriesRepository,
-        Container $dic
+        private SchedulingFormItemBuilder $schedulingFormItemBuilder,
+        private SeriesRepository $seriesRepository,
+        private Container $dic
     ) {
-        $this->ui_factory = $ui_factory;
-        $this->refinery_factory = $refinery_factory;
-        $this->formItemBuilder = $formItemBuilder;
-        $this->workflowParameterRepository = $workflowParameterRepository;
-        $this->uploadStorageService = $uploadStorageService;
-        $this->uploadHandler = $uploadHandler;
         $this->plugin = $plugin;
-        $this->schedulingFormItemBuilder = $schedulingFormItemBuilder;
-        $this->seriesRepository = $seriesRepository;
-        $this->dic = $dic;
         $this->opencast_dic = OpencastDIC::getInstance();
     }
 
@@ -173,8 +155,7 @@ class EventFormBuilder
         // We must bind the WaitOverlay to an Input since the Form itself is not JS-bindable.
         // We also create the callback function which uses the fileInputMutationObserver to update title.
         $file_input = $file_input->withAdditionalOnLoadCode(
-            function ($id) {
-                return '
+            fn(string $id): string => '
                     // Wait Overlay.
                     il.Opencast.UI.waitOverlay.onFormSubmit("#' . $id . '");
 
@@ -210,8 +191,7 @@ class EventFormBuilder
                     };
                     childlist_callback.push(update_title);
                     il.Opencast.UI.fileInputMutationObserver.init("' . $id . '", childlist_callback);
-                ';
-            }
+                '
         );
 
         $file_section_inputs = ['file' => $file_input];
@@ -343,8 +323,7 @@ class EventFormBuilder
             )
                 ->withValue($value_format_str)
                 ->withTimeOnly(true)
-                ->withAdditionalOnLoadCode(function ($id) use ($target_accept_video_files) {
-                    $js = '
+                ->withAdditionalOnLoadCode(fn(string $id): string => '
                     // On show: Set min date, in order to prevent infinite loop.
                     $("#' . $id . '").on("dp.show", function () {
                         let minDate = new Date();
@@ -401,9 +380,7 @@ class EventFormBuilder
                         $("[data-videoFileInput]").find(".ui-input-file-input-dropzone > button").on("click", function () {
                             bindEventExtractVideoDuration();
                         });
-                    }, 500);';
-                    return $js;
-                })
+                    }, 500);')
                 ->withAdditionalPickerconfig([
                     'useCurrent' => false,
                     'format' => 'HH:mm:ss',
@@ -523,7 +500,7 @@ class EventFormBuilder
             $form_action,
             $inputs
         )->withAdditionalTransformation(
-            $this->refinery_factory->custom()->transformation(function ($vs): array {
+            $this->refinery_factory->custom()->transformation(function (array $vs): array {
                 $date_field = new MetadataField(MDFieldDefinition::F_START_DATE, MDDataType::datetime());
                 $date_field->setValue($vs['scheduling'] ["start_date_time"]);
                 $vs['metadata']['object']->addField($date_field);
@@ -547,10 +524,9 @@ class EventFormBuilder
             )
                                                     ->withRequired(true)
                                                     ->withAdditionalTransformation(
-                                                        $this->refinery_factory->custom()->constraint(function ($vs) {
+                                                        $this->refinery_factory->custom()->constraint(fn($vs) =>
                                                             // must be checked (required-functionality doesn't guarantee that)
-                                                            return $vs;
-                                                        }, $this->plugin->txt('event_error_alert_accpet_terms_of_use'))
+                                                            $vs, $this->plugin->txt('event_error_alert_accpet_terms_of_use'))
                                                     )
         ], $this->plugin->txt('event_accept_eula'));
     }

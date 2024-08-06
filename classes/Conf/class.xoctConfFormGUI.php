@@ -27,14 +27,12 @@ class xoctConfFormGUI extends ilPropertyFormGUI
     }
 
     protected PluginConfig $object;
-    protected xoctConfGUI $parent_gui;
-    protected string $subtab_active;
     protected ilOpenCastPlugin $plugin;
     protected \ilGlobalTemplateInterface $main_tpl;
 
     public function __construct(
-        xoctConfGUI $parent_gui,
-        string $subtab_active
+        protected xoctConfGUI $parent_gui,
+        protected string $subtab_active
     ) {
         global $DIC;
         $container = Init::init($DIC);
@@ -43,8 +41,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
         $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
         parent::__construct();
-        $this->parent_gui = $parent_gui;
-        $this->subtab_active = $subtab_active;
         $this->initForm();
     }
 
@@ -96,7 +92,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
      *
      * @internal param $key
      */
-    private function getValuesForItem($item, &$array): void
+    private function getValuesForItem($item, array &$array): void
     {
         if (self::checkItem($item)) {
             $key = $item->getPostVar();

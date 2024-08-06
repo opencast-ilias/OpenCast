@@ -9,6 +9,7 @@ use ActiveRecord;
 /**
  * Metadata of an Event that is stored only in ILIAS
  */
+#[\AllowDynamicProperties]
 class EventAdditionsAR extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_event_additions';
@@ -26,7 +27,7 @@ class EventAdditionsAR extends ActiveRecord
         return self::TABLE_NAME;
     }
 
-    public function update()
+    public function update(): void
     {
         if ($this->getId() === '' || $this->getId() === '0') {
             return;

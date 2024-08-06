@@ -30,20 +30,19 @@ class EventAPIRepository implements EventRepository, Request
     protected API $api;
     public $opencastDIC;
 
+    /**
+     * @readonly
+     */
     private Container $cache;
-    private OpencastIngestService $ingestService;
-    private EventParser $eventParser;
 
     public function __construct(
         Services $cache_services,
-        EventParser $eventParser,
-        OpencastIngestService $ingestService
+        private EventParser $eventParser,
+        private OpencastIngestService $ingestService
     ) {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
         $this->cache = $cache_services->get($this);
-        $this->ingestService = $ingestService;
-        $this->eventParser = $eventParser;
     }
 
     public function getContainerKey(): string
@@ -148,7 +147,7 @@ class EventAPIRepository implements EventRepository, Request
         // nmake sure we have proper values here
         $data = array_filter(
             (array) $this->api->routes()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params),
-            static fn ($event): bool => $event instanceof \stdClass
+            static fn($event): bool => $event instanceof \stdClass
         );
         $return = [];
 

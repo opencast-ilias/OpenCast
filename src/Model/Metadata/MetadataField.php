@@ -22,7 +22,6 @@ class MetadataField implements JsonSerializable
      * @var mixed
      */
     protected $value;
-    private MDDataType $type;
 
     public function getType(): MDDataType
     {
@@ -32,7 +31,7 @@ class MetadataField implements JsonSerializable
     /**
      * @throws xoctException
      */
-    public function __construct(string $id, MDDataType $type)
+    public function __construct(string $id, private MDDataType $type)
     {
         if ($id === '') {
             throw new xoctException(
@@ -41,7 +40,6 @@ class MetadataField implements JsonSerializable
             );
         }
         $this->id = $id;
-        $this->type = $type;
     }
 
     public function getId(): string
@@ -121,7 +119,7 @@ class MetadataField implements JsonSerializable
     public function setValue($value): void
     {
         if (!$this->type->isValidValue($value)) {
-            $class = gettype($value) === 'object' ? get_class($value) : gettype($value);
+            $class = gettype($value) === 'object' ? $value::class : gettype($value);
             throw new xoctException(
                 xoctException::INTERNAL_ERROR,
                 "invalid value type $class for md type {$this->type->getTitle()}"
@@ -146,7 +144,7 @@ class MetadataField implements JsonSerializable
         return str_replace('%', rawurlencode('%'), $string);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $stdClass = new stdClass();
         $stdClass->id = $this->getId();

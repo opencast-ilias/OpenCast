@@ -75,7 +75,6 @@ class xoctEventGUI extends xoctGUI
     public const CMD_CREATE_SCHEDULED = 'createScheduled';
     public const CMD_EDIT_SCHEDULED = 'editScheduled';
     public const CMD_UPDATE_SCHEDULED = 'updateScheduled';
-    private \ilObjOpenCastGUI $parent_gui;
     private \WaitOverlay $wait_overlay;
     /**
      * @var Services
@@ -86,29 +85,15 @@ class xoctEventGUI extends xoctGUI
      * @var DefaultRenderer
      */
     protected $custom_renderer;
-
-    protected ObjectSettings $objectSettings;
     /**
      * @var EventModals|null
      */
     protected $modals = null;
-    protected EventRepository $event_repository;
     /**
      * @var Renderer
      */
     private DefaultRenderer $ui_renderer;
-    private EventFormBuilder $formBuilder;
-    private WorkflowRepository $workflowRepository;
-    private ACLUtils $ACLUtils;
     private Container $dic;
-    private SeriesRepository $seriesRepository;
-    private EventTableBuilder $eventTableBuilder;
-    /**
-     * @var xoctFileUploadHandlerGUI
-     */
-    private UploadHandler $uploadHandler;
-    private PaellaConfigStorageService $paellaConfigStorageService;
-    private PaellaConfigServiceFactory $paellaConfigServiceFactory;
     /**
      * @var \ilObjUser
      */
@@ -127,39 +112,31 @@ class xoctEventGUI extends xoctGUI
     private $ui;
 
     public function __construct(
-        ilObjOpenCastGUI $parent_gui,
-        ObjectSettings $objectSettings,
-        EventRepository $event_repository,
-        EventFormBuilder $formBuilder,
-        EventTableBuilder $eventTableBuilder,
-        WorkflowRepository $workflowRepository,
-        ACLUtils $ACLUtils,
-        SeriesRepository $seriesRepository,
-        UploadHandler $uploadHandler,
-        PaellaConfigStorageService $paellaConfigStorageService,
-        PaellaConfigServiceFactory $paellaConfigServiceFactory,
+        private \ilObjOpenCastGUI $parent_gui,
+        protected ObjectSettings $objectSettings,
+        protected EventRepository $event_repository,
+        private EventFormBuilder $formBuilder,
+        private EventTableBuilder $eventTableBuilder,
+        private WorkflowRepository $workflowRepository,
+        private ACLUtils $ACLUtils,
+        private SeriesRepository $seriesRepository,
+        /**
+         * @var xoctFileUploadHandlerGUI
+         */
+        private UploadHandler $uploadHandler,
+        private PaellaConfigStorageService $paellaConfigStorageService,
+        private PaellaConfigServiceFactory $paellaConfigServiceFactory,
         Container $dic
     ) {
         global $DIC;
-        $opencastContainer  = Init::init();
+        $opencastContainer = Init::init();
         parent::__construct();
 
         $this->user = $DIC->user();
         $this->tabs = $DIC->tabs();
         $this->toolbar = $DIC->toolbar();
         $this->ui = $DIC->ui();
-        $this->objectSettings = $objectSettings;
-        $this->parent_gui = $parent_gui;
-        $this->event_repository = $event_repository;
-        $this->formBuilder = $formBuilder;
-        $this->workflowRepository = $workflowRepository;
-        $this->ACLUtils = $ACLUtils;
         $this->dic = $dic;
-        $this->seriesRepository = $seriesRepository;
-        $this->eventTableBuilder = $eventTableBuilder;
-        $this->uploadHandler = $uploadHandler;
-        $this->paellaConfigStorageService = $paellaConfigStorageService;
-        $this->paellaConfigServiceFactory = $paellaConfigServiceFactory;
         $this->ui_renderer = new DefaultRenderer(
             new Loader($DIC, ilOpenCastPlugin::getInstance())
         );
@@ -320,24 +297,19 @@ class xoctEventGUI extends xoctGUI
             $this->user->getId()
         );
 
-        switch (UserSettingsRepository::getViewTypeForUser($this->user->getId(), $this->ref_id)) {
-            case UserSettingsRepository::VIEW_TYPE_LIST:
-                $html = $this->indexList();
-                break;
-            case UserSettingsRepository::VIEW_TYPE_TILES:
-                $html = $this->indexTiles();
-                break;
-            default:
-                throw new xoctException(
-                    xoctException::INTERNAL_ERROR,
-                    'Invalid view type ' .
-                    UserSettingsRepository::getViewTypeForUser(
-                        $this->user->getId(),
-                        $this->ref_id
-                    ) .
-                    ' for user with id ' . $this->user->getId()
-                );
-        }
+        $html = match (UserSettingsRepository::getViewTypeForUser($this->user->getId(), $this->ref_id)) {
+            UserSettingsRepository::VIEW_TYPE_LIST => $this->indexList(),
+            UserSettingsRepository::VIEW_TYPE_TILES => $this->indexTiles(),
+            default => throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Invalid view type ' .
+                UserSettingsRepository::getViewTypeForUser(
+                    $this->user->getId(),
+                    $this->ref_id
+                ) .
+                ' for user with id ' . $this->user->getId()
+            ),
+        };
 
         $filter_html = $this->dic->ui()->renderer()->render(
             $this->eventTableBuilder->filter(
@@ -518,7 +490,7 @@ class xoctEventGUI extends xoctGUI
             default:
                 throw new xoctException(
                     xoctException::INTERNAL_ERROR,
-                    'Invalid type ' . get_class($providing_gui) . ' for providing gui'
+                    'Invalid type ' . $providing_gui::class . ' for providing gui'
                 );
         }
 
@@ -700,10 +672,13 @@ class xoctEventGUI extends xoctGUI
         foreach ($WorkflowParameter::get() as $param) {
             $id = $param->getId();
             $defaultValue = $admin ? $param->getDefaultValueAdmin() : $param->getDefaultValueMember();
-
-            if (!isset($fromData->{$id}) && $defaultValue == WorkflowParameter::VALUE_ALWAYS_ACTIVE) {
-                $defaultParameter->{$id} = "true";
+            if (isset($fromData->{$id})) {
+                continue;
             }
+            if ($defaultValue != WorkflowParameter::VALUE_ALWAYS_ACTIVE) {
+                continue;
+            }
+            $defaultParameter->{$id} = "true";
         }
 
         // Append extra parameters.
@@ -798,9 +773,9 @@ class xoctEventGUI extends xoctGUI
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
                     'Y.m.d H:i:s',
-                    strtotime($conflict['start'])
+                    strtotime((string) $conflict['start'])
                 ) . ' - '
-                    . date('Y.m.d H:i:s', strtotime($conflict['end'])) . '<br>';
+                    . date('Y.m.d H:i:s', strtotime((string) $conflict['end'])) . '<br>';
             }
             $this->main_tpl->setOnScreenMessage('failure', $message);
             return;
@@ -857,7 +832,7 @@ class xoctEventGUI extends xoctGUI
         }
         $this->addCurrentUserToProducers();
         // redirect to oc studio
-        $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
+        $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
 
         $studio_link = $base . '/studio';
@@ -865,7 +840,7 @@ class xoctEventGUI extends xoctGUI
         // get the custom url for the studio.
         $custom_url = PluginConfig::getConfig(PluginConfig::F_STUDIO_URL);
         if (!empty($custom_url)) {
-            $studio_link = rtrim($custom_url, "/");
+            $studio_link = rtrim((string) $custom_url, "/");
         }
 
         $return_link = ILIAS_HTTP_PATH . '/'
@@ -919,24 +894,18 @@ class xoctEventGUI extends xoctGUI
         $download_publications = $event->publications()->getDownloadPublications();
         // Now that we have multiple sub-usages, we first check for publication_id which is passed by the multi-dropdowns.
         if ($publication_id) {
-            $publication = array_filter($download_publications, function ($publication) use ($publication_id): bool {
-                return $publication->getId() === $publication_id;
-            });
+            $publication = array_filter($download_publications, fn($publication): bool => $publication->getId() === $publication_id);
+            $publication = reset($publication);
+        } elseif (!empty($usage_type) && !empty($usage_id)) {
+            // If this is not multi-download dropdown, then it has to have the usage_type and usage_id parameters identified.
+            $publication = array_filter(
+                $download_publications,
+                fn($publication): bool => $publication->usage_id == $usage_id && $publication->usage_type === $usage_type
+            );
             $publication = reset($publication);
         } else {
-            // If this is not multi-download dropdown, then it has to have the usage_type and usage_id parameters identified.
-            if (!empty($usage_type) && !empty($usage_id)) {
-                $publication = array_filter(
-                    $download_publications,
-                    function ($publication) use ($usage_type, $usage_id): bool {
-                        return $publication->usage_id == $usage_id && $publication->usage_type === $usage_type;
-                    }
-                );
-                $publication = reset($publication);
-            } else {
-                // As a fallback we take out the last publication, if non of the above has been met!
-                $publication = reset($download_publications);
-            }
+            // As a fallback we take out the last publication, if non of the above has been met!
+            $publication = reset($download_publications);
         }
 
         if (empty($publication)) {
@@ -1123,12 +1092,12 @@ class xoctEventGUI extends xoctGUI
                 if (in_array($key, array_keys($received_configs), true)) {
                     $received_value = $received_configs[$key];
                     // Take care of datetime conversion.
-                    if (strpos($type, 'datetime') !== false) {
+                    if (str_contains((string) $type, 'datetime')) {
                         $datetime = new DateTimeImmutable($received_value);
                         $received_value = $datetime->format('Y-m-d\TH:i:s\Z');
                         $value = $received_value;
                     } elseif ($type == 'text') {
-                        $value = strip_tags($received_value);
+                        $value = strip_tags((string) $received_value);
                     } elseif ($type == 'number') {
                         $value = intval($received_value);
                     } else {
@@ -1402,7 +1371,7 @@ class xoctEventGUI extends xoctGUI
                 $ilias_producers = Group::find($group_producers);
                 $sleep = $ilias_producers->addMember($xoctUser);
             }
-        } catch (xoctException $e) {
+        } catch (xoctException) {
         }
 
         // add user to series producers

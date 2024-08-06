@@ -13,6 +13,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class ConfigAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_config';
@@ -50,10 +51,7 @@ class ConfigAR extends ActiveRecord
         return self::$cache[$name];
     }
 
-    /**
-     * @param mixed $value
-     */
-    public static function set(string $name, $value): void
+    public static function set(string $name, mixed $value): void
     {
         $obj = new self($name);
         $obj->setValue(json_encode($value));

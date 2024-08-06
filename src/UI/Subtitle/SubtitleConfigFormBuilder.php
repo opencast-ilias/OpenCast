@@ -36,17 +36,13 @@ class SubtitleConfigFormBuilder
      * @var ilPlugin
      */
     private $plugin;
-    private Factory $ui_factory;
-    private Renderer $ui_renderer;
 
     public function __construct(
         ilPlugin $plugin,
-        Factory $ui_factory,
-        Renderer $ui_renderer
+        private Factory $ui_factory,
+        private Renderer $ui_renderer
     ) {
         $this->plugin = $plugin;
-        $this->ui_factory = $ui_factory;
-        $this->ui_renderer = $ui_renderer;
     }
 
     /**
@@ -134,7 +130,7 @@ class SubtitleConfigFormBuilder
             $digested_list = [];
             $language_list = $listprovider->getList($source);
             foreach ($language_list as $key => $value) {
-                $split = explode('.', $value);
+                $split = explode('.', (string) $value);
                 $default_text = ucfirst(strtolower($split[count($split) - 1]));
                 $translated = $this->getLocaleString(
                     'md_lang_list_' . $key,
@@ -199,9 +195,7 @@ class SubtitleConfigFormBuilder
             return '';
         }
         $separator = self::LANG_VALUE_SEPARATOR;
-        $converted_list = array_map(function ($key, $value) use ($separator) {
-            return "{$key}{$separator}{$value}";
-        }, array_keys($languages), array_values($languages));
-        return !empty($converted_list) ? implode("\n", $converted_list) : '';
+        $converted_list = array_map(fn($key, $value): string => "{$key}{$separator}{$value}", array_keys($languages), array_values($languages));
+        return empty($converted_list) ? '' : implode("\n", $converted_list);
     }
 }

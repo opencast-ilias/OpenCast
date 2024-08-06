@@ -12,11 +12,8 @@ use xoctException;
 
 class MDFieldConfigEventRepository implements MDFieldConfigRepository
 {
-    private MDCatalogueFactory $MDCatalogueFactory;
-
-    public function __construct(MDCatalogueFactory $MDCatalogueFactory)
+    public function __construct(private readonly MDCatalogueFactory $MDCatalogueFactory)
     {
-        $this->MDCatalogueFactory = $MDCatalogueFactory;
     }
 
     /**
@@ -49,9 +46,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         }
         return array_filter(
             $AR->get(),
-            static function (MDFieldConfigEventAR $ar) use ($MDCatalogue): bool {
-                return !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly();
-            }
+            static fn(MDFieldConfigEventAR $ar): bool => !$MDCatalogue->getFieldById($ar->getFieldId())->isReadOnly()
         );
     }
 
@@ -95,10 +90,8 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
         $catalogue = $this->MDCatalogueFactory->event();
         return array_filter(
             $this->getAll($is_admin),
-            function (MDFieldConfigEventAR $fieldConfig) use ($catalogue): bool {
-                return $catalogue->getFieldById($fieldConfig->getFieldId())
-                                 ->getType()->isFilterable();
-            }
+            fn(MDFieldConfigEventAR $fieldConfig): bool => $catalogue->getFieldById($fieldConfig->getFieldId())
+                             ->getType()->isFilterable()
         );
     }
 
@@ -112,7 +105,7 @@ class MDFieldConfigEventRepository implements MDFieldConfigRepository
     public function delete($field_id): void
     {
         $activeRecord = MDFieldConfigEventAR::where(['field_id' => $field_id])->first();
-        if ($activeRecord) {
+        if ($activeRecord !== null) {
             $activeRecord->delete();
         }
     }

@@ -9,19 +9,10 @@ class WaitOverlay
 {
     private const BASE = './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/';
 
-    /**
-     * @var bool
-     */
-    private $init = false;
+    private bool $init = false;
 
-    /**
-     * @var ilGlobalTemplateInterface
-     */
-    private $tpl;
-
-    public function __construct(ilGlobalTemplateInterface $tpl)
+    public function __construct(private readonly \ilGlobalTemplateInterface $tpl)
     {
-        $this->tpl = $tpl;
         $this->init();
     }
 

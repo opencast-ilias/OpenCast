@@ -15,6 +15,7 @@ use ActiveRecord;
  *
  * @author  Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class ChatroomAR extends ActiveRecord
 {
     public const TABLE_NAME = 'sr_chat_room';

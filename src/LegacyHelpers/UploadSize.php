@@ -19,6 +19,8 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\LegacyHelpers;
 
+use ILIAS\UI\Implementation\Component\Input\UploadLimitResolver;
+
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  * @deprecated
@@ -27,13 +29,11 @@ class UploadSize
 {
     public static function getUploadSizeLimitBytes(): int
     {
-        $limit = 2 * 1024 * 1024;
-        if (class_exists('\ilFileUtils') && method_exists('\ilFileUtils', 'getUploadSizeLimitBytes')) {
-            $limit = (int) \ilFileUtils::getUploadSizeLimitBytes();
-        }
-        if (class_exists('\ilUtils') && method_exists('\ilUtils', 'getUploadSizeLimitBytes')) {
-            $limit = (int) \ilUtils::getUploadSizeLimitBytes();
-        }
-        return $limit;
+        global $DIC;
+
+        /** @var UploadLimitResolver $limit */
+        $limit = $DIC["ui.upload_limit_resolver"];
+
+        return $limit->getPhpUploadLimitInBytes();
     }
 }

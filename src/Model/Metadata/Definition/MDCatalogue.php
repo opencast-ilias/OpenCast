@@ -9,16 +9,10 @@ use xoctException;
 class MDCatalogue
 {
     /**
-     * @var MDFieldDefinition[]
-     */
-    private array $field_definitions;
-
-    /**
      * @param MDFieldDefinition[] $field_definitions
      */
-    public function __construct(array $field_definitions)
+    public function __construct(private readonly array $field_definitions)
     {
-        $this->field_definitions = $field_definitions;
     }
 
     /**
@@ -34,9 +28,7 @@ class MDCatalogue
      */
     public function getFieldById(string $id): MDFieldDefinition
     {
-        $field = array_filter($this->field_definitions, function (MDFieldDefinition $field) use ($id): bool {
-            return $field->getId() === $id;
-        });
+        $field = array_filter($this->field_definitions, fn(MDFieldDefinition $field): bool => $field->getId() === $id);
         if ($field === []) {
             throw new xoctException(
                 xoctException::INTERNAL_ERROR,

@@ -28,12 +28,24 @@ use srag\Plugins\Opencast\Container\Init;
 class xoctSeriesAPI
 {
     protected static $instance;
+    /**
+     * @readonly
+     */
     private SeriesRepository $series_repository;
 
+    /**
+     * @readonly
+     */
     private SeriesWorkflowParameterRepository $seriesWorkflowParameterRepository;
 
+    /**
+     * @readonly
+     */
     private MetadataFactory $metadataFactory;
 
+    /**
+     * @readonly
+     */
     private ACLUtils $aclUtils;
 
     /**
@@ -124,7 +136,7 @@ class xoctSeriesAPI
                 $acl,
                 $objectSettings->getUseAnnotations()
             );
-        } elseif ($default_template = PermissionTemplate::where(['is_default' => 1])->first()) {
+        } elseif (($default_template = PermissionTemplate::where(['is_default' => 1])->first()) !== null) {
             /** @var PermissionTemplate $default_template */
             $default_template->addToAcls(
                 $acl,
@@ -150,7 +162,7 @@ class xoctSeriesAPI
                 $ilias_producers = Group::find($group_producers);
                 $ilias_producers->addMembers($producers);
             }
-        } catch (xoctException $e) {
+        } catch (xoctException) {
         }
 
         foreach ($producers as $producer) {
@@ -180,7 +192,7 @@ class xoctSeriesAPI
      *
      * @return ObjectSettings
      */
-    public function read($ref_id)
+    public function read(int $ref_id)
     {
         /** @var ObjectSettings $cast */
         $cast = ObjectSettings::find(ilObjOpenCast::_lookupObjectId($ref_id));
@@ -220,7 +232,7 @@ class xoctSeriesAPI
      *
      * @return ObjectSettings
      */
-    public function update($ref_id, $data)
+    public function update(int $ref_id, array $data)
     {
         $object = new ilObjOpenCast($ref_id);
         /** @var ObjectSettings $settings */

@@ -25,15 +25,8 @@ namespace srag\Plugins\Opencast\Model\Cache\Nodes;
  */
 class Node
 {
-    private string $host;
-    private int $port;
-    private ?int $weight;
-
-    public function __construct(string $host, int $port, ?int $weight = null)
+    public function __construct(private readonly string $host, private readonly int $port, private readonly ?int $weight = null)
     {
-        $this->host = $host;
-        $this->port = $port;
-        $this->weight = $weight;
     }
 
     public function getHost(): string

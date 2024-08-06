@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\Model\API\APIObject;
  *
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PublicationMetadata extends APIObject
 {
     public const MEDIA_TYPE_VIDEO = "video";
@@ -29,10 +30,10 @@ class PublicationMetadata extends APIObject
      */
     public function getRole(): string
     {
-        return strpos(
+        return str_contains(
             $this->getFlavor(),
             self::ROLE_PRESENTATION
-        ) !== false ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
+        ) ? self::ROLE_PRESENTATION : self::ROLE_PRESENTER;
     }
 
     /**

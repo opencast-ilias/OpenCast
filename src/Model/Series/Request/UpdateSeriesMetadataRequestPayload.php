@@ -12,11 +12,8 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
 {
     use SanitizeSeriesMetadata;
 
-    protected Metadata $metadata;
-
-    public function __construct(Metadata $metadata)
+    public function __construct(protected Metadata $metadata)
     {
-        $this->metadata = $metadata;
     }
 
     public function getMetadata(): Metadata
@@ -27,16 +24,14 @@ class UpdateSeriesMetadataRequestPayload implements JsonSerializable
     /**
      * @return array{metadata: string}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $this->saniziteMetadataFields($this->metadata->getFields()); // to prevent empty values
 
         // for some reason, label etc. are not allowed here (unlike for events)
         return [
             'metadata' => json_encode(
-                array_map(function (MetadataField $field): array {
-                    return $field->jsonSerialize();
-                }, $this->metadata->getFields())
+                array_map(fn(MetadataField $field): array => $field->jsonSerialize(), $this->metadata->getFields())
             )
         ];
     }

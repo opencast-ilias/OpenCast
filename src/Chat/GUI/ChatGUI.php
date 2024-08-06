@@ -21,21 +21,20 @@ use srag\Plugins\Opencast\Container\Init;
  */
 class ChatGUI
 {
-    private TokenAR $token;
     private ?ilTemplate $template = null;
     /**
      * @var
+     * @readonly
      */
     private ilOpenCastPlugin $plugin;
 
     /**
      * ChatGUI constructor.
      */
-    public function __construct(TokenAR $token)
+    public function __construct(private TokenAR $token)
     {
         $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
-        $this->token = $token;
     }
 
 

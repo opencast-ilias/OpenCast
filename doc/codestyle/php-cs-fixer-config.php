@@ -1,13 +1,16 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
+use PhpCsFixer\Finder;
+use PhpCsFixer\Config;
+
+$finder = Finder::create()
                            ->in([
                                __DIR__ . '/../../classes',
                                __DIR__ . '/../../src',
                                __DIR__ . '/../../sql'
                            ]);
 
-$config = new PhpCsFixer\Config();
+$config = new Config();
 $config->setUsingCache(false);
 return $config->setRules([
     '@PSR12' => true,

@@ -36,15 +36,9 @@ class Config
      * @var int
      */
     protected $default_ttl = 5 * 60;
-    protected string $adaptor_name;
-    protected bool $activated;
 
-    public function __construct(
-        string $adaptor_name,
-        bool $activated = false
-    ) {
-        $this->adaptor_name = $adaptor_name;
-        $this->activated = $activated;
+    public function __construct(protected string $adaptor_name, protected bool $activated = false)
+    {
     }
 
     public function getAdaptorName(): string

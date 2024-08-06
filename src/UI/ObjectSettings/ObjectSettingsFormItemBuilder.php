@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace srag\Plugins\Opencast\UI\ObjectSettings;
 
 use ILIAS\Refinery\Factory as RefineryFactory;
-use ILIAS\UI\Component\Input\Field\Input;
+use ILIAS\UI\Component\Input\Input;
 use ILIAS\UI\Factory as UIFactory;
 use ilPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
@@ -41,27 +41,8 @@ class ObjectSettingsFormItemBuilder
     public const F_MEMBER_DOWNLOAD = 'member_download';
     public const F_MEMBER_RECORD = 'member_record';
 
-    protected UIFactory $ui_factory;
-    private RefineryFactory $refinery_factory;
-    private PublicationUsageRepository $publicationUsageRepository;
-    private \ilPlugin $plugin;
-    private ObjectSettingsParser $objectSettingsParser;
-    private \xoctFileUploadHandlerGUI $fileUploadHandler;
-
-    public function __construct(
-        UIFactory $ui_factory,
-        RefineryFactory $refinery_factory,
-        PublicationUsageRepository $publicationUsageRepository,
-        ObjectSettingsParser $objectSettingsParser,
-        xoctFileUploadHandlerGUI $fileUploadHandler,
-        ilPlugin $plugin
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->refinery_factory = $refinery_factory;
-        $this->publicationUsageRepository = $publicationUsageRepository;
-        $this->plugin = $plugin;
-        $this->objectSettingsParser = $objectSettingsParser;
-        $this->fileUploadHandler = $fileUploadHandler;
+    public function __construct(protected UIFactory $ui_factory, private readonly RefineryFactory $refinery_factory, private readonly PublicationUsageRepository $publicationUsageRepository, private readonly ObjectSettingsParser $objectSettingsParser, private readonly \xoctFileUploadHandlerGUI $fileUploadHandler, private readonly \ilPlugin $plugin)
+    {
     }
 
     public function create(): Input

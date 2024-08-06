@@ -32,30 +32,8 @@ class EventModals
      */
     protected $startworkflow_modal;
 
-    private $parent_gui;
-    /**
-     * @var Container
-     */
-    private $dic;
-    /**
-     * @var WorkflowRepository
-     */
-    private $workflow_repository;
-    /**
-     * @var ilOpenCastPlugin
-     */
-    private $plugin;
-
-    public function __construct(
-        $parent_gui,
-        ilOpenCastPlugin $plugin,
-        Container $dic,
-        WorkflowRepository $workflow_repository
-    ) {
-        $this->parent_gui = $parent_gui;
-        $this->dic = $dic;
-        $this->workflow_repository = $workflow_repository;
-        $this->plugin = $plugin;
+    public function __construct(private $parent_gui, private readonly \ilOpenCastPlugin $plugin, private readonly Container $dic, private readonly WorkflowRepository $workflow_repository)
+    {
     }
 
     public function initWorkflows(): void
@@ -106,7 +84,7 @@ class EventModals
                 $description = $workflow->getDescription();
                 $id = $workflow->getId();
                 $header = $workflow_selection_array[$id] ?? $this->plugin->txt('workflow_description_section_header');
-                if (!empty(trim($description))) {
+                if (!empty(trim((string) $description))) {
                     $description_block_tpl->setVariable('BLOCK_ID', $id);
                     $description_block_tpl->setVariable('HEADER', $header);
                     $description_block_tpl->setVariable('DESCRIPTION_TEXT', $description);
@@ -157,11 +135,9 @@ class EventModals
             );
 
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
-                                    ->withOnLoadCode(function ($id) use ($form_submit_btn_id): string {
-                                        return "$('#{$id}').click(function() { " .
-                                            "$('#{$form_submit_btn_id}').click(); " .
-                                            "return false; });";
-                                    });
+                                    ->withOnLoadCode(fn($id): string => "$('#{$id}').click(function() { " .
+                                        "$('#{$form_submit_btn_id}').click(); " .
+                                        "return false; });");
 
             $modal_startworkflow = $this->dic->ui()->factory()->modal()->roundtrip(
                 $this->plugin->txt('event_startworkflow'),
@@ -180,7 +156,7 @@ class EventModals
             $this->buildReportingModal(
                 'reportDate',
                 $this->plugin->txt('event_report_date_modification'),
-                nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT))
+                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT))
             )
         );
     }
@@ -194,7 +170,7 @@ class EventModals
             $this->buildReportingModal(
                 "reportQuality",
                 $this->plugin->txt('event_report_quality_problem'),
-                nl2br(PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT))
+                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT))
             )
         );
     }
@@ -213,12 +189,10 @@ class EventModals
         $tpl->setVariable('BODY', $body);
 
         $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("send"), '#')
-                                ->withOnLoadCode(function ($id) use ($form_id): string {
-                                    return "$('#{$id}').click(function() { " .
-                                        "$('#{$form_id}').submit(); " .
-                                        "$(this).prop('disabled', true); " .
-                                        "return false; });";
-                                });
+                                ->withOnLoadCode(fn($id): string => "$('#{$id}').click(function() { " .
+                                    "$('#{$form_id}').submit(); " .
+                                    "$(this).prop('disabled', true); " .
+                                    "return false; });");
 
         return $this->dic->ui()->factory()->modal()->roundtrip(
             $title,

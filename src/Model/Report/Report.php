@@ -15,6 +15,7 @@ use xoct;
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class Report extends ActiveRecord
 {
     public const DB_TABLE = 'xoct_report';
@@ -44,13 +45,7 @@ class Report extends ActiveRecord
             $mail->setSaveInSentbox(false);
             $mail->appendInstallationSignature(true);
             $mail->sendMail(
-                $this->getRecipientForType($this->getType()),
-                '',
-                '',
-                $this->getSubject(),
-                $this->getMessage(),
-                [],
-                xoct::isIlias6() ? false : $type
+                $this->getRecipientForType($this->getType())
             );
         }
     }
@@ -62,14 +57,11 @@ class Report extends ActiveRecord
      */
     protected function getRecipientForType($type)
     {
-        switch ($type) {
-            case self::TYPE_DATE:
-                return PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_EMAIL);
-            case self::TYPE_QUALITY:
-                return PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_EMAIL);
-            default:
-                throw new ilException('Missing Report Type for xoctReport');
-        }
+        return match ($type) {
+            self::TYPE_DATE => PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_EMAIL),
+            self::TYPE_QUALITY => PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_EMAIL),
+            default => throw new ilException('Missing Report Type for xoctReport'),
+        };
     }
 
     /**

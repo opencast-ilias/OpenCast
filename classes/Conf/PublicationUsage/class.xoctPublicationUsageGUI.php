@@ -115,7 +115,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function initTabTableGUI(string $pub_subtab_active): ?ilTable2GUI
     {
         if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_USAGE) {
-            if (count($this->repository->getMissingUsageIds()) > 0) {
+            if ($this->repository->getMissingUsageIds() !== []) {
                 $b = ilLinkButton::getInstance();
                 $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new');
                 $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID));
@@ -125,7 +125,7 @@ class xoctPublicationUsageGUI extends xoctGUI
         }
 
         if ($pub_subtab_active === xoctMainGUI::SUBTAB_PUBLICATION_SUB_USAGE) {
-            if (count($this->repository->getSubAllowedUsageIds()) > 0) {
+            if ($this->repository->getSubAllowedUsageIds() !== []) {
                 $b = ilLinkButton::getInstance();
                 $b->setCaption($this->plugin->getPrefix() . '_publication_usage_add_new_sub');
                 $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SELECT_PUBLICATION_ID_SUB));
@@ -306,7 +306,7 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function editSub(): void
     {
-        if (!PublicationSubUsage::find($this->get_id)) {
+        if (PublicationSubUsage::find($this->get_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
@@ -322,7 +322,7 @@ class xoctPublicationUsageGUI extends xoctGUI
     protected function updateSub(): void
     {
         $sub_usage_id = $this->get_id;
-        if (!PublicationSubUsage::find($sub_usage_id)) {
+        if (PublicationSubUsage::find($sub_usage_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
@@ -341,14 +341,14 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function confirmDeleteSub(): void
     {
-        if (!PublicationSubUsage::find($this->get_id)) {
+        if (PublicationSubUsage::find($this->get_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationSubUsage = PublicationSubUsage::find($this->get_id);
         $confirm = new ilConfirmationGUI();
         $confirm->setHeaderText($this->getLocaleString('confirm_delete_text_sub'));
-        $confirm->addItem('id', $this->get_id, $xoctPublicationSubUsage->getTitle());
+        $confirm->addItem('id', (string) $this->get_id, $xoctPublicationSubUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
         $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
         $confirm->setConfirm($this->getLocaleString(self::CMD_DELETE), self::CMD_DELETE_SUB);
@@ -358,7 +358,7 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function deleteSub(): void
     {
-        if (!PublicationSubUsage::find($this->post_id)) {
+        if (PublicationSubUsage::find($this->post_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('sub_not_found'), true);
             $this->ctrl->redirect($this);
         }
@@ -394,7 +394,7 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function editGroup(): void
     {
-        if (!PublicationUsageGroup::find($this->get_id)) {
+        if (PublicationUsageGroup::find($this->get_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }
@@ -424,14 +424,14 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function confirmDeleteGroup(): void
     {
-        if (!PublicationUsageGroup::find($this->get_id)) {
+        if (PublicationUsageGroup::find($this->get_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }
         $xoctPublicationUsageGroup = PublicationUsageGroup::find($this->get_id);
         $confirm = new ilConfirmationGUI();
         $confirm->setHeaderText($this->getLocaleString('confirm_delete_text_group'));
-        $confirm->addItem('id', $this->get_id, $xoctPublicationUsageGroup->getName());
+        $confirm->addItem('id', (string) $this->get_id, $xoctPublicationUsageGroup->getName());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
         $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
         $confirm->setConfirm($this->getLocaleString(self::CMD_DELETE), self::CMD_DELETE_GROUP);
@@ -441,7 +441,7 @@ class xoctPublicationUsageGUI extends xoctGUI
 
     protected function deleteGroup(): void
     {
-        if (!PublicationUsageGroup::find($this->post_id)) {
+        if (PublicationUsageGroup::find($this->post_id) === null) {
             $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('group_not_found'), true);
             $this->ctrl->redirect($this);
         }

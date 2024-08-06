@@ -18,9 +18,14 @@ use srag\Plugins\Opencast\Container\Init;
  */
 class ChatHistoryGUI
 {
-    private ?int $chat_room_id = null;
+    /**
+     * @readonly
+     */
     private \ilGlobalTemplateInterface $main_tpl;
 
+    /**
+     * @readonly
+     */
     private ilOpenCastPlugin $plugin;
 
     /**
@@ -28,12 +33,11 @@ class ChatHistoryGUI
      *
      * @param $chat_room_id
      */
-    public function __construct(?int $chat_room_id)
+    public function __construct(private ?int $chat_room_id)
     {
         $opencastContainer = Init::init();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->main_tpl = $opencastContainer->ilias()->ui()->mainTemplate();
-        $this->chat_room_id = $chat_room_id;
     }
 
 
@@ -52,7 +56,7 @@ class ChatHistoryGUI
                 $message->getUsrId()
             ));
             $template->setVariable('PUBLIC_NAME', $user->hasPublicProfile() ? $user->getFullname() : $user->getLogin());
-            $template->setVariable('SENT_AT', date('H:i', strtotime($message->getSentAt())));
+            $template->setVariable('SENT_AT', date('H:i', strtotime((string) $message->getSentAt())));
             $profile_picture_path = './data/' . CLIENT_ID . '/usr_images/usr_' . $message->getUsrId() . '_xsmall.jpg';
             $picture_path = is_file(
                 $profile_picture_path

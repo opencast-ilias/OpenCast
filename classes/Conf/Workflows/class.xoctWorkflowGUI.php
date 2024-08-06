@@ -35,7 +35,6 @@ class xoctWorkflowGUI extends xoctGUI
      * @var Factory
      */
     protected $factory;
-    protected WorkflowRepository $workflow_repository;
     /**
      * @var \ilToolbarGUI
      */
@@ -53,7 +52,7 @@ class xoctWorkflowGUI extends xoctGUI
      */
     protected $wf_subtab_active;
 
-    public function __construct(WorkflowRepository $workflow_repository)
+    public function __construct(protected WorkflowRepository $workflow_repository)
     {
         global $DIC;
         parent::__construct();
@@ -61,7 +60,6 @@ class xoctWorkflowGUI extends xoctGUI
         $this->toolbar = $DIC->toolbar();
         $this->language = $DIC->language();
         $this->tabs = $DIC->tabs();
-        $this->workflow_repository = $workflow_repository;
         $this->factory = $ui->factory();
         $this->ui_renderer = $ui->renderer();
         $this->wf_subtab_active =
@@ -136,7 +134,7 @@ class xoctWorkflowGUI extends xoctGUI
                     $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_workflow_settings_saved'), true);
                     PluginConfig::set(
                         PluginConfig::F_WORKFLOWS_TAGS,
-                        trim($new_tags)
+                        trim((string) $new_tags)
                     );
                 } else {
                     $this->main_tpl->setOnScreenMessage('failure', $this->getLocaleString('msg_workflow_settings_saved_update_failed'), true);

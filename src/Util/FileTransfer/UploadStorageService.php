@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace srag\Plugins\Opencast\Util\FileTransfer;
 
 use ILIAS\Data\DataSize;
-use ILIAS\Filesystem\DTO\Metadata as FileMetadata;
 use ILIAS\Filesystem\Exception\FileNotFoundException;
 use ILIAS\Filesystem\Exception\IOException;
 use ILIAS\Filesystem\Filesystem;
@@ -21,13 +20,8 @@ class UploadStorageService
 {
     public const TEMP_SUB_DIR = 'opencast';
 
-    protected Filesystem $fileSystem;
-    protected FileUpload $fileUpload;
-
-    public function __construct(Filesystem $file_system, FileUpload $fileUpload)
+    public function __construct(protected Filesystem $fileSystem, protected FileUpload $fileUpload)
     {
-        $this->fileSystem = $file_system;
-        $this->fileUpload = $fileUpload;
     }
 
     /**
@@ -75,12 +69,7 @@ class UploadStorageService
         // thereby preventing any issues due to deletion attempts on no longer existing folders.
         $folders = $this->fileSystem->finder()->in([$dir]);
         $folders = $folders->directories();
-        $folders = $folders->sort(function (
-            Metadata $a,
-            Metadata $b
-        ): int {
-            return strlen($a->getPath()) - strlen($b->getPath());
-        });
+        $folders = $folders->sort(fn($a, $b): int => strlen((string) $a->getPath()) - strlen((string) $b->getPath()));
         $folders = $folders->reverseSorting();
         $folders = $folders->getIterator();
         $folders->rewind();
@@ -92,13 +81,13 @@ class UploadStorageService
                     $this->fileSystem->deleteDir($path);
                 }
                 $folders->next();
-            } catch (\Throwable $t) {
+            } catch (\Throwable) {
                 $folders->next();
             }
         }
         try {
             $this->fileSystem->deleteDir($dir);
-        } catch (\Throwable $t) {
+        } catch (\Throwable) {
         }
     }
 
@@ -113,14 +102,14 @@ class UploadStorageService
         /** TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way to get the path dynamically from the file service */
         try {
             $data_size = $this->fileSystem->getSize($metadata->getPath(), $fileSizeUnit);
-        } catch (\Throwable $t) {
+        } catch (\Throwable) {
             $data_size = new DataSize(0, $fileSizeUnit);
         }
 
         return [
             'path' => ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $metadata->getPath(),
             'size' => $data_size,
-            'name' => pathinfo($metadata->getPath(), PATHINFO_FILENAME),
+            'name' => pathinfo((string) $metadata->getPath(), PATHINFO_FILENAME),
             'mimeType' => $this->fileSystem->getMimeType($metadata->getPath()),
             'id' => $identifier
         ];
@@ -149,11 +138,13 @@ class UploadStorageService
     /**
      * @throws FileNotFoundException
      */
-    protected function idToFileMetadata(string $identifier): FileMetadata
+    protected function idToFileMetadata(string $identifier)
     {
         $dir = $this->idToDirPath($identifier);
         foreach ($this->fileSystem->finder()->in([$dir]) as $file) {
-            return $file;
+            if($file instanceof Metadata) {
+                return $file;
+            }
         }
         throw new FileNotFoundException();
     }

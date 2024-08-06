@@ -12,6 +12,7 @@ use xoctException;
  *
  * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
+#[\AllowDynamicProperties]
 class PublicationSubUsage extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_pub_sub_usage';

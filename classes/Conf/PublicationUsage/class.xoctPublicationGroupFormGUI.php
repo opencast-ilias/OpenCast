@@ -26,21 +26,14 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
     public const F_DESCRIPTION = 'description';
     public const F_DISPLAY_NAME_MAX_LENGTH = 10;
 
-    protected PublicationUsageGroup $object;
-    protected \xoctPublicationUsageGUI $parent_gui;
-    protected bool $is_new;
-
     public function __construct(
-        xoctPublicationUsageGUI $parent_gui,
-        PublicationUsageGroup $publication_usage_group,
-        bool $is_new = true
+        protected \xoctPublicationUsageGUI $parent_gui,
+        protected PublicationUsageGroup $object,
+        protected bool $is_new = true
     ) {
         parent::__construct();
-        $this->object = $publication_usage_group;
-        $this->parent_gui = $parent_gui;
         $this->parent_gui->setTab();
-        $this->ctrl->saveParameter($parent_gui, 'id');
-        $this->is_new = $is_new;
+        $this->ctrl->saveParameter($this->parent_gui, 'id');
         $this->initForm();
     }
 
@@ -55,8 +48,8 @@ class xoctPublicationGroupFormGUI extends ilPropertyFormGUI
         $this->addItem($te);
 
         $max_length = self::F_DISPLAY_NAME_MAX_LENGTH;
-        $display_name = (!empty($this->object->getDisplayName()) ? $this->object->getDisplayName(
-        ) : '{added display name}');
+        $display_name = (empty($this->object->getDisplayName()) ? '{added display name}' : $this->object->getDisplayName(
+        ));
         $info = sprintf($this->getLocaleString(self::F_DISPLAY_NAME . '_info'), $max_length, strtolower($display_name));
         $te = new ilTextInputGUI($this->getLocaleString(self::F_DISPLAY_NAME), self::F_DISPLAY_NAME);
         $te->setInfo($info);

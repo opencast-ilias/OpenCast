@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ILIAS\UI\Implementation\Component\Input\Field;
 
+use ILIAS\Refinery\Custom\Constraint;
 use ILIAS\Data\Factory as DataFactory;
 use ILIAS\Refinery\Factory;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\AbstractCtrlAwareChunkedUploadHandler;
@@ -16,14 +17,18 @@ use ILIAS\UI\Component\Input\Field\FileUpload;
  */
 class ChunkedFile extends File
 {
+    public $max_file_size;
     protected $chunk_size = 1;
 
+    /**
+     * @param mixed $data_factory
+     */
     public function __construct(
         DataFactory $data_factory,
         Factory $refinery,
         AbstractCtrlAwareChunkedUploadHandler $handler,
-        $label,
-        $byline
+        string $label,
+        ?string $byline
     ) {
         global $DIC;
         parent::__construct(
@@ -45,7 +50,7 @@ class ChunkedFile extends File
     ): ChunkedFile {
         global $DIC;
 
-        $data_factory = new \ILIAS\Data\Factory();
+        $data_factory = new DataFactory();
         $refinery = new \ILIAS\Refinery\Factory($data_factory, $DIC["lng"]);
 
         return (new self(
@@ -103,15 +108,11 @@ class ChunkedFile extends File
         return false;
     }
 
-    protected function getConstraintForRequirement(): \ILIAS\Refinery\Custom\Constraint
+    protected function getConstraintForRequirement(): Constraint
     {
         return $this->refinery->custom()->constraint(
-            function ($value): bool {
-                return (is_array($value) && $value !== []);
-            },
-            function ($txt, $value) {
-                return $txt("msg_no_files_selected");
-            }
+            fn($value): bool => is_array($value) && $value !== [],
+            fn($txt, $value) => $txt("msg_no_files_selected")
         );
     }
 }

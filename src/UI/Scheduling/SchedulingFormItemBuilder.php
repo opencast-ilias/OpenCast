@@ -19,25 +19,8 @@ use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 
 class SchedulingFormItemBuilder
 {
-    protected UIFactory $ui_factory;
-    private RefineryFactory $refinery_factory;
-    private SchedulingParser $schedulingParser;
-    private \ilPlugin $plugin;
-    private AgentRepository $agentApiRepository;
-
-
-    public function __construct(
-        UIFactory $ui_factory,
-        RefineryFactory $refinery_factory,
-        SchedulingParser $schedulingParser,
-        ilPlugin $plugin,
-        AgentRepository $agentApiRepository
-    ) {
-        $this->ui_factory = $ui_factory;
-        $this->refinery_factory = $refinery_factory;
-        $this->schedulingParser = $schedulingParser;
-        $this->plugin = $plugin;
-        $this->agentApiRepository = $agentApiRepository;
+    public function __construct(protected UIFactory $ui_factory, private readonly RefineryFactory $refinery_factory, private readonly SchedulingParser $schedulingParser, private readonly \ilPlugin $plugin, private readonly AgentRepository $agentApiRepository)
+    {
     }
 
     public function create(): Input

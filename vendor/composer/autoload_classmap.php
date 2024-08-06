@@ -43,6 +43,7 @@ return array(
     'ilOpenCastDBUpdateSteps' => $baseDir . '/classes/Setup/class.ilOpenCastDBUpdateSteps.php',
     'ilOpenCastPlugin' => $baseDir . '/classes/class.ilOpenCastPlugin.php',
     'ilOpenCastUpdateRBACPermsListObjective' => $baseDir . '/classes/Setup/class.ilOpenCastUpdateRBACPermsListObjective.php',
+    'ilOpenCastUpdateStepsExecutedObjective' => $baseDir . '/classes/Setup/class.ilOpenCastUpdateStepsExecutedObjective.php',
     'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => $baseDir . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
     'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\Loader' => $baseDir . '/src/UI/Form/Loader.php',
     'srag\\Plugins\\Opencast\\API\\API' => $baseDir . '/src/API/API.php',

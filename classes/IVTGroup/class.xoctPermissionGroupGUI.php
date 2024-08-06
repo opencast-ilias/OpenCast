@@ -22,6 +22,9 @@ class xoctPermissionGroupGUI extends xoctGUI
         self::CMD_CREATE,
         self::CMD_DELETE
     ];
+    /**
+     * @readonly
+     */
     private ?ObjectSettings $objectSettings;
 
 
@@ -126,9 +129,7 @@ class xoctPermissionGroupGUI extends xoctGUI
             $stdClass = $group->asStdClass();
             $stdClass->user_count = count($users);
             $stdClass->name = $stdClass->title;
-            $stdClass->users = array_values(array_filter(array_map('intval', $users), function ($user_id) {
-                return $user_id > 0;
-            }));
+            $stdClass->users = array_values(array_filter(array_map('intval', $users), fn($user_id): bool => $user_id > 0));
             $arr[] = $stdClass;
         }
         usort($arr, ['xoctGUI', 'compareStdClassByName']);

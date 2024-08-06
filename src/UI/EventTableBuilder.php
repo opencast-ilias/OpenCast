@@ -28,24 +28,32 @@ use xoctEventTileGUI;
  */
 class EventTableBuilder
 {
+    /**
+     * @readonly
+     */
     private UIFactory $ui_factory;
+    /**
+     * @readonly
+     */
     private \ilUIService $ui_service;
-    private MDFieldConfigEventRepository $MDFieldConfigEventRepository;
+    /**
+     * @readonly
+     */
     private MDCatalogue $MDCatalogue;
-    private EventRepository $eventRepository;
+    /**
+     * @readonly
+     */
     private Container $dic;
 
     public function __construct(
-        MDFieldConfigEventRepository $MDFieldConfigEventRepository,
+        private MDFieldConfigEventRepository $MDFieldConfigEventRepository,
         MDCatalogueFactory $MDCatalogueFactory,
-        EventRepository $eventRepository,
+        private EventRepository $eventRepository,
         Container $dic
     ) {
         $this->ui_factory = $dic->ui()->factory();
-        $this->MDFieldConfigEventRepository = $MDFieldConfigEventRepository;
         $this->ui_service = $dic->uiService();
         $this->MDCatalogue = $MDCatalogueFactory->event();
-        $this->eventRepository = $eventRepository;
         $this->dic = $dic;
     }
 
@@ -88,15 +96,11 @@ class EventTableBuilder
             'xoct_event_table',
             $form_action,
             array_column(
-                array_map(function (MDFieldConfigEventAR $mdFieldConfig): array {
-                    return [$mdFieldConfig->getFieldId(), $this->mdFieldConfigToFilterItem($mdFieldConfig)];
-                }, $mdFieldConfigs),
+                array_map(fn(MDFieldConfigEventAR $mdFieldConfig): array => [$mdFieldConfig->getFieldId(), $this->mdFieldConfigToFilterItem($mdFieldConfig)], $mdFieldConfigs),
                 1,
                 0
             ),
-            array_map(function (MDFieldConfigEventAR $mdFieldConfig): bool {
-                return true;
-            }, $mdFieldConfigs),
+            array_map(fn(MDFieldConfigEventAR $mdFieldConfig): bool => true, $mdFieldConfigs),
             false,
             false
         );
@@ -111,17 +115,10 @@ class EventTableBuilder
     {
         $input_f = $this->ui_factory->input()->field();
         $fieldDefinition = $this->MDCatalogue->getFieldById($mdFieldConfig->getFieldId());
-        switch ($fieldDefinition->getType()->getTitle()) {
-            case MDDataType::text()->getTitle():
-            case MDDataType::text_array()->getTitle():
-            case MDDataType::text_long()->getTitle():
-                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
-            case MDDataType::date()->getTitle():
-            case MDDataType::datetime()->getTitle():
-            case MDDataType::time()->getTitle():
-            default:
-                return $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey()));
-        }
+        return match ($fieldDefinition->getType()->getTitle()) {
+            MDDataType::text()->getTitle(), MDDataType::text_array()->getTitle(), MDDataType::text_long()->getTitle() => $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey())),
+            default => $input_f->text($mdFieldConfig->getTitle($this->dic->language()->getLangKey())),
+        };
     }
 
     private function applyFilter(array $events, ObjectSettings $objectSettings): array

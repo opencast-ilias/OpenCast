@@ -11,19 +11,11 @@ namespace srag\Plugins\Opencast\Model\DTO;
  */
 class DownloadDto
 {
-    private string $publication_id;
-
-    private string $resolution;
-    private string $url;
-
     /**
      * DownloadDto constructor.
      */
-    public function __construct(string $publication_id, string $resolution, string $url = '')
+    public function __construct(private readonly string $publication_id, private readonly string $resolution, private readonly string $url = '')
     {
-        $this->publication_id = $publication_id;
-        $this->resolution = $resolution;
-        $this->url = $url;
     }
 
     public function getPublicationId(): string

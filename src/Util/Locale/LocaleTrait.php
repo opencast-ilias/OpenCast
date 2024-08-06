@@ -38,13 +38,13 @@ trait LocaleTrait
         $translation = $plugin->txt($locale_string);
 
         // If a fallback string is provided, we check for every scenario in which the txt method might return a value in case of not finding the original string. (backwards compatibility with ILIAS < 8)
-        $start = substr($translation, 0, 1);
-        $end = substr($translation, -1);
-        if (((empty($translation) || $translation === "MISSING" || strpos($translation, "MISSING ") === 0) ||
-                ($start === '-' && $end === '-' && strpos(
-                    $translation,
+        $start = substr((string) $translation, 0, 1);
+        $end = substr((string) $translation, -1);
+        if (((empty($translation) || $translation === "MISSING" || str_starts_with((string) $translation, "MISSING ")) ||
+                ($start === '-' && $end === '-' && str_contains(
+                    (string) $translation,
                     $locale_string
-                ) !== false)) && !empty($fallback)) {
+                ))) && !empty($fallback)) {
             return $fallback;
         }
 

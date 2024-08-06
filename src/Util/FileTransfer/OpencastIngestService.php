@@ -14,17 +14,15 @@ use srag\Plugins\Opencast\Container\Init;
 
 class OpencastIngestService
 {
-    private UploadStorageService $uploadStorageService;
     /**
      * @var API
      */
     protected $api;
 
-    public function __construct(UploadStorageService $uploadStorageService)
+    public function __construct(private readonly UploadStorageService $uploadStorageService)
     {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
-        $this->uploadStorageService = $uploadStorageService;
     }
 
     /**
@@ -60,7 +58,7 @@ class OpencastIngestService
                 $file_stream = $subtitle_uploadfile->getFileStream();
                 if (ilFFmpeg::enabled() && $subtitle_uploadfile->getMimeType() != 'text/vtt') {
                     $path = $subtitle_uploadfile->getPath();
-                    $extension = pathinfo($path, PATHINFO_EXTENSION);
+                    $extension = pathinfo((string) $path, PATHINFO_EXTENSION);
                     $new_vtt_path = str_replace(".$extension", '.vtt', $path);
                     $escaped_path = ilShellUtil::escapeShellArg($path);
                     $escaped_new_vtt_path = ilShellUtil::escapeShellArg($new_vtt_path);

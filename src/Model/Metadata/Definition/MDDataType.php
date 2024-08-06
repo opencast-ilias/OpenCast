@@ -26,6 +26,9 @@ class MDDataType
         self::TYPE_TEXT_SELECTION,
     ];
 
+    /**
+     * @readonly
+     */
     private string $title;
 
     /**
@@ -87,24 +90,16 @@ class MDDataType
      */
     public function isValidValue($value): bool
     {
-        switch ($this->getTitle()) {
-            case self::TYPE_TEXT_SELECTION:
-            case self::TYPE_TEXT:
-            case self::TYPE_TEXT_LONG:
-                return is_string($value);
-            case self::TYPE_TIME:
-                return is_string($value);// && (empty($value) || preg_match("/^(?:2[0-3]|[01]\\d):[0-5]\\d:[0-5]\\d\$/", $value));
-            case self::TYPE_DATETIME:
-            case self::TYPE_DATE:
-                return ($value instanceof DateTimeImmutable);
-            case self::TYPE_TEXT_ARRAY:
-                return is_array($value);
-            default:
-                throw new xoctException(
-                    xoctException::INTERNAL_ERROR,
-                    "invalid MDDataType for " . $this->getTitle()
-                );
-        }
+        return match ($this->getTitle()) {
+            self::TYPE_TEXT_SELECTION, self::TYPE_TEXT, self::TYPE_TEXT_LONG => is_string($value),
+            self::TYPE_TIME => is_string($value),
+            self::TYPE_DATETIME, self::TYPE_DATE => $value instanceof DateTimeImmutable,
+            self::TYPE_TEXT_ARRAY => is_array($value),
+            default => throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                "invalid MDDataType for " . $this->getTitle()
+            ),
+        };
     }
 
     public function isFilterable(): bool

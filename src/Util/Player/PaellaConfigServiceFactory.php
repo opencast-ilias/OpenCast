@@ -11,11 +11,8 @@ use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
  */
 class PaellaConfigServiceFactory
 {
-    private PaellaConfigStorageService $storageService;
-
-    public function __construct(PaellaConfigStorageService $storageService)
+    public function __construct(private readonly PaellaConfigStorageService $storageService)
     {
-        $this->storageService = $storageService;
     }
 
     public function get(): PaellaConfigService

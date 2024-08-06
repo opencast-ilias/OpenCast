@@ -6,13 +6,8 @@ namespace srag\Plugins\Opencast\Model\Series\Request;
 
 class UpdateSeriesACLRequest
 {
-    private string $identifier;
-    private UpdateSeriesACLRequestPayload $payload;
-
-    public function __construct(string $identifier, UpdateSeriesACLRequestPayload $payload)
+    public function __construct(private readonly string $identifier, private readonly UpdateSeriesACLRequestPayload $payload)
     {
-        $this->identifier = $identifier;
-        $this->payload = $payload;
     }
 
     public function getIdentifier(): string

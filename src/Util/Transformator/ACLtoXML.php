@@ -16,14 +16,11 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
  */
 class ACLtoXML
 {
-    protected ACL $acl;
-
     /**
      * ACLtoXML constructor.
      */
-    public function __construct(ACL $acl)
+    public function __construct(protected ACL $acl)
     {
-        $this->acl = $acl;
     }
 
     public function getXML(): string

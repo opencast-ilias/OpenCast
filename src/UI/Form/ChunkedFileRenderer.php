@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ILIAS\UI\Implementation\Component\Input\Field;
 
+use ILIAS\UI\Component\Input\Field\File;
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Implementation\Render\ilTemplateWrapper;
 use ILIAS\UI\Implementation\Render\ResourceRegistry;
@@ -36,8 +37,9 @@ class ChunkedFileRenderer extends Renderer
     /**
      * @param ChunkedFile $component
      * @throws ilTemplateException
+     * @param mixed $default_renderer
      */
-    public function render(Component $component, RendererInterface $default_renderer): string
+    public function render(Component $component, $default_renderer): string
     {
         $component = $component->withByline(
             $component->getByline() . '<br>' . $this->txt('file_notice') . ': ' . $component->getMaxFileSize(
@@ -48,12 +50,12 @@ class ChunkedFileRenderer extends Renderer
         return $this->renderFileField($component, $default_renderer);
     }
 
-    protected function initClientsideFileInput(\ILIAS\UI\Component\Input\Field\File $input): \ILIAS\UI\Component\Input\Field\File
+    protected function initClientsideFileInput(File $input): File
     {
         /** @var ChunkedFile $input */
 
         return $input->withAdditionalOnLoadCode(
-            function ($id) use ($input) {
+            function ($id) use ($input): string {
                 $current_file_count = count($input->getDynamicInputs());
                 $translations = json_encode($input->getTranslations());
                 $is_disabled = ($input->isDisabled()) ? 'true' : 'false';

@@ -9,11 +9,8 @@ use stdClass;
 
 class SeriesParser
 {
-    private ACLParser $ACLParser;
-
-    public function __construct(ACLParser $ACLParser)
+    public function __construct(private readonly ACLParser $ACLParser)
     {
-        $this->ACLParser = $ACLParser;
     }
 
     public function parseAPIResponse(stdClass $data): Series

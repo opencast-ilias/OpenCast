@@ -86,16 +86,13 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
         $group_name = '';
         if (!is_null($publication_sub_usage->getGroupId())) {
             $publication_usage_group = PublicationUsageGroup::find($publication_sub_usage->getGroupId());
-            $group_name = $publication_usage_group ? $publication_usage_group->getName() : $group_name;
+            $group_name = $publication_usage_group !== null ? $publication_usage_group->getName() : $group_name;
         }
         $this->tpl->setVariable('GROUP_NAME', $group_name);
 
         $extras = [];
-        if ($publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD ||
-            $publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) {
-            if ($publication_sub_usage->isExternalDownloadSource()) {
-                $extras[] = $this->getLocaleString('ext_dl_source');
-            }
+        if (($publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD || $publication_sub_usage->getParentUsageId() == PublicationUsage::USAGE_DOWNLOAD_FALLBACK) && $publication_sub_usage->isExternalDownloadSource()) {
+            $extras[] = $this->getLocaleString('ext_dl_source');
         }
         $this->tpl->setVariable('EXTRA_CONFIG', implode('<br>', $extras));
 
@@ -149,13 +146,9 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
     {
         $subs = PublicationSubUsage::getArray();
         // Sorting by parent usage id.
-        usort($subs, function ($sub1, $sub2) {
-            return strcmp($sub1['parent_usage_id'], $sub2['parent_usage_id']);
-        });
+        usort($subs, fn(array $sub1, array $sub2): int => strcmp((string) $sub1['parent_usage_id'], (string) $sub2['parent_usage_id']));
         // Sorting by title.
-        usort($subs, function ($sub1, $sub2) {
-            return strcmp($sub1['title'], $sub2['title']);
-        });
+        usort($subs, fn(array $sub1, array $sub2): int => strcmp((string) $sub1['title'], (string) $sub2['title']));
         $this->setData($subs);
     }
 
@@ -166,10 +159,6 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
     {
         $this->addFilterItem($item);
         $item->readFromSession();
-        if ($item instanceof ilCheckboxInputGUI) {
-            $this->filter[$item->getPostVar()] = $item->getChecked();
-        } else {
-            $this->filter[$item->getPostVar()] = $item->getValue();
-        }
+        $this->filter[$item->getPostVar()] = $item instanceof ilCheckboxInputGUI ? $item->getChecked() : $item->getValue();
     }
 }

@@ -13,16 +13,10 @@ use ilPropertyFormGUI;
 class LegacyFormWrapper extends ilPropertyFormGUI
 {
     /**
-     * @var string
-     */
-    private $html;
-
-    /**
      * @noinspection MagicMethodsValidityInspection
      */
-    public function __construct(string $html)
+    public function __construct(private readonly string $html)
     {
-        $this->html = $html;
         parent::__construct();
     }
 

@@ -28,6 +28,7 @@ use xoctRequestSettings;
  * Class xoctConf
  * @author Fabian Schmid <fs@studer-raimann.ch>
  */
+#[\AllowDynamicProperties]
 class PluginConfig extends ActiveRecord
 {
     public const TABLE_NAME = 'xoct_config';
@@ -744,9 +745,9 @@ class PluginConfig extends ActiveRecord
         if (!(self::$cache_loaded[$name] ?? false)) {
             try {
                 $obj = new self($name);
-                self::$cache[$name] = json_decode($obj->getValue());
+                self::$cache[$name] = json_decode((string) $obj->getValue());
                 self::$cache_loaded[$name] = true;
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 return null;
             }
         }
@@ -761,7 +762,7 @@ class PluginConfig extends ActiveRecord
     {
         try {
             $obj = new self($name);
-        } catch (\Throwable $t) {
+        } catch (\Throwable) {
             $obj = new self();
             $obj->setName($name);
         }

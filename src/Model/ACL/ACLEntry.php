@@ -94,7 +94,7 @@ class ACLEntry implements JsonSerializable
     /**
      * @return array{role: string, action: string, allow: bool}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'role' => $this->getRole(),

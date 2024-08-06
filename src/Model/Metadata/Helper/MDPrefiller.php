@@ -11,8 +11,6 @@ use xoctLog;
 
 class MDPrefiller
 {
-    private Container $dic;
-
     private array $course;
     private array $user;
     private array $metadata;
@@ -54,9 +52,8 @@ class MDPrefiller
         'languages' => 'getLanguageIds',
     ];
 
-    public function __construct(Container $dic)
+    public function __construct(private readonly Container $dic)
     {
-        $this->dic = $dic;
         $this->course = $this->getCourseArray();
         $this->user = $this->getUserArray();
         $this->metadata = $this->getMetadataArray();
@@ -95,7 +92,7 @@ class MDPrefiller
                     }
                 }
             }
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             xoctLog::getInstance()->writeWarning(
                 'couldn\'t fetch parent course or group for prefilling metadata field'
             );
@@ -124,7 +121,7 @@ class MDPrefiller
                     $course[$prop_name] = $course_or_group->$method_name();
                 }
             }
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             xoctLog::getInstance()->writeWarning(
                 'couldn\'t fetch parent course or group for prefilling metadata field'
             );
@@ -186,18 +183,16 @@ class MDPrefiller
                     )) {
                         $replacement = $this->user[strtolower($splitted[1])];
                     }
-                } else {
-                    if (count($splitted) === 3 && $splitted[0] === self::MD_PLACEHOLDER_FLAG) {
-                        // For the combination of 3 parts consisting key value and sub-value.
-                        // In case of these form (3 parts), we need to pass empty string as replacement,
-                        // becasue the case might not be concrete and might not apply everywhere!
-                        $index = (int) $splitted[2] - 1;
-                        if ($index >= 0 && isset($this->metadata[strtolower($splitted[1])]) &&
-                            isset($this->metadata[strtolower($splitted[1])][$index])) {
-                            $replacement = $this->metadata[strtolower($splitted[1])][$index];
-                        } else {
-                            $replacement = '';
-                        }
+                } elseif (count($splitted) === 3 && $splitted[0] === self::MD_PLACEHOLDER_FLAG) {
+                    // For the combination of 3 parts consisting key value and sub-value.
+                    // In case of these form (3 parts), we need to pass empty string as replacement,
+                    // becasue the case might not be concrete and might not apply everywhere!
+                    $index = (int) $splitted[2] - 1;
+                    if ($index >= 0 && isset($this->metadata[strtolower($splitted[1])]) &&
+                        isset($this->metadata[strtolower($splitted[1])][$index])) {
+                        $replacement = $this->metadata[strtolower($splitted[1])][$index];
+                    } else {
+                        $replacement = '';
                     }
                 }
                 if (!is_null($replacement)) {

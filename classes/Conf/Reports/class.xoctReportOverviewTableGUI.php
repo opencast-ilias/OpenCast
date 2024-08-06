@@ -18,6 +18,7 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
 {
     use LocaleTrait;
     use \srag\Plugins\Opencast\LegacyHelpers\TableGUI;
+    public $filter;
 
     public const ROW_TEMPLATE = "tpl.report_table_row.html";
     private ilOpenCastPlugin $plugin;
@@ -27,7 +28,7 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
      * @param $parent xoctReportOverviewGUI
      * @param $parent_cmd
      */
-    public function __construct($parent, string $parent_cmd)
+    public function __construct(?object $parent, string $parent_cmd)
     {
         global $DIC;
         $opencastContainer = Init::init();
@@ -93,7 +94,7 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
             $value['sender'] = ilObjUser::_lookupLogin((int) $value['user_id']) . ', ' . ilObjUser::_lookupEmail(
                 (int) $value['user_id']
             );
-            if ($filter_sender && (stripos($value['sender'], strtolower($filter_sender)) === false)) {
+            if ($filter_sender && (stripos($value['sender'], strtolower((string) $filter_sender)) === false)) {
                 unset($data[$key]);
             } else {
                 $filtered[] = $value;
@@ -111,12 +112,12 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
         $this->initFilterFields();
 
         foreach ($this->filter_fields as $key => $field) {
-            $this->filter_cache[$key] = $item;
+            $this->filter_cache[$key] = $field;
 
-            $this->addFilterItem($item);
+            $this->addFilterItem($field);
 
-            if ($this->hasSessionValue($item->getFieldId())) { // Supports filter default values
-                $item->readFromSession();
+            if ($this->hasSessionValue($field->getFieldId())) { // Supports filter default values
+                $field->readFromSession();
             }
         }
     }
@@ -160,6 +161,6 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
         $ilAccordionGUI->addItem($row['subject'], $row['message']);
         $this->tpl->setVariable('SENDER', $row['sender']);
         $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
-        $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime($row['created_at'])));
+        $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime((string) $row['created_at'])));
     }
 }

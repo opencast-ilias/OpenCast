@@ -12,30 +12,17 @@ use xoctUploadFile;
 
 class UploadEventRequestPayload
 {
-    protected Metadata $metadata;
-    protected ACL $acl;
-    protected Processing $processing;
-    protected \xoctUploadFile $presentation;
-    /**
-     * @var xoctUploadFile[]
-     */
-    protected array $subtitles;
-    protected ?\xoctUploadFile $thumbnail;
-
     public function __construct(
-        Metadata $metadata,
-        ACL $acl,
-        Processing $processing,
-        xoctUploadFile $presentation,
-        array $subtitles = [],
-        ?xoctUploadFile $thumbnail = null
+        protected Metadata $metadata,
+        protected ACL $acl,
+        protected Processing $processing,
+        protected \xoctUploadFile $presentation,
+        /**
+         * @var xoctUploadFile[]
+         */
+        protected array $subtitles = [],
+        protected ?\xoctUploadFile $thumbnail = null
     ) {
-        $this->metadata = $metadata;
-        $this->acl = $acl;
-        $this->processing = $processing;
-        $this->presentation = $presentation;
-        $this->subtitles = $subtitles;
-        $this->thumbnail = $thumbnail;
     }
 
     public function getMetadata(): Metadata
@@ -65,7 +52,7 @@ class UploadEventRequestPayload
 
     public function hasSubtitles(): bool
     {
-        return count($this->subtitles) > 0;
+        return $this->subtitles !== [];
     }
 
     public function getThumbnail(): xoctUploadFile

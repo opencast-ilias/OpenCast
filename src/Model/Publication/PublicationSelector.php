@@ -39,7 +39,6 @@ class PublicationSelector
      * @var bool
      */
     protected $loaded = false;
-    protected Event $event;
     /**
      * @var Publication[]
      */
@@ -107,11 +106,10 @@ class PublicationSelector
     /**
      * PublicationSelector constructor.
      */
-    public function __construct(Event $event)
+    public function __construct(protected Event $event)
     {
         global $DIC;
         $this->user = $DIC->user();
-        $this->event = $event;
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->publication_sub_usage_repository = new PublicationSubUsageRepository();
     }
@@ -160,7 +158,7 @@ class PublicationSelector
      */
     public function getDownloadPublications(): array
     {
-        if (!isset($this->download_publications)) {
+        if ($this->download_publications === null) {
             $pubs = [];
             $download_pub_usage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_DOWNLOAD);
             $download_pub_sub_usages = $this->publication_sub_usage_repository->convertSubsToUsage(
@@ -181,16 +179,15 @@ class PublicationSelector
                 $pubs = $this->getPublicationMetadataForUsage($download_fallback_usage);
             }
             // adding external download source option to the publications.
-            $pubs_mapped = array_map(function ($pub) use ($download_usages) {
+            $pubs_mapped = array_map(function ($pub) use ($download_usages): Attachment|Media|Publication {
                 $ext_dl_source = false;
                 $usage_id = $pub->usage_id;
                 $usage_type = $pub->usage_type;
-                $usage_filtered = array_filter($download_usages, function ($usage) use ($usage_id, $usage_type) {
+                $usage_filtered = array_filter($download_usages, function ($usage) use ($usage_id, $usage_type): bool {
                     if ($usage_type == 'sub') {
                         return $usage->isSub() && $usage->getSubId() == $usage_id;
-                    } else {
-                        return !$usage->isSub() && $usage->getUsageId() == $usage_id;
                     }
+                    return !$usage->isSub() && $usage->getUsageId() == $usage_id;
                 });
                 if (!empty($usage_filtered)) {
                     $ext_dl_source = reset($usage_filtered)->isExternalDownloadSource();
@@ -216,17 +213,20 @@ class PublicationSelector
         usort($download_publications, function ($pub1, $pub2): int {
             /** @var $pub1 Publication|Media|Attachment */
             /** @var $pub2 Publication|Media|Attachment */
-            if ($pub1 instanceof Media && $pub2 instanceof Media) {
-                return $pub2->getHeight() <=> $pub1->getHeight();
+            if (!$pub1 instanceof Media) {
+                return 0;
             }
-            return 0;
+            if (!$pub2 instanceof Media) {
+                return 0;
+            }
+            return $pub2->getHeight() <=> $pub1->getHeight();
         });
 
         $categorized_dtos = [];
         foreach ($download_publications as $index => $pub) {
             $i = ($index + 1);
-            $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight(
-            ) . 'p' : 'Download ' . $i) :
+            $label = ($pub instanceof Media) ? (empty($pub->getHeight()) ? 'Download ' . $i : $pub->getHeight(
+            ) . 'p') :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
@@ -296,7 +296,7 @@ class PublicationSelector
                 $url = is_null($xoctPublication) ? '' : $xoctPublication->getUrl();
             }
             if (!$url) {
-                $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
+                $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
                 $base = str_replace('/api', '', $base);
                 $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier(
                 ) . '/tools/editor';
@@ -348,7 +348,7 @@ class PublicationSelector
     public function getLivePublication()
     {
         $livePublicationUsage = $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_LIVE_EVENT);
-        return $livePublicationUsage instanceof \srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage ? $this->getFirstPublicationMetadataForUsage(
+        return $livePublicationUsage instanceof PublicationUsage ? $this->getFirstPublicationMetadataForUsage(
             $livePublicationUsage
         ) : null;
     }
@@ -395,7 +395,7 @@ class PublicationSelector
 
                     // Sign the url and parse variables
                     $media_url_signed = xoctSecureLink::signPlayer($media_url, $duration);
-                    $media_url_query = parse_url($media_url_signed, PHP_URL_QUERY);
+                    $media_url_query = parse_url((string) $media_url_signed, PHP_URL_QUERY);
                     $media_url = $media_url . '&' . $media_url_query;
                 }
 

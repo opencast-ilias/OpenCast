@@ -11,6 +11,9 @@ use GuzzleHttp\HandlerStack;
  */
 final class Config
 {
+    /**
+     * @readonly
+     */
     private array $config;
     /**
      * @var array|mixed

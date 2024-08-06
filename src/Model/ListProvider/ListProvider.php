@@ -57,12 +57,12 @@ class ListProvider
         if ($this->mandatoryVersionCheck() === false) {
             return [];
         }
-        $providers = $this->api->routes()->listProvidersApi->getProviders(OpencastAPI::RETURN_ARRAY);
+        $providers = $this->api->routes()->listProvidersApi->getProviders();
         if (is_array($providers) && isset($providers['available'])) {
             return count($providers['available']) === 1 ? reset($providers['available']) : $providers['available'];
         }
 
-        if (is_array($providers) && count($providers) > 0) {
+        if (is_array($providers) && $providers !== []) {
             return count($providers) === 1 ? reset($providers) : $providers;
         }
 
@@ -81,9 +81,7 @@ class ListProvider
      */
     public function hasList($source): bool
     {
-        $found = array_filter($this->getProviders(), function ($provider) use ($source) {
-            return strpos($provider, strtoupper($source)) !== false;
-        });
+        $found = array_filter($this->getProviders(), fn($provider): bool => str_contains((string) $provider, strtoupper($source)));
         return count($found) == 1;
     }
 
@@ -104,12 +102,12 @@ class ListProvider
 
         $source = strtoupper($source);
 
-        $list = $this->api->routes()->listProvidersApi->getList($source, OpencastAPI::RETURN_ARRAY);
+        $list = $this->api->routes()->listProvidersApi->getList($source);
         if (is_array($list) && isset($list['available'])) {
             return $list['available'];
         }
 
-        if (is_array($list) && count($list) > 0) {
+        if (is_array($list) && $list !== []) {
             return $list;
         }
 
