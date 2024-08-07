@@ -75,6 +75,8 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             "metadata" => [
                 "title" => $this->event->getTitle(),
                 "preview" => ILIAS_HTTP_PATH . ltrim($this->event->publications()->getThumbnailUrl(), '.'),
+                "videoid" => $this->event->getIdentifier() ?? '',
+                "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
         ];
     }
