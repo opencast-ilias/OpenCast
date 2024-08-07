@@ -93,28 +93,32 @@ class ilObjOpenCast extends ilObjectPlugin
     #[ReturnTypeWillChange]
     protected function doCloneObject(/*ilObject2*/ $new_obj, /*int*/ $a_target_id, /*?int*/ $a_copy_id = null): void
     {
-        PluginConfig::setApiSettings();
-        /**
-         * @var $new_object_settings ObjectSettings
-         * @var $existing_object_settings ObjectSettings
-         */
-        $new_object_settings = new ObjectSettings();
-        $new_object_settings->setObjId($new_obj->getId());
-        $existing_object_settings = ObjectSettings::find($this->getId());
-        if ($existing_object_settings === null) {
-            return;
+
+        // Just in case, the main toggle variable to allow duplication "ALLOW_DUPLICATION" is enabled,
+        // then the actual cloning the object takes place!
+        if (ilOpenCastPlugin::ALLOW_DUPLICATION) {
+            PluginConfig::setApiSettings();
+            /**
+             * @var $new_object_settings ObjectSettings
+             * @var $existing_object_settings ObjectSettings
+             */
+            $new_object_settings = new ObjectSettings();
+            $new_object_settings->setObjId($new_obj->getId());
+            $existing_object_settings = ObjectSettings::find($this->getId());
+            if ($existing_object_settings === null) {
+                return;
+            }
+
+            $new_object_settings->setSeriesIdentifier($existing_object_settings->getSeriesIdentifier());
+            $new_object_settings->setIntroductionText($existing_object_settings->getIntroductionText());
+            $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
+            $new_object_settings->setOnline(false);
+            $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
+            $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
+            $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
+
+            $new_object_settings->create();
         }
-
-        $new_object_settings->setSeriesIdentifier($existing_object_settings->getSeriesIdentifier());
-        $new_object_settings->setIntroductionText($existing_object_settings->getIntroductionText());
-        $new_object_settings->setAgreementAccepted($existing_object_settings->getAgreementAccepted());
-        $new_object_settings->setOnline(false);
-        $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
-        $new_object_settings->setStreamingOnly($existing_object_settings->getStreamingOnly());
-        $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
-        $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
-
-        $new_object_settings->create();
     }
 
     public function getParentCourseOrGroup()
@@ -134,20 +138,27 @@ class ilObjOpenCast extends ilObjectPlugin
             $crs_or_grp_cache = [];
         }
 
-        if (isset($crs_or_grp_cache[$ref_id])) {
-            return $crs_or_grp_cache[$ref_id];
-        }
-
+        // Finding the parent ref id first to make sure, it will be cached properly.
         while (!in_array(ilObject2::_lookupType($ref_id, true), ['crs', 'grp'])) {
-            if ($ref_id === 1) {
+            if ($ref_id === 1 || empty($ref_id)) {
                 return $crs_or_grp_cache[$ref_id] = null;
             }
             $ref_id = (int) $DIC->repositoryTree()->getParentId($ref_id);
         }
 
-        /** @var ilObjCourse|ilObjGroup $course_or_group */
-        $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
-        return $crs_or_grp_cache[$ref_id] = $course_or_group;
+        // Check for the cache.
+        if (isset($crs_or_grp_cache[$ref_id])) {
+            return $crs_or_grp_cache[$ref_id];
+        }
+
+        $course_or_group = null;
+        if ($ref_id) {
+            /** @var ilObjCourse|ilObjGroup $course_or_group */
+            $course_or_group = ilObjectFactory::getInstanceByRefId($ref_id);
+            $crs_or_grp_cache[$ref_id] = $course_or_group;
+        }
+
+        return $course_or_group;
     }
 
     public static function _getCourseOrGroupRole(): string

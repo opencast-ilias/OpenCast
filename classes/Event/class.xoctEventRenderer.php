@@ -329,17 +329,20 @@ class xoctEventRenderer
         string $button_type = 'btn_info'
     ): string {
         $html = '';
-        $ignore_object_settings = $download_publication_usage->ignoreObjectSettings();
-        $has_streaming_only = $this->objectSettings instanceof ObjectSettings && $this->objectSettings->getStreamingOnly(
-            );
-        $show_download = true;
-        if ($has_streaming_only && !$ignore_object_settings) {
-            $show_download = false;
-        }
-        if (($this->event->getProcessingState() == Event::STATE_SUCCEEDED) && (count($download_dtos) > 0)) {
-            if (!$show_download) {
-                return '';
-            }
+        $overwrite_download_perm = $download_publication_usage->overwriteDownloadPerm();
+        /**
+         * @var $xoctUser xoctUser
+         */
+        $xoctUser = xoctUser::getInstance($this->user);
+        if ((
+            $overwrite_download_perm ||
+            ilObjOpenCastAccess::checkAction(
+                ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
+                $this->event,
+                $xoctUser,
+                $this->objectSettings
+            )
+        ) && (count($download_dtos) > 0)) {
 
             // Setting event_id is necessary, because we use it for both multi approach with pub_id or subusage approach with usage_type and usage_id.
             $this->ctrl->setParameterByClass(xoctEventGUI::class, 'event_id', $this->event->getIdentifier());
@@ -698,9 +701,8 @@ class xoctEventRenderer
 
         // Republish
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EDIT_EVENT, $this->event, $xoctUser)
-            && !$this->event->isScheduled() && !is_null(self::$modals) && !is_null(
-                self::$modals->getStartworkflowModal()
-            )
+            && !$this->event->isScheduled() && !$this->event->isRunning() && !is_null(self::$modals) &&
+            !is_null(self::$modals->getStartworkflowModal())
         ) {
             $actions[] = $this->factory->button()->shy(
                 $this->plugin->txt('event_startworkflow'),

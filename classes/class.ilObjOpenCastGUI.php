@@ -140,6 +140,7 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     $objectSettings = $this->initHeader();
                     $this->setTabs();
                     $xoctSeriesGUI = new xoctSeriesGUI(
+                        $this,
                         $this->object,
                         $this->opencast_dic->series_form_builder(),
                         $this->container->get(SeriesAPIRepository::class),
@@ -294,7 +295,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             );
         }
 
-        // ToDo: Why does this access check not work?
         if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_UPLOAD)) {
             $this->ilias_dic->tabs()->addTab(
                 self::TAB_EULA,
@@ -386,7 +386,11 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             /** @var string|false $series_id */
             $series_id = $additional_args['series_type']['channel_id'] ?? null;
             /** @var bool $is_memberupload_enabled */
-            $is_memberupload_enabled = (bool) ($additional_args['settings']['member_upload'] ?? false);
+            $is_memberupload_enabled = (bool) ($additional_args['member_rights']['member_upload'] ?? false);
+            /** @var bool $is_memberdownload_enabled */
+            $is_memberdownload_enabled = (bool) ($additional_args['member_rights']['member_download'] ?? false);
+            /** @var bool $is_memberrecord_enabled */
+            $is_memberrecord_enabled = (bool) ($additional_args['member_rights']['member_record'] ?? false);
             /** @var int $perm_tpl_id */
             $perm_tpl_id = $additional_args['settings']['permission_template'] ?? null;
         }
@@ -422,7 +426,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
         if (!empty($perm_tpl)) {
             $acl = $perm_tpl->addToAcls(
                 $acl,
-                !$settings->getStreamingOnly(),
                 $settings->getUseAnnotations()
             );
         }
@@ -450,10 +453,19 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->tpl->setOnScreenMessage('info', $this->plugin->txt('msg_info_multiple_aftersave'), true);
         }
 
-        // checkbox from creation gui to activate "upload" permission for members
-        if ($is_memberupload_enabled) {
-            ilObjOpenCastAccess::activateMemberUpload($newObj->getRefId());
+        // Initiate the default perms for members.
+        // Looking for additionals when creating a new series object.
+        $additional_perms = [];
+        if (!empty($is_memberupload_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_UPLOAD;
         }
+        if (!empty($is_memberdownload_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_DOWNLOAD;
+        }
+        if (!empty($is_memberrecord_enabled)) {
+            $additional_perms[ilObjOpenCastAccess::ROLE_MEMBER][] = ilObjOpenCastAccess::PERMISSION_RECORD;
+        }
+        ilObjOpenCastAccess::applyDefaultPerms($newObj->getRefId(), $additional_perms);
 
         $newObj->setTitle($metadata->getField(MDFieldDefinition::F_TITLE)->getValue());
         $newObj->setDescription($metadata->getField(MDFieldDefinition::F_DESCRIPTION)->getValue() ?? '');
@@ -558,7 +570,8 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 sprintf(
                     $this->plugin->txt(
                         'series_video_portal_link'
-                    ), $video_portal_title
+                    ),
+                    $video_portal_title
                 ),
                 $objectSettings->getVideoPortalLink()
             );
@@ -571,5 +584,31 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
 
         // forward the command
         $this->ilias_dic->ctrl()->forwardCommand($info);
+    }
+
+    /**
+     * Checks the series duplicates and renders a list of linked series.
+     */
+    public function renderLinksListSection(): string
+    {
+        $objectSettings = ObjectSettings::find($this->obj_id);
+        if ($refs = $objectSettings->getDuplicatesOnSystem()) {
+            $links_list_tpl = $this->plugin->getTemplate('default/tpl.links_list.html');
+            $links_list_tpl->setVariable('TXT_SECTION', $this->plugin->txt('info_linked_items'));
+            $i = 1;
+            $list_items = [];
+            foreach ($refs as $ref) {
+                $links_list_item_tpl = $this->plugin->getTemplate('default/tpl.links_list_item.html');
+                $parent = $this->ilias_dic->repositoryTree()->getParentId($ref);
+                $links_list_item_tpl->setVariable('TXT_KEY', ($i) . '. ' . $this->plugin->txt('info_linked_item'));
+                $links_list_item_tpl->setVariable('TXT_LINK', ilLink::_getStaticLink($parent));
+                $links_list_item_tpl->setVariable('TXT_LINK_LABEL', ilObject2::_lookupTitle(ilObject2::_lookupObjId($parent)));
+                $list_items[] = $links_list_item_tpl->get();
+                $i++;
+            }
+            $links_list_tpl->setVariable('LIST_ITEMS', implode(' ', $list_items));
+            return $links_list_tpl->get();
+        }
+        return '';
     }
 }

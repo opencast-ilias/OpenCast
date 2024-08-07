@@ -5,7 +5,8 @@ import PublicationUsage from './Form/PublicationUsage';
 import WaitOverlay from './UI/WaitOverlay';
 import Tiles from './UI/Tiles';
 import StartWorkflow from './Workflow/StartWorkflow';
-import PaellaPlayer from './Paella/paella-player.min.js'
+import PaellaPlayer from './Paella/paella-player.min.js';
+import FileInputMutationObserver from './UI/FileInputMutationObserver';
 
 il.Opencast = il.Opencast || {};
 il.Opencast.Form = il.Opencast.Form || {};
@@ -15,6 +16,7 @@ il.Opencast.Form.publicationUsage = new PublicationUsage($);
 il.Opencast.UI = il.Opencast.UI || {};
 il.Opencast.UI.waitOverlay = new WaitOverlay($);
 il.Opencast.UI.Tiles = new Tiles($);
+il.Opencast.UI.fileInputMutationObserver = new FileInputMutationObserver($);
 
 il.Opencast.Workflow = il.Opencast.Workflow || {};
 il.Opencast.Workflow.startWorkflow = new StartWorkflow($);

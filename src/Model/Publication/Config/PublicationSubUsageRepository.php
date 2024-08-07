@@ -99,7 +99,7 @@ class PublicationSubUsageRepository
             $usage->setTag($sub->getTag());
             $usage->setAllowMultiple($sub->isAllowMultiple());
             $usage->setMediaType($sub->getMediaType());
-            $usage->setIgnoreObjectSettings($sub->ignoreObjectSettings());
+            $usage->setOverwriteDownloadPerm($sub->overwriteDownloadPerm());
             $usage->setExternalDownloadSource($sub->isExternalDownloadSource());
             // Add extra tracking information.
             $usage->setAsSub(true);

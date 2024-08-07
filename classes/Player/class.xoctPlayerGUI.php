@@ -167,7 +167,7 @@ class xoctPlayerGUI extends xoctGUI
 
         $js_config->paella_preview_fallback = $this->paellaConfigService->getPaellaPlayerPreviewFallback();
 
-        $js_config->prevent_video_download = (bool) PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false;
+        $js_config->prevent_video_download = (bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
 
         if ($event->isLiveEvent()) {
             // script to check live stream availability

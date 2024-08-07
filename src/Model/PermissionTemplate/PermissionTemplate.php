@@ -256,10 +256,10 @@ class PermissionTemplate extends ActiveRecord
         return null;
     }
 
-    public function addToAcls(ACL $ACL, bool $with_download, bool $with_annotate): ACL
+    public function addToAcls(ACL $ACL, bool $with_annotate): ACL
     {
         $this->removeFromAcls($ACL);
-        return $ACL->merge($this->getAcls($with_download, $with_annotate));
+        return $ACL->merge($this->getAcls($with_annotate));
     }
 
     public function removeFromAcls(ACL $ACL): ACL
@@ -276,7 +276,7 @@ class PermissionTemplate extends ActiveRecord
     }
 
 
-    public function getAcls(bool $with_download, bool $with_annotate): ACL
+    public function getAcls(bool $with_annotate): ACL
     {
         $entries = [];
 
@@ -292,7 +292,7 @@ class PermissionTemplate extends ActiveRecord
             $entries[] = $this->constructAclForAction($additional_action);
         }
 
-        if ($with_download && $this->getAdditionalActionsDownload()) {
+        if ($this->getAdditionalActionsDownload()) {
             foreach (explode(',', $this->getAdditionalActionsDownload()) as $additional_action) {
                 $entries[] = $this->constructAclForAction($additional_action);
             }
@@ -317,7 +317,7 @@ class PermissionTemplate extends ActiveRecord
                 $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
             }
 
-            if ($with_download && $this->getAddedRoleActionsDownload()) {
+            if ($this->getAddedRoleActionsDownload()) {
                 foreach (explode(',', $this->getAddedRoleActionsDownload()) as $additional_action) {
                     $entries[] = $this->constructAclActionForRole($additional_action, $role_name);
                 }

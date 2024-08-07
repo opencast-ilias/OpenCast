@@ -105,7 +105,12 @@ class EventAPIRepository implements EventRepository, Request
      */
     public function upload(UploadEventRequest $request): void
     {
-        if (PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)) {
+        // If there are subtitles or thumbnails to be uploaded alongside the video upload, we have to use ingest upload.
+        if (
+            PluginConfig::getConfig(PluginConfig::F_INGEST_UPLOAD)
+            || $request->getPayload()->hasThumbnail()
+            || $request->getPayload()->hasSubtitles()
+        ) {
             $this->ingestService->ingest($request);
         } else {
             $payload = $request->getPayload()->jsonSerialize();
@@ -135,7 +140,7 @@ class EventAPIRepository implements EventRepository, Request
         int $limit = 1000,
         string $sort = '',
         bool $as_object = false
-    ) {
+    ): array {
         $params = [
             'withmetadata' => false,
             'withacl' => true,
@@ -154,9 +159,7 @@ class EventAPIRepository implements EventRepository, Request
         // nmake sure we have proper values here
         $data = array_filter(
             (array) $this->api->routes()->eventsApi->runWithRoles($roles)->runAsUser($for_user)->getAll($params),
-            static function ($event) {
-                return $event instanceof \stdClass;
-            }
+            static fn ($event): bool => $event instanceof \stdClass
         );
         $return = [];
 

@@ -95,7 +95,7 @@ class PublicationSelector
      * @var SerializableClosure
      */
     private $reference;
-    private static $thumbnail_publication_usages = [
+    private static array $thumbnail_publication_usages = [
         PublicationUsage::USAGE_THUMBNAIL,
         PublicationUsage::USAGE_THUMBNAIL_FALLBACK,
         PublicationUsage::USAGE_THUMBNAIL_FALLBACK_2,
@@ -108,6 +108,10 @@ class PublicationSelector
      * @var \ilObjUser
      */
     private $user;
+    /**
+     * @var Publication[]|Media[]|Attachment[]
+     */
+    protected $mpeg7_catalog_publications = [];
 
     /**
      * PublicationSelector constructor.
@@ -231,7 +235,7 @@ class PublicationSelector
         foreach ($download_publications as $index => $pub) {
             $i = ($index + 1);
             $label = ($pub instanceof Media) ? (!empty($pub->getHeight()) ? $pub->getHeight(
-                ) . 'p' : 'Download ' . $i) :
+            ) . 'p' : 'Download ' . $i) :
                 ($pub instanceof Attachment ? $pub->getFlavor() : 'Download ' . $i);
             $label = $label == '1080p' ? ($label . ' (FullHD)') : $label;
             $label = $label == '2160p' ? ($label . ' (UltraHD)') : $label;
@@ -304,7 +308,7 @@ class PublicationSelector
                 $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
                 $base = str_replace('/api', '', $base);
                 $url = $base . '/admin-ng/index.html#!/events/events/' . $this->event->getIdentifier(
-                    ) . '/tools/editor';
+                ) . '/tools/editor';
             }
 
             $this->cutting_url = $url;
@@ -498,16 +502,19 @@ class PublicationSelector
          * @var $publication_usage       PublicationUsage
          * @var $attachment              Attachment
          * @var $medium                  Media
+         * @var $metadata                Metadata
          */
         $media = [];
         $attachments = [];
+        $metadata = [];
         foreach ($this->getPublications() as $publication) {
             if ($publication->getChannel() === $publication_usage->getChannel()) {
                 $media += $publication->getMedia();
                 $attachments += $publication->getAttachments();
+                $metadata += $publication->getMetadata();
             }
         }
-        // Adding the usage and sub usage flags to both attachments and media.
+        // Adding the usage and sub usage flags to both attachments, media and metadata.
         $attachments = array_map(function ($attachment) use ($usage_type, $usage_id) {
             $attachment->usage_type = $usage_type;
             $attachment->usage_id = $usage_id;
@@ -518,6 +525,11 @@ class PublicationSelector
             $medium->usage_id = $usage_id;
             return $medium;
         }, $media);
+        $metadata = array_map(function ($mtd) use ($usage_type, $usage_id) {
+            $mtd->usage_type = $usage_type;
+            $mtd->usage_id = $usage_id;
+            return $mtd;
+        }, $metadata);
         $return = [];
         switch ($publication_usage->getMdType()) {
             case PublicationUsage::MD_TYPE_ATTACHMENT:
@@ -556,6 +568,28 @@ class PublicationSelector
                         case PublicationUsage::SEARCH_KEY_TAG:
                             if (in_array($publication_usage->getTag(), $medium->getTags())) {
                                 $result = $this->checkMediaTypes($medium, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
+                            }
+                            break;
+                    }
+                }
+                break;
+            case PublicationUsage::MD_TYPE_METADATA:
+                foreach ($metadata as $metadata) {
+                    switch ($publication_usage->getSearchKey()) {
+                        case PublicationUsage::SEARCH_KEY_FLAVOR:
+                            if ($this->checkFlavor($metadata->getFlavor(), $publication_usage->getFlavor())) {
+                                $result = $this->checkMediaTypes($metadata, $publication_usage);
+                                if (!empty($result)) {
+                                    $return[] = clone $result;
+                                }
+                            }
+                            break;
+                        case PublicationUsage::SEARCH_KEY_TAG:
+                            if (in_array($publication_usage->getTag(), $metadata->getTags())) {
+                                $result = $this->checkMediaTypes($metadata, $publication_usage);
                                 if (!empty($result)) {
                                     $return[] = clone $result;
                                 }
@@ -671,5 +705,39 @@ class PublicationSelector
         }
 
         return $this->caption_publications;
+    }
+
+    /**
+     * Get MPEG7 Catalog publications.
+     * @return Publication[]|Media[]|Attachment[]
+     * @throws xoctException
+     */
+    public function getMpeg7CatalogPublications(): array
+    {
+        if (empty($this->mpeg7_catalog_publications)) {
+            $mpeg7_catalog_publications = $this->getPublicationMetadataForUsage(
+                $this->publication_usage_repository->getUsage(PublicationUsage::USAGE_MPEG7_CATALOG)
+            );
+            $this->mpeg7_catalog_publications = $mpeg7_catalog_publications;
+        }
+
+        return $this->mpeg7_catalog_publications;
+    }
+
+    /**
+     * Extracts the very first available MPEG7 Catalog url.
+     * @return string
+     * @throws xoctException
+     */
+    public function getMpeg7CatalogUrl(): string
+    {
+        $url = '';
+        $mpeg7_pubs = $this->getMpeg7CatalogPublications();
+        foreach ($mpeg7_pubs as $pub) {
+            if ($url = $pub->getUrl()) {
+                break;
+            }
+        }
+        return $url;
     }
 }
