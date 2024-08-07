@@ -68,7 +68,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             "metadata" => [
                 "title" => $this->event->getTitle(),
                 "duration" => $duration,
-                "preview" => $this->event->publications()->getThumbnailUrl()
+                "preview" => $this->event->publications()->getThumbnailUrl(),
+                "videoid" => $this->event->getIdentifier() ?? '',
+                "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ]
         ];
 
