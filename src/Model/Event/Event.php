@@ -355,4 +355,16 @@ class Event
     {
         return !is_null($this->publications()->getLivePublication());
     }
+
+    /**
+     * Checks whether the event is in running state by looking into the status.
+     * @return bool whether it is running or not
+     */
+    public function isRunning(): bool
+    {
+        return in_array($this->getStatus(), [
+            "EVENTS.EVENTS.STATUS.INGESTING",
+            "EVENTS.EVENTS.STATUS.PENDING"
+        ]);
+    }
 }

@@ -33,13 +33,13 @@ config_curl_chunk_size_info#:#Definiert die Grösse der einzelnen Upload-Chunks 
 config_audio_allowed#:#Audio-Dateien
 config_cancel#:#Abbrechen
 config_create_scheduled_allowed#:#"Aufzeichnungstermin(e) planen" erlauben
-config_create_scheduled_allowed_info#:#Achtung: Das Planen von Aufzeichnungsterminen ist erst ab Opencast API-Version 1.1.0 möglich.
+config_create_scheduled_allowed_info#:#Achtung: Das Planen von Aufzeichnungsterminen ist erst ab Opencast API-Version 1.1.0 möglich.<br>HINWEIS: In einem Serienobjekt müssen die Benutzer die Berechtigung "Schedule" haben, um diese Funktion nutzen zu können.
 config_schedule_channel#:#Input-Wert für Scheduling
 config_schedule_channel_info#:#Input Wert, der an die Capture Agents geschickt wird, wenn Aufzeichnungen über das Plugin geplant werden. Hinweis: Scheduling benötigt die API-Version v1.1.0.
 config_common_idp#:#Gemeinsamer IdP
 config_common_idp_info#:#Auswählen, falls ILIAS und Opencast den selben Identity Provider verwenden (z.B. Shibboleth oder LDAP). Dadurch können gewisse Rechteprüfungen genauer durchgeführt werden ("als User" statt nur "mit Rolle des Users").
 config_oc_studio_allowed#:#Opencast Studio aktivieren
-config_oc_studio_allowed_info#:#Ermöglichen Sie Benutzern den Zugriff auf Opencast Studio von ILIAS aus (Erfordert Opencast > 8.3)
+config_oc_studio_allowed_info#:#Ermöglichen Sie Benutzern den Zugriff auf Opencast Studio von ILIAS aus (Erfordert Opencast > 8.3)<br>HINWEIS: In einem Serienobjekt müssen die Benutzer über die Berechtigung "Aufzeichnen" verfügen, um diese Funktion nutzen zu können.
 config_oc_studio_url#:#Opencast Studio URL
 config_oc_studio_url_info#:#Eine benutzerdefinierte URL für Opencast Studio. Default: https://[ihre-opencast-url.de]/studio
 config_curl#:#cURL
@@ -252,8 +252,8 @@ event_state_not_published#:#Nicht publiziert, für Studierende noch nicht sichtb
 event_state_ready_for_cutting#:#Nicht publiziert (Schnitt erforderlich), für Studierende noch nicht sichtbar.
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar.
 event_state_offline#:#Offline, für Studierende nicht sichtbar.
-event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar.
-event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar.
+event_state_scheduled#:#Aufzeichnung wird verarbeitet, für Studierende nicht sichtbar.
+event_state_scheduled_offline#:#Aufzeichnung wird verarbeitet (Offline), für Studierende nicht sichtbar.
 event_state_recording#:#Wird momentan Aufgezeichnet, für Studierende nicht sichtbar.
 event_state_live_scheduled#:#Live-Übertragung (noch nicht begonnen). Offen ab %s.
 event_state_live_offline#:#Geplante Live-Aufzeichnung (Offline), für Studierende nicht sichtbar.
@@ -270,7 +270,7 @@ event_supported_filetypes#:#Unterstützte Dateitypen
 event_set_offline#:#Offline schalten
 event_created_unix#:#Datum
 event_set_online#:#Online schalten
-event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf Opencast und in den anderen ILIAS-Verlinkungen). Wollen Sie diese Aufzeichnung wirklich löschen?
+event_delete_confirm_w_duplicates#:#Das Löschen bewirkt, dass die Aufzeichnung definitiv gelöscht wird (auf Opencast und in den anderen ILIAS-Verlinkungen, siehe unten und im Tab «Info»).<br />Wollen Sie diese Aufzeichnung wirklich löschen?
 event_state_failed_owner#:#Fehlgeschlagen. Melden Sie sich bei Ihrer Supportstelle.
 event_state_running_owner#:#Wird konvertiert, für andere Studierende noch nicht sichtbar
 event_report_date_modification#:#Terminanpassungen melden
@@ -316,6 +316,7 @@ publication_usage_md_type#:#Typ
 publication_usage_md_type_0#:#Publikation
 publication_usage_md_type_1#:#Attachment
 publication_usage_md_type_2#:#Media
+publication_usage_md_type_3#:#Metadata
 publication_usage_md_type_select#:#Auswählen...
 publication_usage_msg_success#:#Gespeichert
 publication_usage_publication_id#:#Publikations-ID
@@ -380,16 +381,12 @@ series_save#:#Speichern
 series_saved#:#Serie-Informationen gespeichert
 series_show_upload_token#:#Upload-Token anzeigen
 series_show_upload_token_info#:#Zeigt einen Code an, mit welchem Studierende selber Aufzeichnungen hochladen können
-series_streaming_only#:#Ohne Download
-series_streaming_only_info#:#Entfernt 'Download'-Buttons.
 series_title#:#Titel
 series_update#:#Aktualisieren
 series_use_annotations#:#Annotationen aktivieren
-series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Änderungen von Titel, Beschreibung und Lizenz wirken sich auf alle Verlinkungen aus.
-series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
+series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Änderungen an Titel, Beschreibung, Lizenz und Publikation auf Tobira wirken sich auf alle Verlinkungen aus.
+series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Hochgeladene Aufzeichnungen erscheinen in allen Verlinkungen.
 series_has_duplicates_events_delete#:#MISSING
-series_member_upload#:#Upload durch Mitglieder
-series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Kann später in den Rechteeinstellungen geändert werden.
 series_existing_series#:#Bestehende Serie
 series_view_changeable#:#Ansicht änderbar
 series_video_portal_link#:#Link zur Serie in %s
@@ -457,7 +454,7 @@ xoct_edit_permission#:#Rechteeinstellungen des Opencast-Objektes ändern
 xoct_copy#:#Benutzer kann das Objekt kopieren
 form_msg_select#:#Bitte wählen Sie zuerst eine Videodatei aus
 form_msg_not_supported#:#Dateityp wird nicht unterstützt
-info_linked_items#:#Verlinkungen
+info_linked_items#:#Verlinkungen in ILIAS
 info_linked_item#:#Verlinkung
 info_auto_publish_forced#:#Das Video wird automatisch publiziert, da Sie nicht über genügend Rechte verfügen, um es später manuell zu publizieren.
 msg_info_multiple_aftersave#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unter «Info»). Hochgeladene Aufzeichnungen werden in alle Verlinkungen hochgeladen.
@@ -476,6 +473,7 @@ msg_workflow_params_parsing_failed#:#Das Lesen der Parameter aus der API ist feh
 msg_workflow_parameters_info#:#Workflow-Parameter sind Informationen, welche beim Hochladen oder Planen eines Events in der Variable 'processing' an Opencast mitgeschickt werden. Beachten Sie, dass die Parameter auf den Konfigurierten Workflow (Einstellungen -> Aufzeichnungen -> Processing-Workflow-ID) abgestimmt sein müssen. Über die Schaltfläche "Parameter via API Laden" können Sie versuchen, diese Parameter automatisch zu laden - dies funktioniert allerdings nur, wenn in der Workflow-Definition in Opencast ein entsprechendes Configuration-Panel konfiguriert ist.
 msg_invalid_time_format#:#Ungültiges Format.
 msg_missing_file#:#Bitte laden Sie eine Datei hoch.
+msg_empty_required_field#:#Dieses Feld muss ausgefüllt werden. Bitte geben Sie etwas ein.
 byline_timeformat#:#Format: 00:00:00
 table_column_default#:#Default
 table_column_is_default#:#Default
@@ -685,8 +683,8 @@ publication_usage_group_description#:#Beschreibung
 publication_usage_group_not_found#:#Unternutzungsgruppe nicht gefunden!
 publication_usage_mediatype#:#Mediatyp(en)
 publication_usage_mediatype_info#:#Eine durch Kommas getrennte optionale Liste von Mediatypen, die aus der gewählten Opencast-Publikation extrahiert werden sollen, z. B. „video/mp4, application/x-mpegURL“
-publication_usage_ignore_object_settings#:#Objekteinstellungen ignorieren
-publication_usage_ignore_object_settings_info#:#Die auf das Opencast-Serienobjekt bezogene Einstellung "ohne Download" wird ignoriert.Sorgsam benutzen.
+publication_usage_overwrite_download_perm#:#Download-Berechtigung überschreiben
+publication_usage_overwrite_download_perm_info#:#Durch die Aktivierung dieser Option wird die Download-Berechtigung der Benutzer im Serienobjekt ignoriert und überschrieben, sodass der Download für Mitglieder immer erlaubt ist. Gehen Sie verantwortungsbewusst mit dieser Option um.
 publication_usage_create_sub#:#Unternutzung erstellen
 publication_usage_delete_sub#:#Unternutzung löschen
 publication_usage_edit_sub#:#Unternutzung bearbeiten
@@ -719,6 +717,34 @@ config_paella_player_live_theme_info#:#Die Themendatei, die für Livestream-Vide
 config_paella_player_preview_fallback#:#Paella Player Preview (fallback)
 config_paella_player_preview_fallback_info#:#Die (Fallback-)Player-Vorschau-Hintergrundbilddatei, die angezeigt werden soll. Das übliche Bilddateiformat wie PNG oder JPG wird empfohlen.<br> HINWEIS: Standardmäßig wird das Vorschaubild aus den Videoressourcen geladen.
 pp_image_link#:#aktuelle Bilddatei
+xoct_rep_robj_xoct_perm_download#:#Videos herunterladen
+perm_download#:#Herunterladen
+xoct_rep_robj_xoct_perm_record#:#Video aufzeichen mit Opencast Studio (Muss in den Konfigurationen aktiviert werden)
+perm_record#:#Aufzeichen
+xoct_rep_robj_xoct_perm_schedule#:#Aufzeichnungstermin(e) planen (Muss in den Konfigurationen aktiviert werden)
+perm_schedule#:#Schedule
+object_member_rights_section#:#Rechte für Mitglieder
+series_member_upload#:#Upload
+series_member_upload_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Upload" die Möglichkeit, Videos hochzuladen und eigene Videos zu löschen. Dies kann später im Tab "Rechte" geändert werden.
+series_member_download#:#Download
+series_member_download_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Download" die Möglichkeit, Videos herunterzuladen. Dies kann später im Tab "Rechte" geändert werden.
+series_member_record#:#Aufzeichnen
+series_member_record_info#:#Kurs- bzw. Gruppenmitglieder erhalten durch das Recht "Aufzeichnen" die Möglichkeit, Videos mit dem Tool "Opencast Studio" zu erstellen, eigene Videos herunterzuladen, zu löschen und zu editieren (ohne schneiden). Dies kann später im Tab "Rechte" geändert werden.
+subtab_subtitles#:#Untertitel
+config_subtitle#:#Untertitel
+config_subtitle_upload_enabled#:#Untertitel-Upload aktivieren
+config_subtitle_upload_enabled_info#:#Wenn aktiviert, können beim Upload eines Videos auch Untertitel-Dateien hochgeladen werden.
+config_subtitle_accepted_mimetypes#:#Akzeptierte Dateitypen
+config_subtitle_accepted_mimetypes_info#:#Die akzeptierte Dateitypen der Untertiteldateien, die Benutzer hochladen dürfen.<br/>Achtung: Bitte stellen Sie sicher, dass die ausgewählten Dateitypen auch zur Dateisuffix-Positivliste (Anpassungen) der ILIAS-Verwaltungseinstellungen hinzugefügt werden unter:<br/>Verwaltung > Systemeinstellungen und Wartung > Dateidienste<br/>WICHTIG: Um Dateitypen in WebVTT zu konvertieren, ist es notwendig, FFmpeg in ILIAS zu installieren und zu konfigurieren.
+config_subtitle_languages#:#Unterstützte Sprachen
+config_subtitle_languages_info#:#Diese Sprachen werden den Benutzern zur Auswahl als Untertitelsprache zum Hochladen angeboten.<br>Ein Eintrag pro Zeile im Format wie "[Wert]%s[Label]". Das Trennzeichen ist %s, und ändern Sie [Wert] und [Beschriftung] nach Ihren Wünschen: z. B. eng%sEnglisch
+config_subtitle_load_lang_list#:#Sprachenliste von der API laden
+config_subtitle_load_lang_list_confirmation#:#Sind Sie sicher, dass Sie die Sprachliste von der API laden möchten?<br>Achtung:API-Version 1.10.0 oder höher ist erforderlich.
+config_subtitle_load_lang_list_abtn_label#:#Laden
+upload_ui_subtitle_section#:#Untertitel
+config_paella_player_ocr_text_enable#:#OCT-Textfunktion aktivieren
+config_paella_player_ocr_text_enable_info#:#Wenn aktiviert, wird die OCR-Textfunktion in der Menüleiste des Paella Players angezeigt und funktioniert nur, wenn die entsprechende Publikationverwendung "mpeg7_catalog" richtig konfiguriert ist.
+publication_usage_type_mpeg7_catalog#:#MPEG7 Katalog
 config_paella_player_display_caption_text_type#:#Caption Text (Typ) anzeigen
 config_paella_player_display_caption_text_type_info#:#Wenn aktiviert, enthält der Untertiteltext den Typ der Überschrift, sofern diese in den <a href="https://docs.opencast.org/r/15.x/admin/#configuration/subtitles/#tags" target="_blank">Tags</a> vorhanden ist.
 config_paella_player_display_caption_text_generator#:#Caption Text (Generator) anzeigen
@@ -733,3 +759,26 @@ config_paella_player_section_preview#:#Preview
 config_paella_player_section_caption#:#Caption
 config_paella_player_prevent_video_download#:#Video-Download verhindern
 config_paella_player_prevent_video_download_info#:#Wenn diese Option aktiviert ist, wird das direkte Herunterladen von Videos vom Player verhindert. <br> Dies können Sie erreichen, indem Sie mit der rechten Maustaste auf das Video klicken und "Video speichern unter" oder ähnliches auswählen.
+subtab_thumbnails#:#Vorschaubilder
+config_thumbnail_upload_enabled#:#Vorschaubilder hochladen aktivieren
+config_thumbnail_upload_enabled_info#:#Durch Aktivieren dieser Option wird das Hochladen des Vorschaubild zusammen mit dem Video in der Upload-Seite ermöglicht.<br><strong>Achtung:</strong> Damit diese Funktion funktioniert, muss der Workflow-Parameter "straightToPublishing" standardmäßig aktiviert sein. Denn wenn "straightToPublishing" deaktiviert ist, wird das Event in den Schnittmodus versetzt, in dem kein Vorschaubildprozess ausgeführt wird.
+config_thumbnail_accepted_mimetypes#:#Akzeptierte Dateitypen
+config_thumbnail_accepted_mimetypes_info#:#Liste der akzeptierten Erweiterungen der Vorschaubilddatei, die Benutzer hochladen dürfen.
+config_thumbnail_upload_mode#:#Upload-Modus
+config_thumbnail_upload_mode_info#:#Die Auswahl einer Option führt dazu, dass auf der Video-Upload-Seite ein Abschnitt mit Thumbnail-Sektion mit den erforderlichen Eingaben bereitgestellt wird
+config_thumbnail_upload_mode_both#:#Beide Modi (Dateiupload und Zeitpunkt)
+config_thumbnail_upload_mode_both_info#:#Bei dieser Option werden beide Modi angeboten, die Benutzer müssen jedoch nur einen auswählen.
+config_thumbnail_upload_mode_file#:#Datei-Hochladen
+config_thumbnail_upload_mode_file_info#:#Mit dieser Option wird den Benutzern lediglich eine Dateieingabe zum Hochladen einer Vorschaubildsdatei bereitgestellt.
+config_thumbnail_upload_mode_timepoint#:#Zeitpunkt
+config_thumbnail_upload_mode_timepoint_info#:#Mit dieser Option wird den Benutzern nur eine Zeitauswahleingabe bereitgestellt, um den Zeitpunkt des Videos auszuwählen, von dem das Vorschaubild extrahiert werden soll.
+upload_ui_thumbnail_section#:#Vorschaubild
+upload_ui_thumbnail_section_stp_info#:#<strong>ACHTUNG:</strong> Damit diese Funktion funktioniert, müssen die "Straight to publishing" Verarbeitungseinstellung aktiviert sein.
+upload_ui_thumbnail_section_stp_disabled_info#:#<strong>ACHTUNG:</strong> Die "Straight to publishing" Verarbeitungseinstellung ist in den Konfigurationen deaktiviert, daher ist auch diese Funktion deaktiviert.
+upload_ui_thumbnail_mode_sg#:#Modus
+upload_ui_thumbnail_mode_sg_info#:#Sie können nur einen Modus zum Generieren von Vorschaubilder auswählen, indem Sie entweder eine Datei hochladen oder einen Zeitpunkt auswählen.
+upload_ui_thumbnail_mode_sg_file#:#Durch Hochladen einer Datei
+upload_ui_thumbnail_mode_sg_timepoint#:#Durch Auswahl eines Videozeitpunkts
+upload_ui_thumbnail_file#:#Vorschaubilddatei
+upload_ui_thumbnail_timepoint#:#Zeitpunkt
+upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.

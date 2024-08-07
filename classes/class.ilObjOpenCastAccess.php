@@ -37,9 +37,15 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     public const ACTION_REPORT_QUALITY_PROBLEM = 'report_quality_problem';
     public const ACTION_REPORT_DATE_CHANGE = 'report_date_change';
     public const ACTION_VIEW_UNPROTECTED_LINK = 'unprotected_link';
+    public const ACTION_DOWNLOAD_EVENT = 'download_event';
+    public const ACTION_SCHEDULE_EVENT = 'schedule_event';
+    public const ACTION_RECORD_EVENT = 'record_event';
 
     public const PERMISSION_EDIT_VIDEOS = 'edit_videos';
     public const PERMISSION_UPLOAD = 'upload';
+    public const PERMISSION_DOWNLOAD = 'download';
+    public const PERMISSION_RECORD = 'record';
+    public const PERMISSION_SCHEDULE = 'schedule';
 
     /**
      * @var array
@@ -47,6 +53,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     protected static $custom_rights = [
         self::PERMISSION_UPLOAD,
         self::PERMISSION_EDIT_VIDEOS,
+        self::PERMISSION_DOWNLOAD,
+        self::PERMISSION_RECORD,
+        self::PERMISSION_SCHEDULE,
     ];
     /**
      * @var array
@@ -59,11 +68,45 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     /**
      * @var array
      */
+    protected static $members_allowed_defaults = [
+        'visible',
+        'read'
+    ];
+    /**
+     * @var array
+     */
     protected static $tutors = [];
     /**
      * @var array
      */
+    protected static $tutors_allowed_defaults = [
+        'visible',
+        'read',
+        'write',
+        self::PERMISSION_UPLOAD,
+        self::PERMISSION_RECORD,
+        self::PERMISSION_EDIT_VIDEOS,
+        self::PERMISSION_DOWNLOAD
+    ];
+    /**
+     * @var array
+     */
     protected static $admins = [];
+    /**
+     * @var array
+     */
+    protected static $admins_allowed_defaults = [
+        'visible',
+        'read',
+        'write',
+        'delete',
+        // 'copy',
+        'edit_permission',
+        self::PERMISSION_UPLOAD,
+        self::PERMISSION_RECORD,
+        self::PERMISSION_EDIT_VIDEOS,
+        self::PERMISSION_DOWNLOAD
+    ];
 
 
     /**
@@ -88,11 +131,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             case 'read':
             case 'visible':
                 if (!ilObjOpenCastAccess::checkOnline($a_obj_id) && !$this->access->checkAccessOfUser(
-                        $a_user_id,
-                        'write',
-                        '',
-                        $a_ref_id
-                    )) {
+                    $a_user_id,
+                    'write',
+                    '',
+                    $a_ref_id
+                )) {
                     return false;
                 }
                 break;
@@ -107,7 +150,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         $main_tpl = $DIC->ui()->mainTemplate();
         $ctrl = $DIC->ctrl();
         $main_tpl->setOnScreenMessage(
-            'failure', ilOpenCastPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED), true
+            'failure',
+            ilOpenCastPlugin::getInstance()->txt(self::TXT_PERMISSION_DENIED),
+            true
         );
         $ctrl->redirectByClass('ilRepositoryGUI');
     }
@@ -153,9 +198,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             case self::ACTION_SHARE_EVENT:
                 return
                     (self::hasPermission(
-                            self::PERMISSION_EDIT_VIDEOS,
-                            $ref_id
-                        ) && $objectSettings->getPermissionPerClip())
+                        self::PERMISSION_EDIT_VIDEOS,
+                        $ref_id
+                    ) && $objectSettings->getPermissionPerClip())
                     || ($opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)
                         && $objectSettings->getPermissionAllowSetOwn()
                         && $event->getProcessingState() != Event::STATE_ENCODING
@@ -168,19 +213,19 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             case self::ACTION_DELETE_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-                        || (self::hasPermission(self::PERMISSION_UPLOAD)
+                        || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
                     && $event->getProcessingState() != Event::STATE_ENCODING;
             case self::ACTION_EDIT_EVENT:
                 return
                     (self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
-                        || (self::hasPermission(self::PERMISSION_UPLOAD)
+                        || ((self::hasPermission(self::PERMISSION_UPLOAD) || self::hasPermission(self::PERMISSION_RECORD))
                             && $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)))
                     && $event->getProcessingState() != Event::STATE_ENCODING
                     && $event->getProcessingState() != Event::STATE_FAILED
                     && (!$event->isScheduled() || PluginConfig::getConfig(
-                            PluginConfig::F_SCHEDULED_METADATA_EDITABLE
-                        ) != PluginConfig::NO_METADATA);
+                        PluginConfig::F_SCHEDULED_METADATA_EDITABLE
+                    ) != PluginConfig::NO_METADATA);
             case self::ACTION_SET_ONLINE_OFFLINE:
                 return
                     self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
@@ -188,8 +233,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
                     && $event->getProcessingState() != Event::STATE_FAILED;
             case self::ACTION_ADD_EVENT:
                 return
-                    self::hasPermission(self::PERMISSION_UPLOAD)
-                    || self::hasPermission(self::PERMISSION_EDIT_VIDEOS);
+                    self::hasPermission(self::PERMISSION_UPLOAD);
             case self::ACTION_EXPORT_CSV:
             case self::ACTION_VIEW_UNPROTECTED_LINK:
             case self::ACTION_MANAGE_IVT_GROUPS:
@@ -209,6 +253,19 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
                     PluginConfig::getConfig(PluginConfig::F_REPORT_DATE) && self::hasPermission(
                         self::PERMISSION_EDIT_VIDEOS
                     );
+            case self::ACTION_DOWNLOAD_EVENT:
+                return
+                    ((self::hasPermission(self::PERMISSION_DOWNLOAD) && self::hasReadAccessOnEvent($event, $user, $objectSettings))
+                        || (/* (self::hasPermission(self::PERMISSION_DOWNLOAD) || self::hasPermission(self::PERMISSION_UPLOAD)) && */
+                            $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event)
+                        ))
+                    && $event->getProcessingState() == Event::STATE_SUCCEEDED;
+            case self::ACTION_SCHEDULE_EVENT:
+                return
+                    self::hasPermission(self::PERMISSION_SCHEDULE);
+            case self::ACTION_RECORD_EVENT:
+                return
+                    self::hasPermission(self::PERMISSION_RECORD);
             default:
                 return false;
         }
@@ -232,8 +289,8 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
      */
     public static function hasReadAccessOnEvent(Event $event, xoctUser $xoctUser, ObjectSettings $objectSettings): bool
     {
-        // edit_videos and write access see all videos
-        if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
+        // edit_videos see all videos
+        if (ilObjOpenCastAccess::hasPermission(self::PERMISSION_EDIT_VIDEOS)) {
             return true;
         }
 
@@ -261,6 +318,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             [Event::STATE_SUCCEEDED, Event::STATE_LIVE_SCHEDULED, Event::STATE_LIVE_RUNNING]
         ))) {
             return false;
+        }
+
+        // If write access, unpublished videos for others are not allowed!
+        // Here the place where to check the write access is very important, and it must come after the event state check!
+        if (ilObjOpenCastAccess::hasWriteAccess()) {
+            return true;
         }
 
         // no ivt mode: show residual videos
@@ -312,7 +375,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $ref_id = $ref_id ?? (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
-        $prefix = in_array($action, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
+        $prefix = in_array($action, self::$custom_rights, true) ? "rep_robj_xoct_perm_" : "";
         if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
             return false;
         }
@@ -323,7 +386,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         );
         foreach ($active_operations as $op_id) {
             $operation = $DIC->rbac()->review()->getOperation($op_id);
-            if ($operation['operation'] == $prefix . $action) {
+            if (($operation['operation'] ?? null) === $prefix . $action) {
                 return true;
             }
         }
@@ -440,5 +503,80 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     public static function setAdmins($admins): void
     {
         self::$admins = $admins;
+    }
+
+    /**
+     * Applies the default perms upon creating a new series object.
+     *
+     * @param int $ref_id Ref id
+     * @param array $additionals possiblity to pass additional perms upon creating which could be configured by admins in settings.
+     *                  possible values:
+     *                      [
+     *                          [self::ROLE_MEMBER] => [{array list of additional perms}],
+     *                          [self::ROLE_TUTOR] => [{array list of additional perms}],
+     *                          [self::ROLE_ADMIN] => [{array list of additional perms}],
+     *                      ]
+     */
+    public static function applyDefaultPerms(int $ref_id, array $additionals = []): void
+    {
+        $parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
+
+        // Admin defaults.
+        if (method_exists($parent_obj, 'getDefaultAdminRole')) {
+            $admin_role_id = $parent_obj->getDefaultAdminRole();
+            $admins_allowed_defaults_perms = self::$admins_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_ADMIN])) {
+                $admins_allowed_defaults_perms = array_unique(
+                    array_merge($admins_allowed_defaults_perms, $additionals[self::ROLE_ADMIN])
+                );
+            }
+            self::setDefaultPerms($ref_id, $admin_role_id, $admins_allowed_defaults_perms);
+        }
+
+        // Tutor defaults.
+        if (method_exists($parent_obj, 'getDefaultTutorRole')) {
+            $tutor_role_id = $parent_obj->getDefaultTutorRole();
+            $tutors_allowed_defaults_perms = self::$tutors_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_TUTOR])) {
+                $tutors_allowed_defaults_perms = array_unique(
+                    array_merge($tutors_allowed_defaults_perms, $additionals[self::ROLE_TUTOR])
+                );
+            }
+            self::setDefaultPerms($ref_id, $tutor_role_id, $tutors_allowed_defaults_perms);
+        }
+
+        // Member defaults.
+        if (method_exists($parent_obj, 'getDefaultMemberRole')) {
+            $member_role_id = $parent_obj->getDefaultMemberRole();
+            $members_allowed_defaults_perms = self::$members_allowed_defaults ?? [];
+            if (!empty($additionals[self::ROLE_MEMBER])) {
+                $members_allowed_defaults_perms = array_unique(
+                    array_merge($members_allowed_defaults_perms, $additionals[self::ROLE_MEMBER])
+                );
+            }
+            self::setDefaultPerms($ref_id, $member_role_id, $members_allowed_defaults_perms);
+        }
+    }
+
+    /**
+     * Set default permissions.
+     *
+     * @param int $ref_id ref id
+     * @param int $role_id role id
+     * @param array $perms_to_allow array list of perms to allow by default
+     */
+    private static function setDefaultPerms(int $ref_id, int $role_id, array $perms_to_allow): void
+    {
+        global $DIC;
+        $ops_ids = $DIC->rbac()->review()->getActiveOperationsOfRole($ref_id, $role_id) ?? [];
+        foreach ($perms_to_allow as $allowed_perm) {
+            $prefix = in_array($allowed_perm, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
+            $perm_name = $prefix . $allowed_perm;
+            $allowed_ops_id = $DIC->rbac()->review()->_getOperationIdByName($perm_name);
+            if (!in_array($allowed_ops_id, $ops_ids)) {
+                $ops_ids[] = $allowed_ops_id;
+            }
+        }
+        $DIC->rbac()->admin()->grantPermission($role_id, $ops_ids, $ref_id);
     }
 }

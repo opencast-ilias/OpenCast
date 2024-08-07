@@ -84,7 +84,8 @@ class SeriesFormBuilder
             $form_action,
             [
                 'series_type' => $this->buildSeriesSelectionSection(true),
-                'settings' => $this->objectSettingsFormItemBuilder->create()
+                'settings' => $this->objectSettingsFormItemBuilder->create(),
+                'member_rights' => $this->objectSettingsFormItemBuilder->memberRightsSection()
             ]
         );
     }

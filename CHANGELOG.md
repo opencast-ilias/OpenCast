@@ -1,4 +1,46 @@
-# Change Log
+# Changelog
+
+## Version 8.1.3
+- Merge PR #318
+- Merge PR #312
+- Merge PR #320
+- [FIX] Undefined array key "operation" when creating series #326
+- [IMPROVEMENT] Update readme to add CLI update info
+- [FIX] Issue preventing opening publications -> usage groups and export #319
+- [FIX] Issue with Scheduling Parser throws error on null inputs #317
+- [FIX] Issue Undefined array key "workflow_parameters" #311
+
+
+## Version 8.1.2
+- Merge PR #306
+- Merge PR #308
+- Merge PR #309
+- Merge PR #322
+- Merge PR #332
+- [FIX] Issue with changing series metadata leads to unnecessary acl update #297
+- [FIX] Issue with installation #330
+- [FIX] Iissue with Events in the status "Ingesting" #148
+- [FIX] unused syntax
+- [FIX] Issue with Upload of a new event with missing title #171
+- [FIX] Issue with Upload mask: list all linked opencast series, before 
+  users upload new event #270
+- [FIX] Issue with List/show all linked series in the DeleteConfirmationDialog #268
+
+
+## Version 8.1.1
+
+- [FIX] bad merge conflict leads to error in StandardPlayerDataBuilder #324
+
+
+## Version 8.1.0
+
+- [FEATURE] OCT Text feature #71 (via PR #290)
+- [FEATURE] Upload Thumbnail (Preview) #291 (via PR #305)
+- [FEATURE] Upload Subtitles #10 (via PR #277)
+- [FEATURE] New Right management #14 (via PR #301)
+- [FIX] The Opencast object cannot be deleted #275
+- [FIX] make code compliant to the ILIAS 7 version
+
 
 ## Version 8.0.7
 - [FIX] Improvements on paella player which fixes fixes #289, #292, #293, 

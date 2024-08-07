@@ -79,7 +79,7 @@ class PublicationUsageRepository
         string $tag = '',
         bool $allow_multiple = false,
         string $mediatype = '',
-        bool $ignore_object_settings = false,
+        bool $overwrite_download_perm = false,
         bool $ext_dl_source = false
     ): void {
         /** @var PublicationUsage $usage */
@@ -95,7 +95,7 @@ class PublicationUsageRepository
         $usage->setTag($tag);
         $usage->setAllowMultiple($allow_multiple);
         $usage->setMediaType($mediatype);
-        $usage->setIgnoreObjectSettings($ignore_object_settings);
+        $usage->setOverwriteDownloadPerm($overwrite_download_perm);
         $usage->setExternalDownloadSource($ext_dl_source);
         $usage->store();
     }

@@ -66,7 +66,9 @@ $fields = array(
         'length' => '512',
 
     ),
-    'ignore_object_setting' => array(
+    // "ignore_object_setting" field has been renamed to "overwrite_download_perm",
+    // the update step is in: ilOpenCastDBUpdateSteps => step_2
+    'overwrite_download_perm' => array(
         'type' => 'integer',
         'length' => '1',
 
@@ -169,7 +171,9 @@ $fields = array(
     'streaming_only' => array(
         'type' => 'integer',
         'length' => '1',
-
+        // This field is out of use, therefore, we set the default -1 in order to be determined by developers.
+        // As for update step: ilOpenCastDBUpdateSteps => step_1
+        'default' => -1
     ),
     'permission_per_clip' => array(
         'type' => 'integer',
@@ -1480,7 +1484,9 @@ if (!$ilDB->tableExists('xoct_pub_sub_usage')) {
         "md_type" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => null],
         "allow_multiple" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
         "mediatype" => ["notnull" => false, "length" => 512, "type" => "text"],
-        "ignore_object_setting" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
+        // "ignore_object_setting" field has been renamed to "overwrite_download_perm",
+        // the update step is in: ilOpenCastDBUpdateSteps => step_2
+        "overwrite_download_perm" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
         "ext_dl_source" => ['notnull' => false, 'length' => 1, 'type' => "integer", 'default' => 0],
     ];
     $ilDB->createTable("xoct_pub_sub_usage", $fields);
@@ -1513,8 +1519,10 @@ if(!$ilDB->tableColumnExists('xoct_publication_usage', 'mediatype')) {
     ]);
 }
 
-if(!$ilDB->tableColumnExists('xoct_publication_usage', 'ignore_object_setting')) {
-    $ilDB->addTableColumn('xoct_publication_usage', 'ignore_object_setting', [
+// "ignore_object_setting" field has been renamed to "overwrite_download_perm",
+// the update step is in: ilOpenCastDBUpdateSteps => step_2
+if(!$ilDB->tableColumnExists('xoct_publication_usage', 'overwrite_download_perm')) {
+    $ilDB->addTableColumn('xoct_publication_usage', 'overwrite_download_perm', [
         'type' => 'integer',
         'length' => 1,
         'notnull' => false
@@ -1631,13 +1639,13 @@ $mapping = [
 ];
 foreach ($mapping as $old => $new) {
     $ilDB->manipulateF(
-        'UPDATE xoct_md_field_event SET prefill = %s WHERE prefill = %s'
-        , ['text', 'text'],
+        'UPDATE xoct_md_field_event SET prefill = %s WHERE prefill = %s',
+        ['text', 'text'],
         [$new, $old]
     );
     $ilDB->manipulateF(
-        'UPDATE xoct_md_field_series SET prefill = %s WHERE prefill = %s'
-        , ['text', 'text'],
+        'UPDATE xoct_md_field_series SET prefill = %s WHERE prefill = %s',
+        ['text', 'text'],
         [$new, $old]
     );
 }

@@ -112,10 +112,7 @@ class xoctEventTableGUI extends ilTable2GUI
         $this->setFormAction($ctrl->getFormAction($a_parent_obj));
         $data = array_filter(
             $data,
-            $this->filterPermissions() ?? function ($v, $k): bool {
-                return !empty($v);
-            },
-            $this->filterPermissions() === null ? ARRAY_FILTER_USE_BOTH : 0
+            $this->filterPermissions()
         );
         $this->setData($data);
         foreach ($data as $item) {
