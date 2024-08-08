@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 7.0.7
+- Merge PR #303
+- Merge PR #276
+- Bump express from 4.18.2 to 4.19.2
+- disable restorePlaybackRate feature for livestreams
+- Bump ejs from 3.1.9 to 3.1.10
+
+
 ## Version 7.0.6
 - Merge PR #307
 - [FIX] linked series listing, refs #270, refs #268
