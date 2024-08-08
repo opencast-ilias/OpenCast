@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 8.1.4
+- also disable restorePlaybackRate for buffered livestreams
+- disable restorePlaybackRate feature for livestreams
+- darken the title and border colors according to request
+- chat improvements, fixes #83 fixes #84
+- Fix missing check for strings as date in update
+- add videoid and seriesid to metadata
+- upgrade paella-user-tracking to 1.42.5
+- [FIX] Update some NPM dependencies
+
 ## Version 8.1.3
 - Merge PR #318
 - Merge PR #312
