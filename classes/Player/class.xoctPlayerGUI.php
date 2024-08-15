@@ -37,18 +37,12 @@ class xoctPlayerGUI extends xoctGUI
     public const ROLE_MASTER = "presenter";
     public const ROLE_SLAVE = "presentation";
     private bool $force_no_chat;
-    /**
-     * @var string|null
-     */
-    private $identifier;
-    protected ObjectSettings $object_settings;
-    protected PublicationUsageRepository $publication_usage_repository;
+    private ?string $identifier;
+    private ObjectSettings $object_settings;
+    private PublicationUsageRepository $publication_usage_repository;
     private EventRepository $event_repository;
     private PaellaConfigService $paellaConfigService;
-    /**
-     * @var \ilObjUser
-     */
-    private $user;
+    private \ilObjUser $user;
 
     public function __construct(
         EventRepository $event_repository,
@@ -73,7 +67,7 @@ class xoctPlayerGUI extends xoctGUI
      */
     public function streamVideo(): void
     {
-        if (!isset($this->identifier) || empty($this->identifier)) {
+        if (empty($this->identifier)) {
             $this->sendReponse("Error: invalid identifier");
         }
         $event = $this->event_repository->find($this->identifier);
@@ -117,12 +111,11 @@ class xoctPlayerGUI extends xoctGUI
 
         if ($this->isChatVisible()) {
             $this->initChat($event, $tpl);
-        } else {
-            $tpl->setVariable(
-                "STYLE_SHEET_LOCATION",
-                $this->plugin->getDirectory() . "/templates/default/player.css"
-            );
         }
+        $tpl->setVariable(
+            "STYLE_SHEET_LOCATION",
+            $this->plugin->getDirectory() . "/templates/default/player.css"
+        );
 
         setcookie('lastProfile', '', ['expires' => -1]);
         $this->sendReponse($tpl->get());
