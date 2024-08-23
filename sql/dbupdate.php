@@ -697,9 +697,9 @@ if (\srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter::cou
     \srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter::truncateDB();
     global $DIC;
     (new \srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameterRepository(
-        $DIC->ui()->factory(),
-        $DIC->refinery(),
-        new \srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser()
+        new \srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser(),
+        null,
+        null
     ))->createParamsForAllObjects($params);
 }
 ?>

@@ -168,9 +168,9 @@ class OpencastDIC
         );
         $this->container['workflow_parameter_series_repository'] = $this->container->factory(
             fn ($c): SeriesWorkflowParameterRepository => new SeriesWorkflowParameterRepository(
+                $c['workflow_parameter_parser'],
                 $this->dic->ui()->factory(),
-                $this->dic->refinery(),
-                $c['workflow_parameter_parser']
+                $this->dic->refinery()
             )
         );
         $this->container['workflow_parameter_parser'] = $this->container->factory(

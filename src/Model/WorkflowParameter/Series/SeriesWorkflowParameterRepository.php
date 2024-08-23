@@ -22,15 +22,15 @@ class SeriesWorkflowParameterRepository
 {
     protected static $instance;
     protected array $parameters = [];
-    private \ILIAS\UI\Factory $ui_factory;
-    private RefineryFactory $refinery;
+    private ?\ILIAS\UI\Factory $ui_factory;
+    private ?RefineryFactory $refinery;
     private WorkflowParameterParser $workflowParameterParser;
 
 
     public function __construct(
-        Factory $ui_factory,
-        RefineryFactory $refinery,
-        WorkflowParameterParser $workflowParameterParser
+        WorkflowParameterParser $workflowParameterParser,
+        ?Factory $ui_factory,
+        ?RefineryFactory $refinery
     ) {
         $this->ui_factory = $ui_factory;
         $this->refinery = $refinery;
@@ -46,9 +46,9 @@ class SeriesWorkflowParameterRepository
         if (self::$instance === null) {
             global $DIC;
             self::$instance = new self(
+                new WorkflowParameterParser(),
                 $DIC->ui()->factory(),
-                $DIC->refinery(),
-                new WorkflowParameterParser()
+                $DIC->refinery()
             );
         }
         return self::$instance;

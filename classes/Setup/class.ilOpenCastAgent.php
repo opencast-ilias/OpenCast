@@ -41,21 +41,26 @@ class ilOpenCastAgent extends ilPluginDefaultAgent
 
     public function getInstallObjective(Config $config = null): Objective
     {
+        $general_update = parent::getInstallObjective($config);
+
         return new ObjectiveCollection(
             'Opencast-Plugin Installation',
             true,
-            parent::getInstallObjective($config),
-            ...$this->getObjectives()
+            $general_update,
+            ...$this->getObjectives($general_update)
         );
+
     }
 
     public function getUpdateObjective(Config $config = null): Objective
     {
+        $general_update = parent::getUpdateObjective($config);
+
         return new ObjectiveCollection(
             'Opencast-Plugin Update',
             true,
-            parent::getInstallObjective($config),
-            ...$this->getObjectives()
+            $general_update,
+            ...$this->getObjectives($general_update)
         );
     }
 
@@ -64,7 +69,7 @@ class ilOpenCastAgent extends ilPluginDefaultAgent
      *
      * @return Objective[]
      */
-    protected function getObjectives(): array
+    protected function getObjectives(ObjectiveCollection $precondition): array
     {
         return [
             // NOTE: Because there are already 2 custom rbac operations, we don't need to add  the common rbac operations on xoct type!
@@ -91,7 +96,7 @@ class ilOpenCastAgent extends ilPluginDefaultAgent
                 [ilOpenCastPlugin::PLUGIN_ID]
             ),
             // db update steps
-            new ilDatabaseUpdateStepsExecutedObjective(new ilOpenCastDBUpdateSteps()),
+            new ilOpenCastUpdateStepsExecutedObjective($precondition, new ilOpenCastDBUpdateSteps()),
         ];
     }
 
