@@ -58,7 +58,7 @@ abstract class APIObject implements Request
      */
     public static function cache(string $identifier, APIObject $object): void
     {
-        global $opencastContainer;
+        $opencastContainer = Init::init();
         /** @var Services $cache_services */
         $cache_services = $opencastContainer[Services::class];
         $container = $cache_services->get($object);
