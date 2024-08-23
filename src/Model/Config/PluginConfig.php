@@ -158,7 +158,7 @@ class PluginConfig extends ActiveRecord
     /**
      * @var array
      */
-    public static $groups = [
+    public static array $groups = [
         self::F_GROUP_PRODUCERS,
         self::F_GROUP_STUDIO,
     ];
