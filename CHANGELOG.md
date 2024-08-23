@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.2.1
+- [FIX] caching issue with new container
+- [FIX] installation issues using cli setup
 
 ## Version 8.2.0
 - [FEATURE] new internal Plugin API for UI Components needed in other
