@@ -9,9 +9,8 @@ use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Container\Form\Form;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Factory as UIFactory;
-use ILIAS\UI\Implementation\Component\Input\Field\Input;
+use ILIAS\UI\Component\Input\Input;
 use srag\Plugins\Opencast\Util\MimeType as MimeTypeUtil;
-use ilPlugin;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
@@ -543,7 +542,7 @@ class EventFormBuilder
         return array_unique(preg_replace(['#video/#', '#audio/#'], '.', $this->getMimeTypes()));
     }
 
-    private function buildSeriesSelector(): \ILIAS\UI\Component\Input\Field\Input
+    private function buildSeriesSelector(): Input
     {
         $xoct_user = xoctUser::getInstance($this->dic->user());
         // fetch early, because acls will be refreshed

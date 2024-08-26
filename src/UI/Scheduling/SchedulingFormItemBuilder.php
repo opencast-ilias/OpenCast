@@ -8,7 +8,7 @@ use DateTimeZone;
 use ilTimeZone;
 use ILIAS\Refinery\Custom\Constraint;
 use ILIAS\Refinery\Factory as RefineryFactory;
-use ILIAS\UI\Component\Input\Field\Input;
+use ILIAS\UI\Component\Input\Input;
 use ILIAS\UI\Factory as UIFactory;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Agent\AgentRepository;
@@ -18,8 +18,13 @@ use srag\Plugins\Opencast\Model\Scheduling\SchedulingParser;
 
 class SchedulingFormItemBuilder
 {
-    public function __construct(protected UIFactory $ui_factory, private readonly RefineryFactory $refinery_factory, private readonly SchedulingParser $schedulingParser, private readonly \ilPlugin $plugin, private readonly AgentRepository $agentApiRepository)
-    {
+    public function __construct(
+        protected UIFactory $ui_factory,
+        private readonly RefineryFactory $refinery_factory,
+        private readonly SchedulingParser $schedulingParser,
+        private readonly \ilPlugin $plugin,
+        private readonly AgentRepository $agentApiRepository
+    ) {
     }
 
     public function create(): Input
