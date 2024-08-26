@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\UI;
 
+use ILIAS\UI\Component\Input\Input;
 use ILIAS\DI\Container;
 use ILIAS\Refinery\Factory as Refinery;
 use ILIAS\UI\Component\Input\Container\Form\Standard;
-use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
-use ilPlugin;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\Series\Series;
@@ -96,7 +95,7 @@ class SeriesFormBuilder
     /**
      * @throws xoctException
      */
-    private function buildSeriesSelectionSection(bool $is_admin): \ILIAS\UI\Component\Input\Input
+    private function buildSeriesSelectionSection(bool $is_admin): Input
     {
         $existing_series = $this->getSeriesSelectOptions();
         $series_type = $this->ui_factory->input()->field()->switchableGroup([

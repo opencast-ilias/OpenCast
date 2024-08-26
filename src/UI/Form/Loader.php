@@ -30,7 +30,9 @@ class Loader implements \ILIAS\UI\Implementation\Render\Loader
             $this->dic["ui.javascript_binding"],
             $this->dic["refinery"],
             $this->dic["ui.pathresolver"] ?? null,
-            new Factory() // this is only needed after ILIAS 8.11
+            new Factory(),
+            $this->dic["help.text_retriever"],
+            $this->dic["ui.upload_limit_resolver"]
         );
     }
 

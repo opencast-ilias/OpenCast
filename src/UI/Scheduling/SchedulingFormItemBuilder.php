@@ -10,7 +10,6 @@ use ILIAS\Refinery\Custom\Constraint;
 use ILIAS\Refinery\Factory as RefineryFactory;
 use ILIAS\UI\Component\Input\Field\Input;
 use ILIAS\UI\Factory as UIFactory;
-use ilPlugin;
 use srag\Plugins\Opencast\Model\Agent\Agent;
 use srag\Plugins\Opencast\Model\Agent\AgentRepository;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;

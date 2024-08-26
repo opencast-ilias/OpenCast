@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace srag\Plugins\Opencast\Model\WorkflowParameter\Series;
 
 use ILIAS\Refinery\Factory as RefineryFactory;
-use ILIAS\UI\Component\Input\Field\Input;
-use ILIAS\UI\Factory;
+use ILIAS\UI\Component\Input\Input;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\WorkflowParameterParser;
-use ActiveRecord;
 
 /**
  * Class xoctSeriesWorkflowParameterRepository
