@@ -253,7 +253,7 @@ event_state_ready_for_cutting#:#Nicht publiziert (Schnitt erforderlich), für St
 event_state_running#:#Wird konvertiert, für Studierende noch nicht sichtbar.
 event_state_offline#:#Offline, für Studierende nicht sichtbar.
 event_state_scheduled#:#Geplante Aufzeichnung, für Studierende nicht sichtbar.
-event_state_scheduled_offline#:#Geplante Aufzeichnung (Offline), für Studierende nicht sichtbar.
+event_state_scheduled_offline#:#Aufzeichnung wird verarbeitet (Offline), für Studierende nicht sichtbar.
 event_state_recording#:#Wird momentan Aufgezeichnet, für Studierende nicht sichtbar.
 event_state_live_scheduled#:#Live-Übertragung (noch nicht begonnen). Offen ab %s.
 event_state_live_offline#:#Geplante Live-Aufzeichnung (Offline), für Studierende nicht sichtbar.
