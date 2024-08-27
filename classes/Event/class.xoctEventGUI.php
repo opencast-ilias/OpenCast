@@ -855,7 +855,16 @@ class xoctEventGUI extends xoctGUI
             $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
             $this->cancel();
         }
-        $this->addCurrentUserToProducers();
+        // Consider studio group as default.
+        $user_group_name = PluginConfig::F_GROUP_STUDIO;
+
+        // Looking for "Edit Video" permission, to add user to producers group.
+        if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)) {
+            $user_group_name = PluginConfig::F_GROUP_PRODUCERS;
+        }
+
+        $this->addCurrentUserToGroup($user_group_name);
+
         // redirect to oc studio
         $base = rtrim(PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
         $base = str_replace('/api', '', $base);
@@ -889,7 +898,7 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
 
-        $this->addCurrentUserToProducers();
+        $this->addCurrentUserToGroup();
 
         // redirect
         $cutting_link = $event->publications()->getCuttingLink();
@@ -981,7 +990,7 @@ class xoctEventGUI extends xoctGUI
 
         // check access
         if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
-            $this->addCurrentUserToProducers();
+            $this->addCurrentUserToGroup();
         }
 
         // redirect
@@ -1392,30 +1401,41 @@ class xoctEventGUI extends xoctGUI
         return $intro_text;
     }
 
-    protected function addCurrentUserToProducers(): void
+    /**
+     * Adds the current user to the specified group.
+     * Producers group is the default selected group. (PluginConfig::F_GROUP_PRODUCERS)
+     *
+     * @param string $group_config_name the group config name (default PluginConfig::F_GROUP_PRODUCERS)
+     *
+     */
+    protected function addCurrentUserToGroup(string $group_config_name = PluginConfig::F_GROUP_PRODUCERS): void
     {
         $xoctUser = xoctUser::getInstance($this->user);
-        // add user to ilias producers
+        // add user to the group
         $sleep = false;
         try {
-            if ($group_producers = PluginConfig::getConfig(PluginConfig::F_GROUP_PRODUCERS)) {
-                $ilias_producers = Group::find($group_producers);
-                $sleep = $ilias_producers->addMember($xoctUser);
+            $group_config_value = PluginConfig::getConfig($group_config_name);
+            if (!empty($group_config_value)) {
+                $group_obj = Group::find($group_config_value);
+                $sleep = $group_obj->addMember($xoctUser);
             }
         } catch (xoctException $e) {
         }
 
-        // add user to series producers
-        if ($this->objectSettings->getSeriesIdentifier() !== null) {
-            $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-            if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
-                $this->seriesRepository->updateACL(
-                    new UpdateSeriesACLRequest(
-                        $series->getIdentifier(),
-                        new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
-                    )
-                );
-                $sleep = true;
+        // Extra things to do for producers group.
+        if ($group_config_name === PluginConfig::F_GROUP_PRODUCERS) {
+            // add user to series producers
+            if ($this->objectSettings->getSeriesIdentifier() !== null) {
+                $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+                if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
+                    $this->seriesRepository->updateACL(
+                        new UpdateSeriesACLRequest(
+                            $series->getIdentifier(),
+                            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+                        )
+                    );
+                    $sleep = true;
+                }
             }
         }
 

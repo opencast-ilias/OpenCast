@@ -71,6 +71,10 @@
       <value><![CDATA[ROLE_GROUP_ILIAS]]></value>
     </xoct_conf>
     <xoct_conf>
+      <name>group_studio</name>
+      <value><![CDATA[ROLE_GROUP_STUDIO]]></value>
+    </xoct_conf>
+    <xoct_conf>
       <name>identifier_to_uppercase</name>
       <value><![CDATA[1]]></value>
     </xoct_conf>
