@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.2.2
+- [FIX] An error occurred while communicating with the OpenCast-Server: OcEventsApi -> getAll
+
 ## Version 8.2.1
 - [FIX] caching issue with new container
 - [FIX] installation issues using cli setup
