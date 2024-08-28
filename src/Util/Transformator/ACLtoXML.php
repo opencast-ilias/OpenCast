@@ -26,12 +26,13 @@ class ACLtoXML
         $this->acl = $acl;
     }
 
-    public function getXML(): string
+    public function getXML(string $media_package_id = 'mediapackage-1'): string
     {
         $xml_writer = new ilXMLWriter();
+        $xml_writer->xmlSetGenCmt("Opencast ILIAS Plugin Access Policy Generator");
         $xml_writer->xmlHeader();
         $xml_writer->xmlStartTag('Policy', [
-            'PolicyId' => 'mediapackage-1',
+            'PolicyId' => $media_package_id,
             'RuleCombiningAlgId' => 'urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides',
             'Version' => '2.0',
             'xmlns' => 'urn:oasis:names:tc:xacml:2.0:policy:schema:os'
@@ -40,7 +41,7 @@ class ACLtoXML
         foreach ($this->acl->getEntries() as $acl) {
             if ($acl->isAllow()) {
                 $xml_writer->xmlStartTag('Rule', [
-                    'RuleId' => 'user_' . $acl->getAction() . '_permit',
+                    'RuleId' => $acl->getRole() . '_' . $acl->getAction() . '_permit',
                     'Effect' => 'Permit'
                 ]);
 
@@ -83,6 +84,12 @@ class ACLtoXML
                 $xml_writer->xmlEndTag('Rule');
             }
         }
+
+        // Deny rule.
+        $xml_writer->xmlElement('Rule', [
+            'RuleId' => 'DenyRule',
+            'Effect' => 'Deny'
+        ]);
 
         $xml_writer->xmlEndTag('Policy');
 

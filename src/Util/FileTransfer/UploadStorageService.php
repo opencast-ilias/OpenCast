@@ -126,14 +126,13 @@ class UploadStorageService
         ];
     }
 
-    public function buildACLUploadFile(ACL $acl): xoctUploadFile
+    public function buildACLUploadFile(ACL $acl, string $media_package_id): xoctUploadFile
     {
         $tmp_name = uniqid('tmp', false);
-        $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML());
+        $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML($media_package_id));
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(
-            $this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)
-                             ->getSize()
+            $this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)->getSize()
         );
         $upload_file->setPostVar('attachment');
         $upload_file->setTitle('attachment');

@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\API\API;
 use ilFFmpeg;
 use ilShellUtil;
 use srag\Plugins\Opencast\Container\Init;
+use SimpleXMLElement;
 
 class OpencastIngestService
 {
@@ -39,6 +40,13 @@ class OpencastIngestService
         // create media package
         $media_package = $this->api->routes()->ingest->createMediaPackage();
 
+        // Try to extract media package id.
+        $media_package_id = 'mediapackage-1';
+        if (!empty($media_package)) {
+            $media_package_xml = new SimpleXMLElement($media_package);
+            $media_package_id = (string) $media_package_xml['id'];
+        }
+
         // Metadata
         $media_package = $this->api->routes()->ingest->addDCCatalog(
             $media_package,
@@ -50,7 +58,7 @@ class OpencastIngestService
         $media_package = $this->api->routes()->ingest->addAttachment(
             $media_package,
             'security/xacml+episode',
-            $this->uploadStorageService->buildACLUploadFile($payload->getAcl())->getFileStream()
+            $this->uploadStorageService->buildACLUploadFile($payload->getAcl(), $media_package_id)->getFileStream()
         );
 
         // Subtitles using addTrack ingest method.
