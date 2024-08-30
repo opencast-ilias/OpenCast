@@ -49,7 +49,7 @@ class ACLtoXML
         $xml_writer->xmlElement('AttributeValue', [
             'DataType' => 'http://www.w3.org/2001/XMLSchema#string'
         ], $media_package_id);
-        $xml_writer->xmlElement('ActionAttributeDesignator', [
+        $xml_writer->xmlElement('ResourceAttributeDesignator', [
             'AttributeId' => 'urn:oasis:names:tc:xacml:1.0:resource:resource-id',
             'DataType' => 'http://www.w3.org/2001/XMLSchema#string'
         ]);
