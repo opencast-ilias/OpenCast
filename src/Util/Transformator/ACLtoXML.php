@@ -38,6 +38,27 @@ class ACLtoXML
             'xmlns' => 'urn:oasis:names:tc:xacml:2.0:policy:schema:os'
         ]);
 
+        // Add Resource id as target tag.
+        $xml_writer->xmlStartTag('Target');
+        $xml_writer->xmlStartTag('Resources');
+        $xml_writer->xmlStartTag('Resource');
+        $xml_writer->xmlStartTag('ResourceMatch', [
+            'MatchId' => 'urn:oasis:names:tc:xacml:1.0:function:string-equal'
+        ]);
+
+        $xml_writer->xmlElement('AttributeValue', [
+            'DataType' => 'http://www.w3.org/2001/XMLSchema#string'
+        ], $media_package_id);
+        $xml_writer->xmlElement('ActionAttributeDesignator', [
+            'AttributeId' => 'urn:oasis:names:tc:xacml:1.0:resource:resource-id',
+            'DataType' => 'http://www.w3.org/2001/XMLSchema#string'
+        ]);
+
+        $xml_writer->xmlEndTag('ResourceMatch');
+        $xml_writer->xmlEndTag('Resource');
+        $xml_writer->xmlEndTag('Resources');
+        $xml_writer->xmlEndTag('Target');
+
         foreach ($this->acl->getEntries() as $acl) {
             if ($acl->isAllow()) {
                 $xml_writer->xmlStartTag('Rule', [
