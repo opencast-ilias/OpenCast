@@ -129,10 +129,14 @@ class xoctUploadFile
     }
 
     /**
-     * @return resource filestream
+     * @return resource|null filestream
      */
     public function getFileStream()
     {
-        return fopen($this->getPath(), 'rb');
+        $file_stream = null;
+        if (file_exists($this->getPath())) {
+            $file_stream = fopen($this->getPath(), 'rb');
+        }
+        return $file_stream;
     }
 }

@@ -16,6 +16,7 @@ use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use xoctUploadFile;
 use ILIAS\Filesystem\DTO\Metadata;
+use srag\Plugins\Opencast\Util\MimeType as MimeTypeUtil;
 
 class UploadStorageService
 {
@@ -128,12 +129,13 @@ class UploadStorageService
 
     public function buildACLUploadFile(ACL $acl, string $media_package_id): xoctUploadFile
     {
-        $tmp_name = uniqid('tmp', false);
+        $tmp_name = uniqid('tmp', false) . '.xml';
         $this->fileSystem->write($this->idToDirPath($tmp_name), (new ACLtoXML($acl))->getXML($media_package_id));
         $upload_file = new xoctUploadFile();
         $upload_file->setFileSize(
             $this->fileSystem->getSize($this->idToDirPath($tmp_name), DataSize::Byte)->getSize()
         );
+        $upload_file->setMimeType(MimeTypeUtil::APPLICATION__XML);
         $upload_file->setPostVar('attachment');
         $upload_file->setTitle('attachment');
         $upload_file->setPath(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $this->idToDirPath($tmp_name));
