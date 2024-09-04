@@ -104,7 +104,7 @@ class Handlers
         };
     }
 
-    private function excludedRequests(): array
+    private static function excludedRequests(): array
     {
         return [
             // This request is a necessary call for OpencastAPI class to get Ingest service up and running.
