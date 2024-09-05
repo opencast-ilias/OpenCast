@@ -11,7 +11,11 @@ html {
     overflow: hidden;
 }
 
-#srchat_iframe_container {
+#srchat_history_container {
+    overflow: hidden !important;
+}
+
+#srchat_iframe_container, #srchat_history_container {
     border-left: 3px solid #aeaeae;
 }
 
@@ -20,7 +24,7 @@ html {
     height: 100%;
 }
 
-#srchat_body {
+#srchat_body, #srchat_history_container {
     display: flex;
     flex-direction: column;
     font: 16px Helvetica, Arial;
@@ -252,7 +256,7 @@ span.srchat_pseudo_element {
         transform: rotate(-180deg);
     }
 
-    #srchat_iframe_container {
+    #srchat_iframe_container, #srchat_history_container {
         border-top: 3px solid #aeaeae;
         border-left: none;
     }
@@ -281,7 +285,7 @@ span.srchat_pseudo_element {
 
 
 @media screen and (max-device-width: 768px) and (orientation: landscape) {
-    #srchat_iframe_container {
+    #srchat_iframe_container, #srchat_history_container {
         display: none;
     }
 }
