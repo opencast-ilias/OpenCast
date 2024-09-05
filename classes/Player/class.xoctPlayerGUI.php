@@ -109,8 +109,9 @@ class xoctPlayerGUI extends xoctGUI
             $tpl->setVariable('LIVE_OVER_TEXT', $this->translate('live_over_text', 'event'));
         }
 
-        if ($this->isChatVisible($event)) {
-            $this->initChat($event, $tpl);
+        $prev_chatroom_id = $this->eventHasChatRecord($event);
+        if ($this->isChatVisible($event, !is_null($prev_chatroom_id))) {
+            $this->initChat($event, $tpl, $prev_chatroom_id);
         } else {
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
@@ -120,6 +121,19 @@ class xoctPlayerGUI extends xoctGUI
 
         setcookie('lastProfile', '', ['expires' => -1]);
         $this->sendReponse($tpl->get());
+    }
+
+    /**
+     * Function to determine whether the event has chat records.
+     *
+     * @param Event $event the event
+     * @return int|null if true the chat room id is returned, otherwise null
+     */
+    private function eventHasChatRecord(Event $event): ?int
+    {
+        $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->object_settings->getObjId());
+        $has_chat_history = $ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets();
+        return $has_chat_history ? (int) $ChatroomAR->getId() : null;
     }
 
     protected function buildJSConfig(Event $event): stdClass
@@ -160,18 +174,19 @@ class xoctPlayerGUI extends xoctGUI
 
     /**
      * Function to check whether the chat must be provided to the user based on the following conditions:
-     * - Event must be identified as Live
+     * - Event must be identified as Live or has chat records already (was live before)
      * - The "Live Streams" config must be activated.
      * - The "Activate Chat" config must be activated.
      * - The "Chat for live events" in series object settings must be activated.
      *
      * @param Event $event the event object to check whether the event is live or not.
+     * @param bool $has_chat_history whether the event has a chat history
      * @return boolean whether the chat should be visible.
      */
-    protected function isChatVisible(Event $event): bool
+    protected function isChatVisible(Event $event, bool $has_chat_history = false): bool
     {
         return !$this->force_no_chat
-            && $event->isLiveEvent() // The event must only be live to provide the chat!
+            && ($event->isLiveEvent() || $has_chat_history) // The event must be either live or has chat history!
             && PluginConfig::getConfig(PluginConfig::F_ENABLE_LIVE_STREAMS) // The Live Streams config must be activated.
             && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT) // The Chat config must be activated.
             && $this->object_settings->isChatActive(); // The series object settings must allow the chat.
@@ -181,10 +196,9 @@ class xoctPlayerGUI extends xoctGUI
      * @throws arException
      * @throws ilTemplateException
      */
-    protected function initChat(Event $event, ilTemplate $tpl)
+    protected function initChat(Event $event, ilTemplate $tpl, ?int $prev_chatroom_id = null)
     {
-        $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->object_settings->getObjId());
-        if ($event->getProcessingState() == Event::STATE_LIVE_RUNNING) {
+        if ($event->isLiveEvent()) {
             // For running live events, provide a clean chat!
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
@@ -197,16 +211,13 @@ class xoctPlayerGUI extends xoctGUI
             $TokenAR = TokenAR::getNewFrom($ChatroomAR->getId(), $this->user->getId(), $public_name);
             $ChatGUI = new ChatGUI($TokenAR);
             $tpl->setVariable('CHAT', $ChatGUI->render(true));
-        } elseif ($event->getProcessingState() == Event::STATE_LIVE_SCHEDULED
-            && $ChatroomAR
-            && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets()
-        ) {
-            // For scheduled live events, show chat history for past live events!
+        } elseif (!is_null($prev_chatroom_id)) {
+            // Show chat history for past live events!
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
                 $this->plugin->getDirectory() . "/templates/default/player_w_chat.css"
             );
-            $ChatHistoryGUI = new ChatHistoryGUI($ChatroomAR->getId());
+            $ChatHistoryGUI = new ChatHistoryGUI($prev_chatroom_id);
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
         }
     }
