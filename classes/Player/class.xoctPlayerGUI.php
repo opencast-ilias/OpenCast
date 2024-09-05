@@ -158,12 +158,23 @@ class xoctPlayerGUI extends xoctGUI
         return $js_config;
     }
 
+    /**
+     * Function to check whether the chat must be provided to the user based on the following conditions:
+     * - Event must be identified as Live
+     * - The "Live Streams" config must be activated.
+     * - The "Activate Chat" config must be activated.
+     * - The "Chat for live events" in series object settings must be activated.
+     *
+     * @param Event $event the event object to check whether the event is live or not.
+     * @return boolean whether the chat should be visible.
+     */
     protected function isChatVisible(Event $event): bool
     {
         return !$this->force_no_chat
             && $event->isLiveEvent() // The event must only be live to provide the chat!
-            && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT)
-            && $this->object_settings->isChatActive();
+            && PluginConfig::getConfig(PluginConfig::F_ENABLE_LIVE_STREAMS) // The Live Streams config must be activated.
+            && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT) // The Chat config must be activated.
+            && $this->object_settings->isChatActive(); // The series object settings must allow the chat.
     }
 
     /**
