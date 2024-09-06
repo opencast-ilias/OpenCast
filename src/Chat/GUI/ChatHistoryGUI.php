@@ -51,13 +51,19 @@ class ChatHistoryGUI
         foreach (
             MessageAR::where(['chat_room_id' => $this->chat_room_id])->orderBy('sent_at', 'ASC')->get() as $message
         ) {
+            if (!$message->getUsrId()) {
+                continue;
+            }
             $template->setCurrentBlock('message');
             /** @var $message MessageAR */
             $template->setVariable('USER_ID', $message->getUsrId());
             $template->setVariable('MESSAGE', $message->getMessage());
-            $user = $users[$message->getUsrId()] ?: ($users[$message->getUsrId()] = new ilObjUser(
-                $message->getUsrId()
-            ));
+            if (!empty($users) && array_key_exists($message->getUsrId(), $users)) {
+                $user = $users[$message->getUsrId()];
+            } else {
+                $user = new ilObjUser($message->getUsrId());
+                $users[$message->getUsrId()] = $user;
+            }
             $template->setVariable('PUBLIC_NAME', $user->hasPublicProfile() ? $user->getFullname() : $user->getLogin());
             $template->setVariable('SENT_AT', date('H:i', strtotime($message->getSentAt())));
             $profile_picture_path = './data/' . CLIENT_ID . '/usr_images/usr_' . $message->getUsrId() . '_xsmall.jpg';
