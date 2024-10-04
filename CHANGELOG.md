@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 8.2.3
+- [FIX] removed no longer used update check
+- Fix of #341
+
+
 ## Version 8.2.2
 - [FIX] An error occurred while communicating with the OpenCast-Server: OcEventsApi -> getAll
 
