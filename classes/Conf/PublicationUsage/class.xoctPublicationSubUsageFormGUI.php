@@ -7,6 +7,7 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
 use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsage;
+use srag\Plugins\Opencast\Container\Init;
 
 /**
  * Class xoctPublicationSubUsageFormGUI
