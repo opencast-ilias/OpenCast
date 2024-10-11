@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 8.2.4
+- [FIX] fix broken ACL xml and startDate xml metadata when using ingest upload
+- [FIX] controlling chat visibility: only when event is/was live!
+- [FIX] player not shown if chat enabled
+- [FIX] missing Init import, fixes #357
+
 ## Version 8.2.3
 - [FIX] removed no longer used update check
 - Fix of #341
