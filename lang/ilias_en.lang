@@ -103,6 +103,9 @@ config_reset_terms#:#Updated Terms of Use
 config_reset_terms_info#:#Request users to (re-)accept the terms of use. This option should only be activated if the term's content has changed.
 config_groups#:#Opencast Groups
 config_group_producers#:#ILIAS Producers
+config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
+config_group_studio#:#Opencast Studio
+config_group_studio_info#:#Users with the permission "Record" will be assigned to this Opencast group to obtain access to Opencast Studio.
 config_std_roles#:#Standard roles
 config_std_roles_info#:#These roles are given read and write permissions when creating a series or an event.
 config_role_user_actions#:#Additional ACL actions
@@ -119,7 +122,6 @@ config_use_modals_info#:#When active: the video player will not be opened in a s
 config_workflow_info#:#ID of the workflow which will be executed in Opencast after uploading an event.
 config_workflow_unpublish_info#:#ID of the workflow which will be executed in Opencast before deleting an event. Requires API version 1.1.0. Not required in latest Opencast versions, since it's integrated in the delete workflow.
 config_user_mapping_info#:#Userfield in ILIAS which will be used to identify the user in Opencast.<br><b>Warning: depending on the ILIAS configuration, users may be able to change their own email address. It is strongly recommended not to use email as mapping in that case.</b>
-config_group_producers_info#:#Users with the permission "Edit Videos" will be assigned to this Opencast group to obtain access to Opencast.
 config_role_user_prefix_info#:#User specific role in Opencast. Is used to grant the user permission on a series in Opencast. Example: ROLE_USER_&#123IDENTIFIER}
 config_role_owner_prefix_info#:#Indicates the owner of an event. This rules doesn't have to exist in Opencast. Example: ROLE_OWNER_&#123IDENTIFIER}. DO NOT use the same value as for the user specific role.
 config_identifier_to_uppercase#:#User mapping in uppercase
