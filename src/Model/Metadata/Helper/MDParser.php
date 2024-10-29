@@ -181,6 +181,7 @@ class MDParser
             default:
                 return $value;
         }
+        return null;
     }
 
     /**
@@ -203,17 +204,14 @@ class MDParser
     private function parseFormData(array $data, Metadata $metadata, MDCatalogue $catalogue): Metadata
     {
         foreach (
-            array_filter($data, function ($key): bool {
-                return strpos($key, 'md_') === 0;
-            }, ARRAY_FILTER_USE_KEY)
-            as $id => $value
+            array_filter($data, fn ($key): bool => strpos($key, 'md_') === 0, ARRAY_FILTER_USE_KEY) as $id => $value
         ) {
             $id = substr($id, 3);
             $definition = $catalogue->getFieldById($id);
             if ($definition->isReadOnly()) {
                 continue;
             }
-            if ($id == MDFieldDefinition::F_START_DATE) {
+            if ($id === MDFieldDefinition::F_START_DATE) {
                 // start date must be split up into startDate and startTime for the OC api
                 $field = new MetadataField($id, MDDataType::date());
                 $time_field = (new MetadataField(MDFieldDefinition::F_START_TIME, MDDataType::time()));

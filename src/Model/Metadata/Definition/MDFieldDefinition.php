@@ -29,13 +29,20 @@ class MDFieldDefinition
     private MDDataType $type;
     private bool $read_only;
     private bool $required;
+    private bool $mandatory;
 
-    public function __construct(string $id, MDDataType $type, bool $read_only, bool $required)
-    {
+    public function __construct(
+        string $id,
+        MDDataType $type,
+        bool $read_only,
+        bool $required,
+        bool $mandatory = false
+    ) {
         $this->id = $id;
         $this->type = $type;
         $this->read_only = $read_only;
         $this->required = $required;
+        $this->mandatory = $mandatory;
     }
 
     public function getId(): string
@@ -56,5 +63,10 @@ class MDFieldDefinition
     public function isRequired(): bool
     {
         return $this->required;
+    }
+
+    public function isMandatory(): bool
+    {
+        return $this->mandatory;
     }
 }
