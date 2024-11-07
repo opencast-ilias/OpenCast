@@ -226,7 +226,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
     /**
      * Converts or better say digest the loaded list and replaces the translation to be processed by the plugin.
      *
-     * @param array $raw_list  the raw list that comes from the listprovider endpoints
+     * @param array $raw_list the raw list that comes from the listprovider endpoints
      * @param string $field_id the field id to differentiate between the list type
      *
      * @return array of digested list.
