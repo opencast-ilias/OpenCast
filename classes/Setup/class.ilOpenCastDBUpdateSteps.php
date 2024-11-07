@@ -72,7 +72,7 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
                 'id' => ['integer', $next_id],
                 'field_id' => ['text', 'title'],
                 'title_de' => ['text', 'Titel'],
-                'title_en' => ['text', 'Ttitle'],
+                'title_en' => ['text', 'Title'],
                 'visible_for_permissions' => ['text', 'all'],
                 'required' => ['integer', 1],
                 'read_only' => ['integer', 0],
