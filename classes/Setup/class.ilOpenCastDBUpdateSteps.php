@@ -82,4 +82,31 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             ]
         );
     }
+
+    public function step_4(): void
+    {
+        // check for missing mandatory "title" MD for series
+        $r = $this->db->query("SELECT id FROM xoct_md_field_event WHERE field_id = 'title'");
+        if ($r->rowCount() > 0) {
+            return;
+        }
+
+        $next_id = $this->db->nextId('xoct_md_field_event');
+
+        $this->db->insert(
+            'xoct_md_field_event',
+            [
+                'id' => ['integer', $next_id],
+                'field_id' => ['text', 'title'],
+                'title_de' => ['text', 'Titel'],
+                'title_en' => ['text', 'Title'],
+                'visible_for_permissions' => ['text', 'all'],
+                'required' => ['integer', 1],
+                'read_only' => ['integer', 0],
+                'prefill' => ['text', ''],
+                'sort' => ['integer', 1],
+                'values' => ['text', '']
+            ]
+        );
+    }
 }
