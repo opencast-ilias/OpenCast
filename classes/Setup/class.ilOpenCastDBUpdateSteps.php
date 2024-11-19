@@ -85,7 +85,7 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
 
     public function step_4(): void
     {
-        // check for missing mandatory "title" MD for series
+        // check for missing mandatory "title" MD for event
         $r = $this->db->query("SELECT id FROM xoct_md_field_event WHERE field_id = 'title'");
         if ($r->rowCount() > 0) {
             return;
