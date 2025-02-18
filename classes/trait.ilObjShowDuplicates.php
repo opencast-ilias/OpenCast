@@ -163,7 +163,8 @@ trait ilObjShowDuplicates
         // process
         /** @var ObjectSettings $objectSettings */
         $objectSettings = ObjectSettings::find($a_obj_id);
-        if ($objectSettings && $all_refs = $objectSettings->getDuplicatesOnSystem()) {
+        $all_refs = $objectSettings ?  $objectSettings->getDuplicatesOnSystem() : null;
+        if (!empty($all_refs)) {
             $il_language->loadLanguageModule("rep");
 
             $may_delete_any = 0;
