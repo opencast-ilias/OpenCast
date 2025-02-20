@@ -56,6 +56,11 @@ class SeriesAPIRepository implements SeriesRepository, Request
         return 'series';
     }
 
+    public function clearCache(string $identifier): void
+    {
+        $this->cache->delete($identifier);
+    }
+
     public function find(string $identifier): Series
     {
         return $this->fetch($identifier);
@@ -143,7 +148,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
                     'withacl' => false,
                     'limit' => 5000
                 ]);
-                $data = array_filter($data, static fn($series): bool => $series instanceof \stdClass);
+                $data = array_filter($data, static fn ($series): bool => $series instanceof \stdClass);
 
             } catch (\Throwable $e) {
                 $data = [];
