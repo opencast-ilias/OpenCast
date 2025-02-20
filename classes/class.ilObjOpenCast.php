@@ -18,11 +18,6 @@ use srag\Plugins\Opencast\Container\Init;
 class ilObjOpenCast extends ilObjectPlugin
 {
     /**
-     * @var bool
-     */
-    protected $object;
-    public const DEV = false;
-    /**
      * @var \ilCtrl
      */
     private $ctrl;
