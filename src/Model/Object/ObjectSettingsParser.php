@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Model\Object;
 
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\UI\ObjectSettings\ObjectSettingsFormItemBuilder;
 
 class ObjectSettingsParser
@@ -25,7 +26,13 @@ class ObjectSettingsParser
             is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP] ?? null)
             && $data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP][ObjectSettingsFormItemBuilder::F_PERMISSION_ALLOW_SET_OWN] ?? false
         );
-        $objectSettings->setChatActive((bool) ($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE] ?? false));
+        // Taking the default value from configs!
+        $chat_activation = (bool) PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT);
+        // If the data contains the chat activation, we will use that value instead of the default one.
+        if (isset($data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE])) {
+            $chat_activation = (bool) $data[ObjectSettingsFormItemBuilder::F_CHAT_ACTIVE];
+        }
+        $objectSettings->setChatActive($chat_activation);
 
         return $objectSettings;
     }
