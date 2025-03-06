@@ -100,7 +100,8 @@ class MDConfigTable extends ilTable2GUI
                 $this->dic->ctrl()->getFormAction($this->parent_obj, 'delete')
             )
             ->withAffectedItems([
-                $this->ui_factory->modal()->interruptiveItem(
+                $this->ui_factory->modal()->interruptiveItem()->keyValue(
+                    $a_set['field_id'],
                     $a_set['field_id'],
                     $a_set['title_de']
                 )
