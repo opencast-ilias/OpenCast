@@ -241,6 +241,9 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
+                            if ($file === []) {
+                                return [];
+                            }
                             $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
@@ -308,6 +311,9 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
+                            if ($file === []) {
+                                return [];
+                            }
                             $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
