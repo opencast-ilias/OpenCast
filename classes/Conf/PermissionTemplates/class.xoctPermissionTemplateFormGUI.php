@@ -243,9 +243,12 @@ class xoctPermissionTemplateFormGUI extends ilPropertyFormGUI
         $this->object->setAdditionalActionsDownload($this->getInput(self::F_ADDITIONAL_ACTIONS_DOWNLOAD));
         $this->object->setAdditionalActionsAnnotate($this->getInput(self::F_ADDITIONAL_ACTIONS_ANNOTATE));
 
-        $this->object->setAddedRole($this->getInput(self::F_ADDED_ROLE));
+        $added_role = $this->getInput(self::F_ADDED_ROLE);
+        $added_role = empty($added_role) ? null : (int) $added_role;
 
-        if ($this->getInput(self::F_ADDED_ROLE) !== '' && $this->getInput(self::F_ADDED_ROLE) !== '0') {
+        $this->object->setAddedRole($added_role);
+
+        if ($added_role !== null) {
             $this->object->setAddedRoleName($this->getInput(self::F_ADDED_ROLE_NAME));
             $this->object->setAddedRoleRead((int) $this->getInput(self::F_ADDED_ROLE_READ));
             $this->object->setAddedRoleWrite((int) $this->getInput(self::F_ADDED_ROLE_WRITE));
