@@ -66,41 +66,6 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
         ];
     }
 
-    public function insertDeleteCommand(): void
-    {
-        if ($this->std_cmd_only) {
-            return;
-        }
-
-        if ($this->getContainerObject() instanceof ilAdministrationCommandHandling) {
-            if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-                $this->ctrl->setParameterByClass("ilObjOpenCastGUI", 'item_ref_id', $this->getCommandId());
-                $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "delete");
-                $this->insertCommand($cmd_link, $this->lng->txt("delete"));
-                $this->adm_commands_included = true;
-                return;
-            }
-            return;
-        }
-
-        if ($this->checkCommandAccess('delete', '', $this->ref_id, $this->type)) {
-            $this->ctrl->setParameterByClass(
-                "ilObjOpenCastGUI",
-                "ref_id",
-                $this->parent_ref_id
-            );
-            $this->ctrl->setParameterByClass("ilObjOpenCastGUI", "item_ref_id", $this->getCommandId());
-            $cmd_link = $this->ctrl->getLinkTargetByClass("ilObjOpenCastGUI", "deleteObject");
-            $this->insertCommand(
-                $cmd_link,
-                $this->lng->txt("delete"),
-                "",
-                ""
-            );
-            $this->adm_commands_included = true;
-        }
-    }
-
     protected function getObject(): \ilObjOpenCast
     {
         return new ilObjOpenCast($this->ref_id);

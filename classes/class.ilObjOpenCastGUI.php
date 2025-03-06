@@ -168,11 +168,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                     break;
                 default:
                     $this->ilias_dic->ctrl()->saveParameter($this, 'new_type');
-                    // workaround for object deletion; 'parent::executeCommand()' shows the template and leads to "Headers already sent" error
-                    if ($next_class == "" && $cmd == 'deleteObject') {
-                        $this->deleteObject();
-                        break;
-                    }
                     parent::executeCommand();
                     break;
             }
