@@ -53,20 +53,26 @@ class xoctSecureLink
         return $data->url;
     }
 
-
     public static function signThumbnail(string $url): string
     {
         $duration = PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_TIME);
         $valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
-        return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP));
+        return self::sign(
+            $url,
+            $valid_until,
+            (bool) PluginConfig::getConfig(PluginConfig::F_SIGN_THUMBNAIL_LINKS_WITH_IP)
+        );
     }
-
 
     public static function signAnnotation(string $url): string
     {
         $duration = PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_TIME);
         $valid_until = ($duration > 0) ? gmdate("Y-m-d\TH:i:s\Z", time() + $duration) : null;
-        return self::sign($url, $valid_until, PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP));
+        return self::sign(
+            $url,
+            $valid_until,
+            (bool) PluginConfig::getConfig(PluginConfig::F_SIGN_ANNOTATION_LINKS_WITH_IP)
+        );
     }
 
     public static function signPlayer(string $url, int $duration = 0): string
