@@ -133,7 +133,7 @@ class xoctPermissionTemplateGUI extends xoctGUI
         );
         $xoctPermissionTemplateFormGUI->setValuesByPost();
         if ($xoctPermissionTemplateFormGUI->saveForm()) {
-            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('_msg_success'), true);
+            $this->main_tpl->setOnScreenMessage('success', $this->getLocaleString('msg_success'), true);
             $this->ctrl->redirect($this);
         }
         $this->main_tpl->setContent($xoctPermissionTemplateFormGUI->getHTML());
