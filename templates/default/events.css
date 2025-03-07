@@ -20,14 +20,6 @@
 	background-color: #D6FFAC !important;
 }
 
-.event-state {
-
-}
-
-.event-link-list {
-
-}
-
 .xoct_iframe {
 	border: none;
 	width:  100%;
@@ -84,15 +76,6 @@
 	text-align: center;
 }
 
-div.btn-group-vertical button.btn-default {
-	background-color: #dcb496;
-	border-color: #d6a683;
-}
-
-div.btn-group-vertical button.btn-default:hover, div.btn-group-vertical button.btn-default:focus, div.btn-group-vertical .open > .dropdown-toggle.btn-default {
-	background-color: #cf9970;
-	border-color: #c68655;
-}
 
 div.il-card .xoct_event_state span.label {
 	width: 100%;
@@ -206,9 +189,4 @@ div.modal-body form .ilFormFooter {
 	#xoct_tile_container {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
-}
-
-.std .btn-group-vertical .dropdown .btn {
-	width: 100%;
-	text-align: center;
 }
