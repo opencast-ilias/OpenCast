@@ -46,12 +46,14 @@ class MyEvents implements DataRetrieval
     private \ilUIFilterService $filter_service;
     private ?array $filter_data = null;
     private xoctUser $user;
+    private \ILIAS\UI\Renderer $ui_renderer;
 
     public function __construct(
         \ILIAS\UI\Factory $ui_factory,
         Container $container
     ) {
         $this->ui_factory = $ui_factory;
+        $this->ui_renderer = $container->ilias()->ui()->renderer();
         $this->container = $container;
         $this->refinery = $container->ilias()->refinery();
         $this->event_repository = $container->get(EventAPIRepository::class);
@@ -230,7 +232,7 @@ class MyEvents implements DataRetrieval
 //                'status' => $this->ui_factory->table()->column()->text(
 //                    $this->container->translator()->translate("event_processing_state")
 //                )->withIsOptional(true),
-                'action' => $this->ui_factory->table()->column()->link(
+                'action' => $this->ui_factory->table()->column()->text(
                     $this->container->translator()->translate("select")
                 )->withIsSortable(false),
             ],
@@ -254,6 +256,15 @@ class MyEvents implements DataRetrieval
             ) as $event
         ) {
             $action = (string) $this->target_url->withParameter($this->parameter_name, $event->getIdentifier());
+
+            $action_button = $this->ui_factory->button()->shy(
+                $this->container->translator()->translate("select"),
+                $action
+            );
+            if($event->getProcessingState() !== Event::STATE_SUCCEEDED) {
+                $action_button = $action_button->withUnavailableAction();
+            }
+
             yield $row_builder->buildDataRow(
                 $event->getIdentifier(),
                 [
@@ -274,10 +285,7 @@ class MyEvents implements DataRetrieval
                     'series' => $this->getSeriesName($event),
                     'presenter' => implode(", ", $event->getPresenter()),
                     'status' => $event->getProcessingState(),
-                    'action' => $this->ui_factory->link()->standard(
-                        $this->container->translator()->translate("select"),
-                        $action
-                    )
+                    'action' => $this->ui_renderer->render($action_button),
                 ]
             );
         }
@@ -378,8 +386,6 @@ class MyEvents implements DataRetrieval
             return [];
         }
 
-        return array_filter($events, static function (Event $event): bool {
-            return $event->getProcessingState() === Event::STATE_SUCCEEDED;
-        });
+        return $events;
     }
 }
