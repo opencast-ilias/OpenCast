@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 9.0.3
+- [FIX] Upload without subtitle-file or thumbnail-image fails with an error
+- [FIX] removed special case while deleting objects from repository
+
 ## Version 9.0.2
 - [FIX] call database on null when using Plugin-API #384
 
