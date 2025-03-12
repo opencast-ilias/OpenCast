@@ -19,7 +19,7 @@
   "require": {
     "php": ">=8.1 <8.3",
     "ext-dom": "*",
-    "elan-ev/opencast-api": "1.7"
+    "elan-ev/opencast-api": "1.9.0"
   },
   "autoload": {
     "exclude-from-classmap": ["vendor/guzzlehttp/", "vendor/ralouphie/", "vendor/psr/http-message", "vendor/psr/http-factory", "vendor/psr/http-client"],

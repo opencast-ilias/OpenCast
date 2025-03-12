@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4477a83e17ece852980f62262f33d45b",
+    "content-hash": "f7c63dfe3c40f83852eef7b05d15a416",
     "packages": [
         {
             "name": "elan-ev/opencast-api",
-            "version": "1.7.0",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elan-ev/opencast-php-library.git",
-                "reference": "34dee9ad29c6059d6ec913438c48c3f3e6721b5c"
+                "reference": "041f29d10f9572b038e8665f6cc2f9c86d488da8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elan-ev/opencast-php-library/zipball/34dee9ad29c6059d6ec913438c48c3f3e6721b5c",
-                "reference": "34dee9ad29c6059d6ec913438c48c3f3e6721b5c",
+                "url": "https://api.github.com/repos/elan-ev/opencast-php-library/zipball/041f29d10f9572b038e8665f6cc2f9c86d488da8",
+                "reference": "041f29d10f9572b038e8665f6cc2f9c86d488da8",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,7 @@
             },
             "require-dev": {
                 "phpcompatibility/php-compatibility": "^9.3",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^10.5",
                 "squizlabs/php_codesniffer": "^3.7"
             },
             "type": "library",
@@ -39,7 +39,8 @@
                 "psr-4": {
                     "OpencastApi\\": "src/OpencastApi/",
                     "OpencastApi\\Mock\\": "src/OpencastApi/Mock/",
-                    "OpencastApi\\Rest\\": "src/OpencastApi/Rest/"
+                    "OpencastApi\\Rest\\": "src/OpencastApi/Rest/",
+                    "OpencastApi\\Util\\": "src/OpencastApi/Util/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -61,9 +62,9 @@
             ],
             "support": {
                 "issues": "https://github.com/elan-ev/opencast-php-library/issues",
-                "source": "https://github.com/elan-ev/opencast-php-library/tree/1.7.0"
+                "source": "https://github.com/elan-ev/opencast-php-library/tree/1.9.0"
             },
-            "time": "2024-06-13T12:41:49+00:00"
+            "time": "2025-03-10T07:54:08+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3446,13 +3447,13 @@
     ],
     "aliases": [],
     "minimum-stability": "beta",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.1 <8.3",
         "ext-dom": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

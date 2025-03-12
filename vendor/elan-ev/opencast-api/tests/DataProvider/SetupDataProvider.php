@@ -27,15 +27,23 @@ class SetupDataProvider {
         return $config;
     }
 
-    public static function getMockResponses($fileName): array
+    public static function getMockResponses($data): array
     {
+        $responseNames = [];
+        if (!is_array($data)) {
+            $responseNames[] = $data;
+        } else {
+            $responseNames = $data;
+        }
         $mockResponse = [];
         $mockResponsesDir = __DIR__ . "/mock_responses";
-        $fileFullName = basename($fileName, ".json") . '.json';
-        $filePath = $mockResponsesDir . "/" . $fileFullName;
-        if (file_exists($filePath)) {
-            $responseStr = file_get_contents($filePath);
-            $mockResponse = json_decode($responseStr, true);
+        foreach ($responseNames as $fileName) {
+            $fileFullName = basename($fileName, ".json") . '.json';
+            $filePath = $mockResponsesDir . "/" . $fileFullName;
+            if (file_exists($filePath)) {
+                $responseStr = file_get_contents($filePath);
+                $mockResponse = array_merge($mockResponse, json_decode($responseStr, true));
+            }
         }
         return $mockResponse !== false ? $mockResponse : [];
     }
