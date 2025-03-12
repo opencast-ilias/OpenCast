@@ -18,6 +18,8 @@ class OcRestClient extends Client
     private $noHeader = false;
     private $origin;
     private $features = [];
+    private $globalOptions = [];
+
     /*
         $config = [
             'url' => 'https://develop.opencast.org/',       // The API url of the opencast instance (required)
@@ -27,7 +29,8 @@ class OcRestClient extends Client
             'connect_timeout' => 0,                         // The API connection timeout. In seconds (default 0 to wait indefinitely) (optional)
             'version' => null,                               // The API Version. (Default null). (optional)
             'handler' => null,                               // The callable Handler or HandlerStack. (Default null). (optional)
-            'features' => null                              // A set of additional features [e.g. lucene search]. (Default null). (optional)
+            'features' => null,                              // A set of additional features [e.g. lucene search]. (Default null). (optional)
+            'guzzle' => null,                                // Additional Guzzle Request Options. These options can overwrite some default options (Default null). (optional)
         ]
     */
     public function __construct($config)
@@ -56,6 +59,10 @@ class OcRestClient extends Client
 
         if (isset($config['features'])) {
             $this->features = $config['features'];
+        }
+
+        if (isset($config['guzzle'])) {
+            $this->globalOptions = $config['guzzle'];
         }
 
         parent::__construct($parentConstructorConfig);
@@ -101,11 +108,12 @@ class OcRestClient extends Client
 
     private function addRequestOptions($uri, $options)
     {
+        $globalOptions = $this->globalOptions;
 
         // Perform a temp no header request.
         if ($this->noHeader) {
             $this->noHeader = false;
-            return array_merge($options , ['headers' => null]);
+            return array_merge($globalOptions, $options, ['headers' => null]);
         }
 
         $generalOptions = [];
@@ -150,7 +158,7 @@ class OcRestClient extends Client
             }
         }
 
-        $requestOptions = array_merge($generalOptions, $options);
+        $requestOptions = array_merge($generalOptions, $globalOptions, $options);
         return $requestOptions;
     }
 
@@ -161,7 +169,11 @@ class OcRestClient extends Client
                 // We have to use an aux object, in order to prevent overwriting arguments of current object.
                 $aux = clone $this;
                 $aux->enableNoHeader();
-                $defaultVersion = $aux->performGet('/api/version/default');
+                $options = [];
+                if (!empty($this->username) && !empty($this->password)) {
+                    $options['auth'] = [$this->username, $this->password];
+                }
+                $defaultVersion = $aux->performGet('/api/version/default', $options);
                 if (!empty($defaultVersion['body']) && isset($defaultVersion['body']->default)) {
                     $this->setVersion(str_replace(['application/', 'v', '+json'], ['', '', ''], $defaultVersion['body']->default));
                 } else {
