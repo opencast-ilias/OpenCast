@@ -32,6 +32,7 @@ return array(
     'OpencastApi\\Rest\\OcSysinfo' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSysinfo.php',
     'OpencastApi\\Rest\\OcWorkflow' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflow.php',
     'OpencastApi\\Rest\\OcWorkflowsApi' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflowsApi.php',
+    'OpencastApi\\Util\\OcUtils' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Util/OcUtils.php',
     'WaitOverlay' => $baseDir . '/src/UI/WaitOverlay.php',
     'ilObjOpenCast' => $baseDir . '/classes/class.ilObjOpenCast.php',
     'ilObjOpenCastAccess' => $baseDir . '/classes/class.ilObjOpenCastAccess.php',

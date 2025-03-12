@@ -20,6 +20,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         ),
         'O' => 
         array (
+            'OpencastApi\\Util\\' => 17,
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
@@ -41,6 +42,10 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'OpencastApi\\Util\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util',
         ),
         'OpencastApi\\Rest\\' => 
         array (
@@ -95,6 +100,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'OpencastApi\\Rest\\OcSysinfo' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcSysinfo.php',
         'OpencastApi\\Rest\\OcWorkflow' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflow.php',
         'OpencastApi\\Rest\\OcWorkflowsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflowsApi.php',
+        'OpencastApi\\Util\\OcUtils' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util/OcUtils.php',
         'WaitOverlay' => __DIR__ . '/../..' . '/src/UI/WaitOverlay.php',
         'ilObjOpenCast' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCast.php',
         'ilObjOpenCastAccess' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastAccess.php',
