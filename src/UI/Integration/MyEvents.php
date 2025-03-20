@@ -261,7 +261,8 @@ class MyEvents implements DataRetrieval
                 $this->container->translator()->translate("select"),
                 $action
             );
-            if($event->getProcessingState() !== Event::STATE_SUCCEEDED) {
+            $succeeded_state = $event->getProcessingState() === Event::STATE_SUCCEEDED;
+            if(!$succeeded_state) {
                 $action_button = $action_button->withUnavailableAction();
             }
 
@@ -272,13 +273,17 @@ class MyEvents implements DataRetrieval
                         $event->publications()->getThumbnailUrl(),
                         $event->getTitle(),
                         Icon::LARGE
-                    )->withAdditionalOnLoadCode(function (string $id) use ($action): string {
-                        return "let img = document.getElementById('$id');
+                    )->withAdditionalOnLoadCode(function (string $id) use ($action, $succeeded_state): string {
+                        $inline_script = "let img = document.getElementById('$id');
                         img.style.cursor = 'pointer';
                         img.style.width = '220px';
                         img.style.height = 'auto';
-                        img.onclick = function() { window.location.href = '$action';
-                        }";
+                        ";
+                        if ($succeeded_state) {
+                            $inline_script .= "img.onclick = function() {window.location.href = '$action'};";
+                        }
+
+                        return $inline_script;
                     }),
                     'title' => $event->getTitle(),
                     'date' => $event->getStart(),
