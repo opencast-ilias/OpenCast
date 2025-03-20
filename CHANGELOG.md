@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 9.0.4
+- [FIX] In plugin configuration: Accessing tab "Metadata" not possible
+- [FIX]  Opencast objects do not work if stream security is enabled
+
 ## Version 9.0.3
 - [FIX] Upload without subtitle-file or thumbnail-image fails with an error
 - [FIX] removed special case while deleting objects from repository
