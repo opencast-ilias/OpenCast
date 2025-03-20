@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.0.5
+- make sure chat activation gets default value from config when creating new series
+
 ## Version 9.0.4
 - [FIX] In plugin configuration: Accessing tab "Metadata" not possible
 - [FIX]  Opencast objects do not work if stream security is enabled
