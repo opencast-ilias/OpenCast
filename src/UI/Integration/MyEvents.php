@@ -16,14 +16,12 @@ use ILIAS\UI\Component\Item\Group;
 use srag\Plugins\Opencast\Model\Event\Event;
 use ILIAS\Data\URI;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
-use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Component\Button\Button;
 use ILIAS\UI\Component\Table\DataRetrieval;
 use ILIAS\Data\Order;
 use ILIAS\UI\Component\Table\DataRowBuilder;
 use ILIAS\Data\Range;
 use Generator;
-use ILIAS\Data\DateFormat\DateFormat;
 use ILIAS\Data\Factory;
 use ILIAS\UI\Implementation\Component\Symbol\Icon\Icon;
 
@@ -33,6 +31,8 @@ use ILIAS\UI\Implementation\Component\Symbol\Icon\Icon;
  */
 class MyEvents implements DataRetrieval
 {
+    use Commons;
+
     /**
      * @readonly
      */
@@ -45,7 +45,6 @@ class MyEvents implements DataRetrieval
      * @readonly
      */
     private SeriesAPIRepository $series_repository;
-    private array $series_name_cache = [];
     private ?array $event_cache = null;
     private ?URI $target_url = null;
     private string $parameter_name = 'event_id';
@@ -61,7 +60,8 @@ class MyEvents implements DataRetrieval
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
-        private Container $container
+        private Container $container,
+        private Events $events
     ) {
         $this->refinery = $this->container->ilias()->refinery();
         $this->event_repository = $this->container->get(EventAPIRepository::class);
@@ -104,18 +104,6 @@ class MyEvents implements DataRetrieval
         return $filter;
     }
 
-    protected function getSeriesName(Event $event): string
-    {
-        $series_id = $event->getSeries();
-        if (isset($this->series_name_cache[$series_id])) {
-            return $this->series_name_cache[$series_id];
-        }
-
-        $series_name = $this->series_repository->find($series_id)->getMetadata()->getField('title')->getValue();
-
-        return $this->series_name_cache[$series_id] = $series_name;
-    }
-
     public function asItemGroupWithFilters(
         URI $calling_url,
         URI $target_url,
@@ -143,31 +131,13 @@ class MyEvents implements DataRetrieval
                 $parameter_name,
                 $event->getIdentifier()
             );
-            $items[] = $this->ui_factory
-                ->item()
-                ->standard(
-                    $this->ui_factory->link()->standard(
-                        $event->getTitle(),
-                        $action
-                    )
-                )->withActions(
-                    $this->ui_factory->dropdown()->standard([
-                        $this->ui_factory->link()->standard(
-                            $t("select"),
-                            $action
-                        ),
-                    ])
-                )
-                ->withProperties([
-                    $t("event_date") => $event->getStart()->format('d.m.Y H:i'),
-                    $t("event_series") => $this->getSeriesName($event),
-                    $t("event_presenter") => implode(", ", $event->getPresenter()),
-                ])->withLeadImage(
-                    $this->ui_factory->image()->responsive(
-                        $event->publications()->getThumbnailUrl(),
-                        'src'
-                    )->withAction($action)
-                );
+            $actions = [
+                $this->ui_factory->link()->standard(
+                    $t("select"),
+                    $action
+                ),
+            ];
+            $items[] = $this->events->asItem($event, $action, $actions);
         }
 
         return $this->ui_factory->item()->group(
