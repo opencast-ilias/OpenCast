@@ -119,6 +119,9 @@ class MDPrefiller
         }
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
+            if ($course_or_group === null) {
+                return [];
+            }
             foreach (self::$course_properties as $prop_name => $method_name) {
                 if (method_exists($course_or_group, $method_name)) {
                     $course[$prop_name] = $course_or_group->$method_name();
