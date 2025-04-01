@@ -1,10 +1,10 @@
 <?php
 
 declare(strict_types=1);
+
 use srag\Plugins\Opencast\Container\Container;
 use ILIAS\DI\UIServices;
 use ILIAS\UI\Component\Link\Standard;
-
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -20,7 +20,6 @@ use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
-use srag\Plugins\Opencast\Model\DTO\DownloadDto;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\Container\Init;
@@ -38,7 +37,7 @@ class xoctEventRenderer
     public const LANG_MODULE = 'event';
     private bool $async;
     private Container $container;
-    protected ilOpenCastPlugin$plugin;
+    protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $legacy_container;
     protected Factory $factory;
     protected Renderer $renderer;
@@ -634,13 +633,6 @@ class xoctEventRenderer
         );
 
         $actions = [];
-
-        if (ilObjOpenCast::DEV) {
-            $actions[] = $this->factory->link()->standard(
-                $this->plugin->txt('event_view'),
-                $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctGUI::CMD_VIEW)
-            );
-        }
 
         // Edit Owner
         if (ilObjOpenCastAccess::checkAction(
