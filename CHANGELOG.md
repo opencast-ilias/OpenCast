@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 9.0.6
+- [FIX] several issues with permission templates
+- [FIX] Sorting for "Series" ist not possible
+
 ## Version 9.0.5
 - make sure chat activation gets default value from config when creating new series
 
