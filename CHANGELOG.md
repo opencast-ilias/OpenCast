@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.3.4
+- [FIX] Sorting for "Series" ist not possible
+
 ## Version 8.3.3
 - make sure chat activation gets default value from config when creating new series
 - add ACL notation and hidden seriesField to Studio link, fixes #382
