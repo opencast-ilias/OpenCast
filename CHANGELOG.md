@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.0.7
+- [FIX] clear series cache after renaming series, #381
+
 ## Version 9.0.6
 - [FIX] several issues with permission templates
 - [FIX] Sorting for "Series" ist not possible
@@ -435,3 +438,4 @@
 
 
 ## Version 1.0.0
+
