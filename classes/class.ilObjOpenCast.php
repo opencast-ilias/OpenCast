@@ -31,7 +31,9 @@ class ilObjOpenCast extends ilObjectPlugin
         global $DIC;
         $this->ctrl = $DIC->ctrl();
         parent::__construct($a_ref_id);
-        $this->cache = Init::init($DIC)->get(Services::class);
+        $init_instance = Init::init($DIC);
+        $this->cache = $init_instance->get(Services::class);
+        $this->series_repository = $init_instance->get(SeriesAPIRepository::class);
         $this->series_repository = Init::init($DIC)->get(SeriesAPIRepository::class);
     }
 
