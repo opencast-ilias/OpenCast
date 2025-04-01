@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.3.5
+- [FIX] clear series cache after renaming series, #381
+
 ## Version 8.3.4
 - [FIX] Sorting for "Series" ist not possible
 
@@ -442,3 +445,4 @@
 
 
 ## Version 1.0.0
+
