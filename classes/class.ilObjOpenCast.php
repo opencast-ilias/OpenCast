@@ -7,6 +7,8 @@ use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGroup;
 use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\Model\Cache\Services;
+use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 
 /**
  * Class ilObjOpenCast
@@ -17,15 +19,9 @@ use srag\Plugins\Opencast\Container\Init;
  */
 class ilObjOpenCast extends ilObjectPlugin
 {
-    /**
-     * @var bool
-     */
-    protected $object;
-    public const DEV = false;
-    /**
-     * @var \ilCtrl
-     */
-    private $ctrl;
+    private Services $cache;
+    private ilCtrlInterface $ctrl;
+    private SeriesAPIRepository $series_repository;
 
     /**
      * @param int $a_ref_id
@@ -35,6 +31,10 @@ class ilObjOpenCast extends ilObjectPlugin
         global $DIC;
         $this->ctrl = $DIC->ctrl();
         parent::__construct($a_ref_id);
+        $init_instance = Init::init($DIC);
+        $this->cache = $init_instance->get(Services::class);
+        $this->series_repository = $init_instance->get(SeriesAPIRepository::class);
+        $this->series_repository = Init::init($DIC)->get(SeriesAPIRepository::class);
     }
 
     final protected function initType(): void
@@ -69,25 +69,30 @@ class ilObjOpenCast extends ilObjectPlugin
         if ($update) {
             $this->update();
         }
+        $this->cache->flushAdapter();
     }
 
     protected function doUpdate(): void
     {
+        /** @var ObjectSettings $object_settings */
+        $object_settings = ObjectSettings::find($this->getId());
+        $this->series_repository->clearCache($object_settings->getSeriesIdentifier());
     }
 
     protected function doDelete(): void
     {
         $opencast_dic = Init::init()->legacy();
-        /** @var ObjectSettings $objectSettings */
-        $objectSettings = ObjectSettings::find($this->getId());
-        if ($objectSettings) {
-            $opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerFileId());
-            $opencast_dic->paella_config_storage_service()->delete($objectSettings->getPaellaPlayerLiveFileId());
-            $objectSettings->delete();
+        /** @var ObjectSettings $object_settings */
+        $object_settings = ObjectSettings::find($this->getId());
+        if ($object_settings) {
+            $opencast_dic->paella_config_storage_service()->delete($object_settings->getPaellaPlayerFileId());
+            $opencast_dic->paella_config_storage_service()->delete($object_settings->getPaellaPlayerLiveFileId());
+            $object_settings->delete();
         }
         foreach (PermissionGroup::where(['serie_id' => $this->getId()])->get() as $ivt_group) {
             $ivt_group->delete();
         }
+        $this->cache->flushAdapter();
     }
 
     /**
