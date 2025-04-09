@@ -69,7 +69,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
         $this->addColumn($this->getLocaleString('table_column_additional_acl_actions'));
         $this->addColumn($this->getLocaleString('table_column_additional_actions_download'));
         $this->addColumn($this->getLocaleString('table_column_additional_actions_annotate'));
-        $this->addColumn($this->getLocaleString('actions', 'common'), "", '30px', false);
+        $this->addColumn($this->getLocaleString('actions', 'common'), "", '120px', false);
     }
 
     #[ReturnTypeWillChange]

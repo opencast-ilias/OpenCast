@@ -41,9 +41,11 @@ final class Init
      */
     public static function init(?\ILIAS\DI\Container $ilias_container = null): Container
     {
+        global $DIC;
         if (self::$container !== null) {
             return self::$container;
         }
+        $ilias_container ??= $DIC;
         PluginConfig::setApiSettings();
 
         $opencast_container = new Container();

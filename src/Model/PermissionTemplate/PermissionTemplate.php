@@ -176,29 +176,23 @@ class PermissionTemplate extends ActiveRecord
      */
     protected $added_role_write_access;
     /**
-     * @var String
-     *
      * @db_has_field        true
      * @db_fieldtype        text
      * @db_length           256
      */
-    protected $added_role_acl_actions;
+    protected ?string $added_role_acl_actions = null;
     /**
-     * @var String
-     *
      * @db_has_field        true
      * @db_fieldtype        text
      * @db_length           256
      */
-    protected $added_role_actions_download;
+    protected ?string $added_role_actions_download = null;
     /**
-     * @var String
-     *
      * @db_has_field        true
      * @db_fieldtype        text
      * @db_length           256
      */
-    protected $added_role_actions_annotate;
+    protected ?string $added_role_actions_annotate = null;
 
     public function create(): void
     {
@@ -508,7 +502,7 @@ class PermissionTemplate extends ActiveRecord
 
     public function getAddedRoleAclActions(): ?string
     {
-        return str_replace(' ', '', $this->added_role_acl_actions);
+        return str_replace(' ', '', $this->added_role_acl_actions ?? '');
     }
 
     public function setAddedRoleAclActions(?string $additional_acl_actions): void

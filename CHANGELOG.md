@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 9.0.7
+- [FIX] clear series cache after renaming series, #381
+
+## Version 9.0.6
+- [FIX] several issues with permission templates
+- [FIX] Sorting for "Series" ist not possible
+
+## Version 9.0.5
+- make sure chat activation gets default value from config when creating new series
+
+## Version 9.0.4
+- [FIX] In plugin configuration: Accessing tab "Metadata" not possible
+- [FIX]  Opencast objects do not work if stream security is enabled
+
 ## Version 9.0.3
 - [FIX] Upload without subtitle-file or thumbnail-image fails with an error
 - [FIX] removed special case while deleting objects from repository
@@ -424,3 +438,4 @@
 
 
 ## Version 1.0.0
+
