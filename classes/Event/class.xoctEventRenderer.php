@@ -4,7 +4,6 @@ declare(strict_types=1);
 use srag\Plugins\Opencast\Container\Container;
 use ILIAS\DI\UIServices;
 use ILIAS\UI\Component\Link\Standard;
-
 use ILIAS\UI\Component\Component;
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
@@ -38,9 +37,9 @@ class xoctEventRenderer
     public const LANG_MODULE = 'event';
     private bool $async;
     private Container $container;
-    protected ilOpenCastPlugin$plugin;
+    protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $legacy_container;
-    protected Event  $event;
+    protected Event $event;
     protected ?ObjectSettings $objectSettings = null;
     protected Factory $factory;
     protected Renderer $renderer;
@@ -631,13 +630,6 @@ class xoctEventRenderer
         );
 
         $actions = [];
-
-        if (ilObjOpenCast::DEV) {
-            $actions[] = $this->factory->link()->standard(
-                $this->plugin->txt('event_view'),
-                $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctGUI::CMD_VIEW)
-            );
-        }
 
         // Edit Owner
         if (ilObjOpenCastAccess::checkAction(

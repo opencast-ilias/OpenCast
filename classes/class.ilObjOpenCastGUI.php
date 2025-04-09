@@ -256,18 +256,6 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
                 $this->ilias_dic->ctrl()->getLinkTarget(new xoctPermissionGroupGUI())
             );
         }
-        if ($this->ilias_dic->user()->getId() == 6 && ilObjOpenCast::DEV) {
-            $this->ilias_dic->tabs()->addTab(
-                'migrate_event',
-                $this->plugin->txt('tab_migrate_event'),
-                $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'search')
-            );
-            $this->ilias_dic->tabs()->addTab(
-                'list_all',
-                $this->plugin->txt('tab_list_all'),
-                $this->ilias_dic->ctrl()->getLinkTargetByClass(xoctEventGUI::class, 'listAll')
-            );
-        }
 
         if ($this->checkPermissionBool("edit_permission")) {
             $this->ilias_dic->tabs()->addTab(

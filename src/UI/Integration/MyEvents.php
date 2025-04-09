@@ -365,6 +365,12 @@ class MyEvents implements DataRetrieval
             $filter = array_filter($filter, static fn($value): bool => $value !== '');
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
+            $sort__by_series = false;
+            if($sort === 'series') {
+                $sort = 'title';
+                $sort__by_series = true;
+            }
+
             $events = (array) $this->event_repository->getFiltered(
                 $filter,
                 '',
@@ -376,6 +382,12 @@ class MyEvents implements DataRetrieval
             );
         } catch (\Throwable $e) {
             return [];
+        }
+
+        if($sort__by_series) {
+            usort($events, static function(Event $a, Event $b) use ($order) {
+                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp($b->getSeries(), $a->getSeries());
+            });
         }
 
         return array_filter($events, static function (Event $event): bool {

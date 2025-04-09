@@ -28,7 +28,7 @@ use srag\Plugins\Opencast\Container\Init;
 class SeriesAPIRepository implements SeriesRepository, Request
 {
     public const OWN_SERIES_PREFIX = 'Eigene Serie von ';
-    private Container $cache;
+    private Container $cache_container;
     private ACLUtils $ACLUtils;
     private SeriesParser $seriesParser;
     private MetadataFactory $metadataFactory;
@@ -36,7 +36,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
     protected API $api;
 
     public function __construct(
-        Services $cache,
+        Services $cache_services,
         SeriesParser $seriesParser,
         ACLUtils $ACLUtils,
         MetadataFactory $metadataFactory,
@@ -44,7 +44,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
     ) {
         $opencastContainer = Init::init();
         $this->api = $opencastContainer[API::class];
-        $this->cache = $cache->get($this);
+        $this->cache_container = $cache_services->get($this);
         $this->ACLUtils = $ACLUtils;
         $this->seriesParser = $seriesParser;
         $this->metadataFactory = $metadataFactory;
@@ -56,6 +56,11 @@ class SeriesAPIRepository implements SeriesRepository, Request
         return 'series';
     }
 
+    public function clearCache(string $identifier): void
+    {
+        $this->cache_container->delete($identifier);
+    }
+
     public function find(string $identifier): Series
     {
         return $this->fetch($identifier);
@@ -63,11 +68,11 @@ class SeriesAPIRepository implements SeriesRepository, Request
 
     public function fetch(string $identifier): Series
     {
-        if ($this->cache->has($identifier)) {
-            $data = $this->cache->get($identifier);
+        if ($this->cache_container->has($identifier)) {
+            $data = $this->cache_container->get($identifier);
         } else {
             $data = $this->api->routes()->seriesApi->get($identifier, true);
-            $this->cache->set($identifier, $data);
+            $this->cache_container->set($identifier, $data);
         }
 
         $data->metadata = $this->fetchMD($identifier);
@@ -80,11 +85,11 @@ class SeriesAPIRepository implements SeriesRepository, Request
     public function fetchMD(string $identifier): Metadata
     {
         $key = $identifier . '_md';
-        if ($this->cache->has($key)) {
-            $data = $this->cache->get($key);
+        if ($this->cache_container->has($key)) {
+            $data = $this->cache_container->get($key);
         } else {
             $data = $this->api->routes()->seriesApi->getMetadata($identifier) ?? [];
-            $this->cache->set($key, $data);
+            $this->cache_container->set($key, $data);
         }
         return $this->md_parser->parseAPIResponseSeries($data);
     }
@@ -110,7 +115,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $payload['metadata']
         );
 
-        $this->cache->delete($request->getIdentifier());
+        $this->cache_container->delete($request->getIdentifier());
     }
 
     /**
@@ -123,7 +128,7 @@ class SeriesAPIRepository implements SeriesRepository, Request
             $request->getIdentifier(),
             $payload['acl']
         );
-        $this->cache->delete($request->getIdentifier());
+        $this->cache_container->delete($request->getIdentifier());
     }
 
     /**
@@ -134,8 +139,8 @@ class SeriesAPIRepository implements SeriesRepository, Request
      */
     public function getAllForUser(string $user_string): array
     {
-        if ($this->cache->has($user_string)) {
-            $data = $this->cache->get($user_string);
+        if ($this->cache_container->has($user_string)) {
+            $data = $this->cache_container->get($user_string);
         } else {
             try {
                 $data = (array) $this->api->routes()->seriesApi->runWithRoles([$user_string])->getAll([
@@ -143,14 +148,14 @@ class SeriesAPIRepository implements SeriesRepository, Request
                     'withacl' => false,
                     'limit' => 5000
                 ]);
-                $data = array_filter($data, static fn($series): bool => $series instanceof \stdClass);
+                $data = array_filter($data, static fn ($series): bool => $series instanceof \stdClass);
 
             } catch (\Throwable $e) {
                 $data = [];
             }
         }
 
-        $this->cache->set($user_string, $data);
+        $this->cache_container->set($user_string, $data);
         $return = [];
         foreach ($data as $d) {
             try {
