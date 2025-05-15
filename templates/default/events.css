@@ -190,3 +190,7 @@ div.modal-body form .ilFormFooter {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
 }
+
+.btn-group-vertical .btn {
+	margin-bottom: 2px;
+}
