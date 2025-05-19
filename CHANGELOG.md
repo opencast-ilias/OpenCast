@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 9.0.8
+- [FIX] add margin between horizontal buttons
+- [FIX] adding legacy CSS for info-buttons
+- upgrade to oc-php-lib v1.9.0
+
 ## Version 9.0.7
 - [FIX] clear series cache after renaming series, #381
 

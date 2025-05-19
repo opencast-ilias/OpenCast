@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'opencast-ilias/opencast',
-        'pretty_version' => 'dev-r9/issue-417',
-        'version' => 'dev-r9/issue-417',
-        'reference' => 'fdb9c1efbbc5bdcaa520cd81b4ff0eed37719c74',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'a7903a059867cddafcb62cd4d98be7db4f5479c6',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -47,9 +47,9 @@
             'dev_requirement' => false,
         ),
         'opencast-ilias/opencast' => array(
-            'pretty_version' => 'dev-r9/issue-417',
-            'version' => 'dev-r9/issue-417',
-            'reference' => 'fdb9c1efbbc5bdcaa520cd81b4ff0eed37719c74',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'a7903a059867cddafcb62cd4d98be7db4f5479c6',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
