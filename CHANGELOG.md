@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.3.6
+- upgrade to oc-php-lib v1.9.0
+
 ## Version 8.3.5
 - [FIX] clear series cache after renaming series, #381
 
