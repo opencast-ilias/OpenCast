@@ -109,4 +109,26 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             ]
         );
     }
+
+    /**
+     * This step contains the new column "config_panel_json" in the "xoct_workflow" table.
+     */
+    public function step_5(): void
+    {
+        // check if the column already exists
+        if ($this->db->tableColumnExists('xoct_workflow', 'config_panel_json')) {
+            return;
+        }
+
+        // add the new column
+        $this->db->addTableColumn(
+            'xoct_workflow',
+            'config_panel_json',
+            [
+                'type' => 'clob',
+                'notnull' => false,
+                'default' => null
+            ]
+        );
+    }
 }

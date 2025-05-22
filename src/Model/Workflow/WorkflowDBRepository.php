@@ -59,6 +59,7 @@ class WorkflowDBRepository implements WorkflowRepository
         string $description,
         string $tags,
         string $config_panel,
+        string $config_panel_json,
         int $id = 0
     ): void {
         /** @var WorkflowAR $workflow */
@@ -69,12 +70,16 @@ class WorkflowDBRepository implements WorkflowRepository
         if ($id == 0) {
             $workflow->setTags($tags);
             $workflow->setConfigPanel($config_panel);
+            $workflow->setConfigPanelJson($config_panel_json);
         } else {
             if (!empty($tags)) {
                 $workflow->setTags($tags);
             }
             if (!empty($config_panel)) {
                 $workflow->setConfigPanel($config_panel);
+            }
+            if (!empty($config_panel_json)) {
+                $workflow->setConfigPanelJson($config_panel_json);
             }
         }
 
@@ -175,14 +180,58 @@ class WorkflowDBRepository implements WorkflowRepository
         return $config_panel_array;
     }
 
+    /**
+     * Retrieves the configuration panel JSON for a workflow by its ID and returns it as an associative array.
+     *
+     * This method loads the workflow's configuration panel JSON, decodes it, and extracts all fields from each fieldset.
+     * The result is an array where each key is the field name (or ID), and the value is an array containing the field's value and type.
+     *
+     * @param int $id The workflow record ID.
+     * @return array Associative array of configuration fields with keys 'value' and 'type'.
+     */
+    public function getConfigPanelJsonAsArrayById(int $id): array
+    {
+        $config_panel_json_array = [];
+        $workflow = $this->getById($id);
+        if (empty($workflow)) {
+            return $config_panel_array;
+        }
+        $configuration_panel_json = json_decode(trim($workflow->getConfigPanelJson()), true);
+        if (!empty($configuration_panel_json)) {
+            foreach ($configuration_panel_json as $config_panel) {
+
+                if (empty($config_panel['fieldset'])) {
+                    continue;
+                }
+
+                foreach ($config_panel['fieldset'] as $index => $field) {
+                    if (empty($field['id'])) {
+                        $field['id'] = $field['name'];
+                    }
+
+                    $key = $field['name'] ?? $field['id'];
+                    $type = $field['type'] ?? 'text';
+                    $value = ($type == 'checkbox') ? $field['value'] : trim($field['value']);
+
+                    $config_panel_json_array[$key] = [
+                        'value' => $value,
+                        'type' => $type
+                    ];
+                }
+            }
+        }
+        return $config_panel_json_array;
+    }
 
     public function getWorkflowsFromOpencastApi(
         array $filter = [],
         bool $with_configuration_panel = false,
+        bool $with_configuration_panel_json = false,
         bool $with_tags = false
     ): array {
         $workflows = $this->api->routes()->workflowsApi->getAllDefinitions([
             'withconfigurationpanel' => $with_configuration_panel,
+            'withconfigurationpaneljson' => $with_configuration_panel_json,
             'filter' => $filter,
         ]);
         if ($with_tags) {
@@ -194,7 +243,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
     public function updateList(?string $tags_str = null): bool
     {
-        $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
+        $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true, true);
         $filtered_oc_workflows = $this->getFilteredWorkflowsArray($oc_workflows_all, $tags_str);
         $filtered_oc_workflows_ids = array_keys($filtered_oc_workflows);
         $current_workflows = $this->getAllWorkflowsAsArray('workflow_id');
@@ -213,26 +262,59 @@ class WorkflowDBRepository implements WorkflowRepository
             // Exists, we check the diffs!
             if (in_array($oc_wd_id, $current_workflows_ids, true)) {
                 $current_workflow = $this->getByWorkflowId($oc_wd_id);
-                // Check the configuration panel changes only.
-                $current_config_panel = json_encode(
-                    str_replace("\r\n", "\n", trim($current_workflow->getConfigPanel()))
-                );
-                $new_config_panel = json_encode(
-                    str_replace("\r\n", "\n", trim($oc_wf->configuration_panel))
-                );
-                if (strcmp($current_config_panel, $new_config_panel) === 0) {
-                    continue;
+
+                // Checking for changes in both config panels (html and json).
+                $config_panel_html_has_changed = false;
+                $config_panel_json_has_changed = false;
+
+                // Gathering the current and new config panel values and make them comparable.
+                $current_config_panel = $current_workflow->getConfigPanel() ?? '';
+                if (!empty($current_config_panel)) {
+                    $current_config_panel = json_encode(
+                        str_replace("\r\n", "\n", trim($current_config_panel))
+                    );
                 }
-                $configuration_panel = empty($oc_wf->configuration_panel) ? '' : $oc_wf->configuration_panel;
-                $current_workflow->setConfigPanel($configuration_panel);
-                $current_workflow->store();
+                $new_config_panel = property_exists($oc_wf, 'configuration_panel')
+                    ? trim($oc_wf->configuration_panel)
+                    : '';
+                if (!empty($new_config_panel)) {
+                    $new_config_panel = json_encode(
+                        str_replace("\r\n", "\n", $new_config_panel)
+                    );
+                }
+
+                // Check the configuration panel changes.
+                if (strcmp($current_config_panel, $new_config_panel) !== 0) {
+                    $config_panel_html_has_changed = true;
+                    $current_workflow->setConfigPanel(trim($oc_wf->configuration_panel) ?? '');
+                }
+
+                // Gathering the current and new config panel json values.
+                $current_config_panel_json = $current_workflow->getConfigPanelJson() ?? '';
+                $new_config_panel_json = property_exists($oc_wf, 'configuration_panel_json')
+                    ? trim($oc_wf->configuration_panel_json)
+                    : '';
+                // Check the configuration panel json changes as well.
+                if (strcmp(trim($current_config_panel_json), $new_config_panel_json) !== 0) {
+                    $config_panel_json_has_changed = true;
+                    $current_workflow->setConfigPanelJson($new_config_panel_json ?? '');
+                }
+
+                if ($config_panel_json_has_changed || $config_panel_html_has_changed) {
+                    $current_workflow->store();
+                }
             } else {
                 // Otherwise, we save it new!
                 $title = isset($oc_wf->title) ? trim($oc_wf->title) : '';
                 $description = isset($oc_wf->description) ? trim($oc_wf->description) : '';
                 $tags = isset($oc_wf->tags) ? implode(',', $oc_wf->tags) : '';
-                $configuration_panel = empty($oc_wf->configuration_panel) ? '' : $oc_wf->configuration_panel;
-                $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel);
+                $configuration_panel = property_exists($oc_wf, 'configuration_panel')
+                    ? trim($oc_wf->configuration_panel)
+                    : '';
+                $configuration_panel_json = property_exists($oc_wf, 'configuration_panel_json')
+                    ? trim($oc_wf->configuration_panel_json)
+                    : '';
+                $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel, $configuration_panel_json);
             }
         }
 
@@ -248,6 +330,7 @@ class WorkflowDBRepository implements WorkflowRepository
                 $new_workflow->setDescription($workflow->getDescription());
                 $new_workflow->setTags($workflow->getTags());
                 $new_workflow->setConfigPanel($workflow->getConfigPanel());
+                $new_workflow->setConfigPanelJson($workflow->getConfigPanelJson());
                 $new_workflow->store();
             }
         }
@@ -258,7 +341,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
     public function resetList(): bool
     {
-        $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true);
+        $oc_workflows_all = $this->getWorkflowsFromOpencastApi([], true, true, true);
         $filtered_oc_workflows = $this->getFilteredWorkflowsArray($oc_workflows_all);
         $filtered_oc_workflows_ids = array_keys($filtered_oc_workflows);
         $current_workflows = $this->getAllWorkflowsAsArray('workflow_id');
@@ -273,8 +356,13 @@ class WorkflowDBRepository implements WorkflowRepository
             $title = isset($oc_wf->title) ? trim($oc_wf->title) : '';
             $description = isset($oc_wf->description) ? trim($oc_wf->description) : '';
             $tags = isset($oc_wf->tags) ? implode(',', $oc_wf->tags) : '';
-            $configuration_panel = empty($oc_wf->configuration_panel) ? '' : $oc_wf->configuration_panel;
-            $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel);
+            $configuration_panel = property_exists($oc_wf, 'configuration_panel')
+                ? trim($oc_wf->configuration_panel)
+                : '';
+            $configuration_panel_json = property_exists($oc_wf, 'configuration_panel_json')
+                ? trim($oc_wf->configuration_panel_json)
+                : '';
+            $this->createOrUpdate($oc_wd_id, $title, $description, $tags, $configuration_panel, $configuration_panel_json);
         }
 
         $success = WorkflowAR::count() === count($filtered_oc_workflows_ids);
@@ -289,6 +377,7 @@ class WorkflowDBRepository implements WorkflowRepository
                 $new_workflow->setDescription($workflow->getDescription());
                 $new_workflow->setTags($workflow->getTags());
                 $new_workflow->setConfigPanel($workflow->getConfigPanel());
+                $new_workflow->setConfigPanelJson($workflow->getConfigPanelJson());
                 $new_workflow->store();
             }
         }
@@ -302,7 +391,8 @@ class WorkflowDBRepository implements WorkflowRepository
         string $title,
         string $description,
         string $tags = '',
-        string $config_panel = ''
+        string $config_panel = '',
+        string $config_panel_json = ''
     ): WorkflowAR {
         $id = 0;
         if ($this->exists($workflow_id)) {
@@ -310,7 +400,7 @@ class WorkflowDBRepository implements WorkflowRepository
             $id = $workflow->getId();
         }
 
-        $this->store($workflow_id, $title, $description, $tags, $config_panel, $id);
+        $this->store($workflow_id, $title, $description, $tags, $config_panel, $config_panel_json, $id);
         return $this->getByWorkflowId($workflow_id);
     }
 
@@ -436,13 +526,134 @@ class WorkflowDBRepository implements WorkflowRepository
     {
         $config_panels = [];
         foreach ($this->getFilteredWorkflowsArray() as $workflow) {
-            $configuration_panel_html = $workflow->getConfigPanel();
             $id = $workflow->getId();
+            // html string version.
+            $configuration_panel_html = $workflow->getConfigPanel();
             if (!empty(trim((string) $configuration_panel_html))) {
                 $config_panels[$id] = $this->mapConfigPanelElements($id, $configuration_panel_html);
             }
+
+            // We give the precedence to the html version.
+            if (!empty($config_panels[$id])) {
+                continue;
+            }
+            // Otherwise, we use the JSON version of config panel.
+            $configuration_panel_json_string = $workflow->getConfigPanelJson();
+            if (!empty(trim((string) $configuration_panel_json_string))) {
+                $configuration_panel_json = json_decode($configuration_panel_json_string, true);
+                if (is_array($configuration_panel_json)) {
+                    $config_panels[$id] = $this->convertConfigPanelJsonToHtml($id, $configuration_panel_json);
+                }
+            }
         }
         return $config_panels;
+    }
+
+    /**
+     * Converts a configuration panel represented as a JSON array (from Opencast) into an HTML string.
+     *
+     * This function generates a fieldset-based HTML form structure from the provided configuration panel JSON.
+     * Each fieldset item is mapped to appropriate HTML input/select elements, including labels, options, and attributes.
+     * The resulting HTML is then further processed by mapConfigPanelElements to ensure correct IDs, names, and localization.
+     * @see mapConfigPanelElements function for more details on the further mapping process.
+     *
+     * @param int   $workflow_id              The workflow ID used to generate unique element IDs/names.
+     * @param array $configuration_panel_json The configuration panel definition as an associative array (decoded JSON).
+     *
+     * @return string The generated HTML string representing the configuration panel.
+     */
+    private function convertConfigPanelJsonToHtml(int $workflow_id, array $configuration_panel_json): string
+    {
+        $dom = new \DOMDocument();
+        $dom->strictErrorChecking = true;
+        $main_fieldset = $dom->createElement('fieldset');
+
+        foreach ($configuration_panel_json as $index => $config_panel_item) {
+
+            $unique_id_prefix = $workflow_id . '_' . $index;
+
+            // We have to have fieldset to be able to generate the elements.
+            if (!isset($config_panel_item['fieldset'])) {
+                continue;
+            }
+
+            $field_div = $dom->createElement('div');
+            $field_div->setAttribute('id', "{$unique_id_prefix}_field_div");
+            $field_div->setAttribute('class', "wf-field-div");
+
+            $should_have_group_div = count($config_panel_item['fieldset']) > 1;
+            if (!empty($config_panel_item['description'])) {
+                $field_label = $dom->createElement('label');
+                $field_label->textContent = trim($config_panel_item['description']);
+                $field_label->setAttribute('class', "wf-desc-label");
+                $field_div->appendChild($field_label);
+                $should_have_group_div = true;
+            }
+
+            $group_div = $should_have_group_div ? $dom->createElement('div') : $field_div;
+            if (!$group_div->hasAttribute('id')) {
+                $group_div->setAttribute('id', "{$unique_id_prefix}_group_div");
+            }
+            foreach ($config_panel_item['fieldset'] as $key => $field) {
+                $element = $field['type'] === 'select' ? 'select' : 'input';
+                $input_dom = $dom->createElement($element);
+                if (empty($field['id'])) {
+                    $field['id'] = $field['name'];
+                }
+
+                $children = [];
+                if (!empty($field['label'])) {
+                    $field_unique_label = $dom->createElement('label');
+                    $field_unique_label->textContent = trim($field['label']);
+                    $field_unique_label->setAttribute('for', $field['id']);
+                    $group_div->appendChild($field_unique_label);
+                    unset($field['label']);
+                }
+
+                if ($element === 'select' && !empty($field['options']) && is_array($field['options'])) {
+                    foreach ($field['options'] as $option) {
+                        $option_element = $dom->createElement('option', (string) ($option['text'] ?? ''));
+                        $option_element->setAttribute('value', (string) ($option['value'] ?? ''));
+                        if (isset($option['selected']) && $option['selected']) {
+                            $option_element->setAttribute('selected', 'selected');
+                        }
+                        $input_dom->appendChild($option_element);
+                    }
+                    unset($field['options']);
+                }
+
+                if ($field['type'] === 'checkbox') {
+                    $value = $field['value'] ?? false;
+                    if ($value) {
+                        $input_dom->setAttribute('checked', 'checked');
+                    }
+                    $field['value'] = $value ? 'true' : 'false';
+                }
+
+                foreach ($field as $field_attr => $attr_value) {
+                    $input_dom->setAttribute($field_attr, trim((string) $attr_value));
+                }
+
+                $group_div->appendChild($input_dom);
+            }
+
+            if ($group_div->getAttribute('id') !== $field_div->getAttribute('id')) {
+                $field_div->appendChild($group_div);
+                $main_fieldset->appendChild($field_div);
+            } else {
+                $main_fieldset->appendChild($group_div);
+            }
+        }
+
+        $main_div = $dom->createElement('div');
+        $main_div->setAttribute('id', 'workflow-configuration');
+        $main_div->appendChild($main_fieldset);
+
+        $converted = $dom->saveHTML($main_div);
+
+        // Now that we convert it to html, we use the same function to map the elements.
+        $mapped = $this->mapConfigPanelElements($workflow_id, $converted);
+        return $mapped;
     }
 
     /**
@@ -648,7 +859,7 @@ class WorkflowDBRepository implements WorkflowRepository
 
                 $classes = [
                     'wf-labels',
-                    'col-sm-4'
+                    'col-sm-5 col-md-6 col-lg-6'
                 ];
                 if ($label->parentNode->tagName == 'li') {
                     $classes[] = 'wf-list-labels';

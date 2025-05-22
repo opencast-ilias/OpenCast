@@ -210,8 +210,10 @@ class xoctWorkflowGUI extends xoctGUI
         $tags = $this->factory->input()->field()->text($this->getLocaleString('tags', self::LANG_MODULE))->withDisabled(true);
         $configuration_panel = $this->factory->input()->field()->textarea(
             $this->getLocaleString('config_panel', self::LANG_MODULE)
-        )
-                                             ->withDisabled(true);
+        )->withDisabled(true);
+        $configuration_panel_json = $this->factory->input()->field()->textarea(
+            $this->getLocaleString('config_panel_json', self::LANG_MODULE)
+        )->withDisabled(true);
 
         if (!is_null($workflow)) {
             $this->ctrl->setParameter($this, 'workflow_id', $workflow->getId());
@@ -232,7 +234,12 @@ class xoctWorkflowGUI extends xoctGUI
                         'configuration_panel' => is_null(
                             $workflow
                         ) ? $configuration_panel : $configuration_panel->withValue(
-                            json_encode($workflow->getConfigPanel())
+                            json_encode($workflow->getConfigPanel(), JSON_PRETTY_PRINT)
+                        ),
+                        'configuration_panel_json' => is_null(
+                            $workflow
+                        ) ? $configuration_panel_json : $configuration_panel_json->withValue(
+                            json_encode(json_decode(trim($workflow->getConfigPanelJson())), JSON_PRETTY_PRINT)
                         )
                     ],
                     $this->plugin->txt('workflow')

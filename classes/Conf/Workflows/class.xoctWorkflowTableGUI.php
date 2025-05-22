@@ -114,8 +114,8 @@ class xoctWorkflowTableGUI extends ilTable2GUI
                 return str_replace(',', '<br />', $row->getTags());
             case 'config_panel':
                 $tpl = new ilTemplate("tpl.icon.html", true, true, $this->plugin->getDirectory());
-                $has_config_panel = !empty($row->getConfigPanel());
-                $icon = $has_config_panel ? 'checkbox_checked.png' : 'checkbox_unchecked.png';
+                $has_config_panel = !empty($row->getConfigPanel()) || !empty($row->getConfigPanelJson());
+                $icon = $has_config_panel ? 'object/checkbox_checked.png' : 'object/checkbox_unchecked.png';
                 $tpl->setCurrentBlock('icon');
                 $tpl->setVariable('ICON_SRC', ilUtil::getHtmlPath(ilUtil::getImagePath($icon)));
                 $tpl->setVariable('ICON_ALT', $icon);

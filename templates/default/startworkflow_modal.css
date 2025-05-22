@@ -11,6 +11,7 @@
 }
 .startworkflow-form input[type="radio"],.startworkflow-form input[type="checkbox"] {
     width: auto;
+    height: unset;
 }
 .startworkflow-form input:not([type="radio"], [type="checkbox"]) {
     min-width: 180px;
@@ -55,4 +56,8 @@
 }
 .startworkflow-form .submit-btn {
     display: none;
+}
+
+.startworkflow-form .wf-field-div:not(:last-of-type) {
+    margin-bottom: 0.8em;
 }

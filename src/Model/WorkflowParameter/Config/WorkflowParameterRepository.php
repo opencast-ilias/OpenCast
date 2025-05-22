@@ -79,7 +79,9 @@ class WorkflowParameterRepository
         $response = $this->api->routes()->workflowsApi->getDefinition(
             $workflow_definition_id,
             true,
-            true
+            true,
+            true,
+            OpencastAPI::RETURN_ARRAY
         );
 
         if ($response == false) {
@@ -89,7 +91,7 @@ class WorkflowParameterRepository
             );
         }
 
-        if (!isset($response['configuration_panel'])) {
+        if (!isset($response['configuration_panel']) || !isset($response['configuration_panel_json'])) {
             throw new xoctException(
                 xoctException::INTERNAL_ERROR,
                 'No configuration panel found for workflow with id = ' . $workflow_definition_id
@@ -97,13 +99,91 @@ class WorkflowParameterRepository
         }
 
         try {
-            return $this->parseConfigurationPanelHTML($response['configuration_panel']);
+            // Parse the configuration panel HTML to get the workflow parameters.
+            $parsed_config_panel = $this->parseConfigurationPanelHTML($response['configuration_panel']);
+            // We give precedence to the HTML configuration panel, if not available we use the JSON configuration panel.
+            if (empty($parsed_config_panel)) {
+                // We first convert it!
+                $converted_config_panel = $this->convertConfigurationPanelJsonToHTML($response['configuration_panel_json']);
+                // Then we parse it.
+                $parsed_config_panel = $this->parseConfigurationPanelHTML($converted_config_panel);
+            }
+            return $parsed_config_panel;
         } catch (ilException $e) {
             $this->main_tpl->setOnScreenMessage('failure', $this->plugin->txt('msg_workflow_params_parsing_failed') . ' ' . $e->getMessage(), true);
             $this->ctrl->redirectByClass([xoctConfGUI::class, xoctWorkflowParameterGUI::class]);
         }
 
         return [];
+    }
+
+    /**
+     * Converts a configuration panel definition from JSON (as provided by Opencast) into an HTML string.
+     *
+     * This method takes a JSON string representing the configuration panel, decodes it, and generates
+     * a corresponding HTML structure using DOMDocument. Each fieldset and its fields are mapped to
+     * appropriate HTML input or select elements, including their attributes and options.
+     * Labels are also generated and associated with their respective form elements.
+     *
+     * @param string $configuration_panel_json The JSON string representing the configuration panel.
+     * @return string The generated HTML string representing the configuration panel.
+     */
+    protected function convertConfigurationPanelJsonToHTML($configuration_panel_json): string
+    {
+        $configuration_panel_array = json_decode($configuration_panel_json, true);
+        $configuration_panel_html = '';
+        if (!empty($configuration_panel_array)) {
+            $dom = new \DOMDocument();
+            $dom->strictErrorChecking = true;
+            $main_div = $dom->createElement('div');
+
+            foreach ($configuration_panel_array as $key => $item) {
+                if (empty($item['fieldset'])) {
+                    continue;
+                }
+                $main_label = $item['description'] ?? '';
+                $field_div = $dom->createElement('div');
+                foreach ($item['fieldset'] as $field) {
+                    if (isset($field['label'])) {
+                        $main_label = $field['label'];
+                        unset($field['label']);
+                    }
+
+                    if (empty($field['id'])) {
+                        $field['id'] = $field['name'];
+                    }
+
+                    $element = $field['type'] === 'select' ? 'select' : 'input';
+                    $input_dom = $dom->createElement($element);
+
+                    if ($element === 'select' && !empty($field['options']) && is_array($field['options'])) {
+                        foreach ($field['options'] as $option) {
+                            $option_element = $dom->createElement('option', (string) ($option['text'] ?? ''));
+                            $option_element->setAttribute('value', (string) ($option['value'] ?? ''));
+                            if (isset($option['selected']) && $option['selected']) {
+                                $option_element->setAttribute('selected', 'selected');
+                            }
+                            $input_dom->appendChild($option_element);
+                        }
+                        unset($field['options']);
+                    }
+                    foreach ($field as $field_attr => $attr_value) {
+                        $input_dom->setAttribute($field_attr, trim((string)$attr_value));
+                    }
+
+                    $field_unique_label = $dom->createElement('label');
+                    $field_unique_label->textContent = trim($main_label);
+                    $field_unique_label->setAttribute('for', $field['id']);
+
+                    $field_div = $dom->createElement('div');
+                    $field_div->appendChild($field_unique_label);
+                    $field_div->appendChild($input_dom);
+                    $main_div->appendChild($field_div);
+                }
+            }
+            $configuration_panel_html = $dom->saveHTML($main_div);
+        }
+        return $configuration_panel_html;
     }
 
     /**

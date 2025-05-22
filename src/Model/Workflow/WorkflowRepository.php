@@ -33,6 +33,7 @@ interface WorkflowRepository
         string $description,
         string $tags,
         string $config_panel,
+        string $config_panel_json,
         int $id = 0
     );
 
@@ -60,6 +61,7 @@ interface WorkflowRepository
     public function getWorkflowsFromOpencastApi(
         array $filter = [],
         bool $with_configuration_panel = false,
+        bool $with_configuration_panel_json = false,
         bool $with_tags = false
     ): array;
 
@@ -71,7 +73,8 @@ interface WorkflowRepository
         string $title,
         string $description,
         string $tags = '',
-        string $config_panel = ''
+        string $config_panel = '',
+        string $config_panel_json = ''
     ): WorkflowAR;
 
     /**
@@ -111,4 +114,9 @@ interface WorkflowRepository
      * @return array
      */
     public function getConfigPanelAsArrayById(int $id): array;
+
+    /**
+     * @return array
+     */
+    public function getConfigPanelJsonAsArrayById(int $id): array;
 }

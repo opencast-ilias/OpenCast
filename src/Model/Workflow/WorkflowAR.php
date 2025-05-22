@@ -73,6 +73,13 @@ class WorkflowAR extends ActiveRecord
      * @con_fieldtype  clob
      */
     protected $config_panel;
+    /**
+     * @var string
+     *
+     * @con_has_field  true
+     * @con_fieldtype  clob
+     */
+    protected $config_panel_json;
 
     public function getId(): int
     {
@@ -132,5 +139,15 @@ class WorkflowAR extends ActiveRecord
     public function setConfigPanel(string $config_panel): void
     {
         $this->config_panel = $config_panel;
+    }
+
+    public function getConfigPanelJson(): string
+    {
+        return $this->config_panel_json ?? '';
+    }
+
+    public function setConfigPanelJson(string $config_panel_json): void
+    {
+        $this->config_panel_json = $config_panel_json;
     }
 }

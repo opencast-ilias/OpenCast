@@ -1097,7 +1097,10 @@ class xoctEventGUI extends xoctGUI
             if (!empty($post_body[$workflow_id])) {
                 $received_configs = $post_body[$workflow_id];
             }
-            $default_configs = $this->workflowRepository->getConfigPanelAsArrayById($workflow_id);
+            $default_configs = [];
+            $config_panel_html_array = $this->workflowRepository->getConfigPanelAsArrayById($workflow_id);
+            $config_panel_json_array = $this->workflowRepository->getConfigPanelJsonAsArrayById($workflow_id);
+            $default_configs = array_merge($config_panel_html_array, $config_panel_json_array);
             $configurations = [];
 
             foreach ($default_configs as $key => $config_data) {
@@ -1117,6 +1120,8 @@ class xoctEventGUI extends xoctGUI
                     } else {
                         $value = $received_value;
                     }
+                } else if ($type === 'checkbox') { // This means that the checkbox is not checked.
+                    $value = false;
                 }
                 // Take care of boolean conversion.
                 if (is_bool($value)) {
