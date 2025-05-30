@@ -785,6 +785,12 @@ class WorkflowDBRepository implements WorkflowRepository
                     $hidden_input_default->setAttribute('id', $default_id);
                     $hidden_input_default->setAttribute('value', trim($default_value));
                     $defaults[] = $hidden_input_default;
+
+                    // Apply checked property for checkbox inputs.
+                    if ($input->getAttribute('type') === 'checkbox' &&
+                        !$input->hasAttribute('checked') && $default_value === 'true') {
+                        $input->setAttribute('checked', 'true');
+                    }
                 }
 
                 if ($input->hasAttribute('required')) {

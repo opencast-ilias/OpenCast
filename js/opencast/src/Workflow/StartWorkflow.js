@@ -84,6 +84,12 @@ export default class StartWorkflow {
                 }
             });
             self.setNow();
+
+            // Make sure checkboxes are set to true/false!
+            $('form.startworkflow-form input[type="checkbox"]').on('click', function(e) {
+                let value = $(this).is(':checked') ? 'true' : 'false';
+                $(this).val(value);
+            });
         });
     }
 
