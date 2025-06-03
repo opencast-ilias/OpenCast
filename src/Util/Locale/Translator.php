@@ -31,6 +31,6 @@ class Translator
     {
         $plugin_translation = $this->plugin->txt($key);
 
-        return !empty($plugin_translation) && $plugin_translation !== '-' . $this->prefix . '_' . $key . '-';
+        return !empty($plugin_translation) && $plugin_translation !== ('-' . $this->prefix . '_' . $key . '-');
     }
 }
