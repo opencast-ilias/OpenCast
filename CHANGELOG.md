@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 9.1.0
+- [FIX] enhance checkbox handling in StartWorkflow and WorkflowDBRepository
+- [FEATURE] Add JSON configuration panel support and update related workflows
+
 ## Version 9.0.8
 - [FIX] add margin between horizontal buttons
 - [FIX] adding legacy CSS for info-buttons
