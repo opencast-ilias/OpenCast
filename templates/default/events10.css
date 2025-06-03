@@ -1,0 +1,58 @@
+/* MULTI COLUMN*/
+ul.c-listing-entity {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);;
+	/*grid-template-rows: 2fr;*/
+	gap: 1rem;
+	/*justify-items: stretch;*/
+	/*align-items: stretch;*/
+}
+
+div.c-entity.__container {
+	height: 100%;
+	grid-template-rows: min-content min-content min-content min-content min-content min-content 1fr;
+}
+
+/* FIX long titles */
+div.c-entity.__primary-identifier {
+	max-width: 80%;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+/* breakpoint 1800px and smaller*/
+@media (max-width: 1950px) {
+	ul.c-listing-entity {
+		grid-template-columns: repeat(2, 1fr);;
+	}
+}
+
+@media (max-width: 1300px) {
+	ul.c-listing-entity {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* OVERLAY with Playbutton*/
+.c-entity.__secondary-identifier.--image a.playable {
+	position: relative;
+	display: inline-block;
+}
+
+.c-entity.__secondary-identifier.--image a.playable::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;            /* so clicks pass through */
+	background-image: radial-gradient(closest-side, rgba(0,0,0,0.33), rgba(0,0,0,0) 70%),
+	url('../images/play.png');
+	background-repeat: no-repeat, no-repeat;
+	background-position: center, center;
+	background-size: 100% 100%, 64px 64px;  /* vignette fills, button is 64px */
+	transition: transform .18s ease;
+}
+
+.c-entity.__secondary-identifier.--image a.playable:hover::before {
+	transform: scale(1.05);
+}

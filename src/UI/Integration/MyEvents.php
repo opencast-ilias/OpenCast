@@ -132,13 +132,17 @@ class MyEvents implements DataRetrieval
                 $parameter_name,
                 $event->getIdentifier()
             );
+
             $actions = [
-                $this->ui_factory->link()->standard(
+                $this->ui_factory->button()->shy(
                     $this->translate("select"),
                     $action
                 ),
             ];
-            $items[] = $this->events->asItem($event, $action, $actions);
+            $items[] = $this->events->asItem($event, $this->ui_factory->button()->standard(
+                $t("select"),
+                $action
+            ), $actions);
         }
 
         return $this->ui_factory->item()->group(

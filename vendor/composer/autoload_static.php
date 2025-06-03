@@ -254,6 +254,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => __DIR__ . '/../..' . '/src/UI/Integration/Events.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => __DIR__ . '/../..' . '/src/UI/Integration/Integration.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => __DIR__ . '/../..' . '/src/UI/Integration/MyEvents.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series' => __DIR__ . '/../..' . '/src/UI/Integration/Series.php',
         'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => __DIR__ . '/../..' . '/src/UI/LegacyFormWrapper.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\Config\\MDConfigTable' => __DIR__ . '/../..' . '/src/UI/Metadata/Config/MDConfigTable.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\MDFormItemBuilder' => __DIR__ . '/../..' . '/src/UI/Metadata/MDFormItemBuilder.php',

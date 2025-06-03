@@ -11,17 +11,23 @@ use ILIAS\UI\Component\Item\Item;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\UI\Component\Panel\Panel;
 use ILIAS\UI\Component\Button\Standard;
+use ILIAS\UI\Component\Listing\Entity\RecordToEntity;
+use ILIAS\UI\Component\Entity\Entity;
+use ILIAS\UI\Factory as UIFactory;
+use ILIAS\UI\Component\Button\Tag;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  * @internal
  */
-class Events
+class Events implements RecordToEntity
 {
     use Commons;
 
     private EventAPIRepository $event_repository;
     private SeriesAPIRepository $series_repository;
+
+    private array $tooltips = [];
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
@@ -29,6 +35,98 @@ class Events
     ) {
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
+    }
+
+    public function map(UIFactory $ui_factory, mixed $record): Entity
+    {
+        $record = $this->event_repository->find($record['identifier'] ?? '');
+        if (!$record instanceof Event) {
+            throw new \InvalidArgumentException(
+                "Record must be an instance of " . Event::class . ", " . get_class($record) . " given."
+            );
+        }
+
+        $thumbnail = $this->ui_factory
+            ->image()
+            ->responsive(
+                $record->publications()->getThumbnailUrl(),
+                'Preview of Video: ' . $record->getTitle()
+            )
+            ->withAction('#') // TODO link to play
+            ->withAdditionalOnLoadCode(function ($id) {
+                return "document.getElementById('" . $id . "').parentNode.classList.add('playable');";
+            });
+
+        $entity = $this->ui_factory
+            ->entity()
+            ->standard(
+                $record->getTitle(),
+                $thumbnail
+            );
+
+        // Main Details
+        $entity = $entity->withMainDetails(
+                $this->ui_factory->listing()->property()->withProperty(
+                    'Description', $this->shortenText($record->getDescription()), false
+                ),
+                $this->ui_factory->listing()->property()->withProperty(
+                    'Speaker', implode(", ", $record->getPresenter())
+                ),
+                $this->ui_factory->listing()->property()->withProperty('Raum', $record->getLocation()),
+            );
+
+        // Owner Tooltip in Prioritized Reactions
+        $this->tooltips[] = $tooltip = $this->ui_factory
+            ->popover()
+            ->standard(
+                $this->ui_factory->legacy(implode(", ", $record->getPresenter()))
+            )
+            ->withTitle('Speaker');
+
+        $entity = $entity->withPrioritizedReactions(
+            $this->ui_factory->symbol()->glyph()->user()->withOnClick($tooltip->getShowSignal())
+        );
+
+        // Actions as Reactions
+        $entity = $entity->withReactions(
+            $this->ui_factory->button()->tag(
+                'Play',
+                $tooltip->getShowSignal()
+            )->withRelevance(Tag::REL_MID),
+            $this->ui_factory->button()->tag(
+                'Download',
+                "#"
+            )->withRelevance(Tag::REL_MID),
+        );
+
+        // All Actions
+        $entity = $entity->withActions(
+            $this->ui_factory->button()->shy(
+                'Play',
+                "#"
+            ),
+            $this->ui_factory->button()->shy(
+                'Download',
+                "#"
+            ),
+        );
+        // Featured Properties
+        $entity = $entity->withFeaturedProperties(
+            $this->ui_factory->listing()->property()->withProperty(
+                'Date', $record->getStart()->format('d.m.Y H:i'), false
+            ),
+        );
+
+        return $entity;
+    }
+
+    private function shortenText(string $text, int $max_length = 100): string
+    {
+        if (strlen($text) <= $max_length) {
+            return $text;
+        }
+
+        return substr($text, 0, $max_length - 3) . '...';
     }
 
     public function asItemFromEventId(
@@ -46,7 +144,6 @@ class Events
 
         return $this->ui_factory->panel()->standard($surround_with_panel, $item);
     }
-
 
     public function asItem(
         Event $event,
@@ -85,4 +182,10 @@ class Events
 
         return $item;
     }
+
+    public function getTooltips(): array
+    {
+        return $this->tooltips;
+    }
+
 }

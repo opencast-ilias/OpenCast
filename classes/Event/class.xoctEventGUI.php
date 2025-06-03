@@ -43,6 +43,9 @@ use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Util\OutputResponse;
 use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\UI\Integration\Integration;
+use ILIAS\Data\URI;
+use srag\Plugins\Opencast\Views\Series\Display;
 
 /**
  * Class xoctEventGUI
@@ -53,6 +56,7 @@ use srag\Plugins\Opencast\Container\Init;
 class xoctEventGUI extends xoctGUI
 {
     use OutputResponse;
+
     public const IDENTIFIER = 'eid';
     public const CMD_STANDARD = 'index';
     public const CMD_CLEAR_CACHE = 'clearCache';
@@ -192,19 +196,6 @@ class xoctEventGUI extends xoctGUI
         $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
 
         $this->main_tpl->addCss(
-            './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.css'
-        );
-        $this->main_tpl->addJavaScript(
-            './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events.js'
-        );    // init waiter
-        $this->main_tpl->addOnLoadCode(
-            "$(document).on('shown.bs.dropdown', (e) => {
-					$(e.target).children('.dropdown-menu').each((i, el) => {
-						il.Util.fixPosition(el);
-					});
-				});"
-        );    // fix action menu position bug
-        $this->main_tpl->addCss(
             $this->plugin->getDirectory() . '/templates/default/reporting_modal.css'
         );
 
@@ -222,18 +213,8 @@ class xoctEventGUI extends xoctGUI
         parent::performCommand($cmd);
     }
 
-
     protected function prepareContent(): void
     {
-        $this->wait_overlay->onLinkClick('#rep_robj_xoct_event_clear_cache');
-        $this->main_tpl->addJavascript("./src/UI/templates/js/Modal/modal.js");
-        $this->main_tpl->addOnLoadCode(
-            'xoctEvent.init(\'' . json_encode([
-                'msg_link_copied' => $this->plugin->txt('msg_link_copied'),
-                'tooltip_copy_link' => $this->plugin->txt('tooltip_copy_link')
-            ]) . '\');'
-        );
-
         // add "add" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_ADD_EVENT)) {
             $b = ilLinkButton::getInstance();
@@ -245,8 +226,8 @@ class xoctEventGUI extends xoctGUI
 
         // add "schedule" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SCHEDULE_EVENT) && PluginConfig::getConfig(
-            PluginConfig::F_CREATE_SCHEDULED_ALLOWED
-        )) {
+                PluginConfig::F_CREATE_SCHEDULED_ALLOWED
+            )) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_schedule_new');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SCHEDULE));
@@ -256,8 +237,8 @@ class xoctEventGUI extends xoctGUI
 
         // add "Opencast Studio" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_RECORD_EVENT) && PluginConfig::getConfig(
-            PluginConfig::F_STUDIO_ALLOWED
-        )) {
+                PluginConfig::F_STUDIO_ALLOWED
+            )) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_opencast_studio');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
@@ -286,234 +267,22 @@ class xoctEventGUI extends xoctGUI
         }
     }
 
-    /**
-     * asynchronous loading of tableGUI
-     */
     protected function index(): void
     {
-        $filter_html = null;
-        ilChangeEvent::_recordReadEvent(
-            $this->parent_gui->getObject()->getType(),
-            $this->parent_gui->getObject()->getRefId(),
-            $this->objectSettings->getObjId(),
-            $this->user->getId()
+        $container = Init::init();
+        /**
+         * @var Integration $ui
+         */
+        $ui = $container[Integration::class];
+
+        $display_series = new Display(
+            $ui,
+            $this->objectSettings->getSeriesIdentifier(),
+            new URI((string) $this->dic->http()->request()->getUri()),
+            new URI((string) $this->dic->http()->request()->getUri())
         );
 
-        $html = match (UserSettingsRepository::getViewTypeForUser($this->user->getId(), $this->ref_id)) {
-            UserSettingsRepository::VIEW_TYPE_LIST => $this->indexList(),
-            UserSettingsRepository::VIEW_TYPE_TILES => $this->indexTiles(),
-            default => throw new xoctException(
-                xoctException::INTERNAL_ERROR,
-                'Invalid view type ' .
-                UserSettingsRepository::getViewTypeForUser(
-                    $this->user->getId(),
-                    $this->ref_id
-                ) .
-                ' for user with id ' . $this->user->getId()
-            ),
-        };
-
-        $filter_html = $this->dic->ui()->renderer()->render(
-            $this->eventTableBuilder->filter(
-                $this->dic->ctrl()->getFormAction($this, self::CMD_STANDARD, '')
-            )
-        );
-        $intro_text = $this->createHyperlinks($this->getIntroTextHTML());
-        $this->main_tpl->setContent($intro_text . $filter_html . $html);
-    }
-
-    protected function indexList(): string
-    {
-        $this->initViewSwitcherHTML('list');
-
-        $key = xoctEventTableGUI::getGeneratedPrefix($this->getObjId()) . '_xpt';
-
-
-        if (isset($this->http->request()->getQueryParams()[$key])
-            || $this->http->request()->getParsedBody() !== []
-            || PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY)) {
-            // load table synchronously
-            return $this->getTableGUI();
-        }
-
-        if (isset($this->http->request()->getQueryParams()['async'])) {
-            $this->asyncGetTableGUI();
-        }
-
-        $this->main_tpl->addJavascript("./Services/Table/js/ServiceTable.js");
-        $this->loadAjaxCodeForList();    // load table asynchronously
-        return '<div id="xoct_table_placeholder"></div>';
-    }
-
-    protected function indexTiles(): string
-    {
-        $this->initViewSwitcherHTML('tiles');
-
-        if (PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY)) {
-            return $this->getTilesGUI();
-        }
-
-        if (isset($this->http->request()->getQueryParams()['async'])) {
-            $this->asyncGetTilesGUI();
-        }
-
-        $this->loadAjaxCodeForTiles();    // load tiles asynchronously
-        return '<div id="xoct_tiles_placeholder"></div>';
-    }
-
-    protected function initViewSwitcherHTML(string $active): void
-    {
-        if ($this->objectSettings->isViewChangeable()) {
-            $f = $this->ui->factory();
-            $renderer = $this->ui->renderer();
-
-            $actions = [
-                $this->plugin->txt('list') => $this->ctrl->getLinkTarget($this, self::CMD_SWITCH_TO_LIST),
-                $this->plugin->txt('tiles') => $this->ctrl->getLinkTarget($this, self::CMD_SWITCH_TO_TILES),
-            ];
-
-            $aria_label = $this->plugin->txt('info_view_switcher');
-            $view_control = $f->viewControl()->mode($actions, $aria_label)->withActive(
-                $this->plugin->txt($active)
-            );
-            $this->toolbar->addText($renderer->render($view_control));
-        }
-    }
-
-    protected function switchToTiles(): void
-    {
-        UserSettingsRepository::changeViewType(
-            $this->user->getId(),
-            $this->ref_id,
-            UserSettingsRepository::VIEW_TYPE_TILES
-        );
-        $this->ctrl->redirect($this, self::CMD_STANDARD);
-    }
-
-    protected function switchToList(): void
-    {
-        UserSettingsRepository::changeViewType(
-            $this->user->getId(),
-            $this->ref_id,
-            UserSettingsRepository::VIEW_TYPE_LIST
-        );
-        $this->ctrl->redirect($this, self::CMD_STANDARD);
-    }
-
-    protected function changeTileLimit(): void
-    {
-        $tile_limit = (int) ($this->http->request()->getParsedBody()['tiles_per_page'] ?? 0);
-
-        if (in_array($tile_limit, [4, 8, 12, 16])) {
-            UserSettingsRepository::changeTileLimit(
-                $this->user->getId(),
-                $this->ref_id,
-                $tile_limit
-            );
-        }
-        $this->ctrl->redirect($this, self::CMD_STANDARD);
-    }
-
-    protected function loadAjaxCodeForList(): void
-    {
-        $ajax_link = $this->dic->http()->request()->getRequestTarget();
-        $ajax_link .= '&async=true';
-
-        $ajax = "$.ajax({
-				    url: '$ajax_link',
-				    dataType: 'html',
-				    success: function(data){
-				        il.Opencast.UI.waitOverlay.hide();
-				        $('div#xoct_table_placeholder').replaceWith($(data));
-				    }
-				});";
-        $this->main_tpl->addOnLoadCode('il.Opencast.UI.waitOverlay.show();');
-        $this->main_tpl->addOnLoadCode($ajax);
-    }
-
-    protected function loadAjaxCodeForTiles(): void
-    {
-        $ajax_link = $this->dic->http()->request()->getRequestTarget();
-        $ajax_link .= '&async=true';
-
-        $ajax = "$.ajax({
-				    url: '$ajax_link',
-				    dataType: 'html',
-				    success: function(data){
-				        il.Opencast.UI.waitOverlay.hide();
-				        $('div#xoct_tiles_placeholder').replaceWith($(data));
-				        il.Opencast.UI.Tiles.init();
-				    }
-				});";
-        $this->main_tpl->addOnLoadCode('il.Opencast.UI.waitOverlay.show();');
-        $this->main_tpl->addOnLoadCode($ajax);
-    }
-
-    /**
-     * @return never
-     */
-    public function asyncGetTableGUI(): void
-    {
-        $this->sendReponse($this->getTableGUI());
-    }
-
-    public function getTableGUI(): string
-    {
-        $xoctEventTableGUI = $this->eventTableBuilder->table($this, self::CMD_STANDARD, $this->objectSettings);
-
-        return $this->prependModalsAndTrigger($xoctEventTableGUI);
-    }
-
-    /**
-     * ajax call
-     * @return never
-     */
-    public function asyncGetTilesGUI(): void
-    {
-        $this->sendReponse($this->getTilesGUI());
-    }
-
-    protected function getTilesGUI(): string
-    {
-        $xoctEventTileGUI = $this->eventTableBuilder->tiles($this, $this->objectSettings);
-
-        return $this->prependModalsAndTrigger($xoctEventTileGUI);
-    }
-
-    private function prependModalsAndTrigger(object $providing_gui): string
-    {
-        $modals_html = $this->getModalsHTML();
-        switch (true) {
-            case $providing_gui instanceof xoctEventTableGUI:
-            case $providing_gui instanceof xoctEventTileGUI:
-                $html = $providing_gui->getHTML();
-                $has_scheduled_events = $providing_gui->hasScheduledEvents();
-                break;
-            default:
-                throw new xoctException(
-                    xoctException::INTERNAL_ERROR,
-                    'Invalid type ' . $providing_gui::class . ' for providing gui'
-                );
-        }
-
-        if ($has_scheduled_events) {
-            $signal = $this->getModals()->getReportDateModal()->getShowSignal()->getId();
-            $modals_html .= "<script type='text/javascript'>
-                        window.onload = function(event) {
-                            $('#xoct_report_date_button').removeClass('hidden');
-                            $('#xoct_report_date_button').on('click', function(){
-                                $(this).trigger('$signal',
-                                {
-                                    'id' : '$signal', 'event' : 'click',
-                                    'triggerer' : $(this),
-                                    'options' : JSON.parse('[]')
-                                });
-                            });
-                        };
-                    </script>";
-        }
-
-        return $html . $modals_html;
+        $this->main_tpl->setContent($this->ui_renderer->render($display_series->get()));
     }
 
     /**
@@ -584,7 +353,9 @@ class xoctEventGUI extends xoctGUI
                 if ($thumbnail_section_data['mode'][0] == 'file' &&
                     !empty($thumbnail_section_data['mode'][1]['file']['id'])) {
                     $thumbnail_file_id = $thumbnail_section_data['mode'][1]['file']['id'];
-                    $thumbnail_file = xoctUploadFile::getInstanceFromFileArray($thumbnail_section_data['mode'][1]['file']);
+                    $thumbnail_file = xoctUploadFile::getInstanceFromFileArray(
+                        $thumbnail_section_data['mode'][1]['file']
+                    );
                 }
 
                 if ($thumbnail_section_data['mode'][0] == 'timepoint' &&
@@ -620,7 +391,6 @@ class xoctEventGUI extends xoctGUI
                 }
             }
         }
-
 
         // Subtitles.
         $subtitles = [];
@@ -666,8 +436,10 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    public function getDefaultWorkflowParameters(?\stdClass $fromData = null, ?\stdClass $extraParameters = null): \stdClass
-    {
+    public function getDefaultWorkflowParameters(
+        ?\stdClass $fromData = null,
+        ?\stdClass $extraParameters = null
+    ): \stdClass {
         $WorkflowParameter = new WorkflowParameter();
         $defaultParameter = $fromData ?? new stdClass();
         $admin = ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS);
@@ -774,9 +546,9 @@ class xoctEventGUI extends xoctGUI
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
-                    'Y.m.d H:i:s',
-                    strtotime((string) $conflict['start'])
-                ) . ' - '
+                        'Y.m.d H:i:s',
+                        strtotime((string) $conflict['start'])
+                    ) . ' - '
                     . date('Y.m.d H:i:s', strtotime((string) $conflict['end'])) . '<br>';
             }
             $this->main_tpl->setOnScreenMessage('failure', $message);
@@ -886,7 +658,7 @@ class xoctEventGUI extends xoctGUI
         // Combine the query parameters array into a single query string.
         $combined_query_string = implode(
             '&',
-            array_map(function($k, $v){
+            array_map(function ($k, $v) {
                 return "$k=$v";
             }, array_keys($query_params), array_values($query_params))
         );
@@ -896,7 +668,6 @@ class xoctEventGUI extends xoctGUI
 
         $this->ctrl->redirectToURL($studio_link);
     }
-
 
     public function cut(): void
     {
@@ -921,7 +692,6 @@ class xoctEventGUI extends xoctGUI
         return $this->http->request()->getQueryParams()[$q] ?? null;
     }
 
-
     public function download(): void
     {
         $event_id = $this->retrieveQuery('event_id');
@@ -944,13 +714,16 @@ class xoctEventGUI extends xoctGUI
         $download_publications = $event->publications()->getDownloadPublications();
         // Now that we have multiple sub-usages, we first check for publication_id which is passed by the multi-dropdowns.
         if ($publication_id) {
-            $publication = array_filter($download_publications, fn($publication): bool => $publication->getId() === $publication_id);
+            $publication = array_filter(
+                $download_publications, fn($publication): bool => $publication->getId() === $publication_id
+            );
             $publication = reset($publication);
         } elseif (!empty($usage_type) && !empty($usage_id)) {
             // If this is not multi-download dropdown, then it has to have the usage_type and usage_id parameters identified.
             $publication = array_filter(
                 $download_publications,
-                fn($publication): bool => $publication->usage_id == $usage_id && $publication->usage_type === $usage_type
+                fn($publication
+                ): bool => $publication->usage_id == $usage_id && $publication->usage_type === $usage_type
             );
             $publication = reset($publication);
         } else {
@@ -994,13 +767,14 @@ class xoctEventGUI extends xoctGUI
         $this->closeResponse();
     }
 
-
     public function annotate(): void
     {
         $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
 
         // check access
-        if (ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()) {
+        if (ilObjOpenCastAccess::hasPermission(
+                ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS
+            ) || ilObjOpenCastAccess::hasWriteAccess()) {
             $this->addCurrentUserToGroup();
         }
 
@@ -1019,7 +793,6 @@ class xoctEventGUI extends xoctGUI
         $this->cancel();
     }
 
-
     public function setOffline(): void
     {
         $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
@@ -1027,7 +800,6 @@ class xoctEventGUI extends xoctGUI
         $event->getXoctEventAdditions()->update();
         $this->cancel();
     }
-
 
     protected function update(): void
     {
@@ -1063,7 +835,6 @@ class xoctEventGUI extends xoctGUI
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
-
 
     protected function updateScheduled(): void
     {
@@ -1111,7 +882,6 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-
     protected function startWorkflow(): void
     {
         $post_body = $this->http->request()->getParsedBody();
@@ -1122,9 +892,9 @@ class xoctEventGUI extends xoctGUI
             $event_id = (string) strip_tags($post_body['startworkflow_event_id']);
             $workflow = $this->workflowRepository->getById($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(
-                ilObjOpenCastAccess::ACTION_EDIT_EVENT,
-                $this->event_repository->find($event_id)
-            )
+                    ilObjOpenCastAccess::ACTION_EDIT_EVENT,
+                    $this->event_repository->find($event_id)
+                )
                 || is_null($workflow)) {
                 $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
                 $this->cancel();
@@ -1157,8 +927,10 @@ class xoctEventGUI extends xoctGUI
                     } else {
                         $value = $received_value;
                     }
-                } else if ($type === 'checkbox') { // This means that the checkbox is not checked.
-                    $value = false;
+                } else {
+                    if ($type === 'checkbox') { // This means that the checkbox is not checked.
+                        $value = false;
+                    }
                 }
                 // Take care of boolean conversion.
                 if (is_bool($value)) {
@@ -1182,7 +954,6 @@ class xoctEventGUI extends xoctGUI
         }
     }
 
-
     protected function removeInvitations(): void
     {
         foreach (PermissionGrant::get() as $xoctInvitation) {
@@ -1191,7 +962,6 @@ class xoctEventGUI extends xoctGUI
         $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_success'), true);
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
-
 
     protected function confirmDelete(): void
     {
@@ -1204,8 +974,8 @@ class xoctEventGUI extends xoctGUI
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
         if (count($event->publications()->getPublications()) && PluginConfig::getConfig(
-            PluginConfig::F_WORKFLOW_UNPUBLISH
-        )) {
+                PluginConfig::F_WORKFLOW_UNPUBLISH
+            )) {
             $header_text = $this->txt('unpublish_confirm');
             $action_text = 'unpublish';
         } else {
@@ -1231,8 +1001,8 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
         if (count($event->publications()->getPublications()) && PluginConfig::getConfig(
-            PluginConfig::F_WORKFLOW_UNPUBLISH
-        )) {
+                PluginConfig::F_WORKFLOW_UNPUBLISH
+            )) {
             try {
                 $this->unpublish($event);
                 $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_unpublish_started'), true);
@@ -1249,7 +1019,6 @@ class xoctEventGUI extends xoctGUI
         }
         $this->cancel();
     }
-
 
     private function unpublish(Event $event): void
     {
@@ -1310,7 +1079,6 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this);
     }
 
-
     protected function getQualityReportMessage(
         Event $event,
         string $message
@@ -1355,7 +1123,6 @@ class xoctEventGUI extends xoctGUI
             . "<hr>";
     }
 
-
     public function txt(string $key): string
     {
         return $this->plugin->txt('event_' . $key);
@@ -1365,7 +1132,6 @@ class xoctEventGUI extends xoctGUI
     {
         return $this->objectSettings->getObjId();
     }
-
 
     public function getModals(): EventModals
     {
@@ -1390,7 +1156,7 @@ class xoctEventGUI extends xoctGUI
     {
         $intro_text = '';
         if ($this->objectSettings->getIntroductionText() !== '' && $this->objectSettings->getIntroductionText(
-        ) !== '0') {
+            ) !== '0') {
             $intro = new ilTemplate(
                 './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html',
                 true,

@@ -186,6 +186,7 @@ return array(
     'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => $baseDir . '/src/UI/Integration/Events.php',
     'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => $baseDir . '/src/UI/Integration/Integration.php',
     'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => $baseDir . '/src/UI/Integration/MyEvents.php',
+    'srag\\Plugins\\Opencast\\UI\\Integration\\Series' => $baseDir . '/src/UI/Integration/Series.php',
     'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => $baseDir . '/src/UI/LegacyFormWrapper.php',
     'srag\\Plugins\\Opencast\\UI\\Metadata\\Config\\MDConfigTable' => $baseDir . '/src/UI/Metadata/Config/MDConfigTable.php',
     'srag\\Plugins\\Opencast\\UI\\Metadata\\MDFormItemBuilder' => $baseDir . '/src/UI/Metadata/MDFormItemBuilder.php',

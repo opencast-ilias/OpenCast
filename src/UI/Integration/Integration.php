@@ -21,6 +21,10 @@ class Integration
      * @readonly
      */
     private Events $events;
+    /**
+     * @readonly
+     */
+    private Series $series;
 
     public function __construct(
         Container $container,
@@ -35,6 +39,10 @@ class Integration
             $container,
             $this->events
         );
+        $this->series = new Series(
+            $container,
+            $this->events
+        );
     }
 
     public function mine(): MyEvents
@@ -45,5 +53,10 @@ class Integration
     public function events(): Events
     {
         return $this->events;
+    }
+
+    public function series(): Series
+    {
+        return $this->series;
     }
 }
