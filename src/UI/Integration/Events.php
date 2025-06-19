@@ -47,13 +47,12 @@ class Events
         return $this->ui_factory->panel()->standard($surround_with_panel, $item);
     }
 
+
     public function asItem(
         Event $event,
         ?Standard $main_action = null,
         ?array $additional_actions = null
     ): Item {
-        $t = fn(string $key): string => $this->container->translator()->translate($key);
-
         $title = $event->getTitle();
 
         $item = $this->ui_factory
@@ -80,9 +79,9 @@ class Events
         }
 
         $item = $item->withProperties([
-            $t("event_date") => $event->getStart()->format('d.m.Y H:i'),
-            $t("event_series") => $this->getSeriesName($event),
-            $t("event_presenter") => implode(", ", $event->getPresenter()),
+            $this->translate("event_date") => $event->getStart()->format('d.m.Y H:i'),
+            $this->translate("event_series") => $this->getSeriesName($event),
+            $this->translate("event_presenter") => implode(", ", $event->getPresenter()),
         ])->withLeadImage(
             $lead_image
         );

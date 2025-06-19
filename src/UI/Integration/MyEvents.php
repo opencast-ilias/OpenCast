@@ -125,8 +125,6 @@ class MyEvents implements DataRetrieval
     ): Group {
         $items = [];
 
-        $t = fn(string $key): string => $this->container->translator()->translate($key);
-
         /** @var Event $event */
         foreach ($this->getEvents() as $event) {
             $action = (string) $target_url->withParameter(
@@ -135,7 +133,7 @@ class MyEvents implements DataRetrieval
             );
             $actions = [
                 $this->ui_factory->link()->standard(
-                    $t("select"),
+                    $this->translate("select"),
                     $action
                 ),
             ];
@@ -143,7 +141,7 @@ class MyEvents implements DataRetrieval
         }
 
         return $this->ui_factory->item()->group(
-            $this->container->translator()->translate("config_events"),
+            $this->translate("config_events"),
             $items
         );
     }
