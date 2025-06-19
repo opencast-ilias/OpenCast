@@ -53,29 +53,26 @@ class Events
         ?Standard $main_action = null,
         ?array $additional_actions = null
     ): Item {
-        $title = $event->getTitle();
-
         $item = $this->ui_factory
             ->item()
             ->standard(
                 $event->getTitle(),
             );
 
-        if ($main_action !== null) {
-            $item = $item->withMainAction($main_action);
-        }
-
-        if ($additional_actions !== [] && $additional_actions !== null) {
-            $item = $item->withActions(
-                $this->ui_factory->dropdown()->standard($additional_actions)
-            );
-        }
         $lead_image = $this->ui_factory->image()->responsive(
             $event->publications()->getThumbnailUrl(),
             'src'
         );
+
         if ($main_action !== null) {
+            $item = $item->withMainAction($main_action);
             $lead_image = $lead_image->withAction($main_action->getAction());
+        }
+
+        if (!empty($additional_actions)) {
+            $item = $item->withActions(
+                $this->ui_factory->dropdown()->standard($additional_actions)
+            );
         }
 
         $item = $item->withProperties([
