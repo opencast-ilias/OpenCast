@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.2.0
+- [FEATURE] Redesigned Screens in OpencastPageComponent
+
 ## Version 9.1.0
 - [FIX] enhance checkbox handling in StartWorkflow and WorkflowDBRepository
 - [FEATURE] Add JSON configuration panel support and update related workflows
