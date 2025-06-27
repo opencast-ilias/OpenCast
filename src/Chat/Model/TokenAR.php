@@ -132,6 +132,9 @@ class TokenAR extends ActiveRecord
         return $this->valid_until_unix;
     }
 
+    /**
+     * @return string|null
+     */
     public function sleep($field_name)
     {
         return match ($field_name) {
@@ -140,6 +143,9 @@ class TokenAR extends ActiveRecord
         };
     }
 
+    /**
+     * @return Token|null
+     */
     public function wakeUp($field_name, $field_value): ?Token
     {
         return match ($field_name) {

@@ -16,14 +16,12 @@ use ILIAS\UI\Component\Item\Group;
 use srag\Plugins\Opencast\Model\Event\Event;
 use ILIAS\Data\URI;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
-use ILIAS\UI\Component\Modal\Modal;
 use ILIAS\UI\Component\Button\Button;
 use ILIAS\UI\Component\Table\DataRetrieval;
 use ILIAS\Data\Order;
 use ILIAS\UI\Component\Table\DataRowBuilder;
 use ILIAS\Data\Range;
 use Generator;
-use ILIAS\Data\DateFormat\DateFormat;
 use ILIAS\Data\Factory;
 use ILIAS\UI\Implementation\Component\Symbol\Icon\Icon;
 
@@ -33,6 +31,8 @@ use ILIAS\UI\Implementation\Component\Symbol\Icon\Icon;
  */
 class MyEvents implements DataRetrieval
 {
+    use Commons;
+
     /**
      * @readonly
      */
@@ -45,7 +45,6 @@ class MyEvents implements DataRetrieval
      * @readonly
      */
     private SeriesAPIRepository $series_repository;
-    private array $series_name_cache = [];
     private ?array $event_cache = null;
     private ?URI $target_url = null;
     private string $parameter_name = 'event_id';
@@ -58,16 +57,19 @@ class MyEvents implements DataRetrieval
      * @readonly
      */
     private xoctUser $user;
+    private \ILIAS\UI\Renderer $ui_renderer;
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
-        private Container $container
+        private Container $container,
+        private Events $events
     ) {
         $this->refinery = $this->container->ilias()->refinery();
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
         $this->filter_service = $this->container->ilias()->uiService()->filter();
         $this->user = $this->container->get(xoctUser::class);
+        $this->ui_renderer = $this->container->ilias()->ui()->renderer();
     }
 
     protected function getFilter(URI $target_url): \ILIAS\UI\Component\Input\Container\Filter\Standard
@@ -104,18 +106,6 @@ class MyEvents implements DataRetrieval
         return $filter;
     }
 
-    protected function getSeriesName(Event $event): string
-    {
-        $series_id = $event->getSeries();
-        if (isset($this->series_name_cache[$series_id])) {
-            return $this->series_name_cache[$series_id];
-        }
-
-        $series_name = $this->series_repository->find($series_id)->getMetadata()->getField('title')->getValue();
-
-        return $this->series_name_cache[$series_id] = $series_name;
-    }
-
     public function asItemGroupWithFilters(
         URI $calling_url,
         URI $target_url,
@@ -135,43 +125,23 @@ class MyEvents implements DataRetrieval
     ): Group {
         $items = [];
 
-        $t = fn(string $key): string => $this->container->translator()->translate($key);
-
         /** @var Event $event */
         foreach ($this->getEvents() as $event) {
             $action = (string) $target_url->withParameter(
                 $parameter_name,
                 $event->getIdentifier()
             );
-            $items[] = $this->ui_factory
-                ->item()
-                ->standard(
-                    $this->ui_factory->link()->standard(
-                        $event->getTitle(),
-                        $action
-                    )
-                )->withActions(
-                    $this->ui_factory->dropdown()->standard([
-                        $this->ui_factory->link()->standard(
-                            $t("select"),
-                            $action
-                        ),
-                    ])
-                )
-                ->withProperties([
-                    $t("event_date") => $event->getStart()->format('d.m.Y H:i'),
-                    $t("event_series") => $this->getSeriesName($event),
-                    $t("event_presenter") => implode(", ", $event->getPresenter()),
-                ])->withLeadImage(
-                    $this->ui_factory->image()->responsive(
-                        $event->publications()->getThumbnailUrl(),
-                        'src'
-                    )->withAction($action)
-                );
+            $actions = [
+                $this->ui_factory->link()->standard(
+                    $this->translate("select"),
+                    $action
+                ),
+            ];
+            $items[] = $this->events->asItem($event, $action, $actions);
         }
 
         return $this->ui_factory->item()->group(
-            $this->container->translator()->translate("config_events"),
+            $this->translate("config_events"),
             $items
         );
     }
@@ -238,10 +208,10 @@ class MyEvents implements DataRetrieval
                 'presenter' => $this->ui_factory->table()->column()->text(
                     $this->container->translator()->translate("event_presenter")
                 )->withIsOptional(false), // could be optional in the future
-//                'status' => $this->ui_factory->table()->column()->text(
-//                    $this->container->translator()->translate("event_processing_state")
-//                )->withIsOptional(true),
-                'action' => $this->ui_factory->table()->column()->link(
+                /*'status' => $this->ui_factory->table()->column()->text(
+                    $this->container->translator()->translate("event_processing_state")
+                )->withIsOptional(true),*/
+                'action' => $this->ui_factory->table()->column()->text(
                     $this->container->translator()->translate("select")
                 )->withIsSortable(false),
             ],
@@ -268,28 +238,47 @@ class MyEvents implements DataRetrieval
             ) as $event
         ) {
             $action = (string) $this->target_url->withParameter($this->parameter_name, $event->getIdentifier());
+
+            $is_successfully_processed = $event->getProcessingState() === Event::STATE_SUCCEEDED;
+
+            $thumbnail = $this->ui_factory->symbol()->icon()->custom(
+                $event->publications()->getThumbnailUrl(),
+                $event->getTitle(),
+                Icon::LARGE
+            );
+
+            // Thumbsnails are only linked if the event is successfully processed
+            if ($is_successfully_processed) {
+                $thumbnail = $thumbnail->withAdditionalOnLoadCode(
+                    fn(string $id): string => "let img_link = document.getElementById('$id'); 
+                    img_link.onclick = function() { window.location.href = '$action';};
+                    img_link.style.cursor = 'pointer';
+                    "
+                );
+            }
+
+            // we have to resize the thumbnail to a fixed width of 220px
+            $thumbnail = $thumbnail->withAdditionalOnLoadCode(fn(string $id): string => "
+                        let img = document.getElementById('$id');
+                        img.style.width = '220px';
+                        img.style.height = 'auto';"
+            );
+
+            $select_action = $this->ui_factory->link()->standard(
+                $this->container->translator()->translate("select"),
+                $action
+            );
+
             yield $row_builder->buildDataRow(
                 $event->getIdentifier(),
                 [
-                    'preview' => $this->ui_factory->symbol()->icon()->custom(
-                        $event->publications()->getThumbnailUrl(),
-                        $event->getTitle(),
-                        Icon::LARGE
-                    )->withAdditionalOnLoadCode(fn(string $id): string => "let img = document.getElementById('$id');
-                        img.style.cursor = 'pointer';
-                        img.style.width = '220px';
-                        img.style.height = 'auto';
-                        img.onclick = function() { window.location.href = '$action';
-                        }"),
+                    'preview' => $thumbnail,
                     'title' => $event->getTitle(),
                     'date' => $event->getStart(),
                     'series' => $this->getSeriesName($event),
                     'presenter' => implode(", ", $event->getPresenter()),
                     'status' => $event->getProcessingState(),
-                    'action' => $this->ui_factory->link()->standard(
-                        $this->container->translator()->translate("select"),
-                        $action
-                    )
+                    'action' => $is_successfully_processed ? $this->ui_renderer->render($select_action) : ''
                 ]
             );
         }
@@ -378,7 +367,7 @@ class MyEvents implements DataRetrieval
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
             $sort__by_series = false;
-            if($sort === 'series') {
+            if ($sort === 'series') {
                 $sort = 'title';
                 $sort__by_series = true;
             }
@@ -396,14 +385,21 @@ class MyEvents implements DataRetrieval
             return [];
         }
 
-        if($sort__by_series) {
-            usort($events, static function(Event $a, Event $b) use ($order) {
-                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp($b->getSeries(), $a->getSeries());
+        if ($sort__by_series) {
+            usort($events, static function (Event $a, Event $b) use ($order) {
+                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp(
+                    $b->getSeries(), $a->getSeries()
+                );
             });
         }
+        // we cannot filter by processing state here, as the api does not deliver this information directly ant this
+        // would lead to non mathcing amount of rows. e.g. if 5 events should be displayed, but only 3 are processed,
+        // only 3 would be displayed. pagination would not work correctly then.
 
-        return array_filter($events, static function (Event $event): bool {
+        /*return array_filter($events, static function (Event $event): bool {
             return $event->getProcessingState() === Event::STATE_SUCCEEDED;
-        });
+        });*/
+
+        return $events;
     }
 }
