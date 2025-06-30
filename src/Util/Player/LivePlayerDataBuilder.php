@@ -6,6 +6,7 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use OpencastApi\Util\OcUtils;
 
 /**
  * Class LivePlayerDataBuilder
@@ -26,13 +27,8 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             OpencastAPI::RETURN_ARRAY
         );
 
-        //Temporary fix until this issue is fixed in the opencast-php-library:
-        //https://github.com/elan-ev/opencast-php-library/issues/33
-        if (array_key_exists('search-results', $episode_data)) {
-            $media_package = $episode_data['search-results']['result']['mediapackage'];
-        } else {
-            $media_package = $episode_data['result'][0]['mediapackage'];
-        }
+        // Extracting mediapackage from the search endpoint response using OcUtils class from OpencastApi!
+        $media_package = OcUtils::findValueByKey($episode_data, 'mediapackage');
 
         $source_format = PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED) ? 'hls' : 'hlsLive';
         $streams = [];

@@ -75,7 +75,7 @@ class xoctPlayerGUI extends xoctGUI
         try {
             $data = PlayerDataBuilderFactory::getInstance()->getBuilder($event)->buildStreamingData();
         } catch (xoctException $e) {
-            xoctLog::getInstance()->logError($e->getCode(), $e->getMessage());
+            xoctLog::getInstance()->logError((string) $e->getCode(), $e->getMessage());
             xoctLog::getInstance()->logStack($e->getTraceAsString());
             $this->sendReponse("Error: " . $e->getMessage());
         }
