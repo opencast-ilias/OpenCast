@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.2.1
+- [FIX] Search Endpoint Response Conflict resolved, PR #437, Issue #429
+
 ## Version 9.2.0
 - [FEATURE] Redesigned Screens in OpencastPageComponent
 
