@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 8.3.7
+- [FIX] Search Endpoint Response Conflict resolved #437
+
 ## Version 8.3.6
 - upgrade to oc-php-lib v1.9.0
 
