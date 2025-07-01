@@ -120,8 +120,6 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             $obj_id = ilObject2::_lookupObjId($ref_id);
         }
 
-        $obj_id = (int) $obj_id;
-
         switch ($permission) {
             case 'copy':
                 return false;
@@ -241,9 +239,11 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
                 return
                     self::hasWriteAccess(); // = permission: 'edit settings'
             case self::ACTION_REPORT_QUALITY_PROBLEM:
+                $enabled = (bool) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY);
+                $access = (int) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_ACCESS);
                 return
-                    PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY)
-                    && ((PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_ACCESS) == PluginConfig::ACCESS_ALL)
+                    $enabled
+                    && (($access === PluginConfig::ACCESS_ALL)
                         || self::hasPermission(self::PERMISSION_EDIT_VIDEOS)
                         || $opencastDIC->acl_utils()->isUserOwnerOfEvent($user, $event));
             case self::ACTION_REPORT_DATE_CHANGE:
