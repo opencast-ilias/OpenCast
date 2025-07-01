@@ -92,9 +92,9 @@ var xoctGroup = {
         self.clear();
         for (let i in self.groups) {
             self.container.append('<a class="list-group-item xoct_group" data-group-id="' + self.groups[i].id + '">'
-                + self.groups[i].title
-                + '<button class="btn btn-danger xoct_group_delete pull-right xoct_admin_only"><span class="glyphicon glyphicon-remove"></span></button>'
-                + '<Button class="btn pull-right" id="xoct_user_counter_' + self.groups[i].id + '">' + self.groups[i].users.length + '</button>'
+                + '<span>' + self.groups[i].title + '</span>'
+                + '<button class="btn btn-default btn-danger xoct_group_delete pull-right xoct_admin_only"><span class="glyphicon glyphicon-remove"></span></button>'
+                + '<button class="btn btn-default pull-right" id="xoct_user_counter_' + self.groups[i].id + '">' + self.groups[i].users.length + '</button>'
                 + '</li>');
         }
         if (!self.groups || self.groups.length === 0) {
