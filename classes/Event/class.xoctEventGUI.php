@@ -261,6 +261,7 @@ class xoctEventGUI extends xoctGUI
             $b->setCaption('rep_robj_xoct_event_opencast_studio');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
             $b->setPrimary(true);
+            $b->setTarget('_blank');
             $this->toolbar->addButtonInstance($b);
         }
 
@@ -852,16 +853,20 @@ class xoctEventGUI extends xoctGUI
             $studio_link = rtrim((string) $custom_url, "/");
         }
 
-        $return_link = ILIAS_HTTP_PATH . '/'
-            . $this->ctrl->getLinkTarget($this, self::CMD_STANDARD);
-
         // First put the params in an associative array, in order to have a clearer understanding of what is going on!
         $query_params = [
             'upload.seriesId' => $this->objectSettings->getSeriesIdentifier(),
             'upload.seriesField' => 'hidden',
-            'return.label' => 'ILIAS',
-            'return.target' => urlencode($return_link)
         ];
+
+        // The return label and return target parameters for Opencast Studio are temporarily disabled due to an issue.
+        // For more details, see: https://github.com/opencast-ilias/OpenCast/issues/424#issuecomment-3024202623
+
+        /* $return_link = ILIAS_HTTP_PATH . '/'
+            . $this->ctrl->getLinkTarget($this, self::CMD_STANDARD);
+
+        $query_params['return.label'] = 'ILIAS';
+        $query_params['return.target'] = urlencode($return_link); */
 
         // Get the base ACL of the user.
         $acls = $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->user));
