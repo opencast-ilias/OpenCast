@@ -248,6 +248,8 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Model\\Workflow\\WorkflowRepository' => __DIR__ . '/../..' . '/src/Model/Workflow/WorkflowRepository.php',
         'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => __DIR__ . '/../..' . '/src/UI/EventFormBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => __DIR__ . '/../..' . '/src/UI/EventTableBuilder.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Commons' => __DIR__ . '/../..' . '/src/UI/Integration/Commons.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => __DIR__ . '/../..' . '/src/UI/Integration/Events.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => __DIR__ . '/../..' . '/src/UI/Integration/Integration.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => __DIR__ . '/../..' . '/src/UI/Integration/MyEvents.php',
         'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => __DIR__ . '/../..' . '/src/UI/LegacyFormWrapper.php',

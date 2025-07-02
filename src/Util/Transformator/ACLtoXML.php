@@ -113,4 +113,33 @@ class ACLtoXML
 
         return $xml_writer->xmlDumpMem(false);
     }
+
+
+    /**
+     * Generates a JSON representation of the ACL entries for use in the Opencast Studio Link as upload.acl.
+     *
+     * The JSON format is a nested object where the keys are role names and the values are arrays of actions.
+     * Only entries with an "allow" permission are included.
+     *
+     * @return string The JSON representation of the ACL entries consumable for the Opencast Studio.
+     */
+    public function getStudioACLObjectNotation(): string
+    {
+        $acl_notation_array = [];
+        foreach ($this->acl->getEntries() as $entry) {
+            $role = $entry->getRole();
+            $action = $entry->getAction();
+            $allow = $entry->isAllow();
+            if ($allow) {
+                if (!isset($acl_notation_array[$role])) {
+                    $acl_notation_array[$role] = [];
+                }
+                if (!in_array($action, $acl_notation_array[$role])) {
+                    $acl_notation_array[$role][] = $action;
+                }
+            }
+        }
+        $acl_notation_string = !empty($acl_notation_array) ? json_encode($acl_notation_array) : '';
+        return $acl_notation_string;
+    }
 }

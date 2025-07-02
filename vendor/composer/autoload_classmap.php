@@ -180,6 +180,8 @@ return array(
     'srag\\Plugins\\Opencast\\Model\\Workflow\\WorkflowRepository' => $baseDir . '/src/Model/Workflow/WorkflowRepository.php',
     'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => $baseDir . '/src/UI/EventFormBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => $baseDir . '/src/UI/EventTableBuilder.php',
+    'srag\\Plugins\\Opencast\\UI\\Integration\\Commons' => $baseDir . '/src/UI/Integration/Commons.php',
+    'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => $baseDir . '/src/UI/Integration/Events.php',
     'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => $baseDir . '/src/UI/Integration/Integration.php',
     'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => $baseDir . '/src/UI/Integration/MyEvents.php',
     'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => $baseDir . '/src/UI/LegacyFormWrapper.php',
