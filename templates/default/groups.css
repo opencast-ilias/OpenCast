@@ -27,6 +27,16 @@
     background-color: #007bff;
 }
 
-.xoct_group_delete {
-    background-color: #dc3545;
+.btn-default.xoct_group_delete {
+    background-color: #f63b4c;
+    border-color: #dc3545;
+}
+
+
+.xoct_group.active {
+    background-color: #d8d8d8;
+}
+
+#xoct_add_new {
+    margin-left: 1rem;
 }
