@@ -6,9 +6,9 @@ namespace srag\Plugins\Opencast\Model\Report;
 
 use ActiveRecord;
 use ilException;
-use ilMail;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use xoct;
+use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\Notification\NotificationSender;
 
 /**
  * Class xoctReport
@@ -39,13 +39,16 @@ class Report extends ActiveRecord
         parent::create();
 
         if (!$omit_send_mail) {
-            $mail = new ilMail($this->user_id);
-            $type = ['system'];
+            // This is bad practice to use the Init::init() here. But this is an ActiveRecord class which is
+            // already blown up a lot. Adding the NotificationSender as a dependency would overload this class even more.
+            // TODO: We should try to get rid of this Init::init() call in the future.
+            /** @var NotificationSender $mailer */
+            $mailer = Init::init()[NotificationSender::class];
 
-            $mail->setSaveInSentbox(false);
-            $mail->appendInstallationSignature(true);
-            $mail->sendMail(
-                $this->getRecipientForType($this->getType())
+            $mailer->sendMail(
+                $this->getRecipientForType($this->getType()),
+                $this->getSubject(),
+                $this->getMessage(),
             );
         }
     }

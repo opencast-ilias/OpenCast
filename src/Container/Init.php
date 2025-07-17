@@ -18,6 +18,8 @@ use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\Locale\Translator;
 use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\Notification\NotificationSender;
+use srag\Plugins\Opencast\Notification\DefaultNotificationSender;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -142,6 +144,8 @@ final class Init
         ));
 
         $opencast_container->glue(xoctUser::class, fn(): xoctUser => xoctUser::getInstance($ilias_container->user()));
+
+        $opencast_container->glue(NotificationSender::class, fn(): NotificationSender => new DefaultNotificationSender($DIC->mail()->mime()));
 
         return self::$container = $opencast_container;
     }
