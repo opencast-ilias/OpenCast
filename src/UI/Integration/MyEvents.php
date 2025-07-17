@@ -58,6 +58,7 @@ class MyEvents implements DataRetrieval
      */
     private xoctUser $user;
     private \ILIAS\UI\Renderer $ui_renderer;
+    private ?URI $calling_url = null;
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
@@ -175,14 +176,16 @@ class MyEvents implements DataRetrieval
 
         return [
             $filter,
-            $this->asDataTable($target_url, $parameter_name)
+            $this->asDataTable($calling_url, $target_url, $parameter_name)
         ];
     }
 
     public function asDataTable(
+        URI $calling_url,
         URI $target_url,
         string $parameter_name = 'event_id'
     ): Data {
+        $this->calling_url = $calling_url;
         $this->target_url = $target_url;
         $this->parameter_name = $parameter_name;
 
