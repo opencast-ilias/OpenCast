@@ -39,7 +39,7 @@ class Report extends ActiveRecord
         parent::create();
 
         if (!$omit_send_mail) {
-            // This is bad practive to use the Init::init() here. But this is a ActiveRecord class which is
+            // This is bad practice to use the Init::init() here. But this is an ActiveRecord class which is
             // already blown up a lot. Adding the NotificationSender as a dependency would overload this class even more.
             // TODO: We should try to get rid of this Init::init() call in the future.
             /** @var NotificationSender $mailer */
