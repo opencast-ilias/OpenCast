@@ -91,10 +91,12 @@ class Database implements Adaptor
             return;
         }
 
-        $this->db->insert(
+        $this->db->replace(
             self::TABLE_NAME,
             [
                 'identifier' => ['text', $combined_key],
+            ],
+            [
                 'value' => ['text', $value],
                 'expires' => ['integer', time() + $ttl],
             ]
