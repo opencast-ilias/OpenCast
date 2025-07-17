@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 9.2.2
+- [FIX] Disable OC Studio return target and label #424
+- [FIX] sending mails fails while reporting quality problems #434
+- [FIX] prevent racecondition in database cache
+- [FIX] using calling URL in datatables
+
 ## Version 9.2.1
 - [FIX] Search Endpoint Response Conflict resolved, PR #437, Issue #429
 
