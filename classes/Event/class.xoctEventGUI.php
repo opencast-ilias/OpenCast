@@ -38,6 +38,7 @@ use srag\Plugins\Opencast\UI\EventTableBuilder;
 use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
+use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Util\OutputResponse;
@@ -260,6 +261,7 @@ class xoctEventGUI extends xoctGUI
             $b->setCaption('rep_robj_xoct_event_opencast_studio');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
             $b->setPrimary(true);
+            $b->setTarget('_blank');
             $this->toolbar->addButtonInstance($b);
         }
 
@@ -851,12 +853,46 @@ class xoctEventGUI extends xoctGUI
             $studio_link = rtrim((string) $custom_url, "/");
         }
 
-        $return_link = ILIAS_HTTP_PATH . '/'
+        // First put the params in an associative array, in order to have a clearer understanding of what is going on!
+        $query_params = [
+            'upload.seriesId' => $this->objectSettings->getSeriesIdentifier(),
+            'upload.seriesField' => 'hidden',
+        ];
+
+        // The return label and return target parameters for Opencast Studio are temporarily disabled due to an issue.
+        // For more details, see: https://github.com/opencast-ilias/OpenCast/issues/424#issuecomment-3024202623
+
+        /* $return_link = ILIAS_HTTP_PATH . '/'
             . $this->ctrl->getLinkTarget($this, self::CMD_STANDARD);
 
-        $studio_link .= '?upload.seriesId=' . $this->objectSettings->getSeriesIdentifier()
-            . '&return.label=ILIAS'
-            . '&return.target=' . urlencode($return_link);
+        $query_params['return.label'] = 'ILIAS';
+        $query_params['return.target'] = urlencode($return_link); */
+
+        // Get the base ACL of the user.
+        $acls = $this->ACLUtils->getBaseACLForUser(xoctUser::getInstance($this->user));
+
+        // Convert the ACL to Studio ACL notation string.
+        $studio_acl_notation = (new ACLtoXML($acls))->getStudioACLObjectNotation();
+
+        // If ACL notation is not empty, add it to the query parameters array.
+        if (!empty($studio_acl_notation)) {
+            $query_params['upload.acl'] = $studio_acl_notation;
+        }
+
+        // Sort the query parameters array in reverse order to ensure that the parameters are in the correct order.
+        krsort($query_params);
+
+        // Combine the query parameters array into a single query string.
+        $combined_query_string = implode(
+            '&',
+            array_map(function($k, $v){
+                return "$k=$v";
+            }, array_keys($query_params), array_values($query_params))
+        );
+
+        // Append the query string to the studio link.
+        $studio_link .= '?' . $combined_query_string;
+
         $this->ctrl->redirectToURL($studio_link);
     }
 
