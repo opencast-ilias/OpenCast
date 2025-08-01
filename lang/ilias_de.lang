@@ -700,6 +700,7 @@ publication_usage_table_title_usage_group#:#Unternutzungsgruppe
 publication_usage_create_group#:#Unternutzungsgruppe erstellen
 publication_usage_edit_group#:#Unternutzungsgruppe bearbeiten
 publication_usage_confirm_delete_text_group#:#Sind Sie sicher, dass Sie diese Unternutzungsgruppe löschen möchten?
+publication_usage_confirm_delete_text#:#Sind Sie sicher, dass Sie diese Publikationsnutzung löschen möchten?
 publication_usage_extra_config#:#Zusätzliche
 pug_display_name_default#:#Mehr
 publication_usage_type_captions#:#Captions
