@@ -187,13 +187,11 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->outJson($obj->asStdClass());
     }
 
-    /**
-     *
-     */
-    protected function createMultiple()
+    protected function createMultiple(): void
     {
         $objects = [];
-        foreach ($this->http->request()->getParsedBody()['ids'] as $id) {
+        $ids = $this->http->request()->getParsedBody()['ids'] ?? [];
+        foreach ($ids as $id) {
             $id = (int) $id;
             $obj = PermissionGrant::where([
                 'event_identifier' => $this->event->getIdentifier(),
