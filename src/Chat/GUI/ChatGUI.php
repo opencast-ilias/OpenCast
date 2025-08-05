@@ -6,8 +6,6 @@ namespace srag\Plugins\Opencast\Chat\GUI;
 
 use ilOpenCastPlugin;
 use ilTemplate;
-use ilTemplateException;
-use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
 use srag\Plugins\Opencast\Container\Init;
@@ -59,14 +57,21 @@ class ChatGUI
             'REFRESH_ICON',
             $this->plugin->getDirectory() . '/src/Chat/node/public/images/refresh_icon.png'
         );
-        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
-        if (!$async) {
-            $this->template->addCss($chat_css_path);
-        } else {
-            $template->setCurrentBlock('css');
-            $template->setVariable('CSS_PATH', $chat_css_path);
-            $template->parseCurrentBlock();
+        $needed_css = [
+            $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css',
+            $this->plugin->getDirectory() . '/templates/default/Chat/bootstrap.min.css',
+        ];
+
+        foreach ($needed_css as $css) {
+            if (!$async) {
+                $this->template->addCss($css);
+            } else {
+                $template->setCurrentBlock('css');
+                $template->setVariable('CSS_PATH', $css);
+                $template->parseCurrentBlock();
+            }
         }
+
         return $template->get();
     }
 }
