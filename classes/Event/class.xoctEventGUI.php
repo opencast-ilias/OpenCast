@@ -138,7 +138,8 @@ class xoctEventGUI extends xoctGUI
         $this->ui = $DIC->ui();
         $this->dic = $dic;
         $this->ui_renderer = new DefaultRenderer(
-            new Loader($DIC, ilOpenCastPlugin::getInstance())
+            new Loader($DIC, ilOpenCastPlugin::getInstance()),
+            $DIC['ui.javascript_binding']
         );
         $this->wait_overlay = new WaitOverlay($this->main_tpl);
         $this->cache = $opencastContainer->get(Services::class);

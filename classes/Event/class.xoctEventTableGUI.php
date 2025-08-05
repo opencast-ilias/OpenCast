@@ -69,7 +69,7 @@ class xoctEventTableGUI extends ilTable2GUI
         parent::__construct($a_parent_obj, $a_parent_cmd);
         $this->setRowTemplate(
             'tpl.events.html',
-            'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
         );
         $this->setFormAction($ctrl->getFormAction($a_parent_obj));
         $data = array_filter(

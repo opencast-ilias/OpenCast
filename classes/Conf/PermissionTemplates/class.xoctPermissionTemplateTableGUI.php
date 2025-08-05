@@ -39,7 +39,8 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
         $this->setShowRowsSelector(false);
 
         $this->setRowTemplate(
-            $this->plugin->getDirectory() . '/templates/default/tpl.permission_templates.html'
+             'tpl.permission_templates.html',
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
         );
 
         $b = ilLinkButton::getInstance();

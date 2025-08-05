@@ -40,7 +40,10 @@ class MDConfigTable extends ilTable2GUI
         $this->setLimit(0);
         $this->setEnableNumInfo(false);
         $this->setShowRowsSelector(false);
-        $this->setRowTemplate($this->plugin->getDirectory() . '/templates/default/tpl.md_config.html');
+        $this->setRowTemplate(
+            'tpl.md_config.html',
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
+        );
 
         $this->initJS();
         $this->initColumns();

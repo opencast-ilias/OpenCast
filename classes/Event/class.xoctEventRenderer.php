@@ -148,7 +148,7 @@ class xoctEventRenderer
 
     public function getPreviewImageHTML(): string
     {
-        $preview_image_tpl = $this->plugin->getTemplate('default/tpl.event_preview_image.html');
+        $preview_image_tpl = $this->plugin->getTemplate('tpl.event_preview_image.html');
         $preview_image_tpl->setVariable('ID', $this->event->getIdentifier());
         $preview_image_tpl->setVariable('THUMBNAIL', $this->getThumbnailHTML());
         return $preview_image_tpl->get();

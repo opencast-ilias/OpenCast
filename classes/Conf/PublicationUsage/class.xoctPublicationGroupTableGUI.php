@@ -49,7 +49,7 @@ class xoctPublicationGroupTableGUI extends ilTable2GUI
         $this->setTitle($this->getLocaleString('table_title_usage_group'));
         $this->setRowTemplate(
             'tpl.publication_group.html',
-            'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
         );
         $this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
         $this->initColumns();

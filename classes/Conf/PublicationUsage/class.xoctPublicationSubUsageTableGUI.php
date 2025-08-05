@@ -53,7 +53,7 @@ class xoctPublicationSubUsageTableGUI extends ilTable2GUI
         $this->setTitle($this->getLocaleString('table_title_sub_usage'));
         $this->setRowTemplate(
             'tpl.publication_sub_usage.html',
-            'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
         );
         $this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
         $this->initColumns();

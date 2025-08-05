@@ -34,7 +34,6 @@ class ilObjOpenCast extends ilObjectPlugin
         $init_instance = Init::init($DIC);
         $this->cache = $init_instance->get(Services::class);
         $this->series_repository = $init_instance->get(SeriesAPIRepository::class);
-        $this->series_repository = Init::init($DIC)->get(SeriesAPIRepository::class);
     }
 
     final protected function initType(): void

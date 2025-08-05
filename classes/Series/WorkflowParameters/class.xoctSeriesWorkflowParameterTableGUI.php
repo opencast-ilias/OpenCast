@@ -39,7 +39,7 @@ class xoctSeriesWorkflowParameterTableGUI extends ilTable2GUI
 
     protected function getRowTemplate(): string
     {
-        return $this->plugin->getDirectory() . '/templates/default/' . self::ROW_TEMPLATE;
+        return self::ROW_TEMPLATE;
     }
 
     protected function initCommands(): void

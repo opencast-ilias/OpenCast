@@ -57,7 +57,8 @@ class xoctWorkflowTableGUI extends ilTable2GUI
 
     protected function getRowTemplate(): string
     {
-        return $this->plugin->getDirectory() . '/templates/default/tpl.table_row.html';
+        $str = $this->plugin->getDirectory() . '/templates/default/tpl.table_row.html';
+        return $str;
     }
 
     protected function initColumns(): void

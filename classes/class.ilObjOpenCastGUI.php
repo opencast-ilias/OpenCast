@@ -22,6 +22,7 @@ use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Container\Init;
 use ILIAS\HTTP\Services;
 use srag\Plugins\Opencast\Container\Container as PluginContainer;
+use ILIAS\UI\Component\Input\Container\Form\Standard as StandardForm;
 
 /**
  * User Interface class for example repository object.
@@ -300,13 +301,9 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
      * @param string     $type
      * @param bool|false $from_post
      */
-    public function initCreateForm($type, $from_post = false): LegacyFormWrapper
+    public function initCreateForm($type, $from_post = false): StandardForm|ilPropertyFormGUI|array
     {
-        return new LegacyFormWrapper(
-            $this->ilias_dic->ui()->renderer()->render(
-                $this->buildUIForm()
-            )
-        );
+        return $this->buildUIForm();
     }
 
     private function buildUIForm(): Form
@@ -315,6 +312,41 @@ class ilObjOpenCastGUI extends ilObjectPluginGUI
             $this->ilias_dic->ctrl()->getFormAction($this, 'save')
         );
     }
+
+
+    public function saveObject(): void
+    {
+        // create permission is already checked in createObject. This check here is done to prevent hacking attempts
+        if (!$this->checkPermissionBool("create", "", $this->requested_new_type)) {
+            $this->error->raiseError($this->lng->txt("no_create_permission"), $this->error->MESSAGE);
+        }
+
+        $this->lng->loadLanguageModule($this->requested_new_type);
+        $this->ctrl->setParameter($this, "new_type", $this->requested_new_type);
+
+        $form = $this->initCreateForm($this->requested_new_type)
+                     ->withRequest($this->request);
+        $data = $form->getData();
+        if ($data === null) {
+            $this->tpl->setContent($this->getCreationFormsHTML($form));
+            return;
+        }
+
+        $this->ctrl->setParameter($this, 'new_type', '');
+
+        $class_name = 'ilObj' . $this->obj_definition->getClassName($this->requested_new_type);
+
+        $new_obj = new $class_name();
+        $new_obj->setType($this->requested_new_type);
+        $new_obj->processAutoRating();
+        $new_obj->setTitle('');
+        $new_obj->setDescription('');
+        $new_obj->create();
+
+        $this->putObjectInTree($new_obj);
+        $this->afterSave($new_obj);
+    }
+
 
     /**
      * @throws arException

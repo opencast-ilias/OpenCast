@@ -172,7 +172,10 @@ trait TableGUI
      */
     private function initRowTemplate(): void
     {
-        $this->setRowTemplate($this->getRowTemplate());
+        $this->setRowTemplate(
+            basename($this->getRowTemplate()),
+            'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast'
+        );
     }
 
     /**
