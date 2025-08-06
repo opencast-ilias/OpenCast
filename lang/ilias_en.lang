@@ -183,6 +183,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
 config_enable_chat#:#Activate Chat
 config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
+config_enable_cutting#:#Enable Cutting
+config_enable_cutting_info#:#Allow users to access the cutting tool (Video Editor) for videos. When disabled, the "Cut" action will not be available in the event actions menu.
 config_ingest_upload#:#Upload via Ingest Nodes
 config_ingest_upload_info#:#If enabled, the upload will be executed via ingest nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 eula#:#Terms of Use
