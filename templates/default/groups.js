@@ -10,11 +10,11 @@ var xoctGroup = {
     container: null,
     groups: [],
     participants: [],
-    lng: [
-        delete_group = "Delete Group?",
-        no_title = "Please insert title",
-        none_available = "None available"
-    ],
+    lng: {
+        delete_group: "Delete Group?",
+        no_title: "Please insert title",
+        none_available: "None available"
+    },
     before_load: function () {
     },
     after_load: function () {
