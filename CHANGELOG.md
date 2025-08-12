@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 9.2.3
+- [FIX] several (UI) issues in Groups, Change-Owner and Invitation Screens
+- [FEATURE] Upgrade paella-user-tracking to v1.42.6
+- [FIX] Style Issues in Chat
+
 ## Version 9.2.2
 - [FIX] Disable OC Studio return target and label #424
 - [FIX] sending mails fails while reporting quality problems #434
