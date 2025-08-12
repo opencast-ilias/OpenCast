@@ -32,6 +32,15 @@
     background-color: #007bff;
 }
 
-.xoct_remove {
-    background-color: #dc3545;
+.btn-default.xoct_remove {
+    background-color: #f63b4c;
+    border-color: #dc3545;
+}
+
+#xoct_invite_all {
+    margin-top: 1rem;
+}
+
+#xoct_filter {
+    margin-left: 1rem;
 }

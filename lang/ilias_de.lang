@@ -299,6 +299,7 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 invitations_invite_all#:#Alle hinzufügen
+invitations_remove_all#:#Alle entfernen
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
