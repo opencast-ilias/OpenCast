@@ -323,7 +323,7 @@ if (! $ilDB->tableExists('xoct_event_additions')) {
 ?>
 <#4>
 <?php
-require_once("./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php");
+require_once("./components/ILIAS/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php");
 $xoct_type_id = ilDBUpdateNewObjectType::addNewType(ilOpenCastPlugin::PLUGIN_ID, 'Plugin OpenCast');
 
 //Adding a new Permission rep_robj_xoct_upload ("Upload")
