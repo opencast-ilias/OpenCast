@@ -36,8 +36,6 @@ class xoctLog extends ilLog
 
     /**
      * @param $log_level
-     *
-     * @return bool
      */
     public static function relevant($log_level): bool
     {
@@ -63,7 +61,6 @@ class xoctLog extends ilLog
 
     /**
      * @param      $a_msg
-     * @param null $log_level
      */
     public function write(string $a_msg, $log_level = null): void
     {
@@ -106,7 +103,12 @@ class xoctLog extends ilLog
     {
         $log = self::getInstance();
 
-        return $log->getLogDir() . '/' . $log->getLogFile();
+        $log_dir = $log->getLogDir();
+        if (empty($log_dir)) {
+            return 'stdout';
+        }
+
+        return $log_dir . '/' . $log->getLogFile();
     }
 
     /**

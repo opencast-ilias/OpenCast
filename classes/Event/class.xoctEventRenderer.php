@@ -28,6 +28,8 @@ use srag\Plugins\Opencast\Container\Init;
  * Class xoctEventRenderer
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
+ *
+ * @deprecated
  */
 class xoctEventRenderer
 {

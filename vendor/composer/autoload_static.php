@@ -6,74 +6,74 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
 {
-    public static $files = array (
+    public static $files = array(
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
-    public static $prefixLengthsPsr4 = array (
-        'P' => 
-        array (
+    public static $prefixLengthsPsr4 = array(
+        'P' =>
+        array(
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
         ),
-        'O' => 
-        array (
+        'O' =>
+        array(
             'OpencastApi\\Util\\' => 17,
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'G' => 
-        array (
+        'G' =>
+        array(
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
     );
 
-    public static $prefixDirsPsr4 = array (
-        'Psr\\Http\\Message\\' => 
-        array (
+    public static $prefixDirsPsr4 = array(
+        'Psr\\Http\\Message\\' =>
+        array(
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' => 
-        array (
+        'Psr\\Http\\Client\\' =>
+        array(
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'OpencastApi\\Util\\' => 
-        array (
+        'OpencastApi\\Util\\' =>
+        array(
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util',
         ),
-        'OpencastApi\\Rest\\' => 
-        array (
+        'OpencastApi\\Rest\\' =>
+        array(
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' => 
-        array (
+        'OpencastApi\\Mock\\' =>
+        array(
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' => 
-        array (
+        'OpencastApi\\' =>
+        array(
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'GuzzleHttp\\Psr7\\' => 
-        array (
+        'GuzzleHttp\\Psr7\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
-        array (
+        'GuzzleHttp\\Promise\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
-        array (
+        'GuzzleHttp\\' =>
+        array(
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
     );
 
-    public static $classMap = array (
+    public static $classMap = array(
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'ILIAS\\UI\\Implementation\\Component\\Input\\Field\\ChunkedFile' => __DIR__ . '/../..' . '/src/UI/Form/ChunkedFile.php',
         'ILIAS\\UI\\Implementation\\Component\\Input\\Field\\ChunkedFileRenderer' => __DIR__ . '/../..' . '/src/UI/Form/ChunkedFileRenderer.php',
@@ -250,11 +250,20 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Notification\\NotificationSender' => __DIR__ . '/../..' . '/src/Notification/NotificationSender.php',
         'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => __DIR__ . '/../..' . '/src/UI/EventFormBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => __DIR__ . '/../..' . '/src/UI/EventTableBuilder.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Action' => __DIR__ . '/../..' . '/src/UI/Integration/Action.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Commons' => __DIR__ . '/../..' . '/src/UI/Integration/Commons.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionParameter' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionParameter.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionParameters' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionParameters.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionTarget' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionTarget.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionTargetResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionTargetResolver.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => __DIR__ . '/../..' . '/src/UI/Integration/Events.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => __DIR__ . '/../..' . '/src/UI/Integration/Integration.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => __DIR__ . '/../..' . '/src/UI/Integration/MyEvents.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series' => __DIR__ . '/../..' . '/src/UI/Integration/Series.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionParameter' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionParameter.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionParameters' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionParameters.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionTarget' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionTarget.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionTargetResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionTargetResolver.php',
         'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => __DIR__ . '/../..' . '/src/UI/LegacyFormWrapper.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\Config\\MDConfigTable' => __DIR__ . '/../..' . '/src/UI/Metadata/Config/MDConfigTable.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\MDFormItemBuilder' => __DIR__ . '/../..' . '/src/UI/Metadata/MDFormItemBuilder.php',
@@ -282,6 +291,11 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => __DIR__ . '/../..' . '/src/Util/Transformator/ACLtoXML.php',
         'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => __DIR__ . '/../..' . '/src/Util/Transformator/MetadataToXML.php',
         'srag\\Plugins\\Opencast\\Util\\UpdateCheck' => __DIR__ . '/../..' . '/src/Util/UpdateCheck.php',
+        'srag\\Plugins\\Opencast\\Views\\Series\\BaseActionResolver' => __DIR__ . '/../..' . '/src/Views/BaseActionResolver.php',
+        'srag\\Plugins\\Opencast\\Views\\Series\\Display' => __DIR__ . '/../..' . '/src/Views/Series/Display.php',
+        'srag\\Plugins\\Opencast\\Views\\Series\\EventActionResolver' => __DIR__ . '/../..' . '/src/Views/Event/EventActionResolver.php',
+        'srag\\Plugins\\Opencast\\Views\\Series\\SeriesActionResolver' => __DIR__ . '/../..' . '/src/Views/Series/SeriesActionResolver.php',
+        'srag\\Plugins\\Opencast\\Views\\ViewElement' => __DIR__ . '/../..' . '/src/Views/ViewElement.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
         'xoctBase' => __DIR__ . '/../..' . '/classes/Request/class.xoctBase.php',
         'xoctChangeOwnerGUI' => __DIR__ . '/../..' . '/classes/Owner/class.xoctChangeOwnerGUI.php',

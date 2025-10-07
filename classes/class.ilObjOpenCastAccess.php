@@ -166,6 +166,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         return $access->checkAccess('write', '', $ref_id);
     }
 
+    /**
+     * @deprecated We should refactor this whole class and should use the \srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget here as well
+     */
     public static function checkAction(
         string $cmd,
         Event $event = null,
@@ -178,6 +181,12 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         if (!$user instanceof xoctUser) {
             $user = xoctUser::getInstance($DIC->user());
         }
+
+        $objectSettings ??= new ObjectSettings(
+            \ilObject2::_lookupObjectId(
+                (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0)
+            )
+        );
 
         $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
 
@@ -374,7 +383,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         global $DIC;
         $ref_id ??= (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
         $prefix = in_array($action, self::$custom_rights, true) ? "rep_robj_xoct_perm_" : "";
-        if (!$parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+        if (!($parent_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) instanceof \ilContainer) {
             return false;
         }
         $fetch_role_method = "getDefault{$role}Role";
@@ -399,7 +408,7 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
     {
         global $DIC;
         $producers = [];
-        if ($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) {
+        if (($crs_or_grp_obj = ilObjOpenCast::_getParentCourseOrGroup($ref_id)) instanceof \ilContainer) {
             //check each role (admin,tutor,member) for perm edit_videos, add to producers
             $roles = ($crs_or_grp_obj instanceof ilObjCourse) ? ['admin', 'tutor', 'member'] : ['admin', 'member'];
             foreach ($roles as $role) {

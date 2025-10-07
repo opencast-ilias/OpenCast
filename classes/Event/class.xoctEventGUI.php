@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use srag\Plugins\Opencast\Model\Publication\Attachment;
+use srag\Plugins\Opencast\Model\Publication\Media;
+use srag\Plugins\Opencast\Model\Publication\Publication;
 use ILIAS\UI\Implementation\DefaultRenderer;
 use ILIAS\DI\UIServices;
 use ILIAS\DI\Container;
@@ -29,7 +32,6 @@ use srag\Plugins\Opencast\Model\Series\Request\UpdateSeriesACLRequestPayload;
 use srag\Plugins\Opencast\Model\Series\SeriesRepository;
 use srag\Plugins\Opencast\Model\TermsOfUse\ToUManager;
 use srag\Plugins\Opencast\Model\User\xoctUser;
-use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
@@ -44,8 +46,8 @@ use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Util\OutputResponse;
 use srag\Plugins\Opencast\Container\Init;
 use srag\Plugins\Opencast\UI\Integration\Integration;
-use ILIAS\Data\URI;
 use srag\Plugins\Opencast\Views\Series\Display;
+use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
 
 /**
  * Class xoctEventGUI
@@ -57,7 +59,7 @@ class xoctEventGUI extends xoctGUI
 {
     use OutputResponse;
 
-    public const IDENTIFIER = 'eid';
+    public const IDENTIFIER = EventActionParameter::EVENT_ID->value;
     public const CMD_STANDARD = 'index';
     public const CMD_CLEAR_CACHE = 'clearCache';
     public const CMD_EDIT_OWNER = 'editOwner';
@@ -85,6 +87,7 @@ class xoctEventGUI extends xoctGUI
      */
     private object $cache;
     private int $ref_id;
+    private Integration $ui_integration;
     /**
      * @var DefaultRenderer
      */
@@ -92,7 +95,7 @@ class xoctEventGUI extends xoctGUI
     /**
      * @var EventModals|null
      */
-    protected $modals = null;
+    protected $modals;
     /**
      * @var Renderer
      */
@@ -145,6 +148,7 @@ class xoctEventGUI extends xoctGUI
             new Loader($DIC, ilOpenCastPlugin::getInstance()),
             $DIC['ui.javascript_binding']
         );
+        $this->ui_integration = $opencastContainer[Integration::class];
         $this->wait_overlay = new WaitOverlay($this->main_tpl);
         $this->cache = $opencastContainer->get(Services::class);
         $this->ref_id = (int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0);
@@ -226,8 +230,8 @@ class xoctEventGUI extends xoctGUI
 
         // add "schedule" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_SCHEDULE_EVENT) && PluginConfig::getConfig(
-                PluginConfig::F_CREATE_SCHEDULED_ALLOWED
-            )) {
+            PluginConfig::F_CREATE_SCHEDULED_ALLOWED
+        )) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_schedule_new');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SCHEDULE));
@@ -237,8 +241,8 @@ class xoctEventGUI extends xoctGUI
 
         // add "Opencast Studio" button
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_RECORD_EVENT) && PluginConfig::getConfig(
-                PluginConfig::F_STUDIO_ALLOWED
-            )) {
+            PluginConfig::F_STUDIO_ALLOWED
+        )) {
             $b = ilLinkButton::getInstance();
             $b->setCaption('rep_robj_xoct_event_opencast_studio');
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_OPENCAST_STUDIO));
@@ -269,20 +273,16 @@ class xoctEventGUI extends xoctGUI
 
     protected function index(): void
     {
-        $container = Init::init();
-        /**
-         * @var Integration $ui
-         */
-        $ui = $container[Integration::class];
-
         $display_series = new Display(
-            $ui,
-            $this->objectSettings->getSeriesIdentifier(),
-            new URI((string) $this->dic->http()->request()->getUri()),
-            new URI((string) $this->dic->http()->request()->getUri())
+            $this->ui_integration,
+            $this->objectSettings->getSeriesIdentifier()
         );
 
-        $this->main_tpl->setContent($this->ui_renderer->render($display_series->get()));
+        $this->main_tpl->setContent(
+            $this->ui_renderer->render(
+                $display_series->get()
+            )
+        );
     }
 
     /**
@@ -546,9 +546,9 @@ class xoctEventGUI extends xoctGUI
             $message = $this->txt('msg_scheduling_conflict') . '<br>';
             foreach ($conflicts as $conflict) {
                 $message .= '<br>' . $conflict['title'] . '<br>' . date(
-                        'Y.m.d H:i:s',
-                        strtotime((string) $conflict['start'])
-                    ) . ' - '
+                    'Y.m.d H:i:s',
+                    strtotime((string) $conflict['start'])
+                ) . ' - '
                     . date('Y.m.d H:i:s', strtotime((string) $conflict['end'])) . '<br>';
             }
             $this->main_tpl->setOnScreenMessage('failure', $message);
@@ -658,9 +658,7 @@ class xoctEventGUI extends xoctGUI
         // Combine the query parameters array into a single query string.
         $combined_query_string = implode(
             '&',
-            array_map(function ($k, $v) {
-                return "$k=$v";
-            }, array_keys($query_params), array_values($query_params))
+            array_map(fn($k, $v): string => "$k=$v", array_keys($query_params), array_values($query_params))
         );
 
         // Append the query string to the studio link.
@@ -694,7 +692,7 @@ class xoctEventGUI extends xoctGUI
 
     public function download(): void
     {
-        $event_id = $this->retrieveQuery('event_id');
+        $event_id = $this->retrieveQuery(self::IDENTIFIER);
         $publication_id = $this->retrieveQuery('pub_id');
         $usage_type = $this->retrieveQuery('usage_type');
         $usage_id = $this->retrieveQuery('usage_id');
@@ -715,14 +713,16 @@ class xoctEventGUI extends xoctGUI
         // Now that we have multiple sub-usages, we first check for publication_id which is passed by the multi-dropdowns.
         if ($publication_id) {
             $publication = array_filter(
-                $download_publications, fn($publication): bool => $publication->getId() === $publication_id
+                $download_publications,
+                fn(Attachment|Media|Publication $publication): bool => $publication->getId() === $publication_id
             );
             $publication = reset($publication);
         } elseif (!empty($usage_type) && !empty($usage_id)) {
             // If this is not multi-download dropdown, then it has to have the usage_type and usage_id parameters identified.
             $publication = array_filter(
                 $download_publications,
-                fn($publication
+                fn(
+                    Attachment|Media|Publication $publication
                 ): bool => $publication->usage_id == $usage_id && $publication->usage_type === $usage_type
             );
             $publication = reset($publication);
@@ -773,8 +773,8 @@ class xoctEventGUI extends xoctGUI
 
         // check access
         if (ilObjOpenCastAccess::hasPermission(
-                ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS
-            ) || ilObjOpenCastAccess::hasWriteAccess()) {
+            ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS
+        ) || ilObjOpenCastAccess::hasWriteAccess()) {
             $this->addCurrentUserToGroup();
         }
 
@@ -889,12 +889,12 @@ class xoctEventGUI extends xoctGUI
             && isset($post_body['startworkflow_event_id']) && is_string($post_body['startworkflow_event_id'])
         ) {
             $workflow_id = (int) strip_tags($post_body['workflow_id']);
-            $event_id = (string) strip_tags($post_body['startworkflow_event_id']);
+            $event_id = strip_tags($post_body['startworkflow_event_id']);
             $workflow = $this->workflowRepository->getById($workflow_id);
             if (!ilObjOpenCastAccess::checkAction(
-                    ilObjOpenCastAccess::ACTION_EDIT_EVENT,
-                    $this->event_repository->find($event_id)
-                )
+                ilObjOpenCastAccess::ACTION_EDIT_EVENT,
+                $this->event_repository->find($event_id)
+            )
                 || is_null($workflow)) {
                 $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_no_access'), true);
                 $this->cancel();
@@ -927,10 +927,9 @@ class xoctEventGUI extends xoctGUI
                     } else {
                         $value = $received_value;
                     }
-                } else {
-                    if ($type === 'checkbox') { // This means that the checkbox is not checked.
-                        $value = false;
-                    }
+                } elseif ($type === 'checkbox') {
+                    // This means that the checkbox is not checked.
+                    $value = false;
                 }
                 // Take care of boolean conversion.
                 if (is_bool($value)) {
@@ -974,8 +973,8 @@ class xoctEventGUI extends xoctGUI
         $ilConfirmationGUI = new ilConfirmationGUI();
         $ilConfirmationGUI->setFormAction($this->ctrl->getFormAction($this));
         if (count($event->publications()->getPublications()) && PluginConfig::getConfig(
-                PluginConfig::F_WORKFLOW_UNPUBLISH
-            )) {
+            PluginConfig::F_WORKFLOW_UNPUBLISH
+        )) {
             $header_text = $this->txt('unpublish_confirm');
             $action_text = 'unpublish';
         } else {
@@ -1001,8 +1000,8 @@ class xoctEventGUI extends xoctGUI
             $this->cancel();
         }
         if (count($event->publications()->getPublications()) && PluginConfig::getConfig(
-                PluginConfig::F_WORKFLOW_UNPUBLISH
-            )) {
+            PluginConfig::F_WORKFLOW_UNPUBLISH
+        )) {
             try {
                 $this->unpublish($event);
                 $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_unpublish_started'), true);
@@ -1063,7 +1062,7 @@ class xoctEventGUI extends xoctGUI
 
     protected function reportQuality(): void
     {
-        $event = $this->event_repository->find($this->http->request()->getParsedBody()['event_id']);
+        $event = $this->event_repository->find($this->http->request()->getParsedBody()[self::IDENTIFIER]);
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM, $event)) {
             $message = $this->getQualityReportMessage($event, $this->http->request()->getParsedBody()['message']);
             $subject = 'ILIAS Opencast Plugin: neue Meldung «Qualitätsprobleme»';
@@ -1156,7 +1155,7 @@ class xoctEventGUI extends xoctGUI
     {
         $intro_text = '';
         if ($this->objectSettings->getIntroductionText() !== '' && $this->objectSettings->getIntroductionText(
-            ) !== '0') {
+        ) !== '0') {
             $intro = new ilTemplate(
                 './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/tpl.intro.html',
                 true,
@@ -1205,19 +1204,17 @@ class xoctEventGUI extends xoctGUI
         }
 
         // Extra things to do for producers group.
-        if ($group_config_name === PluginConfig::F_GROUP_PRODUCERS) {
-            // add user to series producers
-            if ($this->objectSettings->getSeriesIdentifier() !== null) {
-                $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
-                if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
-                    $this->seriesRepository->updateACL(
-                        new UpdateSeriesACLRequest(
-                            $series->getIdentifier(),
-                            new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
-                        )
-                    );
-                    $sleep = true;
-                }
+        // add user to series producers
+        if ($group_config_name === PluginConfig::F_GROUP_PRODUCERS && $this->objectSettings->getSeriesIdentifier() !== null) {
+            $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
+            if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
+                $this->seriesRepository->updateACL(
+                    new UpdateSeriesACLRequest(
+                        $series->getIdentifier(),
+                        new UpdateSeriesACLRequestPayload($series->getAccessPolicies())
+                    )
+                );
+                $sleep = true;
             }
         }
 

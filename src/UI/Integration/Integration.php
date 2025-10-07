@@ -6,6 +6,8 @@ namespace srag\Plugins\Opencast\UI\Integration;
 
 use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Container\Container;
+use srag\Plugins\Opencast\Views\Series\SeriesActionResolver;
+use srag\Plugins\Opencast\Views\Series\EventActionResolver;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -32,7 +34,12 @@ class Integration
     ) {
         $this->events = new Events(
             $factory,
-            $container
+            $container,
+            new EventActionResolver(
+                $container->translator(),
+                $container->ilias()->http(),
+                $container->ilias()->ctrl()
+            )
         );
         $this->my_events = new MyEvents(
             $factory,
@@ -41,7 +48,12 @@ class Integration
         );
         $this->series = new Series(
             $container,
-            $this->events
+            $this->events,
+            new SeriesActionResolver(
+                $container->translator(),
+                $container->ilias()->http(),
+                $container->ilias()->ctrl()
+            )
         );
     }
 

@@ -16,7 +16,6 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
-use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
@@ -80,11 +79,10 @@ class xoctPlayerGUI extends xoctGUI
             $this->sendReponse("Error: " . $e->getMessage());
         }
 
-        $jquery_path = iljQueryUtil::getLocaljQueryPath();
-        $ilias_basic_js_path = './Services/JavaScript/js/Basic.js';
+        $ilias_basic_js_path = './assets/js/Basic.js';
         $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
 
-        $tpl->setVariable("JQUERY_PATH", $jquery_path);
+        $tpl->setVariable("JQUERY_PATH", './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/src/Chat/node/public/js/jquery.min.js');
         $tpl->setVariable("ILIAS_BASIC_JS_PATH", $ilias_basic_js_path);
 
         $tpl->setVariable("TITLE", $event->getTitle());
@@ -110,7 +108,7 @@ class xoctPlayerGUI extends xoctGUI
         } else {
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                $this->plugin->getDirectory() . "/templates/default/player.css"
+                './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/player.css'
             );
         }
 
@@ -128,7 +126,7 @@ class xoctPlayerGUI extends xoctGUI
     {
         $ChatroomAR = ChatroomAR::findBy($event->getIdentifier(), $this->object_settings->getObjId());
         $has_chat_history = $ChatroomAR && MessageAR::where(["chat_room_id" => $ChatroomAR->getId()])->hasSets();
-        return $has_chat_history ? (int) $ChatroomAR->getId() : null;
+        return $has_chat_history ? $ChatroomAR->getId() : null;
     }
 
     protected function buildJSConfig(Event $event): stdClass
