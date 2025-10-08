@@ -552,7 +552,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
                     array_merge($members_allowed_defaults_perms, $additionals[self::ROLE_MEMBER])
                 );
             }
-            self::setDefaultPerms($ref_id, $member_role_id, $members_allowed_defaults_perms);
+            $rights_to_prevent = self::$custom_rights ?? [];
+            $members_perms_to_prevent = array_diff($rights_to_prevent, $members_allowed_defaults_perms);
+            self::setDefaultPerms($ref_id, $member_role_id, $members_allowed_defaults_perms, $members_perms_to_prevent);
         }
     }
 
@@ -562,8 +564,9 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
      * @param int $ref_id ref id
      * @param int $role_id role id
      * @param array $perms_to_allow array list of perms to allow by default
+     * @param array $perms_to_prevent array list of perms to prevent
      */
-    private static function setDefaultPerms(int $ref_id, int $role_id, array $perms_to_allow): void
+    private static function setDefaultPerms(int $ref_id, int $role_id, array $perms_to_allow, array $perms_to_prevent = []): void
     {
         global $DIC;
         $ops_ids = $DIC->rbac()->review()->getActiveOperationsOfRole($ref_id, $role_id) ?? [];
@@ -573,6 +576,18 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
             $allowed_ops_id = $DIC->rbac()->review()->_getOperationIdByName($perm_name);
             if (!in_array($allowed_ops_id, $ops_ids)) {
                 $ops_ids[] = $allowed_ops_id;
+            }
+        }
+        // In case we are forced to prevent some perms.
+        if (!empty($perms_to_prevent)) {
+            foreach ($perms_to_prevent as $prevented_perm) {
+                $prefix = in_array($prevented_perm, self::$custom_rights) ? "rep_robj_xoct_perm_" : "";
+                $perm_name = $prefix . $prevented_perm;
+                $prevented_ops_id = $DIC->rbac()->review()->_getOperationIdByName($perm_name);
+                $key_to_remove = array_search($prevented_ops_id, $ops_ids, true);
+                if ($key_to_remove !== false) {
+                    unset($ops_ids[$key_to_remove]);
+                }
             }
         }
         $DIC->rbac()->admin()->grantPermission($role_id, $ops_ids, $ref_id);
