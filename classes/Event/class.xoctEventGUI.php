@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use srag\Plugins\Opencast\Views\Event\CreateEvent;
 use srag\Plugins\Opencast\Model\Publication\Attachment;
 use srag\Plugins\Opencast\Model\Publication\Media;
 use srag\Plugins\Opencast\Model\Publication\Publication;
@@ -9,7 +10,6 @@ use ILIAS\UI\Implementation\DefaultRenderer;
 use ILIAS\DI\UIServices;
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
-use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -41,7 +41,6 @@ use srag\Plugins\Opencast\UI\Modal\EventModals;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
-use srag\Plugins\OpenCast\UI\Component\Input\Field\Loader;
 use srag\Plugins\Opencast\Model\Cache\Services;
 use srag\Plugins\Opencast\Util\OutputResponse;
 use srag\Plugins\Opencast\Container\Init;
@@ -96,9 +95,6 @@ class xoctEventGUI extends xoctGUI
      * @var EventModals|null
      */
     protected $modals;
-    /**
-     * @var Renderer
-     */
     private DefaultRenderer $ui_renderer;
     private Container $dic;
     /**
@@ -144,10 +140,7 @@ class xoctEventGUI extends xoctGUI
         $this->toolbar = $DIC->toolbar();
         $this->ui = $DIC->ui();
         $this->dic = $dic;
-        $this->ui_renderer = new DefaultRenderer(
-            new Loader($DIC, ilOpenCastPlugin::getInstance()),
-            $DIC['ui.javascript_binding']
-        );
+        $this->ui_renderer = $this->ui->renderer();
         $this->ui_integration = $opencastContainer[Integration::class];
         $this->wait_overlay = new WaitOverlay($this->main_tpl);
         $this->cache = $opencastContainer->get(Services::class);
@@ -285,24 +278,25 @@ class xoctEventGUI extends xoctGUI
         );
     }
 
-    /**
-     *
-     */
     protected function add(): void
     {
         $pre_form_data = $this->parent_gui->renderLinksListSection();
         if (!empty($pre_form_data)) {
             $this->main_tpl->setOnScreenMessage('info', $this->plugin->txt('series_has_duplicates_events'));
         }
-        $form = $this->formBuilder->upload(
+
+        $upload = new CreateEvent(
             $this->ctrl->getFormAction($this, self::CMD_CREATE),
             !ToUManager::hasAcceptedToU($this->user->getId()),
             $this->objectSettings->getObjId(),
             ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
         );
-        $this->wait_overlay->onUnload();
 
-        $this->main_tpl->setContent($pre_form_data . $this->ui_renderer->render($form));
+        $this->main_tpl->setContent(
+            $pre_form_data . $this->ui_renderer->render(
+                $upload->get()
+            )
+        );
     }
 
     protected function create(): void

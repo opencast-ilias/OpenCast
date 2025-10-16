@@ -21,11 +21,15 @@ class Display implements ViewElement
 
     public function get(): Component|array
     {
-        return iterator_to_array(
-            $this->ui_integration->series()->asEntityListInPanel(
-                $this->series_id
-            )
-        );
+        try {
+            return iterator_to_array(
+                $this->ui_integration->series()->asEntityListInPanel(
+                    $this->series_id
+                )
+            );
+        } catch (\Throwable $t) {
+            return iterator_to_array($this->ui_integration->series()->notFound($this->series_id, $t->getMessage()));
+        }
     }
 
 }

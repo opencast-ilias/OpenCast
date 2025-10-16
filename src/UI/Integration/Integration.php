@@ -8,6 +8,7 @@ use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Views\Series\SeriesActionResolver;
 use srag\Plugins\Opencast\Views\Series\EventActionResolver;
+use srag\Plugins\Opencast\Views\Series\EventSettingsResolver;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -39,6 +40,9 @@ class Integration
                 $container->translator(),
                 $container->ilias()->http(),
                 $container->ilias()->ctrl()
+            ),
+            new EventSettingsResolver(
+                $container->objectSettings()
             )
         );
         $this->my_events = new MyEvents(

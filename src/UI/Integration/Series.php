@@ -16,6 +16,7 @@ use ILIAS\DI\UIServices;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionParameter;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTarget;
+use srag\Plugins\Opencast\Util\Locale\Translator;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -28,12 +29,15 @@ class Series implements DataRetrieval
     private const DEFAULT_PAGE_SIZE = 6;
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
+    public const SORT_TITLE_DESC = 'title:desc';
+    public const SORT_DATE_DESC = 'date:desc';
     private EventAPIRepository $event_repository;
     private SeriesAPIRepository $series_repository;
     private ?\srag\Plugins\Opencast\Model\Series\Series $series = null;
     private Factory $ui_factory;
     private UIServices $ui;
     private int $total = 0;
+    private Translator $translator;
 
     public function __construct(
         private Container $container,
@@ -44,6 +48,34 @@ class Series implements DataRetrieval
         $this->ui_factory = $this->container->ilias()->ui()->factory();
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
         $this->event_repository = $this->container->get(EventAPIRepository::class);
+        $this->translator = $this->container->translator();
+    }
+
+    public function notFound(string $series_id, ?string $error = null): \Generator
+    {
+        $message_box = $this->ui_factory->messageBox()->failure(
+            $this->translator->translate(
+                'series_not_found'
+            )
+        );
+
+        if (!is_null($error)) {
+            $modal = $this->ui_factory->modal()->lightbox(
+                $this->ui_factory->modal()->lightboxTextPage(
+                    $error,
+                    $this->translator->translate('native_error')
+                )
+            );
+            $show = $this->ui_factory->button()->standard(
+                $this->translator->translate('show_native_error'),
+                '#',
+            )->withOnClick($modal->getShowSignal());
+
+            yield $modal;
+            $message_box = $message_box->withButtons([$show]);
+        }
+
+        yield $message_box;
     }
 
     protected function buildSeries(string $series_id): void
@@ -87,6 +119,12 @@ class Series implements DataRetrieval
 
         $entity_list = iterator_to_array($this->asEntityList($series_id));
 
+        $sortation_options = [
+            self::SORT_TITLE_ASC => $this->translator->translate('title_asc'),
+            self::SORT_TITLE_DESC => $this->translator->translate('title_desc'),
+            self::SORT_DATE_ASC => $this->translator->translate('date_asc'),
+            self::SORT_DATE_DESC => $this->translator->translate('date_desc'),
+        ];
         yield $this->ui_factory->panel()->secondary()->legacy(
             $title,
             $this->ui_factory->legacy(
@@ -111,7 +149,7 @@ class Series implements DataRetrieval
                 ),
             $this->ui_factory
                 ->viewControl()
-                ->sortation([self::SORT_TITLE_ASC => 'Title', self::SORT_DATE_ASC => 'Date'], self::SORT_TITLE_ASC)
+                ->sortation($sortation_options, self::SORT_TITLE_ASC)
                 ->withSelected($this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC)
                 ->withTargetURL(
                     (string) $this->resolver->resolve(SeriesActionTarget::SORT),

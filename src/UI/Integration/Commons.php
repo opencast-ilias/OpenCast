@@ -40,4 +40,12 @@ trait Commons
         return $this->container->translator()->translate($key);
     }
 
+    public function formatDate(string|\DateTimeInterface $date): string
+    {
+        if (is_string($date)) {
+            $date = new \DateTimeImmutable($date);
+        }
+        return $date->format('d. M Y, H:i');
+    }
+
 }

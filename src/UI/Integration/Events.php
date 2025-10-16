@@ -14,12 +14,13 @@ use ILIAS\UI\Component\Button\Standard;
 use ILIAS\UI\Component\Listing\Entity\RecordToEntity;
 use ILIAS\UI\Component\Entity\Entity;
 use ILIAS\UI\Factory as UIFactory;
-use ILIAS\UI\Component\Button\Tag;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameters;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget;
 use ILIAS\UI\Component\Button\Shy;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -37,7 +38,8 @@ class Events implements RecordToEntity
     public function __construct(
         private UIFactory $ui_factory,
         private Container $container,
-        private EventActionTargetResolver $resolver
+        private EventActionTargetResolver $resolver,
+        private EventSettingsValueResolver $settings_resolver
     ) {
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
@@ -49,7 +51,6 @@ class Events implements RecordToEntity
 
         $actions = $this->buildActions($record);
         $play_action = $actions[EventActionTarget::PLAY->value] ?? null;
-        $download_action = $actions[EventActionTarget::DOWNLOAD->value] ?? null;
 
         // Thumbnail
         $thumbnail = $this->ui_factory
@@ -63,35 +64,64 @@ class Events implements RecordToEntity
             $thumbnail = $thumbnail
                 ->withAction((string) $play_action)
                 ->withAdditionalOnLoadCode(
-                    fn($id): string => "document.getElementById('" . $id . "').parentNode.classList.add('playable');"
+                    fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
+                        link.classList.add('playable');
+                        link.setAttribute('target', '_blank');
+                        "
                 );
             ;
         }
 
         // Base Entity
+        $title = $play_action === null
+            ? $record->getTitle()
+            : $this->ui_factory->link()->standard(
+                $record->getTitle(),
+                (string) $play_action
+            )->withOpenInNewViewport(true);
+
         $entity = $this->ui_factory
             ->entity()
             ->standard(
-                $record->getTitle(),
+                $title,
                 $thumbnail
             );
 
         // Main Details
-        $entity = $entity->withMainDetails(
-            $this->ui_factory->listing()->property()->withProperty(
-                'Description',
-                $this->shortenText($record->getDescription()),
+        $description = $this->shortenText($record->getDescription());
+        $main_properties = [];
+
+        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
+            $this->translate("event_date"),
+            $this->formatDate($record->getStart()),
+        );
+
+        if (!empty($description)) {
+            $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
+                $this->translate("event_description"),
+                $description,
                 false
-            ),
-            $this->ui_factory->listing()->property()->withProperty(
-                'Speaker',
+            );
+        }
+
+        if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
+            $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
+                $this->translate("event_presenter"),
                 implode(", ", $record->getPresenter())
-            ),
-            $this->ui_factory->listing()->property()->withProperty('Raum', $record->getLocation()),
+            );
+        }
+
+        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
+            $this->translate("event_location"),
+            $record->getLocation() ?: '-'
+        );
+
+        $entity = $entity->withMainDetails(
+            ...$main_properties
         );
 
         // Owner Tooltip in Prioritized Reactions
-        $this->tooltips[] = $tooltip = $this->ui_factory
+        /*$this->tooltips[] = $tooltip = $this->ui_factory
             ->popover()
             ->standard(
                 $this->ui_factory->legacy(implode(", ", $record->getPresenter()))
@@ -100,24 +130,21 @@ class Events implements RecordToEntity
 
         $entity = $entity->withPrioritizedReactions(
             $this->ui_factory->symbol()->glyph()->user()->withOnClick($tooltip->getShowSignal())
-        );
+        );*/
 
-        // Actions as Reactions
-        $reactions = [];
-        if ($play_action) {
-            $reactions[] = $this->ui_factory->button()->tag(
-                $play_action->name(),
-                (string) $play_action
-            )->withRelevance(Tag::REL_MID);
+        // Status as Tag
+        if ($record->getProcessingState() !== Event::STATE_SUCCEEDED) {
+            $entity = $entity->withReactions(
+                $this->ui_factory->button()->tag(
+                    $this->translate('event_state_' . strtolower($record->getProcessingState())),
+                    '#'
+                )
+            );
         }
-        if ($download_action) {
-            $reactions[] = $this->ui_factory->button()->tag(
-                $download_action->name(),
-                (string) $download_action
-            )->withRelevance(Tag::REL_MID);
-        }
-        if (!empty($reactions)) {
-            $entity = $entity->withReactions(...$reactions);
+
+        // remove 'play' action from list of all actions, as it is already used as main action
+        if (isset($actions[EventActionTarget::PLAY->value])) {
+            unset($actions[EventActionTarget::PLAY->value]);
         }
 
         // All Actions
@@ -126,14 +153,6 @@ class Events implements RecordToEntity
                 $action->name(),
                 (string) $action->target()
             ), $actions),
-        );
-        // Featured Properties
-        $entity = $entity->withFeaturedProperties(
-            $this->ui_factory->listing()->property()->withProperty(
-                'Date',
-                $record->getStart()->format('d.m.Y H:i'),
-                false
-            ),
         );
 
         return $entity;

@@ -20,6 +20,7 @@ use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Notification\NotificationSender;
 use srag\Plugins\Opencast\Notification\DefaultNotificationSender;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -102,7 +103,7 @@ final class Init
 
         $opencast_container->glue(API::class, fn(): OpencastAPI => new OpencastAPI($opencast_container[Config::class]));
 
-        $opencast_container->glue(Services::class, function () use ($opencast_container): Services {
+        $opencast_container->glue(Services::class, function (): Services {
             $use_cache = (int) PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE);
             // map to caching settings
             switch ($use_cache) {
@@ -120,12 +121,10 @@ final class Init
                     $adaptor = CacheConfig::DATABASE;
                     break;
             }
-
             $config = new CacheConfig(
                 $adaptor,
                 $activated
             );
-
             return new Services($config);
         });
 
@@ -146,6 +145,9 @@ final class Init
         $opencast_container->glue(xoctUser::class, fn(): xoctUser => xoctUser::getInstance($ilias_container->user()));
 
         $opencast_container->glue(NotificationSender::class, fn(): NotificationSender => new DefaultNotificationSender($DIC->mail()->mime()));
+        $opencast_container->glue(ObjectSettings::class, fn(): ObjectSettings => new ObjectSettings(
+            \ilObject2::_lookupObjectId((int) ($DIC->http()->request()->getQueryParams()['ref_id'] ?? 0))
+        ));
 
         return self::$container = $opencast_container;
     }

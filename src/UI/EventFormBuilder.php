@@ -93,7 +93,6 @@ class EventFormBuilder
         '.aiff',
         '.wav',
     ];
-    private \ilOpenCastPlugin $plugin;
     private OpencastDIC $opencast_dic;
 
     /**
@@ -106,12 +105,11 @@ class EventFormBuilder
         private SeriesWorkflowParameterRepository $workflowParameterRepository,
         private UploadStorageService $uploadStorageService,
         private UploadHandler $uploadHandler,
-        \ilOpenCastPlugin $plugin,
+        private \ilOpenCastPlugin $plugin,
         private SchedulingFormItemBuilder $schedulingFormItemBuilder,
         private SeriesRepository $seriesRepository,
         private Container $dic
     ) {
-        $this->plugin = $plugin;
         $this->opencast_dic = OpencastDIC::getInstance();
     }
 
@@ -123,11 +121,13 @@ class EventFormBuilder
     {
         $upload_storage_service = $this->uploadStorageService;
         $factory = $this->ui_factory->input()->field();
-        $file_input = ChunkedFile::getInstance(
+
+        $file_input = $this->ui_factory->input()->field()->file(
             $this->uploadHandler,
             $this->plugin->txt('file'),
             $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $this->getAcceptedSuffix())
-        )->withRequired(true);
+        );
+
         // Upload Limit
         $configured_upload_limit = (int) PluginConfig::getConfig(PluginConfig::F_CURL_MAX_UPLOADSIZE);
         $upload_limit = $configured_upload_limit > 0
@@ -136,12 +136,11 @@ class EventFormBuilder
 
         // Chunk Size
         $chunk_size = (int) PluginConfig::getConfig(PluginConfig::F_CURL_CHUNK_SIZE);
-        $chunk_size = $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilFileUtils::getUploadSizeLimitBytes();
+        $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilFileUtils::getUploadSizeLimitBytes();
 
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
-                                 ->withChunkSizeInBytes($chunk_size)
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
@@ -165,7 +164,7 @@ class EventFormBuilder
                     let childlist_callback = [];
                     let update_title = (c) => {
                         const targetElement = $(c.targetNode);
-                        const titleElement = $("input[data-titleinput]");
+                        const titleElement = $("fieldset[data-titleinput]").find("input");
                         let last_filename = targetElement.data("last-filename");
                         let title_val = titleElement.val();
                         const selector = ".ui-input-file-input-list .ui-input-file-input .ui-input-file-info span[data-dz-name]";
@@ -201,7 +200,7 @@ class EventFormBuilder
             $file_section_inputs,
             $this->plugin->txt('file')
         );
-        $workflow_param_section = $obj_id == 0 ?
+        $workflow_param_section = $obj_id === 0 ?
             $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
@@ -276,7 +275,7 @@ class EventFormBuilder
                 $as_admin ?
                 $workflow_parameter->getDefaultValueAdmin() :
                 $workflow_parameter->getDefaultValueMember();
-                $wf_title = $workflow_parameter->getTitle();
+            $wf_title = $workflow_parameter->getTitle();
         }
         $thumbnail_upload_enabled = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_UPLOAD_ENABLED) ?? false;
         $accepted_thumbnail_mimetypes = PluginConfig::getConfig(PluginConfig::F_THUMBNAIL_ACCEPTED_MIMETYPES) ?? [];
@@ -474,7 +473,7 @@ class EventFormBuilder
         int $obj_id = 0,
         bool $as_admin = false
     ): Form {
-        $workflow_param_section = $obj_id == 0 ?
+        $workflow_param_section = $obj_id === 0 ?
             $this->workflowParameterRepository->getGeneralFormSection($this->plugin->txt('workflow_params_processing_settings'))
             : $this->workflowParameterRepository->getFormSectionForObjId(
                 $obj_id,
