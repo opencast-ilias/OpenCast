@@ -214,7 +214,7 @@ event_file_presenter#:#Video-Datei
 event_file_presenter_w_audio#:#Video/Audio-Datei
 event_identifier#:#ID
 event_invite_others#:#Zugriffsrechte erteilen
-event_location#:#Aufnahmestation
+event_location#:#Standort
 event_msg_created#:#Upload abgeschlossen
 event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
@@ -243,7 +243,7 @@ event_presenter#:#Referent/in
 event_presenters#:#Referent/in
 event_preview#:#Vorschau
 event_processing_state#:#Status
-event_recording_station#:#Aufnahmestation
+event_recording_station#:#Standort
 event_startworkflow#:#Workflow starten
 event_schedule_new#:#Aufzeichnungstermin(e) planen
 event_start_time#:#Start

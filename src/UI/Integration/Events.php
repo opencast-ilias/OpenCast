@@ -22,6 +22,7 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget;
 use ILIAS\UI\Component\Button\Shy;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use ILIAS\UI\Component\JavaScriptBindable;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -94,16 +95,27 @@ class Events implements RecordToEntity
         // Main Details
         $description = $this->shortenText($record->getDescription());
         $main_properties = [];
+        $main_properties_simple = [];
 
+        $translate_date = $this->translate("event_date");
         $event_label = $lables_as_glyphs
             ? $this->ui_renderer->render(
-                $this->ui_factory->symbol()->glyph()->time()
+                $this->setAttribute(
+                    $this->ui_factory
+                        ->symbol()
+                        ->glyph()
+                        ->time(),
+                    'title',
+                    $translate_date
+                )
             )
-            : $this->translate("event_date");
+            : $translate_date;
         $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
             $event_label,
-            $this->formatDate($record->getStart()),
+            $event_label . ' ' . $this->formatDate($record->getStart()),
+            false
         );
+        $main_properties_simple[$this->translate("event_date")] = $this->formatDate($record->getStart());
 
         if (!empty($description)) {
             $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
@@ -111,39 +123,88 @@ class Events implements RecordToEntity
                 $description,
                 false
             );
+            $main_properties_simple[$this->translate("event_description")] = $description;
         }
+
+        $translate_presenter = $this->translate("event_presenter");
+        $presenter_label = $lables_as_glyphs
+            ? $this->ui_renderer->render(
+                $this->setAttribute(
+                    $this->ui_factory
+                        ->symbol()
+                        ->glyph()
+                        ->user(),
+                    'title',
+                    $translate_presenter
+                )
+            )
+            : $translate_presenter;
+        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
+            $presenter_label,
+            $presenter_label . ' ' . implode(", ", $record->getPresenter()),
+            false
+        );
+        $main_properties_simple[$this->translate("event_presenter")] = implode(", ", $record->getPresenter());
 
         if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
-            $presenter_label = $lables_as_glyphs
+            $owner_username = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($record);
+            $translate_owner = $this->translate("event_owner");
+            $owner_label = $lables_as_glyphs
                 ? $this->ui_renderer->render(
-                    $this->ui_factory->symbol()->glyph()->user()
+                    $this->setAttribute(
+                        $this->ui_factory
+                            ->symbol()
+                            ->glyph()
+                            ->user(),
+                        'title',
+                        $translate_owner
+                    )
                 )
-                : $this->translate("event_presenter");
+                : $translate_owner;
             $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-                $presenter_label,
-                implode(", ", $record->getPresenter())
+                $owner_label,
+                $owner_label . ' ' . $owner_username,
+                false
             );
+            $main_properties_simple[$this->translate("event_owner")] = $owner_username;
         }
 
+        $translate_location = $this->translate("event_location");
         $location_label = $lables_as_glyphs
             ? $this->ui_renderer->render(
-                $this->ui_factory->symbol()->glyph()->note()
+                $this->setAttribute(
+                    $this->ui_factory
+                        ->symbol()
+                        ->glyph()
+                        ->note(),
+                    'title',
+                    $translate_location
+                )
             )
-            : $this->translate("event_location");
+            : $translate_location;
 
         $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
             $location_label,
-            $record->getLocation() ?: '-'
+            $location_label . ' ' . ($record->getLocation() ?: '-'),
+            false
         );
+        $main_properties_simple[$this->translate("event_location")] = $record->getLocation() ?: '-';
 
         $entity = $entity->withMainDetails(
-            ...$main_properties
+            //            ...$main_properties
+            $this->ui_factory->legacy(
+                $this->ui_renderer->render(
+                    $this->ui_factory->listing()->descriptive(
+                        $main_properties_simple
+                    )
+                )
+            )
         );
 
         // Status as Tag
         if ($record->getProcessingState() !== Event::STATE_SUCCEEDED) {
             $status_label = $this->translate('event_state_' . strtolower($record->getProcessingState()));
-            $status_label_short = $this->shortenText($status_label, 25);
+            $status_label_short = $this->shortenText($status_label, 41);
 
             $this->tooltips[] = $tooltip = $this->ui_factory
                 ->popover()
@@ -177,6 +238,15 @@ class Events implements RecordToEntity
         );
 
         return $entity;
+    }
+
+    private function setAttribute(JavaScriptBindable $c, string $attribute, string $value): JavaScriptBindable
+    {
+        return $c->withAdditionalOnLoadCode(
+            fn(
+                $id
+            ): string => "document.getElementById('" . $id . "').setAttribute('" . $attribute . "', '" . $value . "');"
+        );
     }
 
     private function shortenText(string $text, int $max_length = 100): string

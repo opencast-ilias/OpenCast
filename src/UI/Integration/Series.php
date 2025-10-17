@@ -243,7 +243,7 @@ class Series implements DataRetrieval
             $this->filter
         );
 
-        $filtered = array_filter($filtered, function (array $event) use ($filter_data): bool {
+        $ui_filter = function (array $event) use ($filter_data): bool {
             $event_object = $event['object'];
             foreach ($filter_data ?? [] as $key => $value) {
                 /** @var Event $event_object */
@@ -258,16 +258,19 @@ class Series implements DataRetrieval
                 xoctUser::getInstance($this->container->ilias()->user()),
                 $this->container->objectSettings()
             );
-        });
+        };
+        $filtered = array_filter($filtered, $ui_filter);
 
         // Calculate total count
 
+        $filtered_all = $this->event_repository->getFiltered(
+            ['series' => $this->series->getIdentifier()],
+            '',
+            []
+        );
+        $filtered_all = array_filter($filtered_all, $ui_filter);
         $this->total = count(
-            $this->event_repository->getFiltered(
-                ['series' => $this->series->getIdentifier()],
-                '',
-                []
-            )
+            $filtered_all
         );
 
         foreach ($filtered as $event) {

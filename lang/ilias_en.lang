@@ -215,7 +215,7 @@ event_file_presenter#:#Video File
 event_file_presenter_w_audio#:#Video/Audio File
 event_identifier#:#ID
 event_invite_others#:#Grant access rights
-event_location#:#Recording Station
+event_location#:#Location
 event_msg_created#:#Upload finished
 event_msg_deleted#:#Event deleted
 event_msg_unpublish_started#:#The publications are now being removed.
@@ -244,7 +244,7 @@ event_presenter#:#Presenter
 event_presenters#:#Presenters
 event_preview#:#Preview
 event_processing_state#:#State
-event_recording_station#:#Recording Station
+event_recording_station#:#Location
 event_schedule_new#:#Schedule Event(s)
 event_start_time#:#Start
 event_start#:#Start

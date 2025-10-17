@@ -3,6 +3,7 @@
  *
  * @type {{init: Function, selected_id: number, data_url: string, load: Function, deleteGroup: Function, selectGroup: Function, deselectAll: Function, create: Function}}
  */
+
 var xoctChangeOwner = {
 	selected_id: 0,
 	data_url: '',
