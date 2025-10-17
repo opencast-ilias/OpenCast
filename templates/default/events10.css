@@ -2,10 +2,7 @@
 ul.c-listing-entity {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);;
-	/*grid-template-rows: 2fr;*/
 	gap: 1rem;
-	/*justify-items: stretch;*/
-	/*align-items: stretch;*/
 }
 
 div.c-entity.__container {
@@ -32,6 +29,10 @@ div.c-entity.__primary-identifier {
 	ul.c-listing-entity {
 		grid-template-columns: 1fr;
 	}
+}
+
+.c-entity.__secondary-identifier.--image {
+	width: 20rem !important;
 }
 
 /* OVERLAY with Playbutton*/

@@ -25,6 +25,8 @@ use xoctEventTileGUI;
 
 /**
  * Responsible for building the event table, building the table's filter, and initializing the (fitlered) data.
+ *
+ * @deprecated Use new UI\Display
  */
 class EventTableBuilder
 {

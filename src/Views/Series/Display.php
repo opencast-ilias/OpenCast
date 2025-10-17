@@ -22,11 +22,17 @@ class Display implements ViewElement
     public function get(): Component|array
     {
         try {
-            return iterator_to_array(
-                $this->ui_integration->series()->asEntityListInPanel(
+            $components = [];
+
+            foreach (
+                $this->ui_integration->series()->asEntityListInPanelWithFilter(
                     $this->series_id
-                )
-            );
+                ) as $item
+            ) {
+                $components[] = $item;
+            }
+
+            return $components;
         } catch (\Throwable $t) {
             return iterator_to_array($this->ui_integration->series()->notFound($this->series_id, $t->getMessage()));
         }

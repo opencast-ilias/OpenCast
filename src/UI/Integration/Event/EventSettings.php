@@ -11,5 +11,6 @@ namespace srag\Plugins\Opencast\UI\Integration\Event;
 enum EventSettings: string
 {
     case SHOW_OWNER = 'show_owner';
+    case LABELS_AS_GLYPHS = 'glyphs_instead_of_labels';
 
 }

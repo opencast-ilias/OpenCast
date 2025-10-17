@@ -22,6 +22,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
     {
         return match ($setting) {
             EventSettings::SHOW_OWNER => $this->object_settings->getPermissionPerClip(),
+            EventSettings::LABELS_AS_GLYPHS => true,
             default => null
         };
     }

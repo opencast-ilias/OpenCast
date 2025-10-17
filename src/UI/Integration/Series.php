@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\UI\Integration;
 
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDCatalogue;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
+use ILIAS\UI\Component\Input\Container\Filter\Standard;
 use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
@@ -11,12 +14,16 @@ use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\UI\Component\Listing\Entity\DataRetrieval;
 use ILIAS\UI\Component\Listing\Entity\Mapping;
 use ILIAS\Data\Range;
-use ILIAS\Data\URI;
 use ILIAS\DI\UIServices;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionParameter;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTarget;
 use srag\Plugins\Opencast\Util\Locale\Translator;
+use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
+use ILIAS\UI\Implementation\Component\Input\Field\Text;
+use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
+use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -38,6 +45,10 @@ class Series implements DataRetrieval
     private UIServices $ui;
     private int $total = 0;
     private Translator $translator;
+    private \ilUIFilterService $filter_service;
+    private MDCatalogue $md_catalogue;
+    private MDFieldConfigEventRepository $md_repository;
+    private ?Standard $filter = null;
 
     public function __construct(
         private Container $container,
@@ -45,10 +56,23 @@ class Series implements DataRetrieval
         private SeriesActionTargetResolver $resolver
     ) {
         $this->ui = $this->container->ilias()->ui();
+        $this->filter_service = $this->container->ilias()->uiService()->filter();
         $this->ui_factory = $this->container->ilias()->ui()->factory();
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->translator = $this->container->translator();
+
+        // TODO maybe inject, needed for filters
+        $this->md_catalogue = $this->container
+            ->legacy()
+            ->metadata()
+            ->catalogueFactory()
+            ->event();
+
+        $this->md_repository = $this->container
+            ->legacy()
+            ->metadata()
+            ->confRepositoryEvent();
     }
 
     public function notFound(string $series_id, ?string $error = null): \Generator
@@ -86,17 +110,51 @@ class Series implements DataRetrieval
         }
     }
 
-    public function asEntityListWithFilter(
+    public function asEntityListInPanelWithFilter(
         string $series_id,
-        URI $current_url,
-        URI $target_url,
+        string $title = '',
     ): \Generator {
         $this->buildSeries($series_id);
-        // filter service
-        global $DIC;
 
-        // toto yield filters
-        yield from $this->asEntityListInPanel($resolver, $series_id);
+        // Filter
+        $md_field_configs = $this->md_repository->getAllFilterable(
+            \ilObjOpenCastAccess::hasPermission(\ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
+        );
+
+        yield $this->filter = $this->filter_service->standard(
+            self::class,
+            (string) $this->resolver->resolve(SeriesActionTarget::FILTER),
+            array_column(
+                array_map(
+                    fn(MDFieldConfigEventAR $md_field_config): array => [
+                        $md_field_config->getFieldId(),
+                        $this->buildFilterItem($md_field_config)
+                    ],
+                    $md_field_configs
+                ),
+                1,
+                0
+            ),
+            array_map(fn(MDFieldConfigEventAR $md_field_config): bool => true, $md_field_configs),
+            false,
+            false
+        );
+
+        yield from $this->asEntityListInPanel($series_id, $title);
+        yield from $this->events->getTooltips();
+    }
+
+    private function buildFilterItem(MDFieldConfigEventAR $md_field_config): Text
+    {
+        $factory = $this->ui_factory->input()->field();
+        $field_definition = $this->md_catalogue->getFieldById($md_field_config->getFieldId());
+        $lang_key = $this->container->ilias()->language()->getLangKey();
+        return match ($field_definition->getType()->getTitle()) {
+            MDDataType::text()->getTitle(),
+            MDDataType::text_array()->getTitle(),
+            MDDataType::text_long()->getTitle() => $factory->text($md_field_config->getTitle($lang_key)),
+            default => $factory->text($md_field_config->getTitle($lang_key)),
+        };
     }
 
     public function asEntityList(
@@ -108,7 +166,7 @@ class Series implements DataRetrieval
         );
 
         yield $this->ui_factory->listing()->entity()->standard($this->events)->withData($this);
-        yield $this->events->getTooltips();
+        yield from $this->events->getTooltips();
     }
 
     public function asEntityListInPanel(
@@ -125,6 +183,7 @@ class Series implements DataRetrieval
             self::SORT_DATE_ASC => $this->translator->translate('date_asc'),
             self::SORT_DATE_DESC => $this->translator->translate('date_desc'),
         ];
+
         yield $this->ui_factory->panel()->secondary()->legacy(
             $title,
             $this->ui_factory->legacy(
@@ -149,17 +208,19 @@ class Series implements DataRetrieval
                 ),
             $this->ui_factory
                 ->viewControl()
-                ->sortation($sortation_options, self::SORT_TITLE_ASC)
-                ->withSelected($this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC)
+                ->sortation(
+                    $sortation_options,
+                    $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC
+                )
                 ->withTargetURL(
                     (string) $this->resolver->resolve(SeriesActionTarget::SORT),
                     SeriesActionTarget::SORT->value
                 )
         ]);
         // drop first element as it is already rendered in panel
-        array_shift($entity_list);
+        //        array_shift($entity_list);
 
-        yield $entity_list;
+        //        yield $entity_list;
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
@@ -167,6 +228,7 @@ class Series implements DataRetrieval
         $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
         $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC;
 
+        // Filtered by API
         $filtered = $this->event_repository->getFiltered(
             ['series' => $this->series->getIdentifier()],
             '',
@@ -175,6 +237,30 @@ class Series implements DataRetrieval
             self::DEFAULT_PAGE_SIZE,
             $sort,
         );
+
+        // Filtered by UI Filter
+        $filter_data = $this->filter === null ? null : $this->filter_service->getData(
+            $this->filter
+        );
+
+        $filtered = array_filter($filtered, function (array $event) use ($filter_data): bool {
+            $event_object = $event['object'];
+            foreach ($filter_data ?? [] as $key => $value) {
+                /** @var Event $event_object */
+                $md_value = $event_object->getMetadata()->getField($key)->toString();
+                if (stripos($md_value, strtolower($value)) === false) {
+                    return false;
+                }
+            }
+
+            return \ilObjOpenCastAccess::hasReadAccessOnEvent(
+                $event_object,
+                xoctUser::getInstance($this->container->ilias()->user()),
+                $this->container->objectSettings()
+            );
+        });
+
+        // Calculate total count
 
         $this->total = count(
             $this->event_repository->getFiltered(

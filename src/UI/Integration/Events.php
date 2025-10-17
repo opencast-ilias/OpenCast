@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\UI\Integration;
 
+use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -34,6 +35,7 @@ class Events implements RecordToEntity
     private SeriesAPIRepository $series_repository;
 
     private array $tooltips = [];
+    private Renderer $ui_renderer;
 
     public function __construct(
         private UIFactory $ui_factory,
@@ -43,14 +45,16 @@ class Events implements RecordToEntity
     ) {
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
+        $this->ui_renderer = $this->container->ilias()->ui()->renderer();
     }
 
     public function map(UIFactory $ui_factory, mixed $record): Entity
     {
         $record = $this->event_repository->find($record['identifier'] ?? '');
-
         $actions = $this->buildActions($record);
         $play_action = $actions[EventActionTarget::PLAY->value] ?? null;
+
+        $lables_as_glyphs = $this->settings_resolver->resolve(EventSettings::LABELS_AS_GLYPHS);
 
         // Thumbnail
         $thumbnail = $this->ui_factory
@@ -91,8 +95,13 @@ class Events implements RecordToEntity
         $description = $this->shortenText($record->getDescription());
         $main_properties = [];
 
+        $event_label = $lables_as_glyphs
+            ? $this->ui_renderer->render(
+                $this->ui_factory->symbol()->glyph()->time()
+            )
+            : $this->translate("event_date");
         $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-            $this->translate("event_date"),
+            $event_label,
             $this->formatDate($record->getStart()),
         );
 
@@ -105,14 +114,25 @@ class Events implements RecordToEntity
         }
 
         if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
+            $presenter_label = $lables_as_glyphs
+                ? $this->ui_renderer->render(
+                    $this->ui_factory->symbol()->glyph()->user()
+                )
+                : $this->translate("event_presenter");
             $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-                $this->translate("event_presenter"),
+                $presenter_label,
                 implode(", ", $record->getPresenter())
             );
         }
 
+        $location_label = $lables_as_glyphs
+            ? $this->ui_renderer->render(
+                $this->ui_factory->symbol()->glyph()->note()
+            )
+            : $this->translate("event_location");
+
         $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-            $this->translate("event_location"),
+            $location_label,
             $record->getLocation() ?: '-'
         );
 
@@ -120,25 +140,26 @@ class Events implements RecordToEntity
             ...$main_properties
         );
 
-        // Owner Tooltip in Prioritized Reactions
-        /*$this->tooltips[] = $tooltip = $this->ui_factory
-            ->popover()
-            ->standard(
-                $this->ui_factory->legacy(implode(", ", $record->getPresenter()))
-            )
-            ->withTitle('Speaker');
-
-        $entity = $entity->withPrioritizedReactions(
-            $this->ui_factory->symbol()->glyph()->user()->withOnClick($tooltip->getShowSignal())
-        );*/
-
         // Status as Tag
         if ($record->getProcessingState() !== Event::STATE_SUCCEEDED) {
+            $status_label = $this->translate('event_state_' . strtolower($record->getProcessingState()));
+            $status_label_short = $this->shortenText($status_label, 25);
+
+            $this->tooltips[] = $tooltip = $this->ui_factory
+                ->popover()
+                ->standard(
+                    $this->ui_factory
+                        ->divider()
+                        ->horizontal()
+                        ->withLabel($status_label)
+                )
+                ->withTitle($this->translate('event_processing_state'));
+
             $entity = $entity->withReactions(
                 $this->ui_factory->button()->tag(
-                    $this->translate('event_state_' . strtolower($record->getProcessingState())),
+                    $status_label_short,
                     '#'
-                )
+                )->withOnHover($tooltip->getShowSignal())
             );
         }
 
