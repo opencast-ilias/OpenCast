@@ -16,6 +16,7 @@ class xoctException extends Exception
     public const NO_USER_MAPPING = 40;
     public const INTERNAL_ERROR = 50;
     public const NO_STREAMING_DATA = 60;
+    public const JWT_TOKEN_ISSUE_FAILED = 70;
     public const API_CALL_STATUS_500 = 500;
     public const API_CALL_STATUS_403 = 403;
     public const API_CALL_STATUS_404 = 404;
@@ -38,6 +39,7 @@ class xoctException extends Exception
         self::API_CALL_BAD_CREDENTIALS => 'The OpenCast-Server cannot be accessed at the moment.',
         self::INTERNAL_ERROR => 'A plugin-internal error occured.',
         self::NO_STREAMING_DATA => 'No streaming data found.',
+        self::JWT_TOKEN_ISSUE_FAILED => 'Opencast JWT: An error occurred while generating token',
     ];
 
     /**

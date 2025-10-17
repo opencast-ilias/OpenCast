@@ -7,6 +7,7 @@ use ILIAS\DI\UIServices;
 use ILIAS\DI\Container;
 use ILIAS\UI\Component\Input\Field\UploadHandler;
 use ILIAS\UI\Renderer;
+use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -893,7 +894,20 @@ class xoctEventGUI extends xoctGUI
         // Append the query string to the studio link.
         $studio_link .= '?' . $combined_query_string;
 
-        $this->ctrl->redirectToURL($studio_link);
+        if (empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+            $this->ctrl->redirectToURL($studio_link);
+            return;
+        }
+
+        $encoded_studio_link = $base . '/studio?' . http_build_query($query_params);
+
+        $redirect_url = $base . '/redirect/get';
+        $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_STUDIO);
+        $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
+        $temp->setVariable('ACTION', $redirect_url);
+        $temp->setVariable('JWT', $jwt);
+        $temp->setVariable('TARGET_URL', $encoded_studio_link);
+        $this->main_tpl->setContent($temp->get());
     }
 
 
@@ -912,7 +926,20 @@ class xoctEventGUI extends xoctGUI
 
         // redirect
         $cutting_link = $event->publications()->getCuttingLink();
-        $this->ctrl->redirectToURL($cutting_link);
+
+        if (empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+            $this->ctrl->redirectToURL($cutting_link);
+            return;
+        }
+
+        $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
+        $redirect_url = str_replace('/api', '/redirect/get', $base);
+        $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_EDITOR);
+        $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
+        $temp->setVariable('ACTION', $redirect_url);
+        $temp->setVariable('JWT', $jwt);
+        $temp->setVariable('TARGET_URL', $cutting_link);
+        $this->main_tpl->setContent($temp->get());
     }
 
     private function retrieveQuery(string $q): ?string

@@ -35,12 +35,13 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
         if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
                 $role = str_contains((string) $track['type'], self::ROLE_MASTER) ? self::ROLE_MASTER : self::ROLE_SLAVE;
+                $url = $this->api->attachJwtIntoStaticFileUrlForEvent($track['url'], $this->event->getIdentifier());
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
                         $source_format => [
                             [
-                                "src" => $track['url'],
+                                "src" => $url,
                                 "mimetype" => $track['mimetype']
                             ]
                         ]
@@ -54,12 +55,13 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             }
         } else {    // single stream
             $track = $media_package['media']['track'];
+            $url = $this->api->attachJwtIntoStaticFileUrlForEvent($track['url'], $this->event->getIdentifier());
             $streams[] = [
                 "content" => self::ROLE_MASTER,
                 "sources" => [
                     $source_format => [
                         [
-                            "src" => $track['url'],
+                            "src" => $url,
                             "mimetype" => $track['mimetype']
                         ]
                     ]

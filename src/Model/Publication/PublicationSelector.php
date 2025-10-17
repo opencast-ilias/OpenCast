@@ -17,6 +17,8 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use stdClass;
 use xoctException;
 use xoctSecureLink;
+use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\API\API;
 
 /**
  * Class PublicationSelector
@@ -104,6 +106,11 @@ class PublicationSelector
     protected $mpeg7_catalog_publications = [];
 
     /**
+     * @var API
+     */
+    private $api;
+
+    /**
      * PublicationSelector constructor.
      */
     public function __construct(protected Event $event)
@@ -112,6 +119,8 @@ class PublicationSelector
         $this->user = $DIC->user();
         $this->publication_usage_repository = new PublicationUsageRepository();
         $this->publication_sub_usage_repository = new PublicationSubUsageRepository();
+        $opencastContainer = Init::init();
+        $this->api = $opencastContainer[API::class];
     }
 
     /**
@@ -602,7 +611,18 @@ class PublicationSelector
                 return [new Publication()];
         }
 
-        return array_filter($return);
+        // In order to make sure each publication get a jwt token, we filter them out here.
+        $filtered_return = [];
+        foreach ($return as $ret_pub) {
+            $url = $ret_pub->getUrl();
+            $ret_pub->setUrl($this->api->attachJwtIntoStaticFileUrlForEvent(
+                $url,
+                $this->event->getIdentifier()
+            ));
+            $filtered_return[] = $ret_pub;
+        }
+
+        return array_filter($filtered_return);
     }
 
     /**

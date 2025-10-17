@@ -307,4 +307,20 @@ class xoctUser
     {
         $this->identifier = $identifier;
     }
+
+    public function getStudioAccessRoles(): array {
+        $studio_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_STUDIO_ROLES) ?? [];
+        if ($user_role = $this->getUserRoleName()) {
+            $studio_access_roles[] = $user_role;
+        }
+        return $studio_access_roles;
+    }
+
+    public function getEditorAccessRoles(): array {
+        $editor_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EDITOR_ROLES) ?? [];
+        if ($user_role = $this->getUserRoleName()) {
+            $editor_access_roles[] = $user_role;
+        }
+        return $editor_access_roles;
+    }
 }

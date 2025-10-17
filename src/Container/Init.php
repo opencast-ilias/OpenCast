@@ -89,6 +89,14 @@ final class Init
         );
 
         // Plugin Dependencies
+        $jwt = null;
+        if (!empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+            $jwt = [
+                'private_key' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_PK),
+                'algorithm' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG),
+                'expiration' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP)
+            ];
+        }
         $opencast_container->glue(Config::class, fn(): Config => new Config(
             Handlers::getHandlerStack(),
             PluginConfig::getConfig(PluginConfig::F_API_BASE) ?? 'https://stable.opencast.org/api',
@@ -97,7 +105,8 @@ final class Init
             PluginConfig::getConfig(PluginConfig::F_API_VERSION) ?? '1.9.0',
             0,
             0,
-            PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE) ?? null
+            PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE) ?? null,
+            $jwt
         ));
 
         $opencast_container->glue(API::class, fn(): OpencastAPI => new OpencastAPI($opencast_container[Config::class]));

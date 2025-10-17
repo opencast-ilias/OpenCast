@@ -790,3 +790,15 @@ upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video tiempoint
 upload_ui_thumbnail_file#:#Thumbnail File
 upload_ui_thumbnail_timepoint#:#Timepoint
 upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract thumbnail from.
+config_jwt_security_enabled#:#Enable JWT Authentication
+config_jwt_security_enabled_info#:#Enables authentication using JSON Web Tokens (JWT) for enhanced security when accessing Opencast resources.
+config_jwt_security_privatekey#:#Private Key (full text)
+config_jwt_security_privatekey_info#:#Paste the full private key used to sign JWT tokens for Opencast authentication.
+config_jwt_security_expiration#:#Token expiration duration (seconds)
+config_jwt_security_expiration_info#:#Defines how long the JWT token remains valid, in seconds.
+config_jwt_security_algorithm#:#Signing Algorithm
+config_jwt_security_algorithm_info#:#Specifies the algorithm used to sign JWT tokens for authentication.
+config_jwt_security_studio_roles#:#User access roles for Studio
+config_jwt_security_studio_roles_info#:#Specifies the user roles to grant access to Opencast Studio.
+config_jwt_security_editor_roles#:#User access roles for Editor
+config_jwt_security_editor_roles_info#:#Specifies the user roles to grant access to Opencast Editor.
