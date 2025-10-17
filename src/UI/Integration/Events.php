@@ -22,7 +22,6 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget;
 use ILIAS\UI\Component\Button\Shy;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
-use ILIAS\UI\Component\JavaScriptBindable;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -55,7 +54,7 @@ class Events implements RecordToEntity
         $actions = $this->buildActions($record);
         $play_action = $actions[EventActionTarget::PLAY->value] ?? null;
 
-        $lables_as_glyphs = $this->settings_resolver->resolve(EventSettings::LABELS_AS_GLYPHS);
+        $this->settings_resolver->resolve(EventSettings::LABELS_AS_GLYPHS);
 
         // Thumbnail
         $thumbnail = $this->ui_factory
@@ -92,12 +91,43 @@ class Events implements RecordToEntity
                 $thumbnail
             );
 
-        // Main Details
-        $description = $this->shortenText($record->getDescription());
-        $main_properties = [];
+        $description = trim($record->getDescription());
+        if (!empty($description)) {
+            $shortened_description = $this->shortenText($description, 50);
+
+            $description_components = [];
+
+            $description_components[] = $description_wrapper = $this
+                ->ui_factory
+                ->legacy(
+                    "<span data-full='$description'  id='evdesc_{$record->getIdentifier()}'>$shortened_description</span>"
+                )
+                ->withCustomSignal(
+                    "evdesc_{$record->getIdentifier()}",
+                    "document.getElementById('evdesc_{$record->getIdentifier()}').innerHTML = document.getElementById('evdesc_{$record->getIdentifier()}').getAttribute('data-full');"
+                );
+
+            if ($shortened_description !== $description) {
+                $description_components[] = $this
+                    ->ui_factory->button()->shy($this->translate('show_more'), '#')
+                                ->withOnClick(
+                                    $description_wrapper->getCustomSignal("evdesc_{$record->getIdentifier()}")
+                                )->withAdditionalOnLoadCode(
+                                    fn(
+                                        $id
+                                    ): string => "document.getElementById('$id').addEventListener('click', function(event) {let target = event.target || event.srcElement; target.style.display = 'none';});"
+                                );
+            }
+
+            $entity = $entity->withPersonalStatus(
+                $this->ui_factory->legacy(
+                    $this->ui_renderer->render($description_components)
+                )
+            );
+        }
         $main_properties_simple = [];
 
-        $translate_date = $this->translate("event_date");
+        /*$translate_date = $this->translate("event_date");
         $event_label = $lables_as_glyphs
             ? $this->ui_renderer->render(
                 $this->setAttribute(
@@ -110,23 +140,15 @@ class Events implements RecordToEntity
                 )
             )
             : $translate_date;
+
         $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
             $event_label,
             $event_label . ' ' . $this->formatDate($record->getStart()),
             false
-        );
+        );*/
         $main_properties_simple[$this->translate("event_date")] = $this->formatDate($record->getStart());
 
-        if (!empty($description)) {
-            $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-                $this->translate("event_description"),
-                $description,
-                false
-            );
-            $main_properties_simple[$this->translate("event_description")] = $description;
-        }
-
-        $translate_presenter = $this->translate("event_presenter");
+        /*$translate_presenter = $this->translate("event_presenter");
         $presenter_label = $lables_as_glyphs
             ? $this->ui_renderer->render(
                 $this->setAttribute(
@@ -143,12 +165,12 @@ class Events implements RecordToEntity
             $presenter_label,
             $presenter_label . ' ' . implode(", ", $record->getPresenter()),
             false
-        );
+        );*/
         $main_properties_simple[$this->translate("event_presenter")] = implode(", ", $record->getPresenter());
 
         if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
             $owner_username = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($record);
-            $translate_owner = $this->translate("event_owner");
+            /*$translate_owner = $this->translate("event_owner");
             $owner_label = $lables_as_glyphs
                 ? $this->ui_renderer->render(
                     $this->setAttribute(
@@ -165,11 +187,11 @@ class Events implements RecordToEntity
                 $owner_label,
                 $owner_label . ' ' . $owner_username,
                 false
-            );
+            );*/
             $main_properties_simple[$this->translate("event_owner")] = $owner_username;
         }
 
-        $translate_location = $this->translate("event_location");
+        /*$translate_location = $this->translate("event_location");
         $location_label = $lables_as_glyphs
             ? $this->ui_renderer->render(
                 $this->setAttribute(
@@ -187,7 +209,7 @@ class Events implements RecordToEntity
             $location_label,
             $location_label . ' ' . ($record->getLocation() ?: '-'),
             false
-        );
+        );*/
         $main_properties_simple[$this->translate("event_location")] = $record->getLocation() ?: '-';
 
         $entity = $entity->withMainDetails(
@@ -238,15 +260,6 @@ class Events implements RecordToEntity
         );
 
         return $entity;
-    }
-
-    private function setAttribute(JavaScriptBindable $c, string $attribute, string $value): JavaScriptBindable
-    {
-        return $c->withAdditionalOnLoadCode(
-            fn(
-                $id
-            ): string => "document.getElementById('" . $id . "').setAttribute('" . $attribute . "', '" . $value . "');"
-        );
     }
 
     private function shortenText(string $text, int $max_length = 100): string

@@ -789,3 +789,4 @@ upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video tiempoint
 upload_ui_thumbnail_file#:#Thumbnail File
 upload_ui_thumbnail_timepoint#:#Timepoint
 upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract thumbnail from.
+show_more#:#More

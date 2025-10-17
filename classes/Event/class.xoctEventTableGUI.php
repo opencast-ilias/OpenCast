@@ -3,7 +3,6 @@
 declare(strict_types=1);
 use srag\Plugins\Opencast\Container\Container;
 use ILIAS\DI\UIServices;
-
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
@@ -19,10 +18,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Container\Init;
 
 /**
- * Class xoctEventTableGUI
- *
- * @author  Fabian Schmid <fs@studer-raimann.ch>
- * @version 1.0.00
+ * @deprecated
  *
  */
 class xoctEventTableGUI extends ilTable2GUI
@@ -33,7 +29,7 @@ class xoctEventTableGUI extends ilTable2GUI
     private Container $container;
     protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $legacy_container;
-    protected array  $filter = [];
+    protected array $filter = [];
     protected bool $has_scheduled_events = false;
     protected bool $has_unprotected_links = false;
     protected EventRepository $event_repository;
@@ -113,7 +109,7 @@ class xoctEventTableGUI extends ilTable2GUI
             return true;
         }
 
-        $column_settings = $this->getSelectableColumns()[$a_col] ?? [];
+        $this->getSelectableColumns()[$a_col] ?? [];
 
         return false; //$column_settings['default'] ?? false;
     }
@@ -351,10 +347,6 @@ class xoctEventTableGUI extends ilTable2GUI
         };
     }
 
-    /**
-     * @param int  $format
-     * @param bool $send
-     */
     public function exportData(int $format, bool $send = false): void
     {
         if (!ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_EXPORT_CSV)) {
@@ -387,7 +379,7 @@ class xoctEventTableGUI extends ilTable2GUI
     #[ReturnTypeWillChange]
     protected function fillRowCSV(/*ilCSVWriter*/ \ilCSVWriter $a_csv, /*array*/ $a_set): void
     {
-        $selected_colums = $this->getSelectedColumns();
+        $this->getSelectedColumns();
 
         $row_data = [];
         foreach ($this->getSelectedColumns() as $column_id) {
@@ -448,9 +440,6 @@ class xoctEventTableGUI extends ilTable2GUI
         }
     }
 
-    /**
-     * @return bool
-     */
     public function hasScheduledEvents(): bool
     {
         return $this->has_scheduled_events;

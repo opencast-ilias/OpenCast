@@ -33,7 +33,7 @@ class Series implements DataRetrieval
 {
     use Commons;
 
-    private const DEFAULT_PAGE_SIZE = 6;
+    private const DEFAULT_PAGE_SIZE = 10;
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
     public const SORT_TITLE_DESC = 'title:desc';

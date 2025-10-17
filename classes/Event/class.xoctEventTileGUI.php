@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 use srag\Plugins\Opencast\Container\Container;
-
 use ILIAS\UI\Factory;
 use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\Event\Event;
@@ -13,9 +12,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Container\Init;
 
 /**
- * Class xoctEventTileGUI
- *
- * @author Theodor Truffer <tt@studer-raimann.ch>
+ * @deprecated
  */
 class xoctEventTileGUI
 {
@@ -50,7 +47,7 @@ class xoctEventTileGUI
     /**
      * @readonly
      */
-    private ilCtrlInterface  $ctrl;
+    private ilCtrlInterface $ctrl;
 
     public function __construct(protected xoctEventGUI $parent_gui, protected ObjectSettings $objectSettings, array $data)
     {
@@ -82,7 +79,6 @@ class xoctEventTileGUI
     }
 
     /**
-     * @return string
      * @throws ilTemplateException
      * @throws xoctException
      */
@@ -209,9 +205,6 @@ class xoctEventTileGUI
         return $events;
     }
 
-    /**
-     * @return bool
-     */
     public function hasScheduledEvents(): bool
     {
         return $this->has_scheduled_events;
@@ -223,7 +216,7 @@ class xoctEventTileGUI
     protected function getPaginationHTML()
     {
         $max_count = count($this->events);
-        $pages = ($max_count == 0) ? 1 : (int) ceil($max_count / $this->limit);
+        $pages = ($max_count === 0) ? 1 : (int) ceil($max_count / $this->limit);
         $pagination = $this->factory->viewControl()->pagination()
                                     ->withMaxPaginationButtons($pages)
                                     ->withTotalEntries($max_count)
@@ -245,7 +238,6 @@ class xoctEventTileGUI
     }
 
     /**
-     * @return string
      * @throws ilTemplateException
      */
     protected function getLimitSelectorHTML(): string

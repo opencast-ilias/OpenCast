@@ -786,3 +786,4 @@ upload_ui_thumbnail_mode_sg_timepoint#:#Durch Auswahl eines Videozeitpunkts
 upload_ui_thumbnail_file#:#Vorschaubilddatei
 upload_ui_thumbnail_timepoint#:#Zeitpunkt
 upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.
+show_more#:#Mehr

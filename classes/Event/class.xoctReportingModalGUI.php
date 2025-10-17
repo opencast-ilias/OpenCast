@@ -6,9 +6,7 @@ use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Container\Init;
 
 /**
- * Class xoctReportingFormGUI
- *
- * @author  Theodor Truffer <tt@studer-raimann.ch>
+ * @deprecated
  */
 class xoctReportingModalGUI extends ilModalGUI
 {
@@ -75,7 +73,6 @@ class xoctReportingModalGUI extends ilModalGUI
     }
 
     /**
-     * @return string
      * @throws \srag\DIC\OpenCast\Exception\DICException
      * @throws ilTemplateException
      */
