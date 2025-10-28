@@ -81,8 +81,10 @@ export default class PasswordToggle {
      * @param {string} password_textarea_ids_json_string possible values for this are:
      * 		string: json encoded array of textarea like '["curl_password"]'
      *		string: single textarea id like: 'curl_password'
+     * @param {string} strings_str JSON encoded strings for localization
      */
-    initTextarea(password_textarea_ids_json_string) {
+    initTextarea(password_textarea_ids_json_string, strings_str) {
+        let strings = JSON.parse(strings_str);
         try {
             let password_textarea_ids = JSON.parse(password_textarea_ids_json_string);
             if (Array.isArray(password_textarea_ids)) {
@@ -122,13 +124,15 @@ export default class PasswordToggle {
                 $(element).hide();
                 $(toggle_element).show();
             });
-            $('textarea.xoct_pw_textarea_cloned').keyup(function(e) {
-                $('.xoct_pw_toggle_item.toggle-show img').click();
+            $('textarea.xoct_pw_textarea_main').change(function(e) {
+                if (e.target.value && e.target.value.length > 0) {
+                    $('textarea.xoct_pw_textarea_cloned').val('*'.repeat(e.target.value.length));
+                }
             });
         });
 
         this.password_textarea_ids.forEach(function (password_textarea_id, index) {
-            self.wrapper(password_textarea_id, true);
+            self.wrapper(password_textarea_id, true, strings);
         });
     }
     /**
@@ -136,8 +140,9 @@ export default class PasswordToggle {
      * This function prepares the masking elements and wrap them around the password input element.
      * @param {string} password_input_id The id of the password input element
      * @param {boolean} is_textarea Whether the inout is a textarea
+     * @param {object} strings The strings to use for localization
      */
-    wrapper (password_input_id, is_textarea = false) {
+    wrapper (password_input_id, is_textarea = false, strings = {}) {
         let password_input = document.getElementById(password_input_id);
         if (!password_input) {
             return;
@@ -151,6 +156,7 @@ export default class PasswordToggle {
         show_icon.setAttribute('alt', 'show password');
         show_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye');
         show_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye.svg');
+        show_icon.setAttribute('title', strings.show ? strings.show : 'Show Text');
         let show_div = document.createElement('div');
         show_div.setAttribute('class', 'xoct_pw_toggle_item toggle-show');
         show_div.appendChild(show_icon);
@@ -158,6 +164,7 @@ export default class PasswordToggle {
         hide_icon.setAttribute('alt', 'hide password');
         hide_icon.setAttribute('class', 'xoct_pw_icon xoct_pw_eye-slash');
         hide_icon.setAttribute('src', './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/images/eye-slash.svg');
+        hide_icon.setAttribute('title', strings.hide ? strings.hide : 'Hide Text');
         let hide_div = document.createElement('div');
         hide_div.setAttribute('class', 'xoct_pw_toggle_item toggle-hide');
         hide_div.appendChild(hide_icon);
@@ -184,7 +191,11 @@ export default class PasswordToggle {
             cloned_textarea.classList.add('xoct_pw_textarea_cloned');
             cloned_textarea.setAttribute('id', cloned_textarea.getAttribute('id') + '_cloned');
             cloned_textarea.setAttribute('name', cloned_textarea.getAttribute('id') + '_cloned');
-            cloned_textarea.value = '*'.repeat(cloned_textarea.value.length);
+            cloned_textarea.setAttribute('disabled', 'disabled');
+            cloned_textarea.setAttribute('title', strings.hidden_element_title ?? 'To edit, please reveal the content first.');
+            if (password_input.value && password_input.value.length > 0) {
+                cloned_textarea.value = '*'.repeat(password_input.value.length);
+            }
             wrapper_div.insertBefore(cloned_textarea, password_input);
         }
 

@@ -793,7 +793,10 @@ upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract thum
 config_jwt_security_enabled#:#Enable JWT Authentication
 config_jwt_security_enabled_info#:#Enables authentication using JSON Web Tokens (JWT) for enhanced security when accessing Opencast resources.
 config_jwt_security_privatekey#:#Private Key (full text)
-config_jwt_security_privatekey_info#:#Paste the full private key used to sign JWT tokens for Opencast authentication.
+config_jwt_security_privatekey_info#:#Paste the full private key used to sign JWT tokens for Opencast authentication.<br>NOTE: Click the eye icon to reveal the key when editing.
+config_jwt_security_privatekey_show_icon#:#Reveal
+config_jwt_security_privatekey_hide_icon#:#Hide
+config_jwt_security_privatekey_hidden_element_title#:#To edit this field, please click the eye icon to reveal the content first.
 config_jwt_security_expiration#:#Token expiration duration (seconds)
 config_jwt_security_expiration_info#:#Defines how long the JWT token remains valid, in seconds.
 config_jwt_security_algorithm#:#Signing Algorithm

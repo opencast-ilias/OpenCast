@@ -36,7 +36,7 @@ class OcJwtHandler
     ];
 
     /** @var string default algorithm */
-    const DEAFULT_ALGORITHM = 'ES256';
+    const DEFAULT_ALGORITHM = 'ES256';
 
     /** @var string default audience */
     const AUDIENCE = 'opencast-php-library';

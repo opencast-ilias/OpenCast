@@ -514,43 +514,4 @@ class OcJwtClaim
 
         return false;
     }
-
-    /**
-     * Check if the set of actions are matching the current actions of each opencast acl domain.
-     *
-     * @param string $key the key could be e:, s:, p: using self::OC_EVENT, self::OC_SERIES and self::OC_PLAYLIST.
-     * @param string $identifier the resources id, could be event id, series id or playlist id.
-     * @param array $actions the list of action to compare with.
-     *
-     * @return bool return true if both current and incoming actions of the oc claim match, false otherwise.
-     */
-    public function rolesMatch(array $roles): bool {
-        $acls = $this->getAclsClaims();
-        $sets = null;
-
-        switch ($key) {
-            case self::OC_EVENT:
-                $sets = $acls['event'] ?? null;
-                break;
-            case self::OC_SERIES:
-                $sets = $acls['series'] ?? null;
-                break;
-            case self::OC_PLAYLIST:
-                $sets = $acls['playlist'] ?? null;
-                break;
-            default:
-                return false;
-                break;
-        }
-
-        if (!empty($sets) && !empty($sets[$key . $identifier])) {
-            $current = array_values($sets[$key . $identifier]);
-            sort($current);
-            sort($actions);
-
-            return $current === $actions;
-        }
-
-        return false;
-    }
 }

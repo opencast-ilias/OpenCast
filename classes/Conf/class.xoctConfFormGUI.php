@@ -557,7 +557,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI
 
     protected function initSecuritySection(): void
     {
-        $code = "il.Opencast.Form.passwordToggle.initTextarea('" . PluginConfig::F_JWT_SECURITY_PK . "');";
+        $strings = (object) [
+            'show' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_show_icon'),
+            'hide' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_hide_icon'),
+            'hidden_element_title' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_hidden_element_title')
+        ];
+        $strings = json_encode($strings);
+        $code = "il.Opencast.Form.passwordToggle.initTextarea('" . PluginConfig::F_JWT_SECURITY_PK . "', '" . $strings . "');";
         $this->main_tpl->addOnLoadCode($code);
 
         $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('security_info'), true);
@@ -673,6 +679,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         // JWT Private Key.
         $te_cb_sub = new ilTextAreaInputGUI($this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK), PluginConfig::F_JWT_SECURITY_PK);
         $te_cb_sub->setInfo($this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_info'));
+        $te_cb_sub->setRequired(true);
         $cb->addSubItem($te_cb_sub);
 
         //JWT Expiration.
@@ -689,7 +696,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         foreach (array_keys(\OpencastApi\Auth\JWT\OcJwtHandler::SUPPORTED_ALGORITHMS) as $alg) {
             $algorithms[$alg] = $alg;
         }
-        $default = \OpencastApi\Auth\JWT\OcJwtHandler::DEAFULT_ALGORITHM;
+        $default = \OpencastApi\Auth\JWT\OcJwtHandler::DEFAULT_ALGORITHM;
         $se_cb_sub->setOptions($algorithms);
         $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP) ?? $default);
         $cb->addSubItem($se_cb_sub);

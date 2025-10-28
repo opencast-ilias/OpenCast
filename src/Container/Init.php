@@ -90,11 +90,12 @@ final class Init
 
         // Plugin Dependencies
         $jwt = null;
-        if (!empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+        $jwt_private_key = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_PK) ?? ''; // It is a must, otherwise throws error!
+        if (!empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED)) && !empty(trim($jwt_private_key))) {
             $jwt = [
-                'private_key' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_PK),
+                'private_key' => $jwt_private_key,
                 'algorithm' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG),
-                'expiration' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP)
+                'expiration' => PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP) ?? 3600
             ];
         }
         $opencast_container->glue(Config::class, fn(): Config => new Config(
