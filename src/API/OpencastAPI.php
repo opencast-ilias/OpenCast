@@ -261,7 +261,8 @@ class OpencastAPI implements API
         $cached_service_tokens = $this->getCachedJwtForService($service);
 
         // We use those that are already exist to avoid unwanted process of generating tokens.
-        if (empty($access_token) && !empty($cached_service_tokens) && isset($cached_service_tokens[$this->user->getIliasUserId()])) {
+        if (empty($access_token) && !empty($cached_service_tokens) &&
+            isset($cached_service_tokens[$this->user->getIliasUserId()])) {
             $access_token = $cached_service_tokens[$this->user->getIliasUserId()];
         }
 
