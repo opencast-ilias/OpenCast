@@ -688,26 +688,25 @@ class xoctEventGUI extends xoctGUI
 
     public function selectDownload(): void
     {
-        $modal = $this->ui->factory()->modal()->roundtrip(
-            'Select Downloads',
-            null,
-            [
-                $this->ui->factory()->input()->field()->select(
-                    'Item',
-                    [
-                        'pub1_id' => 'Publication 1',
-                        'pub2_id' => 'Publication 2',
-                    ]
-                )->withRequired(true)
-            ]
-        )->withSubmitLabel(
-            $this->txt('download')
+        $this->ctrl->saveParameter(
+            $this,
+            self::IDENTIFIER
         );
 
+        $modal = $this
+            ->ui_integration
+            ->events()
+            ->publications()
+            ->asListInModal(
+                $this->http->request()->getQueryParams()[self::IDENTIFIER],
+                $this->ctrl->getLinkTarget($this, self::CMD_DOWNLOAD)
+            );
+
+        // TODO: Refactor with a OutputResponse trait
         $this->http->saveResponse(
             $this->http->response()->withBody(
                 Streams::ofString(
-                    $this->ui_renderer->render($modal)
+                    $this->ui_renderer->renderAsync($modal)
                 )
             )
         );
@@ -1056,19 +1055,6 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    protected function getModalsHTML(): string
-    {
-        $modals_html = '';
-        $asyc = !(bool) PluginConfig::getConfig(PluginConfig::F_LOAD_TABLE_SYNCHRONOUSLY);
-        foreach ($this->getModals()->getAllComponents() as $modal) {
-            $modals_html .= $asyc
-                ? $this->ui->renderer()->renderAsync($modal)
-                : $this->ui->renderer()->render($modal);
-        }
-
-        return $modals_html;
-    }
-
     protected function reportDate(): void
     {
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
@@ -1155,25 +1141,6 @@ class xoctEventGUI extends xoctGUI
     public function getObjId(): int
     {
         return $this->objectSettings->getObjId();
-    }
-
-    public function getModals(): EventModals
-    {
-        global $DIC;
-        if ($this->modals === null) {
-            $modals = new EventModals(
-                $this,
-                ilOpenCastPlugin::getInstance(),
-                $DIC,
-                $this->workflowRepository
-            );
-            $modals->initWorkflows();
-            $modals->initReportDate();
-            $modals->initReportQuality();
-            $this->modals = $modals;
-            xoctEventRenderer::initModals($modals);
-        }
-        return $this->modals;
     }
 
     protected function getIntroTextHTML(): string

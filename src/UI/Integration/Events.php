@@ -22,6 +22,10 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget;
 use ILIAS\UI\Component\Button\Shy;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use ILIAS\UI\Component\Input\Field\Select;
+use ILIAS\UI\Component\Modal\RoundTrip;
+use ILIAS\Data\URI;
+use srag\Plugins\Opencast\UI\Integration\Event\Publications;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -37,6 +41,7 @@ class Events implements RecordToEntity
     private array $tooltips = [];
     private array $modals = [];
     private Renderer $ui_renderer;
+    private Publications $publications;
 
     public function __construct(
         private UIFactory $ui_factory,
@@ -47,6 +52,56 @@ class Events implements RecordToEntity
         $this->event_repository = $this->container->get(EventAPIRepository::class);
         $this->series_repository = $this->container->get(SeriesAPIRepository::class);
         $this->ui_renderer = $this->container->ilias()->ui()->renderer();
+        $this->publications = new Publications(
+            $this->ui_factory,
+            $this->container,
+            $this->resolver,
+            $this->settings_resolver
+        );
+    }
+
+    public function publications(): Publications
+    {
+        return $this->publications;
+    }
+
+    public function asPublicationSelection(string $event_id): Select
+    {
+        $event = $this->event_repository->find($event_id);
+
+        $publication = [];
+
+        foreach ($event->publications()->getDownloadPublications() as $pub) {
+            $publication[$pub->getId()] = $pub->getId();
+        }
+
+        return $this
+            ->ui_factory
+            ->input()
+            ->field()
+            ->select(
+                $this->translate('publication_usage_md_type_0'),
+                $publication
+            )
+            ->withRequired(true);
+    }
+
+    public function asPublicationSelectionInModal(
+        string $event_id,
+        URI|string $submit_target
+    ): RoundTrip {
+        return $this
+            ->ui_factory
+            ->modal()
+            ->roundtrip(
+                $this->translate('publication_usage_md_type_0'),
+                null,
+                [$this->asPublicationSelection($event_id)],
+                (string) $submit_target
+            )
+            ->withSubmitLabel(
+                $this->translate('event_download')
+            );
     }
 
     public function map(UIFactory $ui_factory, mixed $record): Entity
@@ -69,14 +124,27 @@ class Events implements RecordToEntity
             );
 
         if ($play_action) {
-            $thumbnail = $thumbnail
-                ->withAction((string) $play_action)
-                ->withAdditionalOnLoadCode(
-                    fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
+            if ($play_action->type() === ActionType::ASYNC_MODAL) {
+                $this->modals[] = $play_modal = $this->ui_factory
+                    ->modal()
+                    ->lightbox(
+                        []
+                    )->withAsyncRenderUrl(
+                        (string) $play_action->target()
+                    );
+                $thumbnail = $thumbnail->withOnClick(
+                    $play_modal->getShowSignal()
+                );
+            } else {
+                $thumbnail = $thumbnail
+                    ->withAction((string) $play_action->target())
+                    ->withAdditionalOnLoadCode(
+                        fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
                         link.classList.add('playable');
                         link.setAttribute('target', '_blank');
                         "
-                );
+                    );
+            }
         }
 
         // Base Entity
@@ -194,16 +262,13 @@ class Events implements RecordToEntity
                     ->modal()
                     ->roundtrip(
                         $action->name(),
-                        null,
+                        null
                     )->withAsyncRenderUrl(
                         (string) $action->target()
                     );
 
                 return $button->withOnClick($modal->getShowSignal());
             }
-            /*->withOpenInNewViewport( // Currently not supported in Buttons
-                $action->type() === ActionType::EXTERNAL_LINK
-            );*/
 
             return $this
                 ->ui_factory
@@ -236,7 +301,10 @@ class Events implements RecordToEntity
             ->horizontal()
             ->withLabel($status_label);
 
-        if (($best_action = $this->resolver->resolveBestForEventStatus($record->getProcessingState(), $parameters)) instanceof Action) {
+        if (($best_action = $this->resolver->resolveBestForEventStatus(
+            $record->getProcessingState(),
+            $parameters
+        )) instanceof Action) {
             $tooltip_content[] = $this->ui_factory
                 ->divider()
                 ->horizontal()
@@ -339,6 +407,9 @@ class Events implements RecordToEntity
         return $this->modals;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     private function buildActions(EventActionParameters $parameters): array
     {
         // Build Actions for Event

@@ -15,8 +15,9 @@ class Action implements \Stringable
 {
     public function __construct(
         private string $name,
+        private ActionType $type,
         private URI|Modal $target,
-        private ActionType $type = ActionType::EXTERNAL_LINK
+        private URI|Modal|null $post_target = null,
     ) {
     }
 
@@ -28,6 +29,11 @@ class Action implements \Stringable
     public function target(): URI|Modal
     {
         return $this->target;
+    }
+
+    public function postTarget(): URI|Modal|null
+    {
+        return $this->post_target;
     }
 
     /**
