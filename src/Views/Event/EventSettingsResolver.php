@@ -13,9 +13,12 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
  */
 class EventSettingsResolver implements EventSettingsValueResolver
 {
+    private bool $permission_per_clip;
+
     public function __construct(
-        private ObjectSettings $object_settings
+        ObjectSettings $object_settings
     ) {
+        $this->permission_per_clip = $object_settings->getPermissionPerClip();
     }
 
     public function resolve(EventSettings $setting): mixed
@@ -23,7 +26,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
         return match ($setting) {
             EventSettings::DESCRIPTION_MAX_LENGTH => 120,
             EventSettings::STATUS_MAX_LENGTH => 80,
-            EventSettings::SHOW_OWNER => $this->object_settings->getPermissionPerClip(),
+            EventSettings::SHOW_OWNER => $this->permission_per_clip,
             EventSettings::PRESENTED_METADATA => [
                 EventSettingsValueResolver::MD_OWNER,
                 EventSettingsValueResolver::MD_LOCATION,
