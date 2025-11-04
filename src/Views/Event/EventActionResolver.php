@@ -194,9 +194,9 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             case EventActionTarget::SET_ONLINE:
             case EventActionTarget::SET_OFFLINE:
                 return \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
-                    $event
-                )
+                        \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
+                        $event
+                    )
                     && $event->getXoctEventAdditions()->getIsOnline() === ($target === EventActionTarget::SET_OFFLINE);
 
             case EventActionTarget::DELETE:
@@ -227,4 +227,24 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
     {
         return $this->http->request()->getQueryParams()[$parameter->value] ?? null;
     }
+
+    public function resolveBestForEventStatus(string $status, EventActionParameters $parameter): ?Action
+    {
+        $mapped_action = match ($status) {
+            Event::STATE_OFFLINE => EventActionTarget::SET_ONLINE,
+            Event::STATE_READY_FOR_CUTTING => EventActionTarget::CUT,
+            default => null
+        };
+
+        if ($mapped_action === null) {
+            return null;
+        }
+
+        if (!$this->supports($mapped_action, $parameter)) {
+            return null;
+        }
+
+        return $this->resolve($mapped_action, $parameter);
+    }
+
 }

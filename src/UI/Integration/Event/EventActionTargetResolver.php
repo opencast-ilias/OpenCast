@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\UI\Integration\Action;
 interface EventActionTargetResolver
 {
     public function resolve(EventActionTarget $target, ?EventActionParameters $parameter = null): ?Action;
+    public function resolveBestForEventStatus(string $status, EventActionParameters $parameter): ?Action;
 
     public function supports(EventActionTarget $target, EventActionParameters $parameters): bool;
 

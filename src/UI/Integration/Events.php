@@ -51,7 +51,12 @@ class Events implements RecordToEntity
     public function map(UIFactory $ui_factory, mixed $record): Entity
     {
         $record = $this->event_repository->find($record['identifier'] ?? '');
-        $actions = $this->buildActions($record);
+        // Pass Parameters to Resolver
+        $parameters = (new EventActionParameters())
+            ->with(EventActionParameter::EVENT_ID, $record->getIdentifier())
+            ->with(EventActionParameter::EVENT_OBJECT, $record);
+
+        $actions = $this->buildActions($parameters);
         $play_action = $actions[EventActionTarget::PLAY->value] ?? null;
 
         $this->settings_resolver->resolve(EventSettings::LABELS_AS_GLYPHS);
@@ -72,8 +77,7 @@ class Events implements RecordToEntity
                         link.classList.add('playable');
                         link.setAttribute('target', '_blank');
                         "
-                );
-            ;
+                );;
         }
 
         // Base Entity
@@ -91,8 +95,16 @@ class Events implements RecordToEntity
                 $thumbnail
             );
 
+        // Metadata
+        $shown = $this->settings_resolver->resolve(EventSettings::PRESENTED_METADATA) ?? [
+            EventSettingsValueResolver::MD_OWNER,
+            EventSettingsValueResolver::MD_LOCATION,
+            EventSettingsValueResolver::MD_DESCRITION,
+            EventSettingsValueResolver::MD_PRESENTER
+        ];
+
         $description = trim($record->getDescription());
-        if (!empty($description)) {
+        if (($shown[EventSettingsValueResolver::MD_DESCRITION] ?? false) && !empty($description)) {
             $shortened_description = $this->shortenText($description, 50);
 
             $description_components = [];
@@ -113,10 +125,10 @@ class Events implements RecordToEntity
                                 ->withOnClick(
                                     $description_wrapper->getCustomSignal("evdesc_{$record->getIdentifier()}")
                                 )->withAdditionalOnLoadCode(
-                                    fn(
-                                        $id
-                                    ): string => "document.getElementById('$id').addEventListener('click', function(event) {let target = event.target || event.srcElement; target.style.display = 'none';});"
-                                );
+                        fn(
+                            $id
+                        ): string => "document.getElementById('$id').addEventListener('click', function(event) {let target = event.target || event.srcElement; target.style.display = 'none';});"
+                    );
             }
 
             $entity = $entity->withPersonalStatus(
@@ -125,95 +137,27 @@ class Events implements RecordToEntity
                 )
             );
         }
+
         $main_properties_simple = [];
 
-        /*$translate_date = $this->translate("event_date");
-        $event_label = $lables_as_glyphs
-            ? $this->ui_renderer->render(
-                $this->setAttribute(
-                    $this->ui_factory
-                        ->symbol()
-                        ->glyph()
-                        ->time(),
-                    'title',
-                    $translate_date
-                )
-            )
-            : $translate_date;
-
-        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-            $event_label,
-            $event_label . ' ' . $this->formatDate($record->getStart()),
-            false
-        );*/
         $main_properties_simple[$this->translate("event_date")] = $this->formatDate($record->getStart());
 
-        /*$translate_presenter = $this->translate("event_presenter");
-        $presenter_label = $lables_as_glyphs
-            ? $this->ui_renderer->render(
-                $this->setAttribute(
-                    $this->ui_factory
-                        ->symbol()
-                        ->glyph()
-                        ->user(),
-                    'title',
-                    $translate_presenter
-                )
-            )
-            : $translate_presenter;
-        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-            $presenter_label,
-            $presenter_label . ' ' . implode(", ", $record->getPresenter()),
-            false
-        );*/
-        $main_properties_simple[$this->translate("event_presenter")] = implode(", ", $record->getPresenter());
+        if (($shown[EventSettingsValueResolver::MD_PRESENTER] ?? false)) {
+            $main_properties_simple[$this->translate("event_presenter")] = implode(", ", $record->getPresenter());
+        }
 
-        if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
+        if (($shown[EventSettingsValueResolver::MD_OWNER] ?? false) && $this->settings_resolver->resolve(
+                EventSettings::SHOW_OWNER
+            )) {
             $owner_username = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($record);
-            /*$translate_owner = $this->translate("event_owner");
-            $owner_label = $lables_as_glyphs
-                ? $this->ui_renderer->render(
-                    $this->setAttribute(
-                        $this->ui_factory
-                            ->symbol()
-                            ->glyph()
-                            ->user(),
-                        'title',
-                        $translate_owner
-                    )
-                )
-                : $translate_owner;
-            $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-                $owner_label,
-                $owner_label . ' ' . $owner_username,
-                false
-            );*/
             $main_properties_simple[$this->translate("event_owner")] = $owner_username;
         }
 
-        /*$translate_location = $this->translate("event_location");
-        $location_label = $lables_as_glyphs
-            ? $this->ui_renderer->render(
-                $this->setAttribute(
-                    $this->ui_factory
-                        ->symbol()
-                        ->glyph()
-                        ->note(),
-                    'title',
-                    $translate_location
-                )
-            )
-            : $translate_location;
-
-        $main_properties[] = $this->ui_factory->listing()->property()->withProperty(
-            $location_label,
-            $location_label . ' ' . ($record->getLocation() ?: '-'),
-            false
-        );*/
-        $main_properties_simple[$this->translate("event_location")] = $record->getLocation() ?: '-';
+        if (($shown[EventSettingsValueResolver::MD_LOCATION] ?? false)) {
+            $main_properties_simple[$this->translate("event_location")] = $record->getLocation() ?: '-';
+        }
 
         $entity = $entity->withMainDetails(
-            //            ...$main_properties
             $this->ui_factory->legacy(
                 $this->ui_renderer->render(
                     $this->ui_factory->listing()->descriptive(
@@ -225,25 +169,7 @@ class Events implements RecordToEntity
 
         // Status as Tag
         if ($record->getProcessingState() !== Event::STATE_SUCCEEDED) {
-            $status_label = $this->translate('event_state_' . strtolower($record->getProcessingState()));
-            $status_label_short = $this->shortenText($status_label, 41);
-
-            $this->tooltips[] = $tooltip = $this->ui_factory
-                ->popover()
-                ->standard(
-                    $this->ui_factory
-                        ->divider()
-                        ->horizontal()
-                        ->withLabel($status_label)
-                )
-                ->withTitle($this->translate('event_processing_state'));
-
-            $entity = $entity->withReactions(
-                $this->ui_factory->button()->tag(
-                    $status_label_short,
-                    '#'
-                )->withOnHover($tooltip->getShowSignal())
-            );
+            $entity = $this->buildStatusComponents($record, $parameters, $entity);
         }
 
         // remove 'play' action from list of all actions, as it is already used as main action
@@ -254,11 +180,49 @@ class Events implements RecordToEntity
         // All Actions
         $entity = $entity->withActions(
             ...array_map(fn(Action $action): Shy => $this->ui_factory->button()->shy(
-                $action->name(),
-                (string) $action->target()
-            ), $actions),
+            $action->name(),
+            (string) $action->target()
+        ), $actions),
         );
 
+        return $entity;
+    }
+
+    protected function buildStatusComponents(Event $record, EventActionParameters $parameters, Entity $entity): Entity
+    {
+        $status_label = $this->translate('event_state_' . strtolower($record->getProcessingState()));
+        $status_label_short = $this->shortenText($status_label, 41);
+
+        $tooltip_content = [];
+        $tooltip_content[] = $this->ui_factory
+            ->divider()
+            ->horizontal()
+            ->withLabel($status_label);
+
+        if ($best_action = $this->resolver->resolveBestForEventStatus($record->getProcessingState(), $parameters)) {
+            $tooltip_content[] = $this->ui_factory->button()->standard(
+                $best_action->name(),
+                (string) $best_action->target()
+            );
+        }
+
+        $this->tooltips[] = $tooltip = $this->ui_factory
+            ->popover()
+            ->standard(
+                $this->ui_factory->legacy(
+                    $this->ui_renderer->render(
+                        $tooltip_content
+                    )
+                )
+            )
+            ->withTitle($this->translate('event_processing_state'));
+
+        $entity = $entity->withReactions(
+            $this->ui_factory->button()->tag(
+                $status_label_short,
+                '#'
+            )->withOnHover($tooltip->getShowSignal())
+        );
         return $entity;
     }
 
@@ -328,13 +292,8 @@ class Events implements RecordToEntity
         return $this->tooltips;
     }
 
-    private function buildActions(Event $event): array
+    private function buildActions(EventActionParameters $parameters): array
     {
-        // Pass Parameters to Resolver
-        $parameters = (new EventActionParameters())
-            ->with(EventActionParameter::EVENT_ID, $event->getIdentifier())
-            ->with(EventActionParameter::EVENT_OBJECT, $event);
-
         // Build Actions for Event
         $actions = [];
         foreach (EventActionTarget::cases() as $case) {
