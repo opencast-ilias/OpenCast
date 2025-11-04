@@ -1,8 +1,8 @@
 <?php
 
 $id = 'xoct';
-$version = '9.2.2';
-$ilias_min_version = '9.0';
+$version = '10.0.0';
+$ilias_min_version = '10.0';
 $ilias_max_version = '10.999';
 $responsible = 'Universität Bern';
 $responsible_mail = 'david.graf@unibe.ch';
