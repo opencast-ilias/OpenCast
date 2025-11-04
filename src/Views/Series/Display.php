@@ -25,9 +25,12 @@ class Display implements ViewElement
             $components = [];
 
             foreach (
-                $this->ui_integration->series()->asEntityListInPanelWithFilter(
-                    $this->series_id
-                ) as $item
+                $this
+                    ->ui_integration
+                    ->series()
+                    ->asEntityListInPanelWithFilter(
+                        $this->series_id
+                    ) as $item
             ) {
                 $components[] = $item;
             }

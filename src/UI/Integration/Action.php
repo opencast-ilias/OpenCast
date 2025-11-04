@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace srag\Plugins\Opencast\UI\Integration;
 
 use ILIAS\Data\URI;
-use ILIAS\UI\Component\Signal;
+use ILIAS\UI\Component\Modal\Modal;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -15,9 +15,8 @@ class Action implements \Stringable
 {
     public function __construct(
         private string $name,
-        private URI|Signal $target,
-        private bool $open_in_new_tab = false,
-        private ?array $modals = null
+        private URI|Modal $target,
+        private ActionType $type = ActionType::EXTERNAL_LINK
     ) {
     }
 
@@ -26,19 +25,22 @@ class Action implements \Stringable
         return $this->name;
     }
 
-    public function target(): URI|Signal
+    public function target(): URI|Modal
     {
         return $this->target;
     }
 
+    /**
+     * @deprecated
+     */
     public function openInNewTab(): bool
     {
-        return $this->open_in_new_tab;
+        return $this->type === ActionType::EXTERNAL_LINK;
     }
 
-    public function modals(): ?array
+    public function type(): ActionType
     {
-        return $this->modals;
+        return $this->type;
     }
 
     public function __toString(): string

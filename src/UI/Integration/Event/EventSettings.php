@@ -11,7 +11,9 @@ namespace srag\Plugins\Opencast\UI\Integration\Event;
 enum EventSettings: string
 {
     case SHOW_OWNER = 'show_owner';
-    case LABELS_AS_GLYPHS = 'glyphs_instead_of_labels';
     case PRESENTED_METADATA = 'presented_metadata';
+
+    case DESCRIPTION_MAX_LENGTH = 'description_max_length';
+    case STATUS_MAX_LENGTH = 'status_max_length';
 
 }

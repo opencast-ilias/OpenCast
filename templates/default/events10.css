@@ -10,13 +10,7 @@ div.c-entity.__container {
     grid-template-rows: min-content min-content min-content min-content min-content min-content 1fr;
 }
 
-@media (max-width: 2400px) {
-    ul.c-listing-entity {
-        grid-template-columns: repeat(2, 1fr);;
-    }
-}
-
-@media (max-width: 1600px) {
+@media (max-width: 1800px) {
     ul.c-listing-entity {
         grid-template-columns: 1fr;
     }

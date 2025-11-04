@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\UI\Integration\Action;
 use srag\Plugins\Opencast\Util\Locale\Translator;
+use srag\Plugins\Opencast\UI\Integration\ActionType;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -84,42 +85,48 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 return $this->build(
                     $this->translator->translate('event_edit_owner'),
                     \xoctChangeOwnerGUI::class,
-                    \xoctChangeOwnerGUI::CMD_STANDARD
+                    \xoctChangeOwnerGUI::CMD_STANDARD,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::GRANT_ACCESS:
                 return $this->build(
                     $this->translator->translate('event_invite_others'),
                     \xoctGrantPermissionGUI::class,
-                    \xoctGrantPermissionGUI::CMD_STANDARD
+                    \xoctGrantPermissionGUI::CMD_STANDARD,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::CUT:
                 return $this->build(
                     $this->translator->translate('event_cut'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_CUT
+                    \xoctEventGUI::CMD_CUT,
+                    ActionType::EXTERNAL_LINK
                 );
 
             case EventActionTarget::SET_ONLINE:
                 return $this->build(
                     $this->translator->translate('event_set_online'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_SET_ONLINE
+                    \xoctEventGUI::CMD_SET_ONLINE,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::SET_OFFLINE:
                 return $this->build(
                     $this->translator->translate('event_set_offline'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_SET_OFFLINE
+                    \xoctEventGUI::CMD_SET_OFFLINE,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::DELETE:
                 return $this->build(
                     $this->translator->translate('event_delete'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_CONFIRM
+                    \xoctEventGUI::CMD_CONFIRM,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::EDIT_METADATA:
@@ -127,28 +134,32 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     return $this->build(
                         $this->translator->translate('event_edit_date'),
                         \xoctEventGUI::class,
-                        \xoctEventGUI::CMD_EDIT_SCHEDULED
+                        \xoctEventGUI::CMD_EDIT_SCHEDULED,
+                        ActionType::INTERNAL_LINK
                     );
                 }
 
                 return $this->build(
                     $this->translator->translate('event_edit'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_EDIT
+                    \xoctEventGUI::CMD_EDIT,
+                    ActionType::INTERNAL_LINK
                 );
 
             case EventActionTarget::PLAY:
                 return $this->build(
                     $this->translator->translate('event_player'),
                     \xoctPlayerGUI::class,
-                    \xoctPlayerGUI::CMD_STREAM_VIDEO
+                    \xoctPlayerGUI::CMD_STREAM_VIDEO,
+                    ActionType::EXTERNAL_LINK
                 );
 
             case EventActionTarget::DOWNLOAD:
                 return $this->build(
                     $this->translator->translate('event_download'),
                     \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_DOWNLOAD
+                    \xoctEventGUI::CMD_SELECT_DOWNLOAD,
+                    ActionType::ASYNC_MODAL
                 );
             case EventActionTarget::REPUBLISH: // TODO Modals needed, class.xoctEventRenderer.php:673
             case EventActionTarget::REPORT_QUALITY_ISSUE: // TODO Modals needed, class.xoctEventRenderer.php:673
@@ -194,9 +205,9 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             case EventActionTarget::SET_ONLINE:
             case EventActionTarget::SET_OFFLINE:
                 return \ilObjOpenCastAccess::checkAction(
-                        \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
-                        $event
-                    )
+                    \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
+                    $event
+                )
                     && $event->getXoctEventAdditions()->getIsOnline() === ($target === EventActionTarget::SET_OFFLINE);
 
             case EventActionTarget::DELETE:

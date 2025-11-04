@@ -142,6 +142,7 @@ class Series implements DataRetrieval
 
         yield from $this->asEntityListInPanel($series_id, $title);
         yield from $this->events->getTooltips();
+        yield from $this->events->getModals();
     }
 
     private function buildFilterItem(MDFieldConfigEventAR $md_field_config): Text
@@ -167,6 +168,7 @@ class Series implements DataRetrieval
 
         yield $this->ui_factory->listing()->entity()->standard($this->events)->withData($this);
         yield from $this->events->getTooltips();
+        yield from $this->events->getModals();
     }
 
     public function asEntityListInPanel(

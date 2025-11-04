@@ -47,6 +47,7 @@ use srag\Plugins\Opencast\Container\Init;
 use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Views\Series\Display;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
+use ILIAS\Filesystem\Stream\Streams;
 
 /**
  * Class xoctEventGUI
@@ -76,6 +77,7 @@ class xoctEventGUI extends xoctGUI
     // public const CMD_REPUBLISH = 'republish';
     public const CMD_START_WORKFLOW = 'startWorkflow';
     public const CMD_OPENCAST_STUDIO = 'opencaststudio';
+    public const CMD_SELECT_DOWNLOAD = 'selectDownload';
     public const CMD_DOWNLOAD = 'download';
     public const CMD_CREATE_SCHEDULED = 'createScheduled';
     public const CMD_EDIT_SCHEDULED = 'editScheduled';
@@ -684,6 +686,35 @@ class xoctEventGUI extends xoctGUI
         return $this->http->request()->getQueryParams()[$q] ?? null;
     }
 
+    public function selectDownload(): void
+    {
+        $modal = $this->ui->factory()->modal()->roundtrip(
+            'Select Downloads',
+            null,
+            [
+                $this->ui->factory()->input()->field()->select(
+                    'Item',
+                    [
+                        'pub1_id' => 'Publication 1',
+                        'pub2_id' => 'Publication 2',
+                    ]
+                )->withRequired(true)
+            ]
+        )->withSubmitLabel(
+            $this->txt('download')
+        );
+
+        $this->http->saveResponse(
+            $this->http->response()->withBody(
+                Streams::ofString(
+                    $this->ui_renderer->render($modal)
+                )
+            )
+        );
+        $this->http->sendResponse();
+        $this->http->close();
+    }
+
     public function download(): void
     {
         $event_id = $this->retrieveQuery(self::IDENTIFIER);
@@ -1199,7 +1230,8 @@ class xoctEventGUI extends xoctGUI
 
         // Extra things to do for producers group.
         // add user to series producers
-        if ($group_config_name === PluginConfig::F_GROUP_PRODUCERS && $this->objectSettings->getSeriesIdentifier() !== null) {
+        if ($group_config_name === PluginConfig::F_GROUP_PRODUCERS && $this->objectSettings->getSeriesIdentifier(
+        ) !== null) {
             $series = $this->seriesRepository->find($this->objectSettings->getSeriesIdentifier());
             if ($series->getAccessPolicies()->merge($this->ACLUtils->getUserRolesACL($xoctUser))) {
                 $this->seriesRepository->updateACL(

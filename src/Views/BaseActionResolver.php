@@ -8,6 +8,7 @@ use ILIAS\Data\URI;
 use ILIAS\HTTP\Services;
 use srag\Plugins\Opencast\UI\Integration\Action;
 use srag\Plugins\Opencast\Util\Locale\Translator;
+use srag\Plugins\Opencast\UI\Integration\ActionType;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -19,13 +20,13 @@ abstract class BaseActionResolver
         protected Services $http,
         protected \ilCtrlInterface $ctrl
     ) {
-
     }
 
     protected function build(
         string $translation,
         string|array $target_class,
-        ?string $cmd = null
+        ?string $cmd = null,
+        ?ActionType $type = null
     ): Action {
         $target_by_class = $this->ctrl->getLinkTargetByClass(
             $target_class,
@@ -43,7 +44,8 @@ abstract class BaseActionResolver
 
         return new Action(
             $translation,
-            $target
+            $target,
+            $type ?? ActionType::EXTERNAL_LINK
         );
     }
 }
