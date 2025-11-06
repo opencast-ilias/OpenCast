@@ -7,7 +7,6 @@ namespace srag\Plugins\Opencast\API;
 use OpencastApi\Opencast;
 use OpencastApi\Rest\OcRestClient;
 use OpencastApi\Auth\JWT\OcJwtClaim;
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoctLog;
 use xoctException;
@@ -76,12 +75,19 @@ class OpencastAPI implements API
      * @var array Already generated JWTs for editor
      */
     protected static $already_generated_editor_jwts = [];
+    /**
+     * @var bool
+     */
+    private bool $has_jwt = false;
 
     public function __construct(Config $config)
     {
         global $DIC;
         $this->user = xoctUser::getInstance($DIC->user());
         $this->config = $config->getConfig();
+        if (!empty($this->config['jwt'])) {
+            $this->has_jwt = true;
+        }
         $this->engage_config = $config->getEngageConfig();
         $this->init();
     }
@@ -162,7 +168,7 @@ class OpencastAPI implements API
     ): string
     {
         // In case the configuration is off, then we return the url without injecting any jwt.
-        if (empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+        if (!$this->has_jwt) {
             return $url;
         }
 
@@ -247,8 +253,8 @@ class OpencastAPI implements API
     public function issueExternalServicesJwtFor(string $service): ?string
     {
         // In case the configuration is off, then we return the url without injecting any jwt.
-        if (empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
-            return null;
+        if (!$this->has_jwt) {
+            return $url;
         }
 
         if (!in_array($service, self::ALLOWED_JWT_SERVICES)) {
