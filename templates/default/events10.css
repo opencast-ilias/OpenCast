@@ -10,6 +10,17 @@ div.c-entity.__container {
     grid-template-rows: min-content min-content min-content min-content min-content min-content 1fr;
 }
 
+.c-entity .xoct-invitations-counter {
+    border-radius: 12px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    min-width: 1.5rem;
+    text-align: center;
+    display: inline-block;
+}
+
 @media (max-width: 1800px) {
     ul.c-listing-entity {
         grid-template-columns: 1fr;
@@ -49,9 +60,20 @@ dd {
 
 @media (max-width: 991px) {
     .c-entity.__secondary-identifier.--image {
-        width: 10rem !important;
+        width: 15rem !important;
     }
 }
+
+@media (max-width: 500px) {
+    .c-entity.__secondary-identifier.--image {
+        width: 100% !important;
+        grid-area: f-prop-start;
+    }
+    .c-entity.__actions {
+        grid-area: f-details-start !important;
+    }
+}
+
 
 
 /* OVERLAY with Playbutton*/
@@ -75,4 +97,19 @@ dd {
 
 .c-entity.__secondary-identifier.--image a.playable:hover::before {
     transform: scale(1.07);
+}
+
+/* SOME other adjustments in ILIAS UI */
+/* Popover Content Padding Adjustment */
+.il-standard-popover-content {
+    padding: 0.5em 2em;
+}
+
+/* More Button */
+.c-entity .__personal-status .btn-link:before {
+    content: " ";
+    margin-left: 0.5em;
+}
+.c-entity .__personal-status .btn-link {
+    display: contents;
 }

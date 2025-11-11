@@ -91,7 +91,6 @@ class Publications
         $target = $this->toURI($target);
         $event = $this->event_repository->find($event_id);
         $categorized_download_dtos = $event->publications()->getDownloadDtos(false);
-
         $elements = [];
 
         foreach ($categorized_download_dtos as $usage_type => $content) {
@@ -146,6 +145,19 @@ class Publications
         // Remove last divider
         array_pop($elements);
 
-        return $elements;
+        $alignment[] = $this
+            ->ui_factory
+            ->layout()
+            ->alignment()
+            ->horizontal()
+            ->dynamicallyDistributed(
+                $this->ui_factory->legacy('&nbsp;'),
+                $this->ui_factory->legacy(
+                    $this->ui_renderer->render($elements)
+                ),
+                $this->ui_factory->legacy('&nbsp;'),
+            );
+
+        return $alignment;
     }
 }

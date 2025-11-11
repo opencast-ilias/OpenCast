@@ -24,6 +24,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
     public function resolve(EventSettings $setting): mixed
     {
         return match ($setting) {
+            EventSettings::SHOW_BEST_ACTION => true,
             EventSettings::DESCRIPTION_MAX_LENGTH => 120,
             EventSettings::STATUS_MAX_LENGTH => 80,
             EventSettings::SHOW_OWNER => $this->permission_per_clip,

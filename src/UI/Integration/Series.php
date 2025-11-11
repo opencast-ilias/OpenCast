@@ -242,6 +242,7 @@ class Series implements DataRetrieval
 
         $api_sort = match ($sort) {
             self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API
+            self::SORT_TITLE_ASC, self::SORT_TITLE_DESC, => $sort,
             default => $sort . ',' . self::SORT_TITLE_ASC // we append title as secondary sort to have a deterministic order
         };
 
@@ -257,7 +258,7 @@ class Series implements DataRetrieval
 
         // local sorting for owner
         if (in_array($sort, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC], true)) {
-            usort($filtered, function ($a, $b) use ($sort) {
+            usort($filtered, function (array $a, array $b) use ($sort): int {
                 /** @var Event $a_object */
                 $a_object = $a['object'];
                 /** @var Event $b_object */

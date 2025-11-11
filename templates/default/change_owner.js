@@ -3,18 +3,17 @@
  *
  * @type {{init: Function, selected_id: number, data_url: string, load: Function, deleteGroup: Function, selectGroup: Function, deselectAll: Function, create: Function}}
  */
-
 var xoctChangeOwner = {
 	selected_id: 0,
 	data_url: '',
 	container: null,
-    filter_container: null,
-    filtering: false,
-	lng: [
-		delete_group = "Delete Group?",
-		no_title = "Please insert title",
-		none_available = "None available"
-	],
+	filter_container: null,
+	filtering: false,
+	lng: {
+		delete_group: "Delete Group?",
+		no_title: "Please insert title",
+		none_available: "None available"
+	},
 	before_load: function () {
 	},
 	after_load: function () {
@@ -35,7 +34,7 @@ var xoctChangeOwner = {
 		$(container_available).html('<ul id="xoct_available" class="list-group"></ul>');
 		this.container_owner = $('#xoct_owner_container');
 		this.container_available = $('#xoct_available');
-        this.filter_container = $('#xoct_participant_filter');
+		this.filter_container = $('#xoct_participant_filter');
 		this.load();
 
 		var self = this;
@@ -49,24 +48,24 @@ var xoctChangeOwner = {
 
 		$.expr[':'].contains = function (a, i, m) {
 			return $(a).text().toUpperCase()
-			.indexOf(m[3].toUpperCase()) >= 0;
+				.indexOf(m[3].toUpperCase()) >= 0;
 		};
 
-			this.filter_container.keyup(function () {
-					self.filter($(this).val());
-					if (self.filtering && !$('#xoct_filter').length) {
-							self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
-					} else if (!self.filtering) {
-							$('#xoct_filter').remove();
-					}
-			});
+		this.filter_container.keyup(function () {
+			self.filter($(this).val());
+			if (self.filtering && !$('#xoct_filter').length) {
+				self.filter_container.after('<span class="input-group-btn"><button class="btn btn-default" id="xoct_filter" type="button"><span class="glyphicon glyphicon-remove"></span> </button></span>');
+			} else if (!self.filtering) {
+				$('#xoct_filter').remove();
+			}
+		});
 
 
-			$(document).on('click', '#xoct_filter', function () {
-					self.filter_container.val('');
-					self.filter('');
-					$(this).remove();
-			});
+		$(document).on('click', '#xoct_filter', function () {
+			self.filter_container.val('');
+			self.filter('');
+			$(this).remove();
+		});
 
 	},
 	clear: function () {
@@ -136,13 +135,13 @@ var xoctChangeOwner = {
 		});
 	},
 
-    /**
-     *
-     * @param string
-     */
-    filter: function (string) {
-        this.filtering = (string != '');
-        $('.xoct_participant_available:not(:contains("' + string + '"))').hide();
-        $('.xoct_participant_available:contains("' + string + '")').show();
-    }
+	/**
+	 *
+	 * @param string
+	 */
+	filter: function (string) {
+		this.filtering = (string != '');
+		$('.xoct_participant_available:not(:contains("' + string + '"))').hide();
+		$('.xoct_participant_available:contains("' + string + '")').show();
+	}
 };

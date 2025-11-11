@@ -26,6 +26,7 @@ use ILIAS\UI\Component\Input\Field\Select;
 use ILIAS\UI\Component\Modal\RoundTrip;
 use ILIAS\Data\URI;
 use srag\Plugins\Opencast\UI\Integration\Event\Publications;
+use srag\Plugins\Opencast\Model\PerVideoPermission\PermissionGrant;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -216,11 +217,20 @@ class Events implements RecordToEntity
             $main_properties_simple[$this->translate("event_presenter")] = implode(", ", $record->getPresenter());
         }
 
-        if (in_array(EventSettingsValueResolver::MD_OWNER, $shown, true) && $this->settings_resolver->resolve(
-            EventSettings::SHOW_OWNER
-        )) {
+        if (in_array(EventSettingsValueResolver::MD_OWNER, $shown, true)
+            && ($show_owner = $this->settings_resolver->resolve(EventSettings::SHOW_OWNER))
+        ) {
             $owner_username = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($record);
-            $main_properties_simple[$this->translate("event_owner")] = $owner_username;
+            // This should be refactored since it leads to many queries in case of listing many events.
+            // but this is how it's currently implemented.
+            $in = PermissionGrant::getActiveInvitationsForEvent(
+                $record,
+                $show_owner,
+                true
+            );
+            // We decided to implement this on our own. The alternative would be a user-glyph with a counter badge.
+            $glyph = $in > 0 ? " <span class='xoct-invitations-counter'>+" . $in . "</span>" : '';
+            $main_properties_simple[$this->translate("event_owner")] = $owner_username . $glyph;
         }
 
         if (in_array(EventSettingsValueResolver::MD_LOCATION, $shown, true)) {
@@ -295,44 +305,42 @@ class Events implements RecordToEntity
             (int) ($this->settings_resolver->resolve(EventSettings::STATUS_MAX_LENGTH) ?? 42)
         );
 
-        $tooltip_content = [];
-        $tooltip_content[] = $this->ui_factory
-            ->divider()
-            ->horizontal()
-            ->withLabel($status_label);
+        $status_tag = $this->ui_factory->button()->tag(
+            $status_label_short,
+            '#'
+        );
 
-        if (($best_action = $this->resolver->resolveBestForEventStatus(
-            $record->getProcessingState(),
-            $parameters
-        )) instanceof Action) {
-            $tooltip_content[] = $this->ui_factory
-                ->divider()
-                ->horizontal()
-                ->withLabel(
-                    $this->ui_renderer->render(
-                        $this->ui_factory->button()->standard(
-                            $best_action->name(),
-                            (string) $best_action->target()
-                        )
-                    )
-                );
-        }
+        // We may show best action as tooltip
+        if (
+            $this->settings_resolver->resolve(EventSettings::SHOW_BEST_ACTION)
+            && ($best_action = $this->resolver->resolveBestForEventStatus(
+                $record->getProcessingState(),
+                $parameters
+            )) instanceof Action
+        ) {
 
-        $this->tooltips[] = $tooltip = $this->ui_factory
-            ->popover()
-            ->standard(
-                $this->ui_factory->legacy(
-                    $this->ui_renderer->render(
-                        $tooltip_content
+            $tooltip_content = $this->ui_factory->legacy(
+                $this->translate('event_possible_best_action') . ': '
+                . $this->ui_renderer->render(
+                    $this->ui_factory->button()->shy(
+                        $best_action->name(),
+                        (string) $best_action->target()
                     )
                 )
-            )
-            ->withTitle($this->translate('event_processing_state'));
+            );
+
+            $this->tooltips[] = $tooltip = $this->ui_factory
+                ->popover()
+                ->standard($tooltip_content)
+                ->withVerticalPosition();
+
+            $status_tag = $status_tag->withOnClick(
+                $tooltip->getShowSignal()
+            );
+        }
+
         return $entity->withReactions(
-            $this->ui_factory->button()->tag(
-                $status_label_short,
-                '#'
-            )->withOnHover($tooltip->getShowSignal())
+            $status_tag
         );
     }
 

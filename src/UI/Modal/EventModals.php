@@ -13,6 +13,7 @@ use ilTemplate;
 use ilTemplateException;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Workflow\WorkflowRepository;
+use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
 
 /**
  * Responsible for building modals.
@@ -36,7 +37,7 @@ class EventModals
     {
     }
 
-    public function initWorkflows(): void
+    public function initWorkflows(string $event_id): void
     {
         if ($this->workflow_repository->anyWorkflowAvailable()) {
             $tpl = new ilTemplate("tpl.startworkflow_modal.html", true, true, $this->plugin->getDirectory());
@@ -135,9 +136,14 @@ class EventModals
             );
 
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
-                                    ->withOnLoadCode(fn($id): string => "$('#{$id}').click(function() { " .
-                                        "$('#{$form_submit_btn_id}').click(); " .
-                                        "return false; });");
+                                    ->withAdditionalOnLoadCode(fn($id): string => "
+        document.getElementById('{$id}').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('{$form_submit_btn_id}').click();
+            this.disabled = true;
+            return false;
+        });
+    ");
 
             $modal_startworkflow = $this->dic->ui()->factory()->modal()->roundtrip(
                 $this->plugin->txt('event_startworkflow'),
@@ -150,13 +156,14 @@ class EventModals
     /**
      * @throws ilTemplateException
      */
-    public function initReportDate(): void
+    public function initReportDate(string $event_id): void
     {
         $this->setReportDateModal(
             $this->buildReportingModal(
                 'reportDate',
                 $this->plugin->txt('event_report_date_modification'),
-                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT))
+                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_DATE_TEXT)),
+                $event_id
             )
         );
     }
@@ -164,13 +171,14 @@ class EventModals
     /**
      * @throws ilTemplateException
      */
-    public function initReportQuality(): void
+    public function initReportQuality(string $event_id): void
     {
         $this->setReportQualityModal(
             $this->buildReportingModal(
                 "reportQuality",
                 $this->plugin->txt('event_report_quality_problem'),
-                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT))
+                nl2br((string) PluginConfig::getConfig(PluginConfig::F_REPORT_QUALITY_TEXT)),
+                $event_id
             )
         );
     }
@@ -179,20 +187,31 @@ class EventModals
      *
      * @throws ilTemplateException
      */
-    protected function buildReportingModal(string $cmd, string $title, string $body): RoundTrip
+    protected function buildReportingModal(string $cmd, string $title, string $body, string $event_id = ''): RoundTrip
     {
         $tpl = new ilTemplate("tpl.reporting_modal.html", true, true, $this->plugin->getDirectory());
 
         $form_id = uniqid('form', false);
         $tpl->setVariable('FORM_ID', $form_id);
-        $tpl->setVariable('FORM_ACTION', $this->dic->ctrl()->getFormAction($this->parent_gui, $cmd));
+        $tpl->setVariable('EVENT_ID', $event_id);
+        $tpl->setVariable('EVENT_ID_KEY', EventActionParameter::EVENT_ID->value);
+        $tpl->setVariable('FORM_ACTION', $this->dic->ctrl()->getLinkTarget($this->parent_gui, $cmd));
         $tpl->setVariable('BODY', $body);
 
-        $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("send"), '#')
-                                ->withOnLoadCode(fn($id): string => "$('#{$id}').click(function() { " .
-                                    "$('#{$form_id}').submit(); " .
-                                    "$(this).prop('disabled', true); " .
-                                    "return false; });");
+        $submit_btn = $this
+            ->dic
+            ->ui()
+            ->factory()
+            ->button()
+            ->primary($this->dic->language()->txt("send"), '#')
+                                ->withAdditionalOnLoadCode(fn($id): string => "
+        document.getElementById('{$id}').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('{$form_id}').submit();
+            this.disabled = true;
+            return false;
+        });
+    ");
 
         return $this->dic->ui()->factory()->modal()->roundtrip(
             $title,

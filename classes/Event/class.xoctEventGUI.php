@@ -47,7 +47,6 @@ use srag\Plugins\Opencast\Container\Init;
 use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Views\Series\Display;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
-use ILIAS\Filesystem\Stream\Streams;
 
 /**
  * Class xoctEventGUI
@@ -74,7 +73,7 @@ class xoctEventGUI extends xoctGUI
     public const CMD_SWITCH_TO_LIST = 'switchToList';
     public const CMD_SWITCH_TO_TILES = 'switchToTiles';
     public const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
-    // public const CMD_REPUBLISH = 'republish';
+    public const CMD_REPUBLISH = 'republish';
     public const CMD_START_WORKFLOW = 'startWorkflow';
     public const CMD_OPENCAST_STUDIO = 'opencaststudio';
     public const CMD_SELECT_DOWNLOAD = 'selectDownload';
@@ -82,6 +81,9 @@ class xoctEventGUI extends xoctGUI
     public const CMD_CREATE_SCHEDULED = 'createScheduled';
     public const CMD_EDIT_SCHEDULED = 'editScheduled';
     public const CMD_UPDATE_SCHEDULED = 'updateScheduled';
+    public const CMD_REPORT_QUALITY_MODAL = 'reportQualityModal';
+    public const CMD_REPORT_DATE_MODAL = 'reportDateModal';
+    public const CMD_START_WORKFLOW_MODAL = 'startWorkflowModal';
     private \WaitOverlay $wait_overlay;
     /**
      * @var Services
@@ -688,10 +690,7 @@ class xoctEventGUI extends xoctGUI
 
     public function selectDownload(): void
     {
-        $this->ctrl->saveParameter(
-            $this,
-            self::IDENTIFIER
-        );
+        $this->ctrl->saveParameter($this, self::IDENTIFIER);
 
         $modal = $this
             ->ui_integration
@@ -702,16 +701,7 @@ class xoctEventGUI extends xoctGUI
                 $this->ctrl->getLinkTarget($this, self::CMD_DOWNLOAD)
             );
 
-        // TODO: Refactor with a OutputResponse trait
-        $this->http->saveResponse(
-            $this->http->response()->withBody(
-                Streams::ofString(
-                    $this->ui_renderer->renderAsync($modal)
-                )
-            )
-        );
-        $this->http->sendResponse();
-        $this->http->close();
+        $this->outAsync($modal);
     }
 
     public function download(): void
@@ -769,23 +759,10 @@ class xoctEventGUI extends xoctGUI
             // Open external source page
             header('Location: ' . $url);
         } else {
-            // get filesize
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HEADER, true);
-            curl_setopt($ch, CURLOPT_NOBODY, true);
-            curl_exec($ch);
-            $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-            curl_close($ch);
-
-            // deliver file
-            header('Content-Description: File Transfer');
-            header('Content-Type: ' . $publication->getMediatype());
             $file_name = $event->getTitle() . ($extension !== null ? '.' . $extension : '');
+            header('Content-Type: ' . $publication->getMediatype());
             header('Content-Disposition: attachment; filename="' . $file_name . '"');
-            header('Content-Length: ' . $size);
-            readfile($url);
+            echo file_get_contents($url);
         }
 
         $this->closeResponse();
@@ -1055,6 +1032,16 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
+    protected function reportDateForm(): void
+    {
+        $this->ctrl->saveParameter($this, self::IDENTIFIER);
+        $event_modals = new EventModals($this, $this->plugin, $this->dic, $this->workflowRepository);
+        $event_modals->initReportDate($this->http->request()->getQueryParams()[self::IDENTIFIER]);
+
+        $modal = ($event_modals)->getReportDateModal();
+        $this->outAsync($modal);
+    }
+
     protected function reportDate(): void
     {
         if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
@@ -1069,6 +1056,26 @@ class xoctEventGUI extends xoctGUI
         }
         $this->main_tpl->setOnScreenMessage('success', $this->plugin->txt('msg_date_report_sent'), true);
         $this->ctrl->redirect($this);
+    }
+
+    protected function startWorkflowModal(): void
+    {
+        $this->ctrl->saveParameter($this, self::IDENTIFIER);
+        $event_modals = new EventModals($this, $this->plugin, $this->dic, $this->workflowRepository);
+        $event_modals->initWorkflows($this->http->request()->getQueryParams()[self::IDENTIFIER]);
+
+        $modal = ($event_modals)->getStartworkflowModal();
+        $this->outAsync($modal);
+    }
+
+    protected function reportQualityModal(): void
+    {
+        $this->ctrl->saveParameter($this, self::IDENTIFIER);
+        $event_modals = new EventModals($this, $this->plugin, $this->dic, $this->workflowRepository);
+        $event_modals->initReportQuality($this->http->request()->getQueryParams()[self::IDENTIFIER]);
+
+        $modal = $event_modals->getReportQualityModal();
+        $this->outAsync($modal);
     }
 
     protected function reportQuality(): void

@@ -207,7 +207,7 @@ event_download#:#Download
 event_duration#:#Dauer
 event_edit#:#Metadaten bearbeiten
 event_edit_date#:#Metadaten und Termin bearbeiten
-event_edit_owner#:#Besitzer bearbeiten
+event_edit_owner#:#Besitzer/in bearbeiten
 event_end#:#Ende
 event_error_alert_accpet_terms_of_use#:#Akzeptieren Sie die Nutzungsbedingungen.
 event_file_presenter#:#Video-Datei
@@ -234,9 +234,9 @@ event_multiple_end#:#Enddatum
 event_multiple_end_time#:#Endzeit
 event_multiple_weekdays#:#Wiederholungen
 event_opencast_studio#:#Opencast Studio
-event_owner#:#Besitzer
+event_owner#:#Besitzer/in
 event_owner_select#:#--nicht zugewiesen--
-event_owner_username#:#Besitzer
+event_owner_username#:#Besitzer/in
 event_player#:#Abspielen
 event_player_live#:#Beitreten
 event_presenter#:#Referent/in
@@ -262,7 +262,7 @@ event_state_live_offline#:#Geplante Live-Aufzeichnung (Offline), für Studierend
 event_state_live_running#:#Laufende Live-Übertragung.
 event_title#:#Titel
 event_update#:#Speichern
-event_updateOwner#:#Besitzer speichern
+event_updateOwner#:#/in speichern
 event_view#:#Anzeigen
 event_online#:#Aufzeichnung online
 event_online_info#:#Dies bezieht sich nur auf diese ILIAS-Installation und wird nicht auf Opencast abgebildet
@@ -293,8 +293,8 @@ group_delete_participant#:#Möchten Sie das Mitglied wirklich entfernen?
 group_none_available#:#Keine verfügbar
 group_none_available_all#:#Keine verfügbar
 group_select_group#:#Gruppe auswählen
-current_owner_header#:#Besitzer
-owner_only_one_owner#:#Es kann nur ein Besitzer pro Video ausgewählt werden.
+current_owner_header#:#Besitzer/in
+owner_only_one_owner#:#Es kann nur ein Besitzer/in pro Video ausgewählt werden.
 invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
@@ -791,7 +791,8 @@ title_asc#:#Titel A-Z
 title_desc#:#Titel Z-A
 date_asc#:#Älteste zuerst
 date_desc#:#Neuste zuerst
-presenter_asc#:#Präsentator A-Z
-presenter_desc#:#Präsentator Z-A
-owner_asc#:#Besitzer A-Z
-owner_desc#:#Besitzer Z-A
+presenter_asc#:#Referent/in A-Z
+presenter_desc#:#Referent/in Z-A
+owner_asc#:#Besitzer/in A-Z
+owner_desc#:#Besitzer/in Z-A
+event_possible_best_action#:#Mögliche Aktion

@@ -161,9 +161,21 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \xoctEventGUI::CMD_SELECT_DOWNLOAD,
                     ActionType::ASYNC_MODAL
                 );
+            case EventActionTarget::REPORT_QUALITY_ISSUE:
+                return $this->build(
+                    $this->translator->translate('event_report_quality_problem'),
+                    \xoctEventGUI::class,
+                    \xoctEventGUI::CMD_REPORT_QUALITY_MODAL,
+                    ActionType::ASYNC_MODAL
+                );
+            case EventActionTarget::START_WORKFLOW:
+                return $this->build(
+                    $this->translator->translate('event_startworkflow'),
+                    \xoctEventGUI::class,
+                    \xoctEventGUI::CMD_START_WORKFLOW_MODAL,
+                    ActionType::ASYNC_MODAL
+                );
             case EventActionTarget::REPUBLISH: // TODO Modals needed, class.xoctEventRenderer.php:673
-            case EventActionTarget::REPORT_QUALITY_ISSUE: // TODO Modals needed, class.xoctEventRenderer.php:673
-            case EventActionTarget::START_WORKFLOW: // TODO Modals needed, class.xoctEventRenderer.php:673
             default:
                 return null;
         }
@@ -198,9 +210,13 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     $event
                 );
 
-            case EventActionTarget::REPUBLISH:
-            default:
-                return false; // TODO Case not implemented yet since we miss the possibility to call modals and signals. see public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventRenderer.php:673
+            case EventActionTarget::START_WORKFLOW:
+                return \ilObjOpenCastAccess::checkAction(
+                    \ilObjOpenCastAccess::ACTION_EDIT_EVENT,
+                    $event
+                )
+                    && !$event->isScheduled()
+                    && !$event->isRunning();
 
             case EventActionTarget::SET_ONLINE:
             case EventActionTarget::SET_OFFLINE:
@@ -231,6 +247,9 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             case EventActionTarget::PLAY:
             case EventActionTarget::DOWNLOAD:
                 return $event->getProcessingState() === Event::STATE_SUCCEEDED;
+            default:
+                return false; // TODO Case not implemented yet since we miss the possibility to call modals and signals. see public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventRenderer.php:673
+
         }
     }
 
