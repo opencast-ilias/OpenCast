@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroup;
@@ -24,6 +26,8 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     }
 
     private Container $container;
+    private Factory $ui_factory;
+    private Renderer $ui_renderer;
 
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
@@ -36,14 +40,13 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
     protected array $filter = [];
     protected PublicationUsageRepository $repository;
 
-    /**
-     * @param string $a_parent_cmd
-     */
     public function __construct(xoctPublicationUsageGUI $a_parent_obj, string $a_parent_cmd)
     {
         global $DIC;
         $this->ctrl = $DIC->ctrl();
         $this->container = Init::init($DIC);
+        $this->ui_factory = $this->container->ilias()->ui()->factory();
+        $this->ui_renderer = $this->container->ilias()->ui()->renderer();
         $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $this->repository = new PublicationUsageRepository();
@@ -120,28 +123,29 @@ class xoctPublicationUsageTableGUI extends ilTable2GUI
 
     protected function addActionMenu(PublicationUsage $xoctPublicationUsage)
     {
-        $current_selection_list = new ilAdvancedSelectionListGUI();
-        $current_selection_list->setListTitle($this->getLocaleString('actions', 'common'));
-        $current_selection_list->setId(self::TBL_ID . '_actions_' . $xoctPublicationUsage->getUsageId());
-        $current_selection_list->setUseImages(false);
-
         $this->ctrl->setParameter(
             $this->parent_obj,
             xoctPublicationUsageGUI::IDENTIFIER,
             $xoctPublicationUsage->getUsageId()
         );
-        $current_selection_list->addItem(
-            $this->getLocaleString(xoctGUI::CMD_EDIT),
-            xoctGUI::CMD_EDIT,
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
-        );
-        $current_selection_list->addItem(
-            $this->getLocaleString(xoctGUI::CMD_DELETE),
-            xoctGUI::CMD_DELETE,
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_CONFIRM)
+
+        $dropdown = $this->ui_factory->dropdown()->standard(
+            [
+                $this->ui_factory->link()->standard(
+                    $this->getLocaleString(xoctGUI::CMD_EDIT),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
+                ),
+                $this->ui_factory->link()->standard(
+                    $this->getLocaleString(xoctGUI::CMD_DELETE),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_DELETE)
+                )
+            ]
         );
 
-        $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
+        $this->tpl->setVariable(
+            'ACTIONS',
+            $this->ui_renderer->render($dropdown)
+        );
     }
 
     protected function parseData(): void

@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
-
+use ILIAS\UI\Factory;
+use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
 use srag\Plugins\Opencast\Container\Init;
@@ -18,12 +19,16 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
     use LocaleTrait;
     private ilOpenCastPlugin $plugin;
     private ilObjUser $user;
+    private Factory $ui_factory;
+    private Renderer $ui_renderer;
 
     public function __construct(xoctPermissionTemplateGUI $a_parent_obj, string $a_parent_cmd = "", string $a_template_context = "")
     {
         global $DIC;
         $opencastContainer = Init::init();
         $this->ctrl = $DIC->ctrl();
+        $this->ui_factory = $opencastContainer->ilias()->ui()->factory();
+        $this->ui_renderer = $opencastContainer->ilias()->ui()->renderer();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
         $this->user = $DIC->user();
@@ -39,7 +44,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
         $this->setShowRowsSelector(false);
 
         $this->setRowTemplate(
-             'tpl.permission_templates.html',
+            'tpl.permission_templates.html',
             'public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/'
         );
 
@@ -87,21 +92,20 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
 
     protected function buildActions(array $a_set): string
     {
-        $actions = new ilAdvancedSelectionListGUI();
-        $actions->setListTitle($this->getLocaleString('actions', 'common'));
-
         $this->ctrl->setParameter($this->parent_obj, xoctPermissionTemplateGUI::IDENTIFIER, $a_set['id']);
-        $actions->addItem(
-            $this->lng->txt('edit'),
-            '',
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
-        );
-        $actions->addItem(
-            $this->lng->txt('delete'),
-            '',
-            $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_DELETE)
+        $dropdown = $this->ui_factory->dropdown()->standard(
+            [
+                $this->ui_factory->link()->standard(
+                    $this->lng->txt('edit'),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
+                ),
+                $this->ui_factory->link()->standard(
+                    $this->lng->txt('delete'),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_DELETE)
+                )
+            ]
         );
 
-        return $actions->getHTML();
+        return $this->ui_renderer->render($dropdown);
     }
 }

@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-use srag\CustomInputGUIs\OpenCast\TableGUI\TableGUI;
+use ILIAS\UI\Renderer;
+use ILIAS\UI\Factory;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameter;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Config\WorkflowParameterRepository;
-use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
-use srag\CustomInputGUIs\OpenCast\Template\Template;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUI as LegacyTableGUI;
 use srag\Plugins\Opencast\LegacyHelpers\TableGUIConstants;
 use srag\Plugins\Opencast\Container\Init;
@@ -24,6 +23,9 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
         LocaleTrait::getLocaleString as _getLocaleString;
     }
 
+    private Renderer $ui_renderer;
+    private Factory $ui_factory;
+
     public function getLocaleString(string $string, ?string $module = '', ?string $fallback = null): string
     {
         return $this->_getLocaleString($string, empty($module) ? 'workflow_params' : $module, $fallback);
@@ -38,6 +40,8 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
     {
         global $DIC;
         $opencastContainer = Init::init();
+        $this->ui_factory = $opencastContainer->ilias()->ui()->factory();
+        $this->ui_renderer = $opencastContainer->ilias()->ui()->renderer();
         $this->plugin = $opencastContainer->get(ilOpenCastPlugin::class);
         parent::__construct($parent, $parent_cmd);
         $this->initTable();
@@ -114,25 +118,21 @@ class xoctWorkflowParameterTableGUI extends ilTable2GUI
         $ilSelectInputGUI->setValue($row['default_value_admin']);
         $this->tpl->setVariable("DEFAULT_VALUE_ADMIN", $ilSelectInputGUI->getToolbarHTML());
 
-        $actions = new ilAdvancedSelectionListGUI();
-        $actions->setListTitle($this->getLocaleString("actions", 'common'));
 
         $this->ctrl->setParameter($this->parent_obj, xoctWorkflowParameterGUI::P_PARAM_ID, $row["id"]);
-
-        $actions->addItem(
-            $this->getLocaleString("edit", 'common'),
-            "",
-            $this->ctrl
-                ->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
+        $dropdown = $this->ui_factory->dropdown()->standard(
+            [
+                $this->ui_factory->link()->standard(
+                    $this->getLocaleString("edit", 'common'),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_EDIT)
+                ),
+                $this->ui_factory->link()->standard(
+                    $this->getLocaleString("delete", 'common'),
+                    $this->ctrl->getLinkTarget($this->parent_obj, xoctGUI::CMD_DELETE)
+                )
+            ]
         );
 
-        $actions->addItem(
-            $this->getLocaleString("delete", 'common'),
-            "",
-            $this->ctrl
-                ->getLinkTarget($this->parent_obj, xoctGUI::CMD_DELETE)
-        );
-
-        $this->tpl->setVariable("ACTIONS", $actions->getHTML());
+        $this->tpl->setVariable("ACTIONS", $this->ui_renderer->render($dropdown));
     }
 }
