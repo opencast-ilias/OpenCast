@@ -33,6 +33,9 @@ class Integration
         Container $container,
         Factory $factory
     ) {
+        $settings_resolver = new EventSettingsResolver(
+            $container->objectSettings()
+        );
         $this->events = new Events(
             $factory,
             $container,
@@ -41,9 +44,7 @@ class Integration
                 $container->ilias()->http(),
                 $container->ilias()->ctrl()
             ),
-            new EventSettingsResolver(
-                $container->objectSettings()
-            )
+            $settings_resolver
         );
         $this->my_events = new MyEvents(
             $factory,
@@ -57,7 +58,8 @@ class Integration
                 $container->translator(),
                 $container->ilias()->http(),
                 $container->ilias()->ctrl()
-            )
+            ),
+            $settings_resolver
         );
     }
 

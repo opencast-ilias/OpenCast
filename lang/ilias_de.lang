@@ -787,3 +787,11 @@ upload_ui_thumbnail_file#:#Vorschaubilddatei
 upload_ui_thumbnail_timepoint#:#Zeitpunkt
 upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.
 show_more#:#Mehr
+title_asc#:#Titel A-Z
+title_desc#:#Titel Z-A
+date_asc#:#Älteste zuerst
+date_desc#:#Neuste zuerst
+presenter_asc#:#Präsentator A-Z
+presenter_desc#:#Präsentator Z-A
+owner_asc#:#Besitzer A-Z
+owner_desc#:#Besitzer Z-A

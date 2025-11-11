@@ -24,6 +24,8 @@ use ILIAS\UI\Implementation\Component\Input\Field\Text;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -36,8 +38,12 @@ class Series implements DataRetrieval
     private const DEFAULT_PAGE_SIZE = 10;
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
-    public const SORT_TITLE_DESC = 'title:desc';
-    public const SORT_DATE_DESC = 'date:desc';
+    private const SORT_TITLE_DESC = 'title:desc';
+    private const SORT_DATE_DESC = 'date:desc';
+    private const SORT_PRESENTER_ASC = 'presenter:asc';
+    private const SORT_PRESENTER_DESC = 'presenter:desc';
+    private const SORT_OWNER_ASC = 'owner:asc';
+    private const SORT_OWNER_DESC = 'owner:desc';
     private EventAPIRepository $event_repository;
     private SeriesAPIRepository $series_repository;
     private ?\srag\Plugins\Opencast\Model\Series\Series $series = null;
@@ -53,7 +59,8 @@ class Series implements DataRetrieval
     public function __construct(
         private Container $container,
         private Events $events,
-        private SeriesActionTargetResolver $resolver
+        private SeriesActionTargetResolver $resolver,
+        private EventSettingsValueResolver $settings_resolver
     ) {
         $this->ui = $this->container->ilias()->ui();
         $this->filter_service = $this->container->ilias()->uiService()->filter();
@@ -184,7 +191,14 @@ class Series implements DataRetrieval
             self::SORT_TITLE_DESC => $this->translator->translate('title_desc'),
             self::SORT_DATE_ASC => $this->translator->translate('date_asc'),
             self::SORT_DATE_DESC => $this->translator->translate('date_desc'),
+            self::SORT_PRESENTER_ASC => $this->translator->translate('presenter_asc'),
+            self::SORT_PRESENTER_DESC => $this->translator->translate('presenter_desc'),
         ];
+
+        if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
+            $sortation_options[self::SORT_OWNER_ASC] = $this->translator->translate('owner_asc');
+            $sortation_options[self::SORT_OWNER_DESC] = $this->translator->translate('owner_desc');
+        }
 
         yield $this->ui_factory->panel()->secondary()->legacy(
             $title,
@@ -219,16 +233,17 @@ class Series implements DataRetrieval
                     SeriesActionTarget::SORT->value
                 )
         ]);
-        // drop first element as it is already rendered in panel
-        //        array_shift($entity_list);
-
-        //        yield $entity_list;
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
         $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
         $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC;
+
+        $api_sort = match ($sort) {
+            self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API
+            default => $sort . ',' . self::SORT_TITLE_ASC // we append title as secondary sort to have a deterministic order
+        };
 
         // Filtered by API
         $filtered = $this->event_repository->getFiltered(
@@ -237,8 +252,25 @@ class Series implements DataRetrieval
             [],
             $page * self::DEFAULT_PAGE_SIZE,
             self::DEFAULT_PAGE_SIZE,
-            $sort,
+            $api_sort,
         );
+
+        // local sorting for owner
+        if (in_array($sort, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC], true)) {
+            usort($filtered, function ($a, $b) use ($sort) {
+                /** @var Event $a_object */
+                $a_object = $a['object'];
+                /** @var Event $b_object */
+                $b_object = $b['object'];
+
+                $a_owner = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($a_object);
+                $b_owner = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($b_object);
+                return match ($sort) {
+                    self::SORT_OWNER_ASC => strcasecmp($a_owner, $b_owner),
+                    self::SORT_OWNER_DESC => strcasecmp($b_owner, $a_owner),
+                };
+            });
+        }
 
         // Filtered by UI Filter
         $filter_data = $this->filter === null ? null : $this->filter_service->getData(
