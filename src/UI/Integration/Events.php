@@ -138,14 +138,15 @@ class Events implements RecordToEntity
                 );
             } else {
                 $thumbnail = $thumbnail
-                    ->withAction((string) $play_action->target())
-                    ->withAdditionalOnLoadCode(
-                        fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
+                    ->withAction((string) $play_action->target());
+            }
+            $thumbnail = $thumbnail
+                ->withAdditionalOnLoadCode(
+                    fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
                         link.classList.add('playable');
                         link.setAttribute('target', '_blank');
                         "
-                    );
-            }
+                );
         }
 
         // Base Entity
@@ -423,10 +424,10 @@ class Events implements RecordToEntity
         // Build Actions for Event
         $actions = [];
         foreach (EventActionTarget::cases() as $case) {
-            if (!$this->resolver->supports($case, $parameters)) {
+            if (!$this->resolver->supports($case, $parameters, $this->settings_resolver)) {
                 continue;
             }
-            $actions[$case->value] = $this->resolver->resolve($case, $parameters);
+            $actions[$case->value] = $this->resolver->resolve($case, $parameters, $this->settings_resolver);
         }
 
         // Filter out null actions

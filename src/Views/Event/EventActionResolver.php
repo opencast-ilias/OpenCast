@@ -13,6 +13,8 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\UI\Integration\Action;
 use srag\Plugins\Opencast\Util\Locale\Translator;
 use srag\Plugins\Opencast\UI\Integration\ActionType;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -54,8 +56,11 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
         );
     }
 
-    public function resolve(EventActionTarget $target, ?EventActionParameters $parameter = null): ?Action
-    {
+    public function resolve(
+        EventActionTarget $target,
+        ?EventActionParameters $parameter = null,
+        ?EventSettingsValueResolver $settings = null
+    ): ?Action {
         // no actions without event
         $event = $parameter?->get(EventActionParameter::EVENT_OBJECT);
         if (!$event instanceof Event) {
@@ -147,11 +152,16 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::PLAY:
+                $open_as_modal = (bool) $settings?->resolve(EventSettings::PLAYER_AS_MODAL);
                 return $this->build(
                     $this->translator->translate('event_player'),
                     \xoctPlayerGUI::class,
-                    \xoctPlayerGUI::CMD_STREAM_VIDEO,
-                    ActionType::EXTERNAL_LINK
+                    $open_as_modal
+                        ? \xoctPlayerGUI::CMD_STREAM_VIDEO
+                        : \xoctPlayerGUI::CMD_STREAM_VIDEO,
+                    $open_as_modal
+                        ? ActionType::ASYNC_MODAL
+                        : ActionType::EXTERNAL_LINK
                 );
 
             case EventActionTarget::DOWNLOAD:
@@ -183,8 +193,11 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
         return null;
     }
 
-    public function supports(EventActionTarget $target, EventActionParameters $parameters): bool
-    {
+    public function supports(
+        EventActionTarget $target,
+        EventActionParameters $parameters,
+        ?EventSettingsValueResolver $settings = null
+    ): bool {
         // no actions without event
         $event = $parameters?->get(EventActionParameter::EVENT_OBJECT);
         if (!$event instanceof Event) {
@@ -193,13 +206,13 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
 
         switch ($target) {
             case EventActionTarget::EDIT_OWNER:
-                return \ilObjOpenCastAccess::checkAction(
+                return $settings?->resolve(EventSettings::SHOW_OWNER) ?? \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_EDIT_OWNER,
                     $event
                 );
 
             case EventActionTarget::GRANT_ACCESS:
-                return \ilObjOpenCastAccess::checkAction(
+                return $settings?->resolve(EventSettings::SHOW_OWNER) ?? \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_SHARE_EVENT,
                     $event
                 );
@@ -212,18 +225,18 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
 
             case EventActionTarget::START_WORKFLOW:
                 return \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_EDIT_EVENT,
-                    $event
-                )
+                        \ilObjOpenCastAccess::ACTION_EDIT_EVENT,
+                        $event
+                    )
                     && !$event->isScheduled()
                     && !$event->isRunning();
 
             case EventActionTarget::SET_ONLINE:
             case EventActionTarget::SET_OFFLINE:
                 return \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
-                    $event
-                )
+                        \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
+                        $event
+                    )
                     && $event->getXoctEventAdditions()->getIsOnline() === ($target === EventActionTarget::SET_OFFLINE);
 
             case EventActionTarget::DELETE:
@@ -270,7 +283,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             return null;
         }
 
-        if (!$this->supports($mapped_action, $parameter)) {
+        if (!$this->supports($mapped_action, $parameter, null)) {
             return null;
         }
 

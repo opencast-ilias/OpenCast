@@ -11,6 +11,7 @@ namespace srag\Plugins\Opencast\UI\Integration\Event;
 enum EventSettings: string
 {
     case SHOW_OWNER = 'show_owner';
+    case PLAYER_AS_MODAL = 'player_as_modal';
     case SHOW_BEST_ACTION = 'best_action';
     case PRESENTED_METADATA = 'presented_metadata';
 

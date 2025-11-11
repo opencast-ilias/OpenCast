@@ -29,6 +29,7 @@ class xoctPlayerGUI extends xoctGUI
     use OutputResponse;
 
     public const CMD_STREAM_VIDEO = 'streamVideo';
+    public const CMD_STREAM_VIDEO_MODAL = 'streamVideoModal';
 
     public const IDENTIFIER = 'eid';
 
@@ -53,6 +54,10 @@ class xoctPlayerGUI extends xoctGUI
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
         $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? null;
         $this->force_no_chat = (bool) ($this->http->request()->getQueryParams()['force_no_chat'] ?? false);
+    }
+
+    public function streamVideoModal(): void
+    {
     }
 
     /**
