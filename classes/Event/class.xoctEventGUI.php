@@ -47,6 +47,7 @@ use srag\Plugins\Opencast\Container\Init;
 use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Views\Series\Display;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
+use ILIAS\UI\Renderer;
 
 /**
  * Class xoctEventGUI
@@ -99,7 +100,7 @@ class xoctEventGUI extends xoctGUI
      * @var EventModals|null
      */
     protected $modals;
-    private DefaultRenderer $ui_renderer;
+    private Renderer $ui_renderer;
     private Container $dic;
     /**
      * @var \ilObjUser

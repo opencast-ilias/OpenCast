@@ -21,6 +21,7 @@ use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\Notification\NotificationSender;
 use srag\Plugins\Opencast\Notification\DefaultNotificationSender;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\UI\Integration\IntegrationBuilder;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -80,13 +81,17 @@ final class Init
             static fn(): Translator => new Translator($opencast_container)
         );
 
+        $opencast_container->glue(
+            IntegrationBuilder::class,
+            static fn(): IntegrationBuilder => new IntegrationBuilder(
+                $ilias_container->ui()
+            )
+        );
+
         // UI Integration
         $opencast_container->glue(
             Integration::class,
-            static fn(): Integration => new Integration(
-                $opencast_container,
-                $ilias_container->ui()->factory()
-            )
+            static fn(): Integration => $opencast_container[IntegrationBuilder::class]->main($opencast_container)
         );
 
         // Plugin Dependencies

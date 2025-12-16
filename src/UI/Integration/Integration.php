@@ -9,6 +9,9 @@ use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Views\Series\SeriesActionResolver;
 use srag\Plugins\Opencast\Views\Series\EventActionResolver;
 use srag\Plugins\Opencast\Views\Series\EventSettingsResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
+use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -31,15 +34,18 @@ class Integration
 
     public function __construct(
         Container $container,
-        Factory $factory
+        Factory $factory,
+        ?EventSettingsValueResolver $event_settings_value_resolver = null,
+        ?EventActionTargetResolver $event_action_target_resolver = null,
+        ?SeriesActionTargetResolver $series_action_target_resolver = null
     ) {
-        $settings_resolver = new EventSettingsResolver(
+        $settings_resolver = $event_settings_value_resolver ?? new EventSettingsResolver(
             $container->objectSettings()
         );
         $this->events = new Events(
             $factory,
             $container,
-            new EventActionResolver(
+            $event_action_target_resolver ?? new EventActionResolver(
                 $container->translator(),
                 $container->ilias()->http(),
                 $container->ilias()->ctrl()
@@ -54,7 +60,7 @@ class Integration
         $this->series = new Series(
             $container,
             $this->events,
-            new SeriesActionResolver(
+            $series_action_target_resolver ?? new SeriesActionResolver(
                 $container->translator(),
                 $container->ilias()->http(),
                 $container->ilias()->ctrl()

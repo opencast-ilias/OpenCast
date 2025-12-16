@@ -8,6 +8,10 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Util\Locale\Translator;
 use srag\Plugins\Opencast\UI\Integration\Integration;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\UI\Integration\IntegrationBuilder;
+use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
+use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
+use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -53,9 +57,19 @@ final class Container extends \ILIAS\DI\Container
         return $this->get(OpencastDIC::class);
     }
 
-    public function uiIntegration(\ilPlugin $other_plugin): Integration
-    {
-        return $this->get(Integration::class);
+    public function uiIntegration(
+        \ilPlugin $other_plugin,
+        ?EventSettingsValueResolver $event_settings_value_resolver = null,
+        ?EventActionTargetResolver $event_action_target_resolver = null,
+        ?SeriesActionTargetResolver $series_action_target_resolver = null
+    ): Integration {
+        return $this->get(IntegrationBuilder::class)->external(
+            $other_plugin,
+            $this,
+            $event_settings_value_resolver,
+            $event_action_target_resolver,
+            $series_action_target_resolver
+        );
     }
 
     public function objectSettings(): ObjectSettings
