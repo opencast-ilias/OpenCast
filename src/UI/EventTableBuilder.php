@@ -21,7 +21,6 @@ use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use xoct;
 use xoctEventTableGUI;
-use xoctEventTileGUI;
 
 /**
  * Responsible for building the event table, building the table's filter, and initializing the (fitlered) data.
@@ -74,18 +73,6 @@ class EventTableBuilder
             ),
             $this->dic->language()->getLangKey(),
             $this->MDCatalogue
-        );
-    }
-
-    public function tiles($parent_gui, ObjectSettings $objectSettings): xoctEventTileGUI
-    {
-        return new xoctEventTileGUI(
-            $parent_gui,
-            $objectSettings,
-            $this->applyFilter(
-                $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
-                $objectSettings
-            )
         );
     }
 

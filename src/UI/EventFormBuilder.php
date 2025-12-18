@@ -225,7 +225,7 @@ class EventFormBuilder
             foreach ($supported_languages_arr as $lang_code => $lang_name) {
                 $no_chunked_upload_handler = clone $this->uploadHandler;
                 $no_chunked_upload_handler->toggleChunkedUploadSupport(false);
-                $subtitle_file_input = ChunkedFile::getInstance(
+                $subtitle_file_input = $this->ui_factory->input()->field()->file(
                     $no_chunked_upload_handler,
                     $this->getLocaleString('md_lang_list_' . $lang_code, '', $lang_name),
                     $this->plugin->txt('event_supported_filetypes') . ': ' . implode(', ', $accepted_subtitle_mimetypes)
@@ -235,8 +235,6 @@ class EventFormBuilder
                 // Only 1 file per one subtitle is allowed!
                 ->withMaxFiles(1)
                 ->withMaxFileSize($upload_limit)
-                // Setting ChunkSize as upload limit, in order to prevent unwanted chunking.
-                ->withChunkSizeInBytes($upload_limit)
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
@@ -292,7 +290,7 @@ class EventFormBuilder
         if ($thumbnail_upload_enabled && !empty($accepted_thumbnail_mimetypes)) {
             $thumbnail_section_inputs = [];
             // Thumbnail file input.
-            $thumbnail_file_input = ChunkedFile::getInstance(
+            $thumbnail_file_input = $this->ui_factory->input()->field()->file(
                 $this->uploadHandler,
                 $this->plugin->txt('upload_ui_thumbnail_file'),
                 $this->plugin->txt('event_supported_filetypes') . ': ' .
@@ -305,8 +303,6 @@ class EventFormBuilder
                 // Only 1 file per one subtitle is allowed!
                 ->withMaxFiles(1)
                 ->withMaxFileSize($upload_limit)
-                // Setting ChunkSize as upload limit, in order to prevent unwanted chunking.
-                ->withChunkSizeInBytes($upload_limit)
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {

@@ -16,8 +16,6 @@ class ObjectSettingsParser
         $objectSettings->setIntroductionText(
             (string) ($data[ObjectSettingsFormItemBuilder::F_INTRODUCTION_TEXT] ?? '')
         );
-        $objectSettings->setDefaultView((int) ($data[ObjectSettingsFormItemBuilder::F_DEFAULT_VIEW] ?? 0));
-        $objectSettings->setViewChangeable((bool) ($data[ObjectSettingsFormItemBuilder::F_VIEW_CHANGEABLE] ?? false));
         $objectSettings->setUseAnnotations((bool) ($data[ObjectSettingsFormItemBuilder::F_USE_ANNOTATIONS] ?? false));
         $objectSettings->setPermissionPerClip(
             is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP] ?? null)

@@ -239,7 +239,6 @@ class OpencastDIC
                 $this->dic->refinery(),
                 $c['publication_usage_repository'],
                 $c['object_settings_parser'],
-                $c['paella_config_upload_handler'],
                 $c['plugin']
             )
         );

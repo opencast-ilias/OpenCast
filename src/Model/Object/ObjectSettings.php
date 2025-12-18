@@ -10,7 +10,6 @@ use ilObjOpenCast;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
-use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
 use xoctException;
 
 /**
@@ -194,14 +193,6 @@ class ObjectSettings extends ActiveRecord
      */
     protected $obj_online = false;
     /**
-     * @var integer
-     *
-     * @con_has_field true
-     * @con_fieldtype integer
-     * @con_length    8
-     */
-    protected $default_view = UserSettingsRepository::VIEW_TYPE_LIST;
-    /**
      * @var bool
      *
      * @con_has_field true
@@ -296,26 +287,6 @@ class ObjectSettings extends ActiveRecord
     public function setPermissionAllowSetOwn(bool $permission_allow_set_own): void
     {
         $this->permission_allow_set_own = $permission_allow_set_own;
-    }
-
-    public function getDefaultView(): int
-    {
-        return (int) $this->default_view;
-    }
-
-    public function setDefaultView(int $default_view): void
-    {
-        $this->default_view = $default_view;
-    }
-
-    public function isViewChangeable(): bool
-    {
-        return (bool) $this->view_changeable;
-    }
-
-    public function setViewChangeable(bool $view_changeable): void
-    {
-        $this->view_changeable = $view_changeable;
     }
 
     public function setChatActive(bool $chat_active): void

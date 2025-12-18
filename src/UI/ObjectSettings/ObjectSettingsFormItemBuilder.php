@@ -15,8 +15,6 @@ use srag\Plugins\Opencast\Model\PermissionTemplate\PermissionTemplate;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Series\Series;
-use srag\Plugins\Opencast\Model\UserSettings\UserSettingsRepository;
-use xoctFileUploadHandlerGUI;
 
 class ObjectSettingsFormItemBuilder
 {
@@ -41,8 +39,13 @@ class ObjectSettingsFormItemBuilder
     public const F_MEMBER_DOWNLOAD = 'member_download';
     public const F_MEMBER_RECORD = 'member_record';
 
-    public function __construct(protected UIFactory $ui_factory, private readonly RefineryFactory $refinery_factory, private readonly PublicationUsageRepository $publicationUsageRepository, private readonly ObjectSettingsParser $objectSettingsParser, private readonly \xoctFileUploadHandlerGUI $fileUploadHandler, private readonly \ilPlugin $plugin)
-    {
+    public function __construct(
+        protected UIFactory $ui_factory,
+        private readonly RefineryFactory $refinery_factory,
+        private readonly PublicationUsageRepository $publicationUsageRepository,
+        private readonly ObjectSettingsParser $objectSettingsParser,
+        private readonly \ilPlugin $plugin
+    ) {
     }
 
     public function create(): Input
@@ -51,18 +54,6 @@ class ObjectSettingsFormItemBuilder
         $inputs = [
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
-            self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt(
-                    'view_type_' . UserSettingsRepository::VIEW_TYPE_LIST
-                ),
-                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt(
-                    'view_type_' . UserSettingsRepository::VIEW_TYPE_TILES
-                ),
-            ])->withRequired(true),
-            self::F_VIEW_CHANGEABLE => $field_factory->checkbox(
-                $this->txt(self::F_VIEW_CHANGEABLE),
-                $this->txt(self::F_VIEW_CHANGEABLE . '_info')
-            )->withValue(true),
         ];
         if (PermissionTemplate::count() !== 0) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
@@ -94,7 +85,7 @@ class ObjectSettingsFormItemBuilder
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
                             ->withAdditionalTransformation(
-                                $this->refinery_factory->custom()->transformation(function ($vs) {
+                                $this->refinery_factory->custom()->transformation(function (array $vs): array {
                                     $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
                                     if (is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL] ?? null)) {
                                         $vs['permission_template'] = $vs[self::F_PUBLISH_ON_VIDEO_PORTAL][0];
@@ -115,18 +106,6 @@ class ObjectSettingsFormItemBuilder
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue(
                 $objectSettings->getIntroductionText()
             ),
-            self::F_DEFAULT_VIEW => $field_factory->select($this->txt(self::F_DEFAULT_VIEW), [
-                UserSettingsRepository::VIEW_TYPE_LIST => $this->txt(
-                    'view_type_' . UserSettingsRepository::VIEW_TYPE_LIST
-                ),
-                UserSettingsRepository::VIEW_TYPE_TILES => $this->txt(
-                    'view_type_' . UserSettingsRepository::VIEW_TYPE_TILES
-                ),
-            ])->withRequired(true)->withValue($objectSettings->getDefaultView()),
-            self::F_VIEW_CHANGEABLE => $field_factory->checkbox(
-                $this->txt(self::F_VIEW_CHANGEABLE),
-                $this->txt(self::F_VIEW_CHANGEABLE . '_info')
-            )->withValue($objectSettings->isViewChangeable())
         ];
 
         if (PermissionTemplate::count() !== 0) {
@@ -180,7 +159,7 @@ class ObjectSettingsFormItemBuilder
 
         return $field_factory->section($inputs, $this->plugin->txt('object_settings'))
                             ->withAdditionalTransformation(
-                                $this->refinery_factory->custom()->transformation(function ($vs) {
+                                $this->refinery_factory->custom()->transformation(function (array $vs): array {
                                     $vs['object'] = $this->objectSettingsParser->parseFormData($vs);
                                     if (isset($vs[self::F_PUBLISH_ON_VIDEO_PORTAL]) &&
                                         is_array($vs[self::F_PUBLISH_ON_VIDEO_PORTAL])) {

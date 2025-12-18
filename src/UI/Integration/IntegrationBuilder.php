@@ -19,13 +19,17 @@ use srag\Plugins\Opencast\UI\Integration\Event\NullEventSettingsResolver;
  */
 class IntegrationBuilder
 {
+    private ?Integration $main_integration = null;
+
+    private array $external_integrations = [];
+
     public function __construct(private UIServices $services)
     {
     }
 
     public function main(Container $container): Integration
     {
-        return new Integration(
+        return $this->main_integration ?? $this->main_integration = new Integration(
             $container,
             $this->services->factory()
         );
@@ -38,11 +42,15 @@ class IntegrationBuilder
         ?EventActionTargetResolver $event_action_target_resolver = null,
         ?SeriesActionTargetResolver $series_action_target_resolver = null
     ): Integration {
+        if (isset($this->external_integrations[$external_plugin->getId()])) {
+            return $this->external_integrations[$external_plugin->getId()];
+        }
+
         $event_settings_value_resolver ??= new NullEventSettingsResolver();
         $event_action_target_resolver ??= new NullEventActionResolver();
         $series_action_target_resolver ??= new NullSeriesActionResolver();
 
-        return new Integration(
+        return $this->external_integrations[$external_plugin->getId()] = new Integration(
             $container,
             $this->services->factory(),
             $event_settings_value_resolver,

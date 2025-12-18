@@ -93,7 +93,6 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->_db->dropTable(SeriesWorkflowParameter::TABLE_NAME, false);
         $this->_db->dropTable(MDFieldConfigEventAR::TABLE_NAME, false);
         $this->_db->dropTable(MDFieldConfigSeriesAR::TABLE_NAME, false);
-        $this->_db->dropTable(UserSetting::TABLE_NAME, false);
         $this->_db->dropTable(AcceptedToU::TABLE_NAME, false);
         $this->_db->dropTable('xoct_cache', false);
     }
