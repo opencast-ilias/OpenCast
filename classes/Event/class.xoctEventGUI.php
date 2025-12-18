@@ -272,8 +272,9 @@ class xoctEventGUI extends xoctGUI
     protected function index(): void
     {
         $display_series = new Display(
+            $this->ui,
             $this->ui_integration,
-            $this->objectSettings->getSeriesIdentifier()
+            $this->objectSettings
         );
 
         $this->main_tpl->setContent(

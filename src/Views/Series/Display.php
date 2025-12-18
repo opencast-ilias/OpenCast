@@ -7,22 +7,38 @@ namespace srag\Plugins\Opencast\Views\Series;
 use ILIAS\UI\Component\Component;
 use srag\Plugins\Opencast\Views\ViewElement;
 use srag\Plugins\Opencast\UI\Integration\Integration;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use ILIAS\DI\UIServices;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  */
 class Display implements ViewElement
 {
+    private string $series_id;
+
     public function __construct(
+        private UIServices $ui,
         private Integration $ui_integration,
-        private string $series_id
+        private ObjectSettings $object_settings
     ) {
+        $this->series_id = $this->object_settings->getSeriesIdentifier();
     }
 
     public function get(): Component|array
     {
         try {
             $components = [];
+
+            if ($this->object_settings->getIntroductionText() !== "") {
+                $components[] = $this
+                    ->ui
+                    ->factory()
+                    ->messageBox()
+                    ->info(
+                        $this->object_settings->getIntroductionText()
+                    );
+            }
 
             foreach (
                 $this
