@@ -6,7 +6,7 @@ body {
 	height: 100%;
 }
 
-div#playerContainer {
+div#playerContainer, iframe#opencastPaellaJwtPlayer {
 	font-family: roboto;
 	font-weight: 600;
 	display: inline-block !important;
@@ -14,6 +14,11 @@ div#playerContainer {
 	float: left;
 	width: calc(100% - 290px);
 	height: 100%;
+}
+
+iframe#opencastPaellaJwtPlayer {
+	border: 0 !important;
+	box-shadow: none !important;
 }
 
 #paellaPlayer_loader {
@@ -49,7 +54,7 @@ span.xoct_pseudo_element {
 		width: 100%;
 	}
 
-	div#playerContainer {
+	div#playerContainer, div#opencastPaellaJwtPlayer {
 		width: 100% !important;
 	}
 

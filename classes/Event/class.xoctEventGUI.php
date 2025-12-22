@@ -903,6 +903,12 @@ class xoctEventGUI extends xoctGUI
 
         $redirect_url = $base . '/redirect/get';
         $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_STUDIO);
+        if (empty($jwt)) {
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Unable to provide a JWT for Studio service!'
+            );
+        }
         $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
         $temp->setVariable('ACTION', $redirect_url);
         $temp->setVariable('JWT', $jwt);
@@ -935,6 +941,12 @@ class xoctEventGUI extends xoctGUI
         $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
         $redirect_url = str_replace('/api', '/redirect/get', $base);
         $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_EDITOR);
+        if (empty($jwt)) {
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Unable to provide a JWT for Editor service!'
+            );
+        }
         $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
         $temp->setVariable('ACTION', $redirect_url);
         $temp->setVariable('JWT', $jwt);

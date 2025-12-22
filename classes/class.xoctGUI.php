@@ -27,6 +27,7 @@ abstract class xoctGUI
     public const CMD_DELETE = 'delete';
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
+    public const CMD_REFRESH_JWT_ASYNC = 'refreshJwtAsync';
     protected Services $http;
     protected ilGlobalTemplateInterface $main_tpl;
     protected API $api;
@@ -87,5 +88,42 @@ abstract class xoctGUI
     protected function compareStdClassByName($a, $b)
     {
         return strcasecmp($a->name, $b->name);
+    }
+
+    /**
+     * Tries to regenerate a new JWT requested by the iframe player async fetch call and return it.
+     * @return void
+     */
+    public function refreshJwtAsync(): void
+    {
+        $event_id = $this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER] ?? null;
+        if (!$event_id || !($refreshed_token = $this->api->refreshTokenForEvent($event_id))) {
+            $response = json_encode(['status' => 'error', 'message' => 'Invalid token']);
+            $this->sendReponse($response);
+            return;
+        }
+        $response = json_encode(['status' => 'OK', 'newToken' => $refreshed_token]);
+        $this->sendReponse($response);
+    }
+
+    /**
+     * Generates the link to refreshJwtAsync for the js module.
+     * @param mixed $event_id the event id
+     * @return string the link
+     */
+    public function getRefreshJwtAsyncUrl($event_id): string
+    {
+        // the eid: xoctEventGUI::IDENTIFIER has to be present.
+        $this->ctrl->setParameterByClass(
+            static::class,
+            xoctEventGUI::IDENTIFIER,
+            $event_id
+        );
+        return $this->ctrl->getLinkTargetByClass(
+            static::class,
+            self::CMD_REFRESH_JWT_ASYNC,
+            null,
+            true
+        );
     }
 }

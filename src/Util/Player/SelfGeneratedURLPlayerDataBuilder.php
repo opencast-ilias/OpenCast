@@ -54,7 +54,7 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
             ];
         }
 
-        return [$duration, $streams];
+        return [$duration, $streams, null];
     }
 
     /**
@@ -70,15 +70,23 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
         $dash_url = $streaming_server_url . "/smil:engage-player_" . $event_id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
         // Attach JWT if enabled.
-        if (!empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
-            // TODO: Do we need to follow the duration here for the JWT as well?
-            $hls_url = $this->api->attachJwtIntoStaticFileUrlForEvent($hls_url, $event_id, ['read']);
-            $dash_url = $this->api->attachJwtIntoStaticFileUrlForEvent($dash_url, $event_id, ['read']);
+        if ($this->api->isJWTActivated()) {
+            $duration_in_seconds = $duration > 0 ? (int) ($duration / 1000) : 0;
+            $hls_url = $this->api->attachJwtIntoStaticFileUrlForEvent($hls_url, $event_id, ['read'], $duration_in_seconds);
+            $dash_url = $this->api->attachJwtIntoStaticFileUrlForEvent($dash_url, $event_id, ['read'], $duration_in_seconds);
         } else if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) { // Sign if enabled.
             $hls_url = xoctSecureLink::signPlayer($hls_url, $duration);
             $dash_url = xoctSecureLink::signPlayer($dash_url, $duration);
         }
 
         return [$hls_url, $dash_url];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldPlayInJWTIframe(): bool
+    {
+        return false;
     }
 }

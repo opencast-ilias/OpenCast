@@ -43,6 +43,11 @@ class OpencastAPI implements API
         self::JWT_SERVICE_STUDIO,
         self::JWT_SERVICE_EDITOR,
     ];
+
+    /**
+     * @var string the jwt iframe src path url placeholder.
+     */
+    public const JWT_IFRAME_SRC_PATH_PLACEHOLDER = '/play/{id}';
     /**
      * @var Opencast
      */
@@ -250,11 +255,18 @@ class OpencastAPI implements API
         return $this->unparseUrl($parsed_url);
     }
 
+    /**
+     * Issues a JWT for the external services such as Studio or Editor
+     * These services need different type of claims to build and process.
+     *
+     * @param string $service the opencast external service name such as Editor or Studio
+     * @return null|string null if JWT is disabled or not found, otherwise a proper JWT will be returned.
+     */
     public function issueExternalServicesJwtFor(string $service): ?string
     {
         // In case the configuration is off, then we return the url without injecting any jwt.
         if (!$this->has_jwt) {
-            return $url;
+            return null;
         }
 
         if (!in_array($service, self::ALLOWED_JWT_SERVICES)) {
@@ -324,6 +336,12 @@ class OpencastAPI implements API
         return $access_token;
     }
 
+    /**
+     * Tries to put the generated JWT into a built-in temp cache for each service.
+     * @param string $service the service name
+     * @param string $access_token JWT
+     * @return void
+     */
     private function cacheJwtForService(string $service, string $access_token): void
     {
         if ($service === self::JWT_SERVICE_STUDIO) {
@@ -333,6 +351,11 @@ class OpencastAPI implements API
         }
     }
 
+    /**
+     * Returns the cached JWT for the service.
+     * @param string $service
+     * @return null|array
+     */
     private function getCachedJwtForService(string $service): ?array
     {
         $cache_set = [];
@@ -344,6 +367,11 @@ class OpencastAPI implements API
         return $cache_set;
     }
 
+    /**
+     * Tries to detach the JWT query parameter from the URL.
+     * @param string $url the url string
+     * @return array a set of data including [{original url}, {the new filtered url without jwt}, {detached jwt}]
+     */
     public function detachJwtFromUrl(string $url): array
     {
         $parsed_url = parse_url($url);
@@ -392,5 +420,78 @@ class OpencastAPI implements API
         $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
         $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
         return "$scheme$user$pass$host$port$path$query$fragment";
+    }
+
+    /**
+     * Refreshes an access token from an old access token, by maintaining its claim.
+     *
+     * @param string $token the old access token
+     * @param int $duration optional duration, the configured one would be used by default.
+     * @return null|string the new access token or null if old one is invalid
+     */
+    public function refreshToken(string $token, int $duration = 0): ?string
+    {
+        $oc_jwt_claim = $this->api->getRestJwtHandler()->getOcJwtClaimFromTokenString($token);
+        if (empty($oc_jwt_claim)) {
+            return null;
+        }
+        if (empty($duration)) {
+            // We have to keep it short of not exists, due to the nature of JWT refresh mechanism.
+            $duration = $this->config['jwt']['duration'] ?? 15;
+        }
+        $oc_jwt_claim->setExp(OcJwtClaim::generateFormattedDateTimeObject((int) $duration));
+        $access_token = $this->api->getRestJwtHandler()->issueToken($oc_jwt_claim);
+        return $access_token;
+    }
+
+    /**
+     * Refreshes the access token for an event with basic read access.
+     * @param string $identifier the video identifier
+     * @param int $duration optional duration, the configured one would be used by default.
+     * @return null|string a newly generate access token an event, or null if something goes wrong.
+     */
+    public function refreshTokenForEvent(string $identifier, int $duration = 0): ?string
+    {
+        $oc_claim = new OcJwtClaim();
+        $event_acl = [
+            "$identifier" => ['read'],
+        ];
+        $oc_claim->setEventAcls($event_acl);
+        if (empty($duration)) {
+            // We have to keep it short of not exists, due to the nature of JWT refresh mechanism.
+            $duration = $this->config['jwt']['expiration'] ?? 15;
+        }
+        $expiry_formatted = OcJwtClaim::generateFormattedDateTimeObject($duration);
+        $oc_claim->setExp($expiry_formatted);
+        // To make sure the current search endpoint would have proper data,
+        // TODO: This should be solved by Opencast, as mentioned in https://github.com/opencast/opencast/pull/7249
+        $oc_claim->setUserInfoClaims('unknown-jwt-user');
+        $access_token = $this->api->getRestJwtHandler()->issueToken($oc_claim);
+        return $access_token;
+    }
+
+    /**
+     * Checks if the JWT mechanism is activated.
+     * @return bool
+     */
+    public function isJWTActivated(): bool
+    {
+        return $this->has_jwt;
+    }
+
+    /**
+     * It gets a raw url and replace its path with /play/{id},
+     * in order to be used as Iframe source tha can handle the JWT refresh token.
+     *
+     * @param string $url the raw url
+     * @param string $event_id the event id
+     * @return string the iframe JWT friendly source url ending with /play/{ID}
+     */
+    public function makeJwtIframeSourceUrl(string $url, string $event_id): string
+    {
+        $parsed_url = parse_url($url);
+        $path = str_replace('{id}', $event_id, self::JWT_IFRAME_SRC_PATH_PLACEHOLDER);
+        $parsed_url['path'] = $path;
+        return $this->unparseUrl($parsed_url);
     }
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8;">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{TITLE}</title>
+	<script src="{JQUERY_PATH}"></script>
+	<script src="{ILIAS_BASIC_JS_PATH}"></script>
+	<script type="text/javascript" src="./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/dist/index.js?3"></script>
+	<link rel="stylesheet" href="{STYLE_SHEET_LOCATION}" type="text/css" media="screen" charset="utf-8">
+	<style>
+		body {
+			margin: 0px;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<iframe id="opencastPaellaJwtPlayer" allowfullscreen="true"></iframe>
+	<script>
+		il.Opencast.JWT.init({JWT_MODULE_CONFIG});
+	</script>
+	{CHAT}
+</body>
+</html>
+
+

@@ -16,7 +16,6 @@ use srag\Plugins\Opencast\Util\Player\PaellaConfigServiceFactory;
 use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
-use ILIAS\DI\HTTPServices;
 use srag\Plugins\Opencast\Util\OutputResponse;
 
 /**
@@ -66,30 +65,50 @@ class xoctPlayerGUI extends xoctGUI
             $this->sendReponse("Error: invalid identifier");
         }
         $event = $this->event_repository->find($this->identifier);
-        if (!PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER) && !$event->isLiveEvent()) {
+        if (!$this->api->isJWTActivated() // We don't offer this redirect if JWT is activated.
+            && !PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER)
+            && !$event->isLiveEvent()) {
             // redirect to opencast
             header('Location: ' . $event->publications()->getPlayerLink());
             $this->closeResponse();
         }
 
         try {
-            $data = PlayerDataBuilderFactory::getInstance()->getBuilder($event)->buildStreamingData();
+            $player_data_builder = PlayerDataBuilderFactory::getInstance()->getBuilder($event);
+            $jwt_iframe_capable = $player_data_builder->shouldPlayInJWTIframe();
+            $data = $player_data_builder->buildStreamingData();
+            $jwt_iframe_urls = [];
+            if (isset($data['jwt_iframe_urls'])) {
+                $jwt_iframe_urls = $data['jwt_iframe_urls'];
+                unset($data['jwt_iframe_urls']);
+            }
         } catch (xoctException $e) {
             xoctLog::getInstance()->logError((string) $e->getCode(), $e->getMessage());
             xoctLog::getInstance()->logStack($e->getTraceAsString());
             $this->sendReponse("Error: " . $e->getMessage());
         }
 
+        // We load different template for the JWT Iframe Player.
+        if ($this->api->isJWTActivated() && $jwt_iframe_capable) {
+            $tpl = $this->plugin->getTemplate("jwt_iframe_player.html", true, true);
+            $tpl->setVariable("JWT_MODULE_CONFIG",
+                json_encode($this->buildJwtModuleConfig($event, $jwt_iframe_urls)));
+        } else {
+            // The normal paella player.
+            $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
+            $tpl->setVariable("DATA", json_encode($data));
+            $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
+        }
+
+        if (empty($tpl)) {
+            $this->sendReponse("Error: unable to render proper template!");
+        }
+
         $jquery_path = iljQueryUtil::getLocaljQueryPath();
         $ilias_basic_js_path = './Services/JavaScript/js/Basic.js';
-        $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
-
         $tpl->setVariable("JQUERY_PATH", $jquery_path);
         $tpl->setVariable("ILIAS_BASIC_JS_PATH", $ilias_basic_js_path);
-
         $tpl->setVariable("TITLE", $event->getTitle());
-        $tpl->setVariable("DATA", json_encode($data));
-        $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
 
         if ($event->isLiveEvent()) {
             $tpl->setVariable(
@@ -165,6 +184,26 @@ class xoctPlayerGUI extends xoctGUI
             $js_config->event_end = $event->getScheduling()->getEnd()->getTimestamp();
         }
         return $js_config;
+    }
+
+    protected function buildJwtModuleConfig(Event $event, array $jwt_iframe_urls): stdClass
+    {
+
+        $jwt_module_config = new stdClass();
+        $jwt_module_config->refresh_token_url = $this->getRefreshJwtAsyncUrl($event->getIdentifier());
+        $player_url = null;
+        if (!empty($jwt_iframe_urls)) {
+            $player_url = $jwt_iframe_urls[0]; // We take the first one, no matter how many is there!
+        }
+        // We make the fallback here!
+        if (empty($player_url)) {
+            $base_url = PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
+                ?? PluginConfig::getConfig(PluginConfig::F_API_BASE);
+            $player_url = $this->api->makeJwtIframeSourceUrl($base_url, $event->getIdentifier());
+        }
+        $jwt_module_config->player_url = $player_url;
+        $jwt_module_config->event_id = $event->getIdentifier();
+        return $jwt_module_config;
     }
 
     /**
