@@ -88,6 +88,20 @@ class ilOpenCastAgent extends ilPluginDefaultAgent
                 2050,
                 [ilOpenCastPlugin::PLUGIN_ID]
             ),
+            new ilAccessCustomRBACOperationAddedObjective(
+                "rep_robj_xoct_perm_upload",
+                "Upload",
+                "object",
+                2010,
+                [ilOpenCastPlugin::PLUGIN_ID]
+            ),
+            new ilAccessCustomRBACOperationAddedObjective(
+                "rep_robj_xoct_perm_edit_videos",
+                "Edit Videos",
+                "object",
+                2020,
+                [ilOpenCastPlugin::PLUGIN_ID]
+            ),
             // db update steps
             new ilOpenCastUpdateStepsExecutedObjective($precondition, new ilOpenCastDBUpdateSteps()),
         ];
