@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.3.1
+- fix for getting the user who reported a problem
+
 ## Version 9.3.0
 - [FIX] Add confirmation text for deleting publication usage
 - [FIX] Handle missing start date and time in MetadataToXML
