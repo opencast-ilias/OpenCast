@@ -260,34 +260,57 @@ class Events implements RecordToEntity
 
         // All Actions
         $action_to_buttons = function (Action $action): Shy {
-            if ($action->type() === ActionType::ASYNC_MODAL) {
-                $button = $this
-                    ->ui_factory
-                    ->button()
-                    ->shy(
-                        $action->name(),
-                        '#'
-                    );
+            switch ($action->type()) {
+                case ActionType::INTERNAL_LINK:
+                    $button = $this
+                        ->ui_factory
+                        ->button()
+                        ->shy(
+                            $action->name(),
+                            (string) $action->target()
+                        );
+                    break;
+                case ActionType::EXTERNAL_LINK:
+                    $button = $this
+                        ->ui_factory
+                        ->button()
+                        ->shy(
+                            $action->name(),
+                            '#'
+                        )
+                        ->withAdditionalOnLoadCode(
+                            // This is really not nice, but ILIAS does not provide a better way to open links in new tabs from buttons
+                            fn($id): string => "document.getElementById('"
+                                . $id . "').addEventListener('click', function() { window.open('"
+                                . $action->target()
+                                . "', '_blank'); });"
+                        );
+                    break;
+                case ActionType::ASYNC_MODAL:
+                    $button = $this
+                        ->ui_factory
+                        ->button()
+                        ->shy(
+                            $action->name(),
+                            '#'
+                        );
 
-                $this->modals[] = $modal = $this->ui_factory
-                    ->modal()
-                    ->roundtrip(
-                        $action->name(),
-                        null
-                    )->withAsyncRenderUrl(
-                        (string) $action->target()
-                    );
+                    $this->modals[] = $modal = $this->ui_factory
+                        ->modal()
+                        ->roundtrip(
+                            $action->name(),
+                            null
+                        )->withAsyncRenderUrl(
+                            (string) $action->target()
+                        );
 
-                return $button->withOnClick($modal->getShowSignal());
+                    $button = $button->withOnClick($modal->getShowSignal());
+                    break;
+                default:
+                    throw new \InvalidArgumentException("Unknown Action Type: " . $action->type()->value);
             }
 
-            return $this
-                ->ui_factory
-                ->button()
-                ->shy(
-                    $action->name(),
-                    (string) $action->target()
-                );
+            return $button;
         };
 
         return $entity->withActions(
@@ -319,7 +342,6 @@ class Events implements RecordToEntity
                 $parameters
             )) instanceof Action
         ) {
-
             $tooltip_content = $this->ui_factory->legacy(
                 $this->translate('event_possible_best_action') . ': '
                 . $this->ui_renderer->render(

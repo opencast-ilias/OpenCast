@@ -41,7 +41,7 @@ class Action implements \Stringable
      */
     public function openInNewTab(): bool
     {
-        return $this->type === ActionType::EXTERNAL_LINK;
+        return $this->type === ActionType::EXTERNAL_LINK && $target instanceof URI;
     }
 
     public function type(): ActionType
