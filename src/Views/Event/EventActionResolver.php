@@ -206,16 +206,18 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
 
         switch ($target) {
             case EventActionTarget::EDIT_OWNER:
-                return $settings?->resolve(EventSettings::SHOW_OWNER) ?? \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_EDIT_OWNER,
-                    $event
-                );
+                return $settings?->resolve(EventSettings::SHOW_OWNER)
+                    && \ilObjOpenCastAccess::checkAction(
+                        \ilObjOpenCastAccess::ACTION_EDIT_OWNER,
+                        $event
+                    );
 
             case EventActionTarget::GRANT_ACCESS:
-                return $settings?->resolve(EventSettings::SHOW_OWNER) ?? \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_SHARE_EVENT,
-                    $event
-                );
+                return $settings?->resolve(EventSettings::SHOW_OWNER)
+                    && \ilObjOpenCastAccess::checkAction(
+                        \ilObjOpenCastAccess::ACTION_SHARE_EVENT,
+                        $event
+                    );
 
             case EventActionTarget::CUT:
                 return \ilObjOpenCastAccess::checkAction(
@@ -261,7 +263,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             case EventActionTarget::DOWNLOAD:
                 return $event->getProcessingState() === Event::STATE_SUCCEEDED;
             default:
-                return false; // TODO Case not implemented yet since we miss the possibility to call modals and signals. see public/Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/classes/Event/class.xoctEventRenderer.php:673
+                return false;
 
         }
     }
