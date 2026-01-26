@@ -1,0 +1,45 @@
+.oc-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.oc-grid .col-1, .oc-grid .col-2, .oc-grid .col-3, .oc-grid .col-4, .oc-grid .col-6, .oc-grid .col-8, .oc-grid .col-9, .oc-grid .col-10, .oc-grid .col-12 {
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.oc-grid .col-1 {
+    grid-column: auto/span 1;
+}
+
+.oc-grid .col-2 {
+    grid-column: auto/span 2;
+}
+
+.oc-grid .col-3 {
+    grid-column: auto/span 3;
+}
+
+.oc-grid .col-4 {
+    grid-column: auto/span 4;
+}
+
+.oc-grid .col-6 {
+    grid-column: auto/span 6;
+}
+
+.oc-grid .col-8 {
+    grid-column: auto/span 8;
+}
+
+.oc-grid .col-9 {
+    grid-column: auto/span 9;
+}
+
+.oc-grid .col-10 {
+    grid-column: auto/span 10;
+}
+
+.oc-grid .col-12 {
+    grid-column: auto/span 12;
+}

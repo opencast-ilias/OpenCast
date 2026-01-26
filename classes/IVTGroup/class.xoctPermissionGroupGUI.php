@@ -39,6 +39,7 @@ class xoctPermissionGroupGUI extends xoctGUI
 
         new WaitOverlay($this->main_tpl); // TODO check if needed
 
+        $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/grid.css'));
         $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/groups.css'));
         $this->main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/groups.js'));
     }

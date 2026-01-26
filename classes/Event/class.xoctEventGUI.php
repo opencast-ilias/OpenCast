@@ -195,7 +195,7 @@ class xoctEventGUI extends xoctGUI
         $this->tabs->activateTab(ilObjOpenCastGUI::TAB_EVENTS);
 
         // Adding the top level index.js.
-        $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
+        $this->main_tpl->addJavaScript($this->plugin->getRelativeDirectory() . '/js/opencast/dist/index.js');
 
         $this->main_tpl->addCss(
             $this->plugin->getDirectory() . '/templates/default/reporting_modal.css'

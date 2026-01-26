@@ -38,6 +38,7 @@ class xoctGrantPermissionGUI extends xoctGUI
 
         $tabs->setBackTarget($this->plugin->txt('tab_back'), $this->ctrl->getLinkTargetByClass(xoctEventGUI::class));
         new WaitOverlay($this->main_tpl); // TODO check if needed
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/grid.css'));
         $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/invitations.css'));
         $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/invitations.js'));
         $this->ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);

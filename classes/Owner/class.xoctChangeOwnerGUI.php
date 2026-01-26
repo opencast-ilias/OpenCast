@@ -47,6 +47,7 @@ class xoctChangeOwnerGUI extends xoctGUI
 
         new WaitOverlay($this->main_tpl); // TODO check if needed
 
+        $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/grid.css'));
         $main_tpl->addCss($this->plugin->getStyleSheetLocation('default/change_owner.css'));
         $main_tpl->addJavaScript($this->plugin->getStyleSheetLocation('default/change_owner.js'));
         $ctrl->saveParameter($this, xoctEventGUI::IDENTIFIER);

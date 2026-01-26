@@ -61,7 +61,7 @@ class xoctPublicationSubUsageFormGUI extends ilPropertyFormGUI
         $this->legacy_container = $this->container->legacy();
         $this->plugin = $this->container->plugin();
         $DIC->ui()->mainTemplate()->addJavaScript(
-            $this->plugin->getDirectory() . '/js/opencast/dist/index.js'
+            $this->plugin->getRelativeDirectory() . '/js/opencast/dist/index.js'
         );
         $DIC->ui()->mainTemplate()->addOnLoadCode('il.Opencast.Form.publicationUsage.init()');
         parent::__construct();

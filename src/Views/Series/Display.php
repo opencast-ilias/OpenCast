@@ -20,7 +20,8 @@ class Display implements ViewElement
     public function __construct(
         private UIServices $ui,
         private Integration $ui_integration,
-        private ObjectSettings $object_settings
+        private ObjectSettings $object_settings,
+        private bool $debug = true
     ) {
         $this->series_id = $this->object_settings->getSeriesIdentifier();
     }
@@ -53,6 +54,10 @@ class Display implements ViewElement
 
             return $components;
         } catch (\Throwable $t) {
+            if ($this->debug) {
+                throw $t;
+            }
+
             return iterator_to_array($this->ui_integration->series()->notFound($this->series_id, $t->getMessage()));
         }
     }
