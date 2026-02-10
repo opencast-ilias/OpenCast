@@ -7,6 +7,7 @@ namespace srag\Plugins\Opencast\Views\Series;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -15,14 +16,15 @@ class EventSettingsResolver implements EventSettingsValueResolver
 {
     private bool $permission_per_clip;
     private bool $player_in_modal;
-    private bool $show_best_action;
+    private bool $show_best_action = true; // TODO make configurable
 
     public function __construct(
         ObjectSettings $object_settings
     ) {
         $this->permission_per_clip = $object_settings->getPermissionPerClip();
-        $this->player_in_modal = false; // TODO make configurable
-        $this->show_best_action = true; // TODO make configurable
+        $this->player_in_modal = (bool) PluginConfig::getConfig(
+            PluginConfig::F_USE_MODALS
+        );
     }
 
     public function resolve(EventSettings $setting): mixed

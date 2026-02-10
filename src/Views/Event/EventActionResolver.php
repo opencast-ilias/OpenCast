@@ -157,7 +157,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     $this->translator->translate('event_player'),
                     \xoctPlayerGUI::class,
                     $open_as_modal
-                        ? \xoctPlayerGUI::CMD_STREAM_VIDEO
+                        ? \xoctPlayerGUI::CMD_STREAM_VIDEO_MODAL
                         : \xoctPlayerGUI::CMD_STREAM_VIDEO,
                     $open_as_modal
                         ? ActionType::ASYNC_MODAL
@@ -227,18 +227,18 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
 
             case EventActionTarget::START_WORKFLOW:
                 return \ilObjOpenCastAccess::checkAction(
-                        \ilObjOpenCastAccess::ACTION_EDIT_EVENT,
-                        $event
-                    )
+                    \ilObjOpenCastAccess::ACTION_EDIT_EVENT,
+                    $event
+                )
                     && !$event->isScheduled()
                     && !$event->isRunning();
 
             case EventActionTarget::SET_ONLINE:
             case EventActionTarget::SET_OFFLINE:
                 return \ilObjOpenCastAccess::checkAction(
-                        \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
-                        $event
-                    )
+                    \ilObjOpenCastAccess::ACTION_SET_ONLINE_OFFLINE,
+                    $event
+                )
                     && $event->getXoctEventAdditions()->getIsOnline() === ($target === EventActionTarget::SET_OFFLINE);
 
             case EventActionTarget::DELETE:
@@ -260,6 +260,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::PLAY:
+                return $event->getProcessingState() === Event::STATE_SUCCEEDED;
             case EventActionTarget::DOWNLOAD:
                 return \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,

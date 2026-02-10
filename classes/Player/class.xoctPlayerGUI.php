@@ -17,6 +17,7 @@ use srag\Plugins\Opencast\Util\Player\PlayerDataBuilderFactory;
 use srag\Plugins\Opencast\Util\FileTransfer\PaellaConfigStorageService;
 use srag\Plugins\Opencast\LegacyHelpers\TranslatorTrait;
 use srag\Plugins\Opencast\Util\OutputResponse;
+use ILIAS\DI\UIServices;
 
 /**
  * Class xoctPlayerGUI
@@ -40,6 +41,7 @@ class xoctPlayerGUI extends xoctGUI
     private ObjectSettings $object_settings;
     private PaellaConfigService $paellaConfigService;
     private \ilObjUser $user;
+    private UIServices $ui;
 
     public function __construct(
         private EventRepository $event_repository,
@@ -54,10 +56,46 @@ class xoctPlayerGUI extends xoctGUI
         $this->paellaConfigService = $paellaConfigServiceFactory->get();
         $this->identifier = $this->http->request()->getQueryParams()[self::IDENTIFIER] ?? null;
         $this->force_no_chat = (bool) ($this->http->request()->getQueryParams()['force_no_chat'] ?? false);
+        $this->ui = $DIC->ui();
     }
 
     public function streamVideoModal(): void
     {
+        $this->ctrl->saveParameter($this, self::IDENTIFIER);
+        $event = $this->event_repository->find($this->identifier);
+
+        $iframe = '<iframe src="'
+            . $this->ctrl->getLinkTarget($this, self::CMD_STREAM_VIDEO)
+            . '" width="100%" height="auto" frameborder="0" allowfullscreen style="height: 90svh"></iframe>';
+
+        $modal = $this
+            ->ui
+            ->factory()
+            ->modal()
+            ->lightbox([
+                $this
+                    ->ui
+                    ->factory()
+                    ->modal()
+                    ->lightboxTextPage(
+                        $iframe,
+                        $event->getTitle()
+                    )
+            ])
+            ->withAdditionalOnLoadCode( // we make the modal fullscreen and reset the iframe src on close to stop the video
+                function ($id): string {
+                    return "var modal = document.getElementById('$id');
+                        modal.querySelector('.modal-dialog').style.width = '95svw';
+                        modal.addEventListener('close', function (event) {
+                            var iframe = modal.querySelector('iframe');
+                            iframe.src = 'about:blank';
+                        });
+                    ";
+                }
+            );
+
+        echo $this->ui->renderer()->renderAsync($modal);
+        exit;
     }
 
     /**
@@ -87,7 +125,10 @@ class xoctPlayerGUI extends xoctGUI
         $ilias_basic_js_path = './assets/js/Basic.js';
         $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
 
-        $tpl->setVariable("JQUERY_PATH", './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/src/Chat/node/public/js/jquery.min.js');
+        $tpl->setVariable(
+            "JQUERY_PATH",
+            './Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/src/Chat/node/public/js/jquery.min.js'
+        );
         $tpl->setVariable("ILIAS_BASIC_JS_PATH", $ilias_basic_js_path);
 
         $tpl->setVariable("TITLE", $event->getTitle());
@@ -158,7 +199,9 @@ class xoctPlayerGUI extends xoctGUI
 
         $js_config->paella_preview_fallback = $this->paellaConfigService->getPaellaPlayerPreviewFallback();
 
-        $js_config->prevent_video_download = (bool) (PluginConfig::getConfig(PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD) ?? false);
+        $js_config->prevent_video_download = (bool) (PluginConfig::getConfig(
+            PluginConfig::F_PAELLA_PREVENT_VIDEO_DOWNLOAD
+        ) ?? false);
 
         if ($event->isLiveEvent()) {
             // script to check live stream availability
@@ -178,14 +221,16 @@ class xoctPlayerGUI extends xoctGUI
      * - The "Chat for live events" in series object settings must be activated.
      *
      * @param Event $event the event object to check whether the event is live or not.
-     * @param bool $has_chat_history whether the event has a chat history
+     * @param bool  $has_chat_history whether the event has a chat history
      * @return boolean whether the chat should be visible.
      */
     protected function isChatVisible(Event $event, bool $has_chat_history = false): bool
     {
         return !$this->force_no_chat
             && ($event->isLiveEvent() || $has_chat_history) // The event must be either live or has chat history!
-            && PluginConfig::getConfig(PluginConfig::F_ENABLE_LIVE_STREAMS) // The Live Streams config must be activated.
+            && PluginConfig::getConfig(
+                PluginConfig::F_ENABLE_LIVE_STREAMS
+            ) // The Live Streams config must be activated.
             && PluginConfig::getConfig(PluginConfig::F_ENABLE_CHAT) // The Chat config must be activated.
             && $this->object_settings->isChatActive(); // The series object settings must allow the chat.
     }
@@ -219,7 +264,6 @@ class xoctPlayerGUI extends xoctGUI
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));
         }
     }
-
 
     public function txt(string $key): string
     {

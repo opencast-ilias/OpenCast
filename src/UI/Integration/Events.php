@@ -124,25 +124,41 @@ class Events implements RecordToEntity
                 'Preview of Video: ' . $record->getTitle()
             );
 
+        $title = $record->getTitle();
+
         if ($play_action) {
+            $url = (string) $play_action->target();
             if ($play_action->type() === ActionType::ASYNC_MODAL) {
                 $this->modals[] = $play_modal = $this->ui_factory
                     ->modal()
-                    ->lightbox(
-                        []
+                    ->roundtrip(
+                        $play_action->name(),
+                        null,
                     )->withAsyncRenderUrl(
-                        (string) $play_action->target()
+                        $url
                     );
-                $thumbnail = $thumbnail->withOnClick(
-                    $play_modal->getShowSignal()
-                );
+                $title = $this
+                    ->ui_factory
+                    ->button()
+                    ->shy($title, '#')
+                    ->withOnClick($play_modal->getShowSignal());
+
+                $thumbnail = $thumbnail->withAction($play_modal->getShowSignal());
             } else {
-                $thumbnail = $thumbnail
-                    ->withAction((string) $play_action->target());
+                $title = $this
+                    ->ui_factory
+                    ->link()
+                    ->standard(
+                        $title,
+                        $url
+                    )->withOpenInNewViewport(true);
+
+                $thumbnail = $thumbnail->withAction($url);
             }
+
             $thumbnail = $thumbnail
                 ->withAdditionalOnLoadCode(
-                    fn($id): string => "let link = document.getElementById('" . $id . "').parentNode; 
+                    fn($id): string => "let link = document.getElementById('" . $id . "').parentNode.parentNode.querySelector('a');
                         link.classList.add('playable');
                         link.setAttribute('target', '_blank');
                         "
@@ -150,13 +166,6 @@ class Events implements RecordToEntity
         }
 
         // Base Entity
-        $title = $play_action === null
-            ? $record->getTitle()
-            : $this->ui_factory->link()->standard(
-                $record->getTitle(),
-                (string) $play_action
-            )->withOpenInNewViewport(true);
-
         $entity = $this->ui_factory
             ->entity()
             ->standard(
