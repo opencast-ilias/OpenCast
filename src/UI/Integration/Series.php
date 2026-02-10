@@ -26,6 +26,7 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use ILIAS\Data\Order;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -35,7 +36,8 @@ class Series implements DataRetrieval
 {
     use Commons;
 
-    private const DEFAULT_PAGE_SIZE = 10;
+    public const DEFAULT_PAGE_SIZE = 10;
+    public const DEFAULT_SORT = self::SORT_DATE_DESC;
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
     private const SORT_TITLE_DESC = 'title:desc';
@@ -129,7 +131,7 @@ class Series implements DataRetrieval
         );
 
         yield $this->filter = $this->filter_service->standard(
-            self::class,
+            self::class . $series_id,
             (string) $this->resolver->resolve(SeriesActionTarget::FILTER),
             array_column(
                 array_map(
@@ -200,45 +202,73 @@ class Series implements DataRetrieval
             $sortation_options[self::SORT_OWNER_DESC] = $this->translator->translate('owner_desc');
         }
 
-        yield $this->ui_factory->panel()->secondary()->legacy(
-            $title,
-            $this->ui_factory->legacy(
-                $this->ui->renderer()->render(
-                    $this->ui_factory->legacy(
-                        $this->ui->renderer()->render(
-                            $entity_list[0],
+        yield $this
+            ->ui_factory
+            ->panel()
+            ->secondary()
+            ->legacy(
+                $title,
+                $this->ui_factory->legacy(
+                    $this->ui->renderer()->render(
+                        $this->ui_factory->legacy(
+                            $this->ui->renderer()->render(
+                                $entity_list[0],
+                            )
                         )
                     )
                 )
             )
-        )->withViewControls([
-            $this->ui_factory
-                ->viewControl()
-                ->pagination()
-                ->withCurrentPage($this->resolver->resolveParameter(SeriesActionParameter::PAGE))
-                ->withPageSize(self::DEFAULT_PAGE_SIZE)
-                ->withTotalEntries($this->total)
-                ->withTargetURL(
-                    (string) $this->resolver->resolve(SeriesActionTarget::PAGE),
-                    SeriesActionTarget::PAGE->value
-                ),
-            $this->ui_factory
-                ->viewControl()
-                ->sortation(
-                    $sortation_options,
-                    $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC
-                )
-                ->withTargetURL(
-                    (string) $this->resolver->resolve(SeriesActionTarget::SORT),
-                    SeriesActionTarget::SORT->value
-                )
-        ]);
+            ->withViewControls([
+                $this->ui_factory
+                    ->viewControl()
+                    ->pagination()
+                    ->withCurrentPage($this->resolver->resolveParameter(SeriesActionParameter::PAGE))
+                    ->withPageSize(
+                        $this->resolver->resolveParameter(SeriesActionParameter::PAGE_SIZE) ?? self::DEFAULT_PAGE_SIZE
+                    )
+                    ->withMaxPaginationButtons(5)
+                    ->withTotalEntries($this->total)
+                    ->withTargetURL(
+                        (string) $this->resolver->resolve(SeriesActionTarget::PAGE),
+                        SeriesActionTarget::PAGE->value
+                    ),
+
+                $this->ui_factory
+                    ->viewControl()
+                    ->sortation(
+                        [
+                            '10' => '10',
+                            '20' => '20',
+                            '50' => '50',
+                        ],
+                        (string) ($this->resolver->resolveParameter(
+                            SeriesActionParameter::PAGE_SIZE
+                        ) ?? self::DEFAULT_PAGE_SIZE)
+                    )
+                    ->withLabelPrefix('')
+                    ->withTargetURL(
+                        (string) $this->resolver->resolve(SeriesActionTarget::SET_ITEMS_PER_PAGE),
+                        SeriesActionParameter::PAGE_SIZE->value
+                    ),
+
+                $this->ui_factory
+                    ->viewControl()
+                    ->sortation(
+                        $sortation_options,
+                        $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_DATE_DESC
+                    )
+                    ->withTargetURL(
+                        (string) $this->resolver->resolve(SeriesActionTarget::SORT),
+                        SeriesActionTarget::SORT->value
+                    )
+
+            ]);
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
         $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
-        $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_TITLE_ASC;
+        $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_DATE_ASC;
 
         $api_sort = match ($sort) {
             self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API

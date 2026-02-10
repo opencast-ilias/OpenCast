@@ -11,6 +11,7 @@ use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTarget;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionParameters;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionParameter;
 use srag\Plugins\Opencast\Util\Locale\Translator;
+use srag\Plugins\Opencast\Model\Series\Series;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -32,7 +33,7 @@ class SeriesActionResolver extends BaseActionResolver implements SeriesActionTar
     public function resolve(SeriesActionTarget $target, ?SeriesActionParameters $parameter = null): ?URI
     {
         return match ($target) {
-            SeriesActionTarget::SORT, SeriesActionTarget::FILTER, SeriesActionTarget::PAGE => $this->current_url,
+            SeriesActionTarget::SORT, SeriesActionTarget::FILTER, SeriesActionTarget::PAGE, SeriesActionTarget::SET_ITEMS_PER_PAGE => $this->current_url,
             default => null,
         };
     }
@@ -51,6 +52,7 @@ class SeriesActionResolver extends BaseActionResolver implements SeriesActionTar
     {
         return match ($parameter) {
             SeriesActionParameter::PAGE => (int) ($this->http->request()->getQueryParams()[$parameter->value] ?? 0),
+            SeriesActionParameter::PAGE_SIZE => (int) ($this->http->request()->getQueryParams()[$parameter->value] ?? \srag\Plugins\Opencast\UI\Integration\Series::DEFAULT_PAGE_SIZE),
             default => $this->http->request()->getQueryParams()[$parameter->value] ?? null,
         };
     }

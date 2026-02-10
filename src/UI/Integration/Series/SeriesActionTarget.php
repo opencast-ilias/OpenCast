@@ -9,6 +9,7 @@ namespace srag\Plugins\Opencast\UI\Integration\Series;
  */
 enum SeriesActionTarget: string
 {
+    case SET_ITEMS_PER_PAGE = 'setItemsPerPage';
     case SORT = 'sort';
     case PAGE = 'page';
     case FILTER = 'filter';
