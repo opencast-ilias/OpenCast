@@ -65,7 +65,7 @@ class EventAPIRepository implements EventRepository, Request
         $data = $this->api->routes()->eventsApi->get(
             $identifier,
             [
-                'withmetadata' => true,
+                'withmetadata' => false, // Setting this to true would cause a huge performance decrease
                 'withacl' => true,
                 'withpublications' => true,
                 'withscheduling' => true,
