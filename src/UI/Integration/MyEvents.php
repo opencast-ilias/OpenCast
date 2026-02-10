@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\UI\Integration;
 
+use ILIAS\UI\Renderer;
 use ILIAS\UI\Component\Table\Data;
 use srag\Plugins\Opencast\Container\Container;
 use ILIAS\UI\Component\Input\Field\Section;
@@ -57,8 +58,9 @@ class MyEvents implements DataRetrieval
      * @readonly
      */
     private xoctUser $user;
-    private \ILIAS\UI\Renderer $ui_renderer;
+    private Renderer $ui_renderer;
     private ?URI $calling_url = null;
+    private int $default_page_size = 50;
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
@@ -98,7 +100,7 @@ class MyEvents implements DataRetrieval
             self::class,
             (string) $target_url,
             $inputs,
-            array_map(static fn($key): string => $key, array_keys($inputs)),
+            array_map(static fn(string $key): string => $key, array_keys($inputs)),
             true,
             true
         );
@@ -139,10 +141,14 @@ class MyEvents implements DataRetrieval
                     $action
                 ),
             ];
-            $items[] = $this->events->asItem($event, $this->ui_factory->button()->standard(
-                $t("select"),
-                $action
-            ), $actions);
+            $items[] = $this->events->asItem(
+                $event,
+                $this->ui_factory->button()->standard(
+                    $t("select"),
+                    $action
+                ),
+                $actions
+            );
         }
 
         return $this->ui_factory->item()->group(
@@ -174,21 +180,24 @@ class MyEvents implements DataRetrieval
     public function asDataTableWithFilters(
         URI $calling_url,
         URI $target_url,
-        string $parameter_name = 'event_id'
+        string $parameter_name = 'event_id',
+        ?int $default_page_size = null
     ): array {
         $filter = $this->getFilter($calling_url);
 
         return [
             $filter,
-            $this->asDataTable($calling_url, $target_url, $parameter_name)
+            $this->asDataTable($calling_url, $target_url, $parameter_name, $default_page_size)
         ];
     }
 
     public function asDataTable(
         URI $calling_url,
         URI $target_url,
-        string $parameter_name = 'event_id'
+        string $parameter_name = 'event_id',
+        ?int $default_page_size = null
     ): Data {
+        $this->default_page_size = $default_page_size ?? $this->default_page_size;
         $this->calling_url = $calling_url;
         $this->target_url = $target_url;
         $this->parameter_name = $parameter_name;
@@ -196,34 +205,66 @@ class MyEvents implements DataRetrieval
         $factory = new Factory();
         $date_format = $factory->dateFormat()->withTime24($factory->dateFormat()->standard());
 
-        return $this->ui_factory->table()->data(
-            $this->container->translator()->translate("config_events"),
-            [
-                'preview' => $this->ui_factory->table()->column()->statusIcon(
-                    $this->container->translator()->translate("event_preview")
-                )->withIsSortable(false),
-                'title' => $this->ui_factory->table()->column()->text(
-                    $this->container->translator()->translate("event_title")
-                ),
-                'date' => $this->ui_factory->table()->column()->date(
-                    $this->container->translator()->translate("event_date"),
-                    $date_format
-                ),
-                'series' => $this->ui_factory->table()->column()->text(
-                    $this->container->translator()->translate("event_series")
-                ),
-                'presenter' => $this->ui_factory->table()->column()->text(
-                    $this->container->translator()->translate("event_presenter")
-                )->withIsOptional(false), // could be optional in the future
-                /*'status' => $this->ui_factory->table()->column()->text(
-                    $this->container->translator()->translate("event_processing_state")
-                )->withIsOptional(true),*/
-                'action' => $this->ui_factory->table()->column()->text(
-                    $this->container->translator()->translate("select")
-                )->withIsSortable(false),
-            ],
-            $this
-        )->withRequest($this->container->ilias()->http()->request());
+        return $this
+            ->ui_factory
+            ->table()
+            ->data(
+                $this->container->translator()->translate("config_events"),
+                [
+                    'preview' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->statusIcon(
+                            $this->container->translator()->translate("event_preview")
+                        )
+                        ->withIsSortable(false),
+                    'title' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->text(
+                            $this->container->translator()->translate("event_title")
+                        ),
+                    'date' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->date(
+                            $this->container->translator()->translate("event_date"),
+                            $date_format
+                        ),
+                    'series' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->text(
+                            $this->container->translator()->translate("event_series")
+                        ),
+                    'presenter' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->text(
+                            $this->container->translator()->translate("event_presenter")
+                        )
+                        ->withIsOptional(false), // could be optional in the future
+                    /*'status' => $this->ui_factory->table()->column()->text(
+                        $this->container->translator()->translate("event_processing_state")
+                    )->withIsOptional(true),*/
+                    'action' => $this
+                        ->ui_factory
+                        ->table()
+                        ->column()
+                        ->text(
+                            $this->container->translator()->translate("select")
+                        )
+                        ->withIsSortable(false),
+                ],
+                $this
+            )
+            ->withRequest($this->container->ilias()->http()->request())
+            ->withRange(new Range(0, $this->default_page_size));
     }
 
     public function getRows(
@@ -265,7 +306,8 @@ class MyEvents implements DataRetrieval
             }
 
             // we have to resize the thumbnail to a fixed width of 220px
-            $thumbnail = $thumbnail->withAdditionalOnLoadCode(fn(string $id): string => "
+            $thumbnail = $thumbnail->withAdditionalOnLoadCode(
+                fn(string $id): string => "
                         let img = document.getElementById('$id');
                         img.style.width = '220px';
                         img.style.height = 'auto';"
@@ -379,7 +421,7 @@ class MyEvents implements DataRetrieval
                 $sort__by_series = true;
             }
 
-            $events = (array) $this->event_repository->getFiltered(
+            $events = $this->event_repository->getFiltered(
                 $filter,
                 '',
                 [$xoct_user->getUserRoleName()],
@@ -393,11 +435,16 @@ class MyEvents implements DataRetrieval
         }
 
         if ($sort__by_series) {
-            usort($events, static function (Event $a, Event $b) use ($order) {
-                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp(
-                    $b->getSeries(), $a->getSeries()
-                );
-            });
+            usort(
+                $events,
+                static fn(Event $a, Event $b): int => $order === 'DESC' ? strnatcasecmp(
+                    $a->getSeries(),
+                    $b->getSeries()
+                ) : strnatcasecmp(
+                    $b->getSeries(),
+                    $a->getSeries()
+                )
+            );
         }
         // we cannot filter by processing state here, as the api does not deliver this information directly ant this
         // would lead to non mathcing amount of rows. e.g. if 5 events should be displayed, but only 3 are processed,
