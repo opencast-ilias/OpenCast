@@ -60,7 +60,7 @@ class MyEvents implements DataRetrieval
     private xoctUser $user;
     private Renderer $ui_renderer;
     private ?URI $calling_url = null;
-    private int $default_page_size = 50;
+    private int $default_page_size = 20;
 
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
