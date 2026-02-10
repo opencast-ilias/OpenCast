@@ -261,7 +261,10 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
 
             case EventActionTarget::PLAY:
             case EventActionTarget::DOWNLOAD:
-                return $event->getProcessingState() === Event::STATE_SUCCEEDED;
+                return \ilObjOpenCastAccess::checkAction(
+                    \ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
+                    $event
+                );
             default:
                 return false;
 
