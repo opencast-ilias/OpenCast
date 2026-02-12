@@ -54,6 +54,20 @@ class Publications
         $this->publication_sub_repository = new PublicationSubUsageRepository();
     }
 
+    /**
+     * @see https://github.com/opencast-ilias/OpenCast/issues/477
+     */
+    protected function getOnCloseAction(): \Closure
+    {
+        return static fn($id) => 'document.getElementById("' . $id . '").addEventListener("click", function() { 
+                                    // find parent dialog and close it after click
+                                    let parent = this.closest("dialog");
+                                    if(parent) {
+                                        parent.close();
+                                    }
+                            })';
+    }
+
     public function asListInModal(
         string $event_id,
         string|URI $target,
@@ -125,6 +139,8 @@ class Publications
                             $icon,
                             $dto->getResolution(),
                             $target->withParameter('pub_id', $dto->getPublicationId())
+                        )->withAdditionalOnLoadCode(
+                            $this->getOnCloseAction()
                         );
                         $elements[] = $this->ui_factory->divider()->horizontal();
                     }
@@ -136,6 +152,8 @@ class Publications
                         $target
                             ->withParameter('usage_type', $usage_type)
                             ->withParameter('usage_id', $download_pub_usage->getSubId())
+                    )->withAdditionalOnLoadCode(
+                        $this->getOnCloseAction()
                     );
                     $elements[] = $this->ui_factory->divider()->horizontal();
                 }
