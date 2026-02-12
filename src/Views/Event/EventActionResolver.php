@@ -15,6 +15,7 @@ use srag\Plugins\Opencast\Util\Locale\Translator;
 use srag\Plugins\Opencast\UI\Integration\ActionType;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -135,7 +136,10 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::EDIT_METADATA:
-                if ($event->isScheduled()) {
+                if (
+                    $event->isScheduled()
+                    && (bool) $settings?->resolve(EventSettings::EDIT_ALL_METADATA)
+                ) {
                     return $this->build(
                         $this->translator->translate('event_edit_date'),
                         \xoctEventGUI::class,

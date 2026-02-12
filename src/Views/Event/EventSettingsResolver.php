@@ -17,6 +17,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
     private bool $permission_per_clip;
     private bool $player_in_modal;
     private bool $show_best_action = true; // TODO make configurable
+    private bool $edit_all_metadata;
 
     public function __construct(
         ObjectSettings $object_settings
@@ -25,11 +26,15 @@ class EventSettingsResolver implements EventSettingsValueResolver
         $this->player_in_modal = (bool) PluginConfig::getConfig(
             PluginConfig::F_USE_MODALS
         );
+        $this->edit_all_metadata = ((int) PluginConfig::getConfig(
+            PluginConfig::F_SCHEDULED_METADATA_EDITABLE
+        )) === PluginConfig::ALL_METADATA;
     }
 
     public function resolve(EventSettings $setting): mixed
     {
         return match ($setting) {
+            EventSettings::EDIT_ALL_METADATA => $this->edit_all_metadata,
             EventSettings::PLAYER_AS_MODAL => $this->player_in_modal,
             EventSettings::SHOW_BEST_ACTION => $this->show_best_action,
             EventSettings::DESCRIPTION_MAX_LENGTH => 120,
