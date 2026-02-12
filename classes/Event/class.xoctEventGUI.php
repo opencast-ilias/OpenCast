@@ -1034,7 +1034,7 @@ class xoctEventGUI extends xoctGUI
         $this->ctrl->redirect($this, self::CMD_STANDARD);
     }
 
-    protected function reportDateForm(): void
+    protected function reportDateModal(): void
     {
         $this->ctrl->saveParameter($this, self::IDENTIFIER);
         $event_modals = new EventModals($this, $this->plugin, $this->dic, $this->workflowRepository);

@@ -178,6 +178,13 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \xoctEventGUI::CMD_REPORT_QUALITY_MODAL,
                     ActionType::ASYNC_MODAL
                 );
+            case EventActionTarget::REPORT_DATE_MODIFICATION:
+                return $this->build(
+                    $this->translator->translate('event_report_date_modification'),
+                    \xoctEventGUI::class,
+                    \xoctEventGUI::CMD_REPORT_DATE_MODAL,
+                    ActionType::ASYNC_MODAL
+                );
             case EventActionTarget::START_WORKFLOW:
                 return $this->build(
                     $this->translator->translate('event_startworkflow'),
@@ -256,6 +263,12 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             case EventActionTarget::REPORT_QUALITY_ISSUE:
                 return \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM,
+                    $event
+                );
+
+            case EventActionTarget::REPORT_DATE_MODIFICATION:
+                return \ilObjOpenCastAccess::checkAction(
+                    \ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE,
                     $event
                 );
 
