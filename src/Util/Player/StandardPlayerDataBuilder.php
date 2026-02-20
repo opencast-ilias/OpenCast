@@ -70,7 +70,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
-            "jwt_iframe_urls" => $jwt_iframe_urls,
+            "jwt" => [
+                "jwt_iframe_urls" => $jwt_iframe_urls,
+            ]
         ];
 
         $frame_list_raw = $this->buildSegments($this->event);
@@ -183,7 +185,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param Media[] $media
+     * @param \srag\Plugins\Opencast\Model\Publication\Media[] $media
      * @throws xoctException
      */
     protected function buildStreams(array $media): array
@@ -218,7 +220,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 $this->event->getIdentifier()
             );
             if (!in_array($jwt_iframe_friendly_url, $jwt_iframe_urls )) {
-                $jwt_iframe_urls[] = $this->api->makeJwtIframeSourceUrl($medium->getUrl(), $this->event->getIdentifier());
+                $jwt_iframe_urls[] = $jwt_iframe_friendly_url;
             }
         }
 

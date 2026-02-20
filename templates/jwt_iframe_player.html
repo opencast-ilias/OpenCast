@@ -18,7 +18,19 @@
 	</style>
 </head>
 <body>
-	<iframe id="opencastPaellaJwtPlayer" allowfullscreen="true"></iframe>
+	<iframe id="opencastPaellaJwtPlayer" allowfullscreen="true" class="hidden"></iframe>
+	<div id="overlay_live_waiting" class="overlay_live hidden">
+		<span class="xoct_pseudo_element"></span>
+		<p id="overlay_live_waiting_text" class="overlay_live_text">{LIVE_WAITING_TEXT}</p>
+	</div>
+	<div id="overlay_live_over" class="overlay_live hidden">
+		<span class="xoct_pseudo_element"></span>
+		<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
+	</div>
+	<div id="overlay_live_interrupted" class="overlay_live hidden">
+		<span class="xoct_pseudo_element"></span>
+		<p id="overlay_live_interrupted_text" class="overlay_live_text">{LIVE_INTERRUPTED_TEXT}</p>
+	</div>
 	<script>
 		il.Opencast.JWT.init({JWT_MODULE_CONFIG});
 	</script>

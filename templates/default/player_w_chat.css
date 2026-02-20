@@ -21,6 +21,11 @@ iframe#opencastPaellaJwtPlayer {
 	box-shadow: none !important;
 }
 
+
+#opencastPaellaJwtPlayer.hidden {
+	display: none !important;
+}
+
 #paellaPlayer_loader {
 	width: 80%;
 	/*position: absolute !important;*/
@@ -42,6 +47,10 @@ span.xoct_pseudo_element {
 	background-color: rgba(0,0,0,0.5);
 	color: white;
 	z-index: 100;
+}
+
+.overlay_live.hidden {
+	display: none;
 }
 
 .overlay_live_text {

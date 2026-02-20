@@ -22,6 +22,9 @@ use srag\Plugins\Opencast\Model\Publication\PublicationMetadata;
  */
 class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
 {
+    /**
+     * @inheritdoc
+     */
     protected function buildStreams(array $media): array
     {
         $event_id = $this->event->getIdentifier();

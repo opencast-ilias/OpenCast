@@ -10,6 +10,10 @@
 	z-index: 100;
 }
 
+.overlay_live.hidden {
+	display: none;
+}
+
 .overlay_live_text {
 	display: inline-block;
 	font-size: 32px;
@@ -30,4 +34,8 @@
 	border: 0 !important;
 	box-shadow: none !important;
 	overflow: hidden;
+}
+
+#opencastPaellaJwtPlayer.hidden {
+	display: none !important;
 }

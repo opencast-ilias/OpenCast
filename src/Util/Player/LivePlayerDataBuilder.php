@@ -21,24 +21,27 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
      */
     public function buildStreamingData(): array
     {
-        // TODO: Major issue in Opencast as it blocks the calls to search endpoints without JWT,
-        // however, it returns empty result even with JWT.
-        // This issue should be followed from this comment: https://github.com/opencast/opencast/pull/7249#issuecomment-3665403365
+        $jwt_iframe_urls = [];
         if ($this->api->isJWTActivated()) {
+            // TODO: Major issue in Opencast as it blocks the calls to search endpoints without JWT,
+            // however, it returns empty result even with JWT.
+            // This issue should be followed from this comment: https://github.com/opencast/opencast/pull/7249#issuecomment-3665403365
+            // As a workaround, we fetch the episode data with admin claims to extract the live publication url, which is required for the JWT Iframe player to work. This is not ideal but seems to be the only way until the issue in Opencast is resolved. Once that issue is resolved, we can simply call the search endpoint.
             $oc_claim = new OcJwtClaim();
             $oc_claim->setUserInfoClaims('admin');
             $oc_claim->setRoles(['ROLE_ADMIN', 'ROLE_ANONYMOUS']);
             $episode_data = $this->api->routes()->search->withClaims($oc_claim)->getEpisodes(
                 [
-                    'id' => 'acca3fc3-8e83-4d8e-a234-c892b3472d80'
+                    'id' => $this->event->getIdentifier()
                 ],
                 OpencastAPI::RETURN_ARRAY
             );
 
-            // For the of testing:
-            return [
-                "jwt_iframe_urls" => []
-            ];
+            $live_publication = $this->event->publications()->getLivePublication();
+            $jwt_iframe_urls[] = $this->api->makeJwtIframeSourceUrl(
+                $live_publication->getUrl(),
+                $this->event->getIdentifier()
+            );
         } else {
             $episode_data = $this->api->routes()->search->getEpisodes(
                 [
@@ -53,25 +56,13 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
 
         $source_format = PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED) ? 'hls' : 'hlsLive';
         $streams = [];
-
-        // Take care of duration of JWT exp.
-        $duration = (int) $this->event->getScheduling()->getEnd()->getTimestamp() - time();
-        $duration_in_seconds = 0;
-        if ($duration > 0) {
-            $duration_in_seconds = (int) ($duration / 1000);
-            // We add 5 minutes buffer time, just in case!
-            $duration_in_seconds += (60 * 5);
-        }
+        $urls = [];
 
         if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
                 $role = str_contains((string) $track['type'], self::ROLE_MASTER) ? self::ROLE_MASTER : self::ROLE_SLAVE;
-                $url = $this->api->attachJwtIntoStaticFileUrlForEvent(
-                    $track['url'],
-                    $this->event->getIdentifier(),
-                    ['read'],
-                    $duration_in_seconds
-                );
+                $url = $track['url'];
+                $urls[] = $url;
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
@@ -91,12 +82,8 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             }
         } else {    // single stream
             $track = $media_package['media']['track'];
-            $url = $this->api->attachJwtIntoStaticFileUrlForEvent(
-                $track['url'],
-                $this->event->getIdentifier(),
-                ['read'],
-                $duration_in_seconds
-            );
+            $url = $track['url'];
+            $urls[] = $url;
             $streams[] = [
                 "content" => self::ROLE_MASTER,
                 "sources" => [
@@ -123,6 +110,10 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
+            "jwt" => [
+                "jwt_iframe_urls" => $jwt_iframe_urls,
+                "urls" => $urls,
+            ],
         ];
     }
 
@@ -145,9 +136,6 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
      */
     public function shouldPlayInJWTIframe(): bool
     {
-        // Apparently live streams do not work with the iframe JWT player, so we return false here.
-        // For Live Streams we generate a JWT long enough for the stream duration and inject it into the url,
-        // so that normal player can use it.
-        return false;
+        return true; // It appears that live streams can be played via /play.
     }
 }

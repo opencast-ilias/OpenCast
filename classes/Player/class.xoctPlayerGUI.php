@@ -76,12 +76,8 @@ class xoctPlayerGUI extends xoctGUI
         try {
             $player_data_builder = PlayerDataBuilderFactory::getInstance()->getBuilder($event);
             $jwt_iframe_capable = $player_data_builder->shouldPlayInJWTIframe();
+            // For the data structure, we have now a new parameter "jwt", which contains the jwt related data and needs to extracted later on.
             $data = $player_data_builder->buildStreamingData();
-            $jwt_iframe_urls = [];
-            if (isset($data['jwt_iframe_urls'])) {
-                $jwt_iframe_urls = $data['jwt_iframe_urls'];
-                unset($data['jwt_iframe_urls']);
-            }
         } catch (xoctException $e) {
             xoctLog::getInstance()->logError((string) $e->getCode(), $e->getMessage());
             xoctLog::getInstance()->logStack($e->getTraceAsString());
@@ -91,11 +87,16 @@ class xoctPlayerGUI extends xoctGUI
         // We load different template for the JWT Iframe Player.
         if ($this->api->isJWTActivated() && $jwt_iframe_capable) {
             $tpl = $this->plugin->getTemplate("jwt_iframe_player.html", true, true);
+            $jwt_data = $data['jwt'] ?? [];
             $tpl->setVariable("JWT_MODULE_CONFIG",
-                json_encode($this->buildJwtModuleConfig($event, $jwt_iframe_urls)));
+                json_encode($this->buildJwtModuleConfig($event, $jwt_data)));
         } else {
             // The normal paella player.
             $tpl = $this->plugin->getTemplate("paella_player.html", true, true);
+            // Clear the data from JWT specific data.
+            if (isset($data['jwt'])) {
+                unset($data['jwt']);
+            }
             $tpl->setVariable("DATA", json_encode($data));
             $tpl->setVariable("JS_CONFIG", json_encode($this->buildJSConfig($event)));
         }
@@ -186,14 +187,13 @@ class xoctPlayerGUI extends xoctGUI
         return $js_config;
     }
 
-    protected function buildJwtModuleConfig(Event $event, array $jwt_iframe_urls): stdClass
+    protected function buildJwtModuleConfig(Event $event, array $jwt_data): stdClass
     {
-
         $jwt_module_config = new stdClass();
         $jwt_module_config->refresh_token_url = $this->getRefreshJwtAsyncUrl($event->getIdentifier());
         $player_url = null;
-        if (!empty($jwt_iframe_urls)) {
-            $player_url = $jwt_iframe_urls[0]; // We take the first one, no matter how many is there!
+        if (!empty($jwt_data['jwt_iframe_urls'])) {
+            $player_url = reset($jwt_data['jwt_iframe_urls']); // We take the first one, no matter how many is there!
         }
         // We make the fallback here!
         if (empty($player_url)) {
@@ -203,6 +203,23 @@ class xoctPlayerGUI extends xoctGUI
         }
         $jwt_module_config->player_url = $player_url;
         $jwt_module_config->event_id = $event->getIdentifier();
+        $jwt_module_config->is_live_stream = $event->isLiveEvent();
+        if ($jwt_module_config->is_live_stream) {
+            $jwt_module_config->hls_source_urls = $jwt_data['urls'] ?? [];
+            $jwt_module_config->hls_check_script = ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory() . '/src/Util/check_hls_status.php';
+            $jwt_module_config->hls_source_format =
+                PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
+            $start_utc_atom = $event->getScheduling()
+                                    ->getStart()
+                                    ->setTimezone(new \DateTimeZone('UTC'))
+                                    ->format(\DateTime::ATOM);
+            $end_utc_atom = $event->getScheduling()
+                                    ->getEnd()
+                                    ->setTimezone(new \DateTimeZone('UTC'))
+                                    ->format(\DateTime::ATOM);
+            $jwt_module_config->start_time_utc = $start_utc_atom;
+            $jwt_module_config->end_time_utc = $end_utc_atom;
+        }
         return $jwt_module_config;
     }
 
