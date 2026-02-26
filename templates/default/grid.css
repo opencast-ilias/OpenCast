@@ -6,6 +6,7 @@
 .oc-grid .col-1, .oc-grid .col-2, .oc-grid .col-3, .oc-grid .col-4, .oc-grid .col-6, .oc-grid .col-8, .oc-grid .col-9, .oc-grid .col-10, .oc-grid .col-12 {
     padding: 10px;
     box-sizing: border-box;
+    width: auto;
 }
 
 .oc-grid .col-1 {
