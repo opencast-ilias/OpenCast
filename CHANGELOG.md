@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 10.0.0
+- [FEATURE] Support for ILIAS 10
+- [FEATURE] New UI for Events and Series
+- [FIX] A lot of bug fixed while implementing the new UI, see individual commits for details.
+
 ## Version 9.2.2
 - [FIX] Disable OC Studio return target and label #424
 - [FIX] sending mails fails while reporting quality problems #434
