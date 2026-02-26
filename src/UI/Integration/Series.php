@@ -26,7 +26,7 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
-use ILIAS\Data\Order;
+use srag\Plugins\Opencast\Views\Series\Display;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -35,6 +35,7 @@ use ILIAS\Data\Order;
 class Series implements DataRetrieval
 {
     use Commons;
+    public $has_scheduled_events;
 
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
@@ -334,6 +335,15 @@ class Series implements DataRetrieval
             []
         );
         $filtered_all = array_filter($filtered_all, $ui_filter);
+
+        // @see hasScheduledEvents
+        array_walk($filtered_all, function (array $event): void {
+            $event_object = $event['object'] ?? null;
+            if ($event_object instanceof Event && $event_object->isScheduled()) {
+                $this->has_scheduled_events[$this->series->getIdentifier()] = true;
+            }
+        });
+
         $this->total = count(
             $filtered_all
         );
@@ -342,5 +352,15 @@ class Series implements DataRetrieval
             yield $mapping->map($event);
         }
     }
+
+    /**
+     * @deprecated
+     * @see Display::hasScheduledEvents()
+     */
+    public function hasScheduledEvents(string $series_id): bool
+    {
+        return $this->has_scheduled_events[$series_id] ?? false;
+    }
+
 
 }

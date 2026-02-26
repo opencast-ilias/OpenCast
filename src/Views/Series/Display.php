@@ -16,6 +16,7 @@ use ILIAS\DI\UIServices;
 class Display implements ViewElement
 {
     private string $series_id;
+    private bool $has_scheduled_events = false;
 
     public function __construct(
         private UIServices $ui,
@@ -28,6 +29,10 @@ class Display implements ViewElement
 
     public function get(): Component|array
     {
+        $series = $this
+            ->ui_integration
+            ->series();
+
         try {
             $components = [];
 
@@ -42,9 +47,7 @@ class Display implements ViewElement
             }
 
             foreach (
-                $this
-                    ->ui_integration
-                    ->series()
+                $series
                     ->asEntityListInPanelWithFilter(
                         $this->series_id
                     ) as $item
@@ -52,14 +55,26 @@ class Display implements ViewElement
                 $components[] = $item;
             }
 
+            $this->has_scheduled_events = $series->hasScheduledEvents(
+                $this->series_id
+            ); // @see hasScheduledEvents() for legacy purposes
+
             return $components;
         } catch (\Throwable $t) {
             if ($this->debug) {
                 throw $t;
             }
 
-            return iterator_to_array($this->ui_integration->series()->notFound($this->series_id, $t->getMessage()));
+            return iterator_to_array($series->notFound($this->series_id, $t->getMessage()));
         }
+    }
+
+    /**
+     * @deprecated this is only needed for legacy purposes and should be removed in the future
+     */
+    public function hasScheduledEvents(): bool
+    {
+        return $this->has_scheduled_events;
     }
 
 }

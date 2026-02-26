@@ -257,20 +257,16 @@ class xoctEventGUI extends xoctGUI
             $b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_CLEAR_CACHE));
             $this->toolbar->addButtonInstance($b);
         }
-
-        // add "report date change" button
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
-            $b = ilLinkButton::getInstance();
-            $b->setId('xoct_report_date_button');
-            $b->setCaption('rep_robj_xoct_event_report_date_modification');
-            $b->addCSSClass('hidden');
-
-            $this->toolbar->addButtonInstance($b);
-        }
     }
 
     protected function index(): void
     {
+        // This part is only needed for legacy resons, see later
+        $event_modals = new EventModals($this, $this->plugin, $this->dic, $this->workflowRepository);
+        $event_modals->initReportDate();
+        $modal = $event_modals->getReportDateModal();
+
+        // Main Content (new Approach): The Series Display.
         $display_series = new Display(
             $this->ui,
             $this->ui_integration,
@@ -279,9 +275,27 @@ class xoctEventGUI extends xoctGUI
 
         $this->main_tpl->setContent(
             $this->ui_renderer->render(
-                $display_series->get()
+                array_filter(array_merge($display_series->get(), [$modal]))
             )
         );
+
+        // Report Date Modification Modal: This is a absolute mess... The Button ist added anyway in prepareContent, but "hidden".
+        // Only if the Series has sceduled events, it gets shown via js.
+        // We changed that for now but this whole "eventModals" things must be refactored as soon as possible.
+
+        if (
+            $modal
+            && $display_series->hasScheduledEvents()
+            && ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)
+        ) {
+
+            $button = $this->ui->factory()->button()->standard(
+                $this->txt('report_date_modification'),
+                '#'
+            )->withOnClick($modal->getShowSignal());
+
+            $this->toolbar->addComponent($button);
+        }
     }
 
     protected function add(): void

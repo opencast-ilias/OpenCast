@@ -33,8 +33,12 @@ class EventModals
      */
     protected $startworkflow_modal;
 
-    public function __construct(private $parent_gui, private readonly \ilOpenCastPlugin $plugin, private readonly Container $dic, private readonly WorkflowRepository $workflow_repository)
-    {
+    public function __construct(
+        private $parent_gui,
+        private readonly \ilOpenCastPlugin $plugin,
+        private readonly Container $dic,
+        private readonly WorkflowRepository $workflow_repository
+    ) {
     }
 
     public function initWorkflows(string $event_id): void
@@ -156,7 +160,7 @@ class EventModals
     /**
      * @throws ilTemplateException
      */
-    public function initReportDate(string $event_id): void
+    public function initReportDate(string $event_id = ''): void
     {
         $this->setReportDateModal(
             $this->buildReportingModal(
@@ -204,7 +208,7 @@ class EventModals
             ->factory()
             ->button()
             ->primary($this->dic->language()->txt("send"), '#')
-                                ->withAdditionalOnLoadCode(fn($id): string => "
+            ->withAdditionalOnLoadCode(fn($id): string => "
         document.getElementById('{$id}').addEventListener('click', function(event) {
             event.preventDefault();
             document.getElementById('{$form_id}').submit();
@@ -237,10 +241,7 @@ class EventModals
         return $return;
     }
 
-    /**
-     * @return Modal|null
-     */
-    public function getReportQualityModal()
+    public function getReportQualityModal(): ?Modal
     {
         return $this->report_quality_modal;
     }
@@ -250,10 +251,7 @@ class EventModals
         $this->report_quality_modal = $report_quality_modal;
     }
 
-    /**
-     * @return Modal|null
-     */
-    public function getReportDateModal()
+    public function getReportDateModal(): ?Modal
     {
         return $this->report_date_modal;
     }
@@ -263,10 +261,7 @@ class EventModals
         $this->report_date_modal = $report_date_modal;
     }
 
-    /**
-     * @return Modal|null
-     */
-    public function getStartworkflowModal()
+    public function getStartworkflowModal(): ?Modal
     {
         return $this->startworkflow_modal;
     }
