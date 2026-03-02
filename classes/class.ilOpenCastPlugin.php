@@ -59,7 +59,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
             global $DIC;
             $DIC->ui()->mainTemplate()->setOnScreenMessage(
                 'failure',
-                'Please run the update with the command line interface (CLI) only! The Plugin uses DB Update steps which are not available in the ILIAS GUI. `php setup/cli.php install --plugin OpenCast`',
+                'Please run the update with the command line interface (CLI) only! The Plugin uses DB Update steps which are not available in the ILIAS GUI. `php cli/setup.php install --legacy-plugin OpenCast`',
                 true
             );
             return false;
