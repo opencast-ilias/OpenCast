@@ -16,10 +16,12 @@ Use Opencast in ILIAS LMS with a wide variety of features:
 ### Requirements
 The plugin is published in several branches, each of which is compatible with one ILIAS version. The dependencies are as follows:
 
-| Branch    | ILIAS Version | PHP Versions |
-|-----------|---------------|--------------|
-| release_7 | 7.0 - 7.999   | 7.3.x, 7.4.x |
-| release_8 | 8.0 - 8.999   | 7.4.x, 8.0.x |
+| Branch     | ILIAS Version | PHP Versions  |
+|------------|---------------|---------------|
+| release_7  | 7.0 - 7.999   | 7.3.x, 7.4.x  |
+| release_8  | 8.0 - 8.999   | 7.4.x, 8.0.x  |
+| release_9  | 9.0 - 9.999   | same as ILIAS |
+| release_10 | 10.0 - 10.999 | same as ILIAS |
 
 ### Preconditions to update/migrate to v5.x and higher
 If you want to update to v5.x or higher of this plugin or migrate from other ILIAS plugins to v5.x or higher
@@ -29,8 +31,8 @@ of this plugin for Opencast please check the following readme: [migration](./doc
 Start at your ILIAS root directory
 
 ```bash
-mkdir -p Customizing/global/plugins/Services/Repository/RepositoryObject/
-cd Customizing/global/plugins/Services/Repository/RepositoryObject/
+mkdir -p public/Customizing/global/plugins/Services/Repository/RepositoryObject/
+cd public/Customizing/global/plugins/Services/Repository/RepositoryObject/
 git clone https://github.com/opencast-ilias/OpenCast.git
 ```
 
