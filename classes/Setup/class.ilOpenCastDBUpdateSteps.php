@@ -133,7 +133,7 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
     }
 
     /**
-     * This step sets the default value for the "Enable Cutting" configuration to false (off).
+     * This step sets the default value for the "Enable Cutting" configuration to true (on).
      */
     public function step_6(): void
     {
@@ -143,12 +143,12 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             return;
         }
 
-        // Insert the default configuration value (false)
+        // Insert the default configuration value (true)
         $this->db->insert(
             'xoct_config',
             [
                 'name' => ['text', 'enable_cutting'],
-                'value' => ['text', json_encode(false)]
+                'value' => ['text', json_encode(true)]
             ]
         );
     }
