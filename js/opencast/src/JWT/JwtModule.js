@@ -80,14 +80,17 @@ export default class JwtModule {
         // First on load, we generate the iframe url.
         document.addEventListener("DOMContentLoaded", () => {
             const iframe = document.getElementById(this.iframe_id);
+            console.info('JwtModule: JWT iframe detected, fetching Token from backend...');
             this.fetchTokenForEvent(this.event_id).then(jwt => {
                 if (!jwt) {
+                    console.warn('JwtModule: Unable to fetch JWt from backend!');
                     return;
                 }
+                console.info('JwtModule: JWT fetched, populating iframe src...');
                 this.generateIframeUrl(jwt);
 
-                // Testing purposes!
                 setTimeout(() => {
+                    console.info('JwtModule: [Ping] send message to iframe...');
                     iframe.contentWindow.postMessage(
                         {
                             type: "oc-event-jwt",
@@ -96,33 +99,39 @@ export default class JwtModule {
                         },
                         this.iframe_origin
                     );
-                }, 500);
+                }, 1000);
             });
         });
 
         // We also register the message Listener to listen to the refresh token request from the iframe.
         window.addEventListener("message", ev => {
+            console.info('JwtModule: [Pong] get message from iframe.');
             if (this.iframe_origin !== ev.origin) {
                 console.warn('Invalid JWT iframe origin, skipping...', ev.origin);
                 return;
             }
 
+            console.info('JwtModule: Evaluating message received...');
             // Make sure the message contains the proper data.
-            if (typeof ev.data === "object"
+            if (
+                typeof ev.data === "object"
                 && (ev.data.type && ev.data.type === "oc-event-jwt-request")
-                && (ev.data.event && typeof ev.data.event === 'string')) {
-
+                && (ev.data.event && typeof ev.data.event === 'string')
+            ) {
+                console.info('JwtModule: Message validated!');
                 // A tiny check to make sure that the incoming data is for this event!
                 if (ev.data.event !== this.event_id) {
                     // TODO: Would this console warn clutter the console logs!?
-                    console.warn('Event ID not matched, skipping...', this.event_id, ev.data.event);
+                    console.warn('JwtModule: Event ID not matched, skipping...', this.event_id, ev.data.event);
                     return;
                 }
+                console.info('JwtModule: Iframe tries to fetch new JWT...');
                 this.fetchTokenForEvent(ev.data.event).then(jwt => {
                     if (!jwt) {
                         console.error('JwtModule: failed to send new JWT back to opencast!');
                         return;
                     }
+                    console.info('JwtModule: New JWT fetched! sending back to iframe...');
                     ev.source.postMessage(
                         {
                             type: "oc-event-jwt",
@@ -132,6 +141,8 @@ export default class JwtModule {
                         this.iframe_origin
                     );
                 });
+            } else {
+                console.warn('JwtModule: Invalid message:', ev);
             }
         });
     }

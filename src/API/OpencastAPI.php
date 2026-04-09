@@ -47,7 +47,7 @@ class OpencastAPI implements API
     /**
      * @var string the jwt iframe src path url placeholder.
      */
-    public const JWT_IFRAME_SRC_PATH_PLACEHOLDER = '/play/{id}';
+    public const JWT_IFRAME_SRC_PATH_PLACEHOLDER = '/paella7/ui/watch.html';
     /**
      * @var Opencast
      */
@@ -464,8 +464,6 @@ class OpencastAPI implements API
         $expiry_formatted = OcJwtClaim::generateFormattedDateTimeObject($duration);
         $oc_claim->setExp($expiry_formatted);
         // To make sure the current search endpoint would have proper data,
-        // TODO: This should be solved by Opencast, as mentioned in https://github.com/opencast/opencast/pull/7249
-        $oc_claim->setUserInfoClaims('unknown-jwt-user');
         $access_token = $this->api->getRestJwtHandler()->issueToken($oc_claim);
         return $access_token;
     }
@@ -485,13 +483,24 @@ class OpencastAPI implements API
      *
      * @param string $url the raw url
      * @param string $event_id the event id
-     * @return string the iframe JWT friendly source url ending with /play/{ID}
+     * @return string the iframe JWT friendly source url ending with /play/{ID} or /paella7/ui/watch.html?id={ID}
      */
     public function makeJwtIframeSourceUrl(string $url, string $event_id): string
     {
         $parsed_url = parse_url($url);
+        // This replace takes care of the case if we set the src placeholder as /play/{id}, but no effect on /paella...
         $path = str_replace('{id}', $event_id, self::JWT_IFRAME_SRC_PATH_PLACEHOLDER);
         $parsed_url['path'] = $path;
+        // In case of having /paella.. as the placeholder we make sure that the id exists in the query string.
+        if (str_starts_with(self::JWT_IFRAME_SRC_PATH_PLACEHOLDER, '/paella7')) {
+            $parsed_query = [];
+            parse_str($parsed_url['query'], $parsed_query);
+            if (empty($parsed_query['id'])) {
+                $parsed_query['id'] = $event_id;
+            }
+            $query_built = http_build_query($parsed_query);
+            $parsed_url['query'] = $query_built;
+        }
         return $this->unparseUrl($parsed_url);
     }
 }
