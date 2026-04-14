@@ -449,7 +449,9 @@
     },
     "es.upv.paella.defaultShortcuts": {
       "enabled": true,
-      "validPlaybackRates": [0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0]
+      "validPlaybackRates": [0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0],
+      "skipBackwards": 10,
+      "skipForward": 30
     },
     "es.upv.paella.arrowSlidesNavigator": {
       "enabled": false,
