@@ -493,8 +493,9 @@ class OpencastAPI implements API
         $parsed_url['path'] = $path;
         // In case of having /paella.. as the placeholder we make sure that the id exists in the query string.
         if (str_starts_with(self::JWT_IFRAME_SRC_PATH_PLACEHOLDER, '/paella7')) {
+            $query = !empty($parsed_url['query']) ? $parsed_url['query'] : '';
             $parsed_query = [];
-            parse_str($parsed_url['query'], $parsed_query);
+            parse_str($query, $parsed_query);
             if (empty($parsed_query['id'])) {
                 $parsed_query['id'] = $event_id;
             }
