@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 9.3.1
+- fix for getting the user who reported a problem
+
+## Version 9.3.0
+- [FIX] Add confirmation text for deleting publication usage
+- [FIX] Handle missing start date and time in MetadataToXML
+- [FIX] overwrite global perms for course members during object creating. - setting default perms now can handle some perms prevention.
+
 ## Version 9.2.3
 - [FIX] several (UI) issues in Groups, Change-Owner and Invitation Screens
 - [FEATURE] Upgrade paella-user-tracking to v1.42.6

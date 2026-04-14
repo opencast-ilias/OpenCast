@@ -1,7 +1,7 @@
 <?php
 
 $id = 'xoct';
-$version = '9.2.3';
+$version = '9.3.1';
 $ilias_min_version = '9.0';
 $ilias_max_version = '9.999';
 $responsible = 'Universität Bern';
