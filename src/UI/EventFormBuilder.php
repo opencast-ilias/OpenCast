@@ -59,6 +59,7 @@ class EventFormBuilder
         MimeTypeUtil::VIDEO__X_MSVIDEO,
         'video/mkv',
         'video/x-matroska',
+        'video/matroska',
         'video/x-m4v',
         '.mov',
         '.mp4',
