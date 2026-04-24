@@ -909,11 +909,8 @@ class xoctEventGUI extends xoctGUI
                 'Unable to provide a JWT for Studio service!'
             );
         }
-        $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
-        $temp->setVariable('ACTION', $redirect_url);
-        $temp->setVariable('JWT', $jwt);
-        $temp->setVariable('TARGET_URL', $encoded_studio_link);
-        $this->main_tpl->setContent($temp->get());
+        $redirect_template_html = $this->getJwtRedirectHtml($redirect_url, $jwt, $encoded_studio_link);
+        $this->main_tpl->setContent($redirect_template_html);
     }
 
 
@@ -947,11 +944,29 @@ class xoctEventGUI extends xoctGUI
                 'Unable to provide a JWT for Editor service!'
             );
         }
-        $temp = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
-        $temp->setVariable('ACTION', $redirect_url);
-        $temp->setVariable('JWT', $jwt);
-        $temp->setVariable('TARGET_URL', $cutting_link);
-        $this->main_tpl->setContent($temp->get());
+        $redirect_template_html = $this->getJwtRedirectHtml($redirect_url, $jwt, $cutting_link);
+        $this->main_tpl->setContent($redirect_template_html);
+    }
+
+    /**
+     * Generates HTML for JWT-based redirect from the template.
+     *
+     * This method renders a redirect template by populating it with the provided redirect URL,
+     * JWT token, and target URL. The resulting HTML is used to automatically redirect the user
+     * to the target link using the JWT for authentication.
+     *
+     * @param string $redirect_url The URL to redirect to (typically the Opencast redirect endpoint)
+     * @param string $jwt          The JWT token for authentication
+     * @param string $target_link  The final target URL to redirect to after JWT validation
+     * @return string The generated HTML string for the redirect page
+     */
+    private function getJwtRedirectHtml(string $redirect_url, string $jwt, string $target_link): string
+    {
+        $redirect_template = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
+        $redirect_template->setVariable('ACTION', $redirect_url);
+        $redirect_template->setVariable('JWT', $jwt);
+        $redirect_template->setVariable('TARGET_URL', $target_link);
+        return $redirect_template->get();
     }
 
     private function retrieveQuery(string $q): ?string

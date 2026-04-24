@@ -64,6 +64,8 @@ class xoctPlayerGUI extends xoctGUI
         if ($this->identifier === null || empty($this->identifier)) {
             $this->sendReponse("Error: invalid identifier");
         }
+
+        $jwt_iframe_capable = false;
         $event = $this->event_repository->find($this->identifier);
         if (!$this->api->isJWTActivated() // We don't offer this redirect if JWT is activated.
             && !PluginConfig::getConfig(PluginConfig::F_INTERNAL_VIDEO_PLAYER)
@@ -190,7 +192,7 @@ class xoctPlayerGUI extends xoctGUI
     protected function buildJwtModuleConfig(Event $event, array $jwt_data): stdClass
     {
         $jwt_module_config = new stdClass();
-        $jwt_module_config->refresh_token_url = $this->getRefreshJwtAsyncUrl($event->getIdentifier());
+        $jwt_module_config->refresh_token_url = $this->getRefreshJwtAsyncUrl($event->getIdentifier(), $this->object_settings->getObjId());
         $player_url = null;
         if (!empty($jwt_data['jwt_iframe_urls'])) {
             $player_url = reset($jwt_data['jwt_iframe_urls']); // We take the first one, no matter how many is there!
@@ -210,13 +212,13 @@ class xoctPlayerGUI extends xoctGUI
             $jwt_module_config->hls_source_format =
                 PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
             $start_utc_atom = $event->getScheduling()
-                                    ->getStart()
+                                    ?->getStart()
                                     ->setTimezone(new \DateTimeZone('UTC'))
-                                    ->format(\DateTime::ATOM);
+                                    ->format(\DateTime::ATOM) ?? null;
             $end_utc_atom = $event->getScheduling()
-                                    ->getEnd()
+                                    ?->getEnd()
                                     ->setTimezone(new \DateTimeZone('UTC'))
-                                    ->format(\DateTime::ATOM);
+                                    ->format(\DateTime::ATOM) ?? null;
             $jwt_module_config->start_time_utc = $start_utc_atom;
             $jwt_module_config->end_time_utc = $end_utc_atom;
         }

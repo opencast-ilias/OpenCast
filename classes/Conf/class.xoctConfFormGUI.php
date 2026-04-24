@@ -698,7 +698,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         }
         $default = \OpencastApi\Auth\JWT\OcJwtHandler::DEFAULT_ALGORITHM;
         $se_cb_sub->setOptions($algorithms);
-        $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP) ?? $default);
+        $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG) ?? $default);
         $cb->addSubItem($se_cb_sub);
 
         // JWT Studio Roles.
