@@ -24,29 +24,21 @@ final class Configuration
     private Closure $builderFactory;
 
     /** @var Constraint[] */
-    private array $validationConstraints;
+    private array $validationConstraints = [];
 
-    /** @param Closure(ClaimsFormatter $claimFormatter): Builder|null $builderFactory */
     private function __construct(
         private readonly Signer $signer,
         private readonly Key $signingKey,
         private readonly Key $verificationKey,
-        private readonly Encoder $encoder,
-        private readonly Decoder $decoder,
-        ?Parser $parser,
-        ?Validator $validator,
-        ?Closure $builderFactory,
-        Constraint ...$validationConstraints,
+        Encoder $encoder,
+        Decoder $decoder,
     ) {
-        $this->parser    = $parser ?? new Token\Parser($decoder);
-        $this->validator = $validator ?? new Validation\Validator();
+        $this->parser    = new Token\Parser($decoder);
+        $this->validator = new Validation\Validator();
 
-        $this->builderFactory = $builderFactory
-            ?? static function (ClaimsFormatter $claimFormatter) use ($encoder): Builder {
-                return Token\Builder::new($encoder, $claimFormatter);
-            };
-
-        $this->validationConstraints = $validationConstraints;
+        $this->builderFactory = static function (ClaimsFormatter $claimFormatter) use ($encoder): Builder {
+            return new Token\Builder($encoder, $claimFormatter);
+        };
     }
 
     public static function forAsymmetricSigner(
@@ -62,9 +54,6 @@ final class Configuration
             $verificationKey,
             $encoder,
             $decoder,
-            null,
-            null,
-            null,
         );
     }
 
@@ -80,36 +69,13 @@ final class Configuration
             $key,
             $encoder,
             $decoder,
-            null,
-            null,
-            null,
         );
-    }
-
-    /**
-     * @deprecated Deprecated since v5.5, please use {@see self::withBuilderFactory()} instead
-     *
-     * @param callable(ClaimsFormatter): Builder $builderFactory
-     */
-    public function setBuilderFactory(callable $builderFactory): void
-    {
-        $this->builderFactory = $builderFactory(...);
     }
 
     /** @param callable(ClaimsFormatter): Builder $builderFactory */
-    public function withBuilderFactory(callable $builderFactory): self
+    public function setBuilderFactory(callable $builderFactory): void
     {
-        return new self(
-            $this->signer,
-            $this->signingKey,
-            $this->verificationKey,
-            $this->encoder,
-            $this->decoder,
-            $this->parser,
-            $this->validator,
-            $builderFactory(...),
-            ...$this->validationConstraints,
-        );
+        $this->builderFactory = $builderFactory(...);
     }
 
     public function builder(?ClaimsFormatter $claimFormatter = null): Builder
@@ -122,25 +88,9 @@ final class Configuration
         return $this->parser;
     }
 
-    /** @deprecated Deprecated since v5.5, please use {@see self::withParser()} instead */
     public function setParser(Parser $parser): void
     {
         $this->parser = $parser;
-    }
-
-    public function withParser(Parser $parser): self
-    {
-        return new self(
-            $this->signer,
-            $this->signingKey,
-            $this->verificationKey,
-            $this->encoder,
-            $this->decoder,
-            $parser,
-            $this->validator,
-            $this->builderFactory,
-            ...$this->validationConstraints,
-        );
     }
 
     public function signer(): Signer
@@ -163,25 +113,9 @@ final class Configuration
         return $this->validator;
     }
 
-    /** @deprecated Deprecated since v5.5, please use {@see self::withValidator()} instead */
     public function setValidator(Validator $validator): void
     {
         $this->validator = $validator;
-    }
-
-    public function withValidator(Validator $validator): self
-    {
-        return new self(
-            $this->signer,
-            $this->signingKey,
-            $this->verificationKey,
-            $this->encoder,
-            $this->decoder,
-            $this->parser,
-            $validator,
-            $this->builderFactory,
-            ...$this->validationConstraints,
-        );
     }
 
     /** @return Constraint[] */
@@ -190,24 +124,8 @@ final class Configuration
         return $this->validationConstraints;
     }
 
-    /** @deprecated Deprecated since v5.5, please use {@see self::withValidationConstraints()} instead */
     public function setValidationConstraints(Constraint ...$validationConstraints): void
     {
         $this->validationConstraints = $validationConstraints;
-    }
-
-    public function withValidationConstraints(Constraint ...$validationConstraints): self
-    {
-        return new self(
-            $this->signer,
-            $this->signingKey,
-            $this->verificationKey,
-            $this->encoder,
-            $this->decoder,
-            $this->parser,
-            $this->validator,
-            $this->builderFactory,
-            ...$validationConstraints,
-        );
     }
 }

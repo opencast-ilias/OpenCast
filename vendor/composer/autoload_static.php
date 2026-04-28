@@ -13,24 +13,24 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
     );
 
     public static $prefixLengthsPsr4 = array (
-        'P' => 
+        'P' =>
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Clock\\' => 10,
         ),
-        'O' => 
+        'O' =>
         array (
             'OpencastApi\\Util\\' => 17,
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'L' => 
+        'L' =>
         array (
             'Lcobucci\\JWT\\' => 13,
         ),
-        'G' => 
+        'G' =>
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
@@ -39,48 +39,48 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
     );
 
     public static $prefixDirsPsr4 = array (
-        'Psr\\Http\\Message\\' => 
+        'Psr\\Http\\Message\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' => 
+        'Psr\\Http\\Client\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'Psr\\Clock\\' => 
+        'Psr\\Clock\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/clock/src',
         ),
-        'OpencastApi\\Util\\' => 
+        'OpencastApi\\Util\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util',
         ),
-        'OpencastApi\\Rest\\' => 
+        'OpencastApi\\Rest\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' => 
+        'OpencastApi\\Mock\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' => 
+        'OpencastApi\\' =>
         array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'Lcobucci\\JWT\\' => 
+        'Lcobucci\\JWT\\' =>
         array (
             0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
-        'GuzzleHttp\\Psr7\\' => 
+        'GuzzleHttp\\Psr7\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' => 
+        'GuzzleHttp\\Promise\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' => 
+        'GuzzleHttp\\' =>
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),

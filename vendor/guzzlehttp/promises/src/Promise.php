@@ -230,9 +230,9 @@ class Promise implements PromiseInterface
         } else {
             // If there's no wait function, then reject the promise.
             $this->reject('Cannot wait on a promise that has '
-                . 'no internal wait function. You must provide a wait '
-                . 'function when constructing the promise to be able to '
-                . 'wait on a promise.');
+                .'no internal wait function. You must provide a wait '
+                .'function when constructing the promise to be able to '
+                .'wait on a promise.');
         }
 
         Utils::queue()->run();
