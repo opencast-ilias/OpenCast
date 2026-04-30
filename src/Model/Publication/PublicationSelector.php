@@ -615,10 +615,13 @@ class PublicationSelector
         $filtered_return = [];
         foreach ($return as $ret_pub) {
             $url = $ret_pub->getUrl();
-            $ret_pub->setUrl($this->api->attachJwtIntoStaticFileUrlForEvent(
-                $url,
-                $this->event->getIdentifier()
-            ));
+            // Here we populate/inject JWT into the publication url, only when it is not black listed.
+            if (!in_array($usage_id, PublicationUsage::JWT_USAGE_ID_BLACK_LIST)) {
+                $ret_pub->setUrl($this->api->attachJwtIntoStaticFileUrlForEvent(
+                    $url,
+                    $this->event->getIdentifier()
+                ));
+            }
             $filtered_return[] = $ret_pub;
         }
 
