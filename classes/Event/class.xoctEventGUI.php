@@ -901,7 +901,6 @@ class xoctEventGUI extends xoctGUI
 
         $encoded_studio_link = $base . '/studio?' . http_build_query($query_params);
 
-        $redirect_url = $base . '/redirect/get';
         $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_STUDIO);
         if (empty($jwt)) {
             throw new xoctException(
@@ -909,7 +908,7 @@ class xoctEventGUI extends xoctGUI
                 'Unable to provide a JWT for Studio service!'
             );
         }
-        $redirect_template_html = $this->getJwtRedirectHtml($redirect_url, $jwt, $encoded_studio_link);
+        $redirect_template_html = $this->getJwtRedirectHtml($jwt, $encoded_studio_link);
         $this->main_tpl->setContent($redirect_template_html);
     }
 
@@ -935,8 +934,6 @@ class xoctEventGUI extends xoctGUI
             return;
         }
 
-        $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
-        $redirect_url = str_replace('/api', '/redirect/get', $base);
         $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_EDITOR);
         if (empty($jwt)) {
             throw new xoctException(
@@ -944,7 +941,7 @@ class xoctEventGUI extends xoctGUI
                 'Unable to provide a JWT for Editor service!'
             );
         }
-        $redirect_template_html = $this->getJwtRedirectHtml($redirect_url, $jwt, $cutting_link);
+        $redirect_template_html = $this->getJwtRedirectHtml( $jwt, $cutting_link);
         $this->main_tpl->setContent($redirect_template_html);
     }
 
@@ -955,13 +952,14 @@ class xoctEventGUI extends xoctGUI
      * JWT token, and target URL. The resulting HTML is used to automatically redirect the user
      * to the target link using the JWT for authentication.
      *
-     * @param string $redirect_url The URL to redirect to (typically the Opencast redirect endpoint)
      * @param string $jwt          The JWT token for authentication
      * @param string $target_link  The final target URL to redirect to after JWT validation
      * @return string The generated HTML string for the redirect page
      */
-    private function getJwtRedirectHtml(string $redirect_url, string $jwt, string $target_link): string
+    private function getJwtRedirectHtml(string $jwt, string $target_link): string
     {
+        $base = rtrim((string) PluginConfig::getConfig(PluginConfig::F_API_BASE), "/");
+        $redirect_url = str_replace('/api', '/redirect/get', $base);
         $redirect_template = $this->plugin->getTemplate('default/tpl.jwt_redirect.html', false, false);
         $redirect_template->setVariable('ACTION', $redirect_url);
         $redirect_template->setVariable('JWT', $jwt);
@@ -1061,7 +1059,21 @@ class xoctEventGUI extends xoctGUI
         $annotation_link = $event->publications()->getAnnotationLink(
             $this->ref_id
         );
-        $this->ctrl->redirectToURL($annotation_link);
+
+        if (empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+            $this->ctrl->redirectToURL($annotation_link);
+            return;
+        }
+
+        $jwt = $this->api->issueExternalServicesJwtFor(OpencastAPI::JWT_SERVICE_ANNOTATION_TOOL, $event->getIdentifier());
+        if (empty($jwt)) {
+            throw new xoctException(
+                xoctException::INTERNAL_ERROR,
+                'Unable to provide a JWT for Annotation-tool service!'
+            );
+        }
+        $redirect_template_html = $this->getJwtRedirectHtml($jwt, $annotation_link);
+        $this->main_tpl->setContent($redirect_template_html);
     }
 
     public function setOnline(): void

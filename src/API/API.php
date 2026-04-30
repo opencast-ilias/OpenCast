@@ -59,9 +59,10 @@ interface API
      * These services need different type of claims to build and process.
      *
      * @param string $service the opencast external service name such as Editor or Studio
+     * @param ?string $event_id the event identifier
      * @return null|string null if JWT is disabled or not found, otherwise a proper JWT will be returned.
      */
-    public function issueExternalServicesJwtFor(string $service): ?string;
+    public function issueExternalServicesJwtFor(string $service, ?string $event_id = null): ?string;
 
     /**
      * Tries to detach the JWT query parameter from the URL.

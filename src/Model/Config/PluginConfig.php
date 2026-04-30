@@ -155,6 +155,7 @@ class PluginConfig extends ActiveRecord
     public const F_JWT_SECURITY_ALG = 'jwt_security_algorithm';
     public const F_JWT_SECURITY_STUDIO_ROLES = 'jwt_security_studio_roles';
     public const F_JWT_SECURITY_EDITOR_ROLES = 'jwt_security_editor_roles';
+    public const F_JWT_SECURITY_ANNOTATION_TOOL_ROLES = 'jwt_security_annotation_tool_roles';
 
     /**
      * @var array

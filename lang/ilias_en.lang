@@ -806,3 +806,5 @@ config_jwt_security_studio_roles#:#User access roles for Studio
 config_jwt_security_studio_roles_info#:#Specifies the user roles to grant access to Opencast Studio.
 config_jwt_security_editor_roles#:#User access roles for Editor
 config_jwt_security_editor_roles_info#:#Specifies the user roles to grant access to Opencast Editor.
+config_jwt_security_annotation_tool_roles#:#User access roles for Annotation Tool
+config_jwt_security_annotation_tool_roles_info#:#Specifies the user roles required to grant access to the Opencast Annotation Tool.

@@ -257,7 +257,7 @@ class xoctUser
     public static function getUserMapping()
     {
         if (!array_key_exists(self::$user_mapping, self::$user_mapping_field_titles)) {
-            throw new xoctException('invalid user mapping type, id = ' . self::$user_mapping);
+            throw new xoctException(500, 'invalid user mapping type, id = ' . self::$user_mapping);
         }
         return self::$user_mapping;
     }
@@ -308,6 +308,10 @@ class xoctUser
         $this->identifier = $identifier;
     }
 
+    /**
+     * Gets the JWT Specific user roles for Studio to be added in the claims.
+     * @return array
+     */
     public function getStudioAccessRoles(): array {
         $studio_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_STUDIO_ROLES) ?? [];
         if ($user_role = $this->getUserRoleName()) {
@@ -316,11 +320,27 @@ class xoctUser
         return $studio_access_roles;
     }
 
+    /**
+     * Gets the JWT Specific user roles for Editor to be added in the claims.
+     * @return array
+     */
     public function getEditorAccessRoles(): array {
         $editor_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EDITOR_ROLES) ?? [];
         if ($user_role = $this->getUserRoleName()) {
             $editor_access_roles[] = $user_role;
         }
         return $editor_access_roles;
+    }
+
+    /**
+     * Gets the JWT Specific user roles for Annotation-Tool to be added in the claims.
+     * @return array
+     */
+    public function getAnnotationToolAccessRoles(): array {
+        $annotation_tool_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ANNOTATION_TOOL_ROLES) ?? [];
+        if ($user_role = $this->getUserRoleName()) {
+            $annotation_tool_access_roles[] = $user_role;
+        }
+        return $annotation_tool_access_roles;
     }
 }

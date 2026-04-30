@@ -714,6 +714,13 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $te_editor_cb_sub->setMulti(true);
         $te_editor_cb_sub->setInlineStyle('min-width:250px');
         $cb->addSubItem($te_editor_cb_sub);
+
+        // JWT Annotation-tool Roles.
+        $te_annotation_tool_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_annotation_tool_roles'), PluginConfig::F_JWT_SECURITY_ANNOTATION_TOOL_ROLES);
+        $te_annotation_tool_cb_sub->setInfo($this->getLocaleString('jwt_security_annotation_tool_roles_info'));
+        $te_annotation_tool_cb_sub->setMulti(true);
+        $te_annotation_tool_cb_sub->setInlineStyle('min-width:250px');
+        $cb->addSubItem($te_annotation_tool_cb_sub);
     }
 
     protected function initAdvancedSection(): void

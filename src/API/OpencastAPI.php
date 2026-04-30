@@ -8,6 +8,7 @@ use OpencastApi\Opencast;
 use OpencastApi\Rest\OcRestClient;
 use OpencastApi\Auth\JWT\OcJwtClaim;
 use srag\Plugins\Opencast\Model\User\xoctUser;
+use ilObjOpenCastAccess;
 use xoctLog;
 use xoctException;
 
@@ -37,11 +38,23 @@ class OpencastAPI implements API
      */
     public const JWT_SERVICE_EDITOR = 'jwt_service_editor';
     /**
+     * @var string jwt service flag for annotation-tool
+     */
+    public const JWT_SERVICE_ANNOTATION_TOOL = 'jwt_service_annotation_tool';
+    /**
+     * @var array annotation tool actions.
+     */
+    public const ANNOTATION_TOOL_ACTIONS = [
+        'default' => 'annotate',
+        'admin' => 'annotate-admin',
+    ];
+    /**
      * @var array allowed jwt services.
      */
     public const ALLOWED_JWT_SERVICES = [
         self::JWT_SERVICE_STUDIO,
         self::JWT_SERVICE_EDITOR,
+        self::JWT_SERVICE_ANNOTATION_TOOL,
     ];
 
     /**
@@ -204,10 +217,10 @@ class OpencastAPI implements API
         if (!empty($access_token)) {
             $is_token_valid = $this->api->getRestJwtHandler()->validateToken($access_token);
             $has_similar_perms = false;
+            $duration_is_valid = true;
             $old_oc_jwt_claim = $this->api->getRestJwtHandler()->getOcJwtClaimFromTokenString($access_token);
             if (!empty($old_oc_jwt_claim)) {
                 $has_similar_perms = $old_oc_jwt_claim->actionsMatchFor(OcJwtClaim::OC_EVENT, $identifier, $actions);
-                $duration_is_valid = true;
                 if (!empty($duration)) {
                     $new_expiry_date = OcJwtClaim::generateFormattedDateTimeObject($duration);
                     $old_expiry_date = $old_oc_jwt_claim->getExp();
@@ -260,9 +273,10 @@ class OpencastAPI implements API
      * These services need different type of claims to build and process.
      *
      * @param string $service the opencast external service name such as Editor or Studio
+     * @param ?string $event_id the event identifier
      * @return null|string null if JWT is disabled or not found, otherwise a proper JWT will be returned.
      */
-    public function issueExternalServicesJwtFor(string $service): ?string
+    public function issueExternalServicesJwtFor(string $service, ?string $event_id = null): ?string
     {
         // In case the configuration is off, then we return the url without injecting any jwt.
         if (!$this->has_jwt) {
@@ -291,11 +305,32 @@ class OpencastAPI implements API
             'email' => $this->user->getEmail(),
         ];
 
-        $roles = $this->user->getStudioAccessRoles();
-        if ($service === self::JWT_SERVICE_EDITOR) {
-            $roles = $this->user->getEditorAccessRoles();
+        $roles = match ($service) {
+            self::JWT_SERVICE_EDITOR => $this->user->getEditorAccessRoles(),
+            self::JWT_SERVICE_ANNOTATION_TOOL => $this->user->getAnnotationToolAccessRoles(),
+            default => $this->user->getStudioAccessRoles(),
+        };
+
+        $claim_info[OcJwtClaim::ROLES] = $roles;
+
+        // Handling the case where the event oc roles should also be present, e.g. Annotation Tool!
+        $actions = ['read'];
+        $event_acl = [];
+        if (!empty($event_id)) {
+            if ($service === self::JWT_SERVICE_ANNOTATION_TOOL) {
+                $actions[] = self::ANNOTATION_TOOL_ACTIONS['default'];
+                if (
+                    ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS) || ilObjOpenCastAccess::hasWriteAccess()
+                ) {
+                    $actions[] = self::ANNOTATION_TOOL_ACTIONS['admin'];
+                }
+            }
+            // We prevent manual creation of the Opencast event ACL claim to avoid confusion.
+            // Instead, it is set right before issuing the token using OcJwtClaim::setEventAcls.
+            $event_acl = [
+                "$event_id" => $actions,
+            ];
         }
-        $claim_info['roles'] = $roles;
 
         // We now decide if there is a need to generate new token.
         $need_new_access_token = empty($access_token);
@@ -304,6 +339,7 @@ class OpencastAPI implements API
         if (!empty($access_token)) {
             $is_token_valid = $this->api->getRestJwtHandler()->validateToken($access_token);
             $has_similar_user_info = false;
+            $has_similar_perms = true;
             $old_oc_jwt_claim = $this->api->getRestJwtHandler()->getOcJwtClaimFromTokenString($access_token);
             if (!empty($old_oc_jwt_claim)) {
                 $sub = $old_oc_jwt_claim->getSub();
@@ -316,14 +352,22 @@ class OpencastAPI implements API
                                         (!empty($name) && $name === $claim_info['name']) &&
                                         (!empty($email) && $email === $claim_info['email']) &&
                                         (!empty($roles) && $roles === $claim_info['roles']);
+
+                if (!empty($event_id)) {
+                    $has_similar_perms = $old_oc_jwt_claim->actionsMatchFor(OcJwtClaim::OC_EVENT, $event_id, $actions);
+                }
             }
-            $need_new_access_token = $is_token_valid && !$has_similar_user_info;
+            $need_new_access_token = $is_token_valid && !$has_similar_user_info && !$has_similar_perms;
         }
 
         if ($need_new_access_token) {
             try {
                 $oc_claim = new OcJwtClaim();
                 $oc_claim = OcJwtClaim::createFromArray($claim_info);
+                // Setting event ACL claim using OcJwtClaim::setEventAcls.
+                if (!empty($event_acl)) {
+                    $oc_claim->setEventAcls($event_acl);
+                }
                 $access_token = $this->api->getRestJwtHandler()->issueToken($oc_claim);
                 $this->cacheJwtForService($service, $access_token);
             } catch (\Throwable $th) {
