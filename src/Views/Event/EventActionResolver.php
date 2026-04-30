@@ -204,6 +204,34 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
         return null;
     }
 
+    private function isEventAccessible(Event $event): bool
+    {
+        $processing_state = $event->getProcessingState();
+
+        $accessible = false;
+
+        if ($processing_state === Event::STATE_SUCCEEDED) {
+            $accessible = true;
+        }
+
+        if ($event->isLiveEvent()) {
+            if ($processing_state === Event::STATE_LIVE_RUNNING) {
+                $accessible = true;
+            }
+            if ($processing_state === Event::STATE_LIVE_SCHEDULED) {
+                $start = $event->getScheduling()->getStart()->getTimestamp();
+                $accessible_before_start = ((int) PluginConfig::getConfig(
+                        PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
+                    )) * 60;
+                $accessible_from = $start - $accessible_before_start;
+                $accessible_to = $event->getScheduling()->getEnd()->getTimestamp();
+                $accessible =  ($accessible_from < time()) && ($accessible_to > time());
+            }
+        }
+
+        return $accessible;
+    }
+
     public function supports(
         EventActionTarget $target,
         EventActionParameters $parameters,
@@ -277,7 +305,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::PLAY:
-                return $event->getProcessingState() === Event::STATE_SUCCEEDED;
+                return $this->isEventAccessible($event);
             case EventActionTarget::DOWNLOAD:
                 return \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
