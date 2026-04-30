@@ -787,7 +787,8 @@ upload_ui_thumbnail_mode_sg_file#:#Durch Hochladen einer Datei
 upload_ui_thumbnail_mode_sg_timepoint#:#Durch Auswahl eines Videozeitpunkts
 upload_ui_thumbnail_file#:#Vorschaubilddatei
 upload_ui_thumbnail_timepoint#:#Zeitpunkt
-upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.
+upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll. Format: HH:MM:SS (z.B. 00:01:30 für 1 Minute 30 Sekunden).
+upload_ui_thumbnail_timepoint_invalid#:#Ungültiges Format. Bitte HH:MM:SS verwenden (z.B. 00:01:30).
 show_more#:#Mehr
 title_asc#:#Titel A-Z
 title_desc#:#Titel Z-A

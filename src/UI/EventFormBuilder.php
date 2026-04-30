@@ -295,8 +295,8 @@ class EventFormBuilder
         $wf_id = 'straightToPublishing';
         $stp_wf_value = WorkflowParameter::VALUE_ALWAYS_ACTIVE; // as default value in workflows are always true.
         $wf_title = 'Straight to publishing'; // We set a default value here to avoid confusion in lang string replacements.
-        if (WorkflowParameter::where(['id' => $wf_id])->hasSets()) {
-            $workflow_parameter = WorkflowParameter::find($wf_id);
+        $workflow_parameter = WorkflowParameter::find($wf_id);
+        if ($workflow_parameter !== null) {
             $stp_wf_value =
                 $as_admin ?
                 $workflow_parameter->getDefaultValueAdmin() :
@@ -347,78 +347,34 @@ class EventFormBuilder
                     )
                 );
 
-            // Thumbnail timepoint timepicker input.
-            $target_accept_video_files = implode(',', $this->getMimeTypes());
-            $date_default = new \DateTime('today midnight');
-            $value_format_str = $date_default->format('H:i:s');
-            $timepoint_picker = $factory->dateTime(
+            // Thumbnail timepoint input. Expects HH:MM:SS, transformed to seconds.
+            $timepoint_picker = $factory->text(
                 $this->plugin->txt('upload_ui_thumbnail_timepoint'),
                 $this->plugin->txt('upload_ui_thumbnail_timepoint_info')
             )
-                ->withValue($value_format_str)
-                ->withTimeOnly(true)
-                ->withAdditionalOnLoadCode(fn(string $id): string => '
-                    // On show: Set min date, in order to prevent infinite loop.
-                    $("#' . $id . '").on("dp.show", function () {
-                        let minDate = new Date();
-                        minDate.setHours(0,0,0,0);
-                        $("#' . $id . '").data("DateTimePicker").minDate(minDate);
-                    });
-                    // On change: reset placeholder and the date value if clear is performed.
-                    $("#' . $id . '").on("dp.change", function ({date, oldDate}) {
-                        if (!date) {
-                            // Reset placeholder on clear.
-                            $("#' . $id . '").find("input").attr("placeholder", "00:00:00");
-                            // Reset value on clear.
-                            let resetDate = new Date();
-                            resetDate.setHours(0,0,0,0);
-                            $("#' . $id . '").data("DateTimePicker").date(resetDate);
+                ->withValue('00:00:01')
+                ->withAdditionalOnLoadCode(
+                    fn(string $id): string =>
+                        "document.getElementById('$id').querySelector('input').setAttribute('placeholder', '00:00:00');"
+                )
+                ->withAdditionalTransformation(
+                    $this->refinery_factory->custom()->constraint(
+                        fn($v): bool => is_string($v)
+                            && ($v === '' || preg_match('/^\d{1,3}:[0-5]\d:[0-5]\d$/', $v) === 1),
+                        $this->plugin->txt('upload_ui_thumbnail_timepoint_invalid')
+                    )
+                )
+                ->withAdditionalTransformation(
+                    $this->refinery_factory->custom()->transformation(
+                        function (string $v): int {
+                            if ($v === '') {
+                                return 0;
+                            }
+                            [$h, $m, $s] = array_map('intval', explode(':', $v));
+                            return $h * 3600 + $m * 60 + $s;
                         }
-                    });
-                    // Extra: set max duration based on uploaded video file.
-                    window.URL = window.URL || window.webkitURL;
-                    function bindEventExtractVideoDuration() {
-                        var file_inputs = $("input:file");
-                        if (file_inputs.length > 0) {
-                            file_inputs.each(function (i, el) {
-                                if ($(el).attr("accept") == "' . $target_accept_video_files . '") {
-                                    $(el).on("change" , function () {
-                                        let files = this.files;
-                                        let video = document.createElement("video");
-                                        video.preload = "metadata";
-                                        video.onloadedmetadata = function() {
-                                            const duration = video.duration;
-                                            const hours = parseInt(Math.floor(duration / 3600), 10);
-                                            const minutes = parseInt(Math.floor((duration % 3600) / 60), 10);
-                                            const remainingSeconds = parseInt(duration % 60, 10);
-                                            // Reset date.
-                                            const resetDate = new Date();
-                                            resetDate.setHours(0,0,0,0);
-                                            $("#' . $id . '").data("DateTimePicker").date(resetDate);
-                                            // Max date,
-                                            const maxDate = new Date();
-                                            maxDate.setHours(hours,minutes,remainingSeconds,0);
-                                            $("#' . $id . '").data("DateTimePicker").maxDate(maxDate);
-                                        }
-                                        video.src = URL.createObjectURL(files[0]);
-                                    });
-                                }
-                            });
-                        }
-                    }
-                    setTimeout(function () {
-                        bindEventExtractVideoDuration();
-                        $("[data-videoFileInput]").find(".ui-input-file-input-dropzone").on("drop", function () {
-                            bindEventExtractVideoDuration();
-                        });
-                        $("[data-videoFileInput]").find(".ui-input-file-input-dropzone > button").on("click", function () {
-                            bindEventExtractVideoDuration();
-                        });
-                    }, 500);')
-                ->withAdditionalPickerconfig([
-                    'useCurrent' => false,
-                    'format' => 'HH:mm:ss',
-                ]);
+                    )
+                );
 
             if ($thumbnail_upload_mode_is_both) {
                 $file_input_group = $factory->group(
