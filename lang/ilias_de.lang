@@ -182,6 +182,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#Wenn aktiv, werden die Links bereits signiert von Opencast ausgeliefert. Dies kann die Performanz beeinflussen. Beachten Sie, dass obige Konfiguration trotzdem benötigt wird, da in gewissen Situationen Links vom Plugin signiert werden müssen.
 config_enable_chat#:#Chat aktivieren
 config_enable_chat_info#:#Aktiviert einen On-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
+config_enable_cutting#:#Schneiden aktivieren
+config_enable_cutting_info#:#Ermöglicht es Benutzern, auf das Schnittwerkzeug (Video-Editor) für Videos zuzugreifen. Wenn deaktiviert, ist die Aktion "Schneiden" nicht im Aktionsmenü der Ereignisse verfügbar.
 config_ingest_upload#:#Upload via Ingest-Nodes
 config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
