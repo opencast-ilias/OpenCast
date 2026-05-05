@@ -800,3 +800,20 @@ presenter_desc#:#Referent/in Z-A
 owner_asc#:#Besitzer/in A-Z
 owner_desc#:#Besitzer/in Z-A
 event_possible_best_action#:#Mögliche Aktion
+config_jwt_security_enabled#:#JWT-Authentifizierung aktivieren
+config_jwt_security_enabled_info#:#Aktiviert die Authentifizierung mit JSON Web Tokens (JWT) für verbesserte Sicherheit beim Zugriff auf Opencast-Ressourcen.
+config_jwt_security_privatekey#:#Privater Schlüssel (vollständiger Text)
+config_jwt_security_privatekey_info#:#Fügen Sie den vollständigen privaten Schlüssel ein, der zum Signieren von JWT-Token für die Opencast-Authentifizierung verwendet wird.<br>HINWEIS: Klicken Sie beim Bearbeiten auf das Augensymbol, um den Schlüssel anzuzeigen.
+config_jwt_security_privatekey_show_icon#:#Anzeigen
+config_jwt_security_privatekey_hide_icon#:#Ausblenden
+config_jwt_security_privatekey_hidden_element_title#:#Um dieses Feld zu bearbeiten, klicken Sie bitte zuerst auf das Augensymbol, um den Inhalt anzuzeigen.
+config_jwt_security_expiration#:#Ablaufdauer des Tokens (Sekunden)
+config_jwt_security_expiration_info#:#Legt fest, wie lange das JWT-Token in Sekunden gültig bleibt.
+config_jwt_security_algorithm#:#Signaturalgorithmus
+config_jwt_security_algorithm_info#:#Gibt den Algorithmus an, der zum Signieren von JWT-Token für die Authentifizierung verwendet wird.
+config_jwt_security_studio_roles#:#Benutzerzugriffsrollen für Studio
+config_jwt_security_studio_roles_info#:#Gibt die Benutzerrollen an, die Zugriff auf Opencast Studio erhalten.
+config_jwt_security_editor_roles#:#Benutzerzugriffsrollen für Editor
+config_jwt_security_editor_roles_info#:#Gibt die Benutzerrollen an, die Zugriff auf Opencast Editor erhalten.
+config_jwt_security_annotation_tool_roles#:#Benutzerzugriffsrollen für Annotation-Tool
+config_jwt_security_annotation_tool_roles_info#:#Definiert die benötigten Benutzerrollen für den Zugriff auf das Opencast Annotation-Tool.

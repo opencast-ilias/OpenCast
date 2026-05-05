@@ -33,4 +33,11 @@ abstract class PlayerDataBuilder
      * @throws xoctException
      */
     abstract public function buildStreamingData(): array;
+
+    /**
+     * Make sure that the builder is capable of providing player with JWT Iframe.
+     *
+     * @return bool
+     */
+    abstract public function shouldPlayInJWTIframe(): bool;
 }

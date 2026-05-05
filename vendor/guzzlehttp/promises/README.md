@@ -1,4 +1,3 @@
-
 # Guzzle Promises
 
 [Promises/A+](https://promisesaplus.com/) implementation that handles promise
@@ -42,7 +41,7 @@ composer require guzzlehttp/promises
 | Version | Status              | PHP Version  |
 |---------|---------------------|--------------|
 | 1.x     | Security fixes only | >=5.5,<8.3   |
-| 2.x     | Latest              | >=7.2.5,<8.5 |
+| 2.x     | Latest              | >=7.2.5,<8.6 |
 
 
 ## Quick Start

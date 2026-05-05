@@ -356,6 +356,31 @@ class ilObjOpenCastAccess extends ilObjectPluginAccess
         return $invitations !== [];
     }
 
+
+    /**
+     * Checks if a user has read access on an event for JWT token refresh.
+     *
+     * This method verifies whether a user can access a specific event for the purpose of refreshing JWT tokens.
+     * It retrieves the user and object settings, then delegates to hasReadAccessOnEvent to perform the actual access check.
+     *
+     * @param Event  $event   The event to check access for
+     * @param int    $obj_id  The object ID of the OpenCast object
+     * @param int    $user_id The user ID (optional, defaults to current user)
+     * @return bool True if the user has read access, false otherwise
+     */
+    public static function hasReadAccessOnEventForRefreshJwt(Event $event, int $obj_id, ?int $user_id = null): bool
+    {
+        global $DIC;
+        if (empty($user_id)) {
+            $user_id = $DIC->user()->getId();
+        }
+
+        $xoctUser = xoctUser::getInstance($user_id);
+        $objectSettings = ObjectSettings::findOrGetInstance($obj_id);
+
+        return self::hasReadAccessOnEvent($event, $xoctUser, $objectSettings);
+    }
+
     protected static function initRoleMembers(): void
     {
         global $DIC;

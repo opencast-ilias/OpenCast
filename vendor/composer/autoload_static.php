@@ -6,77 +6,164 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
 {
-    public static $files = array(
+    public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
-    public static $prefixLengthsPsr4 = array(
-        'P' =>
-        array(
+    public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'Psr\\Clock\\' => 10,
         ),
-        'O' =>
-        array(
+        'O' => 
+        array (
             'OpencastApi\\Util\\' => 17,
             'OpencastApi\\Rest\\' => 17,
             'OpencastApi\\Mock\\' => 17,
             'OpencastApi\\' => 12,
         ),
-        'G' =>
-        array(
+        'L' => 
+        array (
+            'Lcobucci\\JWT\\' => 13,
+        ),
+        'G' => 
+        array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
     );
 
-    public static $prefixDirsPsr4 = array(
-        'Psr\\Http\\Message\\' =>
-        array(
+    public static $prefixDirsPsr4 = array (
+        'Psr\\Http\\Message\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
-        'Psr\\Http\\Client\\' =>
-        array(
+        'Psr\\Http\\Client\\' => 
+        array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
-        'OpencastApi\\Util\\' =>
-        array(
+        'Psr\\Clock\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/clock/src',
+        ),
+        'OpencastApi\\Util\\' => 
+        array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util',
         ),
-        'OpencastApi\\Rest\\' =>
-        array(
+        'OpencastApi\\Rest\\' => 
+        array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest',
         ),
-        'OpencastApi\\Mock\\' =>
-        array(
+        'OpencastApi\\Mock\\' => 
+        array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock',
         ),
-        'OpencastApi\\' =>
-        array(
+        'OpencastApi\\' => 
+        array (
             0 => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi',
         ),
-        'GuzzleHttp\\Psr7\\' =>
-        array(
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
         ),
-        'GuzzleHttp\\Promise\\' =>
-        array(
+        'GuzzleHttp\\Promise\\' => 
+        array (
             0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
         ),
-        'GuzzleHttp\\' =>
-        array(
+        'GuzzleHttp\\' => 
+        array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
     );
 
-    public static $classMap = array(
+    public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'ILIAS\\UI\\Implementation\\Component\\Input\\Field\\ChunkedFile' => __DIR__ . '/../..' . '/src/UI/Form/ChunkedFile.php',
-        'ILIAS\\UI\\Implementation\\Component\\Input\\Field\\ChunkedFileRenderer' => __DIR__ . '/../..' . '/src/UI/Form/ChunkedFileRenderer.php',
+        'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Builder.php',
+        'Lcobucci\\JWT\\ClaimsFormatter' => __DIR__ . '/..' . '/lcobucci/jwt/src/ClaimsFormatter.php',
+        'Lcobucci\\JWT\\Configuration' => __DIR__ . '/..' . '/lcobucci/jwt/src/Configuration.php',
+        'Lcobucci\\JWT\\Decoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Decoder.php',
+        'Lcobucci\\JWT\\Encoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoder.php',
+        'Lcobucci\\JWT\\Encoding\\CannotDecodeContent' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/CannotDecodeContent.php',
+        'Lcobucci\\JWT\\Encoding\\CannotEncodeContent' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/CannotEncodeContent.php',
+        'Lcobucci\\JWT\\Encoding\\ChainedFormatter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/ChainedFormatter.php',
+        'Lcobucci\\JWT\\Encoding\\JoseEncoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/JoseEncoder.php',
+        'Lcobucci\\JWT\\Encoding\\MicrosecondBasedDateConversion' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/MicrosecondBasedDateConversion.php',
+        'Lcobucci\\JWT\\Encoding\\UnifyAudience' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/UnifyAudience.php',
+        'Lcobucci\\JWT\\Encoding\\UnixTimestampDates' => __DIR__ . '/..' . '/lcobucci/jwt/src/Encoding/UnixTimestampDates.php',
+        'Lcobucci\\JWT\\Exception' => __DIR__ . '/..' . '/lcobucci/jwt/src/Exception.php',
+        'Lcobucci\\JWT\\JwtFacade' => __DIR__ . '/..' . '/lcobucci/jwt/src/JwtFacade.php',
+        'Lcobucci\\JWT\\Parser' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parser.php',
+        'Lcobucci\\JWT\\Signer' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer.php',
+        'Lcobucci\\JWT\\Signer\\Blake2b' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Blake2b.php',
+        'Lcobucci\\JWT\\Signer\\CannotSignPayload' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/CannotSignPayload.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\ConversionFailed' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/ConversionFailed.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/MultibyteStringConverter.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\SignatureConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/SignatureConverter.php',
+        'Lcobucci\\JWT\\Signer\\Eddsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Eddsa.php',
+        'Lcobucci\\JWT\\Signer\\Hmac' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\InvalidKeyProvided' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/InvalidKeyProvided.php',
+        'Lcobucci\\JWT\\Signer\\Key' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key.php',
+        'Lcobucci\\JWT\\Signer\\Key\\FileCouldNotBeRead' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key/FileCouldNotBeRead.php',
+        'Lcobucci\\JWT\\Signer\\Key\\InMemory' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key/InMemory.php',
+        'Lcobucci\\JWT\\Signer\\OpenSSL' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/OpenSSL.php',
+        'Lcobucci\\JWT\\Signer\\Rsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha512.php',
+        'Lcobucci\\JWT\\SodiumBase64Polyfill' => __DIR__ . '/..' . '/lcobucci/jwt/src/SodiumBase64Polyfill.php',
+        'Lcobucci\\JWT\\Token' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token.php',
+        'Lcobucci\\JWT\\Token\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/Builder.php',
+        'Lcobucci\\JWT\\Token\\DataSet' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/DataSet.php',
+        'Lcobucci\\JWT\\Token\\InvalidTokenStructure' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/InvalidTokenStructure.php',
+        'Lcobucci\\JWT\\Token\\Parser' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/Parser.php',
+        'Lcobucci\\JWT\\Token\\Plain' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/Plain.php',
+        'Lcobucci\\JWT\\Token\\RegisteredClaimGiven' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/RegisteredClaimGiven.php',
+        'Lcobucci\\JWT\\Token\\RegisteredClaims' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/RegisteredClaims.php',
+        'Lcobucci\\JWT\\Token\\Signature' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/Signature.php',
+        'Lcobucci\\JWT\\Token\\UnsupportedHeaderFound' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token/UnsupportedHeaderFound.php',
+        'Lcobucci\\JWT\\UnencryptedToken' => __DIR__ . '/..' . '/lcobucci/jwt/src/UnencryptedToken.php',
+        'Lcobucci\\JWT\\Validation\\Constraint' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint.php',
+        'Lcobucci\\JWT\\Validation\\ConstraintViolation' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/ConstraintViolation.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\CannotValidateARegisteredClaim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/CannotValidateARegisteredClaim.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\HasClaim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/HasClaim.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\HasClaimWithValue' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/HasClaimWithValue.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\IdentifiedBy' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/IdentifiedBy.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\IssuedBy' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/IssuedBy.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\LeewayCannotBeNegative' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/LeewayCannotBeNegative.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\LooseValidAt' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/LooseValidAt.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\PermittedFor' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/PermittedFor.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\RelatedTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/RelatedTo.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\SignedWith' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/SignedWith.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\SignedWithOneInSet' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/SignedWithOneInSet.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\SignedWithUntilDate' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/SignedWithUntilDate.php',
+        'Lcobucci\\JWT\\Validation\\Constraint\\StrictValidAt' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Constraint/StrictValidAt.php',
+        'Lcobucci\\JWT\\Validation\\NoConstraintsGiven' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/NoConstraintsGiven.php',
+        'Lcobucci\\JWT\\Validation\\RequiredConstraintsViolated' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/RequiredConstraintsViolated.php',
+        'Lcobucci\\JWT\\Validation\\SignedWith' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/SignedWith.php',
+        'Lcobucci\\JWT\\Validation\\ValidAt' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/ValidAt.php',
+        'Lcobucci\\JWT\\Validation\\Validator' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validation/Validator.php',
+        'Lcobucci\\JWT\\Validator' => __DIR__ . '/..' . '/lcobucci/jwt/src/Validator.php',
+        'OpencastApi\\Auth\\JWT\\OcJwtBuilder' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Auth/JWT/OcJwtBuilder.php',
+        'OpencastApi\\Auth\\JWT\\OcJwtClaim' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Auth/JWT/OcJwtClaim.php',
+        'OpencastApi\\Auth\\JWT\\OcJwtHandler' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Auth/JWT/OcJwtHandler.php',
+        'OpencastApi\\Auth\\JWT\\OcJwtValidationConstraint' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Auth/JWT/OcJwtValidationConstraint.php',
         'OpencastApi\\Mock\\OcMockHanlder' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Mock/OcMockHanlder.php',
         'OpencastApi\\Opencast' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Opencast.php',
         'OpencastApi\\Rest\\OcAgentsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcAgentsApi.php',
@@ -85,6 +172,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'OpencastApi\\Rest\\OcEventAdminNg' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcEventAdminNg.php',
         'OpencastApi\\Rest\\OcEventsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcEventsApi.php',
         'OpencastApi\\Rest\\OcGroupsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcGroupsApi.php',
+        'OpencastApi\\Rest\\OcInfo' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcInfo.php',
         'OpencastApi\\Rest\\OcIngest' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcIngest.php',
         'OpencastApi\\Rest\\OcListProvidersApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcListProvidersApi.php',
         'OpencastApi\\Rest\\OcPlaylistsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcPlaylistsApi.php',
@@ -101,6 +189,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'OpencastApi\\Rest\\OcWorkflow' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflow.php',
         'OpencastApi\\Rest\\OcWorkflowsApi' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflowsApi.php',
         'OpencastApi\\Util\\OcUtils' => __DIR__ . '/..' . '/elan-ev/opencast-api/src/OpencastApi/Util/OcUtils.php',
+        'Psr\\Clock\\ClockInterface' => __DIR__ . '/..' . '/psr/clock/src/ClockInterface.php',
         'WaitOverlay' => __DIR__ . '/../..' . '/src/UI/WaitOverlay.php',
         'ilObjOpenCast' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCast.php',
         'ilObjOpenCastAccess' => __DIR__ . '/../..' . '/classes/class.ilObjOpenCastAccess.php',
@@ -114,7 +203,6 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'ilOpenCastUpdateRBACPermsListObjective' => __DIR__ . '/../..' . '/classes/Setup/class.ilOpenCastUpdateRBACPermsListObjective.php',
         'ilOpenCastUpdateStepsExecutedObjective' => __DIR__ . '/../..' . '/classes/Setup/class.ilOpenCastUpdateStepsExecutedObjective.php',
         'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\AbstractCtrlAwareChunkedUploadHandler' => __DIR__ . '/../..' . '/src/UI/Form/AbstractCtrlAwareChunkedUploadHandler.php',
-        'srag\\Plugins\\OpenCast\\UI\\Component\\Input\\Field\\Loader' => __DIR__ . '/../..' . '/src/UI/Form/Loader.php',
         'srag\\Plugins\\Opencast\\API\\API' => __DIR__ . '/../..' . '/src/API/API.php',
         'srag\\Plugins\\Opencast\\API\\Config' => __DIR__ . '/../..' . '/src/API/Config.php',
         'srag\\Plugins\\Opencast\\API\\DecorateProxy' => __DIR__ . '/../..' . '/src/API/DecorateProxy.php',
@@ -231,8 +319,6 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Model\\Series\\SeriesRepository' => __DIR__ . '/../..' . '/src/Model/Series/SeriesRepository.php',
         'srag\\Plugins\\Opencast\\Model\\TermsOfUse\\AcceptedToU' => __DIR__ . '/../..' . '/src/Model/TermsOfUse/AcceptedToU.php',
         'srag\\Plugins\\Opencast\\Model\\TermsOfUse\\ToUManager' => __DIR__ . '/../..' . '/src/Model/TermsOfUse/ToUManager.php',
-        'srag\\Plugins\\Opencast\\Model\\UserSettings\\UserSetting' => __DIR__ . '/../..' . '/src/Model/UserSettings/UserSetting.php',
-        'srag\\Plugins\\Opencast\\Model\\UserSettings\\UserSettingsRepository' => __DIR__ . '/../..' . '/src/Model/UserSettings/UserSettingsRepository.php',
         'srag\\Plugins\\Opencast\\Model\\User\\xoctUser' => __DIR__ . '/../..' . '/src/Model/User/xoctUser.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowInstance\\WorkflowInstance' => __DIR__ . '/../..' . '/src/Model/WorkflowInstance/WorkflowInstance.php',
         'srag\\Plugins\\Opencast\\Model\\WorkflowInstance\\WorkflowInstanceCollection' => __DIR__ . '/../..' . '/src/Model/WorkflowInstance/WorkflowInstanceCollection.php',
@@ -251,20 +337,29 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => __DIR__ . '/../..' . '/src/UI/EventFormBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => __DIR__ . '/../..' . '/src/UI/EventTableBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Action' => __DIR__ . '/../..' . '/src/UI/Integration/Action.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\ActionType' => __DIR__ . '/../..' . '/src/UI/Integration/ActionType.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Commons' => __DIR__ . '/../..' . '/src/UI/Integration/Commons.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionParameter' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionParameter.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionParameters' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionParameters.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionTarget' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionTarget.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventActionTargetResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventActionTargetResolver.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventSettings' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventSettings.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\EventSettingsValueResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Event/EventSettingsValueResolver.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\NullEventActionResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Event/NullEventActionResolver.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\NullEventSettingsResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Event/NullEventSettingsResolver.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Event\\Publications' => __DIR__ . '/../..' . '/src/UI/Integration/Event/Publications.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Events' => __DIR__ . '/../..' . '/src/UI/Integration/Events.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Integration' => __DIR__ . '/../..' . '/src/UI/Integration/Integration.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\IntegrationBuilder' => __DIR__ . '/../..' . '/src/UI/Integration/IntegrationBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\MyEvents' => __DIR__ . '/../..' . '/src/UI/Integration/MyEvents.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series' => __DIR__ . '/../..' . '/src/UI/Integration/Series.php',
+        'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\NullSeriesActionResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Series/NullSeriesActionResolver.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionParameter' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionParameter.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionParameters' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionParameters.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionTarget' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionTarget.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Series\\SeriesActionTargetResolver' => __DIR__ . '/../..' . '/src/UI/Integration/Series/SeriesActionTargetResolver.php',
         'srag\\Plugins\\Opencast\\UI\\LegacyFormWrapper' => __DIR__ . '/../..' . '/src/UI/LegacyFormWrapper.php',
+        'srag\\Plugins\\Opencast\\UI\\MakeURI' => __DIR__ . '/../..' . '/src/UI/MakeURI.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\Config\\MDConfigTable' => __DIR__ . '/../..' . '/src/UI/Metadata/Config/MDConfigTable.php',
         'srag\\Plugins\\Opencast\\UI\\Metadata\\MDFormItemBuilder' => __DIR__ . '/../..' . '/src/UI/Metadata/MDFormItemBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Modal\\EventModals' => __DIR__ . '/../..' . '/src/UI/Modal/EventModals.php',
@@ -291,9 +386,11 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Util\\Transformator\\ACLtoXML' => __DIR__ . '/../..' . '/src/Util/Transformator/ACLtoXML.php',
         'srag\\Plugins\\Opencast\\Util\\Transformator\\MetadataToXML' => __DIR__ . '/../..' . '/src/Util/Transformator/MetadataToXML.php',
         'srag\\Plugins\\Opencast\\Util\\UpdateCheck' => __DIR__ . '/../..' . '/src/Util/UpdateCheck.php',
+        'srag\\Plugins\\Opencast\\Views\\Event\\CreateEvent' => __DIR__ . '/../..' . '/src/Views/Event/CreateEvent.php',
         'srag\\Plugins\\Opencast\\Views\\Series\\BaseActionResolver' => __DIR__ . '/../..' . '/src/Views/BaseActionResolver.php',
         'srag\\Plugins\\Opencast\\Views\\Series\\Display' => __DIR__ . '/../..' . '/src/Views/Series/Display.php',
         'srag\\Plugins\\Opencast\\Views\\Series\\EventActionResolver' => __DIR__ . '/../..' . '/src/Views/Event/EventActionResolver.php',
+        'srag\\Plugins\\Opencast\\Views\\Series\\EventSettingsResolver' => __DIR__ . '/../..' . '/src/Views/Event/EventSettingsResolver.php',
         'srag\\Plugins\\Opencast\\Views\\Series\\SeriesActionResolver' => __DIR__ . '/../..' . '/src/Views/Series/SeriesActionResolver.php',
         'srag\\Plugins\\Opencast\\Views\\ViewElement' => __DIR__ . '/../..' . '/src/Views/ViewElement.php',
         'xoct' => __DIR__ . '/../..' . '/classes/class.xoct.php',
@@ -310,7 +407,6 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'xoctEventMetadataConfigGUI' => __DIR__ . '/../..' . '/classes/Conf/Metadata/class.xoctEventMetadataConfigGUI.php',
         'xoctEventRenderer' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventRenderer.php',
         'xoctEventTableGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventTableGUI.php',
-        'xoctEventTileGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctEventTileGUI.php',
         'xoctException' => __DIR__ . '/../..' . '/classes/class.xoctException.php',
         'xoctFileUploadHandlerGUI' => __DIR__ . '/../..' . '/classes/Event/class.xoctFileUploadHandlerGUI.php',
         'xoctGUI' => __DIR__ . '/../..' . '/classes/class.xoctGUI.php',

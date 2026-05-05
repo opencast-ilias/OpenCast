@@ -24,6 +24,10 @@ class xoctSecureLink
      */
     protected static function sign(string $url, ?string $valid_until = null, ?bool $restict_ip = false)
     {
+        // JWT takes precedence.
+        if (!empty(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ENABLED))) {
+            return $url;
+        }
         $opencastContainer = Init::init();
         if (str_contains((string) $url, 'policy=') && str_contains((string) $url, 'signature=')) {
             // already signed, e.g. when presigning is active
