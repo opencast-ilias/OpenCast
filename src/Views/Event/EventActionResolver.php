@@ -6,30 +6,19 @@ namespace srag\Plugins\Opencast\Views\Series;
 
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTarget;
-use ILIAS\HTTP\Services;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameters;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionParameter;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\UI\Integration\Action;
-use srag\Plugins\Opencast\Util\Locale\Translator;
 use srag\Plugins\Opencast\UI\Integration\ActionType;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
-use srag\Plugins\Opencast\Model\Config\PluginConfig;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
  */
 class EventActionResolver extends BaseActionResolver implements EventActionTargetResolver
 {
-    public function __construct(
-        Translator $translator,
-        Services $http,
-        \ilCtrlInterface $ctrl
-    ) {
-        parent::__construct($translator, $http, $ctrl);
-    }
-
     protected function setParametersForOtherClasses(?EventActionParameters $parameter): void
     {
         // Set Parameters for other classes
@@ -204,7 +193,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
         return null;
     }
 
-    private function isEventAccessible(Event $event): bool
+    private function isEventAccessible(Event $event, ?EventSettingsValueResolver $settings = null): bool
     {
         $processing_state = $event->getProcessingState();
 
@@ -219,13 +208,18 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 $accessible = true;
             }
             if ($processing_state === Event::STATE_LIVE_SCHEDULED) {
-                $start = $event->getScheduling()->getStart()->getTimestamp();
-                $accessible_before_start = ((int) PluginConfig::getConfig(
-                        PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
-                    )) * 60;
+                $scheduling = $event->getScheduling();
+                if ($scheduling === null || $scheduling->getStart() === null || $scheduling->getEnd() === null) {
+                    return false;
+                }
+                $start = $scheduling->getStart()->getTimestamp();
+                $accessible_before_start = (int) (($settings?->resolve(
+                        EventSettings::START_X_MINUTES_BEFORE_LIVE
+                    ) ?? 0)) * 60;
                 $accessible_from = $start - $accessible_before_start;
-                $accessible_to = $event->getScheduling()->getEnd()->getTimestamp();
-                $accessible =  ($accessible_from < time()) && ($accessible_to > time());
+                $accessible_to = $scheduling->getEnd()->getTimestamp();
+                $now = time();
+                $accessible = ($accessible_from <= $now) && ($accessible_to >= $now);
             }
         }
 
@@ -305,7 +299,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::PLAY:
-                return $this->isEventAccessible($event);
+                return $this->isEventAccessible($event, $settings);
             case EventActionTarget::DOWNLOAD:
                 return \ilObjOpenCastAccess::checkAction(
                     \ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
@@ -334,7 +328,7 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
             return null;
         }
 
-        if (!$this->supports($mapped_action, $parameter, null)) {
+        if (!$this->supports($mapped_action, $parameter)) {
             return null;
         }
 
