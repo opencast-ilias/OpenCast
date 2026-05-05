@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 9.4.0
+- [FEATURE] JWT-Support
+- [FEATURE] Add "Enable Cutting" configuration and related UI elements (incl. enable by default)
+- [FIX] paella player: align keyboard shortcut rewind with button 10s, fixes #491
+- [FIX] Chrome browser: .mkv Uploads are rejected: "Files of type 'video/matroska' are not allowed" #489
+
 ## Version 9.3.1
 - fix for getting the user who reported a problem
 
