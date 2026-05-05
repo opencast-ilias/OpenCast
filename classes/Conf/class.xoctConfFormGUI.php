@@ -38,7 +38,7 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $container = Init::init($DIC);
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->plugin = $container->plugin();
-        $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/js/opencast/dist/index.js');
+        $this->main_tpl->addJavaScript($this->plugin->getRelativeDirectory() . '/js/opencast/dist/index.js');
         $this->main_tpl->addCss($this->plugin->getStyleSheetLocation('default/password_toggle.css'));
         parent::__construct();
         $this->initForm();

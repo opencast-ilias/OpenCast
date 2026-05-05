@@ -18,6 +18,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
     private bool $player_in_modal;
     private bool $show_best_action = true; // TODO make configurable
     private bool $edit_all_metadata;
+    private int $minutes_before_live;
 
     public function __construct(
         ObjectSettings $object_settings
@@ -29,6 +30,9 @@ class EventSettingsResolver implements EventSettingsValueResolver
         $this->edit_all_metadata = ((int) PluginConfig::getConfig(
             PluginConfig::F_SCHEDULED_METADATA_EDITABLE
         )) === PluginConfig::ALL_METADATA;
+        $this->minutes_before_live = ((int) (PluginConfig::getConfig(
+            PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
+        ) ?? 30));
     }
 
     public function resolve(EventSettings $setting): mixed
@@ -46,6 +50,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
                 EventSettingsValueResolver::MD_DESCRITION,
                 EventSettingsValueResolver::MD_PRESENTER,
             ],
+            EventSettings::START_X_MINUTES_BEFORE_LIVE => $this->minutes_before_live,
             default => null
         };
     }

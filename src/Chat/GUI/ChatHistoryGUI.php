@@ -71,7 +71,7 @@ class ChatHistoryGUI
             $template->parseCurrentBlock();
         }
 
-        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
+        $chat_css_path = $this->plugin->getRelativeDirectory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             $this->main_tpl->addCss($chat_css_path);
         } else {
