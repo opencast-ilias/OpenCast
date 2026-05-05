@@ -333,6 +333,14 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $cbs2->setRequired(false);
         $cbs->addSubItem($cbs2);
 
+        // ENABLE CUTTING
+        $cb = new ilCheckboxInputGUI(
+            $this->getLocaleString(PluginConfig::F_ENABLE_CUTTING),
+            PluginConfig::F_ENABLE_CUTTING
+        );
+        $cb->setInfo($this->getLocaleString(PluginConfig::F_ENABLE_CUTTING . '_info'));
+        $this->addItem($cb);
+
         // MODALS
         $cb = new ilCheckboxInputGUI($this->getLocaleString(PluginConfig::F_USE_MODALS), PluginConfig::F_USE_MODALS);
         $cb->setInfo($this->getLocaleString(PluginConfig::F_USE_MODALS . '_info'));
