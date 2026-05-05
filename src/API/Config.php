@@ -28,7 +28,8 @@ final class Config
         string $api_version = '',
         int $timeout = 0,
         int $connect_timeout = 0,
-        ?string $presentation_node_url = null
+        ?string $presentation_node_url = null,
+        ?array $jwt = null
     ) {
         $this->config = [
             'url' => rtrim(rtrim($api_url, '/'), '/api'),
@@ -39,6 +40,10 @@ final class Config
             'connect_timeout' => ($connect_timeout > 0 ? (intval($connect_timeout) / 1000) : $connect_timeout),
             'handler' => $handler_stack
         ];
+
+        if (!empty($jwt)) {
+            $this->config['jwt'] = $jwt;
+        }
 
         $this->engage_config = $this->config;
         if ($presentation_node_url !== null) {

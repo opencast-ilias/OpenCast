@@ -6,7 +6,7 @@ body {
 	height: 100%;
 }
 
-div#playerContainer {
+div#playerContainer, iframe#opencastPaellaJwtPlayer {
 	font-family: roboto;
 	font-weight: 600;
 	display: inline-block !important;
@@ -14,6 +14,16 @@ div#playerContainer {
 	float: left;
 	width: calc(100% - 290px);
 	height: 100%;
+}
+
+iframe#opencastPaellaJwtPlayer {
+	border: 0 !important;
+	box-shadow: none !important;
+}
+
+
+#opencastPaellaJwtPlayer.hidden {
+	display: none !important;
 }
 
 #paellaPlayer_loader {
@@ -39,6 +49,10 @@ span.xoct_pseudo_element {
 	z-index: 100;
 }
 
+.overlay_live.hidden {
+	display: none;
+}
+
 .overlay_live_text {
 	display: inline-block;
 	font-size: 32px;
@@ -49,7 +63,7 @@ span.xoct_pseudo_element {
 		width: 100%;
 	}
 
-	div#playerContainer {
+	div#playerContainer, div#opencastPaellaJwtPlayer {
 		width: 100% !important;
 	}
 

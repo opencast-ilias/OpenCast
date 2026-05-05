@@ -150,6 +150,14 @@ class PluginConfig extends ActiveRecord
     public const F_THUMBNAIL_UPLOAD_MODE = 'thumbnail_config_upload_mode';
     public const F_THUMBNAIL_ACCEPTED_MIMETYPES = 'thumbnail_config_accepted_mimetypes';
 
+    public const F_JWT_SECURITY_ENABLED = 'jwt_security_enabled';
+    public const F_JWT_SECURITY_PK = 'jwt_security_privatekey';
+    public const F_JWT_SECURITY_EXP = 'jwt_security_expiration';
+    public const F_JWT_SECURITY_ALG = 'jwt_security_algorithm';
+    public const F_JWT_SECURITY_STUDIO_ROLES = 'jwt_security_studio_roles';
+    public const F_JWT_SECURITY_EDITOR_ROLES = 'jwt_security_editor_roles';
+    public const F_JWT_SECURITY_ANNOTATION_TOOL_ROLES = 'jwt_security_annotation_tool_roles';
+
     /**
      * @var array
      */

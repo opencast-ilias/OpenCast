@@ -7,6 +7,7 @@ import Tiles from './UI/Tiles';
 import StartWorkflow from './Workflow/StartWorkflow';
 import PaellaPlayer from './Paella/paella-player.min.js';
 import FileInputMutationObserver from './UI/FileInputMutationObserver';
+import JwtModule from './JWT/JwtModule';
 
 il.Opencast = il.Opencast || {};
 il.Opencast.Form = il.Opencast.Form || {};
@@ -27,3 +28,6 @@ il.Opencast.Paella.player = PaellaPlayer;
 
 // Initialize components without config
 il.Opencast.UI.Tiles.init();
+
+// Opencast JWT Module.
+il.Opencast.JWT = new JwtModule($);

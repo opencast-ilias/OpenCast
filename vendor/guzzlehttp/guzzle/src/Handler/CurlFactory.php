@@ -125,7 +125,9 @@ class CurlFactory implements CurlFactoryInterface
         unset($easy->handle);
 
         if (\count($this->handles) >= $this->maxHandles) {
-            \curl_close($resource);
+            if (PHP_VERSION_ID < 80000) {
+                \curl_close($resource);
+            }
         } else {
             // Remove all callback functions as they can hold onto references
             // and are not cleaned up by curl_reset. Using curl_setopt_array
@@ -651,9 +653,9 @@ class CurlFactory implements CurlFactoryInterface
             }
         } catch (\RuntimeException $e) {
             $ctx['error'] = 'The connection unexpectedly failed without '
-                . 'providing an error. The request would have been retried, '
-                . 'but attempting to rewind the request body failed. '
-                . 'Exception: ' . $e;
+                .'providing an error. The request would have been retried, '
+                .'but attempting to rewind the request body failed. '
+                .'Exception: '.$e;
 
             return self::createRejection($easy, $ctx);
         }
@@ -663,11 +665,11 @@ class CurlFactory implements CurlFactoryInterface
             $easy->options['_curl_retries'] = 1;
         } elseif ($easy->options['_curl_retries'] == 2) {
             $ctx['error'] = 'The cURL request was retried 3 times '
-                . 'and did not succeed. The most likely reason for the failure '
-                . 'is that cURL was unable to rewind the body of the request '
-                . 'and subsequent retries resulted in the same error. Turn on '
-                . 'the debug option to see what went wrong. See '
-                . 'https://bugs.php.net/bug.php?id=47204 for more information.';
+                .'and did not succeed. The most likely reason for the failure '
+                .'is that cURL was unable to rewind the body of the request '
+                .'and subsequent retries resulted in the same error. Turn on '
+                .'the debug option to see what went wrong. See '
+                .'https://bugs.php.net/bug.php?id=47204 for more information.';
 
             return self::createRejection($easy, $ctx);
         } else {
@@ -729,7 +731,10 @@ class CurlFactory implements CurlFactoryInterface
     public function __destruct()
     {
         foreach ($this->handles as $id => $handle) {
-            \curl_close($handle);
+            if (PHP_VERSION_ID < 80000) {
+                \curl_close($handle);
+            }
+
             unset($this->handles[$id]);
         }
     }

@@ -90,9 +90,9 @@ class MessageFormatter implements MessageFormatterInterface
                         break;
                     case 'req_headers':
                         $result = \trim($request->getMethod()
-                                . ' ' . $request->getRequestTarget())
-                            . ' HTTP/' . $request->getProtocolVersion() . "\r\n"
-                            . $this->headers($request);
+                                .' '.$request->getRequestTarget())
+                            .' HTTP/'.$request->getProtocolVersion()."\r\n"
+                            .$this->headers($request);
                         break;
                     case 'res_headers':
                         $result = $response ?
@@ -101,7 +101,7 @@ class MessageFormatter implements MessageFormatterInterface
                                 $response->getProtocolVersion(),
                                 $response->getStatusCode(),
                                 $response->getReasonPhrase()
-                            ) . "\r\n" . $this->headers($response)
+                            )."\r\n".$this->headers($response)
                             : 'NULL';
                         break;
                     case 'req_body':
@@ -191,7 +191,7 @@ class MessageFormatter implements MessageFormatterInterface
     {
         $result = '';
         foreach ($message->getHeaders() as $name => $values) {
-            $result .= $name . ': ' . \implode(', ', $values) . "\r\n";
+            $result .= $name.': '.\implode(', ', $values)."\r\n";
         }
 
         return \trim($result);
