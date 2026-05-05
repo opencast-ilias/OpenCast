@@ -53,7 +53,7 @@ class ChatGUI
             $url .= '&host=' . $host;
         }
 
-        $template = new ilTemplate($this->plugin->getRelativeDirectory() . '/templates/default/Chat/iframe.html', true, true);
+        $template = new ilTemplate($this->plugin->getDirectory() . '/templates/default/Chat/iframe.html', true, true);
         $template->setVariable('URL', $url);
         $template->setVariable(
             'REFRESH_ICON',
