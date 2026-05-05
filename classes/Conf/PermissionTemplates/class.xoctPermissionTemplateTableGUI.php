@@ -55,7 +55,7 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
 
         new WaitOverlay($this->main_tpl); // TODO check if needed
 
-        $this->main_tpl->addJavaScript($this->plugin->getDirectory() . '/templates/default/sortable.js');
+        $this->main_tpl->addJavaScript($this->plugin->getRelativeDirectory() . '/templates/default/sortable.js');
         $base_link = $this->ctrl->getLinkTarget($this->parent_obj, 'reorder', '', true);
         $this->main_tpl->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
 

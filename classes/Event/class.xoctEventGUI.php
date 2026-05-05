@@ -198,12 +198,12 @@ class xoctEventGUI extends xoctGUI
         $this->main_tpl->addJavaScript($this->plugin->getRelativeDirectory() . '/js/opencast/dist/index.js');
 
         $this->main_tpl->addCss(
-            $this->plugin->getDirectory() . '/templates/default/reporting_modal.css'
+            $this->plugin->getRelativeDirectory() . '/templates/default/reporting_modal.css'
         );
 
         // Start Workflow stylesheet
         $this->main_tpl->addCss(
-            $this->plugin->getDirectory() . '/templates/default/startworkflow_modal.css'
+            $this->plugin->getRelativeDirectory() . '/templates/default/startworkflow_modal.css'
         );
 
         switch ($cmd) {

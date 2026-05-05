@@ -205,7 +205,7 @@ class xoctPlayerGUI extends xoctGUI
 
         if ($event->isLiveEvent()) {
             // script to check live stream availability
-            $js_config->check_script_hls = $this->plugin->getDirectory() . '/src/Util/check_hls_status.php';
+            $js_config->check_script_hls = $this->plugin->getRelativeDirectory() . '/src/Util/check_hls_status.php';
             $js_config->is_live_stream = true;
             $js_config->event_start = $event->getScheduling()->getStart()->getTimestamp();
             $js_config->event_end = $event->getScheduling()->getEnd()->getTimestamp();
@@ -245,7 +245,7 @@ class xoctPlayerGUI extends xoctGUI
             // For running live events, provide a clean chat!
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                $this->plugin->getDirectory() . "/templates/default/player_w_chat.css"
+                $this->plugin->getRelativeDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatroomAR = ChatroomAR::findOrCreate($event->getIdentifier(), $this->object_settings->getObjId());
             $public_name = $this->user->hasPublicProfile() ?
@@ -258,7 +258,7 @@ class xoctPlayerGUI extends xoctGUI
             // Show chat history for past live events!
             $tpl->setVariable(
                 "STYLE_SHEET_LOCATION",
-                $this->plugin->getDirectory() . "/templates/default/player_w_chat.css"
+                $this->plugin->getRelativeDirectory() . "/templates/default/player_w_chat.css"
             );
             $ChatHistoryGUI = new ChatHistoryGUI($prev_chatroom_id);
             $tpl->setVariable('CHAT', $ChatHistoryGUI->render(true));

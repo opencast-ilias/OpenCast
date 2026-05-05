@@ -53,13 +53,13 @@ class ChatGUI
             $url .= '&host=' . $host;
         }
 
-        $template = new ilTemplate($this->plugin->getDirectory() . '/templates/default/Chat/iframe.html', true, true);
+        $template = new ilTemplate($this->plugin->getRelativeDirectory() . '/templates/default/Chat/iframe.html', true, true);
         $template->setVariable('URL', $url);
         $template->setVariable(
             'REFRESH_ICON',
-            $this->plugin->getDirectory() . '/src/Chat/node/public/images/refresh_icon.png'
+            $this->plugin->getRelativeDirectory() . '/src/Chat/node/public/images/refresh_icon.png'
         );
-        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
+        $chat_css_path = $this->plugin->getRelativeDirectory() . '/src/Chat/node/public/css/chat.css';
         if (!$async) {
             $this->template->addCss($chat_css_path);
         } else {

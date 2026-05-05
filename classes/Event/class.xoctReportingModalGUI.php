@@ -34,7 +34,7 @@ class xoctReportingModalGUI extends ilModalGUI
         $this->plugin = $opencastContainer[ilOpenCastPlugin::class];
 
         $this->setType(ilModalGUI::TYPE_LARGE);
-        $main_tpl->addCss($this->plugin->getDirectory() . '/templates/default/reporting_modal.css');
+        $main_tpl->addCss($this->plugin->getRelativeDirectory() . '/templates/default/reporting_modal.css');
 
         $send_button = ilSubmitButton::getInstance();
         $send_button->setCaption('send');

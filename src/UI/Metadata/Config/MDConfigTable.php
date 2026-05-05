@@ -53,7 +53,7 @@ class MDConfigTable extends ilTable2GUI
     private function initJS(): void
     {
         $this->main_tpl->addJavaScript(
-            $this->plugin->getDirectory() . '/templates/default/sortable.js'
+            $this->plugin->getRelativeDirectory() . '/templates/default/sortable.js'
         );
         $base_link = $this->dic->ctrl()->getLinkTarget($this->parent, 'reorder', '', true);
         $this->main_tpl->addOnLoadCode("xoctSortable.init('" . $base_link . "');");
