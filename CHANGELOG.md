@@ -1,5 +1,21 @@
 # Changelog
 
+## Version 10.1.0
+- [FIX] Livestreaming can't be accessed #494
+- [FEATURE] JWT-Support
+- [FEATURE] Add "Enable Cutting" configuration and related UI elements (incl. enable by default)
+- paella player: align keyboard shortcut rewind with button 10s, fixes #491
+- [FIX] Chrome browser: .mkv Uploads are rejected: "Files of type 'video/matroska' are not allowed" #489
+- fix for getting the user who reported a problem
+- [FIX] Add confirmation text for deleting publication usage
+- [FIX] Handle missing start date and time in MetadataToXML
+- overwrite global perms for course members during object creating. - setting default perms now can handle some perms prevention.
+- [FIX] several (UI) issues in Groups, Change-Owner and Invitation Screens
+- [FEATURE] Upgrade paella-user-tracking to v1.42.6
+- [FIX] Offline videos can not be inserted #45 (PageComponentPlugin)
+- [FIX] README installation path
+- change install command
+
 ## Version 10.0.0
 - [FEATURE] Support for ILIAS 10
 - [FEATURE] New UI for Events and Series
