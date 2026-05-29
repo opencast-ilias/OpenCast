@@ -389,9 +389,10 @@ class MyEvents implements DataRetrieval
         }
 
         if ($sort__by_series) {
-            usort($events, static function (Event $a, Event $b) use ($order) {
-                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp(
-                    $b->getSeries(), $a->getSeries()
+            // Sort by the displayed series name (not the series identifier) and respect the requested direction.
+            usort($events, function (Event $a, Event $b) use ($order): int {
+                return $order === 'DESC' ? strnatcasecmp($this->getSeriesName($b), $this->getSeriesName($a)) : strnatcasecmp(
+                    $this->getSeriesName($a), $this->getSeriesName($b)
                 );
             });
         }
