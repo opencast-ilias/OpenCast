@@ -59,7 +59,7 @@ class Event
      */
     protected $publications;
     /**
-     * @var EventAdditionsAR
+     * @var EventAdditions
      */
     protected $xoctEventAdditions;
     /**
@@ -329,12 +329,12 @@ class Event
         $this->getMetadata()->getField('isPartOf')->setValue($series_identifier);
     }
 
-    public function getXoctEventAdditions(): EventAdditionsAR
+    public function getXoctEventAdditions(): EventAdditions
     {
         return $this->xoctEventAdditions;
     }
 
-    public function setXoctEventAdditions(EventAdditionsAR $xoctEventAdditions): void
+    public function setXoctEventAdditions(EventAdditions $xoctEventAdditions): void
     {
         $this->xoctEventAdditions = $xoctEventAdditions;
     }
