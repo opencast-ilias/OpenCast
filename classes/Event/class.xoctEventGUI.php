@@ -14,6 +14,7 @@ use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsRepository;
 use srag\Plugins\Opencast\Model\Event\EventRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
@@ -927,16 +928,16 @@ class xoctEventGUI extends xoctGUI
     public function setOnline(): void
     {
         $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
-        $event->getXoctEventAdditions()->setIsOnline(true);
-        $event->getXoctEventAdditions()->update();
+        (new EventAdditionsRepository($this->dic->database()))
+            ->store($event->getXoctEventAdditions()->withIsOnline(true));
         $this->cancel();
     }
 
     public function setOffline(): void
     {
         $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
-        $event->getXoctEventAdditions()->setIsOnline(false);
-        $event->getXoctEventAdditions()->update();
+        (new EventAdditionsRepository($this->dic->database()))
+            ->store($event->getXoctEventAdditions()->withIsOnline(false));
         $this->cancel();
     }
 
