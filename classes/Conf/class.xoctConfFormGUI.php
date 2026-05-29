@@ -164,6 +164,16 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $te->setRequired(true);
         $this->addItem($te);
 
+        $ni = new ilNumberInputGUI(
+            $this->getLocaleString(PluginConfig::F_API_CONNECT_TIMEOUT),
+            PluginConfig::F_API_CONNECT_TIMEOUT
+        );
+        $ni->setInfo($this->getLocaleString(PluginConfig::F_API_CONNECT_TIMEOUT . '_info'));
+        $ni->setSuffix('ms');
+        $ni->setMinValue(0);
+        $ni->allowDecimals(false);
+        $this->addItem($ni);
+
         $te = new ilTextInputGUI($this->getLocaleString(PluginConfig::F_CURL_USERNAME), PluginConfig::F_CURL_USERNAME);
         $te->setInfo($this->getLocaleString(PluginConfig::F_CURL_USERNAME . '_info'));
         $te->setRequired(true);
