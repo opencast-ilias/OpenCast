@@ -441,14 +441,15 @@ class MyEvents implements DataRetrieval
         }
 
         if ($sort__by_series) {
+            // Sort by the displayed series name (not the series identifier) and respect the requested direction.
             usort(
                 $events,
-                static fn(Event $a, Event $b): int => $order === 'DESC' ? strnatcasecmp(
-                    $a->getSeries(),
-                    $b->getSeries()
+                fn(Event $a, Event $b): int => $order === 'DESC' ? strnatcasecmp(
+                    $this->getSeriesName($b),
+                    $this->getSeriesName($a)
                 ) : strnatcasecmp(
-                    $b->getSeries(),
-                    $a->getSeries()
+                    $this->getSeriesName($a),
+                    $this->getSeriesName($b)
                 )
             );
         }
