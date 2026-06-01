@@ -59,6 +59,7 @@ class EventFormBuilder
         MimeTypeUtil::VIDEO__X_MSVIDEO,
         'video/mkv',
         'video/x-matroska',
+        'video/matroska',
         'video/x-m4v',
         '.mov',
         '.mp4',
@@ -527,6 +528,15 @@ class EventFormBuilder
             })
         );
     }
+
+    // public function studio_redirect_jwt_form(string $form_action, string $jwt, string $target_url): Form {
+    //     $inputs['jwt'] = $this->ui_factory->input()->field()->hidden()->withValue($jwt);
+    //     $inputs['target'] = $this->ui_factory->input()->field()->hidden()->withValue($target_url);
+    //     return $this->ui_factory->input()->container()->form()->standard(
+    //         $form_action,
+    //         $inputs
+    //     );
+    // }
 
     private function buildTermsOfUseSection(): Section
     {

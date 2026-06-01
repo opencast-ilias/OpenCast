@@ -6,7 +6,7 @@ var QueryUtils = {
 
     uuidv4: require('uuid/v4'),
     moment: require('moment'),
-    mysql: require('mysql'),
+    mysql: require('mysql2'),
     con: '',
     tokens: [],
 

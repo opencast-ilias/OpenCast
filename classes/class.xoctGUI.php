@@ -6,6 +6,7 @@ use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\API\API;
 use srag\Plugins\Opencast\Util\OutputResponse;
 use srag\Plugins\Opencast\Container\Init;
+use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use ILIAS\HTTP\Services;
 
 /**
@@ -27,12 +28,14 @@ abstract class xoctGUI
     public const CMD_DELETE = 'delete';
     public const CMD_CANCEL = 'cancel';
     public const CMD_VIEW = 'view';
+    public const CMD_REFRESH_JWT_ASYNC = 'refreshJwtAsync';
     protected Services $http;
     protected ilGlobalTemplateInterface $main_tpl;
     protected API $api;
     protected ilOpenCastPlugin $plugin;
     protected OpencastDIC $legacy_container;
     protected ilCtrlInterface $ctrl;
+    private EventAPIRepository $event_repository;
 
     public function __construct()
     {
@@ -44,6 +47,7 @@ abstract class xoctGUI
         $this->plugin = $this->legacy_container->plugin();
         $this->main_tpl = $DIC->ui()->mainTemplate();
         $this->http = $DIC->http();
+        $this->event_repository = $opencastContainer[EventAPIRepository::class];
     }
 
     public function executeCommand(): void
@@ -87,5 +91,68 @@ abstract class xoctGUI
     protected function compareStdClassByName($a, $b)
     {
         return strcasecmp($a->name, $b->name);
+    }
+
+    /**
+     * Tries to regenerate a new JWT requested by the iframe player async fetch call and return it.
+     * @return void
+     */
+    public function refreshJwtAsync(): void
+    {
+        $error_message = null;
+        try {
+            $obj_id = (int) $this->http->request()->getQueryParams()['obj_id'] ?? null;
+            $event_id = $this->http->request()->getQueryParams()[xoctEventGUI::IDENTIFIER] ?? null;
+            $event = $this->event_repository->find($event_id);
+            if (
+                !$event ||
+                !$obj_id ||
+                !ilObjOpenCastAccess::hasReadAccessOnEventForRefreshJwt($event, $obj_id)
+            ) {
+                $error_message = 'No access permission!';
+            }
+
+            if (!($refreshed_token = $this->api->refreshTokenForEvent($event_id))) {
+                $error_message = 'Invalid token!';
+            }
+        } catch (\Throwable $th) {
+            $error_message = $th->getMessage();
+        }
+
+        if (!empty($error_message)) {
+            $response = json_encode(['status' => 'error', 'message' => $error_message]);
+            $this->sendReponse($response);
+            return;
+        }
+
+        $response = json_encode(['status' => 'OK', 'newToken' => $refreshed_token]);
+        $this->sendReponse($response);
+    }
+
+    /**
+     * Generates the link to refreshJwtAsync for the js module.
+     * @param string $event_id the event id
+     * @param int $event_id the event id
+     * @return string the link
+     */
+    public function getRefreshJwtAsyncUrl(string $event_id, int $obj_id): string
+    {
+        // the eid: xoctEventGUI::IDENTIFIER has to be present.
+        $this->ctrl->setParameterByClass(
+            static::class,
+            xoctEventGUI::IDENTIFIER,
+            $event_id
+        );
+        $this->ctrl->setParameterByClass(
+            static::class,
+            'obj_id',
+            $obj_id
+        );
+        return $this->ctrl->getLinkTargetByClass(
+            static::class,
+            self::CMD_REFRESH_JWT_ASYNC,
+            null,
+            true
+        );
     }
 }

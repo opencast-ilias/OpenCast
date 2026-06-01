@@ -8,12 +8,12 @@ var xoctGroupParticipant = {
     data_url: '',
     container_available: null,
     container_per_group: null,
-    "lng": [
-        delete_participant = "Delete Participant?",
-        select_group = "Select Group",
-        none_available = "No Participants in this Group",
-        none_available_all = "No Participants available"
-    ],
+    "lng": {
+        delete_participant: "Delete Participant?",
+        select_group: "Select Group",
+        none_available: "No Participants in this Group",
+        none_available_all: "No Participants available"
+    },
     filter_container: null,
     filtering: false,
     before_load: function () {

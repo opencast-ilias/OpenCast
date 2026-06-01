@@ -40,6 +40,14 @@ class PublicationUsage extends ActiveRecord
     public const USAGE_CAPTIONS = 'captions';
     public const USAGE_CAPTIONS_FALLBACK = 'captions_fallback';
     public const USAGE_MPEG7_CATALOG = 'mpeg7_catalog';
+
+    /**
+     * @var array a black list of publication usages that do not get jwt injected.
+     */
+    public const JWT_USAGE_ID_BLACK_LIST = [
+        self::USAGE_ANNOTATE, // Since Annotation tool is external service, it is handled in different way when it comes to JWT.
+    ];
+
     /**
      * @var array
      */

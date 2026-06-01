@@ -1,11 +1,37 @@
-.xoct_invite, .xoct_remove {
-    position: absolute;
-    top: 6px;
-    right: 5px;
-    padding: 5px 8px !important;
-}
-
 .xoct_preview_image {
     height: 90px;
     width: 160px;
+}
+
+#xoct_available_participant, #xoct_group_participant {
+    padding: 0;
+    margin: 0;
+}
+
+.xoct_participant_available, li.list-group-item, a.list-group-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+}
+
+.list-group-item > div, .list-group-item > span {
+    flex-grow: 1;
+    margin: 0;
+}
+
+.list-group-item button {
+    flex-shrink: 0;
+}
+
+.xoct_invite {
+    margin-left: auto;
+    margin-right: 0;
+    background-color: #007bff;
+}
+
+.xoct_remove {
+    background-color: #dc3545;
 }

@@ -6,6 +6,7 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use OpencastApi\Auth\JWT\OcJwtClaim;
 use OpencastApi\Util\OcUtils;
 
 /**
@@ -20,27 +21,54 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
      */
     public function buildStreamingData(): array
     {
-        $episode_data = $this->api->routes()->search->getEpisodes(
-            [
-                'id' => $this->event->getIdentifier()
-            ],
-            OpencastAPI::RETURN_ARRAY
-        );
+        $jwt_iframe_urls = [];
+        if ($this->api->isJWTActivated()) {
+            // TODO: Major issue in Opencast as it blocks the calls to search endpoints without JWT,
+            // however, it returns empty result even with JWT.
+            // This issue should be followed from this comment: https://github.com/opencast/opencast/pull/7249#issuecomment-3665403365
+            // As a workaround, we fetch the episode data with admin claims to extract the live publication url, which is required for the JWT Iframe player to work. This is not ideal but seems to be the only way until the issue in Opencast is resolved. Once that issue is resolved, we can simply call the search endpoint.
+            $oc_claim = new OcJwtClaim();
+            $oc_claim->setUserInfoClaims('admin');
+            $oc_claim->setRoles(['ROLE_ADMIN', 'ROLE_ANONYMOUS']);
+            $episode_data = $this->api->routes()->search->withClaims($oc_claim)->getEpisodes(
+                [
+                    'id' => $this->event->getIdentifier()
+                ],
+                OpencastAPI::RETURN_ARRAY
+            );
+
+            $live_publication = $this->event->publications()->getLivePublication();
+            $jwt_iframe_urls[] = $this->api->makeJwtIframeSourceUrl(
+                $live_publication->getUrl(),
+                $this->event->getIdentifier()
+            );
+        } else {
+            $episode_data = $this->api->routes()->search->getEpisodes(
+                [
+                    'id' => $this->event->getIdentifier()
+                ],
+                OpencastAPI::RETURN_ARRAY
+            );
+        }
 
         // Extracting mediapackage from the search endpoint response using OcUtils class from OpencastApi!
         $media_package = OcUtils::findValueByKey($episode_data, 'mediapackage');
 
         $source_format = PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_BUFFERED) ? 'hls' : 'hlsLive';
         $streams = [];
+        $urls = [];
+
         if (isset($media_package['media']['track'][0])) {  // multi stream
             foreach ($media_package['media']['track'] as $track) {
                 $role = str_contains((string) $track['type'], self::ROLE_MASTER) ? self::ROLE_MASTER : self::ROLE_SLAVE;
+                $url = $track['url'];
+                $urls[] = $url;
                 $streams[$role] = [
                     "content" => $role,
                     "sources" => [
                         $source_format => [
                             [
-                                "src" => $track['url'],
+                                "src" => $url,
                                 "mimetype" => $track['mimetype']
                             ]
                         ]
@@ -54,12 +82,14 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             }
         } else {    // single stream
             $track = $media_package['media']['track'];
+            $url = $track['url'];
+            $urls[] = $url;
             $streams[] = [
                 "content" => self::ROLE_MASTER,
                 "sources" => [
                     $source_format => [
                         [
-                            "src" => $track['url'],
+                            "src" => $url,
                             "mimetype" => $track['mimetype']
                         ]
                     ]
@@ -80,6 +110,10 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
+            "jwt" => [
+                "jwt_iframe_urls" => $jwt_iframe_urls,
+                "urls" => $urls,
+            ],
         ];
     }
 
@@ -95,5 +129,13 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
             $video_res['h'] = $resolution_arr[1];
         }
         return $video_res;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldPlayInJWTIframe(): bool
+    {
+        return true; // It appears that live streams can be played via /play.
     }
 }

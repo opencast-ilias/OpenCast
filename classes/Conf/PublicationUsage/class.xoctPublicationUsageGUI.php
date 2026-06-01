@@ -232,6 +232,7 @@ class xoctPublicationUsageGUI extends xoctGUI
          */
         $xoctPublicationUsage = $this->repository->getUsage($this->identifier);
         $confirm = new ilConfirmationGUI();
+        $confirm->setHeaderText($this->getLocaleString('confirm_delete_text'));
         $confirm->addItem(self::IDENTIFIER, $xoctPublicationUsage->getUsageId(), $xoctPublicationUsage->getTitle());
         $confirm->setFormAction($this->ctrl->getFormAction($this));
         $confirm->setCancel($this->getLocaleString(self::CMD_CANCEL), self::CMD_CANCEL);
