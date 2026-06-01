@@ -22,6 +22,9 @@ use srag\Plugins\Opencast\Model\Publication\PublicationMetadata;
  */
 class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
 {
+    /**
+     * @inheritdoc
+     */
     protected function buildStreams(array $media): array
     {
         $event_id = $this->event->getIdentifier();
@@ -54,7 +57,7 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
             ];
         }
 
-        return [$duration, $streams];
+        return [$duration, $streams, null];
     }
 
     /**
@@ -69,10 +72,24 @@ class SelfGeneratedURLPlayerDataBuilder extends StandardPlayerDataBuilder
         $hls_url = $streaming_server_url . "/smil:engage-player_" . $event_id . $smil_url_identifier . ".smil/playlist.m3u8";
         $dash_url = $streaming_server_url . "/smil:engage-player_" . $event_id . $smil_url_identifier . ".smil/manifest_mpm4sav_mvlist.mpd";
 
-        if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) {
+        // Attach JWT if enabled.
+        if ($this->api->isJWTActivated()) {
+            $duration_in_seconds = $duration > 0 ? (int) ($duration / 1000) : 0;
+            $hls_url = $this->api->attachJwtIntoStaticFileUrlForEvent($hls_url, $event_id, ['read'], $duration_in_seconds);
+            $dash_url = $this->api->attachJwtIntoStaticFileUrlForEvent($dash_url, $event_id, ['read'], $duration_in_seconds);
+        } else if (PluginConfig::getConfig(PluginConfig::F_SIGN_PLAYER_LINKS)) { // Sign if enabled.
             $hls_url = xoctSecureLink::signPlayer($hls_url, $duration);
             $dash_url = xoctSecureLink::signPlayer($dash_url, $duration);
         }
+
         return [$hls_url, $dash_url];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldPlayInJWTIframe(): bool
+    {
+        return false;
     }
 }

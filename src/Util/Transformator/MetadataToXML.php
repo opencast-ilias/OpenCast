@@ -7,6 +7,7 @@ namespace srag\Plugins\Opencast\Util\Transformator;
 use ilDateTime;
 use ilXmlWriter;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use xoctException;
 
 /**
  * Class MetadataToXML
@@ -46,12 +47,23 @@ class MetadataToXML
         $xml_writer->xmlElement('dcterms:spatial', [], $this->metadata->getField('location')->getValue());
         $xml_writer->xmlElement('dcterms:rightsHolder', [], $this->metadata->getField('rightsHolder')->getValue());
 
+        // Get start date and time with fallback to current date/time if not provided
+        try {
+            $start_date = $this->metadata->getField('startDate')->getValueFormatted();
+        } catch (xoctException $e) {
+            // If startDate field doesn't exist, use current date
+            $start_date = date('Y-m-d');
+        }
+        
+        try {
+            $start_time = $this->metadata->getField('startTime')->getValueFormatted();
+        } catch (xoctException $e) {
+            // If startTime field doesn't exist, use current time or 00:00:00 as default
+            $start_time = '00:00:00';
+        }
+
         $start_end_string_iso = (new ilDateTime(
-            strtotime(
-                $this->metadata->getField('startDate')->getValueFormatted() . ' ' . $this->metadata->getField(
-                    'startTime'
-                )->getValueFormatted()
-            ),
+            strtotime($start_date . ' ' . $start_time),
             IL_CAL_UNIX
         )
         )->get(IL_CAL_FKT_DATE, 'Y-m-d\TH:i:s.u\Z', 'GMT');

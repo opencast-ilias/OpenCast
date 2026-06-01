@@ -74,7 +74,8 @@ class xoctGrantPermissionGUI extends xoctGUI
             'LANGUAGE',
             json_encode([
                 'none_available' => $this->plugin->txt('invitations_none_available'),
-                'invite_all' => $this->plugin->txt('invitations_invite_all')
+                'invite_all' => $this->plugin->txt('invitations_invite_all'),
+                'remove_all' => $this->plugin->txt('invitations_remove_all'),
             ])
         );
         $this->main_tpl->setContent($temp->get());
@@ -186,13 +187,11 @@ class xoctGrantPermissionGUI extends xoctGUI
         $this->outJson($obj->asStdClass());
     }
 
-    /**
-     *
-     */
-    protected function createMultiple()
+    protected function createMultiple(): void
     {
         $objects = [];
-        foreach ($this->http->request()->getParsedBody()['ids'] as $id) {
+        $ids = $this->http->request()->getParsedBody()['ids'] ?? [];
+        foreach ($ids as $id) {
             $id = (int) $id;
             $obj = PermissionGrant::where([
                 'event_identifier' => $this->event->getIdentifier(),
@@ -236,6 +235,20 @@ class xoctGrantPermissionGUI extends xoctGUI
         ])->first();
         if ($obj instanceof PermissionGrant) {
             $obj->delete();
+        }
+    }
+
+    protected function deleteMultiple(): void
+    {
+        $ids = $this->http->request()->getParsedBody()['ids'] ?? [];
+        foreach ($ids as $id) {
+            $obj = PermissionGrant::where([
+                'event_identifier' => $this->event->getIdentifier(),
+                'user_id' => $id,
+            ])->first();
+            if ($obj instanceof PermissionGrant) {
+                $obj->delete();
+            }
         }
     }
 }

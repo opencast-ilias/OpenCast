@@ -175,7 +175,7 @@ final class Utils
                     $standardPorts = ['http' => 80, 'https' => 443];
                     $scheme = $changes['uri']->getScheme();
                     if (isset($standardPorts[$scheme]) && $port != $standardPorts[$scheme]) {
-                        $changes['set_headers']['Host'] .= ':' . $port;
+                        $changes['set_headers']['Host'] .= ':'.$port;
                     }
                 }
             }
@@ -352,7 +352,7 @@ final class Utils
             return new PumpStream($resource, $options);
         }
 
-        throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
+        throw new \InvalidArgumentException('Invalid resource type: '.gettype($resource));
     }
 
     /**
@@ -397,7 +397,7 @@ final class Utils
         restore_error_handler();
 
         if ($ex) {
-            /** @var $ex \RuntimeException */
+            /** @var \RuntimeException $ex */
             throw $ex;
         }
 
@@ -444,7 +444,7 @@ final class Utils
         restore_error_handler();
 
         if ($ex) {
-            /** @var $ex \RuntimeException */
+            /** @var \RuntimeException $ex */
             throw $ex;
         }
 

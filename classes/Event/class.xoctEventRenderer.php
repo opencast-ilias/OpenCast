@@ -661,7 +661,8 @@ class xoctEventRenderer
         }
 
         // Cut Event
-        if (ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this->event, $xoctUser)) {
+        if (PluginConfig::getConfig(PluginConfig::F_ENABLE_CUTTING)
+            && ilObjOpenCastAccess::checkAction(ilObjOpenCastAccess::ACTION_CUT, $this->event, $xoctUser)) {
             $actions[] = $this->factory->link()->standard(
                 $this->plugin->txt('event_cut'),
                 $this->ctrl->getLinkTargetByClass(xoctEventGUI::class, xoctEventGUI::CMD_CUT)

@@ -1,0 +1,8 @@
+<form id="jwt_redirect_form" action="{ACTION}" role="form" method="post">
+    <input type="hidden" name="jwt" value="{JWT}">
+    <input type="hidden" name="target" value="{TARGET_URL}">
+</form>
+
+<script type="text/javascript">
+    document.getElementById('jwt_redirect_form').submit();
+</script>

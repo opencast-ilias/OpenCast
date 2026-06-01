@@ -7,6 +7,7 @@ namespace srag\Plugins\Opencast\Chat\GUI;
 use ilOpenCastPlugin;
 use ilTemplate;
 use ilTemplateException;
+use ilUtil;
 use srag\Plugins\Opencast\Chat\Model\ChatroomAR;
 use srag\Plugins\Opencast\Chat\Model\ConfigAR;
 use srag\Plugins\Opencast\Chat\Model\TokenAR;
@@ -44,7 +45,8 @@ class ChatGUI
         $protocol = ConfigAR::getConfig(ConfigAR::C_PROTOCOL);
         $host = ConfigAR::getConfig(ConfigAR::C_HOST);
 
-        $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim(__DIR__, ILIAS_ABSOLUTE_PATH) . '/open_chat.php';
+        $script_open_chat = ilUtil::getHtmlPath($this->plugin->getDirectory() . '/src/Chat/GUI/open_chat.php');
+
         $url = $script_open_chat .
             '?port=' . $port .
             '&token=' . $this->token->getToken()->toString() .
@@ -59,7 +61,7 @@ class ChatGUI
             'REFRESH_ICON',
             $this->plugin->getDirectory() . '/src/Chat/node/public/images/refresh_icon.png'
         );
-        $chat_css_path = $this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css';
+        $chat_css_path = ilUtil::getHtmlPath($this->plugin->getDirectory() . '/src/Chat/node/public/css/chat.css');
         if (!$async) {
             $this->template->addCss($chat_css_path);
         } else {
@@ -67,6 +69,14 @@ class ChatGUI
             $template->setVariable('CSS_PATH', $chat_css_path);
             $template->parseCurrentBlock();
         }
+        $delos_css_path = ilUtil::getHtmlPath(ilUtil::getStyleSheetLocation("filesystem", "delos.css"));
+        $template->setCurrentBlock('delos_css');
+        $template->setVariable('DELOS_CSS_PATH', $delos_css_path);
+        $template->parseCurrentBlock();
+        $glyphicons_path = ilUtil::getHtmlPath('/templates/default/fonts/bootstrap/glyphicons-halflings-regular.ttf');
+        $template->setCurrentBlock('glyphicons');
+        $template->setVariable('GLYPHICONS_PATH', $glyphicons_path);
+        $template->parseCurrentBlock();
         return $template->get();
     }
 }

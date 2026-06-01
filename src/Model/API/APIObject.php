@@ -20,6 +20,10 @@ use srag\Plugins\Opencast\Container\Init;
 abstract class APIObject implements Request
 {
     /**
+     * @var string
+     */
+    public $ext_dl_source;
+    /**
      * @var bool
      */
     protected $loaded = false;
