@@ -45,7 +45,23 @@ trait Commons
         if (is_string($date)) {
             $date = new \DateTimeImmutable($date);
         }
-        return $date->format('d. M Y, H:i');
+        return $date->setTimezone($this->userTimeZone())->format('d. M Y, H:i');
+    }
+
+    /**
+     * The timezone the current user expects dates to be displayed in. Opencast delivers timestamps in
+     * UTC, so they must be converted before display (otherwise scheduled events show the UTC time). See #499.
+     */
+    public function userTimeZone(): \DateTimeZone
+    {
+        if (!isset($this->container) || !$this->container instanceof Container) {
+            return new \DateTimeZone('UTC');
+        }
+        try {
+            return new \DateTimeZone($this->container->ilias()->user()->getTimeZone() ?: 'UTC');
+        } catch (\Throwable) {
+            return new \DateTimeZone('UTC');
+        }
     }
 
 }
