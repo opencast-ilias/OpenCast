@@ -343,8 +343,10 @@ class Events implements RecordToEntity
             && $record->getScheduling() !== null
         ) {
             $minutes_before_live = (int) PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE);
-            $open_from = $record->getScheduling()->getStart()->getTimestamp() - ($minutes_before_live * 60);
-            $status_label = sprintf($status_label, date('d.m.Y, H:i', $open_from));
+            $open_from = $record->getScheduling()->getStart()
+                ->modify("-{$minutes_before_live} minutes")
+                ->setTimezone($this->userTimeZone());
+            $status_label = sprintf($status_label, $open_from->format('d.m.Y, H:i'));
         }
         $status_label_short = $this->shortenText(
             $status_label,
@@ -442,7 +444,7 @@ class Events implements RecordToEntity
         }
 
         return $item->withProperties([
-            $this->translate("event_date") => $event->getStart()->format('d.m.Y H:i'),
+            $this->translate("event_date") => $event->getStart()->setTimezone($this->userTimeZone())->format('d.m.Y H:i'),
             $this->translate("event_series") => $this->getSeriesName($event),
             $this->translate("event_presenter") => implode(", ", $event->getPresenter()),
         ])->withLeadImage(
