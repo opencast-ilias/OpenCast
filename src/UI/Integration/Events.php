@@ -8,6 +8,7 @@ use ILIAS\UI\Renderer;
 use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Event\Event;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use ILIAS\UI\Component\Item\Item;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\UI\Component\Panel\Panel;
@@ -333,6 +334,18 @@ class Events implements RecordToEntity
     protected function buildStatusComponents(Event $record, EventActionParameters $parameters, Entity $entity): Entity
     {
         $status_label = $this->translate('event_state_' . strtolower($record->getProcessingState()));
+        // The "scheduled live stream" label contains a %s placeholder for the time from which the
+        // stream can be opened. Fill it (the legacy renderer does this; the new UI did not, so the
+        // raw "%s" was shown). See #498.
+        if (
+            $record->getProcessingState() === Event::STATE_LIVE_SCHEDULED
+            && str_contains($status_label, '%s')
+            && $record->getScheduling() !== null
+        ) {
+            $minutes_before_live = (int) PluginConfig::getConfig(PluginConfig::F_START_X_MINUTES_BEFORE_LIVE);
+            $open_from = $record->getScheduling()->getStart()->getTimestamp() - ($minutes_before_live * 60);
+            $status_label = sprintf($status_label, date('d.m.Y, H:i', $open_from));
+        }
         $status_label_short = $this->shortenText(
             $status_label,
             (int) ($this->settings_resolver->resolve(EventSettings::STATUS_MAX_LENGTH) ?? 42)
