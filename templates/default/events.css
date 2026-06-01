@@ -194,3 +194,9 @@ div.modal-body form .ilFormFooter {
 .btn-group-vertical .btn {
 	margin-bottom: 2px;
 }
+
+.badge.oc-badge {
+	background-color: #B54F00;
+	padding: 2px 4px;
+	margin-left: 5px;
+}

@@ -183,6 +183,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
 config_enable_chat#:#Activate Chat
 config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
+config_enable_cutting#:#Enable Cutting
+config_enable_cutting_info#:#Allow users to access the cutting tool (Video Editor) for videos. When disabled, the "Cut" action will not be available in the event actions menu.
 config_ingest_upload#:#Upload via Ingest Nodes
 config_ingest_upload_info#:#If enabled, the upload will be executed via ingest nodes instead of the external API. This improves the load distribution on the Opencast server when uploading multiple files simultaneously. Note that the REST endpoint /ingest has to be available for the ILIAS server and the API user.
 eula#:#Terms of Use
@@ -302,6 +304,7 @@ invitations_back#:#Back
 invitations_header#:#Grant Access to Event
 invitations_none_available#:#None available
 invitations_invite_all#:#Add all
+invitations_remove_all#:#Remove all
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
@@ -703,6 +706,7 @@ publication_usage_table_title_usage_group#:#Publication Groups
 publication_usage_create_group#:#Create Group
 publication_usage_edit_group#:#Edit Group
 publication_usage_confirm_delete_text_group#:#Are you sure you want to delete this publication group?
+publication_usage_confirm_delete_text#:#Are you sure you want to delete this publication usage?
 publication_usage_extra_config#:#Extras
 publication_usage_type_captions#:#Captions
 publication_usage_type_captions_fallback#:#Captions Fallback
@@ -789,3 +793,20 @@ upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video tiempoint
 upload_ui_thumbnail_file#:#Thumbnail File
 upload_ui_thumbnail_timepoint#:#Timepoint
 upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract thumbnail from.
+config_jwt_security_enabled#:#Enable JWT Authentication
+config_jwt_security_enabled_info#:#Enables authentication using JSON Web Tokens (JWT) for enhanced security when accessing Opencast resources.
+config_jwt_security_privatekey#:#Private Key (full text)
+config_jwt_security_privatekey_info#:#Paste the full private key used to sign JWT tokens for Opencast authentication.<br>NOTE: Click the eye icon to reveal the key when editing.
+config_jwt_security_privatekey_show_icon#:#Reveal
+config_jwt_security_privatekey_hide_icon#:#Hide
+config_jwt_security_privatekey_hidden_element_title#:#To edit this field, please click the eye icon to reveal the content first.
+config_jwt_security_expiration#:#Token expiration duration (seconds)
+config_jwt_security_expiration_info#:#Defines how long the JWT token remains valid, in seconds.
+config_jwt_security_algorithm#:#Signing Algorithm
+config_jwt_security_algorithm_info#:#Specifies the algorithm used to sign JWT tokens for authentication.
+config_jwt_security_studio_roles#:#User access roles for Studio
+config_jwt_security_studio_roles_info#:#Specifies the user roles to grant access to Opencast Studio.
+config_jwt_security_editor_roles#:#User access roles for Editor
+config_jwt_security_editor_roles_info#:#Specifies the user roles to grant access to Opencast Editor.
+config_jwt_security_annotation_tool_roles#:#User access roles for Annotation Tool
+config_jwt_security_annotation_tool_roles_info#:#Specifies the user roles required to grant access to the Opencast Annotation Tool.

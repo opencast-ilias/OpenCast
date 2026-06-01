@@ -59,7 +59,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             throw new xoctException(xoctException::NO_STREAMING_DATA);
         }
 
-        [$duration, $streams] = $this->buildStreams($media);
+        [$duration, $streams, $jwt_iframe_urls] = $this->buildStreams($media);
 
         $data = [
             "streams" => array_values($streams),
@@ -69,6 +69,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 "preview" => $this->event->publications()->getThumbnailUrl(),
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
+            ],
+            "jwt" => [
+                "jwt_iframe_urls" => $jwt_iframe_urls,
             ]
         ];
 
@@ -182,7 +185,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     }
 
     /**
-     * @param Media[] $media
+     * @param \srag\Plugins\Opencast\Model\Publication\Media[] $media
      * @throws xoctException
      */
     protected function buildStreams(array $media): array
@@ -195,6 +198,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         ];
 
         $source_type_master_mapping = [];
+        $jwt_iframe_urls = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
@@ -210,6 +214,14 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             if ($is_master_playlist || empty($source_type_master_mapping[$source_type])) {
                 $sources[$medium->getRole()][$source_type][] = $this->buildSource($medium, $duration);
             }
+
+            $jwt_iframe_friendly_url = $this->api->makeJwtIframeSourceUrl(
+                $medium->getUrl(),
+                $this->event->getIdentifier()
+            );
+            if (!in_array($jwt_iframe_friendly_url, $jwt_iframe_urls )) {
+                $jwt_iframe_urls[] = $jwt_iframe_friendly_url;
+            }
         }
 
         foreach ($sources as $role => $source) {
@@ -221,7 +233,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             }
         }
 
-        return [$duration, $streams];
+        return [$duration, $streams, $jwt_iframe_urls];
     }
 
     /**
@@ -484,5 +496,13 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         }
 
         return $mpeg7_catalog_dom_xml;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shouldPlayInJWTIframe(): bool
+    {
+        return true;
     }
 }

@@ -169,7 +169,7 @@ final class AppendStream implements StreamInterface
                 $stream->rewind();
             } catch (\Exception $e) {
                 throw new \RuntimeException('Unable to seek stream '
-                    . $i . ' of the AppendStream', 0, $e);
+                    .$i.' of the AppendStream', 0, $e);
             }
         }
 

@@ -133,11 +133,24 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
     }
 
     /**
-     * Intentionally empty: keeps the step numbering aligned with release_10, where step_6 sets the
-     * default for the "Enable Cutting" configuration. That feature does not exist on release_9.
+     * This step sets the default value for the "Enable Cutting" configuration to true (on).
      */
     public function step_6(): void
     {
+        // Check if the configuration already exists
+        $r = $this->db->query("SELECT name FROM xoct_config WHERE name = 'enable_cutting'");
+        if ($r->rowCount() > 0) {
+            return;
+        }
+
+        // Insert the default configuration value (true)
+        $this->db->insert(
+            'xoct_config',
+            [
+                'name' => ['text', 'enable_cutting'],
+                'value' => ['text', json_encode(true)]
+            ]
+        );
     }
 
     /**

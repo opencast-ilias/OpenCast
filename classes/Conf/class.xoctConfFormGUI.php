@@ -333,6 +333,14 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $cbs2->setRequired(false);
         $cbs->addSubItem($cbs2);
 
+        // ENABLE CUTTING
+        $cb = new ilCheckboxInputGUI(
+            $this->getLocaleString(PluginConfig::F_ENABLE_CUTTING),
+            PluginConfig::F_ENABLE_CUTTING
+        );
+        $cb->setInfo($this->getLocaleString(PluginConfig::F_ENABLE_CUTTING . '_info'));
+        $this->addItem($cb);
+
         // MODALS
         $cb = new ilCheckboxInputGUI($this->getLocaleString(PluginConfig::F_USE_MODALS), PluginConfig::F_USE_MODALS);
         $cb->setInfo($this->getLocaleString(PluginConfig::F_USE_MODALS . '_info'));
@@ -557,6 +565,15 @@ class xoctConfFormGUI extends ilPropertyFormGUI
 
     protected function initSecuritySection(): void
     {
+        $strings = (object) [
+            'show' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_show_icon'),
+            'hide' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_hide_icon'),
+            'hidden_element_title' => $this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_hidden_element_title')
+        ];
+        $strings = json_encode($strings);
+        $code = "il.Opencast.Form.passwordToggle.initTextarea('" . PluginConfig::F_JWT_SECURITY_PK . "', '" . $strings . "');";
+        $this->main_tpl->addOnLoadCode($code);
+
         $this->main_tpl->setOnScreenMessage('info', $this->getLocaleString('security_info'), true);
         $h = new ilFormSectionHeaderGUI();
         $h->setTitle($this->getLocaleString('security'));
@@ -658,6 +675,60 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $cb->setInfo($this->getLocaleString(PluginConfig::F_PRESIGN_LINKS . '_info'));
         $this->addItem($cb);
+
+        // JWT enabled.
+        $cb = new ilCheckboxInputGUI(
+            $this->getLocaleString(PluginConfig::F_JWT_SECURITY_ENABLED),
+            PluginConfig::F_JWT_SECURITY_ENABLED
+        );
+        $cb->setInfo($this->getLocaleString(PluginConfig::F_JWT_SECURITY_ENABLED . '_info'));
+        $this->addItem($cb);
+
+        // JWT Private Key.
+        $te_cb_sub = new ilTextAreaInputGUI($this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK), PluginConfig::F_JWT_SECURITY_PK);
+        $te_cb_sub->setInfo($this->getLocaleString(PluginConfig::F_JWT_SECURITY_PK . '_info'));
+        $te_cb_sub->setRequired(true);
+        $cb->addSubItem($te_cb_sub);
+
+        //JWT Expiration.
+        $nu_cb_sub = new ilNumberInputGUI($this->getLocaleString(PluginConfig::F_JWT_SECURITY_EXP), PluginConfig::F_JWT_SECURITY_EXP);
+        $nu_cb_sub->setMinValue(1, true);
+        $nu_cb_sub->setValue((string) PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EXP) ?? "15");
+        $nu_cb_sub->setInfo($this->getLocaleString(PluginConfig::F_JWT_SECURITY_EXP . '_info'));
+        $cb->addSubItem($nu_cb_sub);
+
+        // JWT Algorithm.
+        $se_cb_sub = new ilSelectInputGUI($this->getLocaleString(PluginConfig::F_JWT_SECURITY_ALG), PluginConfig::F_JWT_SECURITY_ALG);
+        $se_cb_sub->setInfo($this->getLocaleString(PluginConfig::F_JWT_SECURITY_ALG . '_info'));
+        $algorithms = [];
+        foreach (array_keys(\OpencastApi\Auth\JWT\OcJwtHandler::SUPPORTED_ALGORITHMS) as $alg) {
+            $algorithms[$alg] = $alg;
+        }
+        $default = \OpencastApi\Auth\JWT\OcJwtHandler::DEFAULT_ALGORITHM;
+        $se_cb_sub->setOptions($algorithms);
+        $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG) ?? $default);
+        $cb->addSubItem($se_cb_sub);
+
+        // JWT Studio Roles.
+        $te_studio_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_studio_roles'), PluginConfig::F_JWT_SECURITY_STUDIO_ROLES);
+        $te_studio_cb_sub->setInfo($this->getLocaleString('jwt_security_studio_roles_info'));
+        $te_studio_cb_sub->setMulti(true);
+        $te_studio_cb_sub->setInlineStyle('min-width:250px');
+        $cb->addSubItem($te_studio_cb_sub);
+
+        // JWT Editor Roles.
+        $te_editor_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_editor_roles'), PluginConfig::F_JWT_SECURITY_EDITOR_ROLES);
+        $te_editor_cb_sub->setInfo($this->getLocaleString('jwt_security_editor_roles_info'));
+        $te_editor_cb_sub->setMulti(true);
+        $te_editor_cb_sub->setInlineStyle('min-width:250px');
+        $cb->addSubItem($te_editor_cb_sub);
+
+        // JWT Annotation-tool Roles.
+        $te_annotation_tool_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_annotation_tool_roles'), PluginConfig::F_JWT_SECURITY_ANNOTATION_TOOL_ROLES);
+        $te_annotation_tool_cb_sub->setInfo($this->getLocaleString('jwt_security_annotation_tool_roles_info'));
+        $te_annotation_tool_cb_sub->setMulti(true);
+        $te_annotation_tool_cb_sub->setInlineStyle('min-width:250px');
+        $cb->addSubItem($te_annotation_tool_cb_sub);
     }
 
     protected function initAdvancedSection(): void
