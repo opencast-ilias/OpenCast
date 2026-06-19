@@ -62,6 +62,11 @@ class MyEvents implements DataRetrieval
     private ?URI $calling_url = null;
     private int $default_page_size = 20;
 
+    private array $supported_event_states = [
+        Event::STATE_SUCCEEDED,
+        Event::STATE_OFFLINE
+    ];
+
     public function __construct(
         private \ILIAS\UI\Factory $ui_factory,
         private Container $container,
@@ -287,7 +292,8 @@ class MyEvents implements DataRetrieval
         ) {
             $action = (string) $this->target_url->withParameter($this->parameter_name, $event->getIdentifier());
 
-            $is_successfully_processed = $event->getProcessingState() === Event::STATE_SUCCEEDED;
+            $processing_state = $event->getProcessingState();
+            $is_successfully_processed = in_array($processing_state, $this->supported_event_states, true);
 
             $thumbnail = $this->ui_factory->symbol()->icon()->custom(
                 $event->publications()->getThumbnailUrl(),
@@ -326,7 +332,7 @@ class MyEvents implements DataRetrieval
                     'date' => $event->getStart(),
                     'series' => $this->getSeriesName($event),
                     'presenter' => implode(", ", $event->getPresenter()),
-                    'status' => $event->getProcessingState(),
+                    'status' => $processing_state,
                     'action' => $is_successfully_processed ? $this->ui_renderer->render($select_action) : ''
                 ]
             );
