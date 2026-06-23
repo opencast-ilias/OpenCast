@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
-use srag\Plugins\Opencast\DI\OpencastDIC;
 use srag\Plugins\Opencast\Util\Locale\LocaleTrait;
-use srag\Plugins\Opencast\LegacyHelpers\UploadSize;
 use srag\Plugins\Opencast\Container\Init;
 
 /**
@@ -141,8 +139,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI
 
     /**
      * @param $item
-     *
-     * @return bool
      */
     public static function checkItem($item): bool
     {
@@ -206,16 +202,6 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $te->setInfo($this->getLocaleString(PluginConfig::F_CURL_MAX_UPLOADSIZE . '_info'));
         $te->setRequired(true);
-        $this->addItem($te);
-
-        $te = new ilNumberInputGUI(
-            $this->getLocaleString(PluginConfig::F_CURL_CHUNK_SIZE),
-            PluginConfig::F_CURL_CHUNK_SIZE
-        );
-        $te->setInfo($this->getLocaleString(PluginConfig::F_CURL_CHUNK_SIZE . '_info'));
-        $te->setRequired(true);
-        $te->setMinValue(1, true);
-        $te->setMaxValue(UploadSize::getUploadSizeLimitBytes() / 1024 / 1024 / 2, true);
         $this->addItem($te);
 
         $te = new ilTextInputGUI(
