@@ -152,4 +152,18 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             ]
         );
     }
+
+    /**
+     * Removes the orphaned "curl_chunk_size" config. The chunk size is no longer
+     * configurable: the ILIAS UI file field decides on its own whether to chunk
+     * and fixes the chunk size at ~90% of the PHP upload limit.
+     */
+    public function step_7(): void
+    {
+        $this->db->manipulateF(
+            'DELETE FROM xoct_config WHERE name = %s',
+            ['text'],
+            ['curl_chunk_size']
+        );
+    }
 }
