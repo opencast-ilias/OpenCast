@@ -828,12 +828,62 @@ class xoctEventGUI extends xoctGUI
             header('Location: ' . $url);
         } else {
             $file_name = $event->getTitle() . ($extension !== null ? '.' . $extension : '');
-            header('Content-Type: ' . $publication->getMediatype());
-            header('Content-Disposition: attachment; filename="' . $file_name . '"');
-            echo file_get_contents($url);
+            // Stream the file straight from Opencast to the client instead of buffering the whole
+            // file in PHP memory (the previous file_get_contents() failed for files > memory_limit
+            // and timed out behind proxies). Nothing is stored locally; the remote response is
+            // passed through in constant-memory chunks.
+            $size = method_exists($publication, 'getSize') ? (int) $publication->getSize() : 0;
+            $this->streamRemoteToClient($url, $file_name, $publication->getMediatype(), $size);
         }
 
         $this->closeResponse();
+    }
+
+    /**
+     * Streams a remote file (Opencast publication URL) directly through to the client.
+     *
+     * The remote response is forwarded in constant-memory chunks via a cURL write callback;
+     * the file is never fully buffered in PHP memory nor written to a local temp file. This
+     * replaces the former echo file_get_contents($url), which loaded the whole file into a
+     * single PHP string and therefore failed for files larger than memory_limit (and was prone
+     * to proxy buffering/timeouts).
+     *
+     * Note: ILIAS\FileDelivery / the HTTP ResponseSender cannot be used here because both rewind()
+     * the body stream, which is not possible on a non-seekable remote stream, and the
+     * X-Sendfile/X-Accel builders expect a local file path.
+     *
+     * @param int $size Known file size in bytes (0 if unknown) to emit a Content-Length header.
+     */
+    private function streamRemoteToClient(
+        string $url,
+        string $file_name,
+        ?string $mime_type,
+        int $size = 0
+    ): void {
+        // Drop any active output buffering so chunks are flushed and memory stays flat.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        // Large files may take a while to stream.
+        set_time_limit(0);
+
+        header('Content-Type: ' . ($mime_type !== null && $mime_type !== '' ? $mime_type : 'application/octet-stream'));
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        if ($size > 0) {
+            header('Content-Length: ' . $size);
+        }
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_BUFFERSIZE, 256 * 1024);
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, static function ($ch, string $chunk): int {
+            echo $chunk;
+            flush();
+            return strlen($chunk);
+        });
+        curl_exec($ch);
+        curl_close($ch);
     }
 
     public function annotate(): void
