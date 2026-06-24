@@ -45,7 +45,7 @@ class EventFormBuilder
     public const F_SUBTITLE_SECTION = 'subtitles';
     public const F_THUMBNAIL_SECTION = 'thumbnail';
 
-    private static array $accepted_video_mimetypes = [
+    public static array $accepted_video_mimetypes = [
         MimeTypeUtil::VIDEO__AVI,
         MimeTypeUtil::VIDEO__QUICKTIME,
         MimeTypeUtil::VIDEO__MPEG,
@@ -71,7 +71,7 @@ class EventFormBuilder
         '.mkv'
     ];
 
-    private static array $accepted_audio_mimetypes = [
+    public static array $accepted_audio_mimetypes = [
         MimeTypeUtil::AUDIO__MP4,
         MimeTypeUtil::AUDIO__OGG,
         MimeTypeUtil::AUDIO__MPEG,

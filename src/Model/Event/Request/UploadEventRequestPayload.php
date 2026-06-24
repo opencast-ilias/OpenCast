@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace srag\Plugins\Opencast\Model\Event\Request;
 
-use CURLFile;
+use srag\Plugins\Opencast\UI\EventFormBuilder;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
 use srag\Plugins\Opencast\Model\WorkflowParameter\Processing;
@@ -16,7 +16,7 @@ class UploadEventRequestPayload
         protected Metadata $metadata,
         protected ACL $acl,
         protected Processing $processing,
-        protected \xoctUploadFile $presentation,
+        protected \xoctUploadFile $uploading_file,
         /**
          * @var xoctUploadFile[]
          */
@@ -42,7 +42,17 @@ class UploadEventRequestPayload
 
     public function getPresentation(): xoctUploadFile
     {
-        return $this->presentation;
+        return $this->uploading_file;
+    }
+
+    public function getPresenter(): xoctUploadFile
+    {
+        return $this->uploading_file;
+    }
+
+    public function getUploadingFile(): xoctUploadFile
+    {
+        return $this->uploading_file;
     }
 
     public function getSubtitles(): array
@@ -65,16 +75,41 @@ class UploadEventRequestPayload
         return !empty($this->thumbnail);
     }
 
+    public function hasVideoFile(): bool
+    {
+        $file_mimetype = $this->uploading_file->getMimeType();
+        if (in_array($file_mimetype, EventFormBuilder::$accepted_video_mimetypes)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function hasAudioFile(): bool
+    {
+        $file_mimetype = $this->uploading_file->getMimeType();
+        if (in_array($file_mimetype, EventFormBuilder::$accepted_audio_mimetypes)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @return array{metadata: string, acl: string, presentation: mixed, processing: string}
      */
     public function jsonSerialize(): array
     {
-        return [
+        $serialized_array = [
             'metadata' => json_encode([$this->metadata->withoutEmptyFields()->jsonSerialize()]),
             'acl' => json_encode($this->acl),
-            'presentation' => $this->presentation->getCURLFile(),
             'processing' => json_encode($this->processing)
         ];
+
+        if ($this->hasAudioFile()) {
+            $serialized_array['presenter'] = $this->getPresenter()->getCURLFile();
+        } else {
+            $serialized_array['presentation'] = $this->getPresentation()->getCURLFile();
+        }
+
+        return $serialized_array;
     }
 }

@@ -37,7 +37,9 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     private static array $mimetype_mapping = [
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
-        'video/mp4' => 'mp4'
+        'video/mp4' => 'mp4',
+        'audio/m4a' => 'mp4',
+        'audio/mp4' => 'mp4',
     ];
 
     private static array $role_mapping = [

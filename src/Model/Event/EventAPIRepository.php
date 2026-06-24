@@ -101,14 +101,21 @@ class EventAPIRepository implements EventRepository, Request
         ) {
             $this->ingestService->ingest($request);
         } else {
-            $payload = $request->getPayload()->jsonSerialize();
+            $serialized_payload = $request->getPayload()->jsonSerialize();
+
             $presenter = null;
             $presentation = $request->getPayload()->getPresentation()->getFileStream();
+
+            if ($request->getPayload()->hasAudioFile()) {
+                $presentation = null;
+                $presenter = $request->getPayload()->getPresenter()->getFileStream();
+            }
+
             $audio = null;
             $response = $this->api->routes()->eventsApi->create(
-                $payload['acl'],
-                $payload['metadata'],
-                $payload['processing'],
+                $serialized_payload['acl'],
+                $serialized_payload['metadata'],
+                $serialized_payload['processing'],
                 '', // Scheduling (here must be empty string)
                 $presenter,
                 $presentation,
