@@ -140,19 +140,20 @@ class EventModals
             );
 
             $submit_btn = $this->dic->ui()->factory()->button()->primary($this->dic->language()->txt("save"), '#')
-                                    ->withAdditionalOnLoadCode(fn($id): string => "
-        document.getElementById('{$id}').addEventListener('click', function(event) {
-            event.preventDefault();
-            document.getElementById('{$form_submit_btn_id}').click();
-            this.disabled = true;
-            return false;
-        });
-    ");
+                            ->withAdditionalOnLoadCode(fn($id): string => "
+                                document.getElementById('{$id}').addEventListener('click', function(event) {
+                                    event.preventDefault();
+                                    document.getElementById('{$form_submit_btn_id}').click();
+                                    this.disabled = true;
+                                    return false;
+                                });
+                            ");
 
             $modal_startworkflow = $this->dic->ui()->factory()->modal()->roundtrip(
                 $this->plugin->txt('event_startworkflow'),
                 $this->dic->ui()->factory()->legacy($tpl->get())
-            )->withActionButtons([$submit_btn]);
+            )->withActionButtons([$submit_btn])
+            ->withOnLoadCode(fn($id): string => "$($id).on('click', function(event){ $('input#startworkflow_event_id').val('{$event_id}');});");
             $this->setStartworkflowModal($modal_startworkflow);
         }
     }
