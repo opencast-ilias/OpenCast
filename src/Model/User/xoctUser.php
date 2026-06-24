@@ -312,7 +312,8 @@ class xoctUser
      * Gets the JWT Specific user roles for Studio to be added in the claims.
      * @return array
      */
-    public function getStudioAccessRoles(): array {
+    public function getStudioAccessRoles(): array
+    {
         $studio_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_STUDIO_ROLES) ?? [];
         if ($user_role = $this->getUserRoleName()) {
             $studio_access_roles[] = $user_role;
@@ -324,7 +325,8 @@ class xoctUser
      * Gets the JWT Specific user roles for Editor to be added in the claims.
      * @return array
      */
-    public function getEditorAccessRoles(): array {
+    public function getEditorAccessRoles(): array
+    {
         $editor_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_EDITOR_ROLES) ?? [];
         if ($user_role = $this->getUserRoleName()) {
             $editor_access_roles[] = $user_role;
@@ -336,11 +338,22 @@ class xoctUser
      * Gets the JWT Specific user roles for Annotation-Tool to be added in the claims.
      * @return array
      */
-    public function getAnnotationToolAccessRoles(): array {
+    public function getAnnotationToolAccessRoles(): array
+    {
         $annotation_tool_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ANNOTATION_TOOL_ROLES) ?? [];
         if ($user_role = $this->getUserRoleName()) {
             $annotation_tool_access_roles[] = $user_role;
         }
         return $annotation_tool_access_roles;
+    }
+
+    /**
+     * Generates a list of user roles to access events, series or playlist.
+     * @return array
+     */
+    public function getBasicAccessRoles(): array
+    {
+        $user_basic_access_roles = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_BASIC_ROLES) ?? [];
+        return $user_basic_access_roles;
     }
 }
