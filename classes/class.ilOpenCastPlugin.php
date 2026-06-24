@@ -178,13 +178,15 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
 
     public function getRelativeDirectory(): string
     {
-        $ansolute_path = realpath(__DIR__ . '/../');
+        $absolute_path = realpath(__DIR__ . '/../');
         // cut everything before /Customizing/
-        $pos = strpos($ansolute_path, '/Customizing/');
+        $pos = strpos($absolute_path, '/Customizing/');
         if ($pos !== false) {
-            return '.' . substr($ansolute_path, $pos);
+            return '.' . substr($absolute_path, $pos);
         }
-        return '';
+
+        // give it another try as it is a well known path for repositories.
+        return './Customizing/global/plugins/Services/Repository/RepositoryObject/' . $this->getPluginName();
     }
 
     public function getStyleSheetLocation(string $a_css_file): string
