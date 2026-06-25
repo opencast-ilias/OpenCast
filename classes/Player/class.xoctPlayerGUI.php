@@ -129,12 +129,22 @@ class xoctPlayerGUI extends xoctGUI
             $this->sendReponse("Error: " . $e->getMessage());
         }
 
+        // Determining whether the event is audio only.
+        $audio_only_link = null;
+        if (isset($data['audio_only_link'])) {
+            $audio_only_link = $data['audio_only_link'];
+            unset($data['audio_only_link']);
+        }
+
         // We load different template for the JWT Iframe Player.
         if ($this->api->isJWTActivated() && $jwt_iframe_capable) {
             $tpl = $this->plugin->getTemplate("jwt_iframe_player.html", true, true);
             $jwt_data = $data['jwt'] ?? [];
             $tpl->setVariable("JWT_MODULE_CONFIG",
                 json_encode($this->buildJwtModuleConfig($event, $jwt_data)));
+        } else if ($audio_only_link) {
+            $tpl = $this->plugin->getTemplate("audio_iframe_player.html", true, true);
+            $tpl->setVariable("SRC", $audio_only_link);
         } else {
             // The normal paella player.
             $tpl = $this->plugin->getTemplate("paella_player.html", true, true);

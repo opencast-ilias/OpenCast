@@ -103,4 +103,18 @@ interface API
      * @return string the iframe JWT friendly source url ending with /play/{ID}
      */
     public function makeJwtIframeSourceUrl(string $url, string $event_id): string;
+
+    /**
+     * Reconstructs a URL string from its parsed components.
+     *
+     * This method takes an associative array similar to the output of `parse_url()`
+     * and rebuilds the original URL string, including scheme, host, port, user, password,
+     * path, query, and fragment if they are present.
+     *
+     * @param array $parsed_url An associative array containing parts of a URL
+     *                          (keys: scheme, host, port, user, pass, path, query, fragment).
+     *
+     * @return string The reconstructed URL.
+     */
+    public function unparseUrl(array $parsed_url): string;
 }

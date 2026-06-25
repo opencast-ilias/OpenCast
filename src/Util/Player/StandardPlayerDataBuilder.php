@@ -38,8 +38,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
         'video/mp4' => 'mp4',
-        'audio/m4a' => 'mp4',
-        'audio/mp4' => 'mp4',
+        'audio/m4a' => 'audio',
+        'audio/mp4' => 'audio',
     ];
 
     private static array $role_mapping = [
@@ -63,6 +63,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         [$duration, $streams, $jwt_iframe_urls] = $this->buildStreams($media);
 
+        $audio_only_link = $this->getAudioOnlyPlayerLink($media);
+
         $data = [
             "streams" => array_values($streams),
             "metadata" => [
@@ -74,7 +76,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             ],
             "jwt" => [
                 "jwt_iframe_urls" => $jwt_iframe_urls,
-            ]
+            ],
+            "audio_only_link" => $audio_only_link,
         ];
 
         $frame_list_raw = $this->buildSegments($this->event);
@@ -506,5 +509,33 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     public function shouldPlayInJWTIframe(): bool
     {
         return true;
+    }
+
+    /**
+     * Checks whether the event is audio only and generates the engage player url.
+     * @param array $media
+     * @return null|string the play url or null if it is not audio only!
+     */
+    protected function getAudioOnlyPlayerLink(array $media): ?string
+    {
+        $is_audio = false;
+        foreach ($media as $medium) {
+            $stream_type = self::$mimetype_mapping[$medium->getMediatype()];
+            if ($stream_type === 'audio') {
+                $is_audio = true;
+                break;
+            }
+        }
+
+        $audio_player_url = null;
+        if ($is_audio) {
+            $base_url = PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
+                ?? PluginConfig::getConfig(PluginConfig::F_API_BASE);
+            $parsed_based_url = parse_url($base_url);
+            $parsed_based_url['path'] = '/play/' . $this->event->getIdentifier();
+            $audio_player_url = $this->api->unparseUrl($parsed_based_url);
+        }
+
+        return $audio_player_url;
     }
 }

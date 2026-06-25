@@ -19,7 +19,7 @@
 	font-size: 32px;
 }
 
-#playerContainer, #opencastPaellaJwtPlayer {
+#playerContainer, #opencastPaellaJwtPlayer, #opencastPaellaAudioOnly {
 	font-family: roboto;
 	font-weight: 600;
 	width: 100vw;
@@ -30,7 +30,7 @@
 	overflow: hidden;
 }
 
-#opencastPaellaJwtPlayer {
+#opencastPaellaJwtPlayer, #opencastPaellaAudioOnly {
 	border: 0 !important;
 	box-shadow: none !important;
 	overflow: hidden;
