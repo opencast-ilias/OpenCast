@@ -27,4 +27,9 @@ class NullSeriesActionResolver implements SeriesActionTargetResolver
         return null;
     }
 
+    public function resolvePersistentParameter(SeriesActionParameter $parameter, string $scope): mixed
+    {
+        return null;
+    }
+
 }

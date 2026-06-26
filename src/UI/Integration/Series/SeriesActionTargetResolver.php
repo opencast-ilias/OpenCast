@@ -18,4 +18,11 @@ interface SeriesActionTargetResolver
 
     public function resolveParameter(SeriesActionParameter $parameter): mixed;
 
+    /**
+     * Like {@see resolveParameter()}, but remembers the value per user under the
+     * given scope (e.g. the series id): an explicit request value is stored and
+     * restored on later requests.
+     */
+    public function resolvePersistentParameter(SeriesActionParameter $parameter, string $scope): mixed;
+
 }
