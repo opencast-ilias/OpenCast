@@ -76,9 +76,21 @@ class MDConfigTable extends ilTable2GUI
     protected function fillRow(/*array*/ array $a_set): void
     {
         $a_set['actions'] = $this->buildActions($a_set);
-        $a_set['required'] = $a_set['required'] ? 'ok' : 'not_ok';
-        $a_set['read_only'] = $a_set['read_only'] ? 'ok' : 'not_ok';
+        $a_set['required'] = $this->boolIconSrc((bool) $a_set['required']);
+        $a_set['read_only'] = $this->boolIconSrc((bool) $a_set['read_only']);
         parent::fillRow($a_set);
+    }
+
+    /**
+     * Resolves the check-/cross-icon path via the ILIAS asset resolver instead
+     * of a hard-coded template path (the standard images moved from
+     * templates/default/images to assets/images in ILIAS 10).
+     */
+    private function boolIconSrc(bool $value): string
+    {
+        return \ilUtil::getHtmlPath(
+            \ilUtil::getImagePath($value ? 'standard/icon_ok.svg' : 'standard/icon_not_ok.svg')
+        );
     }
 
     protected function buildActions(array $a_set): string
