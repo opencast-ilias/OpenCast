@@ -12,6 +12,7 @@ use srag\Plugins\Opencast\Views\Series\EventSettingsResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
+use srag\Plugins\Opencast\State\SessionSettingsStore;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -63,7 +64,8 @@ class Integration
             $series_action_target_resolver ?? new SeriesActionResolver(
                 $container->translator(),
                 $container->ilias()->http(),
-                $container->ilias()->ctrl()
+                $container->ilias()->ctrl(),
+                new SessionSettingsStore()
             ),
             $settings_resolver
         );
