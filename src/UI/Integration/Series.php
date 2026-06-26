@@ -256,7 +256,7 @@ class Series implements DataRetrieval
                     ->viewControl()
                     ->sortation(
                         $sortation_options,
-                        $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_DATE_DESC
+                        $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::DEFAULT_SORT
                     )
                     ->withTargetURL(
                         (string) $this->resolver->resolve(SeriesActionTarget::SORT),
@@ -269,7 +269,7 @@ class Series implements DataRetrieval
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
         $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
-        $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::SORT_DATE_ASC;
+        $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::DEFAULT_SORT;
 
         $api_sort = match ($sort) {
             self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API
