@@ -84,10 +84,22 @@ class xoctPermissionTemplateTableGUI extends ilTable2GUI
         $a_set['title'] = $this->user->getLanguage() === 'de' ? $a_set['title_de'] : $a_set['title_en'];
         $a_set['info'] = $this->user->getLanguage() === 'de' ? $a_set['info_de'] : $a_set['info_en'];
         $a_set['actions'] = $this->buildActions($a_set);
-        $a_set['default'] = $a_set['is_default'] ? 'ok' : 'not_ok';
-        $a_set['read'] = $a_set['read_access'] ? 'ok' : 'not_ok';
-        $a_set['write'] = $a_set['write_access'] ? 'ok' : 'not_ok';
+        $a_set['default'] = $this->boolIconSrc((bool) $a_set['is_default']);
+        $a_set['read'] = $this->boolIconSrc((bool) $a_set['read_access']);
+        $a_set['write'] = $this->boolIconSrc((bool) $a_set['write_access']);
         parent::fillRow($a_set);
+    }
+
+    /**
+     * Resolves the check-/cross-icon path via the ILIAS asset resolver instead
+     * of a hard-coded template path (the standard images moved from
+     * templates/default/images to assets/images in ILIAS 10).
+     */
+    private function boolIconSrc(bool $value): string
+    {
+        return ilUtil::getHtmlPath(
+            ilUtil::getImagePath($value ? 'standard/icon_ok.svg' : 'standard/icon_not_ok.svg')
+        );
     }
 
     protected function buildActions(array $a_set): string
