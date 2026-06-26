@@ -18,6 +18,7 @@ enum EventSettings: string
     case DESCRIPTION_MAX_LENGTH = 'description_max_length';
     case STATUS_MAX_LENGTH = 'status_max_length';
     case EDIT_ALL_METADATA = 'edit_all_metadata';
+    case USE_ANNOTATIONS = 'use_annotations';
 
     case START_X_MINUTES_BEFORE_LIVE = 'minutes_before_live';
 
