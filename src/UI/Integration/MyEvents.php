@@ -369,10 +369,32 @@ class MyEvents implements DataRetrieval
             $filter = array_filter($filter, static fn($value): bool => $value !== '');
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
-            $sort__by_series = false;
+            // The Opencast API can only sort by an event's own metadata (e.g.
+            // title), not by the resolved series *name* shown in the table - it
+            // only knows the series identifier. Sorting by series is therefore
+            // done locally. As the result is paginated server-side, we fetch the
+            // full result set, sort it by series name (respecting the requested
+            // direction) and slice the requested page ourselves; otherwise only
+            // the current page would be reordered and the overall order across
+            // pages would be wrong.
             if ($sort === 'series') {
-                $sort = 'title';
-                $sort__by_series = true;
+                $events = (array) $this->event_repository->getFiltered(
+                    $filter,
+                    '',
+                    [$xoct_user->getUserRoleName()],
+                    0,
+                    1000,
+                    'title:ASC',
+                    true
+                );
+
+                usort($events, function (Event $a, Event $b) use ($order): int {
+                    return $order === 'DESC' ? strnatcasecmp($this->getSeriesName($b), $this->getSeriesName($a)) : strnatcasecmp(
+                        $this->getSeriesName($a), $this->getSeriesName($b)
+                    );
+                });
+
+                return array_slice($events, $offset, $limit);
             }
 
             $events = (array) $this->event_repository->getFiltered(
@@ -386,15 +408,6 @@ class MyEvents implements DataRetrieval
             );
         } catch (\Throwable) {
             return [];
-        }
-
-        if ($sort__by_series) {
-            // Sort by the displayed series name (not the series identifier) and respect the requested direction.
-            usort($events, function (Event $a, Event $b) use ($order): int {
-                return $order === 'DESC' ? strnatcasecmp($this->getSeriesName($b), $this->getSeriesName($a)) : strnatcasecmp(
-                    $this->getSeriesName($a), $this->getSeriesName($b)
-                );
-            });
         }
         // we cannot filter by processing state here, as the api does not deliver this information directly ant this
         // would lead to non mathcing amount of rows. e.g. if 5 events should be displayed, but only 3 are processed,
