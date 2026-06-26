@@ -18,6 +18,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
     private bool $player_in_modal;
     private bool $show_best_action = true; // TODO make configurable
     private bool $edit_all_metadata;
+    private bool $use_annotations;
 
     public function __construct(
         ObjectSettings $object_settings
@@ -29,6 +30,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
         $this->edit_all_metadata = ((int) PluginConfig::getConfig(
             PluginConfig::F_SCHEDULED_METADATA_EDITABLE
         )) === PluginConfig::ALL_METADATA;
+        $this->use_annotations = (bool) $object_settings->getUseAnnotations();
     }
 
     public function resolve(EventSettings $setting): mixed
@@ -40,6 +42,7 @@ class EventSettingsResolver implements EventSettingsValueResolver
             EventSettings::DESCRIPTION_MAX_LENGTH => 120,
             EventSettings::STATUS_MAX_LENGTH => 80,
             EventSettings::SHOW_OWNER => $this->permission_per_clip,
+            EventSettings::USE_ANNOTATIONS => $this->use_annotations,
             EventSettings::PRESENTED_METADATA => [
                 EventSettingsValueResolver::MD_OWNER,
                 EventSettingsValueResolver::MD_LOCATION,

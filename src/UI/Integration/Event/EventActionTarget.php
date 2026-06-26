@@ -22,5 +22,6 @@ enum EventActionTarget: string
     case GRANT_ACCESS = 'grant_access';
     case EDIT_OWNER = 'edit_owner';
     case REPUBLISH = 'republish';
+    case ANNOTATE = 'annotate';
 
 }
