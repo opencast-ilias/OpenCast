@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.4.1
+- [FIX] Translate subtitle 'Load language list' modal action button label #420
+
 ## Version 9.4.0
 - [FEATURE] JWT-Support
 - [FEATURE] Add "Enable Cutting" configuration and related UI elements (incl. enable by default)
