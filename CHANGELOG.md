@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 10.1.1
+- [FIX] Translate subtitle 'Load language list' modal action button label #420
+- [FIX] Event list: fill scheduled-live-stream label placeholder and show event times in the user's timezone #498 #499
+- [FIX] Stream download passthrough instead of buffering file in memory
+
 ## Version 10.1.0
 - [FIX] Livestreaming can't be accessed #494
 - [FEATURE] JWT-Support
