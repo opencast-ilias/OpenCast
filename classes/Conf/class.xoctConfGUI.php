@@ -252,7 +252,9 @@ class xoctConfGUI extends xoctGUI
             $this->getLocaleString(self::LOAD_SUBTITLE_LANG_LIST_LABEL, 'config'),
             $this->getLocaleString('subtitle_load_lang_list_confirmation', 'config'),
             $this->ctrl->getFormAction($this, self::CMD_LOAD_SUBTITLE_LANG_LIST)
-        )->withActionButtonLabel(self::LOAD_SUBTITLE_LANG_LIST_ABTN_LABEL);
+        )->withActionButtonLabel(
+            $this->getLocaleString(self::LOAD_SUBTITLE_LANG_LIST_LABEL . '_abtn_label', 'config')
+        );
         $this->populateSubtitleToolbar($confirmation_modal);
         $rendered_modal = $this->renderer->render($confirmation_modal);
 
