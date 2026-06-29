@@ -519,22 +519,13 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
      */
     protected function getAudioOnlyPlayerLink(array $media): ?string
     {
-        $is_audio = false;
+        $audio_player_url = null;
         foreach ($media as $medium) {
             $stream_type = self::$mimetype_mapping[$medium->getMediatype()];
             if ($stream_type === 'audio') {
-                $is_audio = true;
+                $audio_player_url = $this->event->publications()->getPlayerLink();
                 break;
             }
-        }
-
-        $audio_player_url = null;
-        if ($is_audio) {
-            $base_url = PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE)
-                ?? PluginConfig::getConfig(PluginConfig::F_API_BASE);
-            $parsed_based_url = parse_url($base_url);
-            $parsed_based_url['path'] = '/play/' . $this->event->getIdentifier();
-            $audio_player_url = $this->api->unparseUrl($parsed_based_url);
         }
 
         return $audio_player_url;
