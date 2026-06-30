@@ -4,7 +4,7 @@
  */
 var QueryUtils = {
 
-    uuidv4: require('uuid/v4'),
+    uuidv4: require('uuid').v4,
     moment: require('moment'),
     mysql: require('mysql'),
     con: '',
@@ -25,10 +25,13 @@ var QueryUtils = {
     },
 
     writeChatServerConfig: async function (ip, port, protocol, host) {
-        await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("ip", "' + ip + '") ON DUPLICATE KEY UPDATE value = "' + ip + '"');
-        await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("port", "' + port + '") ON DUPLICATE KEY UPDATE value = "' + port + '"');
-        await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("protocol", "' + protocol + '") ON DUPLICATE KEY UPDATE value = "' + protocol + '"');
-        await this.con.query('INSERT INTO sr_chat_config (name, value) VALUES ("host", "' + host + '") ON DUPLICATE KEY UPDATE value = "' + host + '"');
+        var config = { ip: ip, port: port, protocol: protocol, host: host };
+        for (var name in config) {
+            await this.con.query(
+                'INSERT INTO sr_chat_config (name, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = ?',
+                [name, config[name], config[name]]
+            );
+        }
     },
 
     getOldMessages: async function (chat_room_id) {
@@ -42,8 +45,8 @@ var QueryUtils = {
             ' usr_data u ON u.usr_id = m.usr_id' +
             ' LEFT JOIN' +
             ' usr_pref p ON p.usr_id = u.usr_id AND p.keyword = "public_profile" AND (p.value = "y" OR p.value = "g")' +
-            ' WHERE m.chat_room_id = ' + chat_room_id +
-            ' ORDER BY sent_at ASC');
+            ' WHERE m.chat_room_id = ?' +
+            ' ORDER BY sent_at ASC', [chat_room_id]);
 
         rows = rows.map(function (row) {
             if (row.login == null) {
@@ -78,7 +81,7 @@ var QueryUtils = {
 
     cleanupTokens: async function () {
         var ts = Math.round(new Date().getTime() / 1000);
-        await this.con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ' + ts);
+        await this.con.query('DELETE FROM sr_chat_token WHERE valid_until_unix < ?', [ts]);
     },
 
     checkAndFetchToken: async function (token) {
@@ -95,8 +98,10 @@ var QueryUtils = {
     },
 
     insertMessage: async function (chat_room_id, usr_id, msg, sent_at) {
-        await this.con.query('INSERT INTO sr_chat_message (id, chat_room_id, usr_id, message, sent_at) ' +
-            'VALUES ("' + this.uuidv4() + '",' + chat_room_id + ',' + usr_id + ',"' + msg + '", "' + sent_at + '")');
+        await this.con.query(
+            'INSERT INTO sr_chat_message (id, chat_room_id, usr_id, message, sent_at) VALUES (?, ?, ?, ?, ?)',
+            [this.uuidv4(), chat_room_id, usr_id, msg, sent_at]
+        );
     }
 }
 
