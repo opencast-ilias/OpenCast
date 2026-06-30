@@ -70,9 +70,8 @@ class OpencastIngestService
                     $new_vtt_path = str_replace(".$extension", '.vtt', $path);
                     $escaped_path = ilShellUtil::escapeShellArg($path);
                     $escaped_new_vtt_path = ilShellUtil::escapeShellArg($new_vtt_path);
-                    $ffmpeg_cmd = "-i {$path} -c:s webvtt {$new_vtt_path}";
-                    $escaped_cmd = ilShellUtil::escapeShellCmd($ffmpeg_cmd);
-                    ilFFmpeg::exec($escaped_cmd);
+                    $ffmpeg_cmd = "-i {$escaped_path} -c:s webvtt {$escaped_new_vtt_path}";
+                    ilFFmpeg::exec($ffmpeg_cmd);
                     if (file_exists($new_vtt_path)) {
                         $file_stream = fopen($new_vtt_path, 'rb');
                         unlink($new_vtt_path);
