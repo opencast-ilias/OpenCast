@@ -142,9 +142,6 @@ class xoctPlayerGUI extends xoctGUI
             $jwt_data = $data['jwt'] ?? [];
             $tpl->setVariable("JWT_MODULE_CONFIG",
                 json_encode($this->buildJwtModuleConfig($event, $jwt_data)));
-        } else if ($audio_only_link) {
-            $tpl = $this->plugin->getTemplate("audio_iframe_player.html", true, true);
-            $tpl->setVariable("SRC", $audio_only_link);
         } else {
             // The normal paella player.
             $tpl = $this->plugin->getTemplate("paella_player.html", true, true);

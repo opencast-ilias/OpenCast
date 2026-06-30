@@ -1,13 +1,12 @@
 'use strict';
 import $ from "jquery";
-import { Paella } from 'paella-core';
-import { Events } from 'paella-core';
-import { utils } from 'paella-core';
+import { Paella, Events, utils } from 'paella-core';
 import getBasicPluginContext from 'paella-basic-plugins';
 import getSlidePluginContext from 'paella-slide-plugins';
 import getZoomPluginContext from 'paella-zoom-plugin';
 import getUserTrackingPluginsContext from 'paella-user-tracking';
 import getMP4MultiQualityContext from 'paella-mp4multiquality-plugin';
+import getVideo360CanvasPluginContext from 'paella-webgl-plugins';
 import localDictionaries from "./lang/registery";
 
 const { getUrlParameter } = utils;
@@ -160,7 +159,8 @@ export default {
                 getSlidePluginContext(),
                 getZoomPluginContext(),
                 getUserTrackingPluginsContext(),
-                getMP4MultiQualityContext()
+                getVideo360CanvasPluginContext(),
+                getMP4MultiQualityContext(),
             ],
             getVideoId: getVideoIdFunction
         });
@@ -328,12 +328,24 @@ export default {
 
     loadPlayer: function() {
         $('#overlay_live_waiting').hide();
-        this.filterStreams().then(() => {
-            this.paella.loadManifest()
-                .then(() => {
-                    console.log("Initialization done");
-                })
-                .catch(e => console.error(e));
+        this.filterStreams().then(async () => {
+            try {
+                await this.paella.loadManifest();
+                if (this.paella.streams.isNativelyPlayable &&
+                    this.paella.streams.isAudioOnly &&
+                    (!this.paella.captions || this.paella.captions.length === 0)
+                ){
+                    const nativePlayer = this.paella.streams.nativePlayer;
+                    nativePlayer.setAttribute('controls','');
+                    await this.paella.unload();
+                    const playerContainer = document.getElementById('playerContainer');
+                    playerContainer.innerHTML = '';
+                    playerContainer.appendChild(nativePlayer);
+                }
+                console.log("Initialization done");
+            } catch (error) {
+                console.error('error loading player: ', error);
+            }
         });
     },
 

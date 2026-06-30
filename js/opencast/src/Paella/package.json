@@ -2,8 +2,10 @@
   "name": "ilias-paella-player",
   "private": true,
   "dependencies": {
-    "paella-basic-plugins": "^1.44.10",
-    "paella-core": "^1.50.2",
+    "paella-skins": "^1.48.1",
+    "paella-webgl-plugins": "^1.41.0",
+    "paella-basic-plugins": "^1.50.3",
+    "paella-core": "^1.50.5",
     "paella-slide-plugins": "^1.50.1",
     "paella-user-tracking": "^1.42.6",
     "paella-zoom-plugin": "^1.41.3",

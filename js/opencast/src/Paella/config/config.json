@@ -425,9 +425,14 @@
       "content": ["presenter", "presentation"]
     },
 
-    "es.upv.paella.videoCanvas": {
+    "es.upv.paella.audioCanvas": {
       "enabled": true,
       "order": 1
+    },
+
+    "es.upv.paella.videoCanvas": {
+      "enabled": true,
+      "order": 2
     },
 
     "es.upv.paella.cookieDataPlugin": {
