@@ -118,7 +118,14 @@ function initServer(server) {
      * get profile picture of user
      */
     app.get('/srchat/get_profile_picture/:usr_id', function (req, res) {
-        var path = ilias_installation_dir + "/data/" + client_id + "/usr_images/usr_" + req.params.usr_id + "_xsmall.jpg";
+        var usr_id = req.params.usr_id;
+        // usr_id must be a plain integer; reject anything else to avoid path traversal.
+        if (!/^\d+$/.test(usr_id)) {
+            // fallback picture
+            res.sendFile(template_dir + "/default/images/placeholder/no_photo_xsmall.jpg");
+            return;
+        }
+        var path = ilias_installation_dir + "/data/" + client_id + "/usr_images/usr_" + usr_id + "_xsmall.jpg";
         try {
             if (fs.existsSync(path)) {
                 res.sendFile(path);
