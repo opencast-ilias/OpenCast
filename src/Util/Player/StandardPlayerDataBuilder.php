@@ -38,8 +38,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
         'video/mp4' => 'mp4',
-        'audio/m4a' => 'audio',
-        'audio/mp4' => 'audio',
+        'audio/m4a' => 'audio'
     ];
 
     private static array $role_mapping = [
@@ -63,21 +62,19 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         [$duration, $streams, $jwt_iframe_urls] = $this->buildStreams($media);
 
-        $audio_only_link = $this->getAudioOnlyPlayerLink($media);
-
         $data = [
             "streams" => array_values($streams),
             "metadata" => [
                 "title" => $this->event->getTitle(),
                 "duration" => $duration,
                 "preview" => $this->event->publications()->getThumbnailUrl(),
+                "previewPortrait" => $this->event->publications()->getThumbnailUrl(),
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
             "jwt" => [
                 "jwt_iframe_urls" => $jwt_iframe_urls,
             ],
-            "audio_only_link" => $audio_only_link,
         ];
 
         $frame_list_raw = $this->buildSegments($this->event);
@@ -204,9 +201,18 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         $source_type_master_mapping = [];
         $jwt_iframe_urls = [];
+        $is_audio = false;
+        $main_audio_role = self::ROLE_MASTER;
+        $canvas_mapping = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
+            $canvas_mapping[$medium->getRole()] = ['video', 'video360'];
+            if (!$is_audio && $source_type === 'audio') {
+                $is_audio = true;
+                $main_audio_role = $medium->getRole();
+                $canvas_mapping[$medium->getRole()] = ['audio'];
+            }
             if (!isset($sources[$medium->getRole()][$source_type]) || !is_array($sources[$medium->getRole()][$source_type])) {
                 $sources[$medium->getRole()][$source_type] = [];
             }
@@ -231,10 +237,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         foreach ($sources as $role => $source) {
             if ($source !== []) {
-                $streams[] = [
+                $stream = [
                     "content" => self::$role_mapping[$role],
                     "sources" => $source
                 ];
+                if ($main_audio_role === $role) {
+                    $stream['role'] = 'mainAudio';
+                }
+                if (!empty($canvas_mapping[$role])) {
+                    $stream['canvas'] = $canvas_mapping[$role];
+                }
+                $streams[] = $stream;
             }
         }
 
@@ -252,14 +265,20 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             $medium->getUrl(),
             $duration
         ) : $medium->getUrl();
-        return [
+
+        $source = [
             "src" => $url,
-            "mimetype" => $medium->getMediatype(),
-            "res" => [
-                "w" => $medium->getWidth(),
-                "h" => $medium->getHeight()
-            ]
+            "mimetype" => $medium->getMediatype()
         ];
+        $width = $medium->getWidth();
+        $height = $medium->getHeight();
+        if (!empty($width) && !empty($height)) {
+            $source['res'] = [
+                "w" => $width,
+                "h" => $height
+            ];
+        }
+        return $source;
     }
 
     /**
@@ -509,25 +528,5 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     public function shouldPlayInJWTIframe(): bool
     {
         return true;
-    }
-
-
-    /**
-     * Checks whether the event is audio only and generates the engage player url.
-     * @param array $media
-     * @return null|string the play url or null if it is not audio only!
-     */
-    protected function getAudioOnlyPlayerLink(array $media): ?string
-    {
-        $audio_player_url = null;
-        foreach ($media as $medium) {
-            $stream_type = self::$mimetype_mapping[$medium->getMediatype()];
-            if ($stream_type === 'audio') {
-                $audio_player_url = $this->event->publications()->getPlayerLink();
-                break;
-            }
-        }
-
-        return $audio_player_url;
     }
 }
