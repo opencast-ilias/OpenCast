@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Lcobucci\\JWT\\Builder' => $vendorDir . '/lcobucci/jwt/src/Builder.php',
     'Lcobucci\\JWT\\ClaimsFormatter' => $vendorDir . '/lcobucci/jwt/src/ClaimsFormatter.php',
@@ -108,7 +109,13 @@ return array(
     'OpencastApi\\Rest\\OcWorkflow' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflow.php',
     'OpencastApi\\Rest\\OcWorkflowsApi' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Rest/OcWorkflowsApi.php',
     'OpencastApi\\Util\\OcUtils' => $vendorDir . '/elan-ev/opencast-api/src/OpencastApi/Util/OcUtils.php',
+    'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
     'Psr\\Clock\\ClockInterface' => $vendorDir . '/psr/clock/src/ClockInterface.php',
+    'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+    'Symfony\\Polyfill\\Php80\\Php80' => $vendorDir . '/symfony/polyfill-php80/Php80.php',
+    'Symfony\\Polyfill\\Php80\\PhpToken' => $vendorDir . '/symfony/polyfill-php80/PhpToken.php',
+    'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+    'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     'WaitOverlay' => $baseDir . '/src/UI/WaitOverlay.php',
     'ilObjOpenCast' => $baseDir . '/classes/class.ilObjOpenCast.php',
     'ilObjOpenCastAccess' => $baseDir . '/classes/class.ilObjOpenCastAccess.php',
