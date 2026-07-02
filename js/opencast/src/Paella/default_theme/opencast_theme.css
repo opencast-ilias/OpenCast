@@ -4,14 +4,35 @@
 }
 
 :root {
-    --main-bg-color: #1e1e1e;
-    --main-bg-gradient: color-mix(in srgb, #1e1e1e 50%, transparent);
-    --secondary-bg-color: #2e2e2e;
-    --secondary-bg-color-hover: color-mix(in srgb, #1e1e1e 90%, transparent);
+    --main-fg-color: #F9FAFB;
+    --main-bg-color: #1F2937;
+    --main-bg-color-hover: #374151;
+    --secondary-bg-color-hover: #202020;
     --highlight-bg-color: #3073B8;
-    --highlight-bg-color-hover: #3a8bdd;
-    --video-container-background-color: #000;
-    --base-video-rect-background-color: #000;
+    --highlight-bg-color-hover: #2c6fb2;
+    --playback-bar-gradient: rgba(31, 41, 55, 0.85);
+    --playback-bar-gradient-hover: rgba(31, 41, 55, 1);
+    --popup-wrapper-padding: 5px 5px;
+    --playback-bar-container-gap2: 0;
+    --progress-indicator-padding: 4px 15px;
+    --playback-bar-buttons-padding: 4px 15px;
+    --button-fixed-size: 40px;
+    --button-icon-size: calc(var(--button-fixed-width) / 2);
+    --popup-menu-item-icon-size: 24px;
+    --player-font-family: "Roboto";
+    --canvas-button-container-padding: 5px 5px;
+    --canvas-button-height: 42px;
+    --canvas-button-button-min-height: 28px;
+    --canvas-button-max-height: 54px;
+    --canvas-button-padding: 2%;
+    --button-color: #ffffff;
+    --icon-fill-color: #ffffff;
+    --icon-stroke-color: none;
+}
+
+nav[role="toolbar"] button > i > svg {
+    fill: var(--icon-fill-color) !important;
+    stroke: var(--icon-stroke-color) !important;
 }
 
 .button-group-title,
@@ -136,12 +157,12 @@ ul.menu-button-content li.menu-button-item button {
 }
 
 /* Custom ILIAS LiveStream Indicators */
-.playback-bar .button-plugins .button-plugin-container div.ilias-livestream-button {
+div.ilias-livestream-button {
     display: flex !important;
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
 }
-.playback-bar .button-plugins .button-plugin-container div.ilias-livestream-button div i {
+div.ilias-livestream-button i {
     width: 12px !important;
 }

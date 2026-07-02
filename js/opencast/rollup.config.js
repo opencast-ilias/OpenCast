@@ -1,4 +1,4 @@
-import {terser} from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 export default {
@@ -17,5 +17,11 @@ export default {
             jquery: '$',
         }
     },
-    plugins: [terser(), commonjs(), nodeResolve()]
+    plugins: [
+        terser({
+            ecma: 2020 // Allows modern syntax in paella player 8
+        }),
+        commonjs(),
+        nodeResolve()
+    ]
 };

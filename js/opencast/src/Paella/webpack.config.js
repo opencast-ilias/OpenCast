@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
     entry: './player.js',
@@ -39,6 +40,15 @@ module.exports = {
             }
         ]
     },
+
+    optimization: {
+        splitChunks: false,
+    },
+    plugins: [
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1,
+        }),
+    ],
 
     performance: {
         hints: false,

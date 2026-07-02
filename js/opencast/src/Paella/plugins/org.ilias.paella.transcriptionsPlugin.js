@@ -1,11 +1,13 @@
 
 import {
   PopUpButtonPlugin,
+  PaellaCorePlugins,
   createElementWithHtmlText,
   translate,
   utils
-  } from 'paella-core';
+} from '@asicupv/paella-core';
 
+import DOMPurify from 'dompurify';
 
 import TranscriptionsIcon from '../icons/transcriptions.svg';
 import './css/transcriptions_plugin.css';
@@ -16,17 +18,20 @@ import './css/transcriptions_plugin.css';
 * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
 */
 export default class TranscriptionsPlugin extends PopUpButtonPlugin {
-
-  get moveable() {
-    return true;
+  getPluginModuleInstance() {
+    return PaellaCorePlugins.Get();
   }
 
-  get resizeable() {
-    return true;
+  get name() {
+      return "org.ilias.paella.transcriptionsPlugin";
+  }
+
+  get side() {
+    return "right";
   }
 
   get popUpType() {
-    return 'no-modal';
+    return 'modal';
   }
 
   get closeActions() {
@@ -53,7 +58,6 @@ export default class TranscriptionsPlugin extends PopUpButtonPlugin {
   async load() {
     this.icon = this.player.getCustomPluginIcon(this.name, 'buttonIcon') || TranscriptionsIcon;
   }
-
 
   rebuildList(search = '') {
     const { videoContainer } = this.player;
@@ -95,32 +99,46 @@ export default class TranscriptionsPlugin extends PopUpButtonPlugin {
     });
   }
 
-  async getContent() {
-    const container = createElementWithHtmlText('<div class="transcriptions-container"></div>');
-    const searchContainer = createElementWithHtmlText(
-      `<input type="search" placeholder="${translate('Search')}"></input>`,
-      container
-    );
+  debounce(func, delay) {
+    let timer;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
 
-    searchContainer.addEventListener(
+  async getContent() {
+    let mainDiv = document.createElement('div');
+    mainDiv.classList.add('transcriptions-container');
+    let searchInput = document.createElement('input');
+    searchInput.setAttribute('type', 'search');
+    searchInput.setAttribute('placeholder', translate('Search'));
+    searchInput.addEventListener(
       'click',
       evt => evt.stopPropagation()
     );
 
-    searchContainer.addEventListener(
+    const debouncedRebuild = this.debounce((val) => this.rebuildList(val), 300);
+
+    searchInput.addEventListener(
       'keyup',
       evt => {
         evt.stopPropagation();
-        this.rebuildList(evt.target.value);
+        let rawText = evt.target.value.trim();
+        let cleanText = DOMPurify.sanitize(rawText);
+        debouncedRebuild(cleanText);
       }
     );
-
-    const transcriptionsContainer = createElementWithHtmlText(
-      `<ul class="transcriptions-list"></ul>`,
-      container
-    );
-    this._transcriptionsContainer = transcriptionsContainer;
+    mainDiv.appendChild(searchInput);
+    let list = document.createElement('ul');
+    list.classList.add('transcriptions-list');
+    this._transcriptionsContainer = list;
+    mainDiv.appendChild(list);
     this.rebuildList();
-    return container;
+    return mainDiv;
+  }
+
+  preload() {
+    console.log("ILIAS-Paella: TranscriptionsPlugin plugin loading...");
   }
 }

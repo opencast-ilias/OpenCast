@@ -30,6 +30,15 @@
 	overflow: hidden;
 }
 
+#playerContainer.paella-fallback-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	z-index: 1000;
+}
+
 #opencastPaellaJwtPlayer {
 	border: 0 !important;
 	box-shadow: none !important;
