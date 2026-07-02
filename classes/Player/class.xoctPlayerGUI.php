@@ -86,6 +86,13 @@ class xoctPlayerGUI extends xoctGUI
             $this->sendReponse("Error: " . $e->getMessage());
         }
 
+        // Determining whether the event is audio only.
+        $audio_only_link = null;
+        if (isset($data['audio_only_link'])) {
+            $audio_only_link = $data['audio_only_link'];
+            unset($data['audio_only_link']);
+        }
+
         // We load different template for the JWT Iframe Player.
         if ($this->api->isJWTActivated() && $jwt_iframe_capable) {
             $tpl = $this->plugin->getTemplate("jwt_iframe_player.html", true, true);
