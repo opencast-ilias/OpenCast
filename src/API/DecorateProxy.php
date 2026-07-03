@@ -85,7 +85,11 @@ class DecorateProxy
             $resp_orig_text .= ' => ' . $reason;
 
             match ($code) {
-                0 => throw new xoctException(xoctException::API_CALL_CONNECTION_FAILED, $resp_orig_text),
+                // 0: Opencast unreachable with no proxy in front. 502 Bad Gateway /
+                // 504 Gateway Timeout: a reverse proxy reports the Opencast behind it
+                // as down or unresponsive. All three mean "cannot reach Opencast", so
+                // show the connection-failed message instead of a generic server error.
+                0, 502, 504 => throw new xoctException(xoctException::API_CALL_CONNECTION_FAILED, $resp_orig_text),
                 403 => throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig_text),
                 401 => throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS),
                 404 => throw new xoctException(xoctException::API_CALL_STATUS_404, $resp_orig_text),
