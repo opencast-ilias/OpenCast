@@ -185,6 +185,13 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \xoctEventGUI::CMD_START_WORKFLOW_MODAL,
                     ActionType::ASYNC_MODAL
                 );
+            case EventActionTarget::ANNOTATE:
+                return $this->build(
+                    $this->translator->translate('event_annotate'),
+                    \xoctEventGUI::class,
+                    \xoctEventGUI::CMD_ANNOTATE,
+                    ActionType::EXTERNAL_LINK
+                );
             case EventActionTarget::REPUBLISH: // TODO Modals needed, class.xoctEventRenderer.php:673
             default:
                 return null;
@@ -305,6 +312,10 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \ilObjOpenCastAccess::ACTION_DOWNLOAD_EVENT,
                     $event
                 );
+            case EventActionTarget::ANNOTATE:
+                return (bool) $settings?->resolve(EventSettings::USE_ANNOTATIONS)
+                    && $event->getProcessingState() === Event::STATE_SUCCEEDED
+                    && (bool) $event->publications()->getAnnotationPublication();
             default:
                 return false;
 

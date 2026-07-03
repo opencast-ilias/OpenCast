@@ -11,6 +11,7 @@ enum EventActionTarget: string
 {
     case PLAY = 'play';
     case DOWNLOAD = 'download';
+    case ANNOTATE = 'annotate';
     case CUT = 'cut';
     case START_WORKFLOW = 'start_workflow';
     case SET_OFFLINE = 'set_offline';
