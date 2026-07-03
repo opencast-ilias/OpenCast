@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 9.5.0
+- [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513
+- [FIX] JWT follow-ups: configurable iframe url path and basic access roles #522
+- [FIX] Chunked upload fails for large files #518
+- [FIX] My Events: include offline-state events in list
+- [SECURITY] Escape ffmpeg subtitle-conversion arguments (command injection)
+- [SECURITY] Chat server: parameterize SQL queries and validate user id in profile-picture endpoint (SQL injection, path traversal)
+- [SECURITY] Bump vulnerable dependencies (chat server, composer)
+
 ## Version 9.4.1
 - [FIX] Translate subtitle 'Load language list' modal action button label #420
 
