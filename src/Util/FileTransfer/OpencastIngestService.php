@@ -103,11 +103,17 @@ class OpencastIngestService
             );
         }
 
+        $track_flavor = 'presentation/source';
+        $track = $payload->getPresentation()->getFileStream();
+        if ($payload->hasAudioFile()) {
+            $track_flavor = 'presenter/source';
+            $track = $payload->getPresenter()->getFileStream();
+        }
         // track
         $media_package = $this->api->routes()->ingest->addTrack(
             $media_package,
-            'presentation/source',
-            $payload->getPresentation()->getFileStream()
+            $track_flavor,
+            $track
         );
 
         // Get workflow configuration params ready, make sure it is array!

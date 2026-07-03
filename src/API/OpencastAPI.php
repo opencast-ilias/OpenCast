@@ -452,7 +452,7 @@ class OpencastAPI implements API
      *
      * @return string The reconstructed URL.
      */
-    private function unparseUrl(array $parsed_url): string
+    public function unparseUrl(array $parsed_url): string
     {
         $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
         $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';

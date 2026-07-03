@@ -1,14 +1,27 @@
 'use strict';
 import $ from "jquery";
-import { Paella } from 'paella-core';
-import { Events } from 'paella-core';
-import { utils } from 'paella-core';
-import getBasicPluginContext from 'paella-basic-plugins';
-import getSlidePluginContext from 'paella-slide-plugins';
-import getZoomPluginContext from 'paella-zoom-plugin';
-import getUserTrackingPluginsContext from 'paella-user-tracking';
-import getMP4MultiQualityContext from 'paella-mp4multiquality-plugin';
+import { OpencastPaellaPlayer } from '@asicupv/paella-opencast-core';
+import { Events, utils } from '@asicupv/paella-core';
+import { basicPlugins } from '@asicupv/paella-basic-plugins';
+import { slidePlugins } from '@asicupv/paella-slide-plugins';
+import { zoomPlugins } from '@asicupv/paella-zoom-plugin';
+import { userTrackingPlugins } from '@asicupv/paella-user-tracking';
+import { videoPlugins } from '@asicupv/paella-video-plugins';
+import { extraPlugins } from '@asicupv/paella-extra-plugins';
+import { webglPlugins } from '@asicupv/paella-webgl-plugins';
+import{ opencastPlugins } from '@asicupv/paella-opencast-plugins';
+import TranscriptionsPlugin from './plugins/org.ilias.paella.transcriptionsPlugin.js';
+import LiveStreamingButtonIndicator from './plugins/org.ilias.paella.liveStreamingButtonIndicator.js';
 import localDictionaries from "./lang/registery";
+import forwardIcon from './resources/forwardIcon.svg';
+import backwardIcon from './resources/backwardIcon.svg';
+
+import '@asicupv/paella-core/paella-core.css';
+import '@asicupv/paella-basic-plugins/paella-basic-plugins.css';
+import '@asicupv/paella-slide-plugins/paella-slide-plugins.css';
+import '@asicupv/paella-zoom-plugin/paella-zoom-plugin.css';
+import '@asicupv/paella-extra-plugins/paella-extra-plugins.css';
+import '@asicupv/paella-opencast-core/paella-opencast-core.css';
 
 const { getUrlParameter } = utils;
 
@@ -27,9 +40,10 @@ const getVideoIdFunction = (config, player) => {
         window?.PaellaPlayer?.default?.data?.metadata?.videoid;
 }
 
-
 /**
  * PaellaPlayer
+ *
+ * Version 8
  *
  * @author Farbod Zamani Boroujeni <zamani@elan-ev.de>
  */
@@ -66,6 +80,8 @@ export default {
     event_start_buffer: 60 * 10,
 
     paella: null,
+
+    binding_delay: null,
 
     init: function(data, config) {
 
@@ -148,24 +164,59 @@ export default {
 
     initPaella: function() {
         this.checkPreview();
-        this.paella = new Paella('playerContainer', {
+        this.paella = new OpencastPaellaPlayer('playerContainer', {
             configResourcesUrl: this.config.paella_config_resources_path,
             configUrl: this.config.paella_config_file,
             getManifestUrl: noop,
             getManifestFileUrl: noop,
             loadVideoManifest: loadVideoManifestFunction,
-            customPluginContext: [
-                require.context('./plugins', true, /\.js/),
-                getBasicPluginContext(),
-                getSlidePluginContext(),
-                getZoomPluginContext(),
-                getUserTrackingPluginsContext(),
-                getMP4MultiQualityContext()
+            plugins: [
+                ...basicPlugins,
+                ...slidePlugins,
+                ...zoomPlugins,
+                ...userTrackingPlugins,
+                ...videoPlugins,
+                ...webglPlugins,
+                ...extraPlugins,
+                ...opencastPlugins,
+                TranscriptionsPlugin,
+                LiveStreamingButtonIndicator
             ],
             getVideoId: getVideoIdFunction
         });
-        this.loadTheme();
-        this.bindPaellaEvents();
+    },
+
+    loadPlayer: function() {
+        $('#overlay_live_waiting').hide();
+        this.filterStreams().then(async () => {
+            try {
+                await this.loadTheme();
+                $('#overlay_loading').remove();
+                await this.paella.loadManifest();
+                this.binding_delay = setTimeout(() => {
+                    this.bindPaellaEvents();
+                }, 500);
+
+                this.adjustForwardBackwardCustomIcons();
+                console.log("ILIAS-Paella: Initialization done");
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    },
+
+    adjustForwardBackwardCustomIcons: function() {
+        let forwardTime = this.paella?.config?.plugins?.['es.upv.paella.forwardButtonPlugin']?.time;
+        if (forwardTime && forwardIcon) {
+            let filteredForwardIcon = forwardIcon.replace('{{SECONDS}}', forwardTime);
+            this.paella.addCustomPluginIcon("es.upv.paella.forwardButtonPlugin", "forwardIcon", filteredForwardIcon);
+        }
+
+        let backwardTime = this.paella?.config?.plugins?.['es.upv.paella.backwardButtonPlugin']?.time;
+        if (backwardTime && backwardIcon) {
+            let filteredBackwardIcon = backwardIcon.replace('{{SECONDS}}', backwardTime);
+            this.paella.addCustomPluginIcon("es.upv.paella.backwardButtonPlugin", "backwardIcon", filteredBackwardIcon);
+        }
     },
 
     loadTheme: async function() {
@@ -173,7 +224,12 @@ export default {
         if (this.config.is_live_stream) {
             theme_url = this.config.paella_theme_live;
         }
-        await this.paella.skin.loadSkin(theme_url);
+        if (theme_url !== 'opencast') {
+            await this.paella.skin.loadSkin(theme_url);
+        } else {
+            // In case we don't pass any custom Theme, we use opencast theme!
+            await this.paella.applyOpencastTheme();
+        }
         console.log(this.config.paella_theme_info);
     },
 
@@ -216,15 +272,18 @@ export default {
             () => this.caption_enabled = true,
             false
         );
+        if (this.binding_delay != null) {
+            clearTimeout(this.binding_delay);
+        }
     },
 
     handleLiveAttributes: function() {
         if (!this.config.is_live_stream || this.config.paella_config_livestream_buffered) {
             return;
         }
-        this.paella.playbackBar.progressIndicator.hideProgressTimer();
-        this.paella.playbackBar.progressIndicator.hideProgressContainer();
-        this.paella.playbackBar.progressIndicator.hideTimeLine();
+        if (this.paella?.playbackBar?.progressIndicator?.container) {
+            $(this.paella.playbackBar.progressIndicator.container).hide();
+        }
     },
 
     enableDefaultCaption: async function() {
@@ -324,17 +383,6 @@ export default {
                 clearInterval(i);
             }
         }, 500);
-    },
-
-    loadPlayer: function() {
-        $('#overlay_live_waiting').hide();
-        this.filterStreams().then(() => {
-            this.paella.loadManifest()
-                .then(() => {
-                    console.log("Initialization done");
-                })
-                .catch(e => console.error(e));
-        });
     },
 
     triggerOverlays: function() {
@@ -451,7 +499,7 @@ export default {
         }
     },
 
-    testLivePaella: async function(containerId, configUrl, previewUrl, themeUrl, hlsUrl = '', withBuffer = false) {
+    testLivePaella: async function(containerId, configUrl, configResourcesUrl, previewUrl, themeUrl, hlsUrl = '', withBuffer = false) {
         if (hlsUrl === '') {
             hlsUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
         }
@@ -475,41 +523,48 @@ export default {
         };
         if (this.paella) {
             this.paella.pause();
+            this.paella.unload();
             this.paella = null;
             $('#' + containerId).empty();
         }
-        this.paella = new Paella(containerId, {
+        this.paella = new OpencastPaellaPlayer(containerId, {
             configUrl: configUrl,
+            configResourcesUrl: configResourcesUrl,
             getManifestUrl: noop,
             getManifestFileUrl: noop,
             loadVideoManifest: loadVideoManifestFunction,
-            customPluginContext: [
-                require.context('./plugins', true, /\.js/),
-                getBasicPluginContext(),
-                getSlidePluginContext(),
-                getZoomPluginContext(),
-                getUserTrackingPluginsContext()
-            ]
+            plugins: [
+                ...basicPlugins,
+                ...slidePlugins,
+                ...zoomPlugins,
+                ...userTrackingPlugins,
+                ...videoPlugins,
+                ...webglPlugins,
+                ...extraPlugins,
+                ...opencastPlugins,
+                TranscriptionsPlugin,
+                LiveStreamingButtonIndicator
+            ],
         });
         if (themeUrl != '') {
             await this.paella.skin.loadSkin(themeUrl);
+        } else {
+            await this.paella.applyOpencastTheme();
         }
-        this.paella.loadManifest()
-        .then(() => {
-            console.log("Initialization done");
-        })
-        .catch(e => console.error(e));
-
-        this.paella.bindEvent(
-            Events.PLAYER_LOADED,
-            () => {
-                if (!withBuffer) {
-                    this.paella.playbackBar.progressIndicator.hideProgressTimer();
-                    this.paella.playbackBar.progressIndicator.hideProgressContainer();
-                    this.paella.playbackBar.progressIndicator.hideTimeLine();
-                }
-            },
-            false
-        );
+        await this.paella.loadManifest();
+        console.log("Initialization done");
+        setTimeout(() => {
+            this.paella.bindEvent(
+                Events.PLAYER_LOADED,
+                () => {
+                    if (!withBuffer) {
+                        if (this.paella?.playbackBar?.progressIndicator?.container) {
+                            $(this.paella.playbackBar.progressIndicator.container).hide();
+                        }
+                    }
+                },
+                false
+            );
+        }, 500);
     }
 }
