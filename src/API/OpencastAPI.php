@@ -7,6 +7,7 @@ namespace srag\Plugins\Opencast\API;
 use OpencastApi\Opencast;
 use OpencastApi\Rest\OcRestClient;
 use OpencastApi\Auth\JWT\OcJwtClaim;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use ilObjOpenCastAccess;
 use xoctLog;
@@ -58,9 +59,9 @@ class OpencastAPI implements API
     ];
 
     /**
-     * @var string the jwt iframe src path url placeholder.
+     * @var string the default jwt iframe src url path.
      */
-    public const JWT_IFRAME_SRC_PATH_PLACEHOLDER = '/paella7/ui/watch.html';
+    public const JWT_IFRAME_SRC_PATH_DEFAULT = '/paella7/ui/watch.html';
     /**
      * @var Opencast
      */
@@ -93,6 +94,10 @@ class OpencastAPI implements API
      * @var array Already generated JWTs for editor
      */
     protected static $already_generated_editor_jwts = [];
+    /**
+     * @var array Already generated JWTs for annotation tool
+     */
+    protected static $already_generated_annotation_tool_jwts = [];
     /**
      * @var bool
      */
@@ -135,7 +140,6 @@ class OpencastAPI implements API
 
     /**
      * Gets the static OpencastAPI instance.
-     * @param bool $new Whether to return the static OpencastAPI instance or create a new one.
      * @return Opencast $api instance of \OpencastAPI\Opencast
      */
     public function routes(): Opencast
@@ -204,11 +208,16 @@ class OpencastAPI implements API
             $access_token = $parsed_query['jwt'];
         }
 
+        $cache_key = "{$identifier}-{$this->user->getIliasUserId()}";
         // If the token is somehow cached on repetitive actions.
         // We use those that are already exist to avoid unwanted process of generating tokens.
-        if (empty($access_token) && isset(self::$already_generated_events_jwts[$identifier])) {
-            $access_token = self::$already_generated_events_jwts[$identifier];
+        if (empty($access_token) && isset(self::$already_generated_events_jwts[$cache_key])) {
+            $access_token = self::$already_generated_events_jwts[$cache_key];
         }
+
+        // Get basic access roles for the user.
+        $user_basic_access_roles = $this->user->getBasicAccessRoles();
+        sort($user_basic_access_roles);
 
         // We now decide if there is a need to generate new token.
         $need_new_access_token = empty($access_token);
@@ -217,6 +226,7 @@ class OpencastAPI implements API
         if (!empty($access_token)) {
             $is_token_valid = $this->api->getRestJwtHandler()->validateToken($access_token);
             $has_similar_perms = false;
+            $has_similar_roles = false;
             $duration_is_valid = true;
             $old_oc_jwt_claim = $this->api->getRestJwtHandler()->getOcJwtClaimFromTokenString($access_token);
             if (!empty($old_oc_jwt_claim)) {
@@ -228,9 +238,13 @@ class OpencastAPI implements API
                         $duration_is_valid = false;
                     }
                 }
+
+                $old_roles = $old_oc_jwt_claim->getRoles();
+                sort($old_roles);
+                $has_similar_roles = $old_roles === $user_basic_access_roles;
             }
 
-            $need_new_access_token = !($is_token_valid && $has_similar_perms && $duration_is_valid);
+            $need_new_access_token = !($is_token_valid && $has_similar_perms && $duration_is_valid && $has_similar_roles);
         }
 
         if ($need_new_access_token) {
@@ -244,8 +258,9 @@ class OpencastAPI implements API
                     $expiry_formatted = OcJwtClaim::generateFormattedDateTimeObject($duration);
                     $oc_claim->setExp($expiry_formatted);
                 }
+                $oc_claim->setRoles($user_basic_access_roles);
                 $access_token = $this->api->getRestJwtHandler()->issueToken($oc_claim);
-                self::$already_generated_events_jwts[$identifier] = $access_token;
+                self::$already_generated_events_jwts[$cache_key] = $access_token;
             } catch (\Throwable $th) {
                 $xoctLog = xoctLog::getInstance();
                 $xoctLog->write('ERROR: error while issuing JWT token: ' . $th->getMessage(), xoctLog::DEBUG_LEVEL_1);
@@ -392,6 +407,8 @@ class OpencastAPI implements API
             self::$already_generated_studio_jwts[$this->user->getIliasUserId()] = $access_token;
         } else if ($service === self::JWT_SERVICE_EDITOR) {
             self::$already_generated_editor_jwts[$this->user->getIliasUserId()] = $access_token;
+        } else if ($service === self::JWT_SERVICE_ANNOTATION_TOOL) {
+            self::$already_generated_annotation_tool_jwts[$this->user->getIliasUserId()] = $access_token;
         }
     }
 
@@ -407,6 +424,8 @@ class OpencastAPI implements API
             $cache_set = self::$already_generated_studio_jwts;
         } else if ($service === self::JWT_SERVICE_EDITOR) {
             $cache_set = self::$already_generated_editor_jwts;
+        } else if ($service === self::JWT_SERVICE_ANNOTATION_TOOL) {
+            $cache_set = self::$already_generated_annotation_tool_jwts;
         }
         return $cache_set;
     }
@@ -507,6 +526,8 @@ class OpencastAPI implements API
         }
         $expiry_formatted = OcJwtClaim::generateFormattedDateTimeObject($duration);
         $oc_claim->setExp($expiry_formatted);
+        $user_basic_access_roles = $this->user->getBasicAccessRoles();
+        $oc_claim->setRoles($user_basic_access_roles);
         // To make sure the current search endpoint would have proper data,
         $access_token = $this->api->getRestJwtHandler()->issueToken($oc_claim);
         return $access_token;
@@ -532,11 +553,15 @@ class OpencastAPI implements API
     public function makeJwtIframeSourceUrl(string $url, string $event_id): string
     {
         $parsed_url = parse_url($url);
-        // This replace takes care of the case if we set the src placeholder as /play/{id}, but no effect on /paella...
-        $path = str_replace('{id}', $event_id, self::JWT_IFRAME_SRC_PATH_PLACEHOLDER);
+        // This replace takes care of the case if we set the src placeholder as /play/{event_id}, but no effect on /paella...
+        $iframe_url_path = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_PATH);
+        if (empty(trim($iframe_url_path))) {
+            $iframe_url_path = self::JWT_IFRAME_SRC_PATH_DEFAULT;
+        }
+        $path = str_replace('{event_id}', $event_id, $iframe_url_path);
         $parsed_url['path'] = $path;
         // In case of having /paella.. as the placeholder we make sure that the id exists in the query string.
-        if (str_starts_with(self::JWT_IFRAME_SRC_PATH_PLACEHOLDER, '/paella7')) {
+        if (str_starts_with($iframe_url_path, '/paella')) {
             $query = !empty($parsed_url['query']) ? $parsed_url['query'] : '';
             $parsed_query = [];
             parse_str($query, $parsed_query);

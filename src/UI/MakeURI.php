@@ -36,6 +36,15 @@ trait MakeURI
         $http ??= $DIC->http();
         $url = parse_url($target);
 
+        // Ensure path does not get lost, in case there are more to path like "/ilias_10/ilias.php"
+        $base_path = $http->request()->getUri()->getPath();
+        if (
+            $base_path !== $url['path'] &&
+            str_contains($base_path, $url['path'])
+        ) {
+            $url['path'] = $base_path;
+        }
+
         return new URI(
             (string) $http
                 ->request()

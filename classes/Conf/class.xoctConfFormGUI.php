@@ -695,6 +695,18 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG) ?? $default);
         $cb->addSubItem($se_cb_sub);
 
+        // JWT Iframe Player Path
+        $te_iframe_player_path_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_iframe_player_path'), PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_PATH);
+        $te_iframe_player_path_cb_sub->setInfo($this->getLocaleString('jwt_security_iframe_player_path_info'));
+        $cb->addSubItem($te_iframe_player_path_cb_sub);
+
+        // JWT Basic Roles
+        $te_basic_roles_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_basic_roles'), PluginConfig::F_JWT_SECURITY_BASIC_ROLES);
+        $te_basic_roles_cb_sub->setInfo($this->getLocaleString('jwt_security_basic_roles_info'));
+        $te_basic_roles_cb_sub->setMulti(true);
+        $te_basic_roles_cb_sub->setInlineStyle('min-width:250px');
+        $cb->addSubItem($te_basic_roles_cb_sub);
+
         // JWT Studio Roles.
         $te_studio_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_studio_roles'), PluginConfig::F_JWT_SECURITY_STUDIO_ROLES);
         $te_studio_cb_sub->setInfo($this->getLocaleString('jwt_security_studio_roles_info'));

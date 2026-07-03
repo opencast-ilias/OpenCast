@@ -818,3 +818,7 @@ config_jwt_security_editor_roles#:#User access roles for Editor
 config_jwt_security_editor_roles_info#:#Specifies the user roles to grant access to Opencast Editor.
 config_jwt_security_annotation_tool_roles#:#User access roles for Annotation Tool
 config_jwt_security_annotation_tool_roles_info#:#Specifies the user roles required to grant access to the Opencast Annotation Tool.
+config_jwt_security_iframe_player_path#:#Iframe player URL path
+config_jwt_security_iframe_player_path_info#:#Specifies the Opencast player path that supports JWT refresh tokens. If left empty, "/paella7/ui/watch.html" will be used by default.<br>NOTE: Only the path should be specified. Do not include query parameters.<br>You may use "&#123event_id}" placeholder in the path, for example "/play/&#123event_id}", where "&#123event_id}" will be replaced with the event identifier.
+config_jwt_security_basic_roles#:#Basic access roles
+config_jwt_security_basic_roles_info#:#Specifies the roles that will be included in the JWT claims when accessing an event, series, or playlist. These roles must also be present in the ACL of the corresponding event, series, or playlist.<br>Additionally, the roles must be part of the effective roles assigned to the JWT user in Opencast.<br>By default, ROLE_EXTERNAL_APPLICATION is a suitable role for this setting.
