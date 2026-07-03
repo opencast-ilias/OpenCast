@@ -30,6 +30,7 @@
 </head>
 <body id="body" onload="
 let configUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/config/config.json';
+let configResourcesUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/resources';
 let previewUrl = location.href.replace(/[^/]*$/, '') + 'templates/images/thumbnail_live_running.png';
 let liveThemeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_live_theme.json';
 let bufferedLiveThemeUrl = location.href.replace(/[^/]*$/, '') + 'js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json';
@@ -41,7 +42,7 @@ function runPaella() {
 	let themeUrl = buffered == 'yes' ? bufferedLiveThemeUrl : liveThemeUrl;
 
 	// this call must be a direct call to the PaellaPlayer class, as il.Opencast is not defined here!
-	window.PaellaPlayer.default.testLivePaella('playerContainer', configUrl, previewUrl, themeUrl, hlsUrl, buffered == 'yes');
+	window.PaellaPlayer.default.testLivePaella('playerContainer', configUrl, configResourcesUrl, previewUrl, themeUrl, hlsUrl, buffered == 'yes');
 }
 
 const runBtn = document.getElementById('run');

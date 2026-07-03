@@ -37,7 +37,8 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
     private static array $mimetype_mapping = [
         'application/x-mpegURL' => 'hls',
         'application/dash+xml' => 'dash',
-        'video/mp4' => 'mp4'
+        'video/mp4' => 'mp4',
+        'audio/m4a' => 'audio'
     ];
 
     private static array $role_mapping = [
@@ -67,6 +68,7 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
                 "title" => $this->event->getTitle(),
                 "duration" => $duration,
                 "preview" => $this->event->publications()->getThumbnailUrl(),
+                "previewPortrait" => $this->event->publications()->getThumbnailUrl(),
                 "videoid" => $this->event->getIdentifier() ?? '',
                 "seriesid" => $this->event->getSeriesIdentifier() ?? ''
             ],
@@ -199,9 +201,18 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         $source_type_master_mapping = [];
         $jwt_iframe_urls = [];
+        $is_audio = false;
+        $main_audio_role = self::ROLE_MASTER;
+        $canvas_mapping = [];
         foreach ($media as $medium) {
             $duration = $duration ?: $medium->getDuration();
             $source_type = self::$mimetype_mapping[$medium->getMediatype()];
+            $canvas_mapping[$medium->getRole()] = ['video', 'video360'];
+            if (!$is_audio && $source_type === 'audio') {
+                $is_audio = true;
+                $main_audio_role = $medium->getRole();
+                $canvas_mapping[$medium->getRole()] = ['audio'];
+            }
             if (!isset($sources[$medium->getRole()][$source_type]) || !is_array($sources[$medium->getRole()][$source_type])) {
                 $sources[$medium->getRole()][$source_type] = [];
             }
@@ -226,10 +237,17 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
 
         foreach ($sources as $role => $source) {
             if ($source !== []) {
-                $streams[] = [
+                $stream = [
                     "content" => self::$role_mapping[$role],
                     "sources" => $source
                 ];
+                if ($main_audio_role === $role) {
+                    $stream['role'] = 'mainAudio';
+                }
+                if (!empty($canvas_mapping[$role])) {
+                    $stream['canvas'] = $canvas_mapping[$role];
+                }
+                $streams[] = $stream;
             }
         }
 
@@ -247,14 +265,20 @@ class StandardPlayerDataBuilder extends PlayerDataBuilder
             $medium->getUrl(),
             $duration
         ) : $medium->getUrl();
-        return [
+
+        $source = [
             "src" => $url,
-            "mimetype" => $medium->getMediatype(),
-            "res" => [
-                "w" => $medium->getWidth(),
-                "h" => $medium->getHeight()
-            ]
+            "mimetype" => $medium->getMediatype()
         ];
+        $width = $medium->getWidth();
+        $height = $medium->getHeight();
+        if (!empty($width) && !empty($height)) {
+            $source['res'] = [
+                "w" => $width,
+                "h" => $height
+            ];
+        }
+        return $source;
     }
 
     /**

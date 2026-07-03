@@ -16,6 +16,15 @@ div#playerContainer, iframe#opencastPaellaJwtPlayer {
 	height: 100%;
 }
 
+#playerContainer.paella-fallback-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	z-index: 1000;
+}
+
 iframe#opencastPaellaJwtPlayer {
 	border: 0 !important;
 	box-shadow: none !important;

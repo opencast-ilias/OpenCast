@@ -1,14 +1,6 @@
 {
   "name": "ilias-paella-player",
   "private": true,
-  "dependencies": {
-    "paella-basic-plugins": "^1.44.10",
-    "paella-core": "^1.50.2",
-    "paella-slide-plugins": "^1.50.1",
-    "paella-user-tracking": "^1.42.6",
-    "paella-zoom-plugin": "^1.41.3",
-    "paella-mp4multiquality-plugin": "^1.47.1"
-  },
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --watch --mode development"
@@ -23,5 +15,19 @@
     "svg-inline-loader": "^0.8.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@asicupv/paella-basic-plugins": "^2.6.2",
+    "@asicupv/paella-core": "^2.12.11",
+    "@asicupv/paella-extra-plugins": "^2.9.2",
+    "@asicupv/paella-opencast-component": "^2.0.4",
+    "@asicupv/paella-opencast-plugins": "^2.0.5",
+    "@asicupv/paella-opencast-skin": "^2.0.1",
+    "@asicupv/paella-slide-plugins": "^2.6.2",
+    "@asicupv/paella-user-tracking": "^2.4.3",
+    "@asicupv/paella-video-plugins": "^2.5.3",
+    "@asicupv/paella-webgl-plugins": "^2.4.2",
+    "@asicupv/paella-zoom-plugin": "^2.5.4",
+    "dompurify": "^3.4.11"
   }
 }
