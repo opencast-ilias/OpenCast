@@ -8,13 +8,13 @@ use ILIAS\Data\DataSize;
 use ILIAS\Filesystem\Exception\FileNotFoundException;
 use ILIAS\Filesystem\Exception\IOException;
 use ILIAS\Filesystem\Filesystem;
+use ILIAS\Filesystem\Stream\Streams;
 use ILIAS\FileUpload\DTO\UploadResult;
 use ILIAS\FileUpload\FileUpload;
 use ILIAS\FileUpload\Location;
 use srag\Plugins\Opencast\Model\ACL\ACL;
 use srag\Plugins\Opencast\Util\Transformator\ACLtoXML;
 use xoctUploadFile;
-use ILIAS\Filesystem\DTO\Metadata;
 use srag\Plugins\Opencast\Util\MimeType as MimeTypeUtil;
 
 class UploadStorageService
@@ -39,11 +39,35 @@ class UploadStorageService
     {
         $path = $this->idToDirPath($chunk_id) . '/' . $uploadResult->getName();
 
-        if ($this->fileSystem->has($path)) {
-            $stream = fopen($this->fileSystem->readStream($path)->getMetadata()['uri'], 'a');
-            fwrite($stream, file_get_contents($uploadResult->getPath()));
-        } else {
-            $this->fileSystem->write($path, file_get_contents($uploadResult->getPath()));
+        $source = fopen($uploadResult->getPath(), 'rb');
+        if ($source === false) {
+            throw new IOException('Could not open uploaded chunk for reading.');
+        }
+
+        try {
+            if ($this->fileSystem->has($path)) {
+                // Subsequent chunks: append directly to the existing file via a
+                // stream copy. file_get_contents() would load the whole chunk
+                // (up to ~90% of the PHP upload limit) into memory and exhaust
+                // memory_limit on large uploads, which broke multi-chunk uploads.
+                $target = fopen(ILIAS_DATA_DIR . '/' . CLIENT_ID . '/temp/' . $path, 'ab');
+                if ($target === false) {
+                    throw new IOException('Could not open chunk storage for appending.');
+                }
+                try {
+                    stream_copy_to_stream($source, $target);
+                } finally {
+                    fclose($target);
+                }
+            } else {
+                // First chunk: let the filesystem create the directory and the
+                // file with a memory-safe stream write.
+                $this->fileSystem->writeStream($path, Streams::ofResource($source));
+            }
+        } finally {
+            if (is_resource($source)) {
+                fclose($source);
+            }
         }
 
         return $chunk_id;
@@ -55,7 +79,7 @@ class UploadStorageService
      */
     public function delete(string $identifier): void
     {
-        if (strlen($identifier) == 0) {
+        if ($identifier === '') {
             return;
         }
         $dir = $this->idToDirPath($identifier);
@@ -143,9 +167,7 @@ class UploadStorageService
     {
         $dir = $this->idToDirPath($identifier);
         foreach ($this->fileSystem->finder()->in([$dir]) as $file) {
-            if($file instanceof Metadata) {
-                return $file;
-            }
+            return $file;
         }
         throw new FileNotFoundException();
     }

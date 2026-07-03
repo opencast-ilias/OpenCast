@@ -38,7 +38,6 @@ class PluginConfig extends ActiveRecord
     public const F_CURL_USERNAME = 'curl_username';
     public const F_CURL_PASSWORD = 'curl_password';
     public const F_CURL_MAX_UPLOADSIZE = 'curl_max_upload_size';
-    public const F_CURL_CHUNK_SIZE = 'curl_chunk_size';
     public const F_WORKFLOW = 'workflow';
     public const F_WORKFLOW_UNPUBLISH = 'workflow_unpublish';
     public const F_EULA = 'eula';
@@ -165,9 +164,6 @@ class PluginConfig extends ActiveRecord
         self::F_ROLE_USER_PREFIX,
         self::F_ROLE_OWNER_PREFIX
     ];
-    /**
-     * @var array
-     */
     public static array $groups = [
         self::F_GROUP_PRODUCERS,
         self::F_GROUP_STUDIO,
@@ -227,8 +223,8 @@ class PluginConfig extends ActiveRecord
             $name = $node->getElementsByTagName('name')->item(0)->nodeValue;
             $value = $node->getElementsByTagName('value')->item(0)->nodeValue;
             if ($name) {
-                $value = (is_array(json_decode($value)))
-                    ? json_decode($value)
+                $value = (is_array(json_decode((string) $value)))
+                    ? json_decode((string) $value)
                     : $value;
                 PluginConfig::set($name, $value);
             }
@@ -468,7 +464,7 @@ class PluginConfig extends ActiveRecord
         $config = $domxml->appendChild(new DOMElement('opencast_settings'));
 
         $xml_info = $config->appendChild(new DOMElement('info'));
-        $xml_info->appendChild(new DOMElement('plugin_version', (string) $opencast_plugin->getVersion()));
+        $xml_info->appendChild(new DOMElement('plugin_version', $opencast_plugin->getVersion()));
         $xml_info->appendChild(new DOMElement('plugin_db_version', (string) $plugin_infos->getCurrentDBVersion()));
         $xml_info->appendChild(
             new DOMElement('config_version', (string) PluginConfig::getConfig(PluginConfig::F_CONFIG_VERSION))

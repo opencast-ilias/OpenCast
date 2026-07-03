@@ -21,7 +21,6 @@ use srag\Plugins\Opencast\Model\WorkflowParameter\Series\SeriesWorkflowParameter
 use srag\Plugins\Opencast\UI\Metadata\MDFormItemBuilder;
 use srag\Plugins\Opencast\UI\Scheduling\SchedulingFormItemBuilder;
 use srag\Plugins\Opencast\Util\FileTransfer\UploadStorageService;
-use ILIAS\UI\Implementation\Component\Input\Field\ChunkedFile;
 use srag\Plugins\Opencast\Model\Metadata\MetadataField;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDDataType;
 use DateTimeZone;
@@ -135,9 +134,9 @@ class EventFormBuilder
             ? $configured_upload_limit * self::MB_IN_B
             : self::DEFAULT_UPLOAD_LIMIT_IN_MIB * self::MB_IN_B;
 
-        // Chunk Size
-        $chunk_size = (int) PluginConfig::getConfig(PluginConfig::F_CURL_CHUNK_SIZE);
-        $chunk_size > 0 ? $chunk_size * 1024 * 1024 : \ilFileUtils::getUploadSizeLimitBytes();
+        // Note: the chunk size cannot be configured here. The ILIAS UI file
+        // field decides on its own whether to chunk (max file size > PHP limit)
+        // and fixes the chunk size at ~90% of the PHP upload limit.
 
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
