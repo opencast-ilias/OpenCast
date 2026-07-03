@@ -1,5 +1,20 @@
 # Changelog
 
+## Version 10.2.0
+- [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513 #532
+- [FIX] Restore the annotation action in the new event list #531
+- [FIX] Series event list: honor the default sort (newest first) #496
+- [FIX] My Events: include offline-state events in list
+- [FIX] Chunked upload fails for large files #518
+- [FIX] Series event list ignores selected page size #493
+- [FIX] JWT: iframe player template could not be found #523
+- [FIX] Start Workflow throws error #520
+- [FIX] Links to videos do not work with irregular base path #521
+- [SECURITY] Escape ffmpeg subtitle-conversion arguments (command injection)
+- [SECURITY] Chat server: parameterize SQL queries and validate user id in profile-picture endpoint (SQL injection, path traversal)
+- [SECURITY] Bump vulnerable dependencies (chat server, Paella build, composer)
+- [FIX] Align PHP requirement with ILIAS 10 (>=8.2 <8.4)
+
 ## Version 10.1.2
 - [FIX] Config table check/cross icons missing in ILIAS 10 #530
 
