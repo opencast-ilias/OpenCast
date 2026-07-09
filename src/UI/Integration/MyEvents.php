@@ -421,33 +421,12 @@ class MyEvents implements DataRetrieval
             $filter = array_filter($filter, static fn($value): bool => $value !== '');
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
-            // The Opencast API can only sort by an event's own metadata (e.g.
-            // title), not by the resolved series *name* shown in the table - it
-            // only knows the series identifier. Sorting by series is therefore
-            // done locally. As the result is paginated server-side, we fetch the
-            // full result set, sort it by series name (respecting the requested
-            // direction) and slice the requested page ourselves; otherwise only
-            // the current page would be reordered and the overall order across
-            // pages would be wrong.
+            // The event list "series" column is sorted by the series name.
+            // Opencast supports this natively through the `series_name` sort
+            // criterion, so we let the API sort the full result set server-side
+            // and paginate correctly across all pages.
             if ($sort === 'series') {
-                $events = $this->event_repository->getFiltered(
-                    $filter,
-                    '',
-                    [$xoct_user->getUserRoleName()],
-                    0,
-                    1000,
-                    'title:ASC',
-                    true
-                );
-
-                usort(
-                    $events,
-                    fn(Event $a, Event $b): int => $order === 'DESC'
-                        ? strnatcasecmp($this->getSeriesName($b), $this->getSeriesName($a))
-                        : strnatcasecmp($this->getSeriesName($a), $this->getSeriesName($b))
-                );
-
-                return array_slice($events, $offset, $limit);
+                $sort = 'series_name';
             }
 
             $events = $this->event_repository->getFiltered(
