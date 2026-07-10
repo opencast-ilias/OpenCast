@@ -62,6 +62,11 @@ class EventModals
 
             $tpl->setVariable('FORM_SUBMIT_BTN_ID', $form_submit_btn_id);
             $tpl->setVariable('FORM_ID', $form_id);
+            // Bake the event id into the hidden field server-side. Relying on JS to
+            // inject it on modal click is racy: the submit handler fires before the
+            // click bubbles up, so the field stayed empty and startWorkflow() queried
+            // GET /api/events/ (all events) instead of a single event (see #541).
+            $tpl->setVariable('EVENT_ID', $event_id);
             $tpl->setVariable(
                 'FORM_ACTION',
                 $this->dic->ctrl()->getFormAction($this->parent_gui, $this->parent_gui::CMD_START_WORKFLOW)
@@ -152,8 +157,7 @@ class EventModals
             $modal_startworkflow = $this->dic->ui()->factory()->modal()->roundtrip(
                 $this->plugin->txt('event_startworkflow'),
                 $this->dic->ui()->factory()->legacy($tpl->get())
-            )->withActionButtons([$submit_btn])
-            ->withOnLoadCode(fn($id): string => "$($id).on('click', function(event){ $('input#startworkflow_event_id').val('{$event_id}');});");
+            )->withActionButtons([$submit_btn]);
             $this->setStartworkflowModal($modal_startworkflow);
         }
     }
