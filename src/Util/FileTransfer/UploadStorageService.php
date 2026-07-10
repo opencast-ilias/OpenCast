@@ -123,6 +123,12 @@ class UploadStorageService
      */
     public function getFileInfo(string $identifier, int $fileSizeUnit = DataSize::Byte): array
     {
+        // An empty identifier would resolve to the temp root (opencast/) and
+        // return an arbitrary, unrelated upload directory, which then breaks the
+        // mime-type lookup (see #535, #536). Refuse it explicitly.
+        if ($identifier === '') {
+            throw new FileNotFoundException('Empty upload identifier.');
+        }
         $metadata = $this->idToFileMetadata($identifier);
         /** TODO: path is hard coded here because it's required to send the file via curlFile and I didn't find a way to get the path dynamically from the file service */
         try {
@@ -166,7 +172,9 @@ class UploadStorageService
     protected function idToFileMetadata(string $identifier)
     {
         $dir = $this->idToDirPath($identifier);
-        foreach ($this->fileSystem->finder()->in([$dir]) as $file) {
+        // Restrict to files: a bare directory would be passed on to
+        // getMimeType() and fail with a misleading "file not found" (see #536).
+        foreach ($this->fileSystem->finder()->in([$dir])->files() as $file) {
             return $file;
         }
         throw new FileNotFoundException();
