@@ -238,10 +238,14 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
-                            if ($file === []) {
+                            // Optional file field: an untouched input yields an empty
+                            // id ([], [null] or ['']). getFileInfo('') would scan the
+                            // whole temp dir and return an unrelated directory, breaking
+                            // the upload (see #535). Skip when no file was selected.
+                            $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                            if ($id === '') {
                                 return [];
                             }
-                            $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
                     )
