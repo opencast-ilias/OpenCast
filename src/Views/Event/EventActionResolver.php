@@ -125,12 +125,17 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::EDIT_METADATA:
-                if (
-                    $event->isScheduled()
-                    && (bool) $settings?->resolve(EventSettings::EDIT_ALL_METADATA)
-                ) {
+                if ($event->isScheduled()) {
+                    // A scheduled event always goes to the scheduled form: it is the only
+                    // one that keeps date and recording station out of the metadata section
+                    // and disables the scheduling section unless all metadata is editable.
+                    // The setting merely picks the label (see #545).
                     return $this->build(
-                        $this->translator->translate('event_edit_date'),
+                        $this->translator->translate(
+                            (bool) $settings?->resolve(EventSettings::EDIT_ALL_METADATA)
+                                ? 'event_edit_date'
+                                : 'event_edit'
+                        ),
                         \xoctEventGUI::class,
                         \xoctEventGUI::CMD_EDIT_SCHEDULED,
                         ActionType::INTERNAL_LINK
