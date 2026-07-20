@@ -86,7 +86,15 @@ class xoctFileUploadHandlerGUI extends AbstractCtrlAwareChunkedUploadHandler
     #[ReturnTypeWillChange]
     public function getInfoResult(string $identifier): FileInfoResult
     {
-        $info = $this->uploadStorageService->getFileInfo($identifier);
+        // The UI renderer calls this for every non-null field value, so an untouched
+        // optional file input hands us an empty id, and a temp dir cleaned up in the
+        // meantime hands us a stale one. Neither may abort the form rendering with an
+        // exception (see #535), so answer with an empty info result instead.
+        try {
+            $info = $this->uploadStorageService->getFileInfo($identifier);
+        } catch (FileNotFoundException) {
+            return new BasicFileInfoResult($this->getFileIdentifierParameterName(), $identifier, '', 0, '');
+        }
         /** @var DataSize $size */
         $size = $info['size'];
         return new BasicFileInfoResult(
