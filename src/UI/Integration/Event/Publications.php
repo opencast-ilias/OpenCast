@@ -134,6 +134,11 @@ class Publications
 
                 $multi = $download_pub_usage->isAllowMultiple();
                 if ($multi) {
+                    // Group the individual downloads of this (sub-)usage under its
+                    // configured display name as a section title. Without it the entries
+                    // only carried their bare resolution/flavor, so every download looked
+                    // like an unnamed "Download" and the configured name was lost (#546).
+                    $elements[] = $this->ui_factory->divider()->horizontal()->withLabel($display_name);
                     foreach ($download_dtos as $dto) {
                         $elements[] = $this->ui_factory->link()->bulky(
                             $icon,
