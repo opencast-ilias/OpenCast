@@ -158,7 +158,14 @@ class xoctReportOverviewTableGUI extends ilTable2GUI
     {
         $this->tpl->setVariable('ID', $row['id']);
         $ilAccordionGUI = new ilAccordionGUI();
-        $ilAccordionGUI->addItem($row['subject'], $row['message']);
+        // The report message is pre-built HTML that uses <br> for its line breaks. In
+        // ILIAS 10 the accordion content is laid out as a flex container, which ignores
+        // <br> (while <b>/<hr> still render), so everything collapsed onto one block
+        // (see #543). Wrap it in a plain block element to restore normal text flow.
+        $ilAccordionGUI->addItem(
+            $row['subject'],
+            '<div class="xoct_report_message" style="white-space: pre-line;">' . $row['message'] . '</div>'
+        );
         $this->tpl->setVariable('SENDER', $row['sender']);
         $this->tpl->setVariable('MESSAGE', $ilAccordionGUI->getHTML());
         $this->tpl->setVariable('DATE', date('d.m.Y H:i:s', strtotime((string) $row['created_at'])));
