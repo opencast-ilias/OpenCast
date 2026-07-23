@@ -300,10 +300,11 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                 );
 
             case EventActionTarget::REPORT_DATE_MODIFICATION:
-                return \ilObjOpenCastAccess::checkAction(
-                    \ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE,
-                    $event
-                );
+                // Reporting a date modification concerns the whole series, not a single
+                // event. It is offered through the toolbar button above the list (see
+                // xoctEventGUI::index()), so it must not appear in the per-event actions
+                // as it did in release 9 (see #544).
+                return false;
 
             case EventActionTarget::PLAY:
                 return $this->isEventAccessible($event, $settings);
