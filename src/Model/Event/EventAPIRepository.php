@@ -82,10 +82,16 @@ class EventAPIRepository implements EventRepository, Request
     public function delete(string $identifier): bool
     {
         $this->api->routes()->eventsApi->delete($identifier);
+        $this->cache->delete($identifier);
         foreach (PermissionGrant::where(['event_identifier' => $identifier])->get() as $invitation) {
             $invitation->delete();
         }
         return true;
+    }
+
+    public function invalidateCache(string $identifier): void
+    {
+        $this->cache->delete($identifier);
     }
 
     /**
