@@ -279,9 +279,11 @@ class xoctEventGUI extends xoctGUI
                 array_filter(array_merge($display_series->get(), [$modal]))
             );
         } catch (xoctException $e) {
-            // Opencast is unreachable: show a readable message instead of the generic ILIAS error page.
+            // Opencast is unreachable: show a readable message instead of the generic ILIAS error
+            // page. The message must not be kept, it belongs on the page being rendered right now
+            // and not on whatever the user opens next.
             if ($e->getCode() === xoctException::API_CALL_CONNECTION_FAILED) {
-                $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_opencast_unreachable'), true);
+                $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_opencast_unreachable'));
                 return;
             }
             throw $e;
