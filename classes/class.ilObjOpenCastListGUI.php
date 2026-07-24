@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
+use srag\Plugins\Opencast\Util\OpencastAvailability;
 
 /**
  * ListGUI implementation for OpenCast object plugin. This one
@@ -104,6 +105,19 @@ class ilObjOpenCastListGUI extends ilObjectPluginListGUI
     public function getCustomProperties(/*array*/ $prop): array
     {
         $props = parent::getCustomProperties([]);
+
+        // A container can hold many series, so Opencast is not asked once per object here.
+        // Instead the last known connection failure is read, see OpencastAvailability.
+        if (OpencastAvailability::isUnreachable()) {
+            $props[] = [
+                'alert' => true,
+                'newline' => true,
+                'property' => 'Status',
+                'value' => $this->txt('event_msg_opencast_unreachable'),
+                'propertyNameVisible' => false
+            ];
+        }
+
         try {
             $objectSettings = $this->getOpenCast(true);
             if (!$objectSettings instanceof ObjectSettings) {
