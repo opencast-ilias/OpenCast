@@ -141,6 +141,21 @@ class EventFormBuilder
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
+                                 // withRequired() does not guarantee a usable upload id: after an
+                                 // unrelated validation error the form re-renders with the file
+                                 // field cleared, so a second submit hands the transformation an
+                                 // empty id ([], [null] or ['']). getFileInfo('') would then throw
+                                 // and abort form processing with an error page (#535). Turn the
+                                 // empty id into a validation message before it is resolved.
+                                 ->withAdditionalTransformation(
+                                     $this->refinery_factory->custom()->constraint(
+                                         function ($file): bool {
+                                             $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                                             return $id !== '';
+                                         },
+                                         $this->plugin->txt('form_msg_select')
+                                     )
+                                 )
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
