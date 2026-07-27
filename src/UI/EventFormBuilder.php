@@ -122,6 +122,15 @@ class EventFormBuilder
         $upload_storage_service = $this->uploadStorageService;
         $factory = $this->ui_factory->input()->field();
 
+        // This form renders several file inputs (video, one per subtitle language,
+        // thumbnail). ILIAS core's file.js submits the form as soon as the FIRST
+        // upload finishes, which drops the id of every upload still running (e.g.
+        // the video is lost when a small subtitle finishes first). Load our patched
+        // copy of file.js that waits for all uploads before submitting. See #535.
+        $this->dic->ui()->mainTemplate()->addJavaScript(
+            $this->plugin->getRelativeDirectory() . '/templates/default/file_multiupload_fix.js'
+        );
+
         $file_input = $this->ui_factory->input()->field()->file(
             $this->uploadHandler,
             $this->plugin->txt('file'),
