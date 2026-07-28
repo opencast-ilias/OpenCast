@@ -42,7 +42,10 @@ class Display implements ViewElement
                     ->factory()
                     ->messageBox()
                     ->info(
-                        $this->object_settings->getIntroductionText()
+                        // The message box renders its text as raw HTML but the stored work
+                        // instruction keeps its line breaks as newlines, which HTML collapses.
+                        // Convert them to <br> so the breaks show in the Content tab (see #524).
+                        nl2br($this->object_settings->getIntroductionText())
                     );
             }
 
