@@ -787,7 +787,7 @@ upload_ui_thumbnail_section_stp_disabled_info#:#<strong>NOTE:</strong> The proce
 upload_ui_thumbnail_mode_sg#:#Mode
 upload_ui_thumbnail_mode_sg_info#:#You can select only one mode to generate thumbnails, either by uploading a file or selecting a timepoint.
 upload_ui_thumbnail_mode_sg_file#:#By uploading a file
-upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video tiempoint
+upload_ui_thumbnail_mode_sg_timepoint#:#By selecting a video timepoint
 upload_ui_thumbnail_file#:#Thumbnail File
 upload_ui_thumbnail_timepoint#:#Timepoint
 upload_ui_thumbnail_timepoint_info#:#The time point of the video to extract the thumbnail from. Format: HH:MM:SS (e.g. 00:01:30 for 1 minute 30 seconds).
