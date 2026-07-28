@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 10.2.1
+- [FIX] Event upload with subtitles/thumbnails: handle empty optional files and wait for all uploads before submitting #535
+- [FIX] Scheduled events: keep date and recording station read-only in Edit Metadata #545
+- [FIX] Show "Converting" status after re-publishing and a plain browser reload #540
+- [FIX] Report tab: restore line breaks and paragraphs in report messages #543
+- [FIX] Work instruction: keep line breaks in the Content tab #524
+- [FIX] Status labels: remove misleading clickable hover effect #533
+
 ## Version 10.2.0
 - [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513 #532
 - [FIX] Restore the annotation action in the new event list #531
