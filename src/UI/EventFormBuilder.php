@@ -122,6 +122,15 @@ class EventFormBuilder
         $upload_storage_service = $this->uploadStorageService;
         $factory = $this->ui_factory->input()->field();
 
+        // This form renders several file inputs (video, one per subtitle language,
+        // thumbnail). ILIAS core's file.js submits the form as soon as the FIRST
+        // upload finishes, which drops the id of every upload still running (e.g.
+        // the video is lost when a small subtitle finishes first). Load our patched
+        // copy of file.js that waits for all uploads before submitting. See #535.
+        $this->dic->ui()->mainTemplate()->addJavaScript(
+            $this->plugin->getRelativeDirectory() . '/templates/default/file_multiupload_fix.js'
+        );
+
         $file_input = $this->ui_factory->input()->field()->file(
             $this->uploadHandler,
             $this->plugin->txt('file'),
@@ -141,6 +150,21 @@ class EventFormBuilder
         $file_input = $file_input->withAcceptedMimeTypes($this->getMimeTypes())
                                  ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
+                                 // withRequired() does not guarantee a usable upload id: after an
+                                 // unrelated validation error the form re-renders with the file
+                                 // field cleared, so a second submit hands the transformation an
+                                 // empty id ([], [null] or ['']). getFileInfo('') would then throw
+                                 // and abort form processing with an error page (#535). Turn the
+                                 // empty id into a validation message before it is resolved.
+                                 ->withAdditionalTransformation(
+                                     $this->refinery_factory->custom()->constraint(
+                                         function ($file): bool {
+                                             $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                                             return $id !== '';
+                                         },
+                                         $this->plugin->txt('form_msg_select')
+                                     )
+                                 )
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
@@ -238,10 +262,14 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
-                            if ($file === []) {
+                            // Optional file field: an untouched input yields an empty
+                            // id ([], [null] or ['']). getFileInfo('') would scan the
+                            // whole temp dir and return an unrelated directory, breaking
+                            // the upload (see #535). Skip when no file was selected.
+                            $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                            if ($id === '') {
                                 return [];
                             }
-                            $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
                     )

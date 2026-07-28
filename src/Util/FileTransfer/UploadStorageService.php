@@ -173,7 +173,7 @@ class UploadStorageService
     {
         $dir = $this->idToDirPath($identifier);
         // Restrict to files: a bare directory would be passed on to
-        // getMimeType() and fail with a misleading "file not found" (see #536).
+        // getMimeType() and fail with a misleading "file not found" (see #535, #536).
         foreach ($this->fileSystem->finder()->in([$dir])->files() as $file) {
             return $file;
         }
