@@ -710,6 +710,12 @@ class xoctEventGUI extends xoctGUI
 
         $this->addCurrentUserToGroup();
 
+        // Cutting and processing happens later in the external editor, so ILIAS never
+        // sees the state change itself. Drop the cached (still SUCCEEDED) event now, so
+        // a plain browser reload after "Save and process changes" re-fetches the event
+        // and shows the "Converting" status instead of the stale cached one (see #540).
+        $this->event_repository->invalidateCache($event->getIdentifier());
+
         // redirect
         $cutting_link = $event->publications()->getCuttingLink();
 
@@ -1078,6 +1084,9 @@ class xoctEventGUI extends xoctGUI
                 true,
                 true
             );
+            // The workflow moves the event into processing on Opencast; drop the cached
+            // SUCCEEDED state so the reload shows the "Converting" status (see #540).
+            $this->event_repository->invalidateCache($event_id);
             $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_republish_started'), true);
             $this->ctrl->redirect($this, self::CMD_STANDARD);
         } else {
@@ -1137,6 +1146,9 @@ class xoctEventGUI extends xoctGUI
         )) {
             try {
                 $this->unpublish($event);
+                // The unpublish workflow moves the event into processing on Opencast;
+                // drop the cached SUCCEEDED state so the reload reflects it (see #540).
+                $this->event_repository->invalidateCache($event->getIdentifier());
                 $this->main_tpl->setOnScreenMessage('success', $this->txt('msg_unpublish_started'), true);
             } catch (xoctException $e) {
                 if ($e->getCode() == 409) {

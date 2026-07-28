@@ -23,6 +23,13 @@ interface EventRepository
     public function delete(string $identifier): bool;
 
     /**
+     * Drop the cached state of a single event so the next read re-fetches it from
+     * Opencast. Needed after an action moves the event into processing (cut,
+     * unpublish) where Opencast, not ILIAS, changes the state.
+     */
+    public function invalidateCache(string $identifier): void;
+
+    /**
      * @throws xoctException
      */
     public function upload(UploadEventRequest $request): void;
