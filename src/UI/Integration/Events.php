@@ -384,6 +384,11 @@ class Events implements RecordToEntity
             $status_tag = $status_tag->withOnClick(
                 $tooltip->getShowSignal()
             );
+        } else {
+            // Without a best-action tooltip the label does nothing when clicked. Mark the
+            // action as unavailable so it renders as a static label instead of a button
+            // with a misleading clickable hover effect (see #533).
+            $status_tag = $status_tag->withUnavailableAction();
         }
 
         return $entity->withReactions(
