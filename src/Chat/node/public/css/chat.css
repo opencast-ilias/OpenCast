@@ -3,12 +3,12 @@ html {
 }
 
 #srchat_iframe_container, #srchat_container {
-    display: inline-block;
     position: relative;
     float: right;
     width: 290px;
     height: 100%;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 #srchat_history_container {

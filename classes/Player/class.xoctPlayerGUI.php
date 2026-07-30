@@ -255,7 +255,7 @@ class xoctPlayerGUI extends xoctGUI
         $jwt_module_config->is_live_stream = $event->isLiveEvent();
         if ($jwt_module_config->is_live_stream) {
             $jwt_module_config->hls_source_urls = $jwt_data['urls'] ?? [];
-            $jwt_module_config->hls_check_script = ILIAS_HTTP_PATH . '/' . $this->plugin->getDirectory() . '/src/Util/check_hls_status.php';
+            $jwt_module_config->hls_check_script = ILIAS_HTTP_PATH . '/' . ltrim($this->plugin->getRelativeDirectory(), './') . '/src/Util/check_hls_status.php';
             $jwt_module_config->hls_source_format =
                 PluginConfig::getConfig(PluginConfig::F_LIVESTREAM_TYPE) ?? 'hls';
             $start_utc_atom = $event->getScheduling()

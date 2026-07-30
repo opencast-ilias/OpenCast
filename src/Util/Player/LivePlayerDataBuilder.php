@@ -6,6 +6,7 @@ namespace srag\Plugins\Opencast\Util\Player;
 
 use srag\Plugins\Opencast\API\OpencastAPI;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\Model\User\xoctUser;
 use OpencastApi\Auth\JWT\OcJwtClaim;
 use OpencastApi\Util\OcUtils;
 
@@ -21,15 +22,28 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
      */
     public function buildStreamingData(): array
     {
+        global $DIC;
+        $user = xoctUser::getInstance($DIC->user());
         $jwt_iframe_urls = [];
+        $fallback_tracks = [];
         if ($this->api->isJWTActivated()) {
             // TODO: Major issue in Opencast as it blocks the calls to search endpoints without JWT,
             // however, it returns empty result even with JWT.
             // This issue should be followed from this comment: https://github.com/opencast/opencast/pull/7249#issuecomment-3665403365
             // As a workaround, we fetch the episode data with admin claims to extract the live publication url, which is required for the JWT Iframe player to work. This is not ideal but seems to be the only way until the issue in Opencast is resolved. Once that issue is resolved, we can simply call the search endpoint.
             $oc_claim = new OcJwtClaim();
-            $oc_claim->setUserInfoClaims('admin');
-            $oc_claim->setRoles(['ROLE_ADMIN', 'ROLE_ANONYMOUS']);
+            $oc_claim->setUserInfoClaims(
+                'unknown-jwt-user',
+                'unknown-jwt-user',
+                'no-mail@jwt.invalid'
+            );
+            $user_basic_access_roles = $user->getBasicAccessRoles();
+            $user_role_name = $user->getUserRoleName();
+            $oc_claim->setRoles(array_unique(array_merge($user_basic_access_roles, [$user_role_name, 'ROLE_ADMIN', 'ROLE_ANONYMOUS', 'ROLE_USER_UNKNOWN_JWT_USER', 'ROLE_JWT_USER'])));
+            $event_acl = [
+                $this->event->getIdentifier() => 'read',
+            ];
+            $oc_claim->setEventAcls($event_acl);
             $episode_data = $this->api->routes()->search->withClaims($oc_claim)->getEpisodes(
                 [
                     'id' => $this->event->getIdentifier()
@@ -42,6 +56,21 @@ class LivePlayerDataBuilder extends PlayerDataBuilder
                 $live_publication->getUrl(),
                 $this->event->getIdentifier()
             );
+
+            // A fallback to publication, in case mediapackage fails.
+            $media = $live_publication->getMedia();
+            $fallback_tracks = [];
+            if (empty($episode_data['result']) && !empty($media)) {
+                foreach ($media as $medium) {
+                    $medium_arr = $medium->getAsArray();
+                    $medium_arr['mimetype'] = $medium_arr['mediatype'];
+                    $fallback_tracks[] = $medium_arr;
+                }
+                if (count($fallback_tracks) === 1) {
+                    $fallback_tracks = reset($fallback_tracks);
+                }
+                $episode_data['result']['mediapackage']['media']['track'] = $fallback_tracks;
+            }
         } else {
             $episode_data = $this->api->routes()->search->getEpisodes(
                 [
