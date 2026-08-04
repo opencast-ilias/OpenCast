@@ -269,7 +269,7 @@ class Series implements DataRetrieval
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
         $table_id = $this->series->getIdentifier();
-        $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
+        $page = (int) $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
         $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
         $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
 

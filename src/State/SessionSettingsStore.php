@@ -36,6 +36,10 @@ final class SessionSettingsStore implements ScopedSettingsStore
     public function remove(string $scope, string $key): void
     {
         $all = $this->all();
+        if (!isset($all[$scope][$key])) {
+            return;
+        }
+
         unset($all[$scope][$key]);
         ilSession::set(self::SESSION_KEY, $all);
     }

@@ -36,6 +36,11 @@ abstract class BaseActionResolver
      * the resolver does not need to know how the consumer identifies itself.
      * No-op pass-through when no store is configured, so resolvers can opt in
      * simply by being constructed with a store.
+     *
+     * @param string      $scope group the value belongs to, e.g. the series id of the table
+     * @param string      $key   identifies the setting within the scope
+     * @param string|null $raw   explicit request value, null when the request carries none
+     * @return string|null the persisted value, or null when nothing has been stored yet
      */
     protected function persisted(string $scope, string $key, ?string $raw): ?string
     {
