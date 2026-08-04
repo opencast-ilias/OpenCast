@@ -1,0 +1,35 @@
+version: 2
+
+updates:
+  # npm: root manifest (build/dev tooling) and the Paella player bundle
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/js/opencast/src/Paella"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      # The @asicupv/paella-* packages are released in lockstep, so bumping
+      # them one by one produces broken intermediate states.
+      paella:
+        patterns:
+          - "@asicupv/*"
+      dev-dependencies:
+        dependency-type: "development"
+
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+
+  # No workflows exist yet; this keeps actions covered once CI is added.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
