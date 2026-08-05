@@ -1,0 +1,64 @@
+:root {
+    --find-captions-plugin-search-bar-height: 30px;
+}
+
+button[name="org.ilias.paella.findCaptionsPlugin"] i svg {
+    fill: #ffffff !important;
+    stroke: none !important;
+}
+
+.center-container .search-results {
+    max-height: 80vh;
+    overflow: auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.center-container .search-results p {
+    max-width: 400px;
+    user-select: none;
+}
+
+.center-container .search-results p.result-item {
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 8px;
+    border-radius: 3px;
+}
+
+
+.center-container div.captions-search-container input {
+    width: 100%;
+    height: var(--find-captions-plugin-search-bar-height);
+    box-sizing: border-box;
+}
+
+.center-container .search-results p.result-item.current {
+    border: 1px solid white;
+    background-color: rgba(240,240,240,0.7);
+    color: black;
+}
+
+/* Resizeable/moveable mode: */
+.center-container  .captions-search-container {
+    height: 100%;
+    width: 100%;
+    max-width: unset;
+    max-height: unset;
+    box-sizing: border-box;
+}
+
+.center-container .search-results {
+    width: 100%;
+    height: calc(100% - var(--find-captions-plugin-search-bar-height));
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.popup-content.static-position .center-container .search-results p {
+    max-width: unset;
+}
+
+/* Custom background color */
+.popup-container.find-captions .popup-content {
+    background-color: rgba(0, 0, 0, 0.2);
+}
