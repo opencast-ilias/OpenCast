@@ -404,6 +404,13 @@
       "order": 10
     },
 
+    "org.ilias.paella.findCaptionsPlugin": {
+      "enabled": true,
+      "side": "right",
+      "description": "Search in captions",
+      "order": 10
+    },
+
     "es.upv.paella.slideMapProgressBarPlugin": {
       "enabled": true,
       "markColor": {
