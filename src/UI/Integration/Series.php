@@ -187,6 +187,10 @@ class Series implements DataRetrieval
     ): \Generator {
         $this->buildSeries($series_id);
 
+        $table_id = $this->series->getIdentifier();
+        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
+        $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
+
         $entity_list = iterator_to_array($this->asEntityList($series_id));
 
         $sortation_options = [
@@ -224,9 +228,7 @@ class Series implements DataRetrieval
                     ->viewControl()
                     ->pagination()
                     ->withCurrentPage($this->resolver->resolveParameter(SeriesActionParameter::PAGE))
-                    ->withPageSize(
-                        $this->resolver->resolveParameter(SeriesActionParameter::PAGE_SIZE) ?? self::DEFAULT_PAGE_SIZE
-                    )
+                    ->withPageSize($page_size)
                     ->withMaxPaginationButtons(5)
                     ->withTotalEntries($this->total)
                     ->withTargetURL(
@@ -242,9 +244,7 @@ class Series implements DataRetrieval
                             '20' => '20',
                             '50' => '50',
                         ],
-                        (string) ($this->resolver->resolveParameter(
-                            SeriesActionParameter::PAGE_SIZE
-                        ) ?? self::DEFAULT_PAGE_SIZE)
+                        (string) $page_size
                     )
                     ->withLabelPrefix('')
                     ->withTargetURL(
@@ -256,7 +256,7 @@ class Series implements DataRetrieval
                     ->viewControl()
                     ->sortation(
                         $sortation_options,
-                        $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::DEFAULT_SORT
+                        $sort
                     )
                     ->withTargetURL(
                         (string) $this->resolver->resolve(SeriesActionTarget::SORT),
@@ -268,9 +268,10 @@ class Series implements DataRetrieval
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
-        $page = $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
-        $page_size = (int) ($this->resolver->resolveParameter(SeriesActionParameter::PAGE_SIZE) ?? self::DEFAULT_PAGE_SIZE);
-        $sort = $this->resolver->resolveParameter(SeriesActionParameter::SORT) ?? self::DEFAULT_SORT;
+        $table_id = $this->series->getIdentifier();
+        $page = (int) $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
+        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
+        $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
 
         $api_sort = match ($sort) {
             self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API
