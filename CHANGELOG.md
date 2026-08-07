@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 10.3.0
+- [FEATURE] Remember series list sort and page size per user #496
+- [FIX] Sort event list by series name and correct sort direction #43 (PageComponentPlugin)
+- [FIX] Edge-case: trim argument must be string not null for the JWT iframe path #577
+
 ## Version 10.2.1
 - [FIX] Event upload with subtitles/thumbnails: handle empty optional files and wait for all uploads before submitting #535
 - [FIX] Scheduled events: keep date and recording station read-only in Edit Metadata #545
