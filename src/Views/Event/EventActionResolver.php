@@ -171,13 +171,6 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \xoctEventGUI::CMD_REPORT_QUALITY_MODAL,
                     ActionType::ASYNC_MODAL
                 );
-            case EventActionTarget::REPORT_DATE_MODIFICATION:
-                return $this->build(
-                    $this->translator->translate('event_report_date_modification'),
-                    \xoctEventGUI::class,
-                    \xoctEventGUI::CMD_REPORT_DATE_MODAL,
-                    ActionType::ASYNC_MODAL
-                );
             case EventActionTarget::START_WORKFLOW:
                 return $this->build(
                     $this->translator->translate('event_startworkflow'),
@@ -298,13 +291,6 @@ class EventActionResolver extends BaseActionResolver implements EventActionTarge
                     \ilObjOpenCastAccess::ACTION_REPORT_QUALITY_PROBLEM,
                     $event
                 );
-
-            case EventActionTarget::REPORT_DATE_MODIFICATION:
-                // Reporting a date modification concerns the whole series, not a single
-                // event. It is offered through the toolbar button above the list (see
-                // xoctEventGUI::index()), so it must not appear in the per-event actions
-                // as it did in release 9 (see #544).
-                return false;
 
             case EventActionTarget::PLAY:
                 return $this->isEventAccessible($event, $settings);
