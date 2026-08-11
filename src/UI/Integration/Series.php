@@ -39,6 +39,12 @@ class Series implements DataRetrieval
 
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
+    /**
+     * Upper bound for the events fetched per series. Access has to be evaluated in ILIAS rather
+     * than by the Opencast API, so a page can only be cut once the whole series is known; this is
+     * the same ceiling the previous total count already ran into.
+     */
+    private const MAX_EVENTS_PER_SERIES = 1000;
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
     private const SORT_TITLE_DESC = 'title:desc';
@@ -279,13 +285,16 @@ class Series implements DataRetrieval
             default => $sort . ',' . self::SORT_TITLE_ASC // we append title as secondary sort to have a deterministic order
         };
 
-        // Filtered by API
+        // #582: fetch the whole series and paginate further down, after the events the current user
+        // may not see have been removed. Paginating in the API means the page is filled with events
+        // that are then dropped, which leaves members of a course looking at short or entirely empty
+        // pages whenever a series holds scheduled, unpublished or still processing events.
         $filtered = $this->event_repository->getFiltered(
             ['series' => $this->series->getIdentifier()],
             '',
             [],
-            $page * $page_size,
-            $page_size,
+            0,
+            self::MAX_EVENTS_PER_SERIES,
             $api_sort,
         );
 
@@ -327,30 +336,27 @@ class Series implements DataRetrieval
                 $this->container->objectSettings()
             );
         };
-        $filtered = array_filter($filtered, $ui_filter);
-
-        // Calculate total count
-
-        $filtered_all = $this->event_repository->getFiltered(
-            ['series' => $this->series->getIdentifier()],
-            '',
-            []
-        );
-        $filtered_all = array_filter($filtered_all, $ui_filter);
+        $filtered = array_values(array_filter($filtered, $ui_filter));
 
         // @see hasScheduledEvents
-        array_walk($filtered_all, function (array $event): void {
+        array_walk($filtered, function (array $event): void {
             $event_object = $event['object'] ?? null;
             if ($event_object instanceof Event && $event_object->isScheduled()) {
                 $this->has_scheduled_events[$this->series->getIdentifier()] = true;
             }
         });
 
-        $this->total = count(
-            $filtered_all
-        );
+        // The total now counts what this user actually gets to see, which is what the pagination
+        // has to work with. It is set before yielding, so the view controls built afterwards in
+        // asEntityListInPanel() pick it up.
+        $this->total = count($filtered);
 
-        foreach ($filtered as $event) {
+        // Keep the requested page within what is left after filtering: a page number carried over
+        // from a wider result set would otherwise land past the end and render nothing at all.
+        $last_page = $page_size > 0 ? max(0, (int) ceil($this->total / $page_size) - 1) : 0;
+        $page = min(max($page, 0), $last_page);
+
+        foreach (array_slice($filtered, $page * $page_size, $page_size) as $event) {
             yield $mapping->map($event);
         }
     }
