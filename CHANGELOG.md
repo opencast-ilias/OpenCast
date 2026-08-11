@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 10.3.1
+- [FIX] Paella 8: searching in subtitles does not work, ship a local findCaptions plugin #566
+- [FIX] Paella 8: playbar missing for live streams and their recordings while the chat is active #568
+- [IMPROVEMENT] Update Paella packages (paella-core 2.12.12, paella-opencast-component 2.0.5, paella-opencast-plugins 2.0.6, paella-opencast-skin 2.0.2)
+- [SECURITY] Bump vulnerable dependencies: guzzlehttp/guzzle 7.15.2, dompurify 3.4.13, body-parser 1.20.6, socket.io-parser 4.2.7, fast-uri 3.1.5, brace-expansion
+
 ## Version 10.3.0
 - [FEATURE] Remember series list sort and page size per user #496
 - [FIX] Sort event list by series name and correct sort direction #43 (PageComponentPlugin)
