@@ -28,6 +28,6 @@
     "@asicupv/paella-video-plugins": "^2.5.3",
     "@asicupv/paella-webgl-plugins": "^2.4.2",
     "@asicupv/paella-zoom-plugin": "^2.5.4",
-    "dompurify": "^3.4.11"
+    "dompurify": "^3.4.13"
   }
 }
