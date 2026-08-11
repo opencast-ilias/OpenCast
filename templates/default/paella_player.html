@@ -17,25 +17,27 @@
 	</style>
 </head>
 <body>
-<div id="playerContainer" class="player-container"></div>
-<div id="overlay_live_waiting" class="overlay_live" hidden>
-	<span class="xoct_pseudo_element"></span>
-	<p id="overlay_live_waiting_text" class="overlay_live_text">{LIVE_WAITING_TEXT}</p>
-</div>
-<div id="overlay_live_interrupted" class="overlay_live" hidden>
-	<span class="xoct_pseudo_element"></span>
-	<p id="overlay_live_interrupted_text" class="overlay_live_text">{LIVE_INTERRUPTED_TEXT}</p>
-</div>
-<div id="overlay_live_over" class="overlay_live" hidden>
-	<span class="xoct_pseudo_element"></span>
-	<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
-</div>
-<script>
-il.Opencast.Paella.player.init(
-	{DATA},
-	{JS_CONFIG}
-)
-</script>
-{CHAT}
+	<div class="ilias-paella-wrapper">
+		<div id="playerContainer" class="player-container"></div>
+		<div id="overlay_live_waiting" class="overlay_live" hidden>
+			<span class="xoct_pseudo_element"></span>
+			<p id="overlay_live_waiting_text" class="overlay_live_text">{LIVE_WAITING_TEXT}</p>
+		</div>
+		<div id="overlay_live_interrupted" class="overlay_live" hidden>
+			<span class="xoct_pseudo_element"></span>
+			<p id="overlay_live_interrupted_text" class="overlay_live_text">{LIVE_INTERRUPTED_TEXT}</p>
+		</div>
+		<div id="overlay_live_over" class="overlay_live" hidden>
+			<span class="xoct_pseudo_element"></span>
+			<p id="overlay_live_over_text" class="overlay_live_text">{LIVE_OVER_TEXT}</p>
+		</div>
+		{CHAT}
+	</div>
+	<script>
+	il.Opencast.Paella.player.init(
+		{DATA},
+		{JS_CONFIG}
+	)
+	</script>
 </body>
 </html>

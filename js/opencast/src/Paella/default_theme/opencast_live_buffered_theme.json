@@ -1,4 +1,6 @@
 {
+    "name": "ILIAS Opencast LiveStream with buffer theme",
+    "description": "Opencast theme for livestream events with buffer in ILIAS",
     "styleSheets": [
         "opencast_theme.css"
     ],
@@ -8,7 +10,7 @@
         },
         "progressIndicator": {
             "showTotal": false,
-            "parentContainer": "progressIndicator",
+            "parentContainer": "buttonArea",
             "side": "left",
             "visible": true,
             "showHandler": true,
@@ -30,7 +32,8 @@
             },
             "es.upv.paella.playPauseButton": {
                 "enabled": true
-            },"es.upv.paella.customTimeProgressIndicator": {
+            },
+            "es.upv.paella.customTimeProgressIndicator": {
                 "enabled": false
             },
             "es.upv.paella.backwardButtonPlugin": {

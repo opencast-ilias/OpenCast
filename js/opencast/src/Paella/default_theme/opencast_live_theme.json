@@ -1,4 +1,6 @@
 {
+    "name": "ILIAS Opencast LiveStream theme",
+    "description": "Opencast theme for livestream events in ILIAS",
     "styleSheets": [
         "opencast_theme.css"
     ],
@@ -8,7 +10,7 @@
         },
         "progressIndicator": {
             "showTotal": true,
-            "parentContainer": "progressIndicator",
+            "parentContainer": "buttonArea",
             "side": "left",
             "visible": false,
             "showHandler": true,
@@ -30,7 +32,11 @@
             },
             "es.upv.paella.playPauseButton": {
                 "enabled": false
-            },"es.upv.paella.customTimeProgressIndicator": {
+            },
+            "es.upv.paella.customTimeProgressIndicator": {
+                "enabled": false
+            },
+            "es.upv.paella.currentTimeLabel": {
                 "enabled": false
             },
             "es.upv.paella.backwardButtonPlugin": {
@@ -53,6 +59,14 @@
             },
             "es.upv.paella.findCaptionsPlugin": {
                 "enabled": false
+            },
+            "es.upv.paella.liveStreamingProgressIndicator": {
+                "enabled": false
+            },
+            "org.ilias.paella.liveStreamingButtonIndicator": {
+                "enabled": true,
+                "order": 2,
+                "side": "right"
             }
         }
     },

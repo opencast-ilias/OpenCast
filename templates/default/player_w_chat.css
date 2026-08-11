@@ -6,10 +6,15 @@ body {
 	height: 100%;
 }
 
+.ilias-paella-wrapper {
+	height:100dvh;
+	width: 100dvw;
+	overflow: hidden !important;
+}
+
 div#playerContainer, iframe#opencastPaellaJwtPlayer {
 	font-family: roboto;
 	font-weight: 600;
-	display: inline-block !important;
 	position: relative;
 	float: left;
 	width: calc(100% - 290px);

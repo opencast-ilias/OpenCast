@@ -98,7 +98,7 @@ abstract class APIObject implements Request
         $this->setLoaded(true);
     }
 
-    protected function getAsArray(): array
+    public function getAsArray(): array
     {
         $r = new \ReflectionClass($this);
         $array = [];

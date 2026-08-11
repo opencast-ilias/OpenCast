@@ -44,7 +44,8 @@ class ChatGUI
         $protocol = ConfigAR::getConfig(ConfigAR::C_PROTOCOL);
         $host = ConfigAR::getConfig(ConfigAR::C_HOST);
 
-        $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim(__DIR__, ILIAS_ABSOLUTE_PATH) . '/open_chat.php';
+        $relativepath = $this->plugin->getRelativeDirectory();
+        $script_open_chat = ILIAS_HTTP_PATH . '/' . ltrim($relativepath, './') . '/src/Chat/GUI/open_chat.php';
         $url = $script_open_chat .
             '?port=' . $port .
             '&token=' . $this->token->getToken()->toString() .
