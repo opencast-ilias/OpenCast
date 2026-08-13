@@ -35,16 +35,27 @@ use srag\Plugins\Opencast\Views\Series\Display;
 class Series implements DataRetrieval
 {
     use Commons;
-    public $has_scheduled_events;
 
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
     /**
-     * Upper bound for the events fetched per series. Access has to be evaluated in ILIAS rather
-     * than by the Opencast API, so a page can only be cut once the whole series is known; this is
-     * the same ceiling the previous total count already ran into.
+     * Access has to be evaluated in ILIAS rather than by the Opencast API, so a page can only be
+     * cut once the whole series is known. The series is therefore walked in chunks of this size
+     * instead of being requested with an arbitrary upper bound.
      */
-    private const MAX_EVENTS_PER_SERIES = 1000;
+    private const FETCH_CHUNK_SIZE = 250;
+    /**
+     * Runaway guard for the chunk loop in case the API ever ignores the offset. This is not a
+     * limit on how many events a series may hold.
+     */
+    private const MAX_FETCH_CHUNKS = 100;
+    /**
+     * @see Event::isScheduled(), which derives the same two states from the API status.
+     */
+    private const SCHEDULED_STATES = [
+        'EVENTS.EVENTS.STATUS.SCHEDULED',
+        'EVENTS.EVENTS.STATUS.RECORDING',
+    ];
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
     private const SORT_TITLE_DESC = 'title:desc';
@@ -64,6 +75,10 @@ class Series implements DataRetrieval
     private MDCatalogue $md_catalogue;
     private MDFieldConfigEventRepository $md_repository;
     private ?Standard $filter = null;
+    /**
+     * @var array<string, bool> memoised result of hasScheduledEvents(), keyed by series id
+     */
+    private array $has_scheduled_events = [];
 
     public function __construct(
         private Container $container,
@@ -289,14 +304,12 @@ class Series implements DataRetrieval
         // may not see have been removed. Paginating in the API means the page is filled with events
         // that are then dropped, which leaves members of a course looking at short or entirely empty
         // pages whenever a series holds scheduled, unpublished or still processing events.
-        $filtered = $this->event_repository->getFiltered(
-            ['series' => $this->series->getIdentifier()],
-            '',
-            [],
-            0,
-            self::MAX_EVENTS_PER_SERIES,
-            $api_sort,
-        );
+        //
+        // The remaining ILIAS side filtering cannot be pushed to the API: whether an event is online
+        // lives in an ILIAS table, "not published" is derived from the publication channels, and the
+        // per clip permissions are ILIAS records as well. The owner sorting and the metadata filter
+        // below run over the whole set for the same reason.
+        $filtered = $this->fetchWholeSeries($api_sort);
 
         // local sorting for owner
         if (in_array($sort, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC], true)) {
@@ -338,14 +351,6 @@ class Series implements DataRetrieval
         };
         $filtered = array_values(array_filter($filtered, $ui_filter));
 
-        // @see hasScheduledEvents
-        array_walk($filtered, function (array $event): void {
-            $event_object = $event['object'] ?? null;
-            if ($event_object instanceof Event && $event_object->isScheduled()) {
-                $this->has_scheduled_events[$this->series->getIdentifier()] = true;
-            }
-        });
-
         // The total now counts what this user actually gets to see, which is what the pagination
         // has to work with. It is set before yielding, so the view controls built afterwards in
         // asEntityListInPanel() pick it up.
@@ -362,13 +367,71 @@ class Series implements DataRetrieval
     }
 
     /**
+     * The API answers with at most `limit` events and does not report a total, so the only way to
+     * know a series completely is to walk it until a chunk comes back short.
+     *
+     * @return array[]
+     */
+    private function fetchWholeSeries(string $api_sort): array
+    {
+        $chunks = [];
+        $offset = 0;
+        $requests = 0;
+
+        do {
+            $chunk = $this->event_repository->getFiltered(
+                ['is_part_of' => $this->series->getIdentifier()],
+                '',
+                [],
+                $offset,
+                self::FETCH_CHUNK_SIZE,
+                $api_sort,
+            );
+            $chunks[] = $chunk;
+            $offset += self::FETCH_CHUNK_SIZE;
+            // A chunk that is short because the repository dropped malformed entries ends the loop
+            // early. That only happens when the API errors out, in which case stopping is right.
+        } while (count($chunk) === self::FETCH_CHUNK_SIZE && ++$requests < self::MAX_FETCH_CHUNKS);
+
+        return array_merge(...$chunks);
+    }
+
+    /**
      * @deprecated
      * @see Display::hasScheduledEvents()
      */
     public function hasScheduledEvents(string $series_id): bool
     {
-        return $this->has_scheduled_events[$series_id] ?? false;
+        // The only consumer is the "report date modification" button, which needs
+        // ACTION_REPORT_DATE_CHANGE anyway. Asking first keeps this free for everyone else.
+        if (!\ilObjOpenCastAccess::checkAction(\ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+            return false;
+        }
+
+        return $this->has_scheduled_events[$series_id] ??= $this->probeScheduledEvents($series_id);
     }
 
+    /**
+     * Asks the API whether the series holds a scheduled event at all, rather than deriving it from
+     * the events on the current page. ACTION_REPORT_DATE_CHANGE implies edit_videos, and
+     * hasReadAccessOnEvent() lets those users see everything, so the API answer matches what the
+     * list would have shown.
+     */
+    private function probeScheduledEvents(string $series_id): bool
+    {
+        foreach (self::SCHEDULED_STATES as $status) {
+            $scheduled = $this->event_repository->getFiltered(
+                ['is_part_of' => $series_id, 'status' => $status],
+                '',
+                [],
+                0,
+                1
+            );
+            if ($scheduled !== []) {
+                return true;
+            }
+        }
 
+        return false;
+    }
 }
