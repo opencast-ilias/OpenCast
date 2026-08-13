@@ -3,3 +3,10 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+
+### Node ###
+# Build time dependencies of the Paella bundle. The bundle itself
+# (paella-player.min.js) is shipped, its build tree is not. Note that the root
+# node_modules/ is tracked on purpose, it ships the runtime dependencies, so
+# this rule stays scoped to the Paella path.
+js/opencast/src/Paella/node_modules/
