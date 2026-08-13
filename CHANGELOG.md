@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 10.3.2
+- [FIX] Remove "Report Date Modifications" from per-event actions #544
+
 ## Version 10.3.1
 - [FIX] Paella 8: searching in subtitles does not work, ship a local findCaptions plugin #566
 - [FIX] Paella 8: playbar missing for live streams and their recordings while the chat is active #568
