@@ -19,7 +19,6 @@ enum EventActionTarget: string
     case DELETE = 'delete';
     case EDIT_METADATA = 'edit_metadata';
     case REPORT_QUALITY_ISSUE = 'report_quality_issue';
-    case REPORT_DATE_MODIFICATION = 'report_date_modification';
     case GRANT_ACCESS = 'grant_access';
     case EDIT_OWNER = 'edit_owner';
     case REPUBLISH = 'republish';
