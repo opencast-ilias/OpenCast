@@ -39,17 +39,6 @@ class Series implements DataRetrieval
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
     /**
-     * Access has to be evaluated in ILIAS rather than by the Opencast API, so a page can only be
-     * cut once the whole series is known. The series is therefore walked in chunks of this size
-     * instead of being requested with an arbitrary upper bound.
-     */
-    private const FETCH_CHUNK_SIZE = 250;
-    /**
-     * Runaway guard for the chunk loop in case the API ever ignores the offset. This is not a
-     * limit on how many events a series may hold.
-     */
-    private const MAX_FETCH_CHUNKS = 100;
-    /**
      * @see Event::isScheduled(), which derives the same two states from the API status.
      */
     private const SCHEDULED_STATES = [
@@ -309,7 +298,15 @@ class Series implements DataRetrieval
         // lives in an ILIAS table, "not published" is derived from the publication channels, and the
         // per clip permissions are ILIAS records as well. The owner sorting and the metadata filter
         // below run over the whole set for the same reason.
-        $filtered = $this->fetchWholeSeries($api_sort);
+        //
+        // The API reports no total, so a series is read in a single request bounded by the default
+        // limit of EventAPIRepository::getFiltered(). That ceiling is not new: the same default
+        // bounded the total count pass this call replaces, so the pager stopped there before as
+        // well. Lifting it needs API side pagination and is tracked separately.
+        $filtered = $this->event_repository->getFiltered(
+            ['is_part_of' => $this->series->getIdentifier()],
+            sort: $api_sort
+        );
 
         // local sorting for owner
         if (in_array($sort, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC], true)) {
@@ -364,36 +361,6 @@ class Series implements DataRetrieval
         foreach (array_slice($filtered, $page * $page_size, $page_size) as $event) {
             yield $mapping->map($event);
         }
-    }
-
-    /**
-     * The API answers with at most `limit` events and does not report a total, so the only way to
-     * know a series completely is to walk it until a chunk comes back short.
-     *
-     * @return array[]
-     */
-    private function fetchWholeSeries(string $api_sort): array
-    {
-        $chunks = [];
-        $offset = 0;
-        $requests = 0;
-
-        do {
-            $chunk = $this->event_repository->getFiltered(
-                ['is_part_of' => $this->series->getIdentifier()],
-                '',
-                [],
-                $offset,
-                self::FETCH_CHUNK_SIZE,
-                $api_sort,
-            );
-            $chunks[] = $chunk;
-            $offset += self::FETCH_CHUNK_SIZE;
-            // A chunk that is short because the repository dropped malformed entries ends the loop
-            // early. That only happens when the API errors out, in which case stopping is right.
-        } while (count($chunk) === self::FETCH_CHUNK_SIZE && ++$requests < self::MAX_FETCH_CHUNKS);
-
-        return array_merge(...$chunks);
     }
 
     /**
