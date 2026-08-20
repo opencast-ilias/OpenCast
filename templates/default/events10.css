@@ -1,3 +1,9 @@
+/* The Entity component was rebuilt in ILIAS 10.9 (core commit f7d1f39): the classes were renamed
+   from `c-entity __element` (two classes on one element) to BEM `c-entity__element`, and the grid
+   was rewritten from named `grid-template-areas` to a two column, nine row layout. Every rule here
+   targets the rebuilt component, which is why this release requires ILIAS 10.9 or later - see
+   $ilias_min_version in plugin.php. */
+
 /* MULTI COLUMN*/
 ul.c-listing-entity {
     display: grid;
@@ -5,12 +11,29 @@ ul.c-listing-entity {
     gap: 1rem;
 }
 
-div.c-entity.__container {
-    height: 100%;
-    grid-template-rows: min-content min-content min-content min-content min-content min-content 1fr;
+/* Cards side by side have to end up equally tall, otherwise the row height changes as the
+   thumbnails come in and the list visibly jumps.
+
+   The list stretches its `li` to the tallest one in the row, but the card inside keeps its own
+   height: an `li` sized by the grid still computes `height: auto`, so a `height: 100%` on the card
+   has nothing to resolve against. Make the `li` a grid of its own instead - its single child is
+   then stretched for real, without any percentage involved. */
+ul.c-listing-entity > li {
+    display: grid;
 }
 
-.c-entity .xoct-invitations-counter {
+/* With the card stretched, the free height has to go somewhere. The core sizes its nine rows as
+   `minmax(min-content, auto)`, and a grid defaults to `align-content: stretch`, so the extra space
+   would be spread evenly across all nine rows and tear the card apart. Give the last row - the one
+   the core reserves for the reaction bar - an `1fr` instead, so it takes the free space by itself
+   and the rows above keep their content height. */
+div.c-entity__container {
+    grid-template-rows: repeat(8, auto) 1fr;
+}
+
+/* Plugin owned class (see Events::map()), so it needs no Entity prefix - the old markup carried
+   `c-entity` on every element and a descendant selector worked, the rebuilt one does not. */
+.xoct-invitations-counter {
     border-radius: 12px;
     background-color: #dc3545;
     color: white;
@@ -53,35 +76,51 @@ dd {
 }
 
 
-/* IMAGE SIZE */
-.c-entity.__secondary-identifier.--image {
-    width: 20rem !important;
+/* IMAGE SIZE
+   The core sizes the thumbnail column as `max-content` and caps the image at 360px, so narrowing
+   only the surrounding box lets the image keep its own width, spill into the column next to it and
+   cover the start of the title and of the metadata labels. Size the image itself instead and let
+   the box follow it.
+
+   This stylesheet is loaded before delos.css, so a selector that merely ties with the core one
+   loses. The core rule is `.c-entity__secondary-identifier.--image img`; going through the
+   container outweighs it without reaching for !important.
+
+   The thumbnails are loaded from Opencast and carry no width/height attributes, so before they
+   arrive they take up no height at all and the row grows the moment they do. Reserve the space up
+   front via the aspect ratio the player previews use; `contain` keeps anything that deviates from
+   it - the scheduled and failed placeholders, for instance - undistorted. */
+.c-entity__container .c-entity__secondary-identifier.--image img {
+    width: 20rem;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    height: auto;
 }
 
 @media (max-width: 991px) {
-    .c-entity.__secondary-identifier.--image {
-        width: 15rem !important;
+    .c-entity__container .c-entity__secondary-identifier.--image img {
+        width: 15rem;
     }
 }
 
-@media (max-width: 500px) {
-    .c-entity.__secondary-identifier.--image {
-        grid-area: f-prop-start;
-    }
-    .c-entity.__actions {
-        grid-area: f-details-start !important;
+/* Below the core's `small` breakpoint the container falls back to `display: block` and the image
+   is meant to bleed edge to edge, so let it use the full width. Must stay after the 991px rule. */
+@media (max-width: 768px) {
+    .c-entity__container .c-entity__secondary-identifier.--image img {
+        width: 100%;
     }
 }
 
 
 
 /* OVERLAY with Playbutton*/
-.c-entity.__secondary-identifier.--image a.playable {
+.c-entity__secondary-identifier.--image a.playable {
     position: relative;
     display: inline-block;
 }
 
-.c-entity.__secondary-identifier.--image a.playable::before {
+.c-entity__secondary-identifier.--image a.playable::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -94,8 +133,25 @@ dd {
     transition: transform .18s ease;
 }
 
-.c-entity.__secondary-identifier.--image a.playable:hover::before {
+.c-entity__secondary-identifier.--image a.playable:hover::before {
     transform: scale(1.07);
+}
+
+/* TITLE (#564)
+   The title of a playable event is a Shy Button or a Link, the title of a scheduled or unpublished
+   event is plain text. All three sit in the same container, which carries the title typography,
+   but the Shy Button pulls in the `.btn` font-size and box model instead, so playable titles
+   render smaller than the others. Reset the interactive variants to the container typography,
+   which is left to the core stylesheet rather than repeated here. */
+.c-entity__primary-identifier .btn.btn-link,
+.c-entity__primary-identifier a {
+    font: inherit;
+    display: inline;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    text-align: left;
+    white-space: normal;
 }
 
 /* SOME other adjustments in ILIAS UI */
@@ -104,11 +160,12 @@ dd {
     padding: 0.5em 2em;
 }
 
-/* More Button */
-.c-entity .__personal-status .btn-link:before {
+/* More Button - the "show more" of the shortened description, which sits in the personal status.
+   The selector used to be a descendant one and never matched any Entity markup, old or new. */
+.c-entity__personal-status .btn-link:before {
     content: " ";
     margin-left: 0.5em;
 }
-.c-entity .__personal-status .btn-link {
+.c-entity__personal-status .btn-link {
     display: contents;
 }
