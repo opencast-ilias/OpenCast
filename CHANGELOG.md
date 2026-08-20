@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- [FIX] Edge-case: trim argument must be string not null for the JWT iframe path #577
+
 ## Version 9.5.0
 - [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513
 - [FIX] JWT follow-ups: configurable iframe url path and basic access roles #522
