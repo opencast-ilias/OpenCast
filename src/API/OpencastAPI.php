@@ -555,7 +555,7 @@ class OpencastAPI implements API
     {
         $parsed_url = parse_url($url);
         // This replace takes care of the case if we set the src placeholder as /play/{event_id}, but no effect on /paella...
-        $iframe_url_path = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_PATH);
+        $iframe_url_path = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_PATH) ?? '';
         if (empty(trim($iframe_url_path))) {
             $iframe_url_path = self::JWT_IFRAME_SRC_PATH_DEFAULT;
         }
