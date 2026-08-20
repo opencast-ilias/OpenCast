@@ -35,10 +35,16 @@ use srag\Plugins\Opencast\Views\Series\Display;
 class Series implements DataRetrieval
 {
     use Commons;
-    public $has_scheduled_events;
 
     public const DEFAULT_PAGE_SIZE = 10;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
+    /**
+     * @see Event::isScheduled(), which derives the same two states from the API status.
+     */
+    private const SCHEDULED_STATES = [
+        'EVENTS.EVENTS.STATUS.SCHEDULED',
+        'EVENTS.EVENTS.STATUS.RECORDING',
+    ];
     private const SORT_TITLE_ASC = 'title:asc';
     private const SORT_DATE_ASC = 'date:asc';
     private const SORT_TITLE_DESC = 'title:desc';
@@ -58,6 +64,10 @@ class Series implements DataRetrieval
     private MDCatalogue $md_catalogue;
     private MDFieldConfigEventRepository $md_repository;
     private ?Standard $filter = null;
+    /**
+     * @var array<string, bool> memoised result of hasScheduledEvents(), keyed by series id
+     */
+    private array $has_scheduled_events = [];
 
     public function __construct(
         private Container $container,
@@ -279,14 +289,23 @@ class Series implements DataRetrieval
             default => $sort . ',' . self::SORT_TITLE_ASC // we append title as secondary sort to have a deterministic order
         };
 
-        // Filtered by API
+        // #582: fetch the whole series and paginate further down, after the events the current user
+        // may not see have been removed. Paginating in the API means the page is filled with events
+        // that are then dropped, which leaves members of a course looking at short or entirely empty
+        // pages whenever a series holds scheduled, unpublished or still processing events.
+        //
+        // The remaining ILIAS side filtering cannot be pushed to the API: whether an event is online
+        // lives in an ILIAS table, "not published" is derived from the publication channels, and the
+        // per clip permissions are ILIAS records as well. The owner sorting and the metadata filter
+        // below run over the whole set for the same reason.
+        //
+        // The API reports no total, so a series is read in a single request bounded by the default
+        // limit of EventAPIRepository::getFiltered(). That ceiling is not new: the same default
+        // bounded the total count pass this call replaces, so the pager stopped there before as
+        // well. Lifting it needs API side pagination and is tracked separately.
         $filtered = $this->event_repository->getFiltered(
-            ['series' => $this->series->getIdentifier()],
-            '',
-            [],
-            $page * $page_size,
-            $page_size,
-            $api_sort,
+            ['is_part_of' => $this->series->getIdentifier()],
+            sort: $api_sort
         );
 
         // local sorting for owner
@@ -327,30 +346,19 @@ class Series implements DataRetrieval
                 $this->container->objectSettings()
             );
         };
-        $filtered = array_filter($filtered, $ui_filter);
+        $filtered = array_values(array_filter($filtered, $ui_filter));
 
-        // Calculate total count
+        // The total now counts what this user actually gets to see, which is what the pagination
+        // has to work with. It is set before yielding, so the view controls built afterwards in
+        // asEntityListInPanel() pick it up.
+        $this->total = count($filtered);
 
-        $filtered_all = $this->event_repository->getFiltered(
-            ['series' => $this->series->getIdentifier()],
-            '',
-            []
-        );
-        $filtered_all = array_filter($filtered_all, $ui_filter);
+        // Keep the requested page within what is left after filtering: a page number carried over
+        // from a wider result set would otherwise land past the end and render nothing at all.
+        $last_page = $page_size > 0 ? max(0, (int) ceil($this->total / $page_size) - 1) : 0;
+        $page = min(max($page, 0), $last_page);
 
-        // @see hasScheduledEvents
-        array_walk($filtered_all, function (array $event): void {
-            $event_object = $event['object'] ?? null;
-            if ($event_object instanceof Event && $event_object->isScheduled()) {
-                $this->has_scheduled_events[$this->series->getIdentifier()] = true;
-            }
-        });
-
-        $this->total = count(
-            $filtered_all
-        );
-
-        foreach ($filtered as $event) {
+        foreach (array_slice($filtered, $page * $page_size, $page_size) as $event) {
             yield $mapping->map($event);
         }
     }
@@ -361,8 +369,36 @@ class Series implements DataRetrieval
      */
     public function hasScheduledEvents(string $series_id): bool
     {
-        return $this->has_scheduled_events[$series_id] ?? false;
+        // The only consumer is the "report date modification" button, which needs
+        // ACTION_REPORT_DATE_CHANGE anyway. Asking first keeps this free for everyone else.
+        if (!\ilObjOpenCastAccess::checkAction(\ilObjOpenCastAccess::ACTION_REPORT_DATE_CHANGE)) {
+            return false;
+        }
+
+        return $this->has_scheduled_events[$series_id] ??= $this->probeScheduledEvents($series_id);
     }
 
+    /**
+     * Asks the API whether the series holds a scheduled event at all, rather than deriving it from
+     * the events on the current page. ACTION_REPORT_DATE_CHANGE implies edit_videos, and
+     * hasReadAccessOnEvent() lets those users see everything, so the API answer matches what the
+     * list would have shown.
+     */
+    private function probeScheduledEvents(string $series_id): bool
+    {
+        foreach (self::SCHEDULED_STATES as $status) {
+            $scheduled = $this->event_repository->getFiltered(
+                ['is_part_of' => $series_id, 'status' => $status],
+                '',
+                [],
+                0,
+                1
+            );
+            if ($scheduled !== []) {
+                return true;
+            }
+        }
 
+        return false;
+    }
 }
