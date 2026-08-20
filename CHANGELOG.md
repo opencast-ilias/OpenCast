@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Version 10.4.0
 - [FIX] For course members, scheduled and unpublished events no longer produce short or blank pages in the event list #582
 - [FIX] Font size of titles no longer differs between published and unpublished events; the event list follows the ILIAS 10.9 markup (minimum ILIAS version is now 10.9) #564
 
