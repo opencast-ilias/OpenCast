@@ -19,6 +19,12 @@ const argv = yargs
         type: 'string',
         default: '/var/www/ilias'
     })
+    .option('template-dir', {
+        description: 'ILIAS template directory relative to <ilias-dir> to get images and styles etc.',
+        alias: 't',
+        type: 'string',
+        default: '/templates'
+    })
     .option('port', {
         description: 'port which the chat server listens to',
         alias: 'p',
@@ -58,6 +64,7 @@ const argv = yargs
 
 const client_id = argv.clientId;
 const ilias_installation_dir = argv.iliasDir ? argv.iliasDir.replace(/\/+$/, '') : '/var/www/ilias';
+const template_dir = argv.templateDir ? ilias_installation_dir + argv.templateDir.replace(/\/+$/, '') : ilias_installation_dir + '/templates';
 const port = argv.port;
 const ip = argv.ip;
 const host = argv.host ? argv.host : ip;
@@ -111,18 +118,25 @@ function initServer(server) {
      * get profile picture of user
      */
     app.get('/srchat/get_profile_picture/:usr_id', function (req, res) {
-        var path = ilias_installation_dir + "/data/" + client_id + "/usr_images/usr_" + req.params.usr_id + "_xsmall.jpg";
+        var usr_id = req.params.usr_id;
+        // usr_id must be a plain integer; reject anything else to avoid path traversal.
+        if (!/^\d+$/.test(usr_id)) {
+            // fallback picture
+            res.sendFile(template_dir + "/default/images/placeholder/no_photo_xsmall.jpg");
+            return;
+        }
+        var path = ilias_installation_dir + "/data/" + client_id + "/usr_images/usr_" + usr_id + "_xsmall.jpg";
         try {
             if (fs.existsSync(path)) {
                 res.sendFile(path);
             } else {
                 // fallback picture
-                res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
+                res.sendFile(template_dir + "/default/images/placeholder/no_photo_xsmall.jpg")
             }
         } catch (err) {
             console.error(err);
             // fallback picture
-            res.sendFile(ilias_installation_dir + "/templates/default/images/no_photo_xsmall.jpg")
+            res.sendFile(template_dir + "/default/images/placeholder/no_photo_xsmall.jpg")
         }
     });
 

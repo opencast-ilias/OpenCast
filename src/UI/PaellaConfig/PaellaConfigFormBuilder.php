@@ -109,12 +109,7 @@ class PaellaConfigFormBuilder
             ->withValue((bool) $ocr_text_default_value);
 
         $themes[self::F_PAELLA_PLAYER_THEME] = $this->generateSwichableGroupWithUrl(
-            $this->ui_renderer->render(
-                $this->ui_factory->link()->standard(
-                    $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
-                    PluginConfig::PAELLA_DEFAULT_THEME
-                )
-            ),
+            $this->plugin->txt(self::F_PAELLA_PLAYER_DEFAULT . "_link"),
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME) ?? PluginConfig::PAELLA_OPTION_DEFAULT,
             PluginConfig::getConfig(PluginConfig::F_PAELLA_THEME_URL) ?? '',
             self::F_PAELLA_PLAYER_THEME,

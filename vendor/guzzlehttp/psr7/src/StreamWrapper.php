@@ -41,10 +41,16 @@ final class StreamWrapper
             $mode = 'w';
         } else {
             throw new \InvalidArgumentException('The stream must be readable, '
-                . 'writable, or both.');
+                .'writable, or both.');
         }
 
-        return fopen('guzzle://stream', $mode, false, self::createStreamContext($stream));
+        $resource = @fopen('guzzle://stream', $mode, false, self::createStreamContext($stream));
+
+        if ($resource === false) {
+            throw new \RuntimeException('Unable to create stream resource');
+        }
+
+        return $resource;
     }
 
     /**

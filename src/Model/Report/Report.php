@@ -49,6 +49,7 @@ class Report extends ActiveRecord
                 $this->getRecipientForType($this->getType()),
                 $this->getSubject(),
                 $this->getMessage(),
+                $this->getUserId()
             );
         }
     }

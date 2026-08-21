@@ -87,6 +87,7 @@ class PluginConfig extends ActiveRecord
     public const F_LIVESTREAM_TYPE = 'livestream_type';
     public const F_LIVESTREAM_BUFFERED = 'livestream_buffered';
     public const F_ENABLE_CHAT = 'enable_chat';
+    public const F_ENABLE_CUTTING = 'enable_cutting';
 
     public const F_REPORT_QUALITY = 'report_quality';
     public const F_REPORT_QUALITY_EMAIL = 'report_quality_email';
@@ -132,7 +133,7 @@ class PluginConfig extends ActiveRecord
     public const PAELLA_DEFAULT_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/config/config.json';
     public const PAELLA_RESOURCES_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/resources';
     public const PAELLA_LANG_PATH = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/lang';
-    public const PAELLA_DEFAULT_THEME = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_theme.json';
+    public const PAELLA_DEFAULT_THEME = 'opencast';
     public const PAELLA_DEFAULT_THEME_LIVE = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_theme.json';
     public const PAELLA_DEFAULT_THEME_LIVE_BUFFERED = 'Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/js/opencast/src/Paella/default_theme/opencast_live_buffered_theme.json';
 
@@ -148,6 +149,16 @@ class PluginConfig extends ActiveRecord
     public const F_THUMBNAIL_UPLOAD_ENABLED = 'thumbnail_config_upload_enabled';
     public const F_THUMBNAIL_UPLOAD_MODE = 'thumbnail_config_upload_mode';
     public const F_THUMBNAIL_ACCEPTED_MIMETYPES = 'thumbnail_config_accepted_mimetypes';
+
+    public const F_JWT_SECURITY_ENABLED = 'jwt_security_enabled';
+    public const F_JWT_SECURITY_PK = 'jwt_security_privatekey';
+    public const F_JWT_SECURITY_EXP = 'jwt_security_expiration';
+    public const F_JWT_SECURITY_ALG = 'jwt_security_algorithm';
+    public const F_JWT_SECURITY_IFRAME_PLAYER_PATH = 'jwt_security_iframe_player_path';
+    public const F_JWT_SECURITY_BASIC_ROLES = 'jwt_security_basic_roles';
+    public const F_JWT_SECURITY_STUDIO_ROLES = 'jwt_security_studio_roles';
+    public const F_JWT_SECURITY_EDITOR_ROLES = 'jwt_security_editor_roles';
+    public const F_JWT_SECURITY_ANNOTATION_TOOL_ROLES = 'jwt_security_annotation_tool_roles';
 
     /**
      * @var array

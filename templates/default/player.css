@@ -10,12 +10,16 @@
 	z-index: 100;
 }
 
+.overlay_live.hidden {
+	display: none;
+}
+
 .overlay_live_text {
 	display: inline-block;
 	font-size: 32px;
 }
 
-#playerContainer {
+#playerContainer, #opencastPaellaJwtPlayer {
 	font-family: roboto;
 	font-weight: 600;
 	width: 100vw;
@@ -24,4 +28,23 @@
 	top: 0px;
 	position: relative;
 	overflow: hidden;
+}
+
+#playerContainer.paella-fallback-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	z-index: 1000;
+}
+
+#opencastPaellaJwtPlayer {
+	border: 0 !important;
+	box-shadow: none !important;
+	overflow: hidden;
+}
+
+#opencastPaellaJwtPlayer.hidden {
+	display: none !important;
 }

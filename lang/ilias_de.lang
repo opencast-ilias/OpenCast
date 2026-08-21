@@ -182,6 +182,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#Wenn aktiv, werden die Links bereits signiert von Opencast ausgeliefert. Dies kann die Performanz beeinflussen. Beachten Sie, dass obige Konfiguration trotzdem benötigt wird, da in gewissen Situationen Links vom Plugin signiert werden müssen.
 config_enable_chat#:#Chat aktivieren
 config_enable_chat_info#:#Aktiviert einen On-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
+config_enable_cutting#:#Schneiden aktivieren
+config_enable_cutting_info#:#Ermöglicht es Benutzern, auf das Schnittwerkzeug (Video-Editor) für Videos zuzugreifen. Wenn deaktiviert, ist die Aktion "Schneiden" nicht im Aktionsmenü der Ereignisse verfügbar.
 config_ingest_upload#:#Upload via Ingest-Nodes
 config_ingest_upload_info#:#Wenn aktiv, wird der Upload über Ingest-Nodes statt über die External-API ausgeführt. Dadurch kann die Last auf dem Opencast-Server bei mehreren gleichzeitigen Uploads besser verteilt werden. Achtung: Dazu muss der REST-Endpunkt /ingest für den ILIAS-Server erreichbar und für den API-Benutzer zugänglich sein.
 event_add_new#:#Aufzeichnung hochladen
@@ -299,6 +301,7 @@ invitations_back#:#Zurück
 invitations_header#:#Zugriffsrechte erteilen
 invitations_none_available#:#Keine verfügbar
 invitations_invite_all#:#Alle hinzufügen
+invitations_remove_all#:#Alle entfernen
 obj_xoct#:#Opencast
 objs_xoct#:#Opencast
 perm_upload#:#Upload
@@ -699,6 +702,7 @@ publication_usage_table_title_usage_group#:#Unternutzungsgruppe
 publication_usage_create_group#:#Unternutzungsgruppe erstellen
 publication_usage_edit_group#:#Unternutzungsgruppe bearbeiten
 publication_usage_confirm_delete_text_group#:#Sind Sie sicher, dass Sie diese Unternutzungsgruppe löschen möchten?
+publication_usage_confirm_delete_text#:#Sind Sie sicher, dass Sie diese Publikationsnutzung löschen möchten?
 publication_usage_extra_config#:#Zusätzliche
 pug_display_name_default#:#Mehr
 publication_usage_type_captions#:#Captions
@@ -786,3 +790,24 @@ upload_ui_thumbnail_mode_sg_timepoint#:#Durch Auswahl eines Videozeitpunkts
 upload_ui_thumbnail_file#:#Vorschaubilddatei
 upload_ui_thumbnail_timepoint#:#Zeitpunkt
 upload_ui_thumbnail_timepoint_info#:#Der Zeitpunkt des Videos, aus dem das Vorschaubild extrahiert werden soll.
+config_jwt_security_enabled#:#JWT-Authentifizierung aktivieren
+config_jwt_security_enabled_info#:#Aktiviert die Authentifizierung mit JSON Web Tokens (JWT) für verbesserte Sicherheit beim Zugriff auf Opencast-Ressourcen.
+config_jwt_security_privatekey#:#Privater Schlüssel (vollständiger Text)
+config_jwt_security_privatekey_info#:#Fügen Sie den vollständigen privaten Schlüssel ein, der zum Signieren von JWT-Token für die Opencast-Authentifizierung verwendet wird.<br>HINWEIS: Klicken Sie beim Bearbeiten auf das Augensymbol, um den Schlüssel anzuzeigen.
+config_jwt_security_privatekey_show_icon#:#Anzeigen
+config_jwt_security_privatekey_hide_icon#:#Ausblenden
+config_jwt_security_privatekey_hidden_element_title#:#Um dieses Feld zu bearbeiten, klicken Sie bitte zuerst auf das Augensymbol, um den Inhalt anzuzeigen.
+config_jwt_security_expiration#:#Ablaufdauer des Tokens (Sekunden)
+config_jwt_security_expiration_info#:#Legt fest, wie lange das JWT-Token in Sekunden gültig bleibt.
+config_jwt_security_algorithm#:#Signaturalgorithmus
+config_jwt_security_algorithm_info#:#Gibt den Algorithmus an, der zum Signieren von JWT-Token für die Authentifizierung verwendet wird.
+config_jwt_security_studio_roles#:#Benutzerzugriffsrollen für Studio
+config_jwt_security_studio_roles_info#:#Gibt die Benutzerrollen an, die Zugriff auf Opencast Studio erhalten.
+config_jwt_security_editor_roles#:#Benutzerzugriffsrollen für Editor
+config_jwt_security_editor_roles_info#:#Gibt die Benutzerrollen an, die Zugriff auf Opencast Editor erhalten.
+config_jwt_security_annotation_tool_roles#:#Benutzerzugriffsrollen für Annotation-Tool
+config_jwt_security_annotation_tool_roles_info#:#Definiert die benötigten Benutzerrollen für den Zugriff auf das Opencast Annotation-Tool.
+config_jwt_security_iframe_player_path#:#URL-Pfad des Iframe-Players
+config_jwt_security_iframe_player_path_info#:#Legt den Pfad zum Opencast-Player fest, der JWT-Refresh-Tokens unterstützt. Wird kein Wert angegeben, wird standardmäßig "/paella7/ui/watch.html" verwendet.<br>HINWEIS: Es sollte nur der Pfad angegeben werden. Query-Parameter dürfen nicht enthalten sein.<br>Im Pfad kann "&#123event_id}" Platzhalter verwendet werden, z. B. "/play/&#123event_id}". Dabei wird "&#123event_id}" durch die Kennung des Events ersetzt.
+config_jwt_security_basic_roles#:#Grundlegende Zugriffsrollen
+config_jwt_security_basic_roles_info#:#Legt die Rollen fest, die beim Zugriff auf ein Event, eine Serie oder eine Playlist in die JWT-Claims aufgenommen werden. Diese Rollen müssen außerdem in der ACL des jeweiligen Events, der Serie oder der Playlist vorhanden sein.<br>Zusätzlich müssen die Rollen zu den effektiven Rollen des JWT-Benutzers in Opencast gehören.<br>Standardmäßig ist ROLE_EXTERNAL_APPLICATION eine geeignete Rolle für diese Einstellung.

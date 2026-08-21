@@ -45,7 +45,7 @@ class EventFormBuilder
     public const F_SUBTITLE_SECTION = 'subtitles';
     public const F_THUMBNAIL_SECTION = 'thumbnail';
 
-    private static array $accepted_video_mimetypes = [
+    public static array $accepted_video_mimetypes = [
         MimeTypeUtil::VIDEO__AVI,
         MimeTypeUtil::VIDEO__QUICKTIME,
         MimeTypeUtil::VIDEO__MPEG,
@@ -59,6 +59,7 @@ class EventFormBuilder
         MimeTypeUtil::VIDEO__X_MSVIDEO,
         'video/mkv',
         'video/x-matroska',
+        'video/matroska',
         'video/x-m4v',
         '.mov',
         '.mp4',
@@ -70,7 +71,7 @@ class EventFormBuilder
         '.mkv'
     ];
 
-    private static array $accepted_audio_mimetypes = [
+    public static array $accepted_audio_mimetypes = [
         MimeTypeUtil::AUDIO__MP4,
         MimeTypeUtil::AUDIO__OGG,
         MimeTypeUtil::AUDIO__MPEG,
@@ -527,6 +528,15 @@ class EventFormBuilder
             })
         );
     }
+
+    // public function studio_redirect_jwt_form(string $form_action, string $jwt, string $target_url): Form {
+    //     $inputs['jwt'] = $this->ui_factory->input()->field()->hidden()->withValue($jwt);
+    //     $inputs['target'] = $this->ui_factory->input()->field()->hidden()->withValue($target_url);
+    //     return $this->ui_factory->input()->container()->form()->standard(
+    //         $form_action,
+    //         $inputs
+    //     );
+    // }
 
     private function buildTermsOfUseSection(): Section
     {

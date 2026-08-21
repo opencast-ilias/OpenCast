@@ -1,5 +1,36 @@
 # Changelog
 
+## Version 9.5.0
+- [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513
+- [FIX] JWT follow-ups: configurable iframe url path and basic access roles #522
+- [FIX] Chunked upload fails for large files #518
+- [FIX] My Events: include offline-state events in list
+- [SECURITY] Escape ffmpeg subtitle-conversion arguments (command injection)
+- [SECURITY] Chat server: parameterize SQL queries and validate user id in profile-picture endpoint (SQL injection, path traversal)
+- [SECURITY] Bump vulnerable dependencies (chat server, composer)
+
+## Version 9.4.1
+- [FIX] Translate subtitle 'Load language list' modal action button label #420
+
+## Version 9.4.0
+- [FEATURE] JWT-Support
+- [FEATURE] Add "Enable Cutting" configuration and related UI elements (incl. enable by default)
+- [FIX] paella player: align keyboard shortcut rewind with button 10s, fixes #491
+- [FIX] Chrome browser: .mkv Uploads are rejected: "Files of type 'video/matroska' are not allowed" #489
+
+## Version 9.3.1
+- fix for getting the user who reported a problem
+
+## Version 9.3.0
+- [FIX] Add confirmation text for deleting publication usage
+- [FIX] Handle missing start date and time in MetadataToXML
+- [FIX] overwrite global perms for course members during object creating. - setting default perms now can handle some perms prevention.
+
+## Version 9.2.3
+- [FIX] several (UI) issues in Groups, Change-Owner and Invitation Screens
+- [FEATURE] Upgrade paella-user-tracking to v1.42.6
+- [FIX] Style Issues in Chat
+
 ## Version 9.2.2
 - [FIX] Disable OC Studio return target and label #424
 - [FIX] sending mails fails while reporting quality problems #434

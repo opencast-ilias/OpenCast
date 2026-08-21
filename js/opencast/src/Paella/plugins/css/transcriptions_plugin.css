@@ -1,28 +1,22 @@
 /* Transcriptions Plugin ILIAS */
-.popup-container.transcription-plugin-popup .popup-content.static-position {
-    opacity: 0.6;
+
+button[name="org.ilias.paella.transcriptionsPlugin"] i svg {
+    fill: #ffffff !important;
+    stroke: none !important;
 }
 
-.popup-container.transcription-plugin-popup .popup-content {
-    opacity: 1;
-}
-
-.popup-container.transcription-plugin-popup:hover .popup-content {
-    opacity: 1;
-}
-
-.transcriptions-container {
-    min-width: 300px;
+.pop-up-content .transcriptions-container {
+    min-width: 350px !important;
 }
 
 .transcriptions-container input {
-    width: 100%;
-}
-.popup-container.transcription-plugin-popup .popup-content {
-    width: 50vw;
+    width: 95%;
+    align-self: center;
+    padding: 5px 2px;
+    margin: 0.75em;
 }
 
-.popup-container.transcription-plugin-popup .popup-content .transcriptions-container {
+.pop-up-content .transcriptions-container {
     max-height: 80vh;
     display: flex;
     flex-direction: column;
@@ -30,10 +24,6 @@
     color: #ffffff;
     font-size: 14px;
     height: 100%
-}
-
-.popup-container.transcription-plugin-popup .popup-content.static-position .transcriptions-container {
-    max-height: unset;
 }
 
 .transcriptions-list {
