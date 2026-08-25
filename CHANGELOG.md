@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Version 10.4.1
 - [FIX] Event list and My Events: send the API's documented `is_part_of` filter key instead of `series` #591
 
 ## Version 10.4.0
