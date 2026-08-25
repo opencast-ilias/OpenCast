@@ -7,6 +7,21 @@
    The core lays the grid out itself (`repeat(auto-fill, minmax(400px, 1fr))`, cards stretched to a
    uniform height with the reaction bar taking the free space), so none of that is repeated here. */
 
+/* COLUMNS
+   The core fills the row with as many 400px cards as fit, which on a wide screen means four or
+   more - at that width an event card holds little more than its thumbnail. Cap the row at three.
+
+   Raising the minimum track size to a third of the row does that without a single breakpoint:
+   `auto-fill` derives the number of tracks from that minimum, so a fourth one never fits, while
+   the 400px floor still drops the row to two and then to one card as the screen narrows. The 30px
+   are the two gaps (core: `gap: 15px`) that three tracks leave between them.
+
+   The stylesheet is loaded before delos.css, so a selector that merely ties with the core one
+   loses - hence `ul` in front of the class. */
+ul.c-listing-entity-grid {
+    grid-template-columns: repeat(auto-fill, minmax(max(400px, (100% - 30px) / 3), 1fr));
+}
+
 /* Plugin owned class (see Events::map()), so it needs no Entity prefix - the old markup carried
    `c-entity` on every element and a descendant selector worked, the rebuilt one does not. */
 .xoct-invitations-counter {
