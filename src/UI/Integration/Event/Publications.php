@@ -25,6 +25,7 @@ use srag\Plugins\Opencast\Container\Container;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageRepository;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationSubUsageRepository;
+use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsageGroupRepository;
 use ILIAS\Data\URI;
 use srag\Plugins\Opencast\Model\Publication\Config\PublicationUsage;
 use srag\Plugins\Opencast\UI\MakeURI;
@@ -41,6 +42,7 @@ class Publications
     private Renderer $ui_renderer;
     private PublicationUsageRepository $publication_repository;
     private PublicationSubUsageRepository $publication_sub_repository;
+    private PublicationUsageGroupRepository $publication_group_repository;
 
     public function __construct(
         private UIFactory $ui_factory,
@@ -52,6 +54,7 @@ class Publications
         $this->ui_renderer = $this->container->ilias()->ui()->renderer();
         $this->publication_repository = new PublicationUsageRepository();
         $this->publication_sub_repository = new PublicationSubUsageRepository();
+        $this->publication_group_repository = new PublicationUsageGroupRepository();
     }
 
     /**
@@ -106,6 +109,9 @@ class Publications
         $event = $this->event_repository->find($event_id);
         $categorized_download_dtos = $event->publications()->getDownloadDtos(false);
         $elements = [];
+        // Downloads of (sub-)usages that are assigned to a publication usage group are not
+        // rendered where they occur, but collected here and appended below their group name.
+        $grouped_links = [];
 
         foreach ($categorized_download_dtos as $usage_type => $content) {
             foreach ($content as $usage_id => $download_dtos) {
@@ -150,18 +156,42 @@ class Publications
                         $elements[] = $this->ui_factory->divider()->horizontal();
                     }
                 } else {
-                    $usage_type = $download_pub_usage->isSub() ? 'sub' : 'org';
-                    $elements[] = $this->ui_factory->link()->bulky(
+                    $link = $this->ui_factory->link()->bulky(
                         $icon,
                         $display_name,
                         $target
-                            ->withParameter('usage_type', $usage_type)
+                            ->withParameter('usage_type', $download_pub_usage->isSub() ? 'sub' : 'org')
                             ->withParameter('usage_id', $download_pub_usage->getSubId())
                     )->withAdditionalOnLoadCode(
                         $this->getOnCloseAction()
                     );
+
+                    // A usage that allows multiple downloads brings its own section title above,
+                    // so only single-download usages take part in the grouping (#546).
+                    $group_id = $download_pub_usage->getGroupId();
+                    if ($group_id !== null) {
+                        $grouped_links[$group_id][] = $link;
+                        continue;
+                    }
+
+                    $elements[] = $link;
                     $elements[] = $this->ui_factory->divider()->horizontal();
                 }
+            }
+        }
+
+        foreach ($this->sortGroups($grouped_links) as $group_id => $links) {
+            // A group holding a single download is rendered like any other entry, the group
+            // name would only repeat what the entry already says.
+            if (count($links) > 1) {
+                $elements[] = $this->ui_factory->divider()->horizontal()->withLabel(
+                    $this->publication_group_repository->getDisplayName($group_id)
+                );
+            }
+
+            foreach ($links as $link) {
+                $elements[] = $link;
+                $elements[] = $this->ui_factory->divider()->horizontal();
             }
         }
 
@@ -182,5 +212,33 @@ class Publications
             );
 
         return $alignment;
+    }
+
+    /**
+     * Orders the collected groups the same way the configuration lists them. Groups that no
+     * longer exist keep their downloads, appended in the order they were found.
+     *
+     * @param array<int, array> $grouped_links
+     * @return array<int, array>
+     */
+    private function sortGroups(array $grouped_links): array
+    {
+        if ($grouped_links === []) {
+            return [];
+        }
+
+        $sorted = [];
+        foreach (array_keys(PublicationUsageGroupRepository::getSortedArrayList(array_keys($grouped_links))) as $group_id) {
+            if (isset($grouped_links[$group_id])) {
+                $sorted[(int) $group_id] = $grouped_links[$group_id];
+                unset($grouped_links[$group_id]);
+            }
+        }
+
+        foreach ($grouped_links as $group_id => $links) {
+            $sorted[(int) $group_id] = $links;
+        }
+
+        return $sorted;
     }
 }
