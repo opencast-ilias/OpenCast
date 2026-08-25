@@ -68,8 +68,13 @@ dd {
 /* OVERLAY with Playbutton
    A playable event has its thumbnail wrapped in an anchor, which is what carries the overlay - and
    with it the bleed: an anchor shrinking to fit its content cannot size an image that is declared
-   wider than the anchor itself. So the offsets move from the image to the anchor, and the image
-   fills it.
+   wider than the anchor itself. So the offsets move from the image to the anchor.
+
+   The ratio moves along with them. Left to size itself the anchor takes its height from its content
+   and the image template's line breaks around the `<img>` can put it a few pixels above the image
+   box, which the overlay then paints over because it spans the anchor - the thumbnails of playable
+   events end up slightly taller than the rest. Giving the anchor the ratio and letting the image
+   fill it outright pins both to the same box.
 
    This stylesheet is loaded before delos.css, so a selector that merely ties with the core one
    loses; going through `a.playable` outweighs `.c-listing-entity-grid .c-entity__secondary-identifier.--image img`
@@ -77,14 +82,17 @@ dd {
 .c-listing-entity-grid .c-entity__secondary-identifier.--image a.playable {
     position: relative;
     display: block;
+    aspect-ratio: 16 / 9;
     width: calc(100% + 30px);
     margin-left: -15px;
     margin-top: -9px;
 }
 
 .c-listing-entity-grid .c-entity__secondary-identifier.--image a.playable img {
+    display: block;
     width: 100%;
     max-width: unset;
+    height: 100%;
     margin: 0;
 }
 
