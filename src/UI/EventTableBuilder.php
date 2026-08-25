@@ -67,7 +67,7 @@ class EventTableBuilder
                 ilObjOpenCastAccess::hasPermission(ilObjOpenCastAccess::PERMISSION_EDIT_VIDEOS)
             ),
             $this->applyFilter(
-                $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $this->eventRepository->getFiltered(['is_part_of' => $objectSettings->getSeriesIdentifier()]),
                 $objectSettings
             ),
             $this->dic->language()->getLangKey(),
@@ -81,7 +81,7 @@ class EventTableBuilder
             $parent_gui,
             $objectSettings,
             $this->applyFilter(
-                $this->eventRepository->getFiltered(['series' => $objectSettings->getSeriesIdentifier()]),
+                $this->eventRepository->getFiltered(['is_part_of' => $objectSettings->getSeriesIdentifier()]),
                 $objectSettings
             )
         );

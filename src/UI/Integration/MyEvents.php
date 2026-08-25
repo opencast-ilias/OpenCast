@@ -375,10 +375,19 @@ class MyEvents implements DataRetrieval
             $filter = array_filter($filter, static fn($value): bool => $value !== '');
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
-            $sort__by_series = false;
+            // The filter input is keyed 'series' because that is what the stored filter state
+            // uses; the API knows a series only as 'is_part_of'.
+            if (isset($filter['series'])) {
+                $filter['is_part_of'] = $filter['series'];
+                unset($filter['series']);
+            }
+
+            // The event list "series" column is sorted by the series name.
+            // Opencast supports this natively through the `series_name` sort
+            // criterion, so we let the API sort the full result set server-side
+            // and paginate correctly across all pages.
             if ($sort === 'series') {
-                $sort = 'title';
-                $sort__by_series = true;
+                $sort = 'series_name';
             }
 
             $events = (array) $this->event_repository->getFiltered(
@@ -392,14 +401,6 @@ class MyEvents implements DataRetrieval
             );
         } catch (\Throwable) {
             return [];
-        }
-
-        if ($sort__by_series) {
-            usort($events, static function (Event $a, Event $b) use ($order) {
-                return $order === 'DESC' ? strnatcasecmp($a->getSeries(), $b->getSeries()) : strnatcasecmp(
-                    $b->getSeries(), $a->getSeries()
-                );
-            });
         }
         // we cannot filter by processing state here, as the api does not deliver this information directly ant this
         // would lead to non mathcing amount of rows. e.g. if 5 events should be displayed, but only 3 are processed,
