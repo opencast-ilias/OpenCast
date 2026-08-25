@@ -421,6 +421,13 @@ class MyEvents implements DataRetrieval
             $filter = array_filter($filter, static fn($value): bool => $value !== '');
             $filter['status'] = 'EVENTS.EVENTS.STATUS.PROCESSED';
 
+            // The filter input is keyed 'series' because that is what the stored filter state
+            // uses; the API knows a series only as 'is_part_of'.
+            if (isset($filter['series'])) {
+                $filter['is_part_of'] = $filter['series'];
+                unset($filter['series']);
+            }
+
             // The event list "series" column is sorted by the series name.
             // Opencast supports this natively through the `series_name` sort
             // criterion, so we let the API sort the full result set server-side
