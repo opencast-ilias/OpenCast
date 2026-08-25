@@ -12,6 +12,7 @@ import { webglPlugins } from '@asicupv/paella-webgl-plugins';
 import{ opencastPlugins } from '@asicupv/paella-opencast-plugins';
 import TranscriptionsPlugin from './plugins/org.ilias.paella.transcriptionsPlugin.js';
 import LiveStreamingButtonIndicator from './plugins/org.ilias.paella.liveStreamingButtonIndicator.js';
+import FindCaptionsPlugin from './plugins/org.ilias.paella.findCaptionsPlugin.js';
 import localDictionaries from "./lang/registery";
 import forwardIcon from './resources/forwardIcon.svg';
 import backwardIcon from './resources/backwardIcon.svg';
@@ -180,7 +181,8 @@ export default {
                 ...extraPlugins,
                 ...opencastPlugins,
                 TranscriptionsPlugin,
-                LiveStreamingButtonIndicator
+                LiveStreamingButtonIndicator,
+                FindCaptionsPlugin
             ],
             getVideoId: getVideoIdFunction
         });
