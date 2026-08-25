@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## Version 9.5.1
 - [FIX] Edge-case: trim argument must be string not null for the JWT iframe path #577
+- [FIX] Sort event list by series name and correct sort direction #43
+- [FIX] Filter events by the Opencast API's documented is_part_of key instead of series
 
 ## Version 9.5.0
 - [FEATURE] Upgrade to Paella Player 8 with audio-only playback support #513
