@@ -186,7 +186,7 @@ class Series implements DataRetrieval
             "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events10.css"
         );
 
-        yield $this->ui_factory->listing()->entity()->standard($this->events)->withData($this);
+        yield $this->ui_factory->listing()->entity()->grid($this->events)->withData($this);
         yield from $this->events->getTooltips();
         yield from $this->events->getModals();
     }
