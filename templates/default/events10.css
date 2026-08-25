@@ -51,14 +51,17 @@ dd {
    the image itself (`width: calc(100% + 30px)` plus negative margins matching the 15px/9px the
    container and its children add up to).
 
-   The thumbnails are loaded from Opencast and carry no width/height attributes, so before they
-   arrive they take up no height at all and the card grows the moment they do - with the cards of a
-   row stretched to a common height, that makes the whole row jump. Reserve the space up front via
-   the aspect ratio the player previews use; `contain` keeps anything that deviates from it - the
-   scheduled and failed placeholders, for instance - undistorted. */
+   The core leaves the format to the image, which makes the thumbnails differ in height from card
+   to card - Opencast hands out whatever the recording produced, and the placeholders for scheduled
+   and failed events have their own format again. Here every card is to show the same 16/9 box over
+   its full width, so the aspect ratio is fixed and `cover` crops whatever does not match it.
+
+   Fixing it up front doubles as the size reservation: the thumbnails carry no width/height
+   attributes, so without it they take up no height until they arrive and the card grows the moment
+   they do - with the cards of a row stretched to a common height, that jumps the whole row. */
 .c-listing-entity-grid .c-entity__secondary-identifier.--image img {
     aspect-ratio: 16 / 9;
-    object-fit: contain;
+    object-fit: cover;
     height: auto;
 }
 
