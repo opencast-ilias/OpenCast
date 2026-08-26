@@ -48,3 +48,24 @@
 #opencastPaellaJwtPlayer.hidden {
 	display: none !important;
 }
+
+/* PREVIEW IMAGE (#565)
+   paella-core only gives the preview image `width: 100%` and lets its height follow the aspect
+   ratio. In a window that is narrower than the image, the image therefore grows taller than
+   #playerContainer, whose `overflow: hidden` then cuts off the top and the bottom - the user sees
+   the middle of the thumbnail blown up until playback starts. Bind the image to the container and
+   let it fit inside instead.
+
+   paella-core injects its stylesheet at runtime, so it comes after this file in the document and
+   would win any tie. Going through #playerContainer outweighs the core selectors without reaching
+   for !important.
+   Upstream issue: https://github.com/polimediaupv/paella-player/issues/64 */
+#playerContainer .preview-container > .preview-image-container {
+	height: 100%;
+}
+
+#playerContainer .preview-container > .preview-image-container > .preview-image-landscape,
+#playerContainer .preview-container > .preview-image-container > .preview-image-portrait {
+	height: 100%;
+	object-fit: contain;
+}
