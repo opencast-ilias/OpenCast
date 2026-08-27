@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- [FIX] Event download: honor Publication (Sub-)Usage display names and render publication usage groups in the download list #546
+- [FIX] Player: fit the preview image into the visible area #565
+
 ## Version 10.4.1
 - [FIX] Event list and My Events: send the API's documented `is_part_of` filter key instead of `series` #591
 
