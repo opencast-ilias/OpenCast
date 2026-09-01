@@ -353,9 +353,15 @@ class EventFormBuilder
                 $this->plugin->txt('upload_ui_thumbnail_timepoint_info')
             )
                 ->withValue('00:00:01')
+                // The timepoint is also capped at the length of the video that is
+                // being uploaded, which only the browser knows. See #485.
                 ->withAdditionalOnLoadCode(
-                    fn(string $id): string =>
-                        "document.getElementById('$id').querySelector('input').setAttribute('placeholder', '00:00:00');"
+                    fn(string $id): string => 'il.Opencast.Form.thumbnailTimepoint.init('
+                        . json_encode($id, JSON_THROW_ON_ERROR) . ', '
+                        . json_encode(
+                            ['max_hint' => $this->plugin->txt('upload_ui_thumbnail_timepoint_max')],
+                            JSON_THROW_ON_ERROR
+                        ) . ');'
                 )
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->constraint(
