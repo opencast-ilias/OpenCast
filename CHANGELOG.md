@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Version 9.5.3
 - [FIX] Stream download passthrough instead of buffering file in memory #562
 
 ## Version 9.5.2
