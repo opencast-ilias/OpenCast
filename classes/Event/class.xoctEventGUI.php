@@ -1023,26 +1023,64 @@ class xoctEventGUI extends xoctGUI
             // Open external source page
             header('Location: ' . $url);
         } else {
-            // get filesize
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HEADER, true);
-            curl_setopt($ch, CURLOPT_NOBODY, true);
-            curl_exec($ch);
-            $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-            curl_close($ch);
-
-            // deliver file
-            header('Content-Description: File Transfer');
-            header('Content-Type: ' . $publication->getMediatype());
             $file_name = $event->getTitle() . ($extension !== null ? '.' . $extension : '');
-            header('Content-Disposition: attachment; filename="' . $file_name . '"');
-            header('Content-Length: ' . $size);
-            readfile($url);
+            // Stream the file straight from Opencast to the client instead of buffering the whole
+            // file in PHP memory (the previous readfile() went through the output buffers and
+            // timed out behind proxies). Nothing is stored locally; the remote response is
+            // passed through in constant-memory chunks.
+            $size = method_exists($publication, 'getSize') ? (int) $publication->getSize() : 0;
+            $this->streamRemoteToClient($url, $file_name, $publication->getMediatype(), $size);
         }
 
         $this->closeResponse();
+    }
+
+    /**
+     * Streams a remote file (Opencast publication URL) directly through to the client.
+     *
+     * The remote response is forwarded in constant-memory chunks via a cURL write callback;
+     * the file is never fully buffered in PHP memory nor written to a local temp file. This
+     * replaces the former readfile($url), which passed the whole file through the PHP output
+     * buffers and therefore failed for files larger than memory_limit (and was prone to proxy
+     * buffering/timeouts).
+     *
+     * Note: ILIAS\FileDelivery / the HTTP ResponseSender cannot be used here because both rewind()
+     * the body stream, which is not possible on a non-seekable remote stream, and the
+     * X-Sendfile/X-Accel builders expect a local file path.
+     *
+     * @param int $size Known file size in bytes (0 if unknown) to emit a Content-Length header.
+     */
+    private function streamRemoteToClient(
+        string $url,
+        string $file_name,
+        ?string $mime_type,
+        int $size = 0
+    ): void {
+        // Drop any active output buffering so chunks are flushed and memory stays flat.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        // Large files may take a while to stream.
+        set_time_limit(0);
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: ' . ($mime_type !== null && $mime_type !== '' ? $mime_type : 'application/octet-stream'));
+        header('Content-Disposition: attachment; filename="' . $file_name . '"');
+        if ($size > 0) {
+            header('Content-Length: ' . $size);
+        }
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_BUFFERSIZE, 256 * 1024);
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, static function ($ch, string $chunk): int {
+            echo $chunk;
+            flush();
+            return strlen($chunk);
+        });
+        curl_exec($ch);
+        curl_close($ch);
     }
 
 
