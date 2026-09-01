@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- [FIX] Stream download passthrough instead of buffering file in memory #562
+
 ## Version 9.5.2
 - [FIX] Paella 8: searching in subtitles does not work, ship a local findCaptions plugin #566
 - [IMPROVEMENT] Update Paella packages (paella-core 2.12.12, paella-opencast-component 2.0.5, paella-opencast-plugins 2.0.6, paella-opencast-skin 2.0.2)
