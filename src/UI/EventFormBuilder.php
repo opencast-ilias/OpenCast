@@ -143,6 +143,21 @@ class EventFormBuilder
                                  ->withRequired(true)
                                  ->withMaxFileSize($upload_limit)
                                  ->withChunkSizeInBytes($chunk_size)
+                                 // withRequired() does not guarantee a usable upload id: after an
+                                 // unrelated validation error the form re-renders with the file
+                                 // field cleared, so a second submit hands the transformation an
+                                 // empty id ([], [null] or ['']). getFileInfo('') would then throw
+                                 // and abort form processing with an error page (#535). Turn the
+                                 // empty id into a validation message before it is resolved.
+                                 ->withAdditionalTransformation(
+                                     $this->refinery_factory->custom()->constraint(
+                                         function ($file): bool {
+                                             $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                                             return $id !== '';
+                                         },
+                                         $this->plugin->txt('form_msg_select')
+                                     )
+                                 )
                                  ->withAdditionalTransformation(
                                      $this->refinery_factory->custom()->transformation(
                                          function ($file) use ($upload_storage_service): array {
@@ -242,10 +257,14 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
-                            if ($file === []) {
+                            // Optional file field: an untouched input yields an empty
+                            // id ([], [null] or ['']). getFileInfo('') would scan the
+                            // whole temp dir and return an unrelated directory, breaking
+                            // the upload (see #535, #536). Skip when no file was selected.
+                            $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                            if ($id === '') {
                                 return [];
                             }
-                            $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
                     )
@@ -312,10 +331,14 @@ class EventFormBuilder
                 ->withAdditionalTransformation(
                     $this->refinery_factory->custom()->transformation(
                         function ($file) use ($upload_storage_service): array {
-                            if ($file === []) {
+                            // Optional file field: an untouched input yields an empty
+                            // id ([], [null] or ['']). getFileInfo('') would scan the
+                            // whole temp dir and return an unrelated directory, breaking
+                            // the upload (see #535, #536). Skip when no file was selected.
+                            $id = (is_array($file) ? ($file[0] ?? '') : '') ?? '';
+                            if ($id === '') {
                                 return [];
                             }
-                            $id = $file[0] ?? '';
                             return $upload_storage_service->getFileInfo($id);
                         }
                     )
