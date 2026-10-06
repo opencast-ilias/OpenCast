@@ -23,10 +23,13 @@ class xoctException extends Exception
     public const API_CALL_STATUS_409 = 409;
     public const API_CALL_BAD_CREDENTIALS = 401;
     public const API_CALL_BAD_REQUEST = 400;
+    // No HTTP response received (connection refused / timeout / DNS) - Opencast is unreachable.
+    public const API_CALL_CONNECTION_FAILED = 0;
     /**
      * @var array
      */
     protected static $messages = [
+        self::API_CALL_CONNECTION_FAILED => 'Opencast cannot be reached at the moment.',
         self::API_CALL_UNSUPPORTED => 'This Api-Call is not supported',
         self::API_CALL_STATUS_500 => 'An error occurred while communicating with the OpenCast-Server',
         self::API_CALL_STATUS_403 => 'Access denied',

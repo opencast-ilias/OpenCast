@@ -24,6 +24,8 @@ config_activate_cache_2_info#:#Daten werden in der ILIAS-Datenbank zwischengespe
 config_annotation_token_security#:#Anmerkungs-Token-Sicherheit aktivieren
 config_annotation_token_security_info#:#Fügt die Kursreferenz und einen Sicherheitshash zum Annotationslink hinzu.
 config_api_base#:#API-Basis-URL
+config_api_connect_timeout#:#API-Verbindungs-Timeout
+config_api_connect_timeout_info#:#Maximale Wartezeit in Millisekunden für den Verbindungsaufbau zu Opencast, bevor abgebrochen wird. Verhindert lange Ladezeiten, wenn Opencast nicht erreichbar ist. 0 = kein Limit. Standard: 5000.
 config_api_version#:#API-Version
 config_api_version_info#:#Format: vX.Y.Z - z.B.: v1.0.0
 config_curl_max_upload_size#:#Maximale Upload-Größe in MB
@@ -220,6 +222,7 @@ event_msg_deleted#:#Aufzeichnung gelöscht
 event_msg_unpublish_started#:#Die Publikationen werden nun entfernt.
 event_msg_currently_unpublishing#:#Der Prozess zum Entfernen der Publikationen läuft bereits.
 event_msg_no_access#:#kein Zugriff
+event_msg_opencast_unreachable#:#Opencast ist zurzeit nicht erreichbar. Bitte melden Sie sich bei Ihrer Supportstelle.
 event_msg_no_download_publication#:#Die Download-Publikation konnte nicht gefunden werden.
 event_msg_success#:#Änderungen gespeichert
 event_msg_scheduled#:#Aufzeichnungstermin(e) erstellt.
