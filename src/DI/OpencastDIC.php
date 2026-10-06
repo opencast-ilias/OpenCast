@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Agent\AgentApiRepository;
 use srag\Plugins\Opencast\Model\Agent\AgentParser;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsRepository;
 use srag\Plugins\Opencast\Model\Event\EventParser;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesRepository;
@@ -80,13 +81,29 @@ class OpencastDIC
         $this->init();
     }
 
+    /**
+     * The ILIAS object (obj_id) the current request operates on, derived from the ref_id.
+     * Returns 0 when there is no object context (e.g. cron, external API), which maps to the
+     * shared online-state bucket.
+     */
+    private function currentObjId(): int
+    {
+        $ref_id = (int) ($this->dic->http()->request()->getQueryParams()['ref_id'] ?? 0);
+        if ($ref_id <= 0) {
+            return 0;
+        }
+        return (int) \ilObject2::_lookupObjId($ref_id);
+    }
+
     private function init(): void
     {
         $this->container['event_parser'] = $this->container->factory(
             fn ($c): EventParser => new EventParser(
                 $c['md_parser'],
                 $c['acl_parser'],
-                $c['scheduling_parser']
+                $c['scheduling_parser'],
+                new EventAdditionsRepository($this->dic->database()),
+                $this->currentObjId()
             )
         );
         $this->container['acl_utils'] = $this->container->factory(

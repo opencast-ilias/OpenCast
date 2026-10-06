@@ -9,6 +9,7 @@ use srag\Plugins\Opencast\Model\ACL\ACLUtils;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsRepository;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequest;
 use srag\Plugins\Opencast\Model\Event\Request\ScheduleEventRequestPayload;
 use srag\Plugins\Opencast\Model\Event\Request\UpdateEventRequest;
@@ -143,8 +144,9 @@ class xoctEventAPI
 
         // field 'online' is stored in ILIAS, not in Opencast
         if (isset($data['online'])) {
-            $event->getXoctEventAdditions()->setIsOnline($data['online']);
-            $event->getXoctEventAdditions()->update();
+            global $DIC;
+            (new EventAdditionsRepository($DIC->database()))
+                ->store($event->getXoctEventAdditions()->withIsOnline((bool) $data['online']));
             unset($data['online']);
         }
 
