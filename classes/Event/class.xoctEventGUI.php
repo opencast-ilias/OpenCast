@@ -299,19 +299,26 @@ class xoctEventGUI extends xoctGUI
             $this->user->getId()
         );
 
-        $html = match (UserSettingsRepository::getViewTypeForUser($this->user->getId(), $this->ref_id)) {
-            UserSettingsRepository::VIEW_TYPE_LIST => $this->indexList(),
-            UserSettingsRepository::VIEW_TYPE_TILES => $this->indexTiles(),
-            default => throw new xoctException(
-                xoctException::INTERNAL_ERROR,
-                'Invalid view type ' .
-                UserSettingsRepository::getViewTypeForUser(
-                    $this->user->getId(),
-                    $this->ref_id
-                ) .
-                ' for user with id ' . $this->user->getId()
-            ),
-        };
+        try {
+            $html = match (UserSettingsRepository::getViewTypeForUser($this->user->getId(), $this->ref_id)) {
+                UserSettingsRepository::VIEW_TYPE_LIST => $this->indexList(),
+                UserSettingsRepository::VIEW_TYPE_TILES => $this->indexTiles(),
+                default => throw new xoctException(
+                    xoctException::INTERNAL_ERROR,
+                    'Invalid view type ' .
+                    UserSettingsRepository::getViewTypeForUser(
+                        $this->user->getId(),
+                        $this->ref_id
+                    ) .
+                    ' for user with id ' . $this->user->getId()
+                ),
+            };
+        } catch (xoctException $e) {
+            // Opencast is unreachable: show a readable message instead of the generic ILIAS
+            // error page. The filter is skipped as well, it would be useless without data.
+            $this->main_tpl->setContent($this->unreachableMessageOrRethrow($e));
+            return;
+        }
 
         $filter_html = $this->dic->ui()->renderer()->render(
             $this->eventTableBuilder->filter(
@@ -454,7 +461,13 @@ class xoctEventGUI extends xoctGUI
      */
     public function asyncGetTableGUI(): void
     {
-        $this->sendReponse($this->getTableGUI());
+        try {
+            $html = $this->getTableGUI();
+        } catch (xoctException $e) {
+            $html = $this->unreachableMessageOrRethrow($e);
+        }
+
+        $this->sendReponse($html);
     }
 
     public function getTableGUI(): string
@@ -470,7 +483,13 @@ class xoctEventGUI extends xoctGUI
      */
     public function asyncGetTilesGUI(): void
     {
-        $this->sendReponse($this->getTilesGUI());
+        try {
+            $html = $this->getTilesGUI();
+        } catch (xoctException $e) {
+            $html = $this->unreachableMessageOrRethrow($e);
+        }
+
+        $this->sendReponse($html);
     }
 
     protected function getTilesGUI(): string
@@ -478,6 +497,28 @@ class xoctEventGUI extends xoctGUI
         $xoctEventTileGUI = $this->eventTableBuilder->tiles($this, $this->objectSettings);
 
         return $this->prependModalsAndTrigger($xoctEventTileGUI);
+    }
+
+    /**
+     * Renders the "Opencast cannot be reached" message box, or rethrows anything else.
+     *
+     * The message is rendered into the response body instead of being passed to
+     * setOnScreenMessage() because the table and the tiles are usually loaded by an ajax
+     * request whose response replaces the placeholder: an on screen message would only show
+     * up on the next page load, and an uncaught exception would drop the generic ILIAS error
+     * page into the placeholder.
+     *
+     * @throws xoctException if the failure is not a connection failure
+     */
+    private function unreachableMessageOrRethrow(xoctException $e): string
+    {
+        if ($e->getCode() !== xoctException::API_CALL_CONNECTION_FAILED) {
+            throw $e;
+        }
+
+        return $this->ui_renderer->render(
+            $this->ui->factory()->messageBox()->failure($this->txt('msg_opencast_unreachable'))
+        );
     }
 
     private function prependModalsAndTrigger(object $providing_gui): string
