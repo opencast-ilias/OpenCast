@@ -72,9 +72,6 @@ class xoctEventGUI extends xoctGUI
     public const CMD_REPORT_DATE = 'reportDate';
     public const CMD_REPORT_QUALITY = 'reportQuality';
     public const CMD_SCHEDULE = 'schedule';
-    public const CMD_SWITCH_TO_LIST = 'switchToList';
-    public const CMD_SWITCH_TO_TILES = 'switchToTiles';
-    public const CMD_CHANGE_TILE_LIMIT = 'changeTileLimit';
     public const CMD_REPUBLISH = 'republish';
     public const CMD_START_WORKFLOW = 'startWorkflow';
     public const CMD_OPENCAST_STUDIO = 'opencaststudio';
