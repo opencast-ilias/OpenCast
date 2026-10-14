@@ -34,6 +34,11 @@ class EventAPIRepository implements EventRepository, Request
      * @readonly
      */
     private Container $cache;
+    /**
+     * @var array<string, \stdClass> raw API data of cacheable events that getFiltered() was asked not to
+     *                                cache right away, see cacheEvents()
+     */
+    private array $deferred_cache = [];
 
     public function __construct(
         Services $cache_services,
@@ -140,7 +145,8 @@ class EventAPIRepository implements EventRepository, Request
         int $offset = 0,
         int $limit = 1000,
         string $sort = '',
-        bool $as_object = false
+        bool $as_object = false,
+        bool $cache_events = true
     ): array {
         $params = [
             'withmetadata' => false,
@@ -178,11 +184,61 @@ class EventAPIRepository implements EventRepository, Request
             }
 
             if (in_array($event->getProcessingState(), [Event::STATE_SUCCEEDED, Event::STATE_OFFLINE], true)) {
-                $this->cache->set($d->identifier, $d);
+                if ($cache_events) {
+                    $this->cache->set($d->identifier, $d);
+                } else {
+                    $this->deferred_cache[$d->identifier] = $d;
+                }
             }
         }
 
         return $return;
+    }
+
+    /**
+     * Writes events to the cache that a getFiltered() call with $cache_events = false left out. A listing
+     * fetches a whole series but shows a single page, so only the events on that page - the ones a user
+     * is about to open - are worth a cache write.
+     */
+    public function cacheEvents(Event ...$events): void
+    {
+        foreach ($events as $event) {
+            $identifier = $event->getIdentifier();
+            if (isset($this->deferred_cache[$identifier])) {
+                $this->cache->set($identifier, $this->deferred_cache[$identifier]);
+                unset($this->deferred_cache[$identifier]);
+            }
+        }
+    }
+
+    /**
+     * Whether the series holds at least one event in one of the given states (e.g. scheduled). The answer
+     * is cached for the cache's default lifetime, so a newly scheduled event may take that long to show.
+     *
+     * @param string[] $states
+     */
+    public function seriesHasEventInState(string $series_id, array $states): bool
+    {
+        $key = 'series_has_state_' . md5($series_id . '|' . implode(',', $states));
+        if ($this->cache->has($key)) {
+            return (bool) $this->cache->get($key);
+        }
+
+        $found = false;
+        foreach ($states as $state) {
+            if ($this->getFiltered(
+                ['is_part_of' => $series_id, 'status' => $state],
+                limit: 1,
+                as_object: true,
+                cache_events: false
+            ) !== []) {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->cache->set($key, $found);
+        return $found;
     }
 
     public function update(UpdateEventRequest $request): void
