@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\UI\Component\Listing\Entity\DataRetrieval;
 use ILIAS\UI\Component\Listing\Entity\Mapping;
+use ILIAS\UI\Component\ViewControl\Mode;
 use ILIAS\Data\Range;
 use ILIAS\DI\UIServices;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
@@ -36,7 +37,14 @@ class Series implements DataRetrieval
 {
     use Commons;
 
-    public const DEFAULT_PAGE_SIZE = 10;
+    /**
+     * Divisible by 2, 3 and 4, so the grid fills its last row at the usual column counts.
+     */
+    public const PAGE_SIZES = [12, 24, 48];
+    public const DEFAULT_PAGE_SIZE = 12;
+    public const VIEW_GRID = 'grid';
+    public const VIEW_LIST = 'list';
+    public const DEFAULT_VIEW = self::VIEW_GRID;
     public const DEFAULT_SORT = self::SORT_DATE_DESC;
     /**
      * @see Event::isScheduled(), which derives the same two states from the API status.
@@ -186,7 +194,11 @@ class Series implements DataRetrieval
             "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events10.css"
         );
 
-        yield $this->ui_factory->listing()->entity()->grid($this->events)->withData($this);
+        $listing = $this->view() === self::VIEW_LIST
+            ? $this->ui_factory->listing()->entity()->standard($this->events)
+            : $this->ui_factory->listing()->entity()->grid($this->events);
+
+        yield $listing->withData($this);
         yield from $this->events->getTooltips();
         yield from $this->events->getModals();
     }
@@ -198,7 +210,7 @@ class Series implements DataRetrieval
         $this->buildSeries($series_id);
 
         $table_id = $this->series->getIdentifier();
-        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
+        $page_size = $this->pageSize();
         $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
 
         $entity_list = iterator_to_array($this->asEntityList($series_id));
@@ -249,11 +261,10 @@ class Series implements DataRetrieval
                 $this->ui_factory
                     ->viewControl()
                     ->sortation(
-                        [
-                            '10' => '10',
-                            '20' => '20',
-                            '50' => '50',
-                        ],
+                        array_combine(
+                            array_map('strval', self::PAGE_SIZES),
+                            array_map('strval', self::PAGE_SIZES)
+                        ),
                         (string) $page_size
                     )
                     ->withLabelPrefix('')
@@ -271,16 +282,57 @@ class Series implements DataRetrieval
                     ->withTargetURL(
                         (string) $this->resolver->resolve(SeriesActionTarget::SORT),
                         SeriesActionTarget::SORT->value
-                    )
+                    ),
 
+                $this->buildViewModeControl(),
             ]);
+    }
+
+    private function buildViewModeControl(): Mode
+    {
+        $url = $this->resolver->resolve(SeriesActionTarget::VIEW);
+        $actions = [];
+        foreach ([self::VIEW_GRID => 'tiles', self::VIEW_LIST => 'list'] as $view => $lang_key) {
+            $actions[$this->translator->translate($lang_key)] = $url === null
+                ? '#'
+                : (string) $url->withParameter(SeriesActionParameter::VIEW->value, $view);
+        }
+
+        return $this->ui_factory
+            ->viewControl()
+            ->mode($actions, $this->translator->translate('view_mode'))
+            ->withActive($this->translator->translate($this->view() === self::VIEW_LIST ? 'list' : 'tiles'));
+    }
+
+    /**
+     * A stored value outside PAGE_SIZES (the sizes used to be 10, 20 and 50) falls back to the
+     * default rather than leaving the selection without a matching option.
+     */
+    private function pageSize(): int
+    {
+        $page_size = (int) $this->resolver->resolvePersistentParameter(
+            SeriesActionParameter::PAGE_SIZE,
+            $this->series->getIdentifier()
+        );
+
+        return in_array($page_size, self::PAGE_SIZES, true) ? $page_size : self::DEFAULT_PAGE_SIZE;
+    }
+
+    private function view(): string
+    {
+        $view = $this->resolver->resolvePersistentParameter(
+            SeriesActionParameter::VIEW,
+            $this->series->getIdentifier()
+        );
+
+        return in_array($view, [self::VIEW_GRID, self::VIEW_LIST], true) ? $view : self::DEFAULT_VIEW;
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
         $table_id = $this->series->getIdentifier();
         $page = (int) $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
-        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
+        $page_size = $this->pageSize();
         $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
 
         $api_sort = match ($sort) {

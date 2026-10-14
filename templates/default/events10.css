@@ -4,8 +4,21 @@
    (see Series::asEntityList()). Every rule here targets the rebuilt component, which is why this
    release requires ILIAS 10.9 or later - see $ilias_min_version in plugin.php.
 
+   The events are shown either as a grid (`Listing\Entity\Grid`, `.c-listing-entity-grid`) or as a
+   list (`Listing\Entity\Standard`, `.c-listing-entity`), depending on the view the user picked.
+   Rules that only apply to one of them are scoped to its listing class.
+
    The core lays the grid out itself (`repeat(auto-fill, minmax(400px, 1fr))`, cards stretched to a
    uniform height with the reaction bar taking the free space), so none of that is repeated here. */
+
+/* LIST
+   The standard listing is an auto-fill grid in the core as well (`minmax(650px, 1fr)`), which puts
+   two or more entities side by side on a wide screen. The list view is meant to show them one below
+   the other, so it is held at a single column. The `ul` outweighs the core selector, which this
+   stylesheet - loaded before delos.css - would otherwise lose to. */
+ul.c-listing-entity {
+    grid-template-columns: 1fr;
+}
 
 /* Plugin owned class (see Events::map()), so it needs no Entity prefix - the old markup carried
    `c-entity` on every element and a descendant selector worked, the rebuilt one does not. */
@@ -65,6 +78,33 @@ dd {
     height: auto;
 }
 
+/* In the list the thumbnail sits beside the text. The core sizes that column as `max-content` and
+   caps the image at 360px, so narrowing only the surrounding box lets the image keep its own width
+   and spill over the text next to it. Size the image itself instead and let the box follow it.
+   The ratio reserves the space up front as in the grid, `contain` keeps anything that deviates from
+   it - the scheduled and failed placeholders, for instance - undistorted. */
+.c-listing-entity .c-entity__secondary-identifier.--image img {
+    width: 20rem;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    height: auto;
+}
+
+@media (max-width: 991px) {
+    .c-listing-entity .c-entity__secondary-identifier.--image img {
+        width: 15rem;
+    }
+}
+
+/* Below the core's `small` breakpoint the container falls back to `display: block` and the image
+   is meant to bleed edge to edge, so let it use the full width. Must stay after the 991px rule. */
+@media (max-width: 768px) {
+    .c-listing-entity .c-entity__secondary-identifier.--image img {
+        width: 100%;
+    }
+}
+
 /* OVERLAY with Playbutton
    A playable event has its thumbnail wrapped in an anchor, which is what carries the overlay - and
    with it the bleed: an anchor shrinking to fit its content cannot size an image that is declared
@@ -86,6 +126,11 @@ dd {
     width: calc(100% + 30px);
     margin-left: -15px;
     margin-top: -9px;
+}
+
+.c-listing-entity .c-entity__secondary-identifier.--image a.playable {
+    position: relative;
+    display: inline-block;
 }
 
 .c-listing-entity-grid .c-entity__secondary-identifier.--image a.playable img {
