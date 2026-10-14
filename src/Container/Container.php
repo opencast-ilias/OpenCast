@@ -28,6 +28,14 @@ final class Container extends \ILIAS\DI\Container
         $this[$fqdn] = $this->factory($factory);
     }
 
+    /**
+     * Like glue(), but the instance is built once and then handed out to every consumer.
+     */
+    public function share(string $fqdn, \Closure $factory): void
+    {
+        $this[$fqdn] = $factory;
+    }
+
     public function get(string $fqdn): object
     {
         return $this[$fqdn];
