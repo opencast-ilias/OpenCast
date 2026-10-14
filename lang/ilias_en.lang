@@ -800,6 +800,7 @@ presenter_asc#:#Presenter A-Z
 presenter_desc#:#Presenter Z-A
 owner_asc#:#Owner A-Z
 owner_desc#:#Owner Z-A
+view_mode#:#Display mode
 event_possible_best_action#:#Possible Action
 config_jwt_security_enabled#:#Enable JWT Authentication
 config_jwt_security_enabled_info#:#Enables authentication using JSON Web Tokens (JWT) for enhanced security when accessing Opencast resources.

@@ -797,6 +797,7 @@ presenter_asc#:#Referent/in A-Z
 presenter_desc#:#Referent/in Z-A
 owner_asc#:#Besitzer/in A-Z
 owner_desc#:#Besitzer/in Z-A
+view_mode#:#Darstellung
 event_possible_best_action#:#Mögliche Aktion
 config_jwt_security_enabled#:#JWT-Authentifizierung aktivieren
 config_jwt_security_enabled_info#:#Aktiviert die Authentifizierung mit JSON Web Tokens (JWT) für verbesserte Sicherheit beim Zugriff auf Opencast-Ressourcen.
