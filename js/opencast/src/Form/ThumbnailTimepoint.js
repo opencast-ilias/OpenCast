@@ -57,6 +57,13 @@ export default class ThumbnailTimepoint {
         this.input.addEventListener('change', () => this.clamp());
         this.input.addEventListener('blur', () => this.clamp());
 
+        // Typing a timepoint and pressing Save right away must not slip past
+        // the cap, so check once more when the form is submitted.
+        const form = this.input.closest('form');
+        if (form !== null) {
+            form.addEventListener('submit', () => this.clamp(), true);
+        }
+
         this.whenVideoDropzoneReady((dropzone) => {
             dropzone.on('addedfile', (file) => this.readDuration(file));
             dropzone.on('removedfile', () => this.setMax(null));
