@@ -44,6 +44,8 @@ class PluginConfig extends ActiveRecord
     public const F_CURL_DEBUG_LEVEL = 'curl_debug_level';
     public const F_API_VERSION = 'api_version';
     public const F_API_BASE = 'api_base';
+    public const F_API_CONNECT_TIMEOUT = 'api_connect_timeout';
+    public const DEFAULT_API_CONNECT_TIMEOUT = 5000;
     public const F_ACTIVATE_CACHE = 'activate_cache';
     public const CACHE_DISABLED = 0;
     public const CACHE_APCU = 1;

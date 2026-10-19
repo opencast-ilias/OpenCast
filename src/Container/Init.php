@@ -111,7 +111,7 @@ final class Init
             PluginConfig::getConfig(PluginConfig::F_CURL_PASSWORD) ?? 'opencast',
             PluginConfig::getConfig(PluginConfig::F_API_VERSION) ?? '1.9.0',
             0,
-            0,
+            (int) (PluginConfig::getConfig(PluginConfig::F_API_CONNECT_TIMEOUT) ?? PluginConfig::DEFAULT_API_CONNECT_TIMEOUT),
             PluginConfig::getConfig(PluginConfig::F_PRESENTATION_NODE) ?? null,
             $jwt
         ));
