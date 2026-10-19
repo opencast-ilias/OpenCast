@@ -1,0 +1,16 @@
+{
+  "name": "srag.plugins.opencast.js",
+  "description": "Build setup for the shipped bundle js/opencast/dist/index.js.",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.24.0"
+  }
+}
