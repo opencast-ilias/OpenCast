@@ -133,11 +133,17 @@ dd {
     display: inline-block;
 }
 
+/* The image carries the ratio itself instead of filling the anchor with `height: 100%`: the anchor
+   only gets its height from its own aspect-ratio, which a percentage height does not resolve
+   against, so the image fell back to the format of the thumbnail (3/2 for a 1080x720 video, say)
+   and stretched the anchor with it - the playable cards ended up taller than the others. */
 .c-listing-entity-grid .c-entity__secondary-identifier.--image a.playable img {
     display: block;
     width: 100%;
     max-width: unset;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     margin: 0;
 }
 
