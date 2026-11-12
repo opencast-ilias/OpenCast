@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 10.4.3
+- [FIX] Event list loads faster: reuse the events the listing already fetched, do per event work only for the shown page, share one API instance per request #486
+
 ## Version 10.4.2
 - [FIX] Event download: honor Publication (Sub-)Usage display names and render publication usage groups in the download list #546
 - [FIX] Player: fit the preview image into the visible area #565
