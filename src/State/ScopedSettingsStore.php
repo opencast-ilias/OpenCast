@@ -21,6 +21,13 @@ namespace srag\Plugins\Opencast\State;
  */
 interface ScopedSettingsStore
 {
+    /**
+     * Scope for values that belong to the user rather than to one object, such as
+     * the sorting of the event lists (#551). Implementations may keep them beyond
+     * the session.
+     */
+    public const SCOPE_USER = 'user';
+
     public function get(string $scope, string $key): ?string;
 
     public function set(string $scope, string $key, string $value): void;

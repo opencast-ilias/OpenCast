@@ -13,6 +13,7 @@ use srag\Plugins\Opencast\Model\Event\EventAPIRepository;
 use srag\Plugins\Opencast\Model\Series\SeriesAPIRepository;
 use ILIAS\UI\Component\Listing\Entity\DataRetrieval;
 use ILIAS\UI\Component\Listing\Entity\Mapping;
+use ILIAS\UI\Component\ViewControl\Mode;
 use ILIAS\Data\Range;
 use ILIAS\DI\UIServices;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
@@ -26,7 +27,10 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Views\Series\Display;
+use srag\Plugins\Opencast\Model\Config\PluginConfig;
+use srag\Plugins\Opencast\State\ScopedSettingsStore;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -36,8 +40,18 @@ class Series implements DataRetrieval
 {
     use Commons;
 
-    public const DEFAULT_PAGE_SIZE = 10;
-    public const DEFAULT_SORT = self::SORT_DATE_DESC;
+    /**
+     * Divisible by 2, 3 and 4, so the grid fills its last row at the usual column counts.
+     */
+    public const PAGE_SIZES = [12, 24, 48];
+    public const DEFAULT_PAGE_SIZE = 12;
+    public const VIEW_GRID = 'grid';
+    public const VIEW_LIST = 'list';
+    public const DEFAULT_VIEW = self::VIEW_GRID;
+    /**
+     * Used when neither the user, the object nor the plugin configuration sets a sorting (#601).
+     */
+    public const DEFAULT_SORT = self::SORT_DATE_ASC;
     /**
      * @see Event::isScheduled(), which derives the same two states from the API status.
      */
@@ -45,14 +59,28 @@ class Series implements DataRetrieval
         'EVENTS.EVENTS.STATUS.SCHEDULED',
         'EVENTS.EVENTS.STATUS.RECORDING',
     ];
-    private const SORT_TITLE_ASC = 'title:asc';
-    private const SORT_DATE_ASC = 'date:asc';
-    private const SORT_TITLE_DESC = 'title:desc';
-    private const SORT_DATE_DESC = 'date:desc';
-    private const SORT_PRESENTER_ASC = 'presenter:asc';
-    private const SORT_PRESENTER_DESC = 'presenter:desc';
-    private const SORT_OWNER_ASC = 'owner:asc';
-    private const SORT_OWNER_DESC = 'owner:desc';
+    public const SORT_TITLE_ASC = 'title:asc';
+    public const SORT_DATE_ASC = 'date:asc';
+    public const SORT_TITLE_DESC = 'title:desc';
+    public const SORT_DATE_DESC = 'date:desc';
+    public const SORT_PRESENTER_ASC = 'presenter:asc';
+    public const SORT_PRESENTER_DESC = 'presenter:desc';
+    public const SORT_OWNER_ASC = 'owner:asc';
+    public const SORT_OWNER_DESC = 'owner:desc';
+    /**
+     * All sortings with the language variable of their label. The owner sortings are offered in the
+     * list only where the owner is shown, see availableSortations().
+     */
+    public const SORT_OPTIONS = [
+        self::SORT_TITLE_ASC => 'title_asc',
+        self::SORT_TITLE_DESC => 'title_desc',
+        self::SORT_DATE_ASC => 'date_asc',
+        self::SORT_DATE_DESC => 'date_desc',
+        self::SORT_PRESENTER_ASC => 'presenter_asc',
+        self::SORT_PRESENTER_DESC => 'presenter_desc',
+        self::SORT_OWNER_ASC => 'owner_asc',
+        self::SORT_OWNER_DESC => 'owner_desc',
+    ];
     private EventAPIRepository $event_repository;
     private SeriesAPIRepository $series_repository;
     private ?\srag\Plugins\Opencast\Model\Series\Series $series = null;
@@ -186,7 +214,11 @@ class Series implements DataRetrieval
             "./Customizing/global/plugins/Services/Repository/RepositoryObject/OpenCast/templates/default/events10.css"
         );
 
-        yield $this->ui_factory->listing()->entity()->standard($this->events)->withData($this);
+        $listing = $this->view() === self::VIEW_LIST
+            ? $this->ui_factory->listing()->entity()->standard($this->events)
+            : $this->ui_factory->listing()->entity()->grid($this->events);
+
+        yield $listing->withData($this);
         yield from $this->events->getTooltips();
         yield from $this->events->getModals();
     }
@@ -197,24 +229,14 @@ class Series implements DataRetrieval
     ): \Generator {
         $this->buildSeries($series_id);
 
-        $table_id = $this->series->getIdentifier();
-        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
-        $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
+        $page_size = $this->pageSize();
+        $sort = $this->sort();
 
         $entity_list = iterator_to_array($this->asEntityList($series_id));
 
-        $sortation_options = [
-            self::SORT_TITLE_ASC => $this->translator->translate('title_asc'),
-            self::SORT_TITLE_DESC => $this->translator->translate('title_desc'),
-            self::SORT_DATE_ASC => $this->translator->translate('date_asc'),
-            self::SORT_DATE_DESC => $this->translator->translate('date_desc'),
-            self::SORT_PRESENTER_ASC => $this->translator->translate('presenter_asc'),
-            self::SORT_PRESENTER_DESC => $this->translator->translate('presenter_desc'),
-        ];
-
-        if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
-            $sortation_options[self::SORT_OWNER_ASC] = $this->translator->translate('owner_asc');
-            $sortation_options[self::SORT_OWNER_DESC] = $this->translator->translate('owner_desc');
+        $sortation_options = [];
+        foreach ($this->availableSortations() as $sortation) {
+            $sortation_options[$sortation] = $this->translator->translate(self::SORT_OPTIONS[$sortation]);
         }
 
         yield $this
@@ -249,11 +271,10 @@ class Series implements DataRetrieval
                 $this->ui_factory
                     ->viewControl()
                     ->sortation(
-                        [
-                            '10' => '10',
-                            '20' => '20',
-                            '50' => '50',
-                        ],
+                        array_combine(
+                            array_map('strval', self::PAGE_SIZES),
+                            array_map('strval', self::PAGE_SIZES)
+                        ),
                         (string) $page_size
                     )
                     ->withLabelPrefix('')
@@ -271,17 +292,102 @@ class Series implements DataRetrieval
                     ->withTargetURL(
                         (string) $this->resolver->resolve(SeriesActionTarget::SORT),
                         SeriesActionTarget::SORT->value
-                    )
+                    ),
 
+                $this->buildViewModeControl(),
             ]);
+    }
+
+    private function buildViewModeControl(): Mode
+    {
+        $url = $this->resolver->resolve(SeriesActionTarget::VIEW);
+        $actions = [];
+        foreach ([self::VIEW_GRID => 'tiles', self::VIEW_LIST => 'list'] as $view => $lang_key) {
+            $actions[$this->translator->translate($lang_key)] = $url === null
+                ? '#'
+                : (string) $url->withParameter(SeriesActionParameter::VIEW->value, $view);
+        }
+
+        return $this->ui_factory
+            ->viewControl()
+            ->mode($actions, $this->translator->translate('view_mode'))
+            ->withActive($this->translator->translate($this->view() === self::VIEW_LIST ? 'list' : 'tiles'));
+    }
+
+    /**
+     * A stored value outside PAGE_SIZES (the sizes used to be 10, 20 and 50) falls back to the
+     * default rather than leaving the selection without a matching option.
+     */
+    private function pageSize(): int
+    {
+        $page_size = (int) $this->resolver->resolvePersistentParameter(
+            SeriesActionParameter::PAGE_SIZE,
+            $this->series->getIdentifier()
+        );
+
+        return in_array($page_size, self::PAGE_SIZES, true) ? $page_size : self::DEFAULT_PAGE_SIZE;
+    }
+
+    /**
+     * The sorting the user chose last, in any list (#551), else the default sorting of the object, else
+     * the one of the plugin configuration (#601). A sorting that is not offered in this list, such as
+     * the owner where the owner is not shown, is passed over.
+     */
+    private function sort(): string
+    {
+        $available = $this->availableSortations();
+        $candidates = [
+            $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, ScopedSettingsStore::SCOPE_USER),
+            $this->settings_resolver->resolve(EventSettings::DEFAULT_SORT),
+            PluginConfig::getConfig(PluginConfig::F_DEFAULT_SORT),
+        ];
+        foreach ($candidates as $candidate) {
+            if (is_string($candidate) && in_array($candidate, $available, true)) {
+                return $candidate;
+            }
+        }
+
+        return self::DEFAULT_SORT;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function availableSortations(): array
+    {
+        $sortations = array_keys(self::SORT_OPTIONS);
+        if ($this->settings_resolver->resolve(EventSettings::SHOW_OWNER)) {
+            return $sortations;
+        }
+
+        return array_values(array_diff($sortations, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC]));
+    }
+
+    /**
+     * The view the user chose in the list, else the default view set in the object settings.
+     */
+    private function view(): string
+    {
+        $view = $this->resolver->resolvePersistentParameter(
+            SeriesActionParameter::VIEW,
+            $this->series->getIdentifier()
+        );
+        if (in_array($view, [self::VIEW_GRID, self::VIEW_LIST], true)) {
+            return $view;
+        }
+
+        return match ($this->settings_resolver->resolve(EventSettings::DEFAULT_VIEW)) {
+            ObjectSettings::VIEW_TYPE_LIST => self::VIEW_LIST,
+            ObjectSettings::VIEW_TYPE_TILES => self::VIEW_GRID,
+            default => self::DEFAULT_VIEW,
+        };
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator
     {
-        $table_id = $this->series->getIdentifier();
         $page = (int) $this->resolver->resolveParameter(SeriesActionParameter::PAGE);
-        $page_size = (int) ($this->resolver->resolvePersistentParameter(SeriesActionParameter::PAGE_SIZE, $table_id) ?? self::DEFAULT_PAGE_SIZE);
-        $sort = $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $table_id) ?? self::DEFAULT_SORT;
+        $page_size = $this->pageSize();
+        $sort = $this->sort();
 
         $api_sort = match ($sort) {
             self::SORT_OWNER_ASC, self::SORT_OWNER_DESC => '', // we cannot sort by owner via API

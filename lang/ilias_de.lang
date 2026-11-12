@@ -180,6 +180,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#Wenn aktiv, werden die Links bereits signiert von Opencast ausgeliefert. Dies kann die Performanz beeinflussen. Beachten Sie, dass obige Konfiguration trotzdem benötigt wird, da in gewissen Situationen Links vom Plugin signiert werden müssen.
 config_enable_chat#:#Chat aktivieren
 config_enable_chat_info#:#Aktiviert einen On-screen Chat neben dem Live-Event. Diese Option muss zusätzlich in den Einstellungen eines Objektes aktiviert werden, um wirksam zu werden.
+config_default_sort#:#Standard-Sortierung
+config_default_sort_info#:#Mit dieser Sortierung starten die Listen der Aufzeichnungen, solange das Objekt keine vorgibt und die Benutzerin oder der Benutzer keine gewählt hat. Eine in einer Liste gewählte Sortierung gilt für alle Listen und bleibt über die Sitzung hinaus erhalten.
 config_enable_cutting#:#Schneiden aktivieren
 config_enable_cutting_info#:#Ermöglicht es Benutzern, auf das Schnittwerkzeug (Video-Editor) für Videos zuzugreifen. Wenn deaktiviert, ist die Aktion "Schneiden" nicht im Aktionsmenü der Ereignisse verfügbar.
 config_ingest_upload#:#Upload via Ingest-Nodes
@@ -356,6 +358,9 @@ series_create#:#Serie anlegen
 series_chat_active#:#Chat bei Live-Streams
 series_chat_active_info#:#Nur bei Live-Streams (nicht bei Aufzeichnungen): Aktiviert einen on-screen Chat
 series_default_view#:#Standard-Ansicht
+series_default_view_info#:#Mit dieser Ansicht startet die Liste der Aufzeichnungen. Benutzerinnen und Benutzer können die Ansicht in der Liste jederzeit wechseln.
+series_default_sort#:#Standard-Sortierung
+series_default_sort_info#:#Mit dieser Sortierung startet die Liste der Aufzeichnungen, solange die Benutzerin oder der Benutzer in einer Liste keine gewählt hat. Ohne Auswahl gilt die Standard-Sortierung der Plugin-Konfiguration.
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
 series_description#:#Beschreibung
@@ -391,10 +396,7 @@ series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unt
 series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Hochgeladene Aufzeichnungen erscheinen in allen Verlinkungen.
 series_has_duplicates_events_delete#:#MISSING
 series_existing_series#:#Bestehende Serie
-series_view_changeable#:#Ansicht änderbar
 series_video_portal_link#:#Link zur Serie in %s
-series_view_changeable#:#Ansicht änderbar
-series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht selbst zu wechseln.
 series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links
@@ -799,6 +801,7 @@ presenter_asc#:#Referent/in A-Z
 presenter_desc#:#Referent/in Z-A
 owner_asc#:#Besitzer/in A-Z
 owner_desc#:#Besitzer/in Z-A
+view_mode#:#Darstellung
 event_possible_best_action#:#Mögliche Aktion
 config_jwt_security_enabled#:#JWT-Authentifizierung aktivieren
 config_jwt_security_enabled_info#:#Aktiviert die Authentifizierung mit JSON Web Tokens (JWT) für verbesserte Sicherheit beim Zugriff auf Opencast-Ressourcen.
