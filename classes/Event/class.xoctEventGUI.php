@@ -374,7 +374,7 @@ class xoctEventGUI extends xoctGUI
                 }
 
                 if ($thumbnail_section_data['mode'][0] == 'timepoint' &&
-                    $thumbnail_section_data['mode'][1]['timepoint'] instanceof \DateTimeImmutable) {
+                    !empty($thumbnail_section_data['mode'][1]['timepoint'])) {
                     $thumbnail_timepoint = $thumbnail_section_data['mode'][1]['timepoint'];
                 }
             }
@@ -388,7 +388,7 @@ class xoctEventGUI extends xoctGUI
 
             // Timepoint mode.
             if (isset($thumbnail_section_data['timepoint']) &&
-                $thumbnail_section_data['timepoint'] instanceof \DateTimeImmutable) {
+                !empty($thumbnail_section_data['timepoint'])) {
                 $thumbnail_timepoint = $thumbnail_section_data['timepoint'];
             }
 
@@ -397,13 +397,16 @@ class xoctEventGUI extends xoctGUI
                 $extra_workflow_params->withUploadedThumbnail = "true";
             }
 
+            // The timepoint must not lie beyond the end of the video. The browser caps it
+            // already, this covers the cases where its check did not run. See #485.
+            $video_duration = $thumbnail_section_data[EventFormBuilder::F_VIDEO_DURATION] ?? 0;
+            if (is_int($thumbnail_timepoint) && is_int($video_duration) && $video_duration > 0) {
+                $thumbnail_timepoint = min($thumbnail_timepoint, $video_duration);
+            }
+
             // Taking care of timepoint here and put it in the workflow configuration already.
-            if (!empty($thumbnail_timepoint)) {
-                $formatted_timepoint = $thumbnail_timepoint->format('H:i:s');
-                $timepoint_seconds = strtotime($formatted_timepoint) - strtotime('TODAY');
-                if ($timepoint_seconds > 0) {
-                    $extra_workflow_params->snapshotThumbnailTime = (string) $timepoint_seconds;
-                }
+            if (is_int($thumbnail_timepoint) && $thumbnail_timepoint > 0) {
+                $extra_workflow_params->snapshotThumbnailTime = (string) $thumbnail_timepoint;
             }
         }
 
