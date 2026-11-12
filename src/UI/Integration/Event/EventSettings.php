@@ -23,5 +23,6 @@ enum EventSettings: string
     case START_X_MINUTES_BEFORE_LIVE = 'minutes_before_live';
 
     case DEFAULT_VIEW = 'default_view';
+    case DEFAULT_SORT = 'default_sort';
 
 }

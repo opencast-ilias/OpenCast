@@ -262,6 +262,7 @@ return array(
     'srag\\Plugins\\Opencast\\Notification\\NotificationSender' => $baseDir . '/src/Notification/NotificationSender.php',
     'srag\\Plugins\\Opencast\\State\\ScopedSettingsStore' => $baseDir . '/src/State/ScopedSettingsStore.php',
     'srag\\Plugins\\Opencast\\State\\SessionSettingsStore' => $baseDir . '/src/State/SessionSettingsStore.php',
+    'srag\\Plugins\\Opencast\\State\\UserPreferenceSettingsStore' => $baseDir . '/src/State/UserPreferenceSettingsStore.php',
     'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => $baseDir . '/src/UI/EventFormBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => $baseDir . '/src/UI/EventTableBuilder.php',
     'srag\\Plugins\\Opencast\\UI\\Integration\\Action' => $baseDir . '/src/UI/Integration/Action.php',

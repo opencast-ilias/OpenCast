@@ -19,6 +19,8 @@ class ObjectSettingsParser
         $objectSettings->setDefaultView(
             (int) ($data[ObjectSettingsFormItemBuilder::F_DEFAULT_VIEW] ?? ObjectSettings::VIEW_TYPE_TILES)
         );
+        $default_sort = $data[ObjectSettingsFormItemBuilder::F_DEFAULT_SORT] ?? null;
+        $objectSettings->setDefaultSort(is_string($default_sort) && $default_sort !== '' ? $default_sort : null);
         $objectSettings->setUseAnnotations((bool) ($data[ObjectSettingsFormItemBuilder::F_USE_ANNOTATIONS] ?? false));
         $objectSettings->setPermissionPerClip(
             is_array($data[ObjectSettingsFormItemBuilder::F_PERMISSION_PER_CLIP] ?? null)

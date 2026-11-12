@@ -10,6 +10,7 @@ use ilObjOpenCast;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\UI\Integration\Series;
 use xoctException;
 
 /**
@@ -208,6 +209,17 @@ class ObjectSettings extends ActiveRecord
      */
     protected $default_view = self::VIEW_TYPE_TILES;
     /**
+     * The sorting the event list starts with as long as the user has not chosen one, see
+     * Series::SORT_OPTIONS. Null leaves it to the plugin configuration.
+     *
+     * @var string|null
+     *
+     * @con_has_field true
+     * @con_fieldtype text
+     * @con_length    32
+     */
+    protected $default_sort = null;
+    /**
      * @var bool
      *
      * @con_has_field true
@@ -306,6 +318,18 @@ class ObjectSettings extends ActiveRecord
         $this->default_view = in_array($default_view, [self::VIEW_TYPE_LIST, self::VIEW_TYPE_TILES], true)
             ? $default_view
             : self::VIEW_TYPE_TILES;
+    }
+
+    public function getDefaultSort(): ?string
+    {
+        return $this->default_sort === null || $this->default_sort === '' ? null : (string) $this->default_sort;
+    }
+
+    public function setDefaultSort(?string $default_sort): void
+    {
+        $this->default_sort = $default_sort !== null && array_key_exists($default_sort, Series::SORT_OPTIONS)
+            ? $default_sort
+            : null;
     }
 
     public function setChatActive(bool $chat_active): void

@@ -32,6 +32,7 @@ class ObjectSettingsFormItemBuilder
     public const F_PUBLISH_ON_VIDEO_PORTAL = 'publish_on_video_portal';
     public const F_PERMISSION_TEMPLATE = 'permission_template';
     public const F_DEFAULT_VIEW = 'default_view';
+    public const F_DEFAULT_SORT = 'default_sort';
     public const F_CHAT_ACTIVE = 'chat_active';
 
     public const F_MEMBER_UPLOAD = 'member_upload';
@@ -54,6 +55,7 @@ class ObjectSettingsFormItemBuilder
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
             self::F_DEFAULT_VIEW => $this->getDefaultViewRadioInput(ObjectSettings::VIEW_TYPE_TILES),
+            self::F_DEFAULT_SORT => $this->getDefaultSortSelectInput(null),
         ];
         if (PermissionTemplate::count() !== 0) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
@@ -107,6 +109,7 @@ class ObjectSettingsFormItemBuilder
                 $objectSettings->getIntroductionText()
             ),
             self::F_DEFAULT_VIEW => $this->getDefaultViewRadioInput($objectSettings->getDefaultView()),
+            self::F_DEFAULT_SORT => $this->getDefaultSortSelectInput($objectSettings->getDefaultSort()),
         ];
 
         if (PermissionTemplate::count() !== 0) {
@@ -230,6 +233,29 @@ class ObjectSettingsFormItemBuilder
             ->withOption((string) ObjectSettings::VIEW_TYPE_TILES, $this->txt('view_type_' . ObjectSettings::VIEW_TYPE_TILES))
             ->withOption((string) ObjectSettings::VIEW_TYPE_LIST, $this->txt('view_type_' . ObjectSettings::VIEW_TYPE_LIST))
             ->withValue((string) $value);
+    }
+
+    /**
+     * The sorting the event list of this object starts with, as long as the user has not chosen one
+     * in any list. Left empty, the default of the plugin configuration applies.
+     *
+     * @param string|null $value one of the keys of the Series::SORT_OPTIONS of the event list
+     * @return Input
+     */
+    private function getDefaultSortSelectInput(?string $value): Input
+    {
+        $options = [];
+        foreach (\srag\Plugins\Opencast\UI\Integration\Series::SORT_OPTIONS as $sort => $lang_var) {
+            $options[$sort] = $this->plugin->txt($lang_var);
+        }
+
+        $select = $this->ui_factory->input()->field()->select(
+            $this->txt(self::F_DEFAULT_SORT),
+            $options,
+            $this->txt(self::F_DEFAULT_SORT . '_info')
+        );
+
+        return $value === null ? $select : $select->withValue($value);
     }
 
     private function txt(string $lang_var): string

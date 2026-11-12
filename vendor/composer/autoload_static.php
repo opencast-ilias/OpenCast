@@ -352,6 +352,7 @@ class ComposerStaticInit20975cba620fc47d8c392214bb856b0a
         'srag\\Plugins\\Opencast\\Notification\\NotificationSender' => __DIR__ . '/../..' . '/src/Notification/NotificationSender.php',
         'srag\\Plugins\\Opencast\\State\\ScopedSettingsStore' => __DIR__ . '/../..' . '/src/State/ScopedSettingsStore.php',
         'srag\\Plugins\\Opencast\\State\\SessionSettingsStore' => __DIR__ . '/../..' . '/src/State/SessionSettingsStore.php',
+        'srag\\Plugins\\Opencast\\State\\UserPreferenceSettingsStore' => __DIR__ . '/../..' . '/src/State/UserPreferenceSettingsStore.php',
         'srag\\Plugins\\Opencast\\UI\\EventFormBuilder' => __DIR__ . '/../..' . '/src/UI/EventFormBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\EventTableBuilder' => __DIR__ . '/../..' . '/src/UI/EventTableBuilder.php',
         'srag\\Plugins\\Opencast\\UI\\Integration\\Action' => __DIR__ . '/../..' . '/src/UI/Integration/Action.php',

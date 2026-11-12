@@ -166,4 +166,25 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             ['curl_chunk_size']
         );
     }
+
+    /**
+     * Step 8 is taken by the migration of #440 (per object online state, PR #508), which has to be
+     * merged before this one.
+     *
+     * Adds the default sorting of the event list per object (#599) and drops `view_changeable`, which
+     * is no longer used since users can always switch between tiles and list.
+     */
+    public function step_9(): void
+    {
+        if (!$this->db->tableColumnExists('xoct_data', 'default_sort')) {
+            $this->db->addTableColumn('xoct_data', 'default_sort', [
+                'type' => 'text',
+                'length' => 32,
+                'notnull' => false,
+            ]);
+        }
+        if ($this->db->tableColumnExists('xoct_data', 'view_changeable')) {
+            $this->db->dropTableColumn('xoct_data', 'view_changeable');
+        }
+    }
 }

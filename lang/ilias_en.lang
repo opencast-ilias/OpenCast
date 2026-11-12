@@ -181,6 +181,8 @@ config_presign_links#:#Presign (experimental)
 config_presign_links_info#:#If active, links will be presigned by Opencast. This may impact the performance. Note that the above configuration is still necessary because links will still have to be signed by the plugin in certain situations.
 config_enable_chat#:#Activate Chat
 config_enable_chat_info#:#Enables an on-screen chat beside the Live Event. This option must additionally be set in the settings of an object to be effective.
+config_default_sort#:#Default Sorting
+config_default_sort_info#:#The lists of recordings start with this sorting as long as the object sets none and the user has not chosen one. A sorting chosen by a user in a list applies to all lists and is kept beyond the session.
 config_enable_cutting#:#Enable Cutting
 config_enable_cutting_info#:#Allow users to access the cutting tool (Video Editor) for videos. When disabled, the "Cut" action will not be available in the event actions menu.
 config_ingest_upload#:#Upload via Ingest Nodes
@@ -360,6 +362,8 @@ series_chat_active#:#Chat for live events
 series_chat_active_info#:#For live events only: activates an on-screen chat
 series_default_view#:#Default View
 series_default_view_info#:#The list of recordings starts with this view. Users can switch the view in the list at any time.
+series_default_sort#:#Default Sorting
+series_default_sort_info#:#The list of recordings starts with this sorting as long as the user has not chosen one in a list. Without a selection, the default sorting of the plugin configuration applies.
 series_department#:#Department
 series_department_info#:#How is the name of your department?
 series_description#:#Description
