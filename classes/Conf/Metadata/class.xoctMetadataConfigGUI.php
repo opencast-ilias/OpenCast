@@ -271,7 +271,7 @@ abstract class xoctMetadataConfigGUI extends xoctGUI
 
     protected function store(): void
     {
-        $field_id = filter_input(INPUT_GET, 'field_id', FILTER_SANITIZE_STRING);
+        $field_id = $this->retrieveFieldId();
         $form = $this->buildForm($field_id)->withRequest($this->http->request());
         $data = $form->getData();
         if (is_null($data)) {
