@@ -359,6 +359,7 @@ series_create#:#Create Series
 series_chat_active#:#Chat for live events
 series_chat_active_info#:#For live events only: activates an on-screen chat
 series_default_view#:#Default View
+series_default_view_info#:#The list of recordings starts with this view. Users can switch the view in the list at any time.
 series_department#:#Department
 series_department_info#:#How is the name of your department?
 series_description#:#Description
@@ -395,8 +396,6 @@ series_has_duplicates_events#:#This Series has several links in ILIAS (see below
 series_has_duplicates_events_delete#:#MISSING
 series_existing_series#:#Existing Series
 series_video_portal_link#:#Link to Series in %s
-series_view_changeable#:#View changeable
-series_view_changeable_info#:#The user has the possibility to change the view.
 series_view_type_0#:#List
 series_view_type_1#:#Tiles
 series_links#:#Links

@@ -27,6 +27,7 @@ use srag\Plugins\Opencast\Model\Event\Event;
 use srag\Plugins\Opencast\Model\User\xoctUser;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
+use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Views\Series\Display;
 
 /**
@@ -318,14 +319,24 @@ class Series implements DataRetrieval
         return in_array($page_size, self::PAGE_SIZES, true) ? $page_size : self::DEFAULT_PAGE_SIZE;
     }
 
+    /**
+     * The view the user chose in the list, else the default view set in the object settings.
+     */
     private function view(): string
     {
         $view = $this->resolver->resolvePersistentParameter(
             SeriesActionParameter::VIEW,
             $this->series->getIdentifier()
         );
+        if (in_array($view, [self::VIEW_GRID, self::VIEW_LIST], true)) {
+            return $view;
+        }
 
-        return in_array($view, [self::VIEW_GRID, self::VIEW_LIST], true) ? $view : self::DEFAULT_VIEW;
+        return match ($this->settings_resolver->resolve(EventSettings::DEFAULT_VIEW)) {
+            ObjectSettings::VIEW_TYPE_LIST => self::VIEW_LIST,
+            ObjectSettings::VIEW_TYPE_TILES => self::VIEW_GRID,
+            default => self::DEFAULT_VIEW,
+        };
     }
 
     public function getEntities(Mapping $mapping, ?Range $range, ?array $additional_parameters): \Generator

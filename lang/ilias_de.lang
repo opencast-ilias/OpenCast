@@ -356,6 +356,7 @@ series_create#:#Serie anlegen
 series_chat_active#:#Chat bei Live-Streams
 series_chat_active_info#:#Nur bei Live-Streams (nicht bei Aufzeichnungen): Aktiviert einen on-screen Chat
 series_default_view#:#Standard-Ansicht
+series_default_view_info#:#Mit dieser Ansicht startet die Liste der Aufzeichnungen. Benutzerinnen und Benutzer können die Ansicht in der Liste jederzeit wechseln.
 series_department#:#Department
 series_department_info#:#Name Ihrer Institution
 series_description#:#Beschreibung
@@ -391,10 +392,7 @@ series_has_duplicates#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unt
 series_has_duplicates_events#:#Diese Serie hat mehrere Verlinkungen in ILIAS (siehe unten und im Tab «Info»).<br />Hochgeladene Aufzeichnungen erscheinen in allen Verlinkungen.
 series_has_duplicates_events_delete#:#MISSING
 series_existing_series#:#Bestehende Serie
-series_view_changeable#:#Ansicht änderbar
 series_video_portal_link#:#Link zur Serie in %s
-series_view_changeable#:#Ansicht änderbar
-series_view_changeable_info#:#Der Benutzer hat die Möglichkeit, die Ansicht selbst zu wechseln.
 series_view_type_0#:#Liste
 series_view_type_1#:#Kacheln
 series_links#:#Links

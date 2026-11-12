@@ -32,7 +32,6 @@ class ObjectSettingsFormItemBuilder
     public const F_PUBLISH_ON_VIDEO_PORTAL = 'publish_on_video_portal';
     public const F_PERMISSION_TEMPLATE = 'permission_template';
     public const F_DEFAULT_VIEW = 'default_view';
-    public const F_VIEW_CHANGEABLE = 'view_changeable';
     public const F_CHAT_ACTIVE = 'chat_active';
 
     public const F_MEMBER_UPLOAD = 'member_upload';
@@ -54,6 +53,7 @@ class ObjectSettingsFormItemBuilder
         $inputs = [
             self::F_OBJ_ONLINE => $field_factory->checkbox($this->txt(self::F_OBJ_ONLINE)),
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT)),
+            self::F_DEFAULT_VIEW => $this->getDefaultViewRadioInput(ObjectSettings::VIEW_TYPE_TILES),
         ];
         if (PermissionTemplate::count() !== 0) {
             $inputs[self::F_PUBLISH_ON_VIDEO_PORTAL] = $field_factory->optionalGroup(
@@ -106,6 +106,7 @@ class ObjectSettingsFormItemBuilder
             self::F_INTRODUCTION_TEXT => $field_factory->textarea($this->txt(self::F_INTRODUCTION_TEXT))->withValue(
                 $objectSettings->getIntroductionText()
             ),
+            self::F_DEFAULT_VIEW => $this->getDefaultViewRadioInput($objectSettings->getDefaultView()),
         ];
 
         if (PermissionTemplate::count() !== 0) {
@@ -212,6 +213,23 @@ class ObjectSettingsFormItemBuilder
             $radio = $radio->withOption((string) $ptpl->getId(), $ptpl->getTitle(), $ptpl->getInfo());
         }
         return $radio->withRequired(true);
+    }
+
+    /**
+     * The view the event list of this object starts with. Users can still switch it in the list.
+     *
+     * @param int $value ObjectSettings::VIEW_TYPE_LIST or ObjectSettings::VIEW_TYPE_TILES
+     * @return Input
+     */
+    private function getDefaultViewRadioInput(int $value): Input
+    {
+        return $this->ui_factory->input()->field()->radio(
+            $this->txt(self::F_DEFAULT_VIEW),
+            $this->txt(self::F_DEFAULT_VIEW . '_info')
+        )
+            ->withOption((string) ObjectSettings::VIEW_TYPE_TILES, $this->txt('view_type_' . ObjectSettings::VIEW_TYPE_TILES))
+            ->withOption((string) ObjectSettings::VIEW_TYPE_LIST, $this->txt('view_type_' . ObjectSettings::VIEW_TYPE_LIST))
+            ->withValue((string) $value);
     }
 
     private function txt(string $lang_var): string

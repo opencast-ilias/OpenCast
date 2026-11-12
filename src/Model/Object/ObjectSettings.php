@@ -18,6 +18,9 @@ use xoctException;
 #[\AllowDynamicProperties]
 class ObjectSettings extends ActiveRecord
 {
+    public const VIEW_TYPE_LIST = 0;
+    public const VIEW_TYPE_TILES = 1;
+
     public $paella_player_option;
     public $paella_player_file_id;
     public $paella_player_url;
@@ -193,13 +196,17 @@ class ObjectSettings extends ActiveRecord
      */
     protected $obj_online = false;
     /**
-     * @var bool
+     * The view the event list starts with, see VIEW_TYPE_LIST and VIEW_TYPE_TILES.
+     * Users can still switch the view in the list. Objects from before the column
+     * was used again have null here and start with the tiles.
+     *
+     * @var int|null
      *
      * @con_has_field true
      * @con_fieldtype integer
-     * @con_length    1
+     * @con_length    8
      */
-    protected $view_changeable = true;
+    protected $default_view = self::VIEW_TYPE_TILES;
     /**
      * @var bool
      *
@@ -287,6 +294,18 @@ class ObjectSettings extends ActiveRecord
     public function setPermissionAllowSetOwn(bool $permission_allow_set_own): void
     {
         $this->permission_allow_set_own = $permission_allow_set_own;
+    }
+
+    public function getDefaultView(): int
+    {
+        return $this->default_view === null ? self::VIEW_TYPE_TILES : (int) $this->default_view;
+    }
+
+    public function setDefaultView(int $default_view): void
+    {
+        $this->default_view = in_array($default_view, [self::VIEW_TYPE_LIST, self::VIEW_TYPE_TILES], true)
+            ? $default_view
+            : self::VIEW_TYPE_TILES;
     }
 
     public function setChatActive(bool $chat_active): void
