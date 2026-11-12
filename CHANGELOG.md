@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 10.4.4
+- [FIX] Thumbnail selection uses a duration input instead of the datetime picker, the timepoint is capped to the video length (also after a failed validation) #485
+
 ## Version 10.4.3
 - [FIX] Event list loads faster: reuse the events the listing already fetched, do per event work only for the shown page, share one API instance per request #486
 
