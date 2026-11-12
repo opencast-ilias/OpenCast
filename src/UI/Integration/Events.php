@@ -108,7 +108,12 @@ class Events implements RecordToEntity
 
     public function map(UIFactory $ui_factory, mixed $record): Entity
     {
-        $record = $this->event_repository->find($record['identifier'] ?? '');
+        // The listing hands over what EventAPIRepository::getFiltered() returned, which already carries the
+        // parsed event. Looking it up again costs a cache read per event, or an API request for every
+        // event the cache does not hold (anything not yet processed, for instance).
+        $record = ($record['object'] ?? null) instanceof Event
+            ? $record['object']
+            : $this->event_repository->find($record['identifier'] ?? '');
         // Pass Parameters to Resolver
         $parameters = (new EventActionParameters())
             ->with(EventActionParameter::EVENT_ID, $record->getIdentifier())

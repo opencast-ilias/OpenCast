@@ -116,7 +116,11 @@ final class Init
             $jwt
         ));
 
-        $opencast_container->glue(API::class, fn(): OpencastAPI => new OpencastAPI($opencast_container[Config::class]));
+        // Shared: almost every repository and model asks for the API in its constructor, PublicationSelector
+        // once per event, and building it sets up the whole set of REST clients each time. The per call
+        // headers (run as user, roles) are dropped by the client after every request, so one instance
+        // can serve all consumers of a request.
+        $opencast_container->share(API::class, fn(): OpencastAPI => new OpencastAPI($opencast_container[Config::class]));
 
         $opencast_container->glue(Services::class, function (): Services {
             $use_cache = (int) PluginConfig::getConfig(PluginConfig::F_ACTIVATE_CACHE);

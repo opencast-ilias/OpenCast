@@ -303,21 +303,27 @@ class Series implements DataRetrieval
         // limit of EventAPIRepository::getFiltered(). That ceiling is not new: the same default
         // bounded the total count pass this call replaces, so the pager stopped there before as
         // well. Lifting it needs API side pagination and is tracked separately.
+        // Plain Event objects: the array form getFiltered() builds otherwise (all metadata fields plus the
+        // owner's name) would be computed for every event of the series, while only the page is shown.
+        // The cache write is deferred to the page for the same reason, see cacheEvents() below.
+        /** @var Event[] $filtered */
         $filtered = $this->event_repository->getFiltered(
             ['is_part_of' => $this->series->getIdentifier()],
-            sort: $api_sort
+            sort: $api_sort,
+            as_object: true,
+            cache_events: false
         );
 
         // local sorting for owner
         if (in_array($sort, [self::SORT_OWNER_ASC, self::SORT_OWNER_DESC], true)) {
-            usort($filtered, function (array $a, array $b) use ($sort): int {
-                /** @var Event $a_object */
-                $a_object = $a['object'];
-                /** @var Event $b_object */
-                $b_object = $b['object'];
-
-                $a_owner = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($a_object);
-                $b_owner = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($b_object);
+            // Resolve each owner once, usort() compares every event several times.
+            $owners = [];
+            foreach ($filtered as $event) {
+                $owners[$event->getIdentifier()] = $this->container->legacy()->acl_utils()->getOwnerUsernameOfEvent($event);
+            }
+            usort($filtered, function (Event $a, Event $b) use ($sort, $owners): int {
+                $a_owner = $owners[$a->getIdentifier()];
+                $b_owner = $owners[$b->getIdentifier()];
                 return match ($sort) {
                     self::SORT_OWNER_ASC => strcasecmp($a_owner, $b_owner),
                     self::SORT_OWNER_DESC => strcasecmp($b_owner, $a_owner),
@@ -330,10 +336,8 @@ class Series implements DataRetrieval
             $this->filter
         );
 
-        $ui_filter = function (array $event) use ($filter_data): bool {
-            $event_object = $event['object'];
+        $ui_filter = function (Event $event_object) use ($filter_data): bool {
             foreach ($filter_data ?? [] as $key => $value) {
-                /** @var Event $event_object */
                 $md_value = $event_object->getMetadata()->getField($key)->toString();
                 if (stripos($md_value, strtolower($value)) === false) {
                     return false;
@@ -358,8 +362,11 @@ class Series implements DataRetrieval
         $last_page = $page_size > 0 ? max(0, (int) ceil($this->total / $page_size) - 1) : 0;
         $page = min(max($page, 0), $last_page);
 
-        foreach (array_slice($filtered, $page * $page_size, $page_size) as $event) {
-            yield $mapping->map($event);
+        $page_events = array_slice($filtered, $page * $page_size, $page_size);
+        $this->event_repository->cacheEvents(...$page_events);
+
+        foreach ($page_events as $event) {
+            yield $mapping->map(['identifier' => $event->getIdentifier(), 'object' => $event]);
         }
     }
 
@@ -386,19 +393,6 @@ class Series implements DataRetrieval
      */
     private function probeScheduledEvents(string $series_id): bool
     {
-        foreach (self::SCHEDULED_STATES as $status) {
-            $scheduled = $this->event_repository->getFiltered(
-                ['is_part_of' => $series_id, 'status' => $status],
-                '',
-                [],
-                0,
-                1
-            );
-            if ($scheduled !== []) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->event_repository->seriesHasEventInState($series_id, self::SCHEDULED_STATES);
     }
 }
