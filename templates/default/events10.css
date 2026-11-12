@@ -71,11 +71,17 @@ dd {
 
    Fixing it up front doubles as the size reservation: the thumbnails carry no width/height
    attributes, so without it they take up no height until they arrive and the card grows the moment
-   they do - with the cards of a row stretched to a common height, that jumps the whole row. */
+   they do - with the cards of a row stretched to a common height, that jumps the whole row.
+
+   The thumbnails carry `.img-responsive`, which caps them at `max-height: 100%` of the surrounding
+   box. That box is 9px shorter than the image, which bleeds over its top padding, so the cap cut
+   the ratio short for every thumbnail sitting directly in it - but not for the playable ones, whose
+   anchor is the box they measure against. Lifting the cap gives all of them the same height. */
 .c-listing-entity-grid .c-entity__secondary-identifier.--image img {
     aspect-ratio: 16 / 9;
     object-fit: cover;
     height: auto;
+    max-height: none;
 }
 
 /* In the list the thumbnail sits beside the text. The core sizes that column as `max-content` and
