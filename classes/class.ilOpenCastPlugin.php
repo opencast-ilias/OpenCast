@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use srag\Plugins\Opencast\Model\Event\EventAdditionsAR;
+use srag\Plugins\Opencast\Model\Event\EventAdditionsRepository;
 use srag\Plugins\Opencast\Model\Metadata\Config\Event\MDFieldConfigEventAR;
 use srag\Plugins\Opencast\Model\Metadata\Config\Series\MDFieldConfigSeriesAR;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
@@ -83,7 +83,7 @@ class ilOpenCastPlugin extends ilRepositoryObjectPlugin
         $this->_db->dropTable(PermissionGroupParticipant::TABLE_NAME, false);
         $this->_db->dropTable(PermissionGroup::TABLE_NAME, false);
         $this->_db->dropTable(ObjectSettings::TABLE_NAME, false);
-        $this->_db->dropTable(EventAdditionsAR::TABLE_NAME, false);
+        $this->_db->dropTable(EventAdditionsRepository::TABLE_NAME, false);
         $this->_db->dropTable(PermissionTemplate::TABLE_NAME, false);
         $this->_db->dropTable(PublicationUsage::TABLE_NAME, false);
         $this->_db->dropTable(PluginConfig::TABLE_NAME, false);
