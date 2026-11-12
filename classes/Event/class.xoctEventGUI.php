@@ -397,6 +397,13 @@ class xoctEventGUI extends xoctGUI
                 $extra_workflow_params->withUploadedThumbnail = "true";
             }
 
+            // The timepoint must not lie beyond the end of the video. The browser caps it
+            // already, this covers the cases where its check did not run. See #485.
+            $video_duration = $thumbnail_section_data[EventFormBuilder::F_VIDEO_DURATION] ?? 0;
+            if (is_int($thumbnail_timepoint) && is_int($video_duration) && $video_duration > 0) {
+                $thumbnail_timepoint = min($thumbnail_timepoint, $video_duration);
+            }
+
             // Taking care of timepoint here and put it in the workflow configuration already.
             if (is_int($thumbnail_timepoint) && $thumbnail_timepoint > 0) {
                 $extra_workflow_params->snapshotThumbnailTime = (string) $thumbnail_timepoint;

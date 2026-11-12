@@ -5,6 +5,11 @@
  * that is about to be uploaded: the duration is read from the selected file in
  * the browser and an entered timepoint beyond it is clamped down.
  *
+ * The duration is also written to a hidden field of the form. When the form
+ * comes back after a failed validation, the video is already uploaded and there
+ * is no file left to read it from, so the cap is restored from that field. The
+ * server uses it as well to cap the timepoint.
+ *
  * @author Fabian Schmid <fabian@sr.solutions>
  */
 
@@ -65,6 +70,7 @@ export default class ThumbnailTimepoint {
         }
 
         this.whenVideoDropzoneReady((dropzone) => {
+            this.restoreDuration();
             dropzone.on('addedfile', (file) => this.readDuration(file));
             dropzone.on('removedfile', () => this.setMax(null));
         });
@@ -101,6 +107,26 @@ export default class ThumbnailTimepoint {
         look();
     }
 
+    /**
+     * The hidden field the duration is kept in, tagged by its own onLoad code,
+     * see EventFormBuilder::upload().
+     */
+    durationField() {
+        const form = this.input.closest('form');
+        return (form !== null) ? form.querySelector('input[data-videoDuration]') : null;
+    }
+
+    restoreDuration() {
+        const field = this.durationField();
+        if (field === null || this.max_seconds !== null) {
+            return;
+        }
+        const seconds = parseInt(field.value, 10);
+        if (Number.isInteger(seconds) && seconds > 0) {
+            this.setMax(seconds);
+        }
+    }
+
     readDuration(file) {
         const object_url = URL.createObjectURL(file);
         const probe = document.createElement('video');
@@ -123,6 +149,11 @@ export default class ThumbnailTimepoint {
 
     setMax(seconds) {
         this.max_seconds = seconds;
+
+        const field = this.durationField();
+        if (field !== null) {
+            field.value = (seconds === null) ? '' : String(seconds);
+        }
 
         if (seconds === null) {
             this.input.setAttribute('placeholder', PLACEHOLDER);

@@ -43,6 +43,7 @@ class EventFormBuilder
     public const DEFAULT_UPLOAD_LIMIT_IN_MIB = 512;
     public const F_SUBTITLE_SECTION = 'subtitles';
     public const F_THUMBNAIL_SECTION = 'thumbnail';
+    public const F_VIDEO_DURATION = 'video_duration';
 
     public static array $accepted_video_mimetypes = [
         MimeTypeUtil::VIDEO__AVI,
@@ -414,6 +415,22 @@ class EventFormBuilder
             // Timepoint
             if ($thumbnail_upload_mode_is_timepoint) {
                 $thumbnail_section_inputs['timepoint'] = $timepoint_picker;
+            }
+
+            // Length of the video in seconds, as far as the browser could read it.
+            // After a failed validation the form comes back with the video already
+            // uploaded, so the browser has no file left to read the length from.
+            // This field carries it over and lets the server cap the timepoint. See #485.
+            if ($thumbnail_upload_mode_is_both || $thumbnail_upload_mode_is_timepoint) {
+                $thumbnail_section_inputs[self::F_VIDEO_DURATION] = $factory->hidden()
+                    ->withAdditionalOnLoadCode(
+                        fn(string $id): string => '$("#' . $id . '").attr("data-videoDuration", "' . $id . '");'
+                    )
+                    ->withAdditionalTransformation(
+                        $this->refinery_factory->custom()->transformation(
+                            fn($v): int => (is_string($v) && ctype_digit($v)) ? (int) $v : 0
+                        )
+                    );
             }
 
             if (!empty($thumbnail_section_inputs)) {
