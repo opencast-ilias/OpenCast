@@ -129,8 +129,10 @@ class xoctPlayerGUI extends xoctGUI
             $this->sendReponse("Error: " . $e->getMessage());
         }
 
+        $jwt_iframe_player_enabled = PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_ENABLED);
+
         // We load different template for the JWT Iframe Player.
-        if ($this->api->isJWTActivated() && $jwt_iframe_capable) {
+        if ($this->api->isJWTActivated() && $jwt_iframe_player_enabled && $jwt_iframe_capable) {
             $tpl = $this->plugin->getTemplate("jwt_iframe_player.html", true, true);
             $jwt_data = $data['jwt'] ?? [];
             $tpl->setVariable("JWT_MODULE_CONFIG",

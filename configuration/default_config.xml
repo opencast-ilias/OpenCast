@@ -278,6 +278,10 @@
       <name>paella_conf_url</name>
       <value><![CDATA[]]></value>
     </xoct_conf>
+    <xoct_conf>
+      <name>jwt_security_iframe_player_enabled</name>
+      <value><![CDATA[1]]></value>
+    </xoct_conf>
   </xoct_confs>
   <xoct_workflow_parameters>
     <xoct_workflow_parameter>
