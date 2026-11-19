@@ -8,6 +8,7 @@ use xoctLog;
 use xoctException;
 use GuzzleHttp\Client;
 use OpencastApi\Rest\OcRest;
+use srag\Plugins\Opencast\Util\OpencastAvailability;
 
 /**
  * Class srag\Plugins\Opencast\API\DecorateProxy
@@ -18,6 +19,12 @@ use OpencastApi\Rest\OcRest;
  */
 class DecorateProxy
 {
+    /**
+     * HTTP codes which mean the Opencast server itself could not be reached: 0 (no response at
+     * all), 502 and 504 (a proxy in front of Opencast reporting it as down or unresponsive).
+     */
+    private const CONNECTION_FAILURE_CODES = [0, 502, 504];
+
     public function __construct(public ?OcRest $object)
     {
     }
@@ -84,6 +91,13 @@ class DecorateProxy
 
             $resp_orig_text .= ' => ' . $reason;
 
+            if (in_array($code, self::CONNECTION_FAILURE_CODES, true)) {
+                // Remembered so the repository list can show the hint without asking Opencast
+                // once per object while it is down.
+                OpencastAvailability::rememberUnreachable();
+                throw new xoctException(xoctException::API_CALL_CONNECTION_FAILED, $resp_orig_text);
+            }
+
             match ($code) {
                 403 => throw new xoctException(xoctException::API_CALL_STATUS_403, $resp_orig_text),
                 401 => throw new xoctException(xoctException::API_CALL_BAD_CREDENTIALS),
@@ -93,6 +107,9 @@ class DecorateProxy
                 default => throw new xoctException(xoctException::API_CALL_STATUS_500, $resp_orig_text),
             };
         }
+
+        // Opencast answered, so a remembered outage is over.
+        OpencastAvailability::rememberReachable();
 
         return $return_array ? $this->parseResponseBodyToArray($body) : $body;
     }

@@ -274,11 +274,22 @@ class xoctEventGUI extends xoctGUI
             $this->objectSettings
         );
 
-        $this->main_tpl->setContent(
-            $this->ui_renderer->render(
+        try {
+            $content = $this->ui_renderer->render(
                 array_filter(array_merge($display_series->get(), [$modal]))
-            )
-        );
+            );
+        } catch (xoctException $e) {
+            // Opencast is unreachable: show a readable message instead of the generic ILIAS error
+            // page. The message must not be kept, it belongs on the page being rendered right now
+            // and not on whatever the user opens next.
+            if ($e->getCode() === xoctException::API_CALL_CONNECTION_FAILED) {
+                $this->main_tpl->setOnScreenMessage('failure', $this->txt('msg_opencast_unreachable'));
+                return;
+            }
+            throw $e;
+        }
+
+        $this->main_tpl->setContent($content);
 
         // Report Date Modification Modal: This is a absolute mess... The Button ist added anyway in prepareContent, but "hidden".
         // Only if the Series has sceduled events, it gets shown via js.
