@@ -48,8 +48,8 @@ class MDPrefiller
     ];
     public const MD_PLACEHOLDER_FLAG = 'META';
     public static $md_properties = [
-        'keywords' => 'getKeywordIds',
-        'languages' => 'getLanguageIds',
+        'keywords' => 'keywords',
+        'languages' => 'languages',
     ];
 
     public function __construct(private readonly Container $dic)
@@ -74,20 +74,12 @@ class MDPrefiller
         try {
             $course_or_group = ilObjOpenCast::_getParentCourseOrGroup($ref_id);
             if (!empty($course_or_group)) {
-                $md = new \ilMD($course_or_group->getId(), 0, $course_or_group->getType());
-                $md_general = $md->getGeneral();
-                if (empty($md_general)) {
-                    return [];
-                }
-                foreach (self::$md_properties as $prop_name => $method_name) {
-                    $sub_method_name = str_replace('Ids', '', $method_name);
-                    if (method_exists($md_general, $method_name) &&
-                        method_exists($md_general, $sub_method_name)) {
-                        $ids = $md_general->$method_name();
-                        foreach ($ids as $index => $id) {
-                            $md = $md_general->$sub_method_name($id);
-                            $value = $md->$sub_method_name();
-                            $metadata[$prop_name][] = $value;
+                $lom = $this->dic->learningObjectMetadata();
+                $reader = $lom->read($course_or_group->getId(), 0, $course_or_group->getType());
+                foreach (self::$md_properties as $prop_name => $path_name) {
+                    foreach ($reader->allData($lom->paths()->$path_name()) as $data) {
+                        if ($data->value() !== '') {
+                            $metadata[$prop_name][] = $data->value();
                         }
                     }
                 }
