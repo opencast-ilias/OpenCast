@@ -199,6 +199,35 @@ class MDFormItemBuilder
                 )
             )
             ->withDisabled($fieldConfigAR->isReadOnly());
+
+        // In case of a required and read only field, the $value must not be empty,
+        // since the underlying Form Input Components of ILIAS throws error.
+        // Therefore, we must fallback to prefiller if exists and notify the user,
+        // otherwise, throw meaningful error beforehand.
+        if ($fieldConfigAR->isRequired() && $fieldConfigAR->isReadOnly() && empty($value)) {
+            $value = $this->prefiller->getReplacedPrefill($fieldConfigAR->getPrefill());
+            // Now, we need to notify the user if the mandatory fallback filled the value!
+            if ($value) {
+                global $DIC;
+                $DIC->ui()->mainTemplate()->setOnScreenMessage(
+                    'question',
+                    sprintf(
+                        $this->plugin->txt('md_msg_mandatory_prefilled'),
+                        $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                    ),
+                    true
+                );
+            } else {
+                // Otherwise, we throw meaningful error here, in order to prevent ILIAS to throw Input Field error.
+                throw new xoctException(
+                    xoctException::INTERNAL_ERROR,
+                    sprintf(
+                        $this->plugin->txt('md_msg_error_empty_required_readonly'),
+                        $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
+                    )
+                );
+            }
+        }
         return $value ? $field->withValue($this->formatValue($value, $md_definition, $fieldConfigAR)) : $field;
     }
 
