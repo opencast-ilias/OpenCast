@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 10.4.5
+- [FIX] Metadata configuration: saving a field no longer fails with "Constant FILTER_SANITIZE_STRING is deprecated" #619
+- [FIX] Metadata prefill: read course keywords and languages via the LOM API (prepares ILIAS 11, where ilMD is removed) #610
+- [IMPROVEMENT] Update Paella packages (paella-core 2.12.15, paella-extra-plugins 2.9.3, paella-opencast-component 2.0.6, paella-opencast-plugins 2.1.0, paella-user-tracking 2.4.4) and dompurify 3.4.17
+- [MAINTENANCE] Chat server: update express to 5.2.1 (qs 6.16.0) and brace-expansion
+- [MAINTENANCE] Paella build tooling: webpack 5.111.1, css-loader 7, style-loader 4 and further Dependabot updates
+
 ## Version 10.4.4
 - [FIX] Thumbnail selection uses a duration input instead of the datetime picker, the timepoint is capped to the video length (also after a failed validation) #485
 
