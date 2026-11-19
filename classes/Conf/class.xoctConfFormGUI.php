@@ -695,10 +695,17 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         $se_cb_sub->setValue(PluginConfig::getConfig(PluginConfig::F_JWT_SECURITY_ALG) ?? $default);
         $cb->addSubItem($se_cb_sub);
 
+        // JWT Iframe player enabled
+        $cb_sub = new ilCheckboxInputGUI(
+            $this->getLocaleString(PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_ENABLED),
+            PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_ENABLED
+        );
+        $cb->addSubItem($cb_sub);
+
         // JWT Iframe Player Path
         $te_iframe_player_path_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_iframe_player_path'), PluginConfig::F_JWT_SECURITY_IFRAME_PLAYER_PATH);
         $te_iframe_player_path_cb_sub->setInfo($this->getLocaleString('jwt_security_iframe_player_path_info'));
-        $cb->addSubItem($te_iframe_player_path_cb_sub);
+        $cb_sub->addSubItem($te_iframe_player_path_cb_sub);
 
         // JWT Basic Roles
         $te_basic_roles_cb_sub = new ilTextInputGUI($this->getLocaleString('jwt_security_basic_roles'), PluginConfig::F_JWT_SECURITY_BASIC_ROLES);
