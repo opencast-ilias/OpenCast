@@ -152,4 +152,37 @@ class ilOpenCastDBUpdateSteps implements \ilDatabaseUpdateSteps
             ]
         );
     }
+
+    /**
+     * Intentionally empty: keeps the step numbering aligned with release_10, where step_7 removes the
+     * "curl_chunk_size" configuration. That configuration is still in use on release_9.
+     */
+    public function step_7(): void
+    {
+    }
+
+    /**
+     * #440: The online/offline state of an event is now stored per ILIAS object (obj_id), so the same
+     * Opencast series linked in several objects can have different states. Extend the primary key of
+     * xoct_event_additions from (id) to (id, obj_id). Per community decision existing states are NOT
+     * migrated: existing rows fall into the shared obj_id = 0 bucket.
+     */
+    public function step_8(): void
+    {
+        if (!$this->db->tableExists('xoct_event_additions')) {
+            return;
+        }
+        if ($this->db->tableColumnExists('xoct_event_additions', 'obj_id')) {
+            // already migrated
+            return;
+        }
+        $this->db->addTableColumn('xoct_event_additions', 'obj_id', [
+            'type' => 'integer',
+            'length' => 8,
+            'notnull' => true,
+            'default' => 0,
+        ]);
+        $this->db->dropPrimaryKey('xoct_event_additions');
+        $this->db->addPrimaryKey('xoct_event_additions', ['id', 'obj_id']);
+    }
 }
