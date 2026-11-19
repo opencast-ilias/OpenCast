@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 9.5.5
+- [FIX] Metadata configuration: saving a field no longer fails with "Constant FILTER_SANITIZE_STRING is deprecated" #620
+
 ## Version 9.5.4
 - [FIX] Video upload always ends on a FileNotFoundException error page #596
 - [FIX] Event upload with subtitles/thumbnails: handle empty optional files and wait for all uploads before submitting #535
