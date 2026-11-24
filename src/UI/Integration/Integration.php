@@ -13,7 +13,6 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventSettingsValueResolver;
 use srag\Plugins\Opencast\UI\Integration\Event\EventActionTargetResolver;
 use srag\Plugins\Opencast\UI\Integration\Series\SeriesActionTargetResolver;
 use srag\Plugins\Opencast\State\SessionSettingsStore;
-use srag\Plugins\Opencast\State\UserPreferenceSettingsStore;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -66,10 +65,7 @@ class Integration
                 $container->translator(),
                 $container->ilias()->http(),
                 $container->ilias()->ctrl(),
-                new UserPreferenceSettingsStore(
-                    new SessionSettingsStore(),
-                    $container->ilias()->user()
-                )
+                new SessionSettingsStore()
             ),
             $settings_resolver
         );

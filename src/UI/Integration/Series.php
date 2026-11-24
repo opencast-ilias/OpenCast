@@ -30,7 +30,6 @@ use srag\Plugins\Opencast\UI\Integration\Event\EventSettings;
 use srag\Plugins\Opencast\Model\Object\ObjectSettings;
 use srag\Plugins\Opencast\Views\Series\Display;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
-use srag\Plugins\Opencast\State\ScopedSettingsStore;
 
 /**
  * @author Fabian Schmid <fabian@sr.solutions>
@@ -329,15 +328,15 @@ class Series implements DataRetrieval
     }
 
     /**
-     * The sorting the user chose last, in any list (#551), else the default sorting of the object, else
-     * the one of the plugin configuration (#601). A sorting that is not offered in this list, such as
+     * The sorting the user chose in this list during the session, else the default sorting of the object,
+     * else the one of the plugin configuration (#601). A sorting that is not offered in this list, such as
      * the owner where the owner is not shown, is passed over.
      */
     private function sort(): string
     {
         $available = $this->availableSortations();
         $candidates = [
-            $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, ScopedSettingsStore::SCOPE_USER),
+            $this->resolver->resolvePersistentParameter(SeriesActionParameter::SORT, $this->series->getIdentifier()),
             $this->settings_resolver->resolve(EventSettings::DEFAULT_SORT),
             PluginConfig::getConfig(PluginConfig::F_DEFAULT_SORT),
         ];

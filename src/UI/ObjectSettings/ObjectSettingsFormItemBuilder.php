@@ -237,7 +237,8 @@ class ObjectSettingsFormItemBuilder
 
     /**
      * The sorting the event list of this object starts with, as long as the user has not chosen one
-     * in any list. Left empty, the default of the plugin configuration applies.
+     * in this list during the session. Without a value of the object, the default of the plugin
+     * configuration is preselected.
      *
      * @param string|null $value one of the keys of the Series::SORT_OPTIONS of the event list
      * @return Input
@@ -255,7 +256,12 @@ class ObjectSettingsFormItemBuilder
             $this->txt(self::F_DEFAULT_SORT . '_info')
         );
 
-        return $value === null ? $select : $select->withValue($value);
+        $value ??= PluginConfig::getConfig(PluginConfig::F_DEFAULT_SORT);
+        if (!is_string($value) || !array_key_exists($value, $options)) {
+            $value = \srag\Plugins\Opencast\UI\Integration\Series::DEFAULT_SORT;
+        }
+
+        return $select->withValue($value);
     }
 
     private function txt(string $lang_var): string
