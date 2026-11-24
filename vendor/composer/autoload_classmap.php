@@ -303,6 +303,7 @@ return array(
     'srag\\Plugins\\Opencast\\Util\\Locale\\LocaleTrait' => $baseDir . '/src/Util/Locale/LocaleTrait.php',
     'srag\\Plugins\\Opencast\\Util\\Locale\\Translator' => $baseDir . '/src/Util/Locale/Translator.php',
     'srag\\Plugins\\Opencast\\Util\\MimeType' => $baseDir . '/src/Util/MimeType.php',
+    'srag\\Plugins\\Opencast\\Util\\OpencastAvailability' => $baseDir . '/src/Util/OpencastAvailability.php',
     'srag\\Plugins\\Opencast\\Util\\OutputResponse' => $baseDir . '/src/Util/OutputResponse.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\LivePlayerDataBuilder' => $baseDir . '/src/Util/Player/LivePlayerDataBuilder.php',
     'srag\\Plugins\\Opencast\\Util\\Player\\PaellaConfigService' => $baseDir . '/src/Util/Player/PaellaConfigService.php',
