@@ -18,7 +18,7 @@ use xoctException;
  */
 interface EventRepository
 {
-    public function find(string $identifier): Event;
+    public function find(string $identifier, bool $with_metadata = false): Event;
 
     public function delete(string $identifier): bool;
 

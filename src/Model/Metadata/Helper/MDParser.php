@@ -57,10 +57,6 @@ class MDParser
                     "id" => "creator",
                     "value" => $entry
                 ],
-                "creator" => (object) [
-                    "id" => "publisher",
-                    "value" => $entry
-                ],
                 "is_part_of" => (object) [
                     "id" => "isPartOf",
                     "value" => $entry
