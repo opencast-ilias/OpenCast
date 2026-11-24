@@ -14,4 +14,5 @@ enum SeriesActionParameter: string
     case PAGE = 'page';
     case FILTER = 'filter';
     case PAGE_SIZE = 'page_size';
+    case VIEW = 'view';
 }

@@ -20,6 +20,8 @@ class EventSettingsResolver implements EventSettingsValueResolver
     private bool $edit_all_metadata;
     private int $minutes_before_live;
     private bool $use_annotations;
+    private int $default_view;
+    private ?string $default_sort;
 
     public function __construct(
         ObjectSettings $object_settings
@@ -35,6 +37,8 @@ class EventSettingsResolver implements EventSettingsValueResolver
             PluginConfig::F_START_X_MINUTES_BEFORE_LIVE
         ) ?? 30));
         $this->use_annotations = (bool) $object_settings->getUseAnnotations();
+        $this->default_view = $object_settings->getDefaultView();
+        $this->default_sort = $object_settings->getDefaultSort();
     }
 
     public function resolve(EventSettings $setting): mixed
@@ -54,6 +58,8 @@ class EventSettingsResolver implements EventSettingsValueResolver
                 EventSettingsValueResolver::MD_PRESENTER,
             ],
             EventSettings::START_X_MINUTES_BEFORE_LIVE => $this->minutes_before_live,
+            EventSettings::DEFAULT_VIEW => $this->default_view,
+            EventSettings::DEFAULT_SORT => $this->default_sort,
             default => null
         };
     }

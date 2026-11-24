@@ -127,6 +127,8 @@ class ilObjOpenCast extends ilObjectPlugin
             $new_object_settings->setPermissionAllowSetOwn($existing_object_settings->getPermissionAllowSetOwn());
             $new_object_settings->setUseAnnotations($existing_object_settings->getUseAnnotations());
             $new_object_settings->setPermissionPerClip($existing_object_settings->getPermissionPerClip());
+            $new_object_settings->setDefaultView($existing_object_settings->getDefaultView());
+            $new_object_settings->setDefaultSort($existing_object_settings->getDefaultSort());
 
             $new_object_settings->create();
         }

@@ -35,7 +35,7 @@ class SeriesActionResolver extends BaseActionResolver implements SeriesActionTar
     public function resolve(SeriesActionTarget $target, ?SeriesActionParameters $parameter = null): ?URI
     {
         return match ($target) {
-            SeriesActionTarget::SORT, SeriesActionTarget::FILTER, SeriesActionTarget::PAGE, SeriesActionTarget::SET_ITEMS_PER_PAGE => $this->current_url,
+            SeriesActionTarget::SORT, SeriesActionTarget::FILTER, SeriesActionTarget::PAGE, SeriesActionTarget::SET_ITEMS_PER_PAGE, SeriesActionTarget::VIEW => $this->current_url,
             default => null,
         };
     }

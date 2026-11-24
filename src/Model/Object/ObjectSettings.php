@@ -10,6 +10,7 @@ use ilObjOpenCast;
 use srag\Plugins\Opencast\Model\Config\PluginConfig;
 use srag\Plugins\Opencast\Model\Metadata\Definition\MDFieldDefinition;
 use srag\Plugins\Opencast\Model\Metadata\Metadata;
+use srag\Plugins\Opencast\UI\Integration\Series;
 use xoctException;
 
 /**
@@ -18,6 +19,9 @@ use xoctException;
 #[\AllowDynamicProperties]
 class ObjectSettings extends ActiveRecord
 {
+    public const VIEW_TYPE_LIST = 0;
+    public const VIEW_TYPE_TILES = 1;
+
     public $paella_player_option;
     public $paella_player_file_id;
     public $paella_player_url;
@@ -193,13 +197,28 @@ class ObjectSettings extends ActiveRecord
      */
     protected $obj_online = false;
     /**
-     * @var bool
+     * The view the event list starts with, see VIEW_TYPE_LIST and VIEW_TYPE_TILES.
+     * Users can still switch the view in the list. Objects from before the column
+     * was used again have null here and start with the tiles.
+     *
+     * @var int|null
      *
      * @con_has_field true
      * @con_fieldtype integer
-     * @con_length    1
+     * @con_length    8
      */
-    protected $view_changeable = true;
+    protected $default_view = self::VIEW_TYPE_TILES;
+    /**
+     * The sorting the event list starts with as long as the user has not chosen one, see
+     * Series::SORT_OPTIONS. Null leaves it to the plugin configuration.
+     *
+     * @var string|null
+     *
+     * @con_has_field true
+     * @con_fieldtype text
+     * @con_length    32
+     */
+    protected $default_sort = null;
     /**
      * @var bool
      *
@@ -287,6 +306,30 @@ class ObjectSettings extends ActiveRecord
     public function setPermissionAllowSetOwn(bool $permission_allow_set_own): void
     {
         $this->permission_allow_set_own = $permission_allow_set_own;
+    }
+
+    public function getDefaultView(): int
+    {
+        return $this->default_view === null ? self::VIEW_TYPE_TILES : (int) $this->default_view;
+    }
+
+    public function setDefaultView(int $default_view): void
+    {
+        $this->default_view = in_array($default_view, [self::VIEW_TYPE_LIST, self::VIEW_TYPE_TILES], true)
+            ? $default_view
+            : self::VIEW_TYPE_TILES;
+    }
+
+    public function getDefaultSort(): ?string
+    {
+        return $this->default_sort === null || $this->default_sort === '' ? null : (string) $this->default_sort;
+    }
+
+    public function setDefaultSort(?string $default_sort): void
+    {
+        $this->default_sort = $default_sort !== null && array_key_exists($default_sort, Series::SORT_OPTIONS)
+            ? $default_sort
+            : null;
     }
 
     public function setChatActive(bool $chat_active): void

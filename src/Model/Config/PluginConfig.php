@@ -86,6 +86,7 @@ class PluginConfig extends ActiveRecord
     public const F_LIVESTREAM_TYPE = 'livestream_type';
     public const F_LIVESTREAM_BUFFERED = 'livestream_buffered';
     public const F_ENABLE_CHAT = 'enable_chat';
+    public const F_DEFAULT_SORT = 'default_sort';
     public const F_ENABLE_CUTTING = 'enable_cutting';
 
     public const F_REPORT_QUALITY = 'report_quality';

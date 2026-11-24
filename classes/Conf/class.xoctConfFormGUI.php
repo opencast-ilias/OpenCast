@@ -81,6 +81,8 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         foreach ($this->getItems() as $item) {
             $this->getValuesForItem($item, $array);
         }
+        // Installations from before #601 have no default sorting stored yet, show the one that applies.
+        $array[PluginConfig::F_DEFAULT_SORT] ??= \srag\Plugins\Opencast\UI\Integration\Series::DEFAULT_SORT;
         $this->setValuesByArray($array);
     }
 
@@ -460,6 +462,16 @@ class xoctConfFormGUI extends ilPropertyFormGUI
         );
         $ri->addOption($ro);
         $this->addItem($ri);
+
+        // Default sorting of the event lists (#601), as long as neither the user nor the object sets one.
+        $se = new ilSelectInputGUI($this->getLocaleString(PluginConfig::F_DEFAULT_SORT), PluginConfig::F_DEFAULT_SORT);
+        $se->setInfo($this->getLocaleString(PluginConfig::F_DEFAULT_SORT . '_info'));
+        $options = [];
+        foreach (\srag\Plugins\Opencast\UI\Integration\Series::SORT_OPTIONS as $sort => $lang_var) {
+            $options[$sort] = $this->plugin->txt($lang_var);
+        }
+        $se->setOptions($options);
+        $this->addItem($se);
     }
 
     private function initToUSection(): void
