@@ -214,8 +214,7 @@ class MDFormItemBuilder
                     sprintf(
                         $this->plugin->txt('md_msg_mandatory_prefilled'),
                         $fieldConfigAR->getTitle($this->dic->language()->getLangKey())
-                    ),
-                    true
+                    )
                 );
             } else {
                 // Otherwise, we throw meaningful error here, in order to prevent ILIAS to throw Input Field error.
