@@ -208,8 +208,7 @@ class MDFormItemBuilder
             $value = $this->prefiller->getReplacedPrefill($fieldConfigAR->getPrefill());
             // Now, we need to notify the user if the mandatory fallback filled the value!
             if ($value) {
-                global $DIC;
-                $DIC->ui()->mainTemplate()->setOnScreenMessage(
+                $this->dic->ui()->mainTemplate()->setOnScreenMessage(
                     'question',
                     sprintf(
                         $this->plugin->txt('md_msg_mandatory_prefilled'),
