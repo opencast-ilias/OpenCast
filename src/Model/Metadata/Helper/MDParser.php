@@ -54,8 +54,8 @@ class MDParser
         foreach ($data as $key => $entry) {
             $field_data = match ($key) {
                 "presenter" => (object) [
-                    "id" => "creator",
-                    "value" => $entry
+                    "id" => "presenter",
+                    "value" => is_array($entry) ? implode(', ',$entry) : $entry
                 ],
                 "is_part_of" => (object) [
                     "id" => "isPartOf",
