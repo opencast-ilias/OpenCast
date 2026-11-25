@@ -55,22 +55,26 @@ class EventAPIRepository implements EventRepository, Request
         return 'event';
     }
 
-    public function find(string $identifier): Event
+    public function find(string $identifier, bool $with_metadata = false): Event
     {
-        return $this->fetch($identifier);
+        return $this->fetch($identifier, $with_metadata);
     }
 
-    public function fetch(string $identifier): Event
+    public function fetch(string $identifier, bool $with_metadata = false): Event
     {
         if ($this->cache->has($identifier)) {
             $data = $this->cache->get($identifier);
-            return $this->eventParser->parseAPIResponse($data, $identifier);
+            // Here, we ensure that the cached data includes metadata when with_metadata = true!
+            // In this case, we skip the return statement to fetch the event data from upstream.
+            if (!$with_metadata || property_exists($data, 'metadata')) {
+                return $this->eventParser->parseAPIResponse($data, $identifier);
+            }
         }
 
         $data = $this->api->routes()->eventsApi->get(
             $identifier,
             [
-                'withmetadata' => false, // Setting this to true would cause a huge performance decrease
+                'withmetadata' => $with_metadata, // Setting this to true could cause a huge performance decrease, mostly in batches!
                 'withacl' => true,
                 'withpublications' => true,
                 'withscheduling' => true,

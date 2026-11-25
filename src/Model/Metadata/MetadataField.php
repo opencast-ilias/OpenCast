@@ -52,7 +52,7 @@ class MetadataField implements JsonSerializable
      */
     public function getValue()
     {
-        return is_string($this->value) ? strip_tags($this->value) : $this->value;
+        return is_string($this->value) && !empty($this->value) ? strip_tags($this->value) : $this->value;
     }
 
     /**

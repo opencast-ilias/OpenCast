@@ -577,7 +577,10 @@ class xoctEventGUI extends xoctGUI
 
     protected function edit(): void
     {
-        $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER]);
+        // On the edit page, we need to fetch the metadata. This won't cause any performance issues,
+        // since we're dealing with a single event rather than a batch. Additionally, some metadata fields,
+        // such as "publisher", are not available in the raw event data and must be retrieved from the metadata!
+        $event = $this->event_repository->find($this->http->request()->getQueryParams()[self::IDENTIFIER], true);
         $xoctUser = xoctUser::getInstance($this->user);
 
         // check access
